@@ -6,10 +6,12 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 
-import * as configModule from '../../../src/config';
+import * as optionsEditorApplierModule from '../../../src/config/OptionsEditorApplier';
+import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
+import * as buildSchemaWithPluginContributionsModule from '../../../src/config/buildSchemaWithPluginContributions';
+import * as pluginLoaderModule from '../../../src/di/PluginLoader';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
-import * as di from '../../../src/di';
-import { PluginCreator } from '../../../src/di';
+import { PluginCreator, PluginLoader, coreTokens } from '../../../src/di';
 import { buildMainInjector } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
 import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
@@ -17,35 +19,35 @@ import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
   let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;
-  let pluginLoaderMock: sinon.SinonStubbedInstance<di.PluginLoader>;
+  let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
   let buildSchemaWithPluginContributionsStub: sinon.SinonStub;
-  let optionsEditorApplierMock: sinon.SinonStubbedInstance<configModule.OptionsEditorApplier>;
+  let optionsEditorApplierMock: sinon.SinonStubbedInstance<optionsEditorApplierModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
-  let optionsValidatorStub: sinon.SinonStubbedInstance<configModule.OptionsValidator>;
+  let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    optionsEditorApplierMock = sinon.createStubInstance(configModule.OptionsEditorApplier);
+    optionsEditorApplierMock = sinon.createStubInstance(optionsEditorApplierModule.OptionsEditorApplier);
     testFrameworkMock = factory.testFramework();
     testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
-    pluginLoaderMock = sinon.createStubInstance(di.PluginLoader);
-    optionsValidatorStub = sinon.createStubInstance(configModule.OptionsValidator);
+    pluginLoaderMock = sinon.createStubInstance(PluginLoader);
+    optionsValidatorStub = sinon.createStubInstance(optionsValidatorModule.OptionsValidator);
     buildSchemaWithPluginContributionsStub = sinon.stub();
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
-    stubInjectable(configModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
-    stubInjectable(configModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
-    stubInjectable(configModule, 'OptionsValidator').returns(optionsValidatorStub);
-    stubInjectable(di, 'PluginLoader').returns(pluginLoaderMock);
+    stubInjectable(optionsEditorApplierModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
+    stubInjectable(buildSchemaWithPluginContributionsModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
+    stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
+    stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
     stubInjectable(testFrameworkOrchestratorModule, 'default').returns(testFrameworkOrchestratorMock);
@@ -66,8 +68,8 @@ describe(buildMainInjector.name, () => {
 
     it('should load default plugins', () => {
       buildMainInjector({}).resolve(commonTokens.options);
-      expect(di.PluginLoader).calledWithNew;
-      expect(di.PluginLoader).calledWith(currentLogMock(), ['@stryker-mutator/*', require.resolve('../../../src/reporters')]);
+      expect(PluginLoader).calledWithNew;
+      expect(PluginLoader).calledWith(currentLogMock(), ['@stryker-mutator/*', require.resolve('../../../src/reporters')]);
     });
 
     it('should load plugins', () => {
@@ -110,19 +112,19 @@ describe(buildMainInjector.name, () => {
   });
 
   it('should be able to supply the test framework', () => {
-    const actualTestFramework = buildMainInjector({}).resolve(di.coreTokens.testFramework);
+    const actualTestFramework = buildMainInjector({}).resolve(coreTokens.testFramework);
     expect(testFrameworkMock).eq(actualTestFramework);
   });
 
   it('should be able to supply the reporter', () => {
-    const actualReporter = buildMainInjector({}).resolve(di.coreTokens.reporter);
+    const actualReporter = buildMainInjector({}).resolve(coreTokens.reporter);
     expect(actualReporter).eq(broadcastReporterMock);
   });
 
   it('should supply pluginCreators for Reporter, ConfigEditor and TestFramework plugins', () => {
     const injector = buildMainInjector({});
-    expect(injector.resolve(di.coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
-    expect(injector.resolve(di.coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
-    expect(injector.resolve(di.coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
+    expect(injector.resolve(coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
+    expect(injector.resolve(coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
+    expect(injector.resolve(coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
   });
 });
