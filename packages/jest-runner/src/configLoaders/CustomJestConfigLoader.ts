@@ -6,7 +6,7 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import { loaderToken, projectRootToken } from '../pluginTokens';
-import { JestOptions } from '../../src-generated/jest-runner-options';
+import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
 
 import JestConfigLoader from './JestConfigLoader';
 import { NodeRequireFunction } from './NodeRequireFunction';
@@ -31,8 +31,8 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromJestConfigFile() {
     try {
-      const jestOptions = this.options.jest as JestOptions;
-      const configFilePath = path.join(this.projectRoot, jestOptions.configFile || 'jest.conf.js');
+      const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
+      const configFilePath = path.join(this.projectRoot, jestOptions.jest?.configFile || 'jest.config.js');
       const config = this.require(configFilePath);
       this.log.debug(`Read Jest config from ${configFilePath}`);
       return config;

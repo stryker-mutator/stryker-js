@@ -22,6 +22,7 @@ describe('JestTestRunner', () => {
     jestTestAdapterMock = { run: sinon.stub() };
     jestTestAdapterMock.run.resolves({ results: { testResults: [] } });
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
+    jestConfigLoaderMock.loadConfig.resolves({});
 
     testInjector.options.jest = { config: { property: 'value' } };
     testInjector.options.basePath = basePath;
