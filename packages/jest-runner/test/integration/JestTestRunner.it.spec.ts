@@ -6,8 +6,7 @@ import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import JestOptionsEditor from '../../src/JestOptionsEditor';
-import { jestTestRunnerFactory } from '../../src/JestTestRunner';
+import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
@@ -22,7 +21,7 @@ const jestProjectRoot = process.cwd();
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
-describe('Integration test for Strykers Jest runner', () => {
+describe(`${JestTestRunner.name} integration test`, () => {
   // Set timeout for integration tests to 10 seconds for travis
   let processCwdStub: sinon.SinonStub;
 
@@ -43,17 +42,16 @@ describe('Integration test for Strykers Jest runner', () => {
   });
 
   function createSut(overrides?: Partial<JestOptions>) {
-    const jestOptionsEditor = testInjector.injector.injectClass(JestOptionsEditor);
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
       jest: createJestOptions(overrides),
     });
-    jestOptionsEditor.edit(options);
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
   it('should run tests on the example React + TypeScript project', async () => {
     processCwdStub.returns(getProjectRoot('reactTsProject'));
     const jestTestRunner = createSut({ projectType: 'react-ts' });
+
     const result = await jestTestRunner.run(runOptions);
 
     expect(result.status).to.equal(RunStatus.Complete);

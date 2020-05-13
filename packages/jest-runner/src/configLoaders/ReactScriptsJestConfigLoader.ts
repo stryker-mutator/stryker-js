@@ -1,15 +1,16 @@
 import path from 'path';
 
+import { tokens } from '@stryker-mutator/api/plugin';
+
 import { createReactJestConfig } from '../utils/createReactJestConfig';
+import { projectRootToken, resolveToken } from '../pluginTokens';
 
 import JestConfigLoader from './JestConfigLoader';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
-  private readonly projectRoot: string;
+  public static inject = tokens(resolveToken, projectRootToken);
 
-  constructor(projectRoot: string, private readonly resolve: RequireResolve = require.resolve) {
-    this.projectRoot = projectRoot;
-  }
+  constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
 
   public loadConfig(): Jest.Configuration {
     try {
@@ -18,9 +19,6 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
 
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig(reactScriptsLocation);
-
-      // Set test environment to jsdom (otherwise Jest won't run)
-      jestConfiguration.testEnvironment = 'jsdom';
 
       return jestConfiguration;
     } catch (e) {

@@ -3,37 +3,41 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import { RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
 
-import { JEST_VERSION_TOKEN, jestTestAdapterFactory } from './jestTestAdapters';
+import { jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
 import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
+import JestConfigLoader from './configLoaders/JestConfigLoader';
+import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
+import { configLoaderFactory } from './configLoaders';
+import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
-    .provideValue(PROCESS_ENV_TOKEN, process.env)
-    .provideValue(JEST_VERSION_TOKEN, require('jest/package.json').version as string)
-    .provideFactory(JEST_TEST_ADAPTER_TOKEN, jestTestAdapterFactory)
+    .provideValue(processEnvToken, process.env)
+    .provideValue(jestVersionToken, require('jest/package.json').version as string)
+    .provideFactory(jestTestAdapterToken, jestTestAdapterFactory)
+    .provideFactory(configLoaderToken, configLoaderFactory)
     .injectClass(JestTestRunner);
 }
 jestTestRunnerFactory.inject = tokens(commonTokens.injector);
-
-export const PROCESS_ENV_TOKEN = 'PROCESS_ENV_TOKEN';
-export const JEST_TEST_ADAPTER_TOKEN = 'jestTestAdapter';
 
 export default class JestTestRunner implements TestRunner {
   private readonly jestConfig: Jest.Configuration;
 
   private readonly enableFindRelatedTests: boolean;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, PROCESS_ENV_TOKEN, JEST_TEST_ADAPTER_TOKEN);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, processEnvToken, jestTestAdapterToken, configLoaderToken);
   constructor(
     private readonly log: Logger,
     options: StrykerOptions,
     private readonly processEnvRef: NodeJS.ProcessEnv,
-    private readonly jestTestAdapter: JestTestAdapter
+    private readonly jestTestAdapter: JestTestAdapter,
+    configLoader: JestConfigLoader
   ) {
     const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
     // Get jest configuration from stryker options and assign it to jestConfig
-    this.jestConfig = (jestOptions.jest.config as unknown) as Jest.Configuration;
+    const configFromFile = configLoader.loadConfig();
+    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
@@ -110,5 +114,15 @@ export default class JestTestRunner implements TestRunner {
       default:
         return TestStatus.Skipped;
     }
+  }
+
+  private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {
+    const stringify = (obj: object) => JSON.stringify(obj, null, 2);
+    this.log.trace(
+      `Merging file-based config ${stringify(configFromFile)} 
+      with custom config ${stringify(config)}
+      and default (internal) stryker config ${JEST_OVERRIDE_OPTIONS}`
+    );
+    return Object.assign(configFromFile, config, JEST_OVERRIDE_OPTIONS);
   }
 }
