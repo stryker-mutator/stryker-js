@@ -1,5 +1,7 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
+import * as strykerValidationSchema from '../schema/typescript-options.json';
+
 import TypescriptOptionsEditor from './TypescriptOptionsEditor';
 import { typescriptMutatorFactory } from './TypescriptMutator';
 import TypescriptTranspiler from './TypescriptTranspiler';
@@ -10,4 +12,4 @@ export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.Mutator, 'typescript', typescriptMutatorFactory),
 ];
 
-export * as strykerValidationSchema from '../schema/typescript-options.json';
+export { strykerValidationSchema };
