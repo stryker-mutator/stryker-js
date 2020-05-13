@@ -1,4 +1,4 @@
-import { Command } from 'commander';
+import * as commander from 'commander';
 import { getLogger } from 'log4js';
 import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -36,7 +36,7 @@ export default class StrykerCli {
 
   constructor(
     private readonly argv: string[],
-    private readonly program: Command = new Command(),
+    private readonly program: commander.Command = new commander.Command(),
     private readonly runMutationTest = async (options: Partial<StrykerOptions>) => new Stryker(options).runMutationTest(),
     private readonly log: Logger = getLogger(StrykerCli.name)
   ) {}
