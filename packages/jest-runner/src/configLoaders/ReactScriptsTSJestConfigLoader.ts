@@ -19,7 +19,7 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
 
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
-
+      jestConfiguration.testEnvironment = 'jsdom';
       return jestConfiguration;
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
