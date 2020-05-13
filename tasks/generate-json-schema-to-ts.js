@@ -85,6 +85,12 @@ function preprocessSchema(inputSchema) {
             $ref: inputSchema.$ref
           }
         }
+        if(inputSchema.oneOf) {
+          return {
+            ...inputSchema,
+            oneOf: inputSchema.oneOf.map(preprocessSchema)
+          }
+        }
         return inputSchema;
     }
   } catch (err) {

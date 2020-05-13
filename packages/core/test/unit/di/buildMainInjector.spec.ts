@@ -21,11 +21,11 @@ describe(buildMainInjector.name, () => {
   let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
-  let buildSchemaWithPluginContributionsStub: sinon.SinonStub;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<configModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<configModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
+  let validationSchemaContributions: object[];
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
@@ -36,14 +36,14 @@ describe(buildMainInjector.name, () => {
     testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(di.PluginLoader);
+    validationSchemaContributions = [];
+    pluginLoaderMock.resolveValidationSchemaContributions.returns(validationSchemaContributions);
     optionsValidatorStub = sinon.createStubInstance(configModule.OptionsValidator);
-    buildSchemaWithPluginContributionsStub = sinon.stub();
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(configModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
-    stubInjectable(configModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
     stubInjectable(configModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(di, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
@@ -96,6 +96,12 @@ describe(buildMainInjector.name, () => {
     it('should validate the options', () => {
       buildMainInjector({}).resolve(commonTokens.options);
       expect(optionsValidatorStub.validate).calledWith(expectedConfig);
+    });
+
+    it('should warn about unknown properties', () => {
+      expectedConfig.foo = 'bar';
+      buildMainInjector({}).resolve(commonTokens.options);
+      expect(currentLogMock().warn).calledWithMatch('Unknown stryker config option "foo"');
     });
   });
 

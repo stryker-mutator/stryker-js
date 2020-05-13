@@ -5,7 +5,14 @@ import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 import { rootInjector } from 'typed-inject';
 
-import { OptionsEditorApplier, readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions } from '../config';
+import {
+  OptionsEditorApplier,
+  readConfig,
+  buildSchemaWithPluginContributions,
+  OptionsValidator,
+  validateOptions,
+  markUnknownOptions,
+} from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
@@ -26,10 +33,29 @@ export interface MainContext extends OptionsContext {
   [coreTokens.temporaryDirectory]: TemporaryDirectory;
 }
 
+type BasicInjector = Injector<Pick<MainContext, 'logger' | 'getLogger'>>;
+type PluginResolverInjector = Injector<Pick<MainContext, 'logger' | 'getLogger' | 'options' | 'pluginResolver'>>;
+
 export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
-  return rootInjector
-    .provideValue(commonTokens.getLogger, getLogger)
-    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
+  const basicInjector = createBasicInjector();
+  const pluginResolverInjector = createPluginResolverInjector(cliOptions, basicInjector);
+  return pluginResolverInjector
+    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
+    .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
+    .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
+    .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
+    .provideClass(coreTokens.reporter, BroadcastReporter)
+    .provideFactory(coreTokens.testFramework, testFrameworkFactory)
+    .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
+    .provideClass(coreTokens.timer, Timer);
+}
+
+function createBasicInjector(): BasicInjector {
+  return rootInjector.provideValue(commonTokens.getLogger, getLogger).provideFactory(commonTokens.logger, loggerFactory, Scope.Transient);
+}
+
+export function createPluginResolverInjector(cliOptions: Partial<StrykerOptions>, parent: BasicInjector): PluginResolverInjector {
+  return parent
     .provideValue(coreTokens.cliOptions, cliOptions)
     .provideValue(coreTokens.validationSchema, strykerCoreSchema)
     .provideClass(coreTokens.optionsValidator, OptionsValidator)
@@ -40,18 +66,11 @@ export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector
     .provideFactory(coreTokens.validationSchema, buildSchemaWithPluginContributions)
     .provideClass(coreTokens.optionsValidator, OptionsValidator)
     .provideFactory(commonTokens.options, validateOptions)
+    .provideFactory(commonTokens.options, markUnknownOptions)
     .provideFactory(coreTokens.pluginCreatorConfigEditor, PluginCreator.createFactory(PluginKind.ConfigEditor))
     .provideFactory(coreTokens.pluginCreatorOptionsEditor, PluginCreator.createFactory(PluginKind.OptionsEditor))
     .provideClass(coreTokens.configOptionsApplier, OptionsEditorApplier)
-    .provideFactory(commonTokens.options, applyOptionsEditors)
-    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
-    .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
-    .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
-    .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
-    .provideClass(coreTokens.reporter, BroadcastReporter)
-    .provideFactory(coreTokens.testFramework, testFrameworkFactory)
-    .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer);
+    .provideFactory(commonTokens.options, applyOptionsEditors);
 }
 
 function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {
