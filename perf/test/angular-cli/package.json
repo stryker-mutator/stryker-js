@@ -55,7 +55,6 @@
   "localDependencies": {
     "@stryker-mutator/core": "../../../packages/core",
     "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/html-reporter": "../../../packages/html-reporter",
     "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
     "@stryker-mutator/typescript": "../../../packages/typescript",
     "@stryker-mutator/util": "../../../packages/util"
