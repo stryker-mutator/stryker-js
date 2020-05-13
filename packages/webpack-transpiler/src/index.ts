@@ -1,5 +1,7 @@
 import { commonTokens, declareFactoryPlugin, Injector, PluginKind, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
 
+import * as strykerValidationSchema from '../schema/webpack-transpiler-options.json';
+
 import ConfigLoader from './compiler/ConfigLoader';
 import { pluginTokens } from './pluginTokens';
 import WebpackTranspiler from './WebpackTranspiler';
@@ -11,4 +13,4 @@ function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
 }
 webpackTranspilerFactory.inject = tokens(commonTokens.injector);
 
-export * as strykerValidationSchema from '../schema/webpack-transpiler-options.json';
+export { strykerValidationSchema };

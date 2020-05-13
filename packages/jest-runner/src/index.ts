@@ -1,6 +1,6 @@
 import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import strykerValidationSchema from '../schema/jest-runner-options.json';
+import * as strykerValidationSchema from '../schema/jest-runner-options.json';
 
 import { jestTestRunnerFactory } from './JestTestRunner';
 

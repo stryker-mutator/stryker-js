@@ -1,5 +1,7 @@
 import { BaseContext, commonTokens, declareClassPlugin, declareFactoryPlugin, Injector, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 
+import * as strykerValidationSchema from '../schema/mocha-runner-options.json';
+
 import MochaOptionsEditor from './MochaOptionsEditor';
 import MochaOptionsLoader from './MochaOptionsLoader';
 import { MochaTestRunner } from './MochaTestRunner';
@@ -14,4 +16,4 @@ function mochaOptionsEditorFactory(injector: Injector<BaseContext>): MochaOption
   return injector.provideClass('loader', MochaOptionsLoader).injectClass(MochaOptionsEditor);
 }
 
-export * as strykerValidationSchema from '../schema/mocha-runner-options.json';
+export { strykerValidationSchema };

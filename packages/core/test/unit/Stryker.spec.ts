@@ -11,7 +11,6 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as typedInject from 'typed-inject';
 
-import * as di from '../../src/di';
 import InputFileCollection from '../../src/input/InputFileCollection';
 import InputFileResolver from '../../src/input/InputFileResolver';
 import LogConfigurator from '../../src/logging/LogConfigurator';
@@ -28,6 +27,8 @@ import { TranspilerFacade } from '../../src/transpiler/TranspilerFacade';
 import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import Timer from '../../src/utils/Timer';
 import { mock, Mock, testableMutant } from '../helpers/producers';
+import { coreTokens } from '../../src/di';
+import * as buildMainInjectorModule from '../../src/di/buildMainInjector';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
@@ -74,7 +75,7 @@ describe(Stryker.name, () => {
 
     temporaryDirectoryMock = mock(TemporaryDirectory);
     mutationTestReportCalculatorMock = mock(MutationTestReportCalculator);
-    sinon.stub(di, 'buildMainInjector').returns(injectorMock);
+    sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock);
     injectorMock.injectClass
       .withArgs(BroadcastReporter)
       .returns(reporterMock)
@@ -93,17 +94,17 @@ describe(Stryker.name, () => {
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(strykerOptions)
-      .withArgs(di.coreTokens.timer)
+      .withArgs(coreTokens.timer)
       .returns(timerMock)
-      .withArgs(di.coreTokens.reporter)
+      .withArgs(coreTokens.reporter)
       .returns(reporterMock)
-      .withArgs(di.coreTokens.testFramework)
+      .withArgs(coreTokens.testFramework)
       .returns(testFrameworkMock)
-      .withArgs(di.coreTokens.temporaryDirectory)
+      .withArgs(coreTokens.temporaryDirectory)
       .returns(temporaryDirectoryMock)
       .withArgs(commonTokens.getLogger)
       .returns(() => logMock)
-      .withArgs(di.coreTokens.transpiler)
+      .withArgs(coreTokens.transpiler)
       .returns(transpilerMock);
   });
 
@@ -241,7 +242,7 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(transpilerMock.transpile).calledWith(inputFiles.files);
-        expect(injectorMock.provideValue).calledWith(di.coreTokens.transpiledFiles, initialTranspiledFiles);
+        expect(injectorMock.provideValue).calledWith(coreTokens.transpiledFiles, initialTranspiledFiles);
       });
 
       it('should create the mutation test executor', async () => {
@@ -274,7 +275,7 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, true);
-        expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+        expect(injectorMock.provideClass).calledWith(coreTokens.transpiler, TranspilerFacade);
       });
 
       it('should create the transpiler with produceSourceMaps = false when coverage analysis is "off"', async () => {
@@ -282,7 +283,7 @@ describe(Stryker.name, () => {
         sut = new Stryker({});
         await sut.runMutationTest();
         expect(injectorMock.provideValue).calledWith(commonTokens.produceSourceMaps, false);
-        expect(injectorMock.provideClass).calledWith(di.coreTokens.transpiler, TranspilerFacade);
+        expect(injectorMock.provideClass).calledWith(coreTokens.transpiler, TranspilerFacade);
       });
     });
   });
