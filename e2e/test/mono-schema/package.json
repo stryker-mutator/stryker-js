@@ -1,0 +1,7 @@
+{
+  "name": "mono-schema",
+  "description": "A test for the 'mono-schema'. A json schema that got merged from all the objects and put into @stryker-mutator/core/schema",
+  "scripts": {
+    "test": "mocha --require \"ts-node/register\" verify/verify.ts"
+  }
+}

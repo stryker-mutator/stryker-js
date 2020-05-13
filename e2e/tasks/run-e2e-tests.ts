@@ -1,6 +1,6 @@
 import fs = require('fs');
 import * as path from 'path';
-import * as execa from 'execa';
+import execa from 'execa';
 import * as semver from 'semver';
 import * as os from 'os';
 import { from, defer } from 'rxjs';

@@ -8,7 +8,6 @@ import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as optionsEditorApplierModule from '../../../src/config/OptionsEditorApplier';
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
-import * as buildSchemaWithPluginContributionsModule from '../../../src/config/buildSchemaWithPluginContributions';
 import * as pluginLoaderModule from '../../../src/di/PluginLoader';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
 import { PluginCreator, PluginLoader, coreTokens } from '../../../src/di';
@@ -23,11 +22,11 @@ describe(buildMainInjector.name, () => {
   let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
-  let buildSchemaWithPluginContributionsStub: sinon.SinonStub;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<optionsEditorApplierModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
+  let validationSchemaContributions: object[];
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
@@ -39,13 +38,13 @@ describe(buildMainInjector.name, () => {
     testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     optionsValidatorStub = sinon.createStubInstance(optionsValidatorModule.OptionsValidator);
-    buildSchemaWithPluginContributionsStub = sinon.stub();
+    validationSchemaContributions = [];
+    pluginLoaderMock.resolveValidationSchemaContributions.returns(validationSchemaContributions);
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(optionsEditorApplierModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
-    stubInjectable(buildSchemaWithPluginContributionsModule, 'buildSchemaWithPluginContributions').returns(buildSchemaWithPluginContributionsStub);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
@@ -98,6 +97,12 @@ describe(buildMainInjector.name, () => {
     it('should validate the options', () => {
       buildMainInjector({}).resolve(commonTokens.options);
       expect(optionsValidatorStub.validate).calledWith(expectedConfig);
+    });
+
+    it('should warn about unknown properties', () => {
+      expectedConfig.foo = 'bar';
+      buildMainInjector({}).resolve(commonTokens.options);
+      expect(currentLogMock().warn).calledWithMatch('Unknown stryker config option "foo"');
     });
   });
 

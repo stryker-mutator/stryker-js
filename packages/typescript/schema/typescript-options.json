@@ -11,7 +11,7 @@
     "tsconfig": {
       "description": "Override tsconfig from your tsconfig.json file",
       "type": "object",
-      "$ref": "http://json.schemastore.org/tsconfig"
+      "$ref": "http://json.schemastore.org/tsconfig#/definitions/compilerOptionsDefinition/properties/compilerOptions"
     }
   }
 }

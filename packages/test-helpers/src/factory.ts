@@ -1,6 +1,14 @@
 import Ajv = require('ajv');
 import { ConfigEditor } from '@stryker-mutator/api/config';
-import { File, Location, MutationScoreThresholds, StrykerOptions, MutatorDescriptor, strykerCoreSchema } from '@stryker-mutator/api/core';
+import {
+  File,
+  Location,
+  MutationScoreThresholds,
+  StrykerOptions,
+  MutatorDescriptor,
+  strykerCoreSchema,
+  WarningOptions,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
@@ -48,6 +56,10 @@ export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
     resolveValidationSchemaContributions: sinon.stub(),
   };
 }
+
+export const warningOptions = factoryMethod<WarningOptions>(() => ({
+  unknownOptions: true,
+}));
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
   id: '256',

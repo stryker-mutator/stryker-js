@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/stryker-mutator/stryker/compare/v3.1.0...v3.2.0) (2020-05-13)
+
+**Note:** Version bump only for package @stryker-mutator/vue-mutator
+
+
+
+
+
+
 # [3.1.0](https://github.com/stryker-mutator/stryker/compare/v3.0.2...v3.1.0) (2020-03-29)
 
 **Note:** Version bump only for package @stryker-mutator/vue-mutator

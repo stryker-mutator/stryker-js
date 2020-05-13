@@ -38,6 +38,7 @@ const optionsAllArgs: StrykerOptions = {
     baseDir: 'mydir'
   },
   tempDirName: '.stryker-tmp',
+  warnings: true
 };
 
 const textFile: File = new File('foo/bar.js', Buffer.from('foobar'));
