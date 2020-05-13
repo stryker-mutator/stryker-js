@@ -1,9 +1,10 @@
+import sinon = require('sinon');
 import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { OptionsValidator } from '../../../src/config/OptionsValidator';
+import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/OptionsValidator';
 import { coreTokens } from '../../../src/di';
 
 describe(OptionsValidator.name, () => {
@@ -220,4 +221,63 @@ describe(OptionsValidator.name, () => {
       testInjector.options[key] = value;
     }
   }
+});
+
+describe(validateOptions.name, () => {
+  let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
+
+  beforeEach(() => {
+    optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
+  });
+
+  it('should validate the options using given optionsValidator', () => {
+    const options = { foo: 'bar' };
+    const output = validateOptions(options, (optionsValidatorMock as unknown) as OptionsValidator);
+    expect(options).eq(output);
+    expect(optionsValidatorMock.validate).calledWith(options);
+  });
+});
+
+describe(markUnknownOptions.name, () => {
+  it('should not warn when there are no unknown properties', () => {
+    testInjector.options.htmlReporter = {
+      baseDir: 'test',
+    };
+    expect(testInjector.logger.warn).not.called;
+  });
+
+  it('should return the options, no matter what', () => {
+    testInjector.options['this key does not exist'] = 'foo';
+    const output = markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    expect(output).eq(testInjector.options);
+  });
+
+  it('should not warn when unknown properties are postfixed with "_comment"', () => {
+    testInjector.options['maxConcurrentTestRunners_comment'] = 'Recommended to use half of your cores';
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    expect(testInjector.logger.warn).not.called;
+  });
+
+  it('should warn about unknown properties', () => {
+    testInjector.options['karma'] = {};
+    testInjector.options['jest'] = {};
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    expect(testInjector.logger.warn).calledThrice;
+    expect(testInjector.logger.warn).calledWith('Unknown stryker config option "karma".');
+    expect(testInjector.logger.warn).calledWith('Unknown stryker config option "jest".');
+    expect(testInjector.logger.warn).calledWithMatch('Possible causes');
+  });
+  it('should not warn about unknown properties when warnings are disabled', () => {
+    testInjector.options['karma'] = {};
+    testInjector.options.warnings = factory.warningOptions({ unknownOptions: false });
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    expect(testInjector.logger.warn).not.called;
+  });
+  it('should ignore options added by Stryker itself', () => {
+    testInjector.options['set'] = {};
+    testInjector.options['configFile'] = {};
+    testInjector.options['$schema'] = '';
+    markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
+    expect(testInjector.logger.warn).not.called;
+  });
 });

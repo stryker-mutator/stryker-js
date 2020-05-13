@@ -25,7 +25,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsPackagePath);
 
-    sut = new ReactScriptsJestConfigLoader(projectRoot, (requireResolveStub as unknown) as RequireResolve);
+    sut = new ReactScriptsJestConfigLoader((requireResolveStub as unknown) as RequireResolve, projectRoot);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts', () => {
@@ -41,7 +41,6 @@ describe(ReactScriptsJestConfigLoader.name, () => {
       eject: false,
       projectRoot: '/path/to/project',
       relativePath: path.join('node_modules', 'react-scripts', 'test'),
-      testEnvironment: 'jsdom',
     });
   });
 

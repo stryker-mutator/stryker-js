@@ -180,6 +180,18 @@
       "required": [
         "name"
       ]
+    },
+    "warningOptions": {
+      "title": "WarningOptions",
+      "type": "object",
+      "default": {},
+      "properties": {
+        "unknownOptions": {
+          "description": "decide whether or not to log warnings when additional stryker options are configured",
+          "type": "boolean",
+          "default": true
+        }
+      }
     }
   },
   "properties": {
@@ -328,6 +340,18 @@
         "type": "string"
       },
       "default": []
+    },
+    "warnings": {
+      "default": true,
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/definitions/warningOptions"
+        }
+      ],
+      "description": "Enable or disable certain warnings"
     }
   }
 }

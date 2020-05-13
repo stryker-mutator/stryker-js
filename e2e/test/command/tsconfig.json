@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "declaration": false
-  },
-  "files": [
-    "verify/verify.ts"
-  ]
-}

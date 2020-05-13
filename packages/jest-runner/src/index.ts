@@ -1,12 +1,11 @@
-import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import JestOptionsEditor from './JestOptionsEditor';
+import strykerValidationSchema from '../schema/jest-runner-options.json';
+
 import { jestTestRunnerFactory } from './JestTestRunner';
 
 process.env.BABEL_ENV = 'test';
 
-export const strykerPlugins = [
-  declareClassPlugin(PluginKind.OptionsEditor, 'jest', JestOptionsEditor),
-  declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory),
-];
-export * as strykerValidationSchema from '../schema/jest-runner-options.json';
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory)];
+
+export { strykerValidationSchema };

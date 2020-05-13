@@ -1,18 +1,18 @@
 {
-    "extends": "../tsconfig.settings.json",
-    "compilerOptions": {
-        "declaration": false,
-        "importHelpers": false,
-        "esModuleInterop": true,
-        "rootDir": ".",
-        "allowUnreachableCode": true,
-        "noUnusedLocals": false,
-        "types": [
-          "mocha",
-          "node"
-        ]
-    },
-    "include": [
-        "*.ts", "tasks/run-e2e-tests.ts", "tasks/bootstrap-local-dependencies.ts"
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "declaration": false,
+    "importHelpers": false,
+    "esModuleInterop": true,
+    "rootDir": ".",
+    "types": [
+      "mocha",
+      "node"
     ]
+  },
+  "include": [
+    "*.ts",
+    "tasks/run-e2e-tests.ts",
+    "tasks/bootstrap-local-dependencies.ts"
+  ]
 }

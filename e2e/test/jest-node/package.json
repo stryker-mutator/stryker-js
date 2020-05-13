@@ -1,0 +1,9 @@
+{
+  "name": "jest-node",
+  "description": "Test for jest on node",
+  "scripts": {
+    "test:unit": "jest",
+    "test": "stryker run",
+    "posttest": "mocha --require ts-node/register verify/*.ts"
+  }
+}

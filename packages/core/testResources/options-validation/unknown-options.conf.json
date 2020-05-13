@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "plugins": [],
+  "this is an unknown property": "foo"
+}

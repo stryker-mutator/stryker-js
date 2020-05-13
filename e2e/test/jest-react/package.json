@@ -14,7 +14,7 @@
     "report-coverage": "coveralls < ./coverage/lcov.info",
     "test-original": "cross-env BABEL_ENV=test react-scripts test --env=jsdom",
     "test": "stryker run",
-    "posttest": "mocha --require ts-node/register verify/*.ts",
+    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
     "cover": "npm test -- --coverage",
     "start": "cross-env BABEL_ENV=webpack webpack-dev-server --config ./webpack.dev.config.js --watch",
     "build-docs": "cross-env BABEL_ENV=webpack WEBPACK_BUILD=production webpack --config ./webpack.dev.config.js --progress --colors",
@@ -69,7 +69,7 @@
     "babel-preset-react-app": "~9.0.2",
     "enzyme": "~3.10.0",
     "enzyme-adapter-react-16": "~1.15.1",
-    "jest": "^25.1.0",
+    "jest": "^26.0.1",
     "react-scripts": "~3.2.0"
   },
   "localDependencies": {

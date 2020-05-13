@@ -43,7 +43,7 @@
     "tslib": "~1.11.1"
   },
   "devDependencies": {
-    "@types/node": "^13.7.1",
+    "@types/node": "^14.0.1",
     "typed-inject": "~2.2.1"
   }
 }

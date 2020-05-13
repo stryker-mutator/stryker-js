@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "typescript",
+  "mutate": [
+    "{src,lib}/**/*.ts?(x)"
+  ],
+  "packageManager": "npm",
+  "testRunner": "mocha",
+  "maxConcurrentTestRunners": 2,
+  "coverageAnalysis": "off",
+  "reporters": ["event-recorder"],
+  "mocha": {
+    "package": "package.json"
+  },
+  "tsconfigFile": "tsconfig.json"
+}
