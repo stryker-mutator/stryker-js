@@ -1,21 +1,21 @@
 import { expect } from 'chai';
 import { CachedInputFileSystem } from 'enhanced-resolve';
 import * as sinon from 'sinon';
+import { IFs } from 'memfs';
 
 import InputFileSystem from '../../../src/fs/InputFileSystem';
-import MemoryFS, * as memoryFSModule from '../../../src/fs/MemoryFS';
+import memoryFS from '../../../src/fs/memory-fs';
 import { createMockInstance, Mock } from '../../helpers/producers';
 
 describe('InputFileSystem', () => {
   let sut: InputFileSystem;
-  let memoryFSMock: Mock<MemoryFS>;
+  let memoryFSMock: sinon.SinonStubbedInstance<IFs>;
   let innerFSMock: Mock<CachedInputFileSystem>;
 
   beforeEach(() => {
-    memoryFSMock = createMockInstance(MemoryFS);
+    memoryFSMock = sinon.stub(memoryFS);
     innerFSMock = createMockInstance(CachedInputFileSystem);
-    sinon.stub(memoryFSModule, 'default').returns(memoryFSMock);
-    sut = new InputFileSystem(innerFSMock);
+    sut = new InputFileSystem(innerFSMock, (memoryFSMock as unknown) as IFs);
   });
 
   describe('writeFileSync', () => {

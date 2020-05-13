@@ -26,8 +26,8 @@ export declare namespace webpack {
     statSync(path: string): Stats;
     readdirSync(path: string): string[];
 
-    readFileSync(path: string, encoding?: string): string;
-    readlinkSync(path: string): string | Buffer;
+    readFileSync(path: string, encoding?: string): string | Buffer;
+    readlinkSync(path: string): string;
   }
 
   /**
