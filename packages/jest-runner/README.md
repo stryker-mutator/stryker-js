@@ -22,25 +22,26 @@ The @stryker-mutator/jest-runner is a plugin for Stryker to enable Jest as a tes
 For the minimum supported versions, see the peerDependencies section in package.json.
 
 ## Configuration
-
-### Configuring Stryker
 Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` to "off" in your Stryker configuration.
 
 ```javascript
 {
-    testRunner: 'jest'
+    testRunner: 'jest',
     coverageAnalysis: 'off'
 }
 ```
 
-### Configuring Jest
+### Advanced configuration
 The @stryker-mutator/jest-runner also provides a couple of configurable options using the `jest` property in your Stryker config:
 
 ```javascript
 {
     jest: {
         projectType: 'custom',
-        config: require('path/to/your/custom/jestConfig.js'),
+        configFile: 'path/to/your/custom/jestConfig.js',
+        config: {
+            testEnvironment: 'jest-environment-jsdom-sixteen'
+        },
         enableFindRelatedTests: true,
     }
 }
@@ -51,11 +52,12 @@ The @stryker-mutator/jest-runner also provides a couple of configurable options 
 | projectType (optional) | The type of project you are working on. | `custom` | `custom` uses the `config` option (see below)|
 | | | | `create-react-app` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
 | | | | `create-react-app-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
-| config (optional) | A custom Jest configuration object. You could also use `require` to load it here. | undefined | |
+| configFile (optional) | The path to your Jest config file. | undefined | |
+| config (optional) | Custom Jest config. This will override file-based config. | undefined | |
 | enableFindRelatedTests (optional) | Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#findrelatedtests-spaceseparatedlistofsourcefiles))  | true | false |
 
-**Note:** When neither of the options are specified it will use the Jest configuration in your "package.json". \
-**Note:** the `projectType` option is ignored when the `config` option is specified.
+**Note:** When the projectType is `custom` and no `configFile` is specified, your `jest.config.js` or `package.json` will be loaded. \
+**Note:** The `configFile` setting is **not** supported for `create-react-app` and `create-react-app-ts`. \
 **Note:** Stryker currently only works for CRA-projects that have not been [_ejected_](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md#npm-run-eject).
 
 The following is an example stryker.conf.js file:
