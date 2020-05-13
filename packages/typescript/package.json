@@ -45,7 +45,7 @@
     "@stryker-mutator/mutator-specification": "^3.1.0",
     "@stryker-mutator/test-helpers": "^3.1.0",
     "@types/lodash.flatmap": "~4.5.3",
-    "@types/node": "^13.7.1",
+    "@types/node": "^14.0.1",
     "@types/semver": "~7.1.0",
     "surrial": "~2.0.2"
   },

@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/util#readme",
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^14.0.1"
   }
 }
