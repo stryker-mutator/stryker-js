@@ -1,4 +1,3 @@
-
 declare module 'enhanced-resolve' {
   export interface Stats {
     isFile(): boolean;
@@ -18,8 +17,9 @@ declare module 'enhanced-resolve' {
     readdirSync(path: string): string[];
     readFile(
       filename: string,
-      encoding: string | { encoding: string; flag?: string; },
-      callback: (err: NodeJS.ErrnoException, data: string) => void): void;
+      encoding: string | { encoding: string; flag?: string },
+      callback: (err: NodeJS.ErrnoException, data: string) => void
+    ): void;
     readFile(
       filename: string,
       options: {
@@ -39,8 +39,12 @@ declare module 'enhanced-resolve' {
 
   export class NodeJsInputFileSystem implements AbstractInputFileSystem {
     public readdir(path: string, callback: (err: NodeJS.ErrnoException, files: string[]) => void): void;
-    public readFile(filename: string, encoding: string | { encoding: string; flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: string) => void): void;
-    public readFile(filename: string, options: { flag?: string | undefined; }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
+    public readFile(
+      filename: string,
+      encoding: string | { encoding: string; flag?: string | undefined },
+      callback: (err: NodeJS.ErrnoException, data: string) => void
+    ): void;
+    public readFile(filename: string, options: { flag?: string | undefined }, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void): void;
     public readFile(filename: any, options: any, callback?: any): void;
     public readlink(path: string, callback: (err: NodeJS.ErrnoException, linkString: string) => void): void;
@@ -70,7 +74,7 @@ declare module 'enhanced-resolve' {
 
     public readdirSync(path: string): string[];
 
-    public readFileSync(filename: string, options?: string): Buffer;
+    public readFileSync(filename: string, options?: string): string | Buffer;
 
     public readlinkSync(path: string | Buffer): string;
 
