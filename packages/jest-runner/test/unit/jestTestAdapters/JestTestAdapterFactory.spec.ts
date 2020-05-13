@@ -1,15 +1,16 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { JEST_VERSION_TOKEN, JestTestAdapter, jestTestAdapterFactory } from '../../../src/jestTestAdapters';
+import { JestTestAdapter, jestTestAdapterFactory } from '../../../src/jestTestAdapters';
 import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
 import JestLessThan25Adapter from '../../../src/jestTestAdapters/JestLessThan25Adapter';
+import { jestVersionToken } from '../../../src/pluginTokens';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;
 
   function act(): JestTestAdapter {
-    return testInjector.injector.provideValue(JEST_VERSION_TOKEN, jestVersion).injectFunction(jestTestAdapterFactory);
+    return testInjector.injector.provideValue(jestVersionToken, jestVersion).injectFunction(jestTestAdapterFactory);
   }
 
   it('should return a JestGreaterThan25Adapter when the Jest version is higher or equal to 25.0.0', () => {

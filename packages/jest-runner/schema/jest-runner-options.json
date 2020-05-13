@@ -14,8 +14,12 @@
           "$ref": "#/definitions/jestProjectType",
           "default": "custom"
         },
+        "configFile": {
+          "description": "Path to your Jest config file. Please leave it empty if you want jest configuration to be loaded from package.json or a standard jest configuration file.",
+          "type": "string"
+        },
         "config": {
-          "description": "A custom Jest configuration object. You could also use `require` to load it here. Please leave it empty if you want jest configuration to be loaded from package.json or a standard jest configuration file.",
+          "description": "A custom Jest configuration object. You could also use `require` to load it here.",
           "type": "object"
         },
         "enableFindRelatedTests": {

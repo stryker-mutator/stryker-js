@@ -2,11 +2,11 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 import semver from 'semver';
 
+import { jestVersionToken } from '../pluginTokens';
+
 import JestLessThan25TestAdapter from './JestLessThan25Adapter';
 import JestTestAdapter from './JestTestAdapter';
 import JestGreaterThan25TestAdapter from './JestGreaterThan25Adapter';
-
-export const JEST_VERSION_TOKEN = 'jestVersion';
 
 export function jestTestAdapterFactory(log: Logger, jestVersion: string, injector: Injector<BaseContext>) {
   if (semver.satisfies(jestVersion, '<22.0.0')) {
@@ -19,5 +19,5 @@ export function jestTestAdapterFactory(log: Logger, jestVersion: string, injecto
   }
 }
 
-jestTestAdapterFactory.inject = tokens(commonTokens.logger, JEST_VERSION_TOKEN, commonTokens.injector);
+jestTestAdapterFactory.inject = tokens(commonTokens.logger, jestVersionToken, commonTokens.injector);
 export { JestTestAdapter };
