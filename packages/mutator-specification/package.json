@@ -20,6 +20,6 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/javascript-mutator#readme",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^14.0.1"
   }
 }

@@ -40,6 +40,6 @@
     "node": ">=10"
   },
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^14.0.1"
   }
 }

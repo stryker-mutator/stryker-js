@@ -32,6 +32,6 @@
     "Simon de Lang <simondelang@gmail.com>"
   ],
   "devDependencies": {
-    "@types/node": "^13.7.1"
+    "@types/node": "^14.0.1"
   }
 }
