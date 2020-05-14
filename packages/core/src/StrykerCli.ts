@@ -1,6 +1,6 @@
 import * as commander from 'commander';
 import { getLogger } from 'log4js';
-import { DashboardOptions, StrykerOptions, ALL_REPORT_TYPES } from '@stryker-mutator/api/core';
+import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { initializerFactory } from './initializer';
@@ -37,7 +37,7 @@ export default class StrykerCli {
   constructor(
     private readonly argv: string[],
     private readonly program: commander.Command = new commander.Command(),
-    private readonly runMutationTest = async (options: Partial<StrykerOptions>) => new Stryker(options).runMutationTest(),
+    private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest(),
     private readonly log: Logger = getLogger(StrykerCli.name)
   ) {}
 
@@ -125,29 +125,23 @@ export default class StrykerCli {
       .parse(this.argv);
 
     // Earliest opportunity to configure the log level based on the logLevel argument
-    LogConfigurator.configureMainProcess(this.program.logLevel);
+    const options: PartialStrykerOptions = this.program.opts();
+    LogConfigurator.configureMainProcess(options.logLevel);
 
     // Cleanup commander state
-    delete this.program.options;
-    delete this.program.rawArgs;
-    delete this.program.args;
-    delete this.program.Command;
-    delete this.program.Option;
-    delete this.program.commands;
-    for (const i in this.program) {
-      if (i.startsWith('_') || i.startsWith('dashboard.')) {
-        delete this.program[i];
-      }
-    }
+    delete options.version;
+    Object.keys(options)
+      .filter((key) => key.startsWith('dashboard.'))
+      .forEach((key) => delete options[key]);
 
     if (this.strykerConfig) {
-      this.program.configFile = this.strykerConfig;
+      options.configFile = this.strykerConfig;
     }
-    this.program.dashboard = dashboard;
+    options.dashboard = dashboard;
 
     const commands: { [cmd: string]: () => Promise<any> } = {
       init: () => initializerFactory().initialize(),
-      run: () => this.runMutationTest(this.program),
+      run: () => this.runMutationTest(options),
     };
 
     if (Object.keys(commands).includes(this.command)) {

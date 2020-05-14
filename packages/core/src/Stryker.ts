@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
@@ -43,7 +43,7 @@ export default class Stryker {
    * @constructor
    * @param {Object} [cliOptions] - Optional options.
    */
-  constructor(cliOptions: Partial<StrykerOptions>) {
+  constructor(cliOptions: PartialStrykerOptions) {
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
     this.injector = buildMainInjector(cliOptions);
     this.log = this.injector.resolve(commonTokens.getLogger)(Stryker.name);

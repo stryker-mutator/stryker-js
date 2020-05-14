@@ -41,7 +41,6 @@ export default class ConfigReader {
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Loaded config: ${JSON.stringify(options, null, 2)}`);
     }
-
     return options;
   }
 

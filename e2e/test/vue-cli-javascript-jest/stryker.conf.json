@@ -15,9 +15,5 @@
     "progress",
     "clear-text",
     "html"
-  ],
-  "spec": [
-    "dist/js/chunk-vendors.js",
-    "dist/js/tests.js"
   ]
 }

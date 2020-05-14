@@ -46,7 +46,7 @@ export default class StrykerConfigWriter {
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
       mutator: selectedMutator ? selectedMutator.name : '',
-      packageManager: selectedPackageManager.name,
+      packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
       transpilers: selectedTranspilers ? selectedTranspilers.map((t) => t.name) : [],

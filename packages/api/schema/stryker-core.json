@@ -273,6 +273,10 @@
       "default": "javascript",
       "errorMessage": "should be an \"object\" describing the mutator or a \"string\". See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
     },
+    "packageManager": {
+      "enum": ["npm", "yarn"],
+      "description": "The package manager Stryker can use to install missing dependencies."
+    },
     "plugins": {
       "description": "With 'plugins', you can add additional Node modules for Stryker to load (or require). By default, all node_modules starting with @stryker-mutator/* will be loaded, so you would normally not need to specify this option. These modules should be installed right next to stryker. For a current list of plugins, you can consult 'npm' or 'stryker-mutator.io.'",
       "type": "array",
