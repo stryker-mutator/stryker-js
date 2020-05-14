@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
+  "mutator": "vue",
+  "mutate": [
+    "{src,lib}/**/*.+(js|vue)",
+    "!{src,lib}/**/*.spec.js"
+  ],
+  "tempDirName": "stryker-tmp",
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "maxConcurrentTestRunners": 2,
+  "coverageAnalysis": "off",
+  "reporters": [
+    "event-recorder",
+    "progress",
+    "clear-text",
+    "html"
+  ],
+  "spec": [
+    "dist/js/chunk-vendors.js",
+    "dist/js/tests.js"
+  ]
+}
