@@ -1,0 +1,43 @@
+{
+  "name": "vue-cli-javascript-jest",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "test:unit": "vue-cli-service test:unit",
+    "test:unit:manual": "cross-env BABEL_ENV=test VUE_CLI_TRANSPILE_BABEL_RUNTIME=true VUE_CLI_BABEL_TARGET_NODE=true VUE_CLI_BABEL_TRANSPILE_MODULES=true jest --runInBand",
+    "test": "cross-env BABEL_ENV=test VUE_CLI_TRANSPILE_BABEL_RUNTIME=true VUE_CLI_BABEL_TARGET_NODE=true VUE_CLI_BABEL_TRANSPILE_MODULES=true stryker run",
+    "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/verify.ts"
+  },
+  "dependencies": {
+    "core-js": "^3.6.4",
+    "vue": "^2.6.11"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "~4.3.0",
+    "@vue/cli-plugin-unit-jest": "~4.3.0",
+    "@vue/cli-service": "~4.3.0",
+    "@vue/test-utils": "1.0.0-beta.31",
+    "jest-fetch-mock": "^3.0.3",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/jest-runner": "../../../packages/jest-runner",
+    "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
+    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "jest": {
+    "preset": "@vue/cli-plugin-unit-jest",
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup-tests.js"],
+    "testMatch": ["<rootDir>/src/*.spec.js"]
+  }
+}
