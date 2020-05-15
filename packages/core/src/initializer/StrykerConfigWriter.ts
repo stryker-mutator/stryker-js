@@ -108,7 +108,7 @@ export default class StrykerConfigWriter {
   private async writeJsonConfig(commentedConfig: Partial<StrykerOptions>) {
     this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
     const typedConfig = {
-      $schema: 'https://unpkg.com/@stryker-mutator/core/schema/stryker-schema.json',
+      $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
       ...commentedConfig,
     };
     const formattedConfig = this.stringify(typedConfig);
