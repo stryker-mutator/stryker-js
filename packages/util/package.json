@@ -26,6 +26,10 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/util#readme",
   "devDependencies": {
+    "@types/lodash.flatmap": "^4.5.6",
     "@types/node": "^14.0.1"
+  },
+  "dependencies": {
+    "lodash.flatmap": "^4.5.0"
   }
 }
