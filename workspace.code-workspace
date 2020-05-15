@@ -5,6 +5,10 @@
       "path": "packages/core"
     },
     {
+      "name": "instrumenter",
+      "path": "packages/instrumenter"
+    },
+    {
       "name": "grunt-stryker",
       "path": "packages/grunt-stryker"
     },
@@ -15,10 +19,6 @@
     {
       "name": "babel-transpiler",
       "path": "packages/babel-transpiler"
-    },
-    {
-      "name": "html-reporter",
-      "path": "packages/html-reporter"
     },
     {
       "name": "jasmine-framework",

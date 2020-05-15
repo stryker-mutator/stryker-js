@@ -1,0 +1,17 @@
+{
+  "extends": "../../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "../dist/src",
+    "rootDir": ".",
+    "resolveJsonModule": true,
+    "types": [] // Exclude global mocha functions for the sources
+  },
+  "references": [
+    {
+      "path": "../../api/tsconfig.src.json"
+    },
+    {
+      "path": "../../util/tsconfig.src.json"
+    }
+  ]
+}
