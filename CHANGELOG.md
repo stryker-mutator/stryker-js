@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1](https://github.com/stryker-mutator/stryker/compare/v3.2.0...v3.2.1) (2020-05-15)
+
+
+### Bug Fixes
+
+* remove duplicate package.json script ([#2198](https://github.com/stryker-mutator/stryker/issues/2198)) ([26beff2](https://github.com/stryker-mutator/stryker/commit/26beff22129c0e07e716a88ae513999949ded5ed))
+
+
+
+
+
 # [3.2.0](https://github.com/stryker-mutator/stryker/compare/v3.1.0...v3.2.0) (2020-05-13)
 
 
