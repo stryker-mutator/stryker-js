@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import { Logger } from '@stryker-mutator/api/logging';
 import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import { DashboardOptions, StrykerOptions, ReportType } from '@stryker-mutator/api/core';
+import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import LogConfigurator from '../../src/logging/LogConfigurator';
 import StrykerCli from '../../src/StrykerCli';
@@ -23,6 +23,33 @@ describe(StrykerCli.name, () => {
     runMutationTestingStub.resolves();
     actRun(['--logLevel', 'error']);
     expect(configureLoggerStub).calledWith('error');
+  });
+
+  it('should accept a config file as last argument', () => {
+    arrangeActAssertConfigOption(['stryker.foo.js'], { configFile: 'stryker.foo.js' });
+  });
+
+  describe('flat options', () => {
+    const testCases: Array<[string[], PartialStrykerOptions]> = [
+      [['--files', 'foo.js,bar.js'], { files: ['foo.js', 'bar.js'] }],
+      [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
+      [['--transpilers', 'foo,bar'], { transpilers: ['foo', 'bar'] }],
+      [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
+      [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],
+      [['--mutator', 'foo'], { mutator: 'foo' }],
+      [['--timeoutMS', '42'], { timeoutMS: 42 }],
+      [['--timeoutFactor', '42'], { timeoutFactor: 42 }],
+      [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
+      [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
+      [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
+      [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
+      [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
+    ];
+    testCases.forEach(([args, expected]) => {
+      it(`should expect option "${args.join(' ')}"`, () => {
+        arrangeActAssertConfigOption(args, expected);
+      });
+    });
   });
 
   describe('dashboard options', () => {
@@ -63,7 +90,22 @@ describe(StrykerCli.name, () => {
     });
   });
 
-  function actRun(args: string[]) {
+  function actRun(args: string[]): void {
     new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub, logMock).run();
+  }
+
+  function arrangeActAssertConfigOption(args: string[], expectedOptions: PartialStrykerOptions): void {
+    runMutationTestingStub.resolves();
+    actRun(args);
+    expect(runMutationTestingStub).called;
+    const actualOptions: PartialStrykerOptions = runMutationTestingStub.getCall(0).args[0];
+    for (const option in actualOptions) {
+      // Unfortunately, commander leaves all unspecified options as `undefined` on the object.
+      // This is not a problem for stryker, so let's clean them for this test.
+      if (actualOptions[option] === undefined) {
+        delete actualOptions[option];
+      }
+    }
+    expect(runMutationTestingStub).calledWith(expectedOptions);
   }
 });

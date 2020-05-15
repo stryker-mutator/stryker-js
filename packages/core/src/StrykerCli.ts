@@ -92,7 +92,7 @@ export default class StrykerCli {
         '--fileLogLevel <level>',
         `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.fileLogLevel}"`
       )
-      .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean, true)
+      .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(
         '--dashboard.project <name>',
         'Indicates which project name to use if the "dashboard" reporter is enabled. Defaults to the git url configured in the environment of your CI server.',
@@ -137,7 +137,9 @@ export default class StrykerCli {
     if (this.strykerConfig) {
       options.configFile = this.strykerConfig;
     }
-    options.dashboard = dashboard;
+    if (Object.keys(dashboard).length > 0) {
+      options.dashboard = dashboard;
+    }
 
     const commands: { [cmd: string]: () => Promise<any> } = {
       init: () => initializerFactory().initialize(),
