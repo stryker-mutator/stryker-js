@@ -24,6 +24,7 @@ packages/*/src/**/*.js
 packages/*/test/**/*.js
 packages/*/src/**/*.d.ts
 packages/*/test/**/*.d.ts
+packages/*/dist
 .idea
 *.iml
 *.tmp.txt
