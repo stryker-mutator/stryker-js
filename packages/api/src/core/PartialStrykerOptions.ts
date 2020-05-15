@@ -8,5 +8,5 @@ import { StrykerOptions } from '../../core';
 export type PartialStrykerOptions = DeepPartial<StrykerOptions>;
 
 type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> | undefined : T[P];
 };

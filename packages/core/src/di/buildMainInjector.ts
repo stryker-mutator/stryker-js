@@ -1,4 +1,4 @@
-import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
+import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
@@ -36,7 +36,7 @@ export interface MainContext extends OptionsContext {
 type BasicInjector = Injector<Pick<MainContext, 'logger' | 'getLogger'>>;
 type PluginResolverInjector = Injector<Pick<MainContext, 'logger' | 'getLogger' | 'options' | 'pluginResolver'>>;
 
-export function buildMainInjector(cliOptions: Partial<StrykerOptions>): Injector<MainContext> {
+export function buildMainInjector(cliOptions: PartialStrykerOptions): Injector<MainContext> {
   const basicInjector = createBasicInjector();
   const pluginResolverInjector = createPluginResolverInjector(cliOptions, basicInjector);
   return pluginResolverInjector
@@ -54,7 +54,7 @@ function createBasicInjector(): BasicInjector {
   return rootInjector.provideValue(commonTokens.getLogger, getLogger).provideFactory(commonTokens.logger, loggerFactory, Scope.Transient);
 }
 
-export function createPluginResolverInjector(cliOptions: Partial<StrykerOptions>, parent: BasicInjector): PluginResolverInjector {
+export function createPluginResolverInjector(cliOptions: PartialStrykerOptions, parent: BasicInjector): PluginResolverInjector {
   return parent
     .provideValue(coreTokens.cliOptions, cliOptions)
     .provideValue(coreTokens.validationSchema, strykerCoreSchema)
