@@ -47,7 +47,6 @@
     "@stryker-mutator/core": "../packages/core",
     "@stryker-mutator/api": "../packages/api",
     "@stryker-mutator/babel-transpiler": "../packages/babel-transpiler",
-    "@stryker-mutator/html-reporter": "../packages/html-reporter",
     "@stryker-mutator/jasmine-framework": "../packages/jasmine-framework",
     "@stryker-mutator/jasmine-runner": "../packages/jasmine-runner",
     "@stryker-mutator/javascript-mutator": "../packages/javascript-mutator",
