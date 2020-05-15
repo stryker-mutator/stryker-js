@@ -73,7 +73,6 @@
     "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
     "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
     "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
-    "@stryker-mutator/html-reporter": "../../../packages/html-reporter",
     "@stryker-mutator/util": "../../../packages/util"
   },
   "engines": {

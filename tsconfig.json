@@ -5,7 +5,6 @@
     { "path": "packages/util" },
     { "path": "packages/core" },
     { "path": "packages/babel-transpiler" },
-    { "path": "packages/html-reporter" },
     { "path": "packages/jasmine-framework" },
     { "path": "packages/jasmine-runner" },
     { "path": "packages/javascript-mutator" },
