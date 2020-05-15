@@ -59,7 +59,8 @@
     "mocha": "lerna run test --stream --concurrency 4",
     "e2e": "cd e2e && npm ci && npm t && cd ..",
     "perf": "cd perf && npm ci && npm t && cd ..",
-    "start": "tsc -b -w"
+    "start": "tsc -b -w",
+    "release": "lerna version"
   },
   "engines": {
     "node": ">=10",
