@@ -93,8 +93,9 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
   const offsetNode = (node: types.Node): void => {
     node.start! += position;
     node.end! += position;
-    node.loc!.start.line += line;
-    node.loc!.end.line += line;
+    //  we need to subtract 1, as lines always start at 1
+    node.loc!.start.line += line - 1;
+    node.loc!.end.line += line - 1;
     if (node.loc!.start.line === line) {
       node.loc!.start.column += column;
     }

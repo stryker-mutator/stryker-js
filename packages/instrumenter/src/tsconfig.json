@@ -3,8 +3,11 @@
   "compilerOptions": {
     "outDir": "../dist/src",
     "rootDir": ".",
+    "esModuleInterop": true,
     "resolveJsonModule": true,
-    "types": [] // Exclude global mocha functions for the sources
+    "types": [
+      "node"
+    ]
   },
   "references": [
     {

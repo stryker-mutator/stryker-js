@@ -12,6 +12,9 @@
       ],
       "skipFiles": [
         "<node_internals>/**"
+      ],
+      "args": [
+        "--no-timeout"
       ]
     }
   ]

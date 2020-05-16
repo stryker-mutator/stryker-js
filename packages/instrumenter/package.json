@@ -5,7 +5,8 @@
   "main": "dist/src/main.js",
   "scripts": {
     "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "mocha": "mocha"
+    "mocha": "mocha",
+    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,8 @@
     "@babel/generator": "^7.9.6",
     "@babel/parser": "^7.9.6",
     "@stryker-mutator/api": "^3.2.2",
-    "@stryker-mutator/util": "^3.2.2"
+    "@stryker-mutator/util": "^3.2.2",
+    "angular-html-parser": "^1.7.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "^3.2.2",
