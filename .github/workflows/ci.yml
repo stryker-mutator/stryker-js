@@ -8,12 +8,13 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         node-version: [10.x, 12.x]
+        os: ['ubuntu-latest', 'windows-latest']
+
+    runs-on: ${{ matrix.os }}
 
     steps:
     - uses: actions/checkout@v1
