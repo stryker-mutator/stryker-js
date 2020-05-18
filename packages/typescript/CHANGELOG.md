@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.4](https://github.com/stryker-mutator/stryker/compare/v3.2.3...v3.2.4) (2020-05-18)
+
+
+### Bug Fixes
+
+* **ts:** support ts 3.9 on windows in the typescript-transpiler ([#2215](https://github.com/stryker-mutator/stryker/issues/2215)) ([0fab74f](https://github.com/stryker-mutator/stryker/commit/0fab74f4af97e6faf0eee0ba44f935af7c4ccbb5))
+
+
+
+
+
+## [3.2.3](https://github.com/stryker-mutator/stryker/compare/v3.2.2...v3.2.3) (2020-05-15)
+
+**Note:** Version bump only for package @stryker-mutator/typescript
+
+
+
+
+
 ## [3.2.2](https://github.com/stryker-mutator/stryker/compare/v3.2.1...v3.2.2) (2020-05-15)
 
 **Note:** Version bump only for package @stryker-mutator/typescript
