@@ -34,7 +34,7 @@ export default class TranspilingLanguageService {
     getLogger: LoggerFactoryMethod
   ) {
     this.compilerOptions = this.adaptCompilerOptions(compilerOptions);
-    rootFiles.forEach((file) => (this.files[file.name] = new ScriptFile(file.name, file.textContent)));
+    rootFiles.forEach((file) => (this.files[normalizeFileForTypescript(file.name)] = new ScriptFile(file.name, file.textContent)));
     const host = this.createLanguageServiceHost();
     this.languageService = ts.createLanguageService(host);
     this.logger = getLogger(TranspilingLanguageService.name);
@@ -63,7 +63,7 @@ export default class TranspilingLanguageService {
    * @param mutantCandidate The mutant used to replace the original source
    */
   public replace(replacements: readonly File[]) {
-    replacements.forEach((replacement) => this.files[replacement.name].replace(replacement.textContent));
+    replacements.forEach((replacement) => this.files[normalizeFileForTypescript(replacement.name)].replace(replacement.textContent));
   }
 
   public getSemanticDiagnostics(files: readonly File[]) {
@@ -79,7 +79,7 @@ export default class TranspilingLanguageService {
    *          If all output files are bundled together, only returns the output file once using the first file as key
    */
   public emit(fileName: string): EmitOutput {
-    const emittedFiles = this.languageService.getEmitOutput(fileName).outputFiles;
+    const emittedFiles = this.languageService.getEmitOutput(normalizeFileForTypescript(fileName)).outputFiles;
     const jsFile = emittedFiles.find(isJavaScriptFile);
     const mapFile = emittedFiles.find(isMapFile);
     if (jsFile) {
@@ -101,7 +101,9 @@ export default class TranspilingLanguageService {
       getCurrentDirectory: () => path.resolve(this.projectDirectory),
       getDefaultLibFileName: ts.getDefaultLibFileName,
       getDirectories: ts.sys.getDirectories,
-      getScriptFileNames: () => Object.keys(this.files),
+      getScriptFileNames: () => {
+        return Object.keys(this.files);
+      },
       getScriptSnapshot: (fileName) => {
         this.pullFileIntoMemoryIfNeeded(fileName);
         return this.files[fileName] && ts.ScriptSnapshot.fromString(this.files[fileName].content);
