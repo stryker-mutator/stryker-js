@@ -1,10 +1,13 @@
 import { expect } from 'chai';
 
+import sinon = require('sinon');
+
 import { parse } from '../../../src/parsers/html-parser';
 import { ParserContext } from '../../../src/parsers/parser-context';
 import { parserContextStub } from '../../helpers/stubs';
 import { createJSAst } from '../../helpers/factories';
 import { AstFormat } from '../../../src/syntax';
+import { ParseError } from '../../../src/parsers/parse-error';
 
 describe('html-parser', () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
@@ -13,7 +16,7 @@ describe('html-parser', () => {
     contextStub = parserContextStub();
   });
 
-  describe('simple html', () => {
+  describe('parsing', () => {
     const simpleHtml = `
     <!DOCTYPE html>
     <html>
@@ -28,14 +31,21 @@ describe('html-parser', () => {
     </html> 
     `;
 
-    it('should be able to parse', async () => {
+    it('should be able to parse simple HTML', async () => {
       const parsed = await parse(simpleHtml, 'index.html', contextStub);
       expect(parsed).ok;
     });
 
-    it('should not deliver script tags', async () => {
+    it('should work without script tags', async () => {
       const parsed = await parse(simpleHtml, 'index.html', contextStub);
       expect(parsed.root.scripts).lengthOf(0);
+    });
+
+    it('should throw an error on invalid HTML', async () => {
+      await expect(parse('<p></div>', 'index.html', contextStub)).rejectedWith(
+        ParseError,
+        'Parse error in index.html (1:3) Unexpected closing tag "div".'
+      );
     });
   });
 
@@ -86,7 +96,7 @@ describe('html-parser', () => {
     testCases.forEach(({ actualType, expectedType }) => {
       it(`should parse <script type="${actualType}"> as ${expectedType}`, async () => {
         const code = 'foo.bar(40,2)';
-        await parse(`<script type="${expectedType}">${code}</script>`, 'test.html', contextStub);
+        await parse(`<script type="${actualType}">${code}</script>`, 'test.html', contextStub);
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
     });
@@ -104,6 +114,16 @@ describe('html-parser', () => {
     it('should support script tags deep in html', async () => {
       await parse('<html><body><div><div><section><script></script></section></div></div></body></html>', 'test.html', contextStub);
       expect(contextStub.parse).called;
+    });
+
+    it('should support script tags with more attributes', async () => {
+      await parse('<script defer type="ts"></script>', 'test.html', contextStub);
+      expect(contextStub.parse).calledWith('', 'test.html', AstFormat.TS);
+    });
+
+    it('should ignore unknown script types', async () => {
+      const parsed = await parse('<script type="text/template"><div></div></script>', 'test.html', contextStub);
+      expect(parsed.root.scripts).lengthOf(0);
     });
 
     it('should support multiple script tags', async () => {

@@ -1,10 +1,11 @@
-import type { parse as ngHtmlParse } from 'angular-html-parser';
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
+import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
 
 import { offsetLocations } from '../util/syntax-helpers';
 import { HtmlAst, AstFormat, HtmlRootNode, TSAst, JSAst, ScriptFormat, AstByFormat } from '../syntax';
 
 import { ParserContext } from './parser-context';
+import { ParseError } from './parse-error';
 
 const TS_SCRIPT_TYPES = Object.freeze(['ts', 'text/typescript', 'typescript']);
 const JS_SCRIPT_TYPES = Object.freeze(['js', 'text/javascript', 'javascript']);
@@ -15,34 +16,28 @@ https://github.com/prettier/prettier/blob/5a7162d0636a82c5862b9101b845af40918d22
 */
 
 export async function parse(text: string, originFileName: string, context: ParserContext): Promise<HtmlAst> {
-  const parserOptions = {
-    canSelfClose: true,
-    allowHtmComponentClosingTags: true,
-    isTagNameCaseSensitive: false,
-  };
-  const root = await ngHtmlParser(text, originFileName, parserOptions, context);
+  const root = await ngHtmlParser(text, originFileName, context);
 
-  return Promise.resolve({
+  return {
     originFileName,
     rawContent: text,
     format: AstFormat.Html,
     root,
-  });
+  };
 }
 
-async function ngHtmlParser(
-  text: string,
-  fileName: string,
-  options: Parameters<typeof ngHtmlParse>[1],
-  parserContext: ParserContext
-): Promise<HtmlRootNode> {
+async function ngHtmlParser(text: string, fileName: string, parserContext: ParserContext): Promise<HtmlRootNode> {
   const { parse } = await import('angular-html-parser');
   const { RecursiveVisitor, visitAll } = await import('angular-html-parser/lib/compiler/src/ml_parser/ast');
 
-  const { rootNodes, errors } = parse(text, options);
+  const { rootNodes, errors } = parse(text, {
+    canSelfClose: true,
+    allowHtmComponentClosingTags: true,
+    isTagNameCaseSensitive: true,
+  });
 
   if (errors.length !== 0) {
-    throw new Error(errors[0].msg);
+    throw new ParseError(errors[0].msg, fileName, toSourceLocation(errors[0].span.start));
   }
   const scriptsAsPromised: Array<Promise<JSAst | TSAst>> = [];
   visitAll(
@@ -77,6 +72,11 @@ async function ngHtmlParser(
     }
     return ast;
   }
+}
+
+function toSourceLocation({ line, col }: ParseLocation): { line: number; column: number } {
+  // Offset line with 1, since ngHtmlParser is 0-based
+  return { line: line + 1, column: col };
 }
 
 function getScriptType(element: Element): ScriptFormat | undefined {
