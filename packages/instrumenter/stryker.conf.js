@@ -4,5 +4,5 @@ const moduleName = __dirname.split(path.sep).pop();
 settings.dashboard.module = moduleName;
 delete settings.mochaOptions.spec;
 delete settings.files;
-settings.coverageAnalysis = 'off';
+settings.coverageAnalysis = 'perTest';
 module.exports = settings;
