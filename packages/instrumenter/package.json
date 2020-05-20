@@ -33,6 +33,8 @@
     "@babel/core": "^7.9.6",
     "@babel/generator": "^7.9.6",
     "@babel/parser": "^7.9.6",
+    "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@babel/preset-typescript": "^7.9.0",
     "@stryker-mutator/api": "^3.2.2",
     "@stryker-mutator/util": "^3.2.2",
     "angular-html-parser": "^1.7.0"

@@ -15,6 +15,7 @@ const plugins = [
   'numericSeparator',
   'importMeta',
   'optionalCatchBinding',
+  'optionalChaining',
   'classPrivateProperties',
   ['pipelineOperator', { proposal: 'minimal' }],
   'nullishCoalescingOperator',

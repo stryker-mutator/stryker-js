@@ -67,6 +67,14 @@ describe('js-parser', () => {
     itShouldSupportAst('partial-application', 'const addOne = add(1, ?);', (t) => t.isArgumentPlaceholder());
     itShouldSupportAst('decorators', '@annotation class MyClass { }', (t) => t.isDecorator());
   });
+
+  describe('language extensions (https://babeljs.io/docs/en/babel-parser#language-extensions)', () => {
+    it('should support v8intrinsic', async () => {
+      const { root } = await parse('%DebugPrint(foo);', 'test.js');
+      // @ts-expect-error not (yet) defined in the types
+      expectAst(root, (t) => t.isV8IntrinsicIdentifier());
+    });
+  });
 });
 
 function createActArrangeAndAssertHelper(makeUrl: (name: string) => string) {
