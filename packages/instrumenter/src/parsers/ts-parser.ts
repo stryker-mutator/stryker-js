@@ -16,7 +16,7 @@ export async function parse(text: string, fileName: string): Promise<TSAst> {
       ranges: true,
       sourceFilename: fileName,
     },
-    presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: isTSX }]],
+    presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true }]],
     plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
   });
   if (types.isProgram(ast)) {

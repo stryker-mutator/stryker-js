@@ -1,0 +1,1984 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`parser integration should allow to parse a *.vue file 1`] = `
+Object {
+  "format": "html",
+  "originFileName": "App.vue",
+  "rawContent": "<template>
+  <div id=\\"app\\">
+    <h1>Hello Pokemon</h1>
+    <PokemonComponent v-for=\\"pok in pokemon\\" v-bind:key=\\"pok.name\\" :pokemon=\\"pok\\"></PokemonComponent>
+  </div>
+</template>
+
+<script>
+import PokemonComponent from './Pokemon.vue'
+import { pokemonService } from './pokemon.service';
+
+export default {
+  components: {
+    PokemonComponent
+  },
+  data() {
+    return {
+      pokemon: []
+    }
+  },
+
+  created() {
+    pokemonService.getAll().then(pokemon => (this.pokemon = pokemon));
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style>
+",
+  "root": Object {
+    "scripts": Array [
+      Object {
+        "format": "js",
+        "originFileName": "App.vue",
+        "rawContent": "
+import PokemonComponent from './Pokemon.vue'
+import { pokemonService } from './pokemon.service';
+
+export default {
+  components: {
+    PokemonComponent
+  },
+  data() {
+    return {
+      pokemon: []
+    }
+  },
+
+  created() {
+    pokemonService.getAll().then(pokemon => (this.pokemon = pokemon));
+  }
+}
+",
+        "root": Node {
+          "comments": Array [],
+          "end": 321,
+          "errors": Array [],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 0,
+              "line": 26,
+            },
+            "filename": "App.vue",
+            "start": Position {
+              "column": 8,
+              "line": 8,
+            },
+          },
+          "program": Node {
+            "body": Array [
+              Node {
+                "end": 240,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 44,
+                    "line": 16,
+                  },
+                  "filename": "App.vue",
+                  "start": Position {
+                    "column": 0,
+                    "line": 9,
+                  },
+                },
+                "range": Array [
+                  2,
+                  46,
+                ],
+                "source": Node {
+                  "end": 240,
+                  "extra": Object {
+                    "raw": "'./Pokemon.vue'",
+                    "rawValue": "./Pokemon.vue",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 44,
+                      "line": 16,
+                    },
+                    "filename": "App.vue",
+                    "start": Position {
+                      "column": 29,
+                      "line": 9,
+                    },
+                  },
+                  "range": Array [
+                    31,
+                    46,
+                  ],
+                  "start": 225,
+                  "type": "StringLiteral",
+                  "value": "./Pokemon.vue",
+                },
+                "specifiers": Array [
+                  Node {
+                    "end": 219,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 23,
+                        "line": 16,
+                      },
+                      "filename": "App.vue",
+                      "start": Position {
+                        "column": 7,
+                        "line": 16,
+                      },
+                    },
+                    "local": Node {
+                      "end": 219,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 23,
+                          "line": 16,
+                        },
+                        "filename": "App.vue",
+                        "identifierName": "PokemonComponent",
+                        "start": Position {
+                          "column": 7,
+                          "line": 16,
+                        },
+                      },
+                      "name": "PokemonComponent",
+                      "range": Array [
+                        9,
+                        25,
+                      ],
+                      "start": 203,
+                      "type": "Identifier",
+                    },
+                    "range": Array [
+                      9,
+                      25,
+                    ],
+                    "start": 203,
+                    "type": "ImportDefaultSpecifier",
+                  },
+                ],
+                "start": 196,
+                "type": "ImportDeclaration",
+              },
+              Node {
+                "end": 293,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 51,
+                    "line": 10,
+                  },
+                  "filename": "App.vue",
+                  "start": Position {
+                    "column": 0,
+                    "line": 10,
+                  },
+                },
+                "range": Array [
+                  48,
+                  99,
+                ],
+                "source": Node {
+                  "end": 292,
+                  "extra": Object {
+                    "raw": "'./pokemon.service'",
+                    "rawValue": "./pokemon.service",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 50,
+                      "line": 10,
+                    },
+                    "filename": "App.vue",
+                    "start": Position {
+                      "column": 31,
+                      "line": 10,
+                    },
+                  },
+                  "range": Array [
+                    79,
+                    98,
+                  ],
+                  "start": 273,
+                  "type": "StringLiteral",
+                  "value": "./pokemon.service",
+                },
+                "specifiers": Array [
+                  Node {
+                    "end": 265,
+                    "imported": Node {
+                      "end": 265,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 23,
+                          "line": 24,
+                        },
+                        "filename": "App.vue",
+                        "identifierName": "pokemonService",
+                        "start": Position {
+                          "column": 9,
+                          "line": 24,
+                        },
+                      },
+                      "name": "pokemonService",
+                      "range": Array [
+                        57,
+                        71,
+                      ],
+                      "start": 251,
+                      "type": "Identifier",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 23,
+                        "line": 24,
+                      },
+                      "filename": "App.vue",
+                      "start": Position {
+                        "column": 9,
+                        "line": 24,
+                      },
+                    },
+                    "local": Node {
+                      "end": 265,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 23,
+                          "line": 24,
+                        },
+                        "filename": "App.vue",
+                        "identifierName": "pokemonService",
+                        "start": Position {
+                          "column": 9,
+                          "line": 24,
+                        },
+                      },
+                      "name": "pokemonService",
+                      "range": Array [
+                        57,
+                        71,
+                      ],
+                      "start": 251,
+                      "type": "Identifier",
+                    },
+                    "range": Array [
+                      57,
+                      71,
+                    ],
+                    "start": 251,
+                    "type": "ImportSpecifier",
+                  },
+                ],
+                "start": 242,
+                "type": "ImportDeclaration",
+              },
+              Node {
+                "declaration": Node {
+                  "end": 513,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 1,
+                      "line": 32,
+                    },
+                    "filename": "App.vue",
+                    "start": Position {
+                      "column": 15,
+                      "line": 12,
+                    },
+                  },
+                  "properties": Array [
+                    Node {
+                      "computed": false,
+                      "end": 357,
+                      "key": Node {
+                        "end": 327,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 12,
+                            "line": 13,
+                          },
+                          "filename": "App.vue",
+                          "identifierName": "components",
+                          "start": Position {
+                            "column": 2,
+                            "line": 20,
+                          },
+                        },
+                        "name": "components",
+                        "range": Array [
+                          123,
+                          133,
+                        ],
+                        "start": 317,
+                        "type": "Identifier",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 3,
+                          "line": 22,
+                        },
+                        "filename": "App.vue",
+                        "start": Position {
+                          "column": 2,
+                          "line": 20,
+                        },
+                      },
+                      "method": false,
+                      "range": Array [
+                        123,
+                        163,
+                      ],
+                      "shorthand": false,
+                      "start": 317,
+                      "type": "ObjectProperty",
+                      "value": Node {
+                        "end": 357,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 3,
+                            "line": 22,
+                          },
+                          "filename": "App.vue",
+                          "start": Position {
+                            "column": 14,
+                            "line": 13,
+                          },
+                        },
+                        "properties": Array [
+                          Node {
+                            "computed": false,
+                            "end": 352,
+                            "extra": Object {
+                              "shorthand": true,
+                            },
+                            "key": Node {
+                              "end": 352,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 20,
+                                  "line": 28,
+                                },
+                                "filename": "App.vue",
+                                "identifierName": "PokemonComponent",
+                                "start": Position {
+                                  "column": 4,
+                                  "line": 28,
+                                },
+                              },
+                              "name": "PokemonComponent",
+                              "range": Array [
+                                142,
+                                158,
+                              ],
+                              "start": 336,
+                              "type": "Identifier",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 20,
+                                "line": 28,
+                              },
+                              "filename": "App.vue",
+                              "start": Position {
+                                "column": 4,
+                                "line": 28,
+                              },
+                            },
+                            "method": false,
+                            "range": Array [
+                              142,
+                              158,
+                            ],
+                            "shorthand": true,
+                            "start": 336,
+                            "type": "ObjectProperty",
+                            "value": Node {
+                              "end": 352,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 20,
+                                  "line": 28,
+                                },
+                                "filename": "App.vue",
+                                "identifierName": "PokemonComponent",
+                                "start": Position {
+                                  "column": 4,
+                                  "line": 28,
+                                },
+                              },
+                              "name": "PokemonComponent",
+                              "range": Array [
+                                142,
+                                158,
+                              ],
+                              "start": 336,
+                              "type": "Identifier",
+                            },
+                          },
+                        ],
+                        "range": Array [
+                          135,
+                          163,
+                        ],
+                        "start": 329,
+                        "type": "ObjectExpression",
+                      },
+                    },
+                    Node {
+                      "async": false,
+                      "body": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "end": 410,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 5,
+                                  "line": 26,
+                                },
+                                "filename": "App.vue",
+                                "start": Position {
+                                  "column": 11,
+                                  "line": 17,
+                                },
+                              },
+                              "properties": Array [
+                                Node {
+                                  "computed": false,
+                                  "end": 403,
+                                  "key": Node {
+                                    "end": 399,
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 13,
+                                        "line": 18,
+                                      },
+                                      "filename": "App.vue",
+                                      "identifierName": "pokemon",
+                                      "start": Position {
+                                        "column": 6,
+                                        "line": 25,
+                                      },
+                                    },
+                                    "name": "pokemon",
+                                    "range": Array [
+                                      198,
+                                      205,
+                                    ],
+                                    "start": 392,
+                                    "type": "Identifier",
+                                  },
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 17,
+                                      "line": 25,
+                                    },
+                                    "filename": "App.vue",
+                                    "start": Position {
+                                      "column": 6,
+                                      "line": 25,
+                                    },
+                                  },
+                                  "method": false,
+                                  "range": Array [
+                                    198,
+                                    209,
+                                  ],
+                                  "shorthand": false,
+                                  "start": 392,
+                                  "type": "ObjectProperty",
+                                  "value": Node {
+                                    "elements": Array [],
+                                    "end": 403,
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 17,
+                                        "line": 25,
+                                      },
+                                      "filename": "App.vue",
+                                      "start": Position {
+                                        "column": 15,
+                                        "line": 18,
+                                      },
+                                    },
+                                    "range": Array [
+                                      207,
+                                      209,
+                                    ],
+                                    "start": 401,
+                                    "type": "ArrayExpression",
+                                  },
+                                },
+                              ],
+                              "range": Array [
+                                189,
+                                216,
+                              ],
+                              "start": 383,
+                              "type": "ObjectExpression",
+                            },
+                            "end": 410,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 5,
+                                "line": 26,
+                              },
+                              "filename": "App.vue",
+                              "start": Position {
+                                "column": 4,
+                                "line": 17,
+                              },
+                            },
+                            "range": Array [
+                              182,
+                              216,
+                            ],
+                            "start": 376,
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 415,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 3,
+                            "line": 27,
+                          },
+                          "filename": "App.vue",
+                          "start": Position {
+                            "column": 9,
+                            "line": 16,
+                          },
+                        },
+                        "range": Array [
+                          175,
+                          221,
+                        ],
+                        "start": 369,
+                        "type": "BlockStatement",
+                      },
+                      "computed": false,
+                      "end": 415,
+                      "generator": false,
+                      "id": null,
+                      "key": Node {
+                        "end": 366,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 6,
+                            "line": 16,
+                          },
+                          "filename": "App.vue",
+                          "identifierName": "data",
+                          "start": Position {
+                            "column": 2,
+                            "line": 23,
+                          },
+                        },
+                        "name": "data",
+                        "range": Array [
+                          168,
+                          172,
+                        ],
+                        "start": 362,
+                        "type": "Identifier",
+                      },
+                      "kind": "method",
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 3,
+                          "line": 27,
+                        },
+                        "filename": "App.vue",
+                        "start": Position {
+                          "column": 2,
+                          "line": 23,
+                        },
+                      },
+                      "method": true,
+                      "params": Array [],
+                      "range": Array [
+                        168,
+                        221,
+                      ],
+                      "start": 362,
+                      "type": "ObjectMethod",
+                    },
+                    Node {
+                      "async": false,
+                      "body": Node {
+                        "body": Array [
+                          Node {
+                            "end": 505,
+                            "expression": Node {
+                              "arguments": Array [
+                                Node {
+                                  "async": false,
+                                  "body": Node {
+                                    "end": 502,
+                                    "extra": Object {
+                                      "parenStart": 285,
+                                      "parenthesized": true,
+                                    },
+                                    "left": Node {
+                                      "computed": false,
+                                      "end": 492,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 57,
+                                          "line": 30,
+                                        },
+                                        "filename": "App.vue",
+                                        "start": Position {
+                                          "column": 45,
+                                          "line": 37,
+                                        },
+                                      },
+                                      "object": Node {
+                                        "end": 484,
+                                        "loc": SourceLocation {
+                                          "end": Position {
+                                            "column": 49,
+                                            "line": 23,
+                                          },
+                                          "filename": "App.vue",
+                                          "start": Position {
+                                            "column": 45,
+                                            "line": 37,
+                                          },
+                                        },
+                                        "range": Array [
+                                          286,
+                                          290,
+                                        ],
+                                        "start": 480,
+                                        "type": "ThisExpression",
+                                      },
+                                      "property": Node {
+                                        "end": 492,
+                                        "loc": SourceLocation {
+                                          "end": Position {
+                                            "column": 57,
+                                            "line": 30,
+                                          },
+                                          "filename": "App.vue",
+                                          "identifierName": "pokemon",
+                                          "start": Position {
+                                            "column": 50,
+                                            "line": 23,
+                                          },
+                                        },
+                                        "name": "pokemon",
+                                        "range": Array [
+                                          291,
+                                          298,
+                                        ],
+                                        "start": 485,
+                                        "type": "Identifier",
+                                      },
+                                      "range": Array [
+                                        286,
+                                        298,
+                                      ],
+                                      "start": 480,
+                                      "type": "MemberExpression",
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 67,
+                                        "line": 30,
+                                      },
+                                      "filename": "App.vue",
+                                      "start": Position {
+                                        "column": 45,
+                                        "line": 37,
+                                      },
+                                    },
+                                    "operator": "=",
+                                    "range": Array [
+                                      286,
+                                      308,
+                                    ],
+                                    "right": Node {
+                                      "end": 502,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 67,
+                                          "line": 30,
+                                        },
+                                        "filename": "App.vue",
+                                        "identifierName": "pokemon",
+                                        "start": Position {
+                                          "column": 60,
+                                          "line": 23,
+                                        },
+                                      },
+                                      "name": "pokemon",
+                                      "range": Array [
+                                        301,
+                                        308,
+                                      ],
+                                      "start": 495,
+                                      "type": "Identifier",
+                                    },
+                                    "start": 480,
+                                    "type": "AssignmentExpression",
+                                  },
+                                  "end": 503,
+                                  "generator": false,
+                                  "id": null,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 68,
+                                      "line": 23,
+                                    },
+                                    "filename": "App.vue",
+                                    "start": Position {
+                                      "column": 33,
+                                      "line": 30,
+                                    },
+                                  },
+                                  "params": Array [
+                                    Node {
+                                      "end": 475,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 40,
+                                          "line": 23,
+                                        },
+                                        "filename": "App.vue",
+                                        "identifierName": "pokemon",
+                                        "start": Position {
+                                          "column": 33,
+                                          "line": 30,
+                                        },
+                                      },
+                                      "name": "pokemon",
+                                      "range": Array [
+                                        274,
+                                        281,
+                                      ],
+                                      "start": 468,
+                                      "type": "Identifier",
+                                    },
+                                  ],
+                                  "range": Array [
+                                    274,
+                                    309,
+                                  ],
+                                  "start": 468,
+                                  "type": "ArrowFunctionExpression",
+                                },
+                              ],
+                              "callee": Node {
+                                "computed": false,
+                                "end": 467,
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 32,
+                                    "line": 30,
+                                  },
+                                  "filename": "App.vue",
+                                  "start": Position {
+                                    "column": 4,
+                                    "line": 58,
+                                  },
+                                },
+                                "object": Node {
+                                  "arguments": Array [],
+                                  "callee": Node {
+                                    "computed": false,
+                                    "end": 460,
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 25,
+                                        "line": 30,
+                                      },
+                                      "filename": "App.vue",
+                                      "start": Position {
+                                        "column": 4,
+                                        "line": 58,
+                                      },
+                                    },
+                                    "object": Node {
+                                      "end": 453,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 18,
+                                          "line": 23,
+                                        },
+                                        "filename": "App.vue",
+                                        "identifierName": "pokemonService",
+                                        "start": Position {
+                                          "column": 4,
+                                          "line": 58,
+                                        },
+                                      },
+                                      "name": "pokemonService",
+                                      "range": Array [
+                                        245,
+                                        259,
+                                      ],
+                                      "start": 439,
+                                      "type": "Identifier",
+                                    },
+                                    "property": Node {
+                                      "end": 460,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 25,
+                                          "line": 30,
+                                        },
+                                        "filename": "App.vue",
+                                        "identifierName": "getAll",
+                                        "start": Position {
+                                          "column": 19,
+                                          "line": 23,
+                                        },
+                                      },
+                                      "name": "getAll",
+                                      "range": Array [
+                                        260,
+                                        266,
+                                      ],
+                                      "start": 454,
+                                      "type": "Identifier",
+                                    },
+                                    "range": Array [
+                                      245,
+                                      266,
+                                    ],
+                                    "start": 439,
+                                    "type": "MemberExpression",
+                                  },
+                                  "end": 462,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 27,
+                                      "line": 23,
+                                    },
+                                    "filename": "App.vue",
+                                    "start": Position {
+                                      "column": 4,
+                                      "line": 58,
+                                    },
+                                  },
+                                  "range": Array [
+                                    245,
+                                    268,
+                                  ],
+                                  "start": 439,
+                                  "type": "CallExpression",
+                                },
+                                "property": Node {
+                                  "end": 467,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 32,
+                                      "line": 30,
+                                    },
+                                    "filename": "App.vue",
+                                    "identifierName": "then",
+                                    "start": Position {
+                                      "column": 28,
+                                      "line": 23,
+                                    },
+                                  },
+                                  "name": "then",
+                                  "range": Array [
+                                    269,
+                                    273,
+                                  ],
+                                  "start": 463,
+                                  "type": "Identifier",
+                                },
+                                "range": Array [
+                                  245,
+                                  273,
+                                ],
+                                "start": 439,
+                                "type": "MemberExpression",
+                              },
+                              "end": 504,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 69,
+                                  "line": 23,
+                                },
+                                "filename": "App.vue",
+                                "start": Position {
+                                  "column": 4,
+                                  "line": 58,
+                                },
+                              },
+                              "range": Array [
+                                245,
+                                310,
+                              ],
+                              "start": 439,
+                              "type": "CallExpression",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 70,
+                                "line": 23,
+                              },
+                              "filename": "App.vue",
+                              "start": Position {
+                                "column": 4,
+                                "line": 58,
+                              },
+                            },
+                            "range": Array [
+                              245,
+                              311,
+                            ],
+                            "start": 439,
+                            "type": "ExpressionStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 510,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 3,
+                            "line": 31,
+                          },
+                          "filename": "App.vue",
+                          "start": Position {
+                            "column": 12,
+                            "line": 22,
+                          },
+                        },
+                        "range": Array [
+                          238,
+                          316,
+                        ],
+                        "start": 432,
+                        "type": "BlockStatement",
+                      },
+                      "computed": false,
+                      "end": 510,
+                      "generator": false,
+                      "id": null,
+                      "key": Node {
+                        "end": 429,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 9,
+                            "line": 22,
+                          },
+                          "filename": "App.vue",
+                          "identifierName": "created",
+                          "start": Position {
+                            "column": 2,
+                            "line": 29,
+                          },
+                        },
+                        "name": "created",
+                        "range": Array [
+                          228,
+                          235,
+                        ],
+                        "start": 422,
+                        "type": "Identifier",
+                      },
+                      "kind": "method",
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 3,
+                          "line": 31,
+                        },
+                        "filename": "App.vue",
+                        "start": Position {
+                          "column": 2,
+                          "line": 29,
+                        },
+                      },
+                      "method": true,
+                      "params": Array [],
+                      "range": Array [
+                        228,
+                        316,
+                      ],
+                      "start": 422,
+                      "type": "ObjectMethod",
+                    },
+                  ],
+                  "range": Array [
+                    118,
+                    319,
+                  ],
+                  "start": 312,
+                  "type": "ObjectExpression",
+                },
+                "end": 513,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 1,
+                    "line": 32,
+                  },
+                  "filename": "App.vue",
+                  "start": Position {
+                    "column": 0,
+                    "line": 12,
+                  },
+                },
+                "range": Array [
+                  103,
+                  319,
+                ],
+                "start": 297,
+                "type": "ExportDefaultDeclaration",
+              },
+            ],
+            "directives": Array [],
+            "end": 515,
+            "interpreter": null,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 0,
+                "line": 26,
+              },
+              "filename": "App.vue",
+              "start": Position {
+                "column": 8,
+                "line": 8,
+              },
+            },
+            "range": Array [
+              0,
+              321,
+            ],
+            "sourceType": "module",
+            "start": 194,
+            "type": "Program",
+          },
+          "range": Array [
+            0,
+            321,
+          ],
+          "start": 0,
+          "type": "File",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`parser integration should allow to parse html with script tags 1`] = `
+Object {
+  "format": "html",
+  "originFileName": "index.html",
+  "rawContent": "<!DOCTYPE html>
+<html lang=\\"en\\">
+<head>
+    <meta charset=\\"UTF-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        alert('hello there');
+    </script>
+
+    <script type=\\"text/typescript\\">
+        function fib(n: number) {
+          if (n == 0 || n == 1) {
+            return n;
+          } else {
+            return (f(n-1) + f(n-2));
+          }
+        }
+    </script>
+    <script type=\\"text/template\\">
+        this should be ignored
+    </script>
+</body>
+</html>",
+  "root": Object {
+    "scripts": Array [
+      Object {
+        "format": "js",
+        "originFileName": "index.html",
+        "rawContent": "
+        alert('hello there');
+    ",
+        "root": Node {
+          "comments": Array [],
+          "end": 37,
+          "errors": Array [],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "line": 11,
+            },
+            "filename": "index.html",
+            "start": Position {
+              "column": 12,
+              "line": 9,
+            },
+          },
+          "program": Node {
+            "body": Array [
+              Node {
+                "end": 236,
+                "expression": Node {
+                  "arguments": Array [
+                    Node {
+                      "end": 234,
+                      "extra": Object {
+                        "raw": "'hello there'",
+                        "rawValue": "hello there",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 27,
+                          "line": 10,
+                        },
+                        "filename": "index.html",
+                        "start": Position {
+                          "column": 14,
+                          "line": 10,
+                        },
+                      },
+                      "range": Array [
+                        16,
+                        29,
+                      ],
+                      "start": 221,
+                      "type": "StringLiteral",
+                      "value": "hello there",
+                    },
+                  ],
+                  "callee": Node {
+                    "end": 220,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 13,
+                        "line": 10,
+                      },
+                      "filename": "index.html",
+                      "identifierName": "alert",
+                      "start": Position {
+                        "column": 8,
+                        "line": 26,
+                      },
+                    },
+                    "name": "alert",
+                    "range": Array [
+                      10,
+                      15,
+                    ],
+                    "start": 215,
+                    "type": "Identifier",
+                  },
+                  "end": 235,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 28,
+                      "line": 10,
+                    },
+                    "filename": "index.html",
+                    "start": Position {
+                      "column": 8,
+                      "line": 26,
+                    },
+                  },
+                  "range": Array [
+                    10,
+                    30,
+                  ],
+                  "start": 215,
+                  "type": "CallExpression",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "line": 10,
+                  },
+                  "filename": "index.html",
+                  "start": Position {
+                    "column": 8,
+                    "line": 26,
+                  },
+                },
+                "range": Array [
+                  10,
+                  31,
+                ],
+                "start": 215,
+                "type": "ExpressionStatement",
+              },
+            ],
+            "directives": Array [],
+            "end": 242,
+            "interpreter": null,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "line": 11,
+              },
+              "filename": "index.html",
+              "start": Position {
+                "column": 12,
+                "line": 9,
+              },
+            },
+            "range": Array [
+              0,
+              37,
+            ],
+            "sourceType": "module",
+            "start": 205,
+            "type": "Program",
+          },
+          "range": Array [
+            0,
+            37,
+          ],
+          "start": 0,
+          "type": "File",
+        },
+      },
+      Object {
+        "format": "ts",
+        "originFileName": "index.html",
+        "rawContent": "
+        function fib(n: number) {
+          if (n == 0 || n == 1) {
+            return n;
+          } else {
+            return (f(n-1) + f(n-2));
+          }
+        }
+    ",
+        "root": Node {
+          "comments": Array [],
+          "end": 182,
+          "errors": Array [],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "line": 21,
+            },
+            "filename": "index.html",
+            "start": Position {
+              "column": 35,
+              "line": 13,
+            },
+          },
+          "program": Node {
+            "body": Array [
+              Node {
+                "async": false,
+                "body": Node {
+                  "body": Array [
+                    Node {
+                      "alternate": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "end": 440,
+                              "extra": Object {
+                                "parenStart": 134,
+                                "parenthesized": true,
+                              },
+                              "left": Node {
+                                "arguments": Array [
+                                  Node {
+                                    "end": 430,
+                                    "left": Node {
+                                      "end": 428,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 23,
+                                          "line": 18,
+                                        },
+                                        "filename": "index.html",
+                                        "identifierName": "n",
+                                        "start": Position {
+                                          "column": 22,
+                                          "line": 30,
+                                        },
+                                      },
+                                      "name": "n",
+                                      "range": Array [
+                                        137,
+                                        138,
+                                      ],
+                                      "start": 427,
+                                      "type": "Identifier",
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 25,
+                                        "line": 30,
+                                      },
+                                      "filename": "index.html",
+                                      "start": Position {
+                                        "column": 22,
+                                        "line": 30,
+                                      },
+                                    },
+                                    "operator": "-",
+                                    "range": Array [
+                                      137,
+                                      140,
+                                    ],
+                                    "right": Node {
+                                      "end": 430,
+                                      "extra": Object {
+                                        "raw": "1",
+                                        "rawValue": 1,
+                                      },
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 25,
+                                          "line": 30,
+                                        },
+                                        "filename": "index.html",
+                                        "start": Position {
+                                          "column": 24,
+                                          "line": 18,
+                                        },
+                                      },
+                                      "range": Array [
+                                        139,
+                                        140,
+                                      ],
+                                      "start": 429,
+                                      "type": "NumericLiteral",
+                                      "value": 1,
+                                    },
+                                    "start": 427,
+                                    "type": "BinaryExpression",
+                                  },
+                                ],
+                                "callee": Node {
+                                  "end": 426,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 21,
+                                      "line": 18,
+                                    },
+                                    "filename": "index.html",
+                                    "identifierName": "f",
+                                    "start": Position {
+                                      "column": 20,
+                                      "line": 42,
+                                    },
+                                  },
+                                  "name": "f",
+                                  "range": Array [
+                                    135,
+                                    136,
+                                  ],
+                                  "start": 425,
+                                  "type": "Identifier",
+                                },
+                                "end": 431,
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 26,
+                                    "line": 18,
+                                  },
+                                  "filename": "index.html",
+                                  "start": Position {
+                                    "column": 20,
+                                    "line": 42,
+                                  },
+                                },
+                                "range": Array [
+                                  135,
+                                  141,
+                                ],
+                                "start": 425,
+                                "type": "CallExpression",
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 35,
+                                  "line": 30,
+                                },
+                                "filename": "index.html",
+                                "start": Position {
+                                  "column": 20,
+                                  "line": 42,
+                                },
+                              },
+                              "operator": "+",
+                              "range": Array [
+                                135,
+                                150,
+                              ],
+                              "right": Node {
+                                "arguments": Array [
+                                  Node {
+                                    "end": 439,
+                                    "left": Node {
+                                      "end": 437,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 32,
+                                          "line": 18,
+                                        },
+                                        "filename": "index.html",
+                                        "identifierName": "n",
+                                        "start": Position {
+                                          "column": 31,
+                                          "line": 30,
+                                        },
+                                      },
+                                      "name": "n",
+                                      "range": Array [
+                                        146,
+                                        147,
+                                      ],
+                                      "start": 436,
+                                      "type": "Identifier",
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 34,
+                                        "line": 30,
+                                      },
+                                      "filename": "index.html",
+                                      "start": Position {
+                                        "column": 31,
+                                        "line": 30,
+                                      },
+                                    },
+                                    "operator": "-",
+                                    "range": Array [
+                                      146,
+                                      149,
+                                    ],
+                                    "right": Node {
+                                      "end": 439,
+                                      "extra": Object {
+                                        "raw": "2",
+                                        "rawValue": 2,
+                                      },
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 34,
+                                          "line": 30,
+                                        },
+                                        "filename": "index.html",
+                                        "start": Position {
+                                          "column": 33,
+                                          "line": 18,
+                                        },
+                                      },
+                                      "range": Array [
+                                        148,
+                                        149,
+                                      ],
+                                      "start": 438,
+                                      "type": "NumericLiteral",
+                                      "value": 2,
+                                    },
+                                    "start": 436,
+                                    "type": "BinaryExpression",
+                                  },
+                                ],
+                                "callee": Node {
+                                  "end": 435,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 30,
+                                      "line": 18,
+                                    },
+                                    "filename": "index.html",
+                                    "identifierName": "f",
+                                    "start": Position {
+                                      "column": 29,
+                                      "line": 30,
+                                    },
+                                  },
+                                  "name": "f",
+                                  "range": Array [
+                                    144,
+                                    145,
+                                  ],
+                                  "start": 434,
+                                  "type": "Identifier",
+                                },
+                                "end": 440,
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 35,
+                                    "line": 30,
+                                  },
+                                  "filename": "index.html",
+                                  "start": Position {
+                                    "column": 29,
+                                    "line": 30,
+                                  },
+                                },
+                                "range": Array [
+                                  144,
+                                  150,
+                                ],
+                                "start": 434,
+                                "type": "CallExpression",
+                              },
+                              "start": 425,
+                              "type": "BinaryExpression",
+                            },
+                            "end": 442,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 37,
+                                "line": 18,
+                              },
+                              "filename": "index.html",
+                              "start": Position {
+                                "column": 12,
+                                "line": 18,
+                              },
+                            },
+                            "range": Array [
+                              127,
+                              152,
+                            ],
+                            "start": 417,
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 455,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "line": 31,
+                          },
+                          "filename": "index.html",
+                          "start": Position {
+                            "column": 17,
+                            "line": 17,
+                          },
+                        },
+                        "range": Array [
+                          112,
+                          165,
+                        ],
+                        "start": 402,
+                        "type": "BlockStatement",
+                      },
+                      "consequent": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "end": 382,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 20,
+                                  "line": 16,
+                                },
+                                "filename": "index.html",
+                                "identifierName": "n",
+                                "start": Position {
+                                  "column": 19,
+                                  "line": 16,
+                                },
+                              },
+                              "name": "n",
+                              "range": Array [
+                                91,
+                                92,
+                              ],
+                              "start": 381,
+                              "type": "Identifier",
+                            },
+                            "end": 383,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 21,
+                                "line": 16,
+                              },
+                              "filename": "index.html",
+                              "start": Position {
+                                "column": 12,
+                                "line": 16,
+                              },
+                            },
+                            "range": Array [
+                              84,
+                              93,
+                            ],
+                            "start": 374,
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 396,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "line": 17,
+                          },
+                          "filename": "index.html",
+                          "start": Position {
+                            "column": 32,
+                            "line": 15,
+                          },
+                        },
+                        "range": Array [
+                          69,
+                          106,
+                        ],
+                        "start": 359,
+                        "type": "BlockStatement",
+                      },
+                      "end": 455,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 11,
+                          "line": 31,
+                        },
+                        "filename": "index.html",
+                        "start": Position {
+                          "column": 10,
+                          "line": 15,
+                        },
+                      },
+                      "range": Array [
+                        47,
+                        165,
+                      ],
+                      "start": 337,
+                      "test": Node {
+                        "end": 357,
+                        "left": Node {
+                          "end": 347,
+                          "left": Node {
+                            "end": 342,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 15,
+                                "line": 15,
+                              },
+                              "filename": "index.html",
+                              "identifierName": "n",
+                              "start": Position {
+                                "column": 14,
+                                "line": 39,
+                              },
+                            },
+                            "name": "n",
+                            "range": Array [
+                              51,
+                              52,
+                            ],
+                            "start": 341,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 20,
+                              "line": 27,
+                            },
+                            "filename": "index.html",
+                            "start": Position {
+                              "column": 14,
+                              "line": 39,
+                            },
+                          },
+                          "operator": "==",
+                          "range": Array [
+                            51,
+                            57,
+                          ],
+                          "right": Node {
+                            "end": 347,
+                            "extra": Object {
+                              "raw": "0",
+                              "rawValue": 0,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 20,
+                                "line": 27,
+                              },
+                              "filename": "index.html",
+                              "start": Position {
+                                "column": 19,
+                                "line": 15,
+                              },
+                            },
+                            "range": Array [
+                              56,
+                              57,
+                            ],
+                            "start": 346,
+                            "type": "NumericLiteral",
+                            "value": 0,
+                          },
+                          "start": 341,
+                          "type": "BinaryExpression",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 30,
+                            "line": 39,
+                          },
+                          "filename": "index.html",
+                          "start": Position {
+                            "column": 14,
+                            "line": 39,
+                          },
+                        },
+                        "operator": "||",
+                        "range": Array [
+                          51,
+                          67,
+                        ],
+                        "right": Node {
+                          "end": 357,
+                          "left": Node {
+                            "end": 352,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 25,
+                                "line": 15,
+                              },
+                              "filename": "index.html",
+                              "identifierName": "n",
+                              "start": Position {
+                                "column": 24,
+                                "line": 27,
+                              },
+                            },
+                            "name": "n",
+                            "range": Array [
+                              61,
+                              62,
+                            ],
+                            "start": 351,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 30,
+                              "line": 39,
+                            },
+                            "filename": "index.html",
+                            "start": Position {
+                              "column": 24,
+                              "line": 27,
+                            },
+                          },
+                          "operator": "==",
+                          "range": Array [
+                            61,
+                            67,
+                          ],
+                          "right": Node {
+                            "end": 357,
+                            "extra": Object {
+                              "raw": "1",
+                              "rawValue": 1,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 30,
+                                "line": 39,
+                              },
+                              "filename": "index.html",
+                              "start": Position {
+                                "column": 29,
+                                "line": 15,
+                              },
+                            },
+                            "range": Array [
+                              66,
+                              67,
+                            ],
+                            "start": 356,
+                            "type": "NumericLiteral",
+                            "value": 1,
+                          },
+                          "start": 351,
+                          "type": "BinaryExpression",
+                        },
+                        "start": 341,
+                        "type": "LogicalExpression",
+                      },
+                      "type": "IfStatement",
+                    },
+                  ],
+                  "directives": Array [],
+                  "end": 466,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 9,
+                      "line": 32,
+                    },
+                    "filename": "index.html",
+                    "start": Position {
+                      "column": 32,
+                      "line": 14,
+                    },
+                  },
+                  "range": Array [
+                    34,
+                    176,
+                  ],
+                  "start": 324,
+                  "type": "BlockStatement",
+                },
+                "end": 466,
+                "generator": false,
+                "id": Node {
+                  "end": 312,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 20,
+                      "line": 14,
+                    },
+                    "filename": "index.html",
+                    "identifierName": "fib",
+                    "start": Position {
+                      "column": 17,
+                      "line": 14,
+                    },
+                  },
+                  "name": "fib",
+                  "range": Array [
+                    19,
+                    22,
+                  ],
+                  "start": 309,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 9,
+                    "line": 32,
+                  },
+                  "filename": "index.html",
+                  "start": Position {
+                    "column": 8,
+                    "line": 14,
+                  },
+                },
+                "params": Array [
+                  Node {
+                    "end": 322,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 30,
+                        "line": 38,
+                      },
+                      "filename": "index.html",
+                      "identifierName": "n",
+                      "start": Position {
+                        "column": 21,
+                        "line": 14,
+                      },
+                    },
+                    "name": "n",
+                    "range": Array [
+                      23,
+                      32,
+                    ],
+                    "start": 313,
+                    "type": "Identifier",
+                    "typeAnnotation": Node {
+                      "end": 322,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 30,
+                          "line": 38,
+                        },
+                        "filename": "index.html",
+                        "start": Position {
+                          "column": 22,
+                          "line": 14,
+                        },
+                      },
+                      "range": Array [
+                        24,
+                        32,
+                      ],
+                      "start": 314,
+                      "type": "TSTypeAnnotation",
+                      "typeAnnotation": Node {
+                        "end": 322,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 30,
+                            "line": 38,
+                          },
+                          "filename": "index.html",
+                          "start": Position {
+                            "column": 24,
+                            "line": 14,
+                          },
+                        },
+                        "range": Array [
+                          26,
+                          32,
+                        ],
+                        "start": 316,
+                        "type": "TSNumberKeyword",
+                      },
+                    },
+                  },
+                ],
+                "range": Array [
+                  10,
+                  176,
+                ],
+                "start": 300,
+                "type": "FunctionDeclaration",
+              },
+            ],
+            "directives": Array [],
+            "end": 472,
+            "interpreter": null,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "line": 21,
+              },
+              "filename": "index.html",
+              "start": Position {
+                "column": 35,
+                "line": 13,
+              },
+            },
+            "range": Array [
+              0,
+              182,
+            ],
+            "sourceType": "module",
+            "start": 290,
+            "type": "Program",
+          },
+          "range": Array [
+            0,
+            182,
+          ],
+          "start": 0,
+          "type": "File",
+        },
+      },
+    ],
+  },
+}
+`;
