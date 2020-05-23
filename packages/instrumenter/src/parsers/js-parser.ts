@@ -1,4 +1,5 @@
-import { parse as babelParse, ParserPlugin } from '@babel/parser';
+import { ParserPlugin } from '@babel/parser';
+import { parseAsync, types } from '@babel/core';
 
 import { AstFormat, JSAst } from '../syntax';
 
@@ -28,16 +29,21 @@ const plugins = [
   ['decorators', { decoratorsBeforeExport: false }],
 ] as ParserPlugin[];
 
-export async function parse(text: string, originFileName: string): Promise<JSAst> {
-  return Promise.resolve({
-    originFileName,
-    format: AstFormat.JS,
-    rawContent: text,
-    root: babelParse(text, {
-      sourceFilename: originFileName,
+export async function parse(text: string, fileName: string): Promise<JSAst> {
+  const ast = await parseAsync(text, {
+    parserOpts: {
       plugins,
-      sourceType: 'module',
-      ranges: true,
-    }),
+    },
+    filename: fileName,
+    sourceType: 'module',
   });
+  if (types.isProgram(ast)) {
+    throw new Error(`Expected ${fileName} to contain a babel.types.file, but was a program`);
+  }
+  return {
+    originFileName: fileName,
+    rawContent: text,
+    format: AstFormat.JS,
+    root: ast!,
+  };
 }

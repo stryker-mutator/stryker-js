@@ -75,7 +75,6 @@ export default {
               "column": 0,
               "line": 26,
             },
-            "filename": "App.vue",
             "start": Position {
               "column": 8,
               "line": 8,
@@ -90,16 +89,11 @@ export default {
                     "column": 44,
                     "line": 16,
                   },
-                  "filename": "App.vue",
                   "start": Position {
                     "column": 0,
                     "line": 9,
                   },
                 },
-                "range": Array [
-                  2,
-                  46,
-                ],
                 "source": Node {
                   "end": 240,
                   "extra": Object {
@@ -111,16 +105,11 @@ export default {
                       "column": 44,
                       "line": 16,
                     },
-                    "filename": "App.vue",
                     "start": Position {
                       "column": 29,
                       "line": 9,
                     },
                   },
-                  "range": Array [
-                    31,
-                    46,
-                  ],
                   "start": 225,
                   "type": "StringLiteral",
                   "value": "./Pokemon.vue",
@@ -133,7 +122,6 @@ export default {
                         "column": 23,
                         "line": 16,
                       },
-                      "filename": "App.vue",
                       "start": Position {
                         "column": 7,
                         "line": 16,
@@ -146,7 +134,6 @@ export default {
                           "column": 23,
                           "line": 16,
                         },
-                        "filename": "App.vue",
                         "identifierName": "PokemonComponent",
                         "start": Position {
                           "column": 7,
@@ -154,17 +141,9 @@ export default {
                         },
                       },
                       "name": "PokemonComponent",
-                      "range": Array [
-                        9,
-                        25,
-                      ],
                       "start": 203,
                       "type": "Identifier",
                     },
-                    "range": Array [
-                      9,
-                      25,
-                    ],
                     "start": 203,
                     "type": "ImportDefaultSpecifier",
                   },
@@ -179,16 +158,11 @@ export default {
                     "column": 51,
                     "line": 10,
                   },
-                  "filename": "App.vue",
                   "start": Position {
                     "column": 0,
                     "line": 10,
                   },
                 },
-                "range": Array [
-                  48,
-                  99,
-                ],
                 "source": Node {
                   "end": 292,
                   "extra": Object {
@@ -200,16 +174,11 @@ export default {
                       "column": 50,
                       "line": 10,
                     },
-                    "filename": "App.vue",
                     "start": Position {
                       "column": 31,
                       "line": 10,
                     },
                   },
-                  "range": Array [
-                    79,
-                    98,
-                  ],
                   "start": 273,
                   "type": "StringLiteral",
                   "value": "./pokemon.service",
@@ -224,7 +193,6 @@ export default {
                           "column": 23,
                           "line": 24,
                         },
-                        "filename": "App.vue",
                         "identifierName": "pokemonService",
                         "start": Position {
                           "column": 9,
@@ -232,10 +200,6 @@ export default {
                         },
                       },
                       "name": "pokemonService",
-                      "range": Array [
-                        57,
-                        71,
-                      ],
                       "start": 251,
                       "type": "Identifier",
                     },
@@ -244,7 +208,6 @@ export default {
                         "column": 23,
                         "line": 24,
                       },
-                      "filename": "App.vue",
                       "start": Position {
                         "column": 9,
                         "line": 24,
@@ -257,7 +220,6 @@ export default {
                           "column": 23,
                           "line": 24,
                         },
-                        "filename": "App.vue",
                         "identifierName": "pokemonService",
                         "start": Position {
                           "column": 9,
@@ -265,17 +227,9 @@ export default {
                         },
                       },
                       "name": "pokemonService",
-                      "range": Array [
-                        57,
-                        71,
-                      ],
                       "start": 251,
                       "type": "Identifier",
                     },
-                    "range": Array [
-                      57,
-                      71,
-                    ],
                     "start": 251,
                     "type": "ImportSpecifier",
                   },
@@ -291,7 +245,6 @@ export default {
                       "column": 1,
                       "line": 32,
                     },
-                    "filename": "App.vue",
                     "start": Position {
                       "column": 15,
                       "line": 12,
@@ -308,7 +261,6 @@ export default {
                             "column": 12,
                             "line": 13,
                           },
-                          "filename": "App.vue",
                           "identifierName": "components",
                           "start": Position {
                             "column": 2,
@@ -316,10 +268,6 @@ export default {
                           },
                         },
                         "name": "components",
-                        "range": Array [
-                          123,
-                          133,
-                        ],
                         "start": 317,
                         "type": "Identifier",
                       },
@@ -328,17 +276,12 @@ export default {
                           "column": 3,
                           "line": 22,
                         },
-                        "filename": "App.vue",
                         "start": Position {
                           "column": 2,
                           "line": 20,
                         },
                       },
                       "method": false,
-                      "range": Array [
-                        123,
-                        163,
-                      ],
                       "shorthand": false,
                       "start": 317,
                       "type": "ObjectProperty",
@@ -349,7 +292,6 @@ export default {
                             "column": 3,
                             "line": 22,
                           },
-                          "filename": "App.vue",
                           "start": Position {
                             "column": 14,
                             "line": 13,
@@ -369,7 +311,6 @@ export default {
                                   "column": 20,
                                   "line": 28,
                                 },
-                                "filename": "App.vue",
                                 "identifierName": "PokemonComponent",
                                 "start": Position {
                                   "column": 4,
@@ -377,10 +318,6 @@ export default {
                                 },
                               },
                               "name": "PokemonComponent",
-                              "range": Array [
-                                142,
-                                158,
-                              ],
                               "start": 336,
                               "type": "Identifier",
                             },
@@ -389,17 +326,12 @@ export default {
                                 "column": 20,
                                 "line": 28,
                               },
-                              "filename": "App.vue",
                               "start": Position {
                                 "column": 4,
                                 "line": 28,
                               },
                             },
                             "method": false,
-                            "range": Array [
-                              142,
-                              158,
-                            ],
                             "shorthand": true,
                             "start": 336,
                             "type": "ObjectProperty",
@@ -410,7 +342,6 @@ export default {
                                   "column": 20,
                                   "line": 28,
                                 },
-                                "filename": "App.vue",
                                 "identifierName": "PokemonComponent",
                                 "start": Position {
                                   "column": 4,
@@ -418,18 +349,10 @@ export default {
                                 },
                               },
                               "name": "PokemonComponent",
-                              "range": Array [
-                                142,
-                                158,
-                              ],
                               "start": 336,
                               "type": "Identifier",
                             },
                           },
-                        ],
-                        "range": Array [
-                          135,
-                          163,
                         ],
                         "start": 329,
                         "type": "ObjectExpression",
@@ -447,7 +370,6 @@ export default {
                                   "column": 5,
                                   "line": 26,
                                 },
-                                "filename": "App.vue",
                                 "start": Position {
                                   "column": 11,
                                   "line": 17,
@@ -464,7 +386,6 @@ export default {
                                         "column": 13,
                                         "line": 18,
                                       },
-                                      "filename": "App.vue",
                                       "identifierName": "pokemon",
                                       "start": Position {
                                         "column": 6,
@@ -472,10 +393,6 @@ export default {
                                       },
                                     },
                                     "name": "pokemon",
-                                    "range": Array [
-                                      198,
-                                      205,
-                                    ],
                                     "start": 392,
                                     "type": "Identifier",
                                   },
@@ -484,17 +401,12 @@ export default {
                                       "column": 17,
                                       "line": 25,
                                     },
-                                    "filename": "App.vue",
                                     "start": Position {
                                       "column": 6,
                                       "line": 25,
                                     },
                                   },
                                   "method": false,
-                                  "range": Array [
-                                    198,
-                                    209,
-                                  ],
                                   "shorthand": false,
                                   "start": 392,
                                   "type": "ObjectProperty",
@@ -506,24 +418,15 @@ export default {
                                         "column": 17,
                                         "line": 25,
                                       },
-                                      "filename": "App.vue",
                                       "start": Position {
                                         "column": 15,
                                         "line": 18,
                                       },
                                     },
-                                    "range": Array [
-                                      207,
-                                      209,
-                                    ],
                                     "start": 401,
                                     "type": "ArrayExpression",
                                   },
                                 },
-                              ],
-                              "range": Array [
-                                189,
-                                216,
                               ],
                               "start": 383,
                               "type": "ObjectExpression",
@@ -534,16 +437,11 @@ export default {
                                 "column": 5,
                                 "line": 26,
                               },
-                              "filename": "App.vue",
                               "start": Position {
                                 "column": 4,
                                 "line": 17,
                               },
                             },
-                            "range": Array [
-                              182,
-                              216,
-                            ],
                             "start": 376,
                             "type": "ReturnStatement",
                           },
@@ -555,16 +453,11 @@ export default {
                             "column": 3,
                             "line": 27,
                           },
-                          "filename": "App.vue",
                           "start": Position {
                             "column": 9,
                             "line": 16,
                           },
                         },
-                        "range": Array [
-                          175,
-                          221,
-                        ],
                         "start": 369,
                         "type": "BlockStatement",
                       },
@@ -579,7 +472,6 @@ export default {
                             "column": 6,
                             "line": 16,
                           },
-                          "filename": "App.vue",
                           "identifierName": "data",
                           "start": Position {
                             "column": 2,
@@ -587,10 +479,6 @@ export default {
                           },
                         },
                         "name": "data",
-                        "range": Array [
-                          168,
-                          172,
-                        ],
                         "start": 362,
                         "type": "Identifier",
                       },
@@ -600,7 +488,6 @@ export default {
                           "column": 3,
                           "line": 27,
                         },
-                        "filename": "App.vue",
                         "start": Position {
                           "column": 2,
                           "line": 23,
@@ -608,10 +495,6 @@ export default {
                       },
                       "method": true,
                       "params": Array [],
-                      "range": Array [
-                        168,
-                        221,
-                      ],
                       "start": 362,
                       "type": "ObjectMethod",
                     },
@@ -639,7 +522,6 @@ export default {
                                           "column": 57,
                                           "line": 30,
                                         },
-                                        "filename": "App.vue",
                                         "start": Position {
                                           "column": 45,
                                           "line": 37,
@@ -652,16 +534,11 @@ export default {
                                             "column": 49,
                                             "line": 23,
                                           },
-                                          "filename": "App.vue",
                                           "start": Position {
                                             "column": 45,
                                             "line": 37,
                                           },
                                         },
-                                        "range": Array [
-                                          286,
-                                          290,
-                                        ],
                                         "start": 480,
                                         "type": "ThisExpression",
                                       },
@@ -672,7 +549,6 @@ export default {
                                             "column": 57,
                                             "line": 30,
                                           },
-                                          "filename": "App.vue",
                                           "identifierName": "pokemon",
                                           "start": Position {
                                             "column": 50,
@@ -680,17 +556,9 @@ export default {
                                           },
                                         },
                                         "name": "pokemon",
-                                        "range": Array [
-                                          291,
-                                          298,
-                                        ],
                                         "start": 485,
                                         "type": "Identifier",
                                       },
-                                      "range": Array [
-                                        286,
-                                        298,
-                                      ],
                                       "start": 480,
                                       "type": "MemberExpression",
                                     },
@@ -699,17 +567,12 @@ export default {
                                         "column": 67,
                                         "line": 30,
                                       },
-                                      "filename": "App.vue",
                                       "start": Position {
                                         "column": 45,
                                         "line": 37,
                                       },
                                     },
                                     "operator": "=",
-                                    "range": Array [
-                                      286,
-                                      308,
-                                    ],
                                     "right": Node {
                                       "end": 502,
                                       "loc": SourceLocation {
@@ -717,7 +580,6 @@ export default {
                                           "column": 67,
                                           "line": 30,
                                         },
-                                        "filename": "App.vue",
                                         "identifierName": "pokemon",
                                         "start": Position {
                                           "column": 60,
@@ -725,10 +587,6 @@ export default {
                                         },
                                       },
                                       "name": "pokemon",
-                                      "range": Array [
-                                        301,
-                                        308,
-                                      ],
                                       "start": 495,
                                       "type": "Identifier",
                                     },
@@ -743,7 +601,6 @@ export default {
                                       "column": 68,
                                       "line": 23,
                                     },
-                                    "filename": "App.vue",
                                     "start": Position {
                                       "column": 33,
                                       "line": 30,
@@ -757,7 +614,6 @@ export default {
                                           "column": 40,
                                           "line": 23,
                                         },
-                                        "filename": "App.vue",
                                         "identifierName": "pokemon",
                                         "start": Position {
                                           "column": 33,
@@ -765,17 +621,9 @@ export default {
                                         },
                                       },
                                       "name": "pokemon",
-                                      "range": Array [
-                                        274,
-                                        281,
-                                      ],
                                       "start": 468,
                                       "type": "Identifier",
                                     },
-                                  ],
-                                  "range": Array [
-                                    274,
-                                    309,
                                   ],
                                   "start": 468,
                                   "type": "ArrowFunctionExpression",
@@ -789,7 +637,6 @@ export default {
                                     "column": 32,
                                     "line": 30,
                                   },
-                                  "filename": "App.vue",
                                   "start": Position {
                                     "column": 4,
                                     "line": 58,
@@ -805,7 +652,6 @@ export default {
                                         "column": 25,
                                         "line": 30,
                                       },
-                                      "filename": "App.vue",
                                       "start": Position {
                                         "column": 4,
                                         "line": 58,
@@ -818,7 +664,6 @@ export default {
                                           "column": 18,
                                           "line": 23,
                                         },
-                                        "filename": "App.vue",
                                         "identifierName": "pokemonService",
                                         "start": Position {
                                           "column": 4,
@@ -826,10 +671,6 @@ export default {
                                         },
                                       },
                                       "name": "pokemonService",
-                                      "range": Array [
-                                        245,
-                                        259,
-                                      ],
                                       "start": 439,
                                       "type": "Identifier",
                                     },
@@ -840,7 +681,6 @@ export default {
                                           "column": 25,
                                           "line": 30,
                                         },
-                                        "filename": "App.vue",
                                         "identifierName": "getAll",
                                         "start": Position {
                                           "column": 19,
@@ -848,17 +688,9 @@ export default {
                                         },
                                       },
                                       "name": "getAll",
-                                      "range": Array [
-                                        260,
-                                        266,
-                                      ],
                                       "start": 454,
                                       "type": "Identifier",
                                     },
-                                    "range": Array [
-                                      245,
-                                      266,
-                                    ],
                                     "start": 439,
                                     "type": "MemberExpression",
                                   },
@@ -868,16 +700,11 @@ export default {
                                       "column": 27,
                                       "line": 23,
                                     },
-                                    "filename": "App.vue",
                                     "start": Position {
                                       "column": 4,
                                       "line": 58,
                                     },
                                   },
-                                  "range": Array [
-                                    245,
-                                    268,
-                                  ],
                                   "start": 439,
                                   "type": "CallExpression",
                                 },
@@ -888,7 +715,6 @@ export default {
                                       "column": 32,
                                       "line": 30,
                                     },
-                                    "filename": "App.vue",
                                     "identifierName": "then",
                                     "start": Position {
                                       "column": 28,
@@ -896,17 +722,9 @@ export default {
                                     },
                                   },
                                   "name": "then",
-                                  "range": Array [
-                                    269,
-                                    273,
-                                  ],
                                   "start": 463,
                                   "type": "Identifier",
                                 },
-                                "range": Array [
-                                  245,
-                                  273,
-                                ],
                                 "start": 439,
                                 "type": "MemberExpression",
                               },
@@ -916,16 +734,11 @@ export default {
                                   "column": 69,
                                   "line": 23,
                                 },
-                                "filename": "App.vue",
                                 "start": Position {
                                   "column": 4,
                                   "line": 58,
                                 },
                               },
-                              "range": Array [
-                                245,
-                                310,
-                              ],
                               "start": 439,
                               "type": "CallExpression",
                             },
@@ -934,16 +747,11 @@ export default {
                                 "column": 70,
                                 "line": 23,
                               },
-                              "filename": "App.vue",
                               "start": Position {
                                 "column": 4,
                                 "line": 58,
                               },
                             },
-                            "range": Array [
-                              245,
-                              311,
-                            ],
                             "start": 439,
                             "type": "ExpressionStatement",
                           },
@@ -955,16 +763,11 @@ export default {
                             "column": 3,
                             "line": 31,
                           },
-                          "filename": "App.vue",
                           "start": Position {
                             "column": 12,
                             "line": 22,
                           },
                         },
-                        "range": Array [
-                          238,
-                          316,
-                        ],
                         "start": 432,
                         "type": "BlockStatement",
                       },
@@ -979,7 +782,6 @@ export default {
                             "column": 9,
                             "line": 22,
                           },
-                          "filename": "App.vue",
                           "identifierName": "created",
                           "start": Position {
                             "column": 2,
@@ -987,10 +789,6 @@ export default {
                           },
                         },
                         "name": "created",
-                        "range": Array [
-                          228,
-                          235,
-                        ],
                         "start": 422,
                         "type": "Identifier",
                       },
@@ -1000,7 +798,6 @@ export default {
                           "column": 3,
                           "line": 31,
                         },
-                        "filename": "App.vue",
                         "start": Position {
                           "column": 2,
                           "line": 29,
@@ -1008,17 +805,9 @@ export default {
                       },
                       "method": true,
                       "params": Array [],
-                      "range": Array [
-                        228,
-                        316,
-                      ],
                       "start": 422,
                       "type": "ObjectMethod",
                     },
-                  ],
-                  "range": Array [
-                    118,
-                    319,
                   ],
                   "start": 312,
                   "type": "ObjectExpression",
@@ -1029,16 +818,11 @@ export default {
                     "column": 1,
                     "line": 32,
                   },
-                  "filename": "App.vue",
                   "start": Position {
                     "column": 0,
                     "line": 12,
                   },
                 },
-                "range": Array [
-                  103,
-                  319,
-                ],
                 "start": 297,
                 "type": "ExportDefaultDeclaration",
               },
@@ -1051,29 +835,646 @@ export default {
                 "column": 0,
                 "line": 26,
               },
-              "filename": "App.vue",
               "start": Position {
                 "column": 8,
                 "line": 8,
               },
             },
-            "range": Array [
-              0,
-              321,
-            ],
             "sourceType": "module",
             "start": 194,
             "type": "Program",
           },
-          "range": Array [
-            0,
-            321,
-          ],
           "start": 0,
           "type": "File",
         },
       },
     ],
+  },
+}
+`;
+
+exports[`parser integration should allow to parse a piece of angular code 1`] = `
+Object {
+  "format": "ts",
+  "originFileName": "app.component.ts",
+  "rawContent": "import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent {
+  title = 'angular-app';
+}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 216,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "line": 11,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "end": 42,
+          "importKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 42,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "range": Array [
+            0,
+            42,
+          ],
+          "source": Node {
+            "end": 41,
+            "extra": Object {
+              "raw": "'@angular/core'",
+              "rawValue": "@angular/core",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 41,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 26,
+                "line": 1,
+              },
+            },
+            "range": Array [
+              26,
+              41,
+            ],
+            "start": 26,
+            "type": "StringLiteral",
+            "value": "@angular/core",
+          },
+          "specifiers": Array [
+            Node {
+              "end": 18,
+              "imported": Node {
+                "end": 18,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                  "identifierName": "Component",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "Component",
+                "range": Array [
+                  9,
+                  18,
+                ],
+                "start": 9,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 18,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 9,
+                  "line": 1,
+                },
+              },
+              "local": Node {
+                "end": 18,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 18,
+                    "line": 1,
+                  },
+                  "identifierName": "Component",
+                  "start": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                },
+                "name": "Component",
+                "range": Array [
+                  9,
+                  18,
+                ],
+                "start": 9,
+                "type": "Identifier",
+              },
+              "range": Array [
+                9,
+                18,
+              ],
+              "start": 9,
+              "type": "ImportSpecifier",
+            },
+          ],
+          "start": 0,
+          "type": "ImportDeclaration",
+        },
+        Node {
+          "declaration": Node {
+            "body": Node {
+              "body": Array [
+                Node {
+                  "computed": false,
+                  "end": 213,
+                  "key": Node {
+                    "end": 196,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 7,
+                        "line": 9,
+                      },
+                      "identifierName": "title",
+                      "start": Position {
+                        "column": 2,
+                        "line": 9,
+                      },
+                    },
+                    "name": "title",
+                    "range": Array [
+                      191,
+                      196,
+                    ],
+                    "start": 191,
+                    "type": "Identifier",
+                  },
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 24,
+                      "line": 9,
+                    },
+                    "start": Position {
+                      "column": 2,
+                      "line": 9,
+                    },
+                  },
+                  "range": Array [
+                    191,
+                    213,
+                  ],
+                  "start": 191,
+                  "static": false,
+                  "type": "ClassProperty",
+                  "value": Node {
+                    "end": 212,
+                    "extra": Object {
+                      "raw": "'angular-app'",
+                      "rawValue": "angular-app",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 23,
+                        "line": 9,
+                      },
+                      "start": Position {
+                        "column": 10,
+                        "line": 9,
+                      },
+                    },
+                    "range": Array [
+                      199,
+                      212,
+                    ],
+                    "start": 199,
+                    "type": "StringLiteral",
+                    "value": "angular-app",
+                  },
+                },
+              ],
+              "end": 215,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "line": 10,
+                },
+                "start": Position {
+                  "column": 26,
+                  "line": 8,
+                },
+              },
+              "range": Array [
+                187,
+                215,
+              ],
+              "start": 187,
+              "type": "ClassBody",
+            },
+            "decorators": Array [
+              Node {
+                "end": 160,
+                "expression": Node {
+                  "arguments": Array [
+                    Node {
+                      "end": 159,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 1,
+                          "line": 7,
+                        },
+                        "start": Position {
+                          "column": 11,
+                          "line": 3,
+                        },
+                      },
+                      "properties": Array [
+                        Node {
+                          "computed": false,
+                          "end": 79,
+                          "key": Node {
+                            "end": 67,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 10,
+                                "line": 4,
+                              },
+                              "identifierName": "selector",
+                              "start": Position {
+                                "column": 2,
+                                "line": 4,
+                              },
+                            },
+                            "name": "selector",
+                            "range": Array [
+                              59,
+                              67,
+                            ],
+                            "start": 59,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 22,
+                              "line": 4,
+                            },
+                            "start": Position {
+                              "column": 2,
+                              "line": 4,
+                            },
+                          },
+                          "method": false,
+                          "range": Array [
+                            59,
+                            79,
+                          ],
+                          "shorthand": false,
+                          "start": 59,
+                          "type": "ObjectProperty",
+                          "value": Node {
+                            "end": 79,
+                            "extra": Object {
+                              "raw": "'app-root'",
+                              "rawValue": "app-root",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 22,
+                                "line": 4,
+                              },
+                              "start": Position {
+                                "column": 12,
+                                "line": 4,
+                              },
+                            },
+                            "range": Array [
+                              69,
+                              79,
+                            ],
+                            "start": 69,
+                            "type": "StringLiteral",
+                            "value": "app-root",
+                          },
+                        },
+                        Node {
+                          "computed": false,
+                          "end": 118,
+                          "key": Node {
+                            "end": 94,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 13,
+                                "line": 5,
+                              },
+                              "identifierName": "templateUrl",
+                              "start": Position {
+                                "column": 2,
+                                "line": 5,
+                              },
+                            },
+                            "name": "templateUrl",
+                            "range": Array [
+                              83,
+                              94,
+                            ],
+                            "start": 83,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 37,
+                              "line": 5,
+                            },
+                            "start": Position {
+                              "column": 2,
+                              "line": 5,
+                            },
+                          },
+                          "method": false,
+                          "range": Array [
+                            83,
+                            118,
+                          ],
+                          "shorthand": false,
+                          "start": 83,
+                          "type": "ObjectProperty",
+                          "value": Node {
+                            "end": 118,
+                            "extra": Object {
+                              "raw": "'./app.component.html'",
+                              "rawValue": "./app.component.html",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 37,
+                                "line": 5,
+                              },
+                              "start": Position {
+                                "column": 15,
+                                "line": 5,
+                              },
+                            },
+                            "range": Array [
+                              96,
+                              118,
+                            ],
+                            "start": 96,
+                            "type": "StringLiteral",
+                            "value": "./app.component.html",
+                          },
+                        },
+                        Node {
+                          "computed": false,
+                          "end": 157,
+                          "key": Node {
+                            "end": 131,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 11,
+                                "line": 6,
+                              },
+                              "identifierName": "styleUrls",
+                              "start": Position {
+                                "column": 2,
+                                "line": 6,
+                              },
+                            },
+                            "name": "styleUrls",
+                            "range": Array [
+                              122,
+                              131,
+                            ],
+                            "start": 122,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 37,
+                              "line": 6,
+                            },
+                            "start": Position {
+                              "column": 2,
+                              "line": 6,
+                            },
+                          },
+                          "method": false,
+                          "range": Array [
+                            122,
+                            157,
+                          ],
+                          "shorthand": false,
+                          "start": 122,
+                          "type": "ObjectProperty",
+                          "value": Node {
+                            "elements": Array [
+                              Node {
+                                "end": 156,
+                                "extra": Object {
+                                  "raw": "'./app.component.scss'",
+                                  "rawValue": "./app.component.scss",
+                                },
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 36,
+                                    "line": 6,
+                                  },
+                                  "start": Position {
+                                    "column": 14,
+                                    "line": 6,
+                                  },
+                                },
+                                "range": Array [
+                                  134,
+                                  156,
+                                ],
+                                "start": 134,
+                                "type": "StringLiteral",
+                                "value": "./app.component.scss",
+                              },
+                            ],
+                            "end": 157,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 37,
+                                "line": 6,
+                              },
+                              "start": Position {
+                                "column": 13,
+                                "line": 6,
+                              },
+                            },
+                            "range": Array [
+                              133,
+                              157,
+                            ],
+                            "start": 133,
+                            "type": "ArrayExpression",
+                          },
+                        },
+                      ],
+                      "range": Array [
+                        55,
+                        159,
+                      ],
+                      "start": 55,
+                      "type": "ObjectExpression",
+                    },
+                  ],
+                  "callee": Node {
+                    "end": 54,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 10,
+                        "line": 3,
+                      },
+                      "identifierName": "Component",
+                      "start": Position {
+                        "column": 1,
+                        "line": 3,
+                      },
+                    },
+                    "name": "Component",
+                    "range": Array [
+                      45,
+                      54,
+                    ],
+                    "start": 45,
+                    "type": "Identifier",
+                  },
+                  "end": 160,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 2,
+                      "line": 7,
+                    },
+                    "start": Position {
+                      "column": 1,
+                      "line": 3,
+                    },
+                  },
+                  "range": Array [
+                    45,
+                    160,
+                  ],
+                  "start": 45,
+                  "type": "CallExpression",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 2,
+                    "line": 7,
+                  },
+                  "start": Position {
+                    "column": 0,
+                    "line": 3,
+                  },
+                },
+                "range": Array [
+                  44,
+                  160,
+                ],
+                "start": 44,
+                "type": "Decorator",
+              },
+            ],
+            "end": 215,
+            "id": Node {
+              "end": 186,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 25,
+                  "line": 8,
+                },
+                "identifierName": "AppComponent",
+                "start": Position {
+                  "column": 13,
+                  "line": 8,
+                },
+              },
+              "name": "AppComponent",
+              "range": Array [
+                174,
+                186,
+              ],
+              "start": 174,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "line": 10,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 3,
+              },
+            },
+            "range": Array [
+              44,
+              215,
+            ],
+            "start": 44,
+            "superClass": null,
+            "type": "ClassDeclaration",
+          },
+          "end": 215,
+          "exportKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "line": 10,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 8,
+            },
+          },
+          "range": Array [
+            161,
+            215,
+          ],
+          "source": null,
+          "specifiers": Array [],
+          "start": 161,
+          "type": "ExportNamedDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 216,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "line": 11,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "range": Array [
+        0,
+        216,
+      ],
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "range": Array [
+      0,
+      216,
+    ],
+    "start": 0,
+    "type": "File",
   },
 }
 `;
@@ -1125,7 +1526,6 @@ Object {
               "column": 4,
               "line": 11,
             },
-            "filename": "index.html",
             "start": Position {
               "column": 12,
               "line": 9,
@@ -1148,16 +1548,11 @@ Object {
                           "column": 27,
                           "line": 10,
                         },
-                        "filename": "index.html",
                         "start": Position {
                           "column": 14,
                           "line": 10,
                         },
                       },
-                      "range": Array [
-                        16,
-                        29,
-                      ],
                       "start": 221,
                       "type": "StringLiteral",
                       "value": "hello there",
@@ -1170,7 +1565,6 @@ Object {
                         "column": 13,
                         "line": 10,
                       },
-                      "filename": "index.html",
                       "identifierName": "alert",
                       "start": Position {
                         "column": 8,
@@ -1178,10 +1572,6 @@ Object {
                       },
                     },
                     "name": "alert",
-                    "range": Array [
-                      10,
-                      15,
-                    ],
                     "start": 215,
                     "type": "Identifier",
                   },
@@ -1191,16 +1581,11 @@ Object {
                       "column": 28,
                       "line": 10,
                     },
-                    "filename": "index.html",
                     "start": Position {
                       "column": 8,
                       "line": 26,
                     },
                   },
-                  "range": Array [
-                    10,
-                    30,
-                  ],
                   "start": 215,
                   "type": "CallExpression",
                 },
@@ -1209,16 +1594,11 @@ Object {
                     "column": 29,
                     "line": 10,
                   },
-                  "filename": "index.html",
                   "start": Position {
                     "column": 8,
                     "line": 26,
                   },
                 },
-                "range": Array [
-                  10,
-                  31,
-                ],
                 "start": 215,
                 "type": "ExpressionStatement",
               },
@@ -1231,24 +1611,15 @@ Object {
                 "column": 4,
                 "line": 11,
               },
-              "filename": "index.html",
               "start": Position {
                 "column": 12,
                 "line": 9,
               },
             },
-            "range": Array [
-              0,
-              37,
-            ],
             "sourceType": "module",
             "start": 205,
             "type": "Program",
           },
-          "range": Array [
-            0,
-            37,
-          ],
           "start": 0,
           "type": "File",
         },
@@ -1274,7 +1645,6 @@ Object {
               "column": 4,
               "line": 21,
             },
-            "filename": "index.html",
             "start": Position {
               "column": 35,
               "line": 13,
@@ -1307,7 +1677,6 @@ Object {
                                           "column": 23,
                                           "line": 18,
                                         },
-                                        "filename": "index.html",
                                         "identifierName": "n",
                                         "start": Position {
                                           "column": 22,
@@ -1327,7 +1696,6 @@ Object {
                                         "column": 25,
                                         "line": 30,
                                       },
-                                      "filename": "index.html",
                                       "start": Position {
                                         "column": 22,
                                         "line": 30,
@@ -1349,7 +1717,6 @@ Object {
                                           "column": 25,
                                           "line": 30,
                                         },
-                                        "filename": "index.html",
                                         "start": Position {
                                           "column": 24,
                                           "line": 18,
@@ -1374,7 +1741,6 @@ Object {
                                       "column": 21,
                                       "line": 18,
                                     },
-                                    "filename": "index.html",
                                     "identifierName": "f",
                                     "start": Position {
                                       "column": 20,
@@ -1395,7 +1761,6 @@ Object {
                                     "column": 26,
                                     "line": 18,
                                   },
-                                  "filename": "index.html",
                                   "start": Position {
                                     "column": 20,
                                     "line": 42,
@@ -1413,7 +1778,6 @@ Object {
                                   "column": 35,
                                   "line": 30,
                                 },
-                                "filename": "index.html",
                                 "start": Position {
                                   "column": 20,
                                   "line": 42,
@@ -1435,7 +1799,6 @@ Object {
                                           "column": 32,
                                           "line": 18,
                                         },
-                                        "filename": "index.html",
                                         "identifierName": "n",
                                         "start": Position {
                                           "column": 31,
@@ -1455,7 +1818,6 @@ Object {
                                         "column": 34,
                                         "line": 30,
                                       },
-                                      "filename": "index.html",
                                       "start": Position {
                                         "column": 31,
                                         "line": 30,
@@ -1477,7 +1839,6 @@ Object {
                                           "column": 34,
                                           "line": 30,
                                         },
-                                        "filename": "index.html",
                                         "start": Position {
                                           "column": 33,
                                           "line": 18,
@@ -1502,7 +1863,6 @@ Object {
                                       "column": 30,
                                       "line": 18,
                                     },
-                                    "filename": "index.html",
                                     "identifierName": "f",
                                     "start": Position {
                                       "column": 29,
@@ -1523,7 +1883,6 @@ Object {
                                     "column": 35,
                                     "line": 30,
                                   },
-                                  "filename": "index.html",
                                   "start": Position {
                                     "column": 29,
                                     "line": 30,
@@ -1545,7 +1904,6 @@ Object {
                                 "column": 37,
                                 "line": 18,
                               },
-                              "filename": "index.html",
                               "start": Position {
                                 "column": 12,
                                 "line": 18,
@@ -1566,7 +1924,6 @@ Object {
                             "column": 11,
                             "line": 31,
                           },
-                          "filename": "index.html",
                           "start": Position {
                             "column": 17,
                             "line": 17,
@@ -1589,7 +1946,6 @@ Object {
                                   "column": 20,
                                   "line": 16,
                                 },
-                                "filename": "index.html",
                                 "identifierName": "n",
                                 "start": Position {
                                   "column": 19,
@@ -1610,7 +1966,6 @@ Object {
                                 "column": 21,
                                 "line": 16,
                               },
-                              "filename": "index.html",
                               "start": Position {
                                 "column": 12,
                                 "line": 16,
@@ -1631,7 +1986,6 @@ Object {
                             "column": 11,
                             "line": 17,
                           },
-                          "filename": "index.html",
                           "start": Position {
                             "column": 32,
                             "line": 15,
@@ -1650,7 +2004,6 @@ Object {
                           "column": 11,
                           "line": 31,
                         },
-                        "filename": "index.html",
                         "start": Position {
                           "column": 10,
                           "line": 15,
@@ -1672,7 +2025,6 @@ Object {
                                 "column": 15,
                                 "line": 15,
                               },
-                              "filename": "index.html",
                               "identifierName": "n",
                               "start": Position {
                                 "column": 14,
@@ -1692,7 +2044,6 @@ Object {
                               "column": 20,
                               "line": 27,
                             },
-                            "filename": "index.html",
                             "start": Position {
                               "column": 14,
                               "line": 39,
@@ -1714,7 +2065,6 @@ Object {
                                 "column": 20,
                                 "line": 27,
                               },
-                              "filename": "index.html",
                               "start": Position {
                                 "column": 19,
                                 "line": 15,
@@ -1736,7 +2086,6 @@ Object {
                             "column": 30,
                             "line": 39,
                           },
-                          "filename": "index.html",
                           "start": Position {
                             "column": 14,
                             "line": 39,
@@ -1756,7 +2105,6 @@ Object {
                                 "column": 25,
                                 "line": 15,
                               },
-                              "filename": "index.html",
                               "identifierName": "n",
                               "start": Position {
                                 "column": 24,
@@ -1776,7 +2124,6 @@ Object {
                               "column": 30,
                               "line": 39,
                             },
-                            "filename": "index.html",
                             "start": Position {
                               "column": 24,
                               "line": 27,
@@ -1798,7 +2145,6 @@ Object {
                                 "column": 30,
                                 "line": 39,
                               },
-                              "filename": "index.html",
                               "start": Position {
                                 "column": 29,
                                 "line": 15,
@@ -1828,7 +2174,6 @@ Object {
                       "column": 9,
                       "line": 32,
                     },
-                    "filename": "index.html",
                     "start": Position {
                       "column": 32,
                       "line": 14,
@@ -1850,7 +2195,6 @@ Object {
                       "column": 20,
                       "line": 14,
                     },
-                    "filename": "index.html",
                     "identifierName": "fib",
                     "start": Position {
                       "column": 17,
@@ -1870,7 +2214,6 @@ Object {
                     "column": 9,
                     "line": 32,
                   },
-                  "filename": "index.html",
                   "start": Position {
                     "column": 8,
                     "line": 14,
@@ -1884,7 +2227,6 @@ Object {
                         "column": 30,
                         "line": 38,
                       },
-                      "filename": "index.html",
                       "identifierName": "n",
                       "start": Position {
                         "column": 21,
@@ -1905,7 +2247,6 @@ Object {
                           "column": 30,
                           "line": 38,
                         },
-                        "filename": "index.html",
                         "start": Position {
                           "column": 22,
                           "line": 14,
@@ -1924,7 +2265,6 @@ Object {
                             "column": 30,
                             "line": 38,
                           },
-                          "filename": "index.html",
                           "start": Position {
                             "column": 24,
                             "line": 14,
@@ -1956,7 +2296,6 @@ Object {
                 "column": 4,
                 "line": 21,
               },
-              "filename": "index.html",
               "start": Position {
                 "column": 35,
                 "line": 13,
