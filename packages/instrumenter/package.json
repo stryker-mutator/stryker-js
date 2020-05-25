@@ -40,6 +40,7 @@
     "angular-html-parser": "^1.7.0"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.9.4",
     "@stryker-mutator/test-helpers": "^3.2.2",
     "@types/babel__core": "^7.1.7",
     "@types/babel__generator": "^7.6.1",

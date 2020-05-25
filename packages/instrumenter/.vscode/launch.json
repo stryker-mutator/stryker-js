@@ -17,6 +17,8 @@
         "--no-timeout"
       ],
       "env": {
+        // Set CHAI_JEST_SNAPSHOT_UPDATE_ALL variable when you want to update the snapshot files
+        // "CHAI_JEST_SNAPSHOT_UPDATE_ALL": "true"
       }
     }
   ]
