@@ -6,3 +6,4 @@ export * from './KnownKeys';
 export * from './stringUtils';
 export * from './noopLogger';
 export * from './notEmpty';
+export * from './flatMap';

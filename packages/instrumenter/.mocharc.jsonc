@@ -5,7 +5,7 @@
     "dist/test/helpers/setupTests.js"
   ],
   "spec": [
-    "dist/test/integration/**/*.js",
-    "dist/test/unit/**/*.js"
+    "dist/test/unit/**/*.js",
+    "dist/test/integration/**/*.js"
   ]
 }
