@@ -68,7 +68,7 @@ export default {
 ",
         "root": Node {
           "comments": Array [],
-          "end": 303,
+          "end": 490,
           "errors": Array [],
           "loc": SourceLocation {
             "end": Position {
@@ -844,7 +844,7 @@ export default {
             "start": 187,
             "type": "Program",
           },
-          "start": 0,
+          "start": 187,
           "type": "File",
         },
       },
@@ -6034,7 +6034,7 @@ Object {
     ",
         "root": Node {
           "comments": Array [],
-          "end": 35,
+          "end": 232,
           "errors": Array [],
           "loc": SourceLocation {
             "end": Position {
@@ -6135,7 +6135,7 @@ Object {
             "start": 197,
             "type": "Program",
           },
-          "start": 0,
+          "start": 197,
           "type": "File",
         },
       },
@@ -6153,7 +6153,7 @@ Object {
     ",
         "root": Node {
           "comments": Array [],
-          "end": 174,
+          "end": 452,
           "errors": Array [],
           "loc": SourceLocation {
             "end": Position {
@@ -6828,7 +6828,7 @@ Object {
             0,
             174,
           ],
-          "start": 0,
+          "start": 278,
           "type": "File",
         },
       },

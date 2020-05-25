@@ -17,16 +17,6 @@ const resolveTestResource = path.resolve.bind(
 ) as typeof path.resolve;
 
 describe('parser integration', () => {
-  let originalCwd: string;
-
-  beforeEach(() => {
-    originalCwd = process.cwd();
-  });
-
-  afterEach(() => {
-    process.chdir(originalCwd);
-  });
-
   it('should allow to parse html with script tags', async () => {
     const actual = await actAssertHtml('index.html');
     expect(actual.root.scripts).lengthOf(2);

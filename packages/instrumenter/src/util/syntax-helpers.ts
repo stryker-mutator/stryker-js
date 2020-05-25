@@ -105,6 +105,9 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
       offsetNode(path.node);
     },
   });
+  // Don't forget the file itself!
+  file.start! += position;
+  file.end! += position;
 }
 
 // export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>, mutant: Mutant): T {
