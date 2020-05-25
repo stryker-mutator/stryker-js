@@ -11,9 +11,12 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 chai.use(chaiJestSnapshot);
 
+let originalCwd: string;
+
 afterEach(() => {
   sinon.restore();
   testInjector.reset();
+  process.chdir(originalCwd);
 });
 
 before(() => {
@@ -21,6 +24,7 @@ before(() => {
 });
 
 beforeEach(function () {
+  originalCwd = process.cwd();
   chaiJestSnapshot.configureUsingMochaContext(this);
   chaiJestSnapshot.setFilename(this.currentTest!.file!.replace(`${sep}dist`, '') + '.snap');
 });

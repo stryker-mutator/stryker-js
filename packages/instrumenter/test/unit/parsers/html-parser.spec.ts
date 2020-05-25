@@ -78,6 +78,8 @@ describe('html-parser', () => {
         start: { line: 5, column: 12 },
         end: { line: 7, column: 4 },
       });
+      expect(parsed.root.scripts[0].root.start).eq(74);
+      expect(parsed.root.scripts[0].root.end).eq(111);
     });
   });
 
