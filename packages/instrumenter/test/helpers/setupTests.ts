@@ -1,3 +1,5 @@
+import EOL from 'os';
+
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
@@ -20,5 +22,5 @@ before(() => {
 
 beforeEach(function () {
   chaiJestSnapshot.configureUsingMochaContext(this);
-  chaiJestSnapshot.setFilename(this.currentTest!.file!.replace('\\dist', '') + '.snap');
+  chaiJestSnapshot.setFilename(this.currentTest!.file!.replace(`${EOL}dist`, '') + '.snap');
 });
