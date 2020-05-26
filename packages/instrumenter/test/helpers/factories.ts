@@ -1,6 +1,6 @@
-import { parseSync, types } from '@babel/core';
-
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
+
+import { parseTS, parseJS } from './syntax-test-helpers';
 
 export function createHtmlAst(overrides?: Partial<HtmlAst>): HtmlAst {
   return {
@@ -20,7 +20,7 @@ export function createJSAst(overrides?: Partial<JSAst>): JSAst {
     format: AstFormat.JS,
     originFileName: 'example.js',
     rawContent,
-    root: parseSync(rawContent)! as types.File,
+    root: parseJS(rawContent),
     ...overrides,
   };
 }
@@ -32,11 +32,7 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
     format: AstFormat.TS,
     originFileName,
     rawContent,
-    root: parseSync(rawContent, {
-      presets: [require.resolve('@babel/preset-typescript')],
-      filename: originFileName,
-      plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
-    })! as types.File,
+    root: parseTS(rawContent, originFileName),
     ...overrides,
   };
 }
