@@ -1,4 +1,7 @@
+import { types } from '@babel/core';
+
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
+import { Mutant } from '../../src/mutant';
 
 import { parseTS, parseJS } from './syntax-test-helpers';
 
@@ -35,4 +38,14 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
     root: parseTS(rawContent, originFileName),
     ...overrides,
   };
+}
+
+export function createMutant(overrides?: Partial<Mutant>): Mutant {
+  return new Mutant(
+    overrides?.id ?? 1,
+    overrides?.original ?? types.identifier('foo'),
+    overrides?.replacement ?? types.identifier('bar'),
+    overrides?.fileName ?? 'example.js',
+    overrides?.mutatorName ?? 'fooMutator'
+  );
 }

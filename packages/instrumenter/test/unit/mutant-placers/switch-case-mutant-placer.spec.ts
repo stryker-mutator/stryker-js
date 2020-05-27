@@ -22,8 +22,7 @@ describe(switchCaseMutantPlacer.name, () => {
     });
   });
 
-  it('should place mutants in a statement', () => {
-    // Arrange
+  function arrangeSingleMutant() {
     const ast = parseJS('const foo = a + b');
     const statement = findNodePath(ast, (p) => p.isVariableDeclaration());
     const nodeToMutate = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
@@ -34,24 +33,68 @@ describe(switchCaseMutantPlacer.name, () => {
       'file.js',
       'fooMutator'
     );
+    return { statement, mutant, ast };
+  }
+
+  it('should be able to place a mutant in a statement', () => {
+    // Arrange
+    const { statement, mutant, ast } = arrangeSingleMutant();
 
     // Act
     const actual = switchCaseMutantPlacer(statement, [mutant]);
+    const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
     expect(actual).true;
-    expect(normalizeWhitespaces(generate(ast).code)).eq(
+    expect(actualCode).contains(
       normalizeWhitespaces(`{
       switch (__global_69fa48.activeMutant) {
         case 1:
           const foo = bar >>> baz;
           break;
-      default:
-          __global_69fa48.__coverMutant__(1);
-          const foo = a + b;
-           break;
-        }
-      }`)
+          `)
+    );
+  });
+
+  it('should place the original code as default case', () => {
+    const { ast, mutant, statement } = arrangeSingleMutant();
+    switchCaseMutantPlacer(statement, [mutant]);
+    const actualCode = normalizeWhitespaces(generate(ast).code);
+    expect(actualCode).matches(/default:.*const foo = a \+ b;\s*break;/);
+  });
+
+  it('should add mutant coverage syntax', () => {
+    const { ast, mutant, statement } = arrangeSingleMutant();
+    switchCaseMutantPlacer(statement, [mutant]);
+    const actualCode = normalizeWhitespaces(generate(ast).code);
+    expect(actualCode).matches(/default:\s*__global_69fa48\.__coverMutant__\(1\)/);
+  });
+
+  it('should be able to place multiple mutants', () => {
+    // Arrange
+    const ast = parseJS('const foo = a + b');
+    const statement = findNodePath(ast, (p) => p.isVariableDeclaration());
+    const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+    const fooIdentifier = findNodePath<types.Identifier>(ast, (p) => p.isIdentifier());
+    const mutants = [
+      new Mutant(52, binaryExpression.node, types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')), 'file.js', 'fooMutator'),
+      new Mutant(659, fooIdentifier.node, types.identifier('bar'), 'file.js', 'fooMutator'),
+    ];
+
+    // Act
+    switchCaseMutantPlacer(statement, mutants);
+    const actualCode = normalizeWhitespaces(generate(ast).code);
+
+    // Assert
+    expect(actualCode).contains(
+      normalizeWhitespaces(`{
+        switch (__global_69fa48.activeMutant) {
+          case 52:
+            const foo = bar >>> baz;
+            break;
+          case 659:
+            const bar = a + b;
+            break;`)
     );
   });
 });
