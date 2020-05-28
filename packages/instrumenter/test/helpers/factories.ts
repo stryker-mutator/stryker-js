@@ -1,6 +1,9 @@
-import { parseSync, types } from '@babel/core';
+import { types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
+import { Mutant } from '../../src/mutant';
+
+import { parseTS, parseJS } from './syntax-test-helpers';
 
 export function createHtmlAst(overrides?: Partial<HtmlAst>): HtmlAst {
   return {
@@ -20,7 +23,7 @@ export function createJSAst(overrides?: Partial<JSAst>): JSAst {
     format: AstFormat.JS,
     originFileName: 'example.js',
     rawContent,
-    root: parseSync(rawContent)! as types.File,
+    root: parseJS(rawContent),
     ...overrides,
   };
 }
@@ -32,11 +35,17 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
     format: AstFormat.TS,
     originFileName,
     rawContent,
-    root: parseSync(rawContent, {
-      presets: [require.resolve('@babel/preset-typescript')],
-      filename: originFileName,
-      plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
-    })! as types.File,
+    root: parseTS(rawContent, originFileName),
     ...overrides,
   };
+}
+
+export function createMutant(overrides?: Partial<Mutant>): Mutant {
+  return new Mutant(
+    overrides?.id ?? 1,
+    overrides?.original ?? types.identifier('foo'),
+    overrides?.replacement ?? types.identifier('bar'),
+    overrides?.fileName ?? 'example.js',
+    overrides?.mutatorName ?? 'fooMutator'
+  );
 }

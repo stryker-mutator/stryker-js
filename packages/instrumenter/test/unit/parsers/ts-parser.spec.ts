@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { TSAst, AstFormat } from '../../../src/syntax';
 import { parse } from '../../../src/parsers/ts-parser';
-import { expectAst, AstExpectation } from '../../helpers/expect-ast';
+import { expectAst, AstExpectation } from '../../helpers/syntax-test-helpers';
 
 describe('ts-parser', () => {
   it('should be able to parse simple typescript', async () => {

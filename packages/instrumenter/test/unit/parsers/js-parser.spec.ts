@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { parse } from '../../../src/parsers/js-parser';
 import { JSAst, AstFormat } from '../../../src/syntax';
-import { expectAst, AstExpectation } from '../../helpers/expect-ast';
+import { expectAst, AstExpectation } from '../../helpers/syntax-test-helpers';
 
 describe('js-parser', () => {
   it('should be able to parse simple es5', async () => {
