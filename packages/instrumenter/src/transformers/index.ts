@@ -6,6 +6,8 @@ import { MutantCollector } from './mutant-collector';
 import { transformHtml } from './html-transformer';
 import { transformBabel } from './babel-transformer';
 
+export { MutantCollector };
+
 /**
  * Transform the AST by generating mutants and placing them in the AST.
  * Supports all AST formats supported by Stryker.

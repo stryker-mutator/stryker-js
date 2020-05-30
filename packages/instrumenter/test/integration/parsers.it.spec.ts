@@ -1,20 +1,12 @@
 import { promises as fs } from 'fs';
-import * as path from 'path';
+import path from 'path';
 
 import { expect } from 'chai';
 
 import { parse } from '../../src/parsers';
 import { AstFormat, HtmlAst, TSAst, JSAst, Ast } from '../../src/syntax';
 
-const resolveTestResource = path.resolve.bind(
-  path,
-  __dirname,
-  '..' /* integration */,
-  '..' /* test */,
-  '..' /* dist */,
-  'testResources',
-  'parser'
-) as typeof path.resolve;
+const resolveTestResource = path.resolve.bind(path, __dirname, '..' /* integration */, '..' /* test */, '..' /* dist */, 'testResources', 'parser');
 
 describe('parsers integration', () => {
   it('should allow to parse html with script tags', async () => {

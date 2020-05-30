@@ -1,0 +1,369 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration should be able to instrument a lit-html file 1`] = `
+"var __global_69fa48 = function (g) {
+  g.__mutationCoverage__ = g.__mutationCoverage__ || {
+    static: {}
+  };
+
+  g.__coverMutant__ = g.__coverMutant__ || function () {
+    var c = g.__mutationCoverage__.static;
+
+    if (g.__currentTestId__) {
+      c = g.__mutationCoverage__[g.__currentTestId__];
+    }
+
+    var a = arguments;
+
+    for (var i = 0; i < a.length; i++) {
+      c[a[i]] = (c[a[i]] || 0) + 1;
+    }
+  };
+
+  return g;
+}(new Function(\\"return this\\")());
+
+import { LitElement, html, property, customElement, svg } from 'lit-element';
+import { Thresholds } from 'mutation-testing-report-schema';
+import { pathJoin } from '../lib/codeHelpers';
+import { MetricsResult } from 'mutation-testing-metrics';
+import { toAbsoluteUrl } from '../lib/htmlHelpers';
+@customElement('mutation-test-report-totals')
+export class MutationTestReportTotalsComponent extends LitElement {
+  @property()
+  public model: MetricsResult | undefined;
+  @property()
+  public thresholds: Thresholds | undefined;
+  @property()
+  public currentPath: string[] = [];
+  private readonly fileIcon = __global_69fa48.activeMutant === 0 ? svg\`\` : (__global_69fa48.__coverMutant__(0), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
+  private readonly directoryIcon = __global_69fa48.activeMutant === 1 ? svg\`\` : (__global_69fa48.__coverMutant__(1), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
+
+  public render() {
+    switch (__global_69fa48.activeMutant) {
+      case 2:
+        {}
+        break;
+
+      default:
+        __global_69fa48.__coverMutant__(2);
+        {
+          if (__global_69fa48.activeMutant === 4 ? false : __global_69fa48.activeMutant === 3 ? true : (__global_69fa48.__coverMutant__(3, 4), this.model)) {
+            switch (__global_69fa48.activeMutant) {
+              case 5:
+                {}
+                break;
+
+              default:
+                __global_69fa48.__coverMutant__(5);
+                {
+                  return __global_69fa48.activeMutant === 6 ? html\`\` : (__global_69fa48.__coverMutant__(6), html\`
+        <table class=\\"table table-sm table-hover table-bordered table-no-top\\">
+          \${this.renderHead()} \${this.renderTableBody(this.model)}
+        </table>
+      \`);
+                }
+                break;
+            }
+          } else {
+            switch (__global_69fa48.activeMutant) {
+              case 7:
+                {}
+                break;
+
+              default:
+                __global_69fa48.__coverMutant__(7);
+                {
+                  return undefined;
+                }
+                break;
+            }
+          }
+        }
+        break;
+    }
+  }
+
+  private renderHead() {
+    switch (__global_69fa48.activeMutant) {
+      case 8:
+        {}
+        break;
+
+      default:
+        __global_69fa48.__coverMutant__(8);
+        {
+          return __global_69fa48.activeMutant === 9 ? html\`\` : (__global_69fa48.__coverMutant__(9), html\`<thead>
+      <tr>
+        <th colspan=\\"2\\" style=\\"width: 217px\\">
+          <div><span>File / Directory</span></div>
+        </th>
+        <th colspan=\\"2\\">
+          <div><span>Mutation score</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Killed</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Survived</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Timeout</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># No coverage</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Ignored</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Runtime errors</span></div>
+        </th>
+        <th class=\\"rotate text-center\\" style=\\"width: 50px\\">
+          <div><span># Compile errors</span></div>
+        </th>
+        <th class=\\"rotate rotate-width-70 text-center\\" style=\\"width: 70px\\">
+          <div><span>Total detected</span></div>
+        </th>
+        <th class=\\"rotate rotate-width-70 text-center\\" style=\\"width: 70px\\">
+          <div><span>Total undetected</span></div>
+        </th>
+        <th class=\\"rotate rotate-width-70 text-center\\" style=\\"width: 70px\\">
+          <div><span>Total mutants</span></div>
+        </th>
+      </tr>
+    </thead>\`);
+        }
+        break;
+    }
+  }
+
+  private renderTableBody(model: MetricsResult) {
+    switch (__global_69fa48.activeMutant) {
+      case 10:
+        {}
+        break;
+
+      default:
+        __global_69fa48.__coverMutant__(10);
+        {
+          const renderChildren = () => {
+            switch (__global_69fa48.activeMutant) {
+              case 11:
+                {}
+                break;
+
+              default:
+                __global_69fa48.__coverMutant__(11);
+                {
+                  if (__global_69fa48.activeMutant === 13 ? false : __global_69fa48.activeMutant === 12 ? true : (__global_69fa48.__coverMutant__(12, 13), model.file)) {
+                    switch (__global_69fa48.activeMutant) {
+                      case 14:
+                        {}
+                        break;
+
+                      default:
+                        __global_69fa48.__coverMutant__(14);
+                        {
+                          return undefined;
+                        }
+                        break;
+                    }
+                  } else {
+                    switch (__global_69fa48.activeMutant) {
+                      case 15:
+                        {}
+                        break;
+
+                      default:
+                        __global_69fa48.__coverMutant__(15);
+                        {
+                          return model.childResults.map(childResult => {
+                            switch (__global_69fa48.activeMutant) {
+                              case 16:
+                                {}
+                                break;
+
+                              default:
+                                __global_69fa48.__coverMutant__(16);
+                                {
+                                  let fullName: string = childResult.name;
+
+                                  while (__global_69fa48.activeMutant === 17 ? false : (__global_69fa48.__coverMutant__(17), !childResult.file && (__global_69fa48.activeMutant === 19 ? false : __global_69fa48.activeMutant === 18 ? true : (__global_69fa48.__coverMutant__(18, 19), childResult.childResults.length === 1)))) {
+                                    switch (__global_69fa48.activeMutant) {
+                                      case 20:
+                                        {}
+                                        break;
+
+                                      default:
+                                        __global_69fa48.__coverMutant__(20);
+                                        {
+                                          childResult = childResult.childResults[0];
+                                          fullName = pathJoin(fullName, childResult.name);
+                                        }
+                                        break;
+                                    }
+                                  }
+
+                                  return this.renderRow(fullName, childResult, pathJoin(...this.currentPath, fullName));
+                                }
+                                break;
+                            }
+                          });
+                        }
+                        break;
+                    }
+                  }
+                }
+                break;
+            }
+          };
+
+          return __global_69fa48.activeMutant === 21 ? html\`\` : (__global_69fa48.__coverMutant__(21), html\`
+      <tbody>
+        \${this.renderRow(model.name, model, undefined)} \${renderChildren()}
+      </tbody>
+    \`);
+        }
+        break;
+    }
+  }
+
+  private renderRow(name: string, row: MetricsResult, path: string | undefined) {
+    switch (__global_69fa48.activeMutant) {
+      case 22:
+        {}
+        break;
+
+      default:
+        __global_69fa48.__coverMutant__(22);
+        {
+          const {
+            mutationScore
+          } = row.metrics;
+          const scoreIsPresent = !isNaN(mutationScore);
+          const coloringClass = this.determineColoringClass(mutationScore);
+          const mutationScoreRounded = mutationScore.toFixed(2);
+          const progressBarStyle = __global_69fa48.activeMutant === 23 ? \`\` : (__global_69fa48.__coverMutant__(23), \`width: \${mutationScore}%\`);
+          return __global_69fa48.activeMutant === 24 ? html\`\` : (__global_69fa48.__coverMutant__(24), html\` <tr title=\\"\${row.name}\\">
+      <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\"
+        >\${row.file ? this.fileIcon : this.directoryIcon}</td
+      >
+      <td width=\\"\\" class=\\"no-border-left\\"
+        >\${(__global_69fa48.activeMutant === 26 ? false : __global_69fa48.activeMutant === 25 ? true : (__global_69fa48.__coverMutant__(25, 26), typeof path === (__global_69fa48.activeMutant === 27 ? \\"\\" : (__global_69fa48.__coverMutant__(27), 'string')))) ? __global_69fa48.activeMutant === 28 ? html\`\` : (__global_69fa48.__coverMutant__(28), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : __global_69fa48.activeMutant === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\`<span>\${row.name}</span>\`)}</td
+      >
+      <td class=\\"no-border-right vertical-middle\\">
+        \${scoreIsPresent ? __global_69fa48.activeMutant === 30 ? html\`\` : (__global_69fa48.__coverMutant__(30), html\` <div class=\\"progress\\">
+              <div
+                class=\\"progress-bar bg-\${coloringClass}\\"
+                role=\\"progressbar\\"
+                aria-valuenow=\\"\${mutationScoreRounded}\\"
+                aria-valuemin=\\"0\\"
+                aria-valuemax=\\"100\\"
+                style=\\"\${progressBarStyle}\\"
+              >
+                \${mutationScoreRounded}%
+              </div>
+            </div>\`) : __global_69fa48.activeMutant === 31 ? html\`\` : (__global_69fa48.__coverMutant__(31), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
+      </td>
+      <td style=\\"width: 50px;\\" class=\\"no-border-left font-weight-bold text-center text-\${coloringClass}\\">
+        \${scoreIsPresent ? mutationScoreRounded : undefined}
+      </td>
+      <td class=\\"text-center\\">\${row.metrics.killed}</td>
+      <td class=\\"text-center\\">\${row.metrics.survived}</td>
+      <td class=\\"text-center\\">\${row.metrics.timeout}</td>
+      <td class=\\"text-center\\">\${row.metrics.noCoverage}</td>
+      <td class=\\"text-center\\">\${row.metrics.ignored}</td>
+      <td class=\\"text-center\\">\${row.metrics.runtimeErrors}</td>
+      <td class=\\"text-center\\">\${row.metrics.compileErrors}</td>
+      <th class=\\"text-center\\">\${row.metrics.totalDetected}</th>
+      <th class=\\"text-center\\">\${row.metrics.totalUndetected}</th>
+      <th class=\\"text-center\\">\${row.metrics.totalMutants}</th>
+    </tr>\`);
+        }
+        break;
+    }
+  }
+
+  private determineColoringClass(mutationScore: number) {
+    switch (__global_69fa48.activeMutant) {
+      case 32:
+        {}
+        break;
+
+      default:
+        __global_69fa48.__coverMutant__(32);
+        {
+          if (__global_69fa48.activeMutant === 34 ? false : __global_69fa48.activeMutant === 33 ? true : (__global_69fa48.__coverMutant__(33, 34), !isNaN(mutationScore) && this.thresholds)) {
+            switch (__global_69fa48.activeMutant) {
+              case 35:
+                {}
+                break;
+
+              default:
+                __global_69fa48.__coverMutant__(35);
+                {
+                  if (__global_69fa48.activeMutant === 37 ? false : __global_69fa48.activeMutant === 36 ? true : (__global_69fa48.__coverMutant__(36, 37), mutationScore < this.thresholds.low)) {
+                    switch (__global_69fa48.activeMutant) {
+                      case 38:
+                        {}
+                        break;
+
+                      default:
+                        __global_69fa48.__coverMutant__(38);
+                        {
+                          return __global_69fa48.activeMutant === 39 ? \\"\\" : (__global_69fa48.__coverMutant__(39), 'danger');
+                        }
+                        break;
+                    }
+                  } else if (__global_69fa48.activeMutant === 41 ? false : __global_69fa48.activeMutant === 40 ? true : (__global_69fa48.__coverMutant__(40, 41), mutationScore < this.thresholds.high)) {
+                    switch (__global_69fa48.activeMutant) {
+                      case 42:
+                        {}
+                        break;
+
+                      default:
+                        __global_69fa48.__coverMutant__(42);
+                        {
+                          return __global_69fa48.activeMutant === 43 ? \\"\\" : (__global_69fa48.__coverMutant__(43), 'warning');
+                        }
+                        break;
+                    }
+                  } else {
+                    switch (__global_69fa48.activeMutant) {
+                      case 44:
+                        {}
+                        break;
+
+                      default:
+                        __global_69fa48.__coverMutant__(44);
+                        {
+                          return __global_69fa48.activeMutant === 45 ? \\"\\" : (__global_69fa48.__coverMutant__(45), 'success');
+                        }
+                        break;
+                    }
+                  }
+                }
+                break;
+            }
+          } else {
+            switch (__global_69fa48.activeMutant) {
+              case 46:
+                {}
+                break;
+
+              default:
+                __global_69fa48.__coverMutant__(46);
+                {
+                  return __global_69fa48.activeMutant === 47 ? \\"\\" : (__global_69fa48.__coverMutant__(47), 'default');
+                }
+                break;
+            }
+          }
+        }
+        break;
+    }
+  }
+
+}"
+`;
