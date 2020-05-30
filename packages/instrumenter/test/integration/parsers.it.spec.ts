@@ -16,7 +16,7 @@ const resolveTestResource = path.resolve.bind(
   'parser'
 ) as typeof path.resolve;
 
-describe('parser integration', () => {
+describe('parsers integration', () => {
   it('should allow to parse html with script tags', async () => {
     const actual = await actAssertHtml('index.html');
     expect(actual.root.scripts).lengthOf(2);
