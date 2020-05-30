@@ -144,18 +144,18 @@ export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpr
   return types.sequenceExpression(sequence);
 }
 
-// export function isTypeAnnotation(path: NodePath): boolean {
-//   return (
-//     path.isInterfaceDeclaration() ||
-//     path.isTypeAnnotation() ||
-//     types.isTSInterfaceDeclaration(path.node) ||
-//     types.isTSTypeAnnotation(path.node) ||
-//     types.isTSTypeAliasDeclaration(path.node) ||
-//     types.isTSModuleDeclaration(path.node) ||
-//     types.isTSEnumDeclaration(path.node)
-//   );
-// }
+export function isTypeAnnotation(path: NodePath): boolean {
+  return (
+    path.isInterfaceDeclaration() ||
+    path.isTypeAnnotation() ||
+    types.isTSInterfaceDeclaration(path.node) ||
+    types.isTSTypeAnnotation(path.node) ||
+    types.isTSTypeAliasDeclaration(path.node) ||
+    types.isTSModuleDeclaration(path.node) ||
+    types.isTSEnumDeclaration(path.node)
+  );
+}
 
-// export function isImportDeclaration(path: NodePath): boolean {
-//   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
-// }
+export function isImportDeclaration(path: NodePath): boolean {
+  return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
+}

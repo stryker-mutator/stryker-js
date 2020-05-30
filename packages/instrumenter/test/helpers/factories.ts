@@ -1,7 +1,7 @@
 import { types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
-import { Mutant } from '../../src/mutant';
+import { Mutant, NamedNodeMutation } from '../../src/mutant';
 
 import { parseTS, parseJS } from './syntax-test-helpers';
 
@@ -48,4 +48,12 @@ export function createMutant(overrides?: Partial<Mutant>): Mutant {
     overrides?.fileName ?? 'example.js',
     overrides?.mutatorName ?? 'fooMutator'
   );
+}
+
+export function createNamedNodeMutation(overrides?: Partial<NamedNodeMutation>): NamedNodeMutation {
+  return {
+    mutatorName: 'fooMutator',
+    original: types.identifier('foo'),
+    replacement: types.identifier('bar'),
+  };
 }
