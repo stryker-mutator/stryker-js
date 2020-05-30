@@ -1,3 +1,5 @@
+import { I } from '@stryker-mutator/util';
+
 import { AstFormat, AstByFormat, Ast } from '../syntax';
 
 import { MutantCollector } from './mutant-collector';
@@ -10,7 +12,7 @@ import { transformBabel } from './babel-transformer';
  * @param ast The Abstract Syntax Tree
  * @param mutantCollector the mutant collector that will be used to register and administer mutants
  */
-export function transform(ast: Ast, mutantCollector: MutantCollector): void {
+export function transform(ast: Ast, mutantCollector: I<MutantCollector>): void {
   const context: TransformerContext = {
     transform,
   };
@@ -25,8 +27,8 @@ export function transform(ast: Ast, mutantCollector: MutantCollector): void {
   }
 }
 
-export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCollector: MutantCollector, context: TransformerContext) => void;
+export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCollector: I<MutantCollector>, context: TransformerContext) => void;
 
-interface TransformerContext {
+export interface TransformerContext {
   transform: AstTransformer<AstFormat>;
 }
