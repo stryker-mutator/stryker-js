@@ -1,0 +1,11 @@
+**/*
+!*.d.ts
+!bin/**
+!src/**
+src/**/*.map
+src/**/*.ts
+!schema/*.json
+!src/**/*.d.ts
+!readme.md
+!LICENSE
+!CHANGELOG.md
