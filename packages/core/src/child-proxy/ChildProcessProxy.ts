@@ -3,14 +3,13 @@ import * as os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { OptionsContext } from '@stryker-mutator/api/plugin';
-import { isErrnoException } from '@stryker-mutator/util';
+import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import LoggingClientContext from '../logging/LoggingClientContext';
 import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
 import StringBuilder from '../utils/StringBuilder';
-import { ExpirableTask, Task } from '../utils/Task';
 
 import ChildProcessCrashedError from './ChildProcessCrashedError';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';

@@ -11,6 +11,7 @@ import { expect } from 'chai';
 import { from } from 'rxjs';
 import { toArray } from 'rxjs/operators';
 import * as sinon from 'sinon';
+import { Task } from '@stryker-mutator/util';
 
 import { coreTokens } from '../../src/di';
 import LoggingClientContext from '../../src/logging/LoggingClientContext';
@@ -18,7 +19,6 @@ import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
 import Sandbox from '../../src/Sandbox';
 import { SandboxPool } from '../../src/SandboxPool';
 import TranspiledMutant from '../../src/TranspiledMutant';
-import { Task } from '../../src/utils/Task';
 import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 import { Mock, mock, transpiledMutant } from '../helpers/producers';
 

@@ -1,10 +1,10 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { RunOptions, RunResult, TestRunner } from '@stryker-mutator/api/test_runner';
+import { ExpirableTask } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
 import LoggingClientContext from '../logging/LoggingClientContext';
-import { timeout } from '../utils/objectUtils';
 
 import { ChildProcessTestRunnerWorker } from './ChildProcessTestRunnerWorker';
 
@@ -36,7 +36,7 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-    await timeout(
+    await ExpirableTask.timeout(
       // First let the inner test runner dispose
       this.worker.proxy.dispose().catch((error) => {
         // It's OK if the child process is already down.
