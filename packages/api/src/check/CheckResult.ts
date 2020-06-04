@@ -1,4 +1,4 @@
-import MutantStatus from '../report/MutantStatus';
+import { MutantStatus } from './MutantStatus';
 
 export interface CheckResult {
   reason?: string;
