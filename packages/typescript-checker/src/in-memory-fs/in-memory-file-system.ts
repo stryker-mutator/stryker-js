@@ -11,6 +11,15 @@ export class InMemoryFileSystem {
   private readonly files = new Map<string, ScriptFile | undefined>();
   private mutatedFile: ScriptFile | undefined;
 
+  public writeFile(fileName: string, data: string) {
+    const existingFile = this.files.get(fileName);
+    if (existingFile) {
+      existingFile.write(data);
+    } else {
+      this.files.set(fileName, new ScriptFile(data, fileName));
+    }
+  }
+
   public mutate(mutant: Mutant) {
     const fileName = toTSFileName(mutant.fileName);
     const file = this.files.get(fileName);

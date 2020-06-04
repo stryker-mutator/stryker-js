@@ -5,11 +5,14 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "module": "commonjs",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
 
     // These settings should be overridden by the typescript checker
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    
+
     "types": []
   }
 }

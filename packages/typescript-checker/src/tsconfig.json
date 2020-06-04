@@ -1,13 +1,14 @@
 {
   "extends": "../../../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "../dist/src",
-    "rootDir": ".",
+    "outDir": "../dist",
+    "rootDir": "..",
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "noImplicitThis": true,
     "types": [
       "node"
-    ]
+    ],
   },
   "references": [
     {
@@ -16,5 +17,6 @@
     {
       "path": "../../util/tsconfig.src.json"
     }
-  ]
+  ],
+  "include": ["**/*.ts", "../src-generated/**/*.ts"]
 }

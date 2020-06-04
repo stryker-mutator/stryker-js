@@ -8,6 +8,7 @@ import { Range } from '@stryker-mutator/api/core';
 import { CheckResult, MutantStatus } from '@stryker-mutator/api/check';
 
 import { TypescriptChecker } from '../../src';
+import { createTypescriptOptions } from '../helpers/factories';
 
 const resolveTestResource = (path.resolve.bind(
   path,
@@ -15,40 +16,22 @@ const resolveTestResource = (path.resolve.bind(
   '..' /* integration */,
   '..' /* test */,
   '..' /* dist */,
-  'testResources'
+  'testResources',
+  'single-project'
 ) as unknown) as typeof path.resolve;
 
-describe('Typescript checker on a simple project', () => {
+describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
-  const fileContents = Object.freeze({
-    ['todo.ts']: fs.readFileSync(resolveTestResource('simple-project', 'todo.ts'), 'utf8'),
-    ['todo.spec.ts']: fs.readFileSync(resolveTestResource('simple-project', 'todo.spec.ts'), 'utf8'),
-    ['not-type-checked.js']: fs.readFileSync(resolveTestResource('simple-project', 'not-type-checked.js'), 'utf8'),
-  });
-
-  function createMutant(
-    fileName: 'todo.ts' | 'todo.spec.ts' | 'not-type-checked.js',
-    findText: string,
-    replacement: string,
-    offset: number = 0
-  ): Mutant {
-    const originalOffset: number = fileContents[fileName].indexOf(findText);
-    if (originalOffset === -1) {
-      throw new Error(`Cannot find ${findText} in ${fileName}`);
-    }
-    const range: Range = [originalOffset + offset, originalOffset + findText.length];
-    return {
-      fileName: resolveTestResource('simple-project', fileName),
-      mutatorName: 'foo-mutator',
-      range,
-      replacement,
-    };
-  }
 
   beforeEach(() => {
-    process.chdir(resolveTestResource('simple-project'));
+    process.chdir(resolveTestResource());
+    testInjector.options.typescriptChecker = createTypescriptOptions();
     sut = testInjector.injector.injectClass(TypescriptChecker);
     return sut.initialize();
+  });
+
+  it('should not write output to disk', () => {
+    expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
   });
 
   it('should be able to validate a mutant that does not result in an error', async () => {
@@ -121,3 +104,28 @@ describe('Typescript checker on a simple project', () => {
     expect(actual).deep.eq(expectedResult);
   });
 });
+
+const fileContents = Object.freeze({
+  ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
+  ['todo.spec.ts']: fs.readFileSync(resolveTestResource('src', 'todo.spec.ts'), 'utf8'),
+  ['not-type-checked.js']: fs.readFileSync(resolveTestResource('src', 'not-type-checked.js'), 'utf8'),
+});
+
+function createMutant(
+  fileName: 'todo.ts' | 'todo.spec.ts' | 'not-type-checked.js',
+  findText: string,
+  replacement: string,
+  offset: number = 0
+): Mutant {
+  const originalOffset: number = fileContents[fileName].indexOf(findText);
+  if (originalOffset === -1) {
+    throw new Error(`Cannot find ${findText} in ${fileName}`);
+  }
+  const range: Range = [originalOffset + offset, originalOffset + findText.length];
+  return {
+    fileName: resolveTestResource('src', fileName),
+    mutatorName: 'foo-mutator',
+    range,
+    replacement,
+  };
+}
