@@ -1,7 +1,6 @@
 import { RunOptions, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
 import { getLogger } from 'log4js';
-
-import { timeout, TimeoutExpired } from '../utils/objectUtils';
+import { ExpirableTask } from '@stryker-mutator/util';
 
 import TestRunnerDecorator from './TestRunnerDecorator';
 
@@ -13,8 +12,8 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
 
   public async run(options: RunOptions): Promise<RunResult> {
     this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
-    const result = await timeout(super.run(options), options.timeout);
-    if (result === TimeoutExpired) {
+    const result = await ExpirableTask.timeout(super.run(options), options.timeout);
+    if (result === ExpirableTask.TimeoutExpired) {
       return this.handleTimeout();
     } else {
       return result;

@@ -64,23 +64,6 @@ export function kill(pid: number): Promise<void> {
   });
 }
 
-export const TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
-export function timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof TimeoutExpired> {
-  const sleep = new Promise<T | typeof TimeoutExpired>((res, rej) => {
-    const timer = setTimeout(() => res(TimeoutExpired), ms);
-    promise
-      .then((result) => {
-        clearTimeout(timer);
-        res(result);
-      })
-      .catch((error) => {
-        clearTimeout(timer);
-        rej(error);
-      });
-  });
-  return sleep;
-}
-
 export function padLeft(input: string): string {
   return input
     .split('\n')
