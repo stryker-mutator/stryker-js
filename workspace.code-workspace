@@ -57,6 +57,10 @@
       "path": "packages/typescript"
     },
     {
+      "name": "typescript-checker",
+      "path": "packages/typescript-checker"
+    },
+    {
       "name": "vue-mutator",
       "path": "packages/vue-mutator"
     },

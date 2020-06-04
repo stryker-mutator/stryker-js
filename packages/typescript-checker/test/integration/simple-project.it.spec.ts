@@ -5,8 +5,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { Range } from '@stryker-mutator/api/core';
-import { CheckResult } from '@stryker-mutator/api/check';
-import { MutantStatus } from '@stryker-mutator/api/report';
+import { CheckResult, MutantStatus } from '@stryker-mutator/api/check';
 
 import { TypescriptChecker } from '../../src';
 
@@ -19,14 +18,20 @@ const resolveTestResource = (path.resolve.bind(
   'testResources'
 ) as unknown) as typeof path.resolve;
 
-describe('simple project', () => {
+describe('Typescript checker on a simple project', () => {
   let sut: TypescriptChecker;
   const fileContents = Object.freeze({
     ['todo.ts']: fs.readFileSync(resolveTestResource('simple-project', 'todo.ts'), 'utf8'),
     ['todo.spec.ts']: fs.readFileSync(resolveTestResource('simple-project', 'todo.spec.ts'), 'utf8'),
+    ['not-type-checked.js']: fs.readFileSync(resolveTestResource('simple-project', 'not-type-checked.js'), 'utf8'),
   });
 
-  function createMutant(fileName: 'todo.ts' | 'todo.spec.ts', findText: string, replacement: string, offset: number = 0): Mutant {
+  function createMutant(
+    fileName: 'todo.ts' | 'todo.spec.ts' | 'not-type-checked.js',
+    findText: string,
+    replacement: string,
+    offset: number = 0
+  ): Mutant {
     const originalOffset: number = fileContents[fileName].indexOf(findText);
     if (originalOffset === -1) {
       throw new Error(`Cannot find ${findText} in ${fileName}`);
@@ -41,15 +46,15 @@ describe('simple project', () => {
   }
 
   beforeEach(() => {
-    sut = testInjector.injector.injectClass(TypescriptChecker);
     process.chdir(resolveTestResource('simple-project'));
+    sut = testInjector.injector.injectClass(TypescriptChecker);
     return sut.initialize();
   });
 
   it('should be able to validate a mutant that does not result in an error', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
     const expectedResult: CheckResult = {
-      mutantResult: MutantStatus.Survived,
+      result: MutantStatus.Init,
     };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);
@@ -58,7 +63,7 @@ describe('simple project', () => {
   it('should be able invalidate a mutant that does result in a compile error', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
     const actual = await sut.check(mutant);
-    expect(actual.mutantResult).deep.eq(MutantStatus.TranspileError);
+    expect(actual.result).deep.eq(MutantStatus.CompileError);
     expect(actual.reason).has.string('todo.ts(15,9): error TS2322');
   });
 
@@ -67,7 +72,7 @@ describe('simple project', () => {
     const mutantCompileError = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
     const mutantWithoutError = createMutant('todo.ts', 'return TodoList.allTodos', '[]', 7);
     const expectedResult: CheckResult = {
-      mutantResult: MutantStatus.Survived,
+      result: MutantStatus.Init,
     };
 
     // Act
@@ -80,7 +85,7 @@ describe('simple project', () => {
 
   it('should be able to invalidate a mutant that results in an error in a different file', async () => {
     const result = await sut.check(createMutant('todo.ts', 'return totalCount;', ''));
-    expect(result.mutantResult).eq(MutantStatus.TranspileError);
+    expect(result.result).eq(MutantStatus.CompileError);
     expect(result.reason).has.string('todo.spec.ts(4,7): error TS2322');
   });
 
@@ -91,8 +96,28 @@ describe('simple project', () => {
 
     // Assert
     const expectedResult: CheckResult = {
-      mutantResult: MutantStatus.Survived,
+      result: MutantStatus.Init,
     };
     expect(result).deep.eq(expectedResult);
+  });
+
+  it('should be allow mutations in unrelated files', async () => {
+    // Act
+    const result = await sut.check(createMutant('not-type-checked.js', 'bar', 'baz'));
+
+    // Assert
+    const expectedResult: CheckResult = {
+      result: MutantStatus.Init,
+    };
+    expect(result).deep.eq(expectedResult);
+  });
+
+  it('should allow unused local variables (override options)', async () => {
+    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+    const expectedResult: CheckResult = {
+      result: MutantStatus.Init,
+    };
+    const actual = await sut.check(mutant);
+    expect(actual).deep.eq(expectedResult);
   });
 });

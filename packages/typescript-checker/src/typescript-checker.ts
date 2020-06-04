@@ -1,11 +1,11 @@
 import { EOL } from 'os';
+import { resolve } from 'path';
 
 import ts from 'typescript';
-import { Checker, CheckResult } from '@stryker-mutator/api/check';
+import { Checker, CheckResult, MutantStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
-import MutantStatus from '@stryker-mutator/api/src/report/MutantStatus';
 
 import { InMemoryFileSystem } from './in-memory-file-system';
 
@@ -47,14 +47,22 @@ const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getNewLine: () => EOL,
 };
 
+// Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
+// See https://github.com/stryker-mutator/stryker/issues/391 for more info
+const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
+  allowUnreachableCode: true,
+  noUnusedLocals: false,
+  noUnusedParameters: false,
+});
+
 export class TypescriptChecker implements Checker {
   private readonly fs = new InMemoryFileSystem();
   private currentTask: Task<CheckResult>;
   private readonly currentErrors: ts.Diagnostic[] = [];
+  private readonly tsconfigFiles: string[] = [resolve('tsconfig.json')];
 
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly logger: Logger) {}
-
   public async initialize(): Promise<void> {
     this.currentTask = new Task();
     const compiler = ts.createSolutionBuilderWithWatch(
@@ -62,7 +70,11 @@ export class TypescriptChecker implements Checker {
         {
           ...ts.sys,
           readFile: (fileName) => {
-            return this.fs.getFile(fileName)?.content;
+            const content = this.fs.getFile(fileName)?.content;
+            if (content && this.tsconfigFiles.includes(resolve(fileName))) {
+              return this.postProcessTSConfig(fileName, content);
+            }
+            return content;
           },
           watchFile: (path: string, callback: ts.FileWatcherCallback) => {
             this.fs.getFile(path)!.watcher = callback;
@@ -95,8 +107,24 @@ export class TypescriptChecker implements Checker {
     );
     compiler.build();
     const result = await this.currentTask.promise;
-    if (result.mutantResult === MutantStatus.TranspileError) {
+    if (result.result === MutantStatus.CompileError) {
       throw new Error(`Type error in initial compilation: ${result.reason}`);
+    }
+  }
+
+  private postProcessTSConfig(fileName: string, content: string) {
+    const parsed = ts.parseConfigFileTextToJson(fileName, content);
+    if (parsed.error) {
+      return content; // let the ts compiler deal with this error
+    } else {
+      const config = {
+        ...parsed.config,
+        compilerOptions: {
+          ...parsed.config?.compilerOptions,
+          ...COMPILER_OPTIONS_OVERRIDES,
+        },
+      };
+      return JSON.stringify(config);
     }
   }
 
@@ -108,17 +136,24 @@ export class TypescriptChecker implements Checker {
         getNewLine: () => EOL,
       });
       this.currentTask.resolve({
-        mutantResult: MutantStatus.TranspileError,
+        result: MutantStatus.CompileError,
         reason: errorText,
       });
     }
-    this.currentTask.resolve({ mutantResult: MutantStatus.Survived });
+    this.currentTask.resolve({ result: MutantStatus.Init });
   }
 
   public async check(mutant: Mutant): Promise<CheckResult> {
-    this.clear();
-    this.fs.mutate(mutant);
-    return this.currentTask.promise;
+    if (this.fs.existsInMemory(mutant.fileName)) {
+      this.clear();
+      this.fs.mutate(mutant);
+      return this.currentTask.promise;
+    } else {
+      // We allow people to mutate files that are not included in this ts project
+      return {
+        result: MutantStatus.Init,
+      };
+    }
   }
 
   /**

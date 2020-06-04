@@ -3,20 +3,24 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 
 import { ScriptFile } from './script-file';
 
+function toTSFileName(fileName: string) {
+  return fileName.replace(/\\/g, '/');
+}
+
 export class InMemoryFileSystem {
   private readonly files = new Map<string, ScriptFile | undefined>();
   private mutatedFile: ScriptFile | undefined;
 
   public mutate(mutant: Mutant) {
-    const tsFileName = mutant.fileName.replace(/\\/g, '/');
-    const file = this.files.get(tsFileName);
+    const fileName = toTSFileName(mutant.fileName);
+    const file = this.files.get(fileName);
     if (!file) {
       throw new Error(`File "${mutant.fileName}" cannot be found.`);
     }
     if (this.mutatedFile && this.mutatedFile !== file) {
       this.mutatedFile.reset();
     }
-  file.mutate(mutant);
+    file.mutate(mutant);
     this.mutatedFile = file;
   }
 
@@ -39,5 +43,9 @@ export class InMemoryFileSystem {
       }
     }
     return this.files.get(fileName);
+  }
+
+  public existsInMemory(fileName: string): boolean {
+    return this.files.has(toTSFileName(fileName));
   }
 }

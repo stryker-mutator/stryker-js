@@ -14,7 +14,7 @@ var TodoList = /** @class */ (function () {
     }
     TodoList.prototype.createTodoItem = function (name, description) {
         var newItem = new Todo(name, description, false);
-        var totalCount = TodoList.allTodos.push(newItem);
+        var totalCount = 42;
         return totalCount;
     };
     TodoList.prototype.allTodoItems = function () {
