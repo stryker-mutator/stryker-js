@@ -86,7 +86,7 @@ export class TypescriptChecker implements Checker {
           summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE && this.resolveCheckResult();
         }
       ),
-      ['tsconfig.json'],
+      [this.rootTSConfigFile],
       {}
     );
     compiler.build();
