@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { HybridFileSystem } from '../../../src/fs';
 
 describe('fs', () => {
-  describe.only(HybridFileSystem.name, () => {
+  describe(HybridFileSystem.name, () => {
     class Helper {
       public readFileStub = sinon.stub(ts.sys, 'readFile');
       public getModifiedTimeStub = sinon.stub(ts.sys, 'getModifiedTime');
