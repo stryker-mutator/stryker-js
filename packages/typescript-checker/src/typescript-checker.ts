@@ -9,7 +9,7 @@ import { Mutant } from '@stryker-mutator/api/mutant';
 import { Task } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { InMemoryFileSystem } from './in-memory-fs';
+import { HybridFileSystem } from './fs';
 import { TypescriptCheckerWithStrykerOptions } from './typescript-checker-with-stryker-options';
 import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects } from './tsconfig-helpers';
 
@@ -25,7 +25,7 @@ const FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE = 6032;
  * An in-memory type checker implementation which validates type errors of mutants.
  */
 export class TypescriptChecker implements Checker {
-  private readonly fs = new InMemoryFileSystem();
+  private readonly fs = new HybridFileSystem();
   private currentTask: Task<CheckResult>;
   private readonly currentErrors: ts.Diagnostic[] = [];
   private readonly tsconfigFiles: Set<string> = new Set([path.resolve('tsconfig.json')]);

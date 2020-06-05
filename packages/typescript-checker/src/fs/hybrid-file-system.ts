@@ -7,11 +7,19 @@ function toTSFileName(fileName: string) {
   return fileName.replace(/\\/g, '/');
 }
 
-export class InMemoryFileSystem {
+/**
+ * A very simple hybrid file system.
+ * * Readonly from disk
+ * * Writes in-memory
+ * * Hard caching
+ * * Ability to mutate one file
+ */
+export class HybridFileSystem {
   private readonly files = new Map<string, ScriptFile | undefined>();
   private mutatedFile: ScriptFile | undefined;
 
   public writeFile(fileName: string, data: string) {
+    fileName = toTSFileName(fileName);
     const existingFile = this.files.get(fileName);
     if (existingFile) {
       existingFile.write(data);
@@ -20,20 +28,20 @@ export class InMemoryFileSystem {
     }
   }
 
-  public mutate(mutant: Mutant) {
+  public mutate(mutant: Pick<Mutant, 'fileName' | 'range' | 'replacement'>) {
     const fileName = toTSFileName(mutant.fileName);
     const file = this.files.get(fileName);
     if (!file) {
       throw new Error(`File "${mutant.fileName}" cannot be found.`);
     }
     if (this.mutatedFile && this.mutatedFile !== file) {
-      this.mutatedFile.reset();
+      this.mutatedFile.resetMutant();
     }
     file.mutate(mutant);
     this.mutatedFile = file;
   }
 
-  public addFileSystemWatcher(fileName: string, watcher: ts.FileWatcherCallback) {
+  public watchFile(fileName: string, watcher: ts.FileWatcherCallback) {
     const file = this.getFile(fileName);
     if (!file) {
       throw new Error(`Cannot find file ${fileName} for watching`);
@@ -42,6 +50,7 @@ export class InMemoryFileSystem {
   }
 
   public getFile(fileName: string): ScriptFile | undefined {
+    fileName = toTSFileName(fileName);
     if (!this.files.has(fileName)) {
       let content = ts.sys.readFile(fileName);
       if (content) {
@@ -55,6 +64,6 @@ export class InMemoryFileSystem {
   }
 
   public existsInMemory(fileName: string): boolean {
-    return this.files.has(toTSFileName(fileName));
+    return !!this.files.get(toTSFileName(fileName));
   }
 }
