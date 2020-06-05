@@ -32,7 +32,7 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
 export function determineBuildModeEnabled(tsconfigFileName: string) {
   const tsconfigFile = ts.sys.readFile(tsconfigFileName);
   if (!tsconfigFile) {
-    throw new Error(`${tsconfigFileName} not found!`);
+    throw new Error(`File "${tsconfigFileName}" not found!`);
   }
   const useProjectReferences = 'references' in ts.parseConfigFileTextToJson(tsconfigFileName, tsconfigFile).config;
   return useProjectReferences;
