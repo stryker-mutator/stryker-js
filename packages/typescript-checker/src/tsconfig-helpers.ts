@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 
 import ts from 'typescript';
+import semver from 'semver';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info
@@ -24,6 +25,12 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
   noEmit: false,
   declarationMap: false,
 });
+
+export function guardTSVersion() {
+  if (!semver.satisfies(ts.version, '>=3.6')) {
+    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
+  }
+}
 
 /**
  * Determines whether or not to use `--build` mode based on "references" being there in the config file

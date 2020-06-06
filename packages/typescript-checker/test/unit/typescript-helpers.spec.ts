@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
 
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects } from '../../src/tsconfig-helpers';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers';
 
 describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {
@@ -115,6 +115,21 @@ describe('typescript-helpers', () => {
 
     it('should retrieve referenced projects', () => {
       expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } })).deep.eq([path.resolve('some.json')]);
+    });
+  });
+
+  describe(guardTSVersion.name, () => {
+    it('should throw if typescript@2.5.0', () => {
+      sinon.stub(ts, 'version').value('3.5.0');
+      expect(guardTSVersion).throws('@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@3.5.0');
+    });
+    it('should not throw if typescript@3.6.0', () => {
+      sinon.stub(ts, 'version').value('3.6.0');
+      expect(guardTSVersion).not.throws();
+    });
+    it('should not throw if typescript@4.0.0', () => {
+      sinon.stub(ts, 'version').value('4.0.0');
+      expect(guardTSVersion).not.throws();
     });
   });
 });

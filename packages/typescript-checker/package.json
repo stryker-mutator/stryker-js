@@ -31,9 +31,11 @@
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
     "@stryker-mutator/api": "^3.2.2",
-    "@stryker-mutator/util": "^3.2.2"
+    "@stryker-mutator/util": "^3.2.2",
+    "semver": "^7.3.2"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "^3.2.2"
+    "@stryker-mutator/test-helpers": "^3.2.2",
+    "@types/semver": "^7.2.0"
   }
 }

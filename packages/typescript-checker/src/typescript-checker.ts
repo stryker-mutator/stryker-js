@@ -12,7 +12,7 @@ import { TypescriptCheckerOptions } from '../src-generated/typescript-checker-op
 
 import { HybridFileSystem } from './fs';
 import { TypescriptCheckerWithStrykerOptions } from './typescript-checker-with-stryker-options';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects } from './tsconfig-helpers';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -46,6 +46,7 @@ export class TypescriptChecker implements Checker {
    * Starts the typescript compiler and does a dry run
    */
   public async initialize(): Promise<void> {
+    guardTSVersion();
     this.guardTSConfigFileExists();
     this.currentTask = new Task();
     const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
@@ -70,6 +71,9 @@ export class TypescriptChecker implements Checker {
           },
           writeFile: (path, data) => {
             this.fs.writeFile(path, data);
+          },
+          createDirectory: () => {
+            // Idle, no need to create directories in the hybrid fs
           },
           clearScreen() {
             // idle, never clear the screen
