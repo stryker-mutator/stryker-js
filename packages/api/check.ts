@@ -1,3 +1,3 @@
-export * from './src/check/Check';
+export * from './src/check/Checker';
 export * from './src/check/CheckResult';
-export * from './src/check/MutantStatus';
+export * from './src/check/CheckStatus';

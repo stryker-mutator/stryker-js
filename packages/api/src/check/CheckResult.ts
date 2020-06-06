@@ -1,6 +1,6 @@
-import { MutantStatus } from './MutantStatus';
+import { CheckStatus } from './CheckStatus';
 
 export interface CheckResult {
   reason?: string;
-  mutantResult: MutantStatus;
+  status: CheckStatus;
 }
