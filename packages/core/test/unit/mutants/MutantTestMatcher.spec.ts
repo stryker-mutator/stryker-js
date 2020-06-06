@@ -1,5 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { CoverageCollection, CoveragePerTestResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';

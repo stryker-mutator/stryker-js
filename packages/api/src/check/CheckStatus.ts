@@ -1,5 +1,4 @@
 export enum CheckStatus {
-  Ok = 'ok',
-  Ignore = 'ignore',
+  Passed = 'passed',
   CompileError = 'compileError',
 }

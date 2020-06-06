@@ -4,7 +4,7 @@ import { declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin/Pl
 import { PluginKind } from '../../../src/plugin/PluginKind';
 import { tokens, commonTokens } from '../../../src/plugin/tokens';
 import { Logger } from '../../../logging';
-import { Mutant } from '../../../mutant';
+import { Mutant } from '../../../core';
 
 describe('plugins', () => {
   describe(declareClassPlugin.name, () => {

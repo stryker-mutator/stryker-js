@@ -1,5 +1,5 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
+import { Mutator } from '@stryker-mutator/api/mutant';
 import { tokens } from '@stryker-mutator/api/plugin';
 
 import { MUTATORS_TOKEN } from './helpers/MutatorHelpers';
