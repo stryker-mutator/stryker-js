@@ -5,9 +5,8 @@ import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { Task } from '@stryker-mutator/util';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { HybridFileSystem } from './fs';
 import { TypescriptCheckerWithStrykerOptions } from './typescript-checker-with-stryker-options';
@@ -109,7 +108,7 @@ export class TypescriptChecker implements Checker {
     } else {
       // We allow people to mutate files that are not included in this ts project
       return {
-        status: CheckStatus.Ok,
+        status: CheckStatus.Passed,
       };
     }
   }
@@ -147,7 +146,7 @@ export class TypescriptChecker implements Checker {
         reason: errorText,
       });
     }
-    this.currentTask.resolve({ status: CheckStatus.Ok });
+    this.currentTask.resolve({ status: CheckStatus.Passed });
   }
 
   /**

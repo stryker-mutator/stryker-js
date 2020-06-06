@@ -2,8 +2,7 @@ import path from 'path';
 import fs from 'fs';
 
 import { expect } from 'chai';
-import { Mutant } from '@stryker-mutator/api/mutant';
-import { Range } from '@stryker-mutator/api/core';
+import { Mutant, Range } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
@@ -37,7 +36,7 @@ describe('Typescript checker on a project with project references', () => {
   it('should be able to validate a mutant', async () => {
     const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
     const expectedResult: CheckResult = {
-      status: CheckStatus.Ok,
+      status: CheckStatus.Passed,
     };
     const actualResult = await sut.check(mutant);
     expect(actualResult).deep.eq(expectedResult);
@@ -46,7 +45,7 @@ describe('Typescript checker on a project with project references', () => {
   it('should allow unused local variables (override options)', async () => {
     const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
     const expectedResult: CheckResult = {
-      status: CheckStatus.Ok,
+      status: CheckStatus.Passed,
     };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);

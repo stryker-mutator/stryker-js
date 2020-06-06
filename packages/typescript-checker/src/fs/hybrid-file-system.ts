@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant } from '@stryker-mutator/api/core';
 
 import { ScriptFile } from './script-file';
 
