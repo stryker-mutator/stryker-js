@@ -2,7 +2,7 @@ import { EOL } from 'os';
 import path from 'path';
 
 import ts from 'typescript';
-import { Checker, CheckResult, MutantStatus } from '@stryker-mutator/api/check';
+import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant } from '@stryker-mutator/api/mutant';
@@ -91,7 +91,7 @@ export class TypescriptChecker implements Checker {
     );
     compiler.build();
     const result = await this.currentTask.promise;
-    if (result.result === MutantStatus.CompileError) {
+    if (result.status === CheckStatus.CompileError) {
       throw new Error(`Type error in initial compilation: ${result.reason}`);
     }
   }
@@ -109,7 +109,7 @@ export class TypescriptChecker implements Checker {
     } else {
       // We allow people to mutate files that are not included in this ts project
       return {
-        result: MutantStatus.Init,
+        status: CheckStatus.Ok,
       };
     }
   }
@@ -143,11 +143,11 @@ export class TypescriptChecker implements Checker {
         getNewLine: () => EOL,
       });
       this.currentTask.resolve({
-        result: MutantStatus.CompileError,
+        status: CheckStatus.CompileError,
         reason: errorText,
       });
     }
-    this.currentTask.resolve({ result: MutantStatus.Init });
+    this.currentTask.resolve({ status: CheckStatus.Ok });
   }
 
   /**

@@ -5,7 +5,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Mutant } from '@stryker-mutator/api/mutant';
 import { Range } from '@stryker-mutator/api/core';
-import { CheckResult, MutantStatus } from '@stryker-mutator/api/check';
+import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { TypescriptChecker } from '../../src';
 import { createTypescriptOptions } from '../helpers/factories';
@@ -37,7 +37,7 @@ describe('Typescript checker on a single project', () => {
   it('should be able to validate a mutant that does not result in an error', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
     const expectedResult: CheckResult = {
-      result: MutantStatus.Init,
+      status: CheckStatus.Ok,
     };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);
@@ -46,7 +46,7 @@ describe('Typescript checker on a single project', () => {
   it('should be able invalidate a mutant that does result in a compile error', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
     const actual = await sut.check(mutant);
-    expect(actual.result).deep.eq(MutantStatus.CompileError);
+    expect(actual.status).deep.eq(CheckStatus.CompileError);
     expect(actual.reason).has.string('todo.ts(15,9): error TS2322');
   });
 
@@ -55,7 +55,7 @@ describe('Typescript checker on a single project', () => {
     const mutantCompileError = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
     const mutantWithoutError = createMutant('todo.ts', 'return TodoList.allTodos', '[]', 7);
     const expectedResult: CheckResult = {
-      result: MutantStatus.Init,
+      status: CheckStatus.Ok,
     };
 
     // Act
@@ -68,7 +68,7 @@ describe('Typescript checker on a single project', () => {
 
   it('should be able to invalidate a mutant that results in an error in a different file', async () => {
     const result = await sut.check(createMutant('todo.ts', 'return totalCount;', ''));
-    expect(result.result).eq(MutantStatus.CompileError);
+    expect(result.status).eq(CheckStatus.CompileError);
     expect(result.reason).has.string('todo.spec.ts(4,7): error TS2322');
   });
 
@@ -79,7 +79,7 @@ describe('Typescript checker on a single project', () => {
 
     // Assert
     const expectedResult: CheckResult = {
-      result: MutantStatus.Init,
+      status: CheckStatus.Ok,
     };
     expect(result).deep.eq(expectedResult);
   });
@@ -90,7 +90,7 @@ describe('Typescript checker on a single project', () => {
 
     // Assert
     const expectedResult: CheckResult = {
-      result: MutantStatus.Init,
+      status: CheckStatus.Ok,
     };
     expect(result).deep.eq(expectedResult);
   });
@@ -98,7 +98,7 @@ describe('Typescript checker on a single project', () => {
   it('should allow unused local variables (override options)', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
     const expectedResult: CheckResult = {
-      result: MutantStatus.Init,
+      status: CheckStatus.Ok,
     };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);
