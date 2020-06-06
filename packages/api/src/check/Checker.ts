@@ -1,4 +1,4 @@
-import { Mutant } from '../../mutant';
+import { Mutant } from '../../core';
 
 import { CheckResult } from './CheckResult';
 

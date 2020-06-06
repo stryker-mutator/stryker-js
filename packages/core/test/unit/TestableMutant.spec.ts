@@ -1,5 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { mutant, runResult, testResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 
