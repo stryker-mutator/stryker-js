@@ -24,7 +24,7 @@ describe('Typescript checker on a project with project references', () => {
 
   beforeEach(() => {
     process.chdir(resolveTestResource());
-    testInjector.options.typescriptChecker = createTypescriptOptions();
+    testInjector.options.typescriptChecker = createTypescriptOptions({ tsconfigFile: 'tsconfig.root.json' });
     sut = testInjector.injector.injectClass(TypescriptChecker);
     return sut.initialize();
   });

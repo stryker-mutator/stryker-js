@@ -5,8 +5,10 @@ import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Task } from '@stryker-mutator/util';
+import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+
+import { TypescriptCheckerOptions } from '../src-generated/typescript-checker-options';
 
 import { HybridFileSystem } from './fs';
 import { TypescriptCheckerWithStrykerOptions } from './typescript-checker-with-stryker-options';
@@ -27,28 +29,33 @@ export class TypescriptChecker implements Checker {
   private readonly fs = new HybridFileSystem();
   private currentTask: Task<CheckResult>;
   private readonly currentErrors: ts.Diagnostic[] = [];
-  private readonly tsconfigFiles: Set<string> = new Set([path.resolve('tsconfig.json')]);
+  /**
+   * Keep track of all tsconfig files which are read during compilation (for project references)
+   */
+  private readonly allTSConfigFiles: Set<string>;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options);
-  private readonly rootTSConfigFile: string;
+  private readonly tsconfigFile: string;
 
   constructor(private readonly logger: Logger, options: StrykerOptions) {
-    this.rootTSConfigFile = (options as TypescriptCheckerWithStrykerOptions).typescriptChecker.tsconfigFile;
+    this.tsconfigFile = (options as TypescriptCheckerWithStrykerOptions).typescriptChecker.tsconfigFile;
+    this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
 
   /**
    * Starts the typescript compiler and does a dry run
    */
   public async initialize(): Promise<void> {
+    this.guardTSConfigFileExists();
     this.currentTask = new Task();
-    const buildModeEnabled = determineBuildModeEnabled(this.rootTSConfigFile);
+    const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
     const compiler = ts.createSolutionBuilderWithWatch(
       ts.createSolutionBuilderWithWatchHost(
         {
           ...ts.sys,
           readFile: (fileName) => {
             const content = this.fs.getFile(fileName)?.content;
-            if (content && this.tsconfigFiles.has(path.resolve(fileName))) {
+            if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
               return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
             }
             return content;
@@ -85,13 +92,26 @@ export class TypescriptChecker implements Checker {
           summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE && this.resolveCheckResult();
         }
       ),
-      [this.rootTSConfigFile],
+      [this.tsconfigFile],
       {}
     );
     compiler.build();
     const result = await this.currentTask.promise;
     if (result.status === CheckStatus.CompileError) {
-      throw new Error(`Type error in initial compilation: ${result.reason}`);
+      throw new Error(`TypeScript error(s) found in dry run compilation: ${result.reason}`);
+    }
+  }
+
+  private guardTSConfigFileExists() {
+    if (!ts.sys.fileExists(this.tsconfigFile)) {
+      throw new Error(
+        `The tsconfig file does not exist at: "${path.resolve(
+          this.tsconfigFile
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<TypescriptCheckerOptions>(
+          'typescriptChecker',
+          'tsconfigFile'
+        )}"`
+      );
     }
   }
 
@@ -125,7 +145,7 @@ export class TypescriptChecker implements Checker {
       return content; // let the ts compiler deal with this error
     } else {
       for (const referencedProject of retrieveReferencedProjects(parsedConfig)) {
-        this.tsconfigFiles.add(referencedProject);
+        this.allTSConfigFiles.add(referencedProject);
       }
       return overrideOptions(parsedConfig, buildModeEnabled);
     }
