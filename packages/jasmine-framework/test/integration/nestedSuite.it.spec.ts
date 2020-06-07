@@ -29,7 +29,7 @@ describe('Selecting tests with nested suites', () => {
     testSelections = [
       { id: 0, name: 'outer test 1' },
       { id: 1, name: 'outer inner test 2' },
-      { id: 2, name: 'outer test 3' },
+      { id: 2, name: 'outer test 3' }
     ];
   });
 

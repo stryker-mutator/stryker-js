@@ -49,7 +49,7 @@ export default class DashboardReporter implements Reporter {
       return result;
     } else {
       return {
-        mutationScore: calculateMetrics(result.files).metrics.mutationScore,
+        mutationScore: calculateMetrics(result.files).metrics.mutationScore
       };
     }
   }
@@ -60,7 +60,7 @@ export default class DashboardReporter implements Reporter {
         report,
         moduleName,
         projectName,
-        version: version,
+        version: version
       });
       this.log.info('Report available at: %s', href);
     } catch (err) {
@@ -72,7 +72,7 @@ export default class DashboardReporter implements Reporter {
     return {
       moduleName: this.options.dashboard.module,
       projectName: this.options.dashboard.project || (this.ciProvider && this.ciProvider.determineProject()),
-      version: this.options.dashboard.version || (this.ciProvider && this.ciProvider.determineVersion()),
+      version: this.options.dashboard.version || (this.ciProvider && this.ciProvider.determineVersion())
     };
   }
 }

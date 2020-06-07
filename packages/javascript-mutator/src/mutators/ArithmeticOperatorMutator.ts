@@ -10,7 +10,7 @@ export default class ArithmeticOperatorMutator implements NodeMutator {
     '-': '+',
     '*': '/',
     '/': '*',
-    '%': '*',
+    '%': '*'
   };
 
   public name = 'ArithmeticOperator';
@@ -25,7 +25,7 @@ export default class ArithmeticOperatorMutator implements NodeMutator {
 
         return mutatedOperators.map((mutatedOperator) => [
           node,
-          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any }),
+          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any })
         ]);
       }
     }

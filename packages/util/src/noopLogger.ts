@@ -34,5 +34,5 @@ export const noopLogger = {
   },
   fatal() {
     // noop
-  },
+  }
 };

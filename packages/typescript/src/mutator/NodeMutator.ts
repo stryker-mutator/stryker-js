@@ -23,7 +23,7 @@ export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
       fileName: sourceFile.fileName.replace(/\//g, path.sep),
       mutatorName: this.name,
       range: [original.getStart(sourceFile), original.getEnd()],
-      replacement,
+      replacement
     };
   }
 }

@@ -28,12 +28,12 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     clock = sinon.useFakeTimers();
     childProcessProxyMock = {
       dispose: sinon.stub(),
-      proxy: mock(TestRunnerDecorator),
+      proxy: mock(TestRunnerDecorator)
     };
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
     options = strykerOptions({
-      plugins: ['foo-plugin', 'bar-plugin'],
+      plugins: ['foo-plugin', 'bar-plugin']
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };
     sut = new ChildProcessTestRunnerDecorator(options, [], 'a working directory', loggingContext);
@@ -58,7 +58,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   it('should forward `run` calls', async () => {
     childProcessProxyMock.proxy.run.resolves(42);
     const runOptions: RunOptions = {
-      timeout: 234,
+      timeout: 234
     };
     await expect(sut.run(runOptions)).eventually.eq(42);
     expect(childProcessProxyMock.proxy.run).calledWith(runOptions);

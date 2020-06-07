@@ -19,14 +19,14 @@ export class AngularPreset implements Preset {
       configFile: 'src/karma.conf.js',
       projectType: 'angular-cli',
       config: {
-        browsers: ['ChromeHeadless'],
-      },
+        browsers: ['ChromeHeadless']
+      }
     },
     reporters: ['progress', 'clear-text', 'html'],
     maxConcurrentTestRunners: Math.floor(os.cpus().length / 2),
-    // eslint-disable-next-line @typescript-eslint/camelcase
+    // eslint-disable-next-line camelcase
     maxConcurrentTestRunners_comment: 'Recommended to use about half of your available cores when running stryker with angular',
-    coverageAnalysis: 'off',
+    coverageAnalysis: 'off'
   };
 
   public async createConfig(): Promise<PresetConfiguration> {

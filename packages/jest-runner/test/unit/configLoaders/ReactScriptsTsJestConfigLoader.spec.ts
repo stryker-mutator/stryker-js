@@ -19,7 +19,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
       eject,
       projectRoot,
-      relativePath: resolve('test'),
+      relativePath: resolve('test')
     }));
 
     requireResolveStub = sinon.stub();
@@ -41,7 +41,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
       eject: false,
       projectRoot: '/path/to/project',
       relativePath: path.join('node_modules', 'react-scripts-ts', 'test'),
-      testEnvironment: 'jsdom',
+      testEnvironment: 'jsdom'
     });
   });
 

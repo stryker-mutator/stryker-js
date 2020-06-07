@@ -29,11 +29,11 @@ export default class BabelParser {
       'flow',
       'jsx',
       'objectRestSpread',
-      ['decorators', { decoratorsBeforeExport: true }] as any,
+      ['decorators', { decoratorsBeforeExport: true }] as any
     ];
     const options: ParserOptions = {
       plugins,
-      sourceType: 'unambiguous',
+      sourceType: 'unambiguous'
     };
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Using options ${JSON.stringify(options)}`);
@@ -50,7 +50,7 @@ export default class BabelParser {
         node.parent = path.parent as any;
         Object.freeze(node);
         nodes.push(node);
-      },
+      }
     });
 
     return nodes;

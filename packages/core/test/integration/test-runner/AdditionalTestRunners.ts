@@ -136,5 +136,5 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner)
 ];

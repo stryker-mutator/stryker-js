@@ -32,7 +32,7 @@ import * as buildMainInjectorModule from '../../src/di/buildMainInjector';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Debug,
-  port: 4200,
+  port: 4200
 });
 
 describe(Stryker.name, () => {

@@ -34,7 +34,7 @@ export default class ConditionalExpressionMutator implements NodeMutator {
       return [
         // raw string mutations
         [node, { raw: 'true' }],
-        [node, { raw: 'false' }],
+        [node, { raw: 'false' }]
       ];
     } else if (types.isDoWhileStatement(node) || types.isWhileStatement(node)) {
       return [[node.test, { raw: 'false' }]];
@@ -48,7 +48,7 @@ export default class ConditionalExpressionMutator implements NodeMutator {
       return [
         // raw string mutations in the `if` condition
         [node.test, { raw: 'true' }],
-        [node.test, { raw: 'false' }],
+        [node.test, { raw: 'false' }]
       ];
     } else if (
       types.isSwitchCase(node) &&

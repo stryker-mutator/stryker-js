@@ -17,7 +17,7 @@ describe('Read TS Config file integration', () => {
     testInjector.injector.injectClass(TypescriptOptionsEditor).edit(config);
     expect((config.tsconfig!.fileNames as string[]).map(path.normalize)).deep.eq([
       resolveSampleProject('math.ts'),
-      resolveSampleProject('useMath.ts'),
+      resolveSampleProject('useMath.ts')
     ]);
   });
 });

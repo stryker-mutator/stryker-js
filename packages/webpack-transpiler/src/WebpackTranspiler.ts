@@ -22,7 +22,7 @@ export default class WebpackTranspiler implements Transpiler {
     }
     this.config = {
       context: process.cwd(),
-      ...((options as unknown) as WebpackTranspilerWithStrykerOptions).webpack,
+      ...((options as unknown) as WebpackTranspilerWithStrykerOptions).webpack
     };
   }
 

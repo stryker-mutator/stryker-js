@@ -15,7 +15,7 @@ import {
   ParentMessageKind,
   WorkerMessage,
   WorkerMessageKind,
-  WorkResult,
+  WorkResult
 } from '../../../src/child-proxy/messageProtocol';
 import * as di from '../../../src/di';
 import LogConfigurator from '../../../src/logging/LogConfigurator';
@@ -79,7 +79,7 @@ describe(ChildProcessProxyWorker.name, () => {
         options,
         requireName: HelloClass.name,
         requirePath: require.resolve('./HelloClass'),
-        workingDirectory: workingDir,
+        workingDirectory: workingDir
       };
     });
 
@@ -169,12 +169,12 @@ describe(ChildProcessProxyWorker.name, () => {
           args: [],
           correlationId: 32,
           kind: WorkerMessageKind.Call,
-          methodName: 'sayHello',
+          methodName: 'sayHello'
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
           kind: ParentMessageKind.Result,
-          result: 'hello from FooBarName',
+          result: 'hello from FooBarName'
         };
 
         await actAndAssert(workerMessage, expectedResult);
@@ -186,7 +186,7 @@ describe(ChildProcessProxyWorker.name, () => {
           args: [],
           correlationId: 32,
           kind: WorkerMessageKind.Call,
-          methodName: 'reject',
+          methodName: 'reject'
         };
         await actAndAssertRejection(workerMessage, 'Rejected');
       });
@@ -197,7 +197,7 @@ describe(ChildProcessProxyWorker.name, () => {
           args: ['foo bar'],
           correlationId: 32,
           kind: WorkerMessageKind.Call,
-          methodName: 'throw',
+          methodName: 'throw'
         };
         await actAndAssertRejection(workerMessage, 'foo bar');
       });
@@ -208,12 +208,12 @@ describe(ChildProcessProxyWorker.name, () => {
           args: ['foo', 'bar', 'chair'],
           correlationId: 32,
           kind: WorkerMessageKind.Call,
-          methodName: 'say',
+          methodName: 'say'
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
           kind: ParentMessageKind.Result,
-          result: 'hello foo and bar and chair',
+          result: 'hello foo and bar and chair'
         };
 
         await actAndAssert(workerMessage, expectedResult);
@@ -225,12 +225,12 @@ describe(ChildProcessProxyWorker.name, () => {
           args: [],
           correlationId: 32,
           kind: WorkerMessageKind.Call,
-          methodName: 'sayDelayed',
+          methodName: 'sayDelayed'
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
           kind: ParentMessageKind.Result,
-          result: 'delayed hello from FooBarName',
+          result: 'delayed hello from FooBarName'
         };
 
         await actAndAssert(workerMessage, expectedResult);

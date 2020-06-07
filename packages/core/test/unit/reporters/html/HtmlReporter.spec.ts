@@ -70,8 +70,8 @@ describe(HtmlReporter.name, () => {
         schemaVersion: '1.0',
         thresholds: {
           high: 80,
-          low: 60,
-        },
+          low: 60
+        }
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();

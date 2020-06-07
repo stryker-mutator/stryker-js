@@ -54,7 +54,7 @@ describe(TypescriptOptionsEditor.name, () => {
       preserveConstEnums: true,
       project: path.resolve('.').replace(/\\/g, '/'),
       removeComments: true,
-      sourceMap: true,
+      sourceMap: true
     });
     expect(options.tsconfig!.fileNames).deep.eq(['file1.ts', 'file2.ts']);
   });
@@ -72,7 +72,7 @@ describe(TypescriptOptionsEditor.name, () => {
     expect(options.tsconfig!.options).include({
       allowUnreachableCode: true,
       noUnusedLocals: false,
-      noUnusedParameters: false,
+      noUnusedParameters: false
     });
   });
 
@@ -94,7 +94,7 @@ describe(TypescriptOptionsEditor.name, () => {
       fileExists: () => true,
       readDirectory: () => ['file1.ts', 'file2.ts'],
       readFile: () => '',
-      useCaseSensitiveFileNames: true,
+      useCaseSensitiveFileNames: true
     };
     return Object.assign({}, defaults, overrides);
   }

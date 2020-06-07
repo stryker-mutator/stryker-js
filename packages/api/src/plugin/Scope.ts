@@ -1,6 +1,6 @@
 export enum Scope {
   Transient = 'transient',
-  Singleton = 'singleton',
+  Singleton = 'singleton'
 }
 
 // Keep in sync with import { Scope } from '@typed-inject';

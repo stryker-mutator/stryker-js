@@ -18,7 +18,7 @@ describe('Webpack transpiler', () => {
     options = (testInjector.options as unknown) as WebpackTranspilerWithStrykerOptions;
     options.webpack = {
       configFile: 'webpack.conf.js',
-      silent: true,
+      silent: true
     };
   });
 

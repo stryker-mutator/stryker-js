@@ -24,7 +24,7 @@ export default class DashboardReporterClient {
     report,
     projectName,
     version,
-    moduleName,
+    moduleName
   }: {
     report: Report;
     projectName: string;
@@ -41,7 +41,7 @@ export default class DashboardReporterClient {
     this.log.trace('PUT report %s', serializedBody);
     const result = await this.httpClient.put(url, serializedBody, {
       ['X-Api-Key']: apiKey,
-      ['Content-Type']: 'application/json',
+      ['Content-Type']: 'application/json'
     });
     const responseBody = await result.readBody();
     if (isOK(result.message.statusCode || 0)) {

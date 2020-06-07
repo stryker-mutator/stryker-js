@@ -16,7 +16,7 @@ import {
   ParentMessage,
   ParentMessageKind,
   WorkerMessage,
-  WorkerMessageKind,
+  WorkerMessageKind
 } from '../../../src/child-proxy/messageProtocol';
 import LoggingClientContext from '../../../src/logging/LoggingClientContext';
 import { serialize } from '../../../src/utils/objectUtils';
@@ -28,7 +28,7 @@ import { HelloClass } from './HelloClass';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
-  port: 4200,
+  port: 4200
 });
 
 class ChildProcessMock extends EventEmitter {
@@ -75,7 +75,7 @@ describe(ChildProcessProxy.name, () => {
         options: factory.strykerOptions(),
         requireName: 'HelloClass',
         requirePath: 'foobar',
-        workingDirectory: 'workingDirectory',
+        workingDirectory: 'workingDirectory'
       };
 
       // Act
@@ -84,7 +84,7 @@ describe(ChildProcessProxy.name, () => {
         name: (expectedMessage.additionalInjectableValues as { name: string }).name,
         options: expectedMessage.options,
         requirePath: expectedMessage.requirePath,
-        workingDir: expectedMessage.workingDirectory,
+        workingDir: expectedMessage.workingDirectory
       });
 
       // Assert
@@ -161,13 +161,13 @@ describe(ChildProcessProxy.name, () => {
       const workerResponse: ParentMessage = {
         correlationId: 0,
         kind: ParentMessageKind.Result,
-        result: 'ack',
+        result: 'ack'
       };
       const expectedWorkerMessage: WorkerMessage = {
         args: ['echo'],
         correlationId: 0,
         kind: WorkerMessageKind.Call,
-        methodName: 'say',
+        methodName: 'say'
       };
 
       // Act

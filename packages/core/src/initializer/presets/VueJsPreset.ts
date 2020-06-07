@@ -23,7 +23,7 @@ export class VueJsPreset implements Preset {
       // config: require('path/to/your/custom/jestConfig.js')
     },
     reporters: ['progress', 'clear-text', 'html'],
-    coverageAnalysis: 'off',
+    coverageAnalysis: 'off'
   };
 
   private readonly karmaDependency = '@stryker-mutator/karma-runner';
@@ -34,11 +34,11 @@ export class VueJsPreset implements Preset {
     karma: {
       configFile: 'test/unit/karma.conf.js',
       config: {
-        browsers: ['ChromeHeadless'],
-      },
+        browsers: ['ChromeHeadless']
+      }
     },
     reporters: ['progress', 'clear-text', 'html'],
-    coverageAnalysis: 'off',
+    coverageAnalysis: 'off'
   };
 
   public async createConfig(): Promise<PresetConfiguration> {
@@ -47,21 +47,21 @@ export class VueJsPreset implements Preset {
       choices: testRunnerChoices,
       message: 'Which test runner do you want to use?',
       name: 'testRunner',
-      type: 'list',
+      type: 'list'
     });
     const scriptChoices: Array<inquirer.ChoiceType<string>> = ['typescript', 'javascript'];
     const scriptAnswers = await inquirer.prompt<{ script: string }>({
       choices: scriptChoices,
       message: 'Which language does your project use?',
       name: 'script',
-      type: 'list',
+      type: 'list'
     });
     const chosenTestRunner = testRunnerAnswers.testRunner;
     const chosenScript = scriptAnswers.script;
     return {
       config: this.getConfig(chosenTestRunner),
       dependencies: this.createDependencies(chosenTestRunner, chosenScript),
-      handbookUrl,
+      handbookUrl
     };
   }
 

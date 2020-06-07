@@ -56,7 +56,7 @@ export class BabelTranspiler implements Transpiler {
     const relativeOptions: babel.TransformOptions = {
       cwd: this.projectRoot,
       filename: file.name,
-      filenameRelative: path.relative(this.projectRoot, file.name),
+      filenameRelative: path.relative(this.projectRoot, file.name)
     };
     const options: babel.TransformOptions = { ...this.babelConfig.options, ...relativeOptions };
     const result: babel.BabelFileResult | null = babel.transformSync(file.textContent, options);

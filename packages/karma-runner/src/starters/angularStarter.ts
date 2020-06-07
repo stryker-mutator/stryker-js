@@ -36,7 +36,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
   return cli({
     cliArgs,
     inputStream: process.stdin,
-    outputStream: process.stdout,
+    outputStream: process.stdout
   }).then((exitCode: number) => {
     if (exitCode > 0) {
       throw new Error(

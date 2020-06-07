@@ -26,7 +26,7 @@ export default class TestHooksMiddleware {
     if (pathName && path.normalize(pathName).endsWith(path.join('src', path.basename(TEST_HOOKS_FILE_NAME)))) {
       response.writeHead(200, {
         'Cache-Control': 'no-cache',
-        'Content-Type': 'application/javascript',
+        'Content-Type': 'application/javascript'
       });
       response.end(this.currentTestHooks);
     } else {

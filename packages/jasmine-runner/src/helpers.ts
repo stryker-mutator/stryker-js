@@ -16,7 +16,7 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
     failureMessages,
     name: specResult.fullName,
     status,
-    timeSpentMs,
+    timeSpentMs
   };
 }
 

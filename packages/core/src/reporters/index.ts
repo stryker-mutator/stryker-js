@@ -15,5 +15,5 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'dots', DotsReporter),
   declareClassPlugin(PluginKind.Reporter, 'event-recorder', EventRecorderReporter),
   declareClassPlugin(PluginKind.Reporter, 'html', HtmlReporter),
-  declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory),
+  declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory)
 ];

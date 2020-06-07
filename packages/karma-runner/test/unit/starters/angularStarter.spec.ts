@@ -45,7 +45,7 @@ describe('angularStarter', () => {
     expect(cliStub).calledWith({
       cliArgs: ['test', '--progress=false', `--karma-config=${require.resolve('../../../src/starters/stryker-karma.conf')}`],
       inputStream: process.stdin,
-      outputStream: process.stdout,
+      outputStream: process.stdout
     });
   });
 
@@ -62,8 +62,8 @@ describe('angularStarter', () => {
       testArguments: {
         baz: 'true',
         foo: 'bar',
-        fooBar: 'baz',
-      },
+        fooBar: 'baz'
+      }
     });
     expect(cliStub).calledWith({
       cliArgs: [
@@ -72,10 +72,10 @@ describe('angularStarter', () => {
         `--karma-config=${require.resolve('../../../src/starters/stryker-karma.conf')}`,
         '--baz=true',
         '--foo=bar',
-        '--foo-bar=baz',
+        '--foo-bar=baz'
       ],
       inputStream: process.stdin,
-      outputStream: process.stdout,
+      outputStream: process.stdout
     });
   });
 
@@ -84,8 +84,8 @@ describe('angularStarter', () => {
     return expect(
       sut.start(getLogger, {
         testArguments: {
-          '--project': '@ns/myproj',
-        },
+          '--project': '@ns/myproj'
+        }
       })
     ).rejectedWith("Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are --project");
   });

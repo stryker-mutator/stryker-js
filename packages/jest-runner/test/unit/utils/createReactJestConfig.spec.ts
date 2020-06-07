@@ -6,7 +6,7 @@ import { createReactJestConfig, createReactTsJestConfig } from '../../../src/uti
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   const loader: any = {
-    require: () => {},
+    require: () => {}
   };
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('createReactJestConfig', () => {
 describe('createReactTsJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   const loader: any = {
-    require: () => {},
+    require: () => {}
   };
 
   beforeEach(() => {

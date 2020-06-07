@@ -26,7 +26,7 @@ describe(MutantTranspileScheduler.name, () => {
     initialTranspiledFiles = [new File('firstResult.js', 'initial result')];
     transpilerMock = {
       dispose: sinon.stub(),
-      transpile: sinon.stub(),
+      transpile: sinon.stub()
     };
     transpiledFilesOne = [new File('firstResult.js', 'first result')];
     transpiledFilesTwo = [new File('secondResult.js', 'second result')];
@@ -42,7 +42,7 @@ describe(MutantTranspileScheduler.name, () => {
     transpilerMock.transpile.onFirstCall().resolves(transpiledFilesOne).onSecondCall().resolves(transpiledFilesTwo);
     const expected: TranspiledMutant[] = [
       { mutant: mutants[0], transpileResult: { error: null, outputFiles: transpiledFilesOne }, changedAnyTranspiledFiles: true },
-      { mutant: mutants[1], transpileResult: { error: null, outputFiles: transpiledFilesTwo }, changedAnyTranspiledFiles: true },
+      { mutant: mutants[1], transpileResult: { error: null, outputFiles: transpiledFilesTwo }, changedAnyTranspiledFiles: true }
     ];
 
     // Act
@@ -63,7 +63,7 @@ describe(MutantTranspileScheduler.name, () => {
 
     // Assert
     const expected: TranspiledMutant[] = [
-      { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false },
+      { mutant, transpileResult: { error: errorToString(error), outputFiles: [] }, changedAnyTranspiledFiles: false }
     ];
     expect(actualResult).deep.eq(expected);
   });
@@ -78,7 +78,7 @@ describe(MutantTranspileScheduler.name, () => {
 
     // Assert
     const expected: TranspiledMutant[] = [
-      { mutant: mutants[0], transpileResult: { error: null, outputFiles: initialTranspiledFiles }, changedAnyTranspiledFiles: false },
+      { mutant: mutants[0], transpileResult: { error: null, outputFiles: initialTranspiledFiles }, changedAnyTranspiledFiles: false }
     ];
     expect(actual).deep.eq(expected);
   });
@@ -112,7 +112,7 @@ describe(MutantTranspileScheduler.name, () => {
     await sleep();
     const expectedResults: TranspileResult[] = [
       { error: null, outputFiles: transpiledFilesOne },
-      { error: null, outputFiles: transpiledFilesTwo },
+      { error: null, outputFiles: transpiledFilesTwo }
     ];
     expect(actualResults).deep.eq(expectedResults);
   });

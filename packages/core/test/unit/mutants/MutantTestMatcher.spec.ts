@@ -34,7 +34,7 @@ describe(MutantTestMatcher.name, () => {
       coverageMaps: fileCoverageDictionary,
       overheadTimeMS: 42,
       runResult: { tests: [], status: RunStatus.Complete },
-      sourceMapper: new PassThroughSourceMapper(),
+      sourceMapper: new PassThroughSourceMapper()
     };
     reporter = mock(BroadcastReporter);
     input = new InputFileCollection(
@@ -62,7 +62,7 @@ describe(MutantTestMatcher.name, () => {
             fileName: 'fileWithMutantOne',
             mutatorName: 'myMutator',
             range: [9, 9], // line 4:5 -> line 4:5
-            replacement: '>',
+            replacement: '>'
             // location: { start: { line: 4, column: 5 }, end: { line: 4, column: 5 } },
           };
 
@@ -70,19 +70,19 @@ describe(MutantTestMatcher.name, () => {
             fileName: 'fileWithMutantTwo',
             mutatorName: 'myMutator',
             range: [9, 9], // line 9:0 -> line 9:0
-            replacement: '<',
+            replacement: '<'
             // location: { start: { line: 9, column: 0 }, end: { line: 9, column: 0 } },
           };
 
           testResultOne = {
             name: 'test one',
             status: TestStatus.Success,
-            timeSpentMs: 5,
+            timeSpentMs: 5
           };
           testResultTwo = {
             name: 'test two',
             status: TestStatus.Success,
-            timeSpentMs: 5,
+            timeSpentMs: 5
           };
           initialRunResult.runResult.tests.push(testResultOne, testResultTwo);
           mutants.push(mutantOne);
@@ -114,7 +114,7 @@ describe(MutantTestMatcher.name, () => {
                 replacement: result[0].replacement,
                 runAllTests: true,
                 scopedTestIds: [],
-                timeSpentScopedTests: result[0].timeSpentScopedTests,
+                timeSpentScopedTests: result[0].timeSpentScopedTests
               },
               {
                 fileName: result[1].fileName,
@@ -123,8 +123,8 @@ describe(MutantTestMatcher.name, () => {
                 replacement: result[1].replacement,
                 runAllTests: true,
                 scopedTestIds: [],
-                timeSpentScopedTests: result[1].timeSpentScopedTests,
-              },
+                timeSpentScopedTests: result[1].timeSpentScopedTests
+              }
             ];
 
             expect(reporter.onAllMutantsMatchedWithTests).calledWith(Object.freeze(matchedMutants));
@@ -137,13 +137,13 @@ describe(MutantTestMatcher.name, () => {
               baseline: {},
               deviations: {
                 0: {
-                  anOtherFile: { s: { 1: 1 }, f: {} }, // covers, but in wrong src file
+                  anOtherFile: { s: { 1: 1 }, f: {} } // covers, but in wrong src file
                 },
                 1: {
                   fileWithMutantOne: { s: { 1: 1, 2: 1, 3: 0 }, f: {} }, // Covers, but not smallest statement based on column
-                  fileWithMutantTwo: { s: { 1: 1, 2: 0, 3: 1 }, f: {} }, // Covers, but not smallest statement based on row number
-                },
-              },
+                  fileWithMutantTwo: { s: { 1: 1, 2: 0, 3: 1 }, f: {} } // Covers, but not smallest statement based on row number
+                }
+              }
             };
             initialRunResult.runResult.coverage = covCollectionPerFile;
 
@@ -153,45 +153,45 @@ describe(MutantTestMatcher.name, () => {
                 1: {
                   // covers but in wrong src file
                   end: { line: 4, column: 7 },
-                  start: { line: 4, column: 0 },
-                },
-              },
+                  start: { line: 4, column: 0 }
+                }
+              }
             };
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {},
               statementMap: {
                 1: {
                   end: { line: 4, column: 9 },
-                  start: { line: 2, column: 0 },
+                  start: { line: 2, column: 0 }
                 },
                 2: {
                   end: { line: 4, column: 9 },
-                  start: { line: 4, column: 0 },
+                  start: { line: 4, column: 0 }
                 },
                 3: {
                   // Smallest statement that surrounds the mutant. Differs based on column number
                   end: { line: 4, column: 7 },
-                  start: { line: 4, column: 3 },
-                },
-              },
+                  start: { line: 4, column: 3 }
+                }
+              }
             };
             fileCoverageDictionary.fileWithMutantTwo = {
               fnMap: {},
               statementMap: {
                 1: {
                   end: { line: 9, column: 4 },
-                  start: { line: 0, column: 0 },
+                  start: { line: 0, column: 0 }
                 },
                 2: {
                   // Smallest  statement that surround the mutant. Differs based on line number
                   end: { line: 9, column: 4 },
-                  start: { line: 8, column: 0 },
+                  start: { line: 8, column: 0 }
                 },
                 3: {
                   end: { line: 9, column: 4 },
-                  start: { line: 9, column: 1 },
-                },
-              },
+                  start: { line: 9, column: 1 }
+                }
+              }
             };
           });
 
@@ -208,14 +208,14 @@ describe(MutantTestMatcher.name, () => {
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {},
               statementMap: {
-                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } },
-              },
+                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } }
+              }
             };
             fileCoverageDictionary.fileWithMutantTwo = {
               fnMap: {},
               statementMap: {
-                1: { start: { line: 0, column: 0 }, end: { line: 10, column: 0 } },
-              },
+                1: { start: { line: 0, column: 0 }, end: { line: 10, column: 0 } }
+              }
             };
 
             initialRunResult.runResult.coverage = {
@@ -223,12 +223,12 @@ describe(MutantTestMatcher.name, () => {
               deviations: {
                 0: {
                   fileWithMutantOne: { s: { 1: 1 }, f: {} },
-                  fileWithMutantTwo: { s: { 1: 1 }, f: {} },
+                  fileWithMutantTwo: { s: { 1: 1 }, f: {} }
                 },
                 1: {
-                  fileWithMutantOne: { s: { 1: 1 }, f: {} },
-                },
-              },
+                  fileWithMutantOne: { s: { 1: 1 }, f: {} }
+                }
+              }
             };
             sut = createSut();
           });
@@ -236,7 +236,7 @@ describe(MutantTestMatcher.name, () => {
           it('should have added the run results to the mutants', async () => {
             const expectedTestSelectionFirstMutant: TestSelection[] = [
               { id: 0, name: 'test one' },
-              { id: 1, name: 'test two' },
+              { id: 1, name: 'test two' }
             ];
 
             const result = await sut.matchWithMutants(mutants);
@@ -272,14 +272,14 @@ describe(MutantTestMatcher.name, () => {
           beforeEach(() => {
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {
-                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } },
+                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } }
               },
-              statementMap: {},
+              statementMap: {}
             };
             fileCoverageDictionary.fileWithMutantTwo = { statementMap: {}, fnMap: {} };
             initialRunResult.runResult.coverage = {
               baseline: {},
-              deviations: { 0: { fileWithMutantOne: { s: {}, f: { 1: 1 } } } },
+              deviations: { 0: { fileWithMutantOne: { s: {}, f: { 1: 1 } } } }
             };
             sut = createSut();
           });
@@ -298,20 +298,20 @@ describe(MutantTestMatcher.name, () => {
             fileCoverageDictionary.fileWithMutantOne = {
               fnMap: {},
               statementMap: {
-                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } },
-              },
+                1: { start: { line: 4, column: 0 }, end: { line: 6, column: 0 } }
+              }
             };
             fileCoverageDictionary.fileWithMutantTwo = {
               fnMap: {},
               statementMap: {
-                1: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } },
-              },
+                1: { start: { line: 10, column: 0 }, end: { line: 10, column: 0 } }
+              }
             };
             initialRunResult.runResult.coverage = {
               baseline: {
-                fileWithMutantOne: { s: { 1: 1 }, f: {} },
+                fileWithMutantOne: { s: { 1: 1 }, f: {} }
               },
-              deviations: {},
+              deviations: {}
             };
             sut = createSut();
           });
@@ -334,7 +334,7 @@ describe(MutantTestMatcher.name, () => {
         const testableMutant = new TestableMutant(
           '1',
           mutant({
-            fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js',
+            fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js'
           }),
           sourceFile
         );
@@ -378,10 +378,10 @@ describe(MutantTestMatcher.name, () => {
               34: 1,
               35: 1,
               36: 0,
-              37: 0,
+              37: 0
             },
-            f: {},
-          },
+            f: {}
+          }
         };
 
         fileCoverageDictionary['juice-shop\\app\\js\\controllers\\SearchResultController.js'] = {
@@ -422,16 +422,16 @@ describe(MutantTestMatcher.name, () => {
             34: { start: { line: 77, column: 6 }, end: { line: 77, column: 37 } },
             35: { start: { line: 78, column: 6 }, end: { line: 80, column: 7 } },
             36: { start: { line: 79, column: 8 }, end: { line: 79, column: 89 } },
-            37: { start: { line: 82, column: 6 }, end: { line: 82, column: 22 } },
+            37: { start: { line: 82, column: 6 }, end: { line: 82, column: 22 } }
           },
-          fnMap: {},
+          fnMap: {}
         };
 
         initialRunResult.runResult.coverage = { baseline: {}, deviations: { 0: coverageResult } };
         initialRunResult.runResult.tests.push({
           name: 'controllers SearchResultController should open a modal dialog with product details',
           status: TestStatus.Success,
-          timeSpentMs: 5,
+          timeSpentMs: 5
         });
         sut = createSut();
 
@@ -442,8 +442,8 @@ describe(MutantTestMatcher.name, () => {
         expect(testableMutant.selectedTests).deep.eq([
           {
             id: 0,
-            name: 'controllers SearchResultController should open a modal dialog with product details',
-          },
+            name: 'controllers SearchResultController should open a modal dialog with product details'
+          }
         ]);
       });
     });
@@ -474,13 +474,13 @@ describe(MutantTestMatcher.name, () => {
     describe('when there is coverage data', () => {
       beforeEach(() => {
         initialRunResult.runResult.coverage = {
-          fileWithMutantOne: { s: { 0: 1 }, f: {} },
+          fileWithMutantOne: { s: { 0: 1 }, f: {} }
         };
         fileCoverageDictionary.fileWithMutantOne = {
           fnMap: {},
           statementMap: {
-            0: { start: { line: 0, column: 0 }, end: { line: 6, column: 0 } },
-          },
+            0: { start: { line: 0, column: 0 }, end: { line: 6, column: 0 } }
+          }
         };
       });
 
@@ -496,8 +496,8 @@ describe(MutantTestMatcher.name, () => {
           fileName: 'fileWithMutantOne',
           location: {
             end: { line: 4, column: 1 },
-            start: { line: 4, column: 0 },
-          },
+            start: { line: 4, column: 0 }
+          }
         };
         expect(initialRunResult.sourceMapper.transpiledLocationFor).calledWith(expectedLocation);
       });
@@ -514,12 +514,12 @@ describe(MutantTestMatcher.name, () => {
         const expectedTestSelection: TestSelection[] = [
           {
             id: 0,
-            name: 'test 1',
+            name: 'test 1'
           },
           {
             id: 1,
-            name: 'test 2',
-          },
+            name: 'test 2'
+          }
         ];
         expect(result).lengthOf(1);
         expect(result[0].selectedTests).deep.eq(expectedTestSelection);

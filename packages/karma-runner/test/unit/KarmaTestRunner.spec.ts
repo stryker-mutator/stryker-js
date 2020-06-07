@@ -42,24 +42,24 @@ describe('KarmaTestRunner', () => {
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: undefined,
-      karmaConfigFile: undefined,
+      karmaConfigFile: undefined
     });
   });
 
   it('should setup karma from stryker options', () => {
     const expectedSetup: StrykerKarmaSetup = {
       config: {
-        basePath: 'foo/bar',
+        basePath: 'foo/bar'
       },
       configFile: 'baz.conf.js',
-      projectType: 'angular-cli',
+      projectType: 'angular-cli'
     };
     testInjector.options.karma = expectedSetup;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
+      karmaConfigFile: expectedSetup.configFile
     });
 
     expect(testInjector.logger.warn).not.called;
@@ -68,22 +68,22 @@ describe('KarmaTestRunner', () => {
   it('should run ng test with parameters from stryker options', () => {
     const ngConfig: NgConfigOptions = {};
     ngConfig.testArguments = {
-      project: '@ns/mypackage',
+      project: '@ns/mypackage'
     };
     const expectedSetup: StrykerKarmaSetup = {
       config: {
-        basePath: 'foo/bar',
+        basePath: 'foo/bar'
       },
       configFile: 'baz.conf.js',
       ngConfig,
-      projectType: 'angular-cli',
+      projectType: 'angular-cli'
     };
     testInjector.options.karma = expectedSetup;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
+      karmaConfigFile: expectedSetup.configFile
     });
     expect(testInjector.logger.warn).not.called;
     expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
@@ -204,7 +204,7 @@ describe('KarmaTestRunner', () => {
       {
         name: 'foobar',
         status: TestStatus.Success,
-        timeSpentMs: 0,
+        timeSpentMs: 0
       },
       overrides
     );

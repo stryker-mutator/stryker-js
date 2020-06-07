@@ -34,7 +34,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     'Add should be able negate a number',
     'Add should be able to recognize a negative number',
     'Add should be able to recognize that 0 is not a negative number',
-    'Circle should have a circumference of 2PI when the radius is 1',
+    'Circle should have a circumference of 2PI when the radius is 1'
   ];
 
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
   function createSut(overrides?: Partial<JestOptions>) {
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
-      jest: createJestOptions(overrides),
+      jest: createJestOptions(overrides)
     });
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }

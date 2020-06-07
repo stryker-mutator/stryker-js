@@ -81,7 +81,7 @@ describe('WebpackCompiler', () => {
       const fakeError: string = 'fakeError';
       webpackRunStub.callsArgWith(0, null, {
         hasErrors: () => true,
-        toString: () => fakeError,
+        toString: () => fakeError
       });
 
       try {
@@ -99,7 +99,7 @@ describe('WebpackCompiler', () => {
       createTextFile('path/to/awesome/directory/file1'),
       createTextFile('path/to/awesome/directory/file2'),
       createTextFile('path/to/awesome/directory/file3'),
-      createTextFile('path/to/awesome/directory/file4'),
+      createTextFile('path/to/awesome/directory/file4')
     ];
   }
 });

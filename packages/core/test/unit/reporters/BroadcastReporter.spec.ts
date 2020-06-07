@@ -58,7 +58,7 @@ describe('BroadcastReporter', () => {
       // Assert
       expect(sut.reporters).deep.eq({
         progress,
-        rep2,
+        rep2
       });
     });
 

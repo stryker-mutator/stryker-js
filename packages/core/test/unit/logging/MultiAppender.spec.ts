@@ -30,7 +30,7 @@ describe('MultiAppender', () => {
       data: ['foo data'],
       level: (log4js.levels as any).DEBUG,
       pid: 42,
-      startTime: new Date(42),
+      startTime: new Date(42)
     };
     sut(loggingEvent);
     expect(fooLogEvents).lengthOf(1);

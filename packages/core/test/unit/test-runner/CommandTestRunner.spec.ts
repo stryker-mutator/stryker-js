@@ -42,7 +42,7 @@ describe(CommandTestRunner.name, () => {
       const result = await actRun();
       const expectedResult: RunResult = {
         status: RunStatus.Complete,
-        tests: [{ name: 'All tests', status: TestStatus.Success, timeSpentMs: 42 }],
+        tests: [{ name: 'All tests', status: TestStatus.Success, timeSpentMs: 42 }]
       };
       expect(result).deep.eq(expectedResult);
     });
@@ -58,7 +58,7 @@ describe(CommandTestRunner.name, () => {
       const result = await resultPromise;
       const expectedResult: RunResult = {
         status: RunStatus.Complete,
-        tests: [{ name: 'All tests', status: TestStatus.Failed, timeSpentMs: 42, failureMessages: [`x Test 1 failed${os.EOL}1 != 2`] }],
+        tests: [{ name: 'All tests', status: TestStatus.Failed, timeSpentMs: 42, failureMessages: [`x Test 1 failed${os.EOL}1 != 2`] }]
       };
       expect(result).deep.eq(expectedResult);
     });
@@ -74,7 +74,7 @@ describe(CommandTestRunner.name, () => {
       const expectedResult: RunResult = {
         errorMessages: [errorToString(expectedError)],
         status: RunStatus.Error,
-        tests: [],
+        tests: []
       };
       expect(result).deep.eq(expectedResult);
     });

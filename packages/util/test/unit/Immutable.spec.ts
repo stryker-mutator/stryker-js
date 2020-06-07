@@ -34,9 +34,9 @@ describe(deepFreeze.name, () => {
     const input = {
       foo: {
         bar: {
-          baz: 'qux',
-        },
-      },
+          baz: 'qux'
+        }
+      }
     };
     const output = deepFreeze(input);
     expect(output).deep.eq(input);
@@ -47,10 +47,10 @@ describe(deepFreeze.name, () => {
 
   it('should work for Arrays', () => {
     const one = {
-      foo: 'bar',
+      foo: 'bar'
     };
     const two = {
-      baz: 42,
+      baz: 42
     };
     const input = [one, two];
     const output = deepFreeze(input);
@@ -68,10 +68,10 @@ describe(deepFreeze.name, () => {
 
   it('should work for Maps', () => {
     const key = {
-      foo: 'bar',
+      foo: 'bar'
     };
     const value = {
-      baz: 42,
+      baz: 42
     };
     const input = new Map([[key, value]]);
     const output = deepFreeze(input);
@@ -89,7 +89,7 @@ describe(deepFreeze.name, () => {
 
   it('should work for Sets', () => {
     const value = {
-      foo: 'bar',
+      foo: 'bar'
     };
     const input = new Set([value]);
     const output = deepFreeze(input);

@@ -10,7 +10,7 @@ import WctReporter from './WctReporter';
 
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
-  persistent: false,
+  persistent: false
 });
 
 export default class WctTestRunner implements TestRunner {
@@ -52,13 +52,13 @@ export default class WctTestRunner implements TestRunner {
       await steps.runTests(this.context).catch(WctTestRunner.ignoreFailedTests);
       return {
         status: RunStatus.Complete,
-        tests: this.reporter.results,
+        tests: this.reporter.results
       };
     } catch (error) {
       return {
         errorMessages: [error.stack],
         status: RunStatus.Error,
-        tests: [],
+        tests: []
       };
     }
   }

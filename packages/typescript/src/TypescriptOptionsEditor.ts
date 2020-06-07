@@ -18,7 +18,7 @@ import { TypescriptWithStrykerOptions } from './TypescriptWithStrykerOptions';
 const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   allowUnreachableCode: true,
   noUnusedLocals: false,
-  noUnusedParameters: false,
+  noUnusedParameters: false
 });
 
 export default class TypescriptOptionsEditor implements OptionsEditor<TypescriptWithStrykerOptions> {
@@ -75,7 +75,7 @@ export default class TypescriptOptionsEditor implements OptionsEditor<Typescript
       return {
         getCanonicalFileName: (fileName) => path.resolve(fileName),
         getCurrentDirectory: () => configFileBase,
-        getNewLine: () => os.EOL,
+        getNewLine: () => os.EOL
       };
     }
   }

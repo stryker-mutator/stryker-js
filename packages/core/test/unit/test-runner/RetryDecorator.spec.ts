@@ -83,7 +83,7 @@ describe('RetryDecorator', () => {
       const runResult = await sut.run(options);
       expect(runResult.status).to.be.eq(RunStatus.Error);
       expect(runResult.errorMessages).to.be.deep.eq([
-        `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`,
+        `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`
       ]);
       expect(availableTestRunners).to.have.lengthOf(0);
     });

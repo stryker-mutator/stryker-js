@@ -10,5 +10,5 @@ export {
    * Types exported directly from mutation-testing-schema
    * @see https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/mutation-testing-report-schema
    */
-  mutationTestReportSchema,
+  mutationTestReportSchema
 };

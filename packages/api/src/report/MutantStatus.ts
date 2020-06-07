@@ -42,7 +42,7 @@ enum MutantStatus {
    *
    * Mutants that result in a TranspileError are not taken into account during score calculation.
    */
-  TranspileError,
+  TranspileError
 }
 
 export default MutantStatus;

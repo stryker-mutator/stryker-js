@@ -28,7 +28,7 @@ describe(configLoaderFactory.name, () => {
       collectCoverage: true,
       verbose: true,
       bail: false,
-      testResultsProcessor: 'someResultProcessor',
+      testResultsProcessor: 'someResultProcessor'
     };
     customConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
@@ -37,8 +37,8 @@ describe(configLoaderFactory.name, () => {
     options = factory.strykerWithPluginOptions({
       jest: {
         enableFindRelatedTests: true,
-        projectType: 'custom',
-      },
+        projectType: 'custom'
+      }
     });
   });
 

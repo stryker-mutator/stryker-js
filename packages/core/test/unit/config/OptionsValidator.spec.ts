@@ -96,14 +96,14 @@ describe(OptionsValidator.name, () => {
         testInjector.options.mutator = {
           excludedMutations: ['BooleanSubstitution'],
           name: 'javascript',
-          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]],
+          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]]
         };
         actAssertValid();
       });
 
       it('should be valid with minimal options', () => {
         breakConfig('mutator', {
-          name: 'javascript',
+          name: 'javascript'
         });
         actAssertValid();
       });
@@ -115,7 +115,7 @@ describe(OptionsValidator.name, () => {
 
       it('should be invalid with non-string mutator name', () => {
         breakConfig('mutator', {
-          name: 0,
+          name: 0
         });
         actValidationErrors('Config option "mutator.name" has the wrong type. It should be a string, but was a number.');
       });
@@ -123,7 +123,7 @@ describe(OptionsValidator.name, () => {
       it('should be invalid with non array plugins', () => {
         breakConfig('mutator', {
           name: 'javascript',
-          plugins: 'optionalChaining',
+          plugins: 'optionalChaining'
         });
         actValidationErrors('Config option "mutator.plugins" has the wrong type. It should be a array or null, but was a string.');
       });
@@ -131,7 +131,7 @@ describe(OptionsValidator.name, () => {
       it('should be invalid with non-array excluded mutations', () => {
         breakConfig('mutator', {
           excludedMutations: 'BooleanSubstitution',
-          name: 'javascript',
+          name: 'javascript'
         });
         actValidationErrors('Config option "mutator.excludedMutations" has the wrong type. It should be a array, but was a string.');
       });
@@ -139,7 +139,7 @@ describe(OptionsValidator.name, () => {
       it('should be invalid with non-string excluded mutation array elements', () => {
         breakConfig('mutator', {
           excludedMutations: ['BooleanSubstitution', 0],
-          name: 'javascript',
+          name: 'javascript'
         });
         actValidationErrors('Config option "mutator.excludedMutations[1]" has the wrong type. It should be a string, but was a number.');
       });
@@ -241,7 +241,7 @@ describe(validateOptions.name, () => {
 describe(markUnknownOptions.name, () => {
   it('should not warn when there are no unknown properties', () => {
     testInjector.options.htmlReporter = {
-      baseDir: 'test',
+      baseDir: 'test'
     };
     expect(testInjector.logger.warn).not.called;
   });

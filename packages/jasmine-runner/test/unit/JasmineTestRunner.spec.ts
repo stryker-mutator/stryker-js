@@ -25,7 +25,7 @@ describe('JasmineTestRunner', () => {
     sandbox = sinon.createSandbox();
     jasmineStub = sandbox.createStubInstance(Jasmine);
     jasmineStub.env = {
-      throwOnExpectationFailure: sandbox.stub(),
+      throwOnExpectationFailure: sandbox.stub()
     };
     evalGlobalStub = sandbox.stub(helpers, 'evalGlobal');
     sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
@@ -83,7 +83,7 @@ describe('JasmineTestRunner', () => {
       { name: 'bar spec', status: TestStatus.Failed, failureMessages: ['bar failed'] },
       { name: 'disabled', status: TestStatus.Skipped, failureMessages: undefined },
       { name: 'pending', status: TestStatus.Skipped, failureMessages: undefined },
-      { name: 'excluded', status: TestStatus.Skipped, failureMessages: undefined },
+      { name: 'excluded', status: TestStatus.Skipped, failureMessages: undefined }
     ]);
   });
 
@@ -100,7 +100,7 @@ describe('JasmineTestRunner', () => {
       failureMessages: undefined,
       name: 'foobar spec',
       status: TestStatus.Success,
-      timeSpentMs: 10,
+      timeSpentMs: 10
     };
     expect(result.tests).deep.eq([expectedTestResult]);
   });

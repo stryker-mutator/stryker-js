@@ -57,7 +57,7 @@ export function declareClassPlugin<TPluginKind extends PluginKind, Tokens extend
   return {
     injectableClass,
     kind,
-    name,
+    name
   };
 }
 
@@ -75,7 +75,7 @@ export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens exte
   return {
     factory,
     kind,
-    name,
+    name
   };
 }
 

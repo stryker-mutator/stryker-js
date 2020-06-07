@@ -39,7 +39,7 @@ export default class HtmlReporter implements Reporter {
       ),
       HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'stryker-80x80.png'), path.resolve(this.baseDir, 'stryker-80x80.png')),
       HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'index.html'), path.resolve(this.baseDir, 'index.html')),
-      HtmlReporterUtil.writeFile(path.resolve(this.baseDir, 'bind-mutation-test-report.js'), bindMutationTestReport(report)),
+      HtmlReporterUtil.writeFile(path.resolve(this.baseDir, 'bind-mutation-test-report.js'), bindMutationTestReport(report))
     ]);
     this.log.info(`Your report can be found at: ${fileUrl(indexFileName)}`);
   }

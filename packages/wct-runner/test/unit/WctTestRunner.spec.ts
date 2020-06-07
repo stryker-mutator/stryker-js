@@ -28,7 +28,7 @@ describe(WctTestRunner.name, () => {
       loadPlugins: sinon.stub(),
       prepare: sinon.stub(),
       runTests: sinon.stub(),
-      setupOverrides: sinon.stub(),
+      setupOverrides: sinon.stub()
     };
     testInjector.options.coverageAnalysis = 'off';
     contextMock.options = {};

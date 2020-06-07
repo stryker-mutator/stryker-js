@@ -18,7 +18,7 @@ describe(JestGreaterThan25Adapter.name, () => {
     runCLIStub.callsFake((config: object) =>
       Promise.resolve({
         config,
-        result: 'testResult',
+        result: 'testResult'
       })
     );
 
@@ -41,7 +41,7 @@ describe(JestGreaterThan25Adapter.name, () => {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         runInBand: true,
         silent: true,
-        findRelatedTests: false,
+        findRelatedTests: false
       },
       [projectRoot]
     );
@@ -57,7 +57,7 @@ describe(JestGreaterThan25Adapter.name, () => {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         findRelatedTests: true,
         runInBand: true,
-        silent: true,
+        silent: true
       },
       [projectRoot]
     );
@@ -73,9 +73,9 @@ describe(JestGreaterThan25Adapter.name, () => {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         runInBand: true,
         silent: true,
-        findRelatedTests: false,
+        findRelatedTests: false
       },
-      result: 'testResult',
+      result: 'testResult'
     });
   });
 
@@ -89,9 +89,9 @@ describe(JestGreaterThan25Adapter.name, () => {
         config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
         findRelatedTests: true,
         runInBand: true,
-        silent: true,
+        silent: true
       },
-      result: 'testResult',
+      result: 'testResult'
     });
   });
 

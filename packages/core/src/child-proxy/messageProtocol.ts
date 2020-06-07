@@ -5,14 +5,14 @@ import LoggingClientContext from '../logging/LoggingClientContext';
 export enum WorkerMessageKind {
   'Init',
   'Call',
-  'Dispose',
+  'Dispose'
 }
 
 export enum ParentMessageKind {
   'Initialized',
   'Result',
   'Rejection',
-  'DisposeCompleted',
+  'DisposeCompleted'
 }
 
 export type WorkerMessage = InitMessage | CallMessage | DisposeMessage;

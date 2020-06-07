@@ -7,7 +7,7 @@ import {
   PluginInterfaces,
   PluginKind,
   PluginResolver,
-  tokens,
+  tokens
 } from '@stryker-mutator/api/plugin';
 import { InjectableFunctionWithInject, InjectionToken, Injector } from 'typed-inject';
 

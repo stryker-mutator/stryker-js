@@ -11,5 +11,5 @@ export enum PluginKind {
   TestFramework = 'TestFramework',
   Transpiler = 'Transpiler',
   Mutator = 'Mutator',
-  Reporter = 'Reporter',
+  Reporter = 'Reporter'
 }

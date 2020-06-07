@@ -7,11 +7,11 @@ function mergedSchema(mainSchema: any, additionalSchemas: any[]): object {
   const schema = {
     ...mainSchema,
     properties: {
-      ...mainSchema.properties,
+      ...mainSchema.properties
     },
     definitions: {
-      ...mainSchema.definitions,
-    },
+      ...mainSchema.definitions
+    }
   };
 
   Object.assign(schema.properties, ...additionalSchemas.map((s) => s.properties));

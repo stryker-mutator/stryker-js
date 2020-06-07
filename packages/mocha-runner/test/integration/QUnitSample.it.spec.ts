@@ -23,7 +23,7 @@ describe('QUnit sample', () => {
     const mochaOptions = createMochaOptions({
       require: [],
       spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
-      ui: 'qunit',
+      ui: 'qunit'
     });
     testInjector.options.mochaOptions = mochaOptions;
     files = mochaOptions.spec!;
@@ -36,14 +36,14 @@ describe('QUnit sample', () => {
       'Math should be able 1 to a number',
       'Math should be able negate a number',
       'Math should be able to recognize a negative number',
-      'Math should be able to recognize that 0 is not a negative number',
+      'Math should be able to recognize that 0 is not a negative number'
     ]);
   });
 
   it('should not run tests when not configured with "qunit" ui', async () => {
     files = [resolve('./testResources/qunit-sample/MyMathSpec.js'), resolve('./testResources/qunit-sample/MyMath.js')];
     testInjector.options.mochaOptions = createMochaOptions({
-      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
+      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')]
     });
     const sut = createSut();
     await sut.init();

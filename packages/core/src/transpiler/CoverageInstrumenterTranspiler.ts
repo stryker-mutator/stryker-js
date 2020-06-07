@@ -89,7 +89,7 @@ export default class CoverageInstrumenterTranspiler implements Transpiler {
   private retrieveCoverageMaps(input: FileCoverageData): CoverageMaps {
     const output: CoverageMaps = {
       fnMap: {},
-      statementMap: input.statementMap,
+      statementMap: input.statementMap
     };
     Object.keys(input.fnMap).forEach((key) => (output.fnMap[key] = input.fnMap[key].loc));
     return output;

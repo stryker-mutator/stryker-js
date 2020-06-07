@@ -34,7 +34,7 @@ export function deepFreeze<T>(target: T): Immutable<T> {
         ...Object.entries(target).reduce((result, [prop, val]) => {
           result[prop] = deepFreeze(val);
           return result;
-        }, {} as any),
+        }, {} as any)
       });
     default:
       return target as Immutable<T>;

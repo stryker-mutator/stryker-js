@@ -28,7 +28,7 @@ describe('Selecting tests with nested suites', () => {
   const testSelections: ReadonlyArray<Readonly<TestSelection>> = [
     { id: 0, name: 'outer test 1' },
     { id: 1, name: 'outer test 2' },
-    { id: 2, name: 'outer inner test 3' },
+    { id: 2, name: 'outer inner test 3' }
   ];
 
   beforeEach(() => {

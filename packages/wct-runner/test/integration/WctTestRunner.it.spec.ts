@@ -32,10 +32,10 @@ describe('WctTestRunner integration', () => {
         name: '<failing-element> is throwing',
         status: TestStatus.Failed,
         failureMessages: [
-          'This element is failing HTMLElement.throw at /components/@stryker-mutator/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11',
-        ],
-      },
-    ],
+          'This element is failing HTMLElement.throw at /components/@stryker-mutator/wct-runner/testResources/htmlTestSuite/src/failing-element.js:11'
+        ]
+      }
+    ]
   };
   // To enable console logging: LoggerFactory.setLogImplementation(consoleLoggerFactory);
 
@@ -54,7 +54,7 @@ describe('WctTestRunner integration', () => {
     testInjector.options.wct = {
       configFile: wctConfigFile,
       persistent: true, // should be forced to false
-      root,
+      root
     };
     const sut = createSut();
 
@@ -85,12 +85,12 @@ describe('WctTestRunner integration', () => {
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'jsTestSuite', 'wct.conf.json');
     testInjector.options.wct = {
       configFile: wctConfigFile,
-      root,
+      root
     };
     const sut = createSut();
     const expectedResult: TimelessRunResult = {
       status: RunStatus.Complete,
-      tests: [{ name: 'AwesomeLib is awesome', status: TestStatus.Success, failureMessages: undefined }],
+      tests: [{ name: 'AwesomeLib is awesome', status: TestStatus.Success, failureMessages: undefined }]
     };
 
     // Act
@@ -106,7 +106,7 @@ describe('WctTestRunner integration', () => {
     const wctConfigFile = path.resolve(__dirname, '..', '..', 'testResources', 'garbage', 'wct.conf.json');
     testInjector.options.wct = {
       configFile: wctConfigFile,
-      root,
+      root
     };
     const sut = createSut();
     const expectedResult: TimelessRunResult = {
@@ -115,9 +115,9 @@ describe('WctTestRunner integration', () => {
         {
           name: '',
           status: TestStatus.Failed,
-          failureMessages: ['Random error <unknown> at /components/@stryker-mutator/wct-runner/testResources/garbage/test/gargbage-tests.js:1'],
-        },
-      ],
+          failureMessages: ['Random error <unknown> at /components/@stryker-mutator/wct-runner/testResources/garbage/test/gargbage-tests.js:1']
+        }
+      ]
     };
 
     // Act

@@ -3,7 +3,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import {
   mutationTestReportSchemaFileResult,
   mutationTestReportSchemaMutantResult,
-  mutationTestReportSchemaMutationTestResult,
+  mutationTestReportSchemaMutationTestResult
 } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -13,7 +13,7 @@ import { CIProvider } from '../../../../src/reporters/ci/Provider';
 import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
 import {
   default as DashboardReporterClient,
-  default as StrykerDashboardClient,
+  default as StrykerDashboardClient
 } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { mock, Mock } from '../../../helpers/producers';
@@ -27,7 +27,7 @@ describe(DashboardReporter.name, () => {
     dashboardClientMock = mock(StrykerDashboardClient);
     ciProviderMock = {
       determineProject: sinon.stub(),
-      determineVersion: sinon.stub(),
+      determineVersion: sinon.stub()
     };
   });
 
@@ -53,7 +53,7 @@ describe(DashboardReporter.name, () => {
     expect(dashboardClientMock.updateReport).calledWithMatch({
       projectName: 'fooProject',
       version: 'barVersion',
-      moduleName: 'bazModule',
+      moduleName: 'bazModule'
     });
   });
 
@@ -72,7 +72,7 @@ describe(DashboardReporter.name, () => {
       report: expectedMutationTestResult,
       projectName: 'github.com/foo/bar',
       version: 'master',
-      moduleName: undefined,
+      moduleName: undefined
     });
     expect(testInjector.logger.warn).not.called;
   });
@@ -89,13 +89,13 @@ describe(DashboardReporter.name, () => {
             mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
             mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
             mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived }),
-          ],
-        }),
-      },
+            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived })
+          ]
+        })
+      }
     });
     const expectedReport: Report = {
-      mutationScore: 75,
+      mutationScore: 75
     };
 
     // Act
@@ -106,7 +106,7 @@ describe(DashboardReporter.name, () => {
       report: expectedReport,
       projectName: 'github.com/foo/bar',
       version: 'master',
-      moduleName: undefined,
+      moduleName: undefined
     });
     expect(testInjector.logger.warn).not.called;
   });

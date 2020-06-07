@@ -25,7 +25,7 @@ export default class JestLessThan25TestAdapter implements JestTestAdapter {
         ...(fileNameUnderTest && { _: [fileNameUnderTest], findRelatedTests: true }),
         config,
         runInBand: true,
-        silent: true,
+        silent: true
       } as any,
       [projectRoot]
     );

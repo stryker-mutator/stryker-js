@@ -22,5 +22,5 @@ export default {
         () => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandboxFileNames, sandboxWorkingDirectory, loggingContext))
       );
     }
-  },
+  }
 };

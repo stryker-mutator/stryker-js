@@ -35,7 +35,7 @@ describe(WctReporter.name, () => {
         duration: 2,
         error: null,
         state: 'passing',
-        test: ['fooSpec.js', 'Foo', 'bar()', 'should baz'],
+        test: ['fooSpec.js', 'Foo', 'bar()', 'should baz']
       },
       10,
       { name: 'Foo bar() should baz', status: TestStatus.Success, timeSpentMs: 10, failureMessages: undefined }
@@ -47,7 +47,7 @@ describe(WctReporter.name, () => {
       failureMessages: ['fooError'],
       name: 'true should be false',
       status: TestStatus.Failed,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 
@@ -56,7 +56,7 @@ describe(WctReporter.name, () => {
       failureMessages: ['fooError'],
       name: 'true should be false',
       status: TestStatus.Failed,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 
@@ -65,7 +65,7 @@ describe(WctReporter.name, () => {
       failureMessages: ['{"a":"fooError"}'],
       name: 'true should be false',
       status: TestStatus.Failed,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 
@@ -74,7 +74,7 @@ describe(WctReporter.name, () => {
       failureMessages: ['42'],
       name: 'true should be false',
       status: TestStatus.Failed,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 
@@ -83,7 +83,7 @@ describe(WctReporter.name, () => {
       failureMessages: ['fooError'],
       name: 'true should be false',
       status: TestStatus.Failed,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 
@@ -92,7 +92,7 @@ describe(WctReporter.name, () => {
       failureMessages: undefined,
       name: 'true should be false',
       status: TestStatus.Skipped,
-      timeSpentMs: 40,
+      timeSpentMs: 40
     });
   });
 

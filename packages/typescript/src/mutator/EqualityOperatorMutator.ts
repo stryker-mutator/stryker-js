@@ -10,7 +10,7 @@ const replaceTokens: ts.MapLike<string[]> = {
   [ts.SyntaxKind.EqualsEqualsToken]: ['!='],
   [ts.SyntaxKind.ExclamationEqualsToken]: ['=='],
   [ts.SyntaxKind.EqualsEqualsEqualsToken]: ['!=='],
-  [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['==='],
+  [ts.SyntaxKind.ExclamationEqualsEqualsToken]: ['===']
 };
 
 export default class EqualityOperatorMutator extends NodeMutator<ts.BinaryExpression> {

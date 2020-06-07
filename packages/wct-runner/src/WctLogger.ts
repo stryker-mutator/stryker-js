@@ -7,7 +7,7 @@ export default class WctLogger {
     ['log:debug']: this.log.debug.bind(this.log),
     ['log:error']: this.log.error.bind(this.log),
     ['log:info']: this.log.info.bind(this.log),
-    ['log:warn']: this.log.warn.bind(this.log),
+    ['log:warn']: this.log.warn.bind(this.log)
   };
 
   constructor(private readonly context: EventEmitter, verbose: boolean, private readonly log: Logger) {

@@ -11,7 +11,7 @@ import {
   buildSchemaWithPluginContributions,
   OptionsValidator,
   validateOptions,
-  markUnknownOptions,
+  markUnknownOptions
 } from '../config';
 import ConfigReader from '../config/ConfigReader';
 import BroadcastReporter from '../reporters/BroadcastReporter';

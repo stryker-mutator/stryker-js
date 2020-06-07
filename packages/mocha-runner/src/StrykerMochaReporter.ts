@@ -28,7 +28,7 @@ export class StrykerMochaReporter {
       this.runResult = {
         errorMessages: [],
         status: RunStatus.Error,
-        tests: [],
+        tests: []
       };
       StrykerMochaReporter.log.debug('Starting Mocha test run');
     });
@@ -37,7 +37,7 @@ export class StrykerMochaReporter {
       this.runResult.tests.push({
         name: test.fullTitle(),
         status: TestStatus.Success,
-        timeSpentMs: this.timer.elapsedMs(),
+        timeSpentMs: this.timer.elapsedMs()
       });
       this.passedCount++;
       this.timer.reset();
@@ -48,7 +48,7 @@ export class StrykerMochaReporter {
         failureMessages: [err.message],
         name: test.fullTitle(),
         status: TestStatus.Failed,
-        timeSpentMs: this.timer.elapsedMs(),
+        timeSpentMs: this.timer.elapsedMs()
       });
       if (!this.runResult.errorMessages) {
         this.runResult.errorMessages = [];

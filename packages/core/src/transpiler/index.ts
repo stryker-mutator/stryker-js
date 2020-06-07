@@ -23,7 +23,7 @@ export function transpilerFactory(
       },
       dispose() {
         // noop
-      },
+      }
     };
   }
 }

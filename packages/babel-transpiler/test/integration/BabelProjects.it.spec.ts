@@ -69,18 +69,18 @@ describe('Different extensions', () => {
 describe('A Babel project with babel.config.js config file that exports function', () => {
   describeIntegrationTest('babelProjectWithBabelConfigJs', {
     extensions: ['.ts'],
-    optionsFile: 'babel.config.js',
+    optionsFile: 'babel.config.js'
   });
 });
 describe('A Babel project with babel.config.js config file that exports object', () => {
   describeIntegrationTest('babelProjectWithBabelConfigJsObject', {
     extensions: ['.ts'],
-    optionsFile: 'babel.config.js',
+    optionsFile: 'babel.config.js'
   });
 });
 describe('A Babel project with .babelrc.js config file', () => {
   describeIntegrationTest('babelProjectWithBabelRcJs', {
     extensions: ['.ts'],
-    optionsFile: '.babelrc.js',
+    optionsFile: '.babelrc.js'
   });
 });

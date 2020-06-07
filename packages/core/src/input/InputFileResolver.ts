@@ -17,7 +17,7 @@ import InputFileCollection from './InputFileCollection';
 function toReportSourceFile(file: File): SourceFile {
   return {
     content: file.textContent,
-    path: file.name,
+    path: file.name
   };
 }
 
@@ -101,7 +101,7 @@ export default class InputFileResolver {
   private async resolveFilesUsingGit(): Promise<string[]> {
     try {
       const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
-        maxBuffer: 10 * 1000 * 1024,
+        maxBuffer: 10 * 1000 * 1024
       });
       const fileNames = stdout
         .toString()
