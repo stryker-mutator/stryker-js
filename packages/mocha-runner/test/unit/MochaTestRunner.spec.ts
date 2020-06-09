@@ -8,6 +8,7 @@ import { expect } from 'chai';
 import * as Mocha from 'mocha';
 
 import sinon = require('sinon');
+
 import LibWrapper from '../../src/LibWrapper';
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
 import { MochaTestRunner } from '../../src/MochaTestRunner';

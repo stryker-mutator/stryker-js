@@ -4,8 +4,9 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
 import * as karma from 'karma';
 
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
+
+import strykerKarmaConf = require('./starters/stryker-karma.conf');
 
 import ProjectStarter from './starters/ProjectStarter';
 import StrykerReporter from './StrykerReporter';
