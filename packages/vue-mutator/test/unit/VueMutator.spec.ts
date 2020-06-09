@@ -1,5 +1,5 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
+import { Mutator } from '@stryker-mutator/api/mutant';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { SinonStubbedInstance } from 'sinon';

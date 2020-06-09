@@ -8,9 +8,9 @@ import {
   MutatorDescriptor,
   strykerCoreSchema,
   WarningOptions,
+  Mutant,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';

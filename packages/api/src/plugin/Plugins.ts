@@ -7,6 +7,7 @@ import { TestFramework } from '../../test_framework';
 import { TestRunner } from '../../test_runner';
 import { Transpiler } from '../../transpile';
 import { OptionsEditor } from '../core/OptionsEditor';
+import { Checker } from '../../check';
 
 import { PluginContexts } from './Contexts';
 import { PluginKind } from './PluginKind';
@@ -90,6 +91,7 @@ export interface PluginInterfaces {
   [PluginKind.TestFramework]: TestFramework;
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.Transpiler]: Transpiler;
+  [PluginKind.Checker]: Checker;
 }
 
 /**

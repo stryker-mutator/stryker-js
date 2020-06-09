@@ -1,5 +1,4 @@
-import { Location } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, Location } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, TestResult } from '@stryker-mutator/api/test_runner';

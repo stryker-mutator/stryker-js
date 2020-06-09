@@ -48,4 +48,5 @@ export interface PluginContexts {
   [PluginKind.TestFramework]: OptionsContext;
   [PluginKind.TestRunner]: TestRunnerPluginContext;
   [PluginKind.Transpiler]: TranspilerPluginContext;
+  [PluginKind.Checker]: OptionsContext;
 }
