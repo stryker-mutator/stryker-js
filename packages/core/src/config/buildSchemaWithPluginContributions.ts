@@ -3,7 +3,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
 
-function mergedSchema(mainSchema: any, additionalSchemas: any[]): object {
+function mergedSchema(mainSchema: any, additionalSchemas: any[]): Record<string, any> {
   const schema = {
     ...mainSchema,
     properties: {
@@ -19,7 +19,7 @@ function mergedSchema(mainSchema: any, additionalSchemas: any[]): object {
   return schema;
 }
 
-export function buildSchemaWithPluginContributions(schema: object, pluginResolver: PluginResolver, logger: Logger): object {
+export function buildSchemaWithPluginContributions(schema: Record<string, any>, pluginResolver: PluginResolver, logger: Logger): Record<string, any> {
   const additionalSchemas = pluginResolver.resolveValidationSchemaContributions();
   logger.debug('Contributing %s schemas from plugins to options validation.', additionalSchemas.length);
   return mergedSchema(schema, additionalSchemas);

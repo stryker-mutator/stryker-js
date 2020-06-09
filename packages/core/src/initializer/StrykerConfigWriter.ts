@@ -117,7 +117,7 @@ export default class StrykerConfigWriter {
     return STRYKER_JSON_CONFIG_FILE;
   }
 
-  private stringify(input: object): string {
+  private stringify(input: Record<string, any>): string {
     return JSON.stringify(input, undefined, 2);
   }
 }

@@ -30,7 +30,7 @@ module.exports = {
       }
     ],
     '@typescript-eslint/await-thenable': 'off',
-    '@typescript-eslint/ban-types': 'off',
+    '@typescript-eslint/ban-types': 'error',
     'brace-style': 'off',
     '@typescript-eslint/brace-style': 'error',
     camelcase: 'error',

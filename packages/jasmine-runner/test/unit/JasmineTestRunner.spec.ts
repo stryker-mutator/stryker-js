@@ -10,7 +10,7 @@ import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
 type SinonStubbedInstance<TType> = {
-  [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
+  [P in keyof TType]: TType[P] extends (...args: any) => any ? sinon.SinonStub : TType[P];
 };
 
 describe('JasmineTestRunner', () => {
