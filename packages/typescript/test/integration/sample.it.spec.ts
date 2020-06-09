@@ -45,7 +45,7 @@ describe('Sample integration', () => {
     expect(mapFiles).lengthOf(2);
     expect(mapFiles.map((file) => file.name)).deep.eq([
       path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'math.js.map'),
-      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'useMath.js.map')
+      path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'useMath.js.map'),
     ]);
   });
 

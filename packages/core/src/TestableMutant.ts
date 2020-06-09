@@ -10,7 +10,7 @@ import SourceFile, { isLineBreak } from './SourceFile';
 export enum TestSelectionResult {
   Failed,
   FailedButAlreadyReported,
-  Success
+  Success,
 }
 
 class TestFilter {
@@ -127,7 +127,7 @@ export default class TestableMutant {
       replacement: this.replacement,
       sourceFilePath: this.fileName,
       status,
-      testsRan
+      testsRan,
     }) as MutantResult;
   }
 

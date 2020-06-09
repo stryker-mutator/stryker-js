@@ -48,7 +48,7 @@ export function guardTypescriptVersion() {
 
 const printer = ts.createPrinter({
   newLine: os.EOL === '\r\n' ? ts.NewLineKind.CarriageReturnLineFeed : ts.NewLineKind.LineFeed,
-  removeComments: false
+  removeComments: false,
 });
 
 export function printNode(node: ts.Node, originalSourceFile: ts.SourceFile): string {

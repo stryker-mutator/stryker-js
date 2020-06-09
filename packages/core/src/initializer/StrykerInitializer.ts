@@ -18,7 +18,7 @@ import { initializerTokens } from '.';
 
 const enum PackageManager {
   Npm = 'npm',
-  Yarn = 'yarn'
+  Yarn = 'yarn',
 }
 
 export default class StrykerInitializer {
@@ -140,19 +140,19 @@ export default class StrykerInitializer {
     reporterOptions.push(
       {
         name: 'html',
-        pkg: null
+        pkg: null,
       },
       {
         name: 'clear-text',
-        pkg: null
+        pkg: null,
       },
       {
         name: 'progress',
-        pkg: null
+        pkg: null,
       },
       {
         name: 'dashboard',
-        pkg: null
+        pkg: null,
       }
     );
     return this.inquirer.promptReporters(reporterOptions);
@@ -165,7 +165,7 @@ export default class StrykerInitializer {
       this.log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
       const none: PromptOption = {
         name: 'None/other',
-        pkg: null
+        pkg: null,
       };
       testFrameworkOptions.push(none);
       selectedTestFramework = await this.inquirer.promptTestFrameworks(testFrameworkOptions);
@@ -205,12 +205,12 @@ export default class StrykerInitializer {
     return this.inquirer.promptPackageManager([
       {
         name: PackageManager.Npm,
-        pkg: null
+        pkg: null,
       },
       {
         name: PackageManager.Yarn,
-        pkg: null
-      }
+        pkg: null,
+      },
     ]);
   }
 

@@ -24,7 +24,7 @@ describe(MutationTestReportCalculator.name, () => {
     inputFiles = {
       files,
       filesToMutate: [],
-      logFiles: () => {}
+      logFiles: () => {},
     };
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock as Required<Reporter>)
@@ -77,28 +77,28 @@ describe(MutationTestReportCalculator.name, () => {
           mutatorName: 'Foo',
           replacement: 'foo replacement',
           sourceFilePath: 'foo.js',
-          status: MutantStatus.Killed
+          status: MutantStatus.Killed,
         }),
         factory.mutantResult({
           sourceFilePath: 'bar.js',
-          status: MutantStatus.NoCoverage
+          status: MutantStatus.NoCoverage,
         }),
         factory.mutantResult({
           sourceFilePath: 'baz.js',
-          status: MutantStatus.RuntimeError
+          status: MutantStatus.RuntimeError,
         }),
         factory.mutantResult({
           sourceFilePath: 'qux.js',
-          status: MutantStatus.Survived
+          status: MutantStatus.Survived,
         }),
         factory.mutantResult({
           sourceFilePath: '5.js',
-          status: MutantStatus.TimedOut
+          status: MutantStatus.TimedOut,
         }),
         factory.mutantResult({
           sourceFilePath: '6.js',
-          status: MutantStatus.TranspileError
-        })
+          status: MutantStatus.TranspileError,
+        }),
       ];
       files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
 
@@ -111,7 +111,7 @@ describe(MutationTestReportCalculator.name, () => {
         id: '1',
         mutatorName: 'Foo',
         replacement: 'foo replacement',
-        status: mutationTestReportSchema.MutantStatus.Killed
+        status: mutationTestReportSchema.MutantStatus.Killed,
       });
       expect(actualReport.files['bar.js'].mutants[0]).include({ status: mutationTestReportSchema.MutantStatus.NoCoverage });
       expect(actualReport.files['baz.js'].mutants[0]).include({ status: mutationTestReportSchema.MutantStatus.RuntimeError });
@@ -132,12 +132,12 @@ describe(MutationTestReportCalculator.name, () => {
       const inputMutants = [
         factory.mutantResult({
           mutatorName: 'Foo',
-          sourceFilePath: 'foo.js'
+          sourceFilePath: 'foo.js',
         }),
         factory.mutantResult({
           mutatorName: 'Bar',
-          sourceFilePath: 'foo.js'
-        })
+          sourceFilePath: 'foo.js',
+        }),
       ];
       files.push(new File('foo.js', ''));
 

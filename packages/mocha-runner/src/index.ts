@@ -8,7 +8,7 @@ import { MochaTestRunner } from './MochaTestRunner';
 
 export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.OptionsEditor, 'mocha-runner', mochaOptionsEditorFactory),
-  declareClassPlugin(PluginKind.TestRunner, 'mocha', MochaTestRunner)
+  declareClassPlugin(PluginKind.TestRunner, 'mocha', MochaTestRunner),
 ];
 
 mochaOptionsEditorFactory.inject = tokens(commonTokens.injector);

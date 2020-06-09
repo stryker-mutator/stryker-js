@@ -13,7 +13,7 @@ export default class EqualityOperatorMutator implements NodeMutator {
     '==': '!=',
     '!=': '==',
     '===': '!==',
-    '!==': '==='
+    '!==': '===',
   };
 
   public name = 'EqualityOperator';
@@ -28,7 +28,7 @@ export default class EqualityOperatorMutator implements NodeMutator {
 
         return mutatedOperators.map((mutatedOperator) => [
           node,
-          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any })
+          NodeGenerator.createMutatedCloneWithProperties(node, { operator: mutatedOperator as any }),
         ]);
       }
     }

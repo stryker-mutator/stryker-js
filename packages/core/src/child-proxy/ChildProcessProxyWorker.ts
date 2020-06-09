@@ -55,14 +55,14 @@ export default class ChildProcessProxyWorker {
             this.send({
               correlationId: message.correlationId,
               kind: ParentMessageKind.Result,
-              result
+              result,
             });
           })
           .catch((error) => {
             this.send({
               correlationId: message.correlationId,
               error: errorToString(error),
-              kind: ParentMessageKind.Rejection
+              kind: ParentMessageKind.Rejection,
             });
           });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);

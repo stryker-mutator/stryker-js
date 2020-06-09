@@ -26,7 +26,7 @@ import { coverageMaps, Mock } from '../../helpers/producers';
 const EXPECTED_INITIAL_TIMEOUT = 60 * 1000 * 5;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
-  port: 4200
+  port: 4200,
 });
 
 describe('InitialTestExecutor run', () => {
@@ -125,11 +125,11 @@ describe('InitialTestExecutor run', () => {
       timerMock.elapsedMs.returns(42);
       const expectedResult: InitialTestRunResult = {
         coverageMaps: {
-          someFile: coverageData
+          someFile: coverageData,
         },
         overheadTimeMS: 42 - expectedRunResult.tests[0].timeSpentMs,
         runResult: expectedRunResult,
-        sourceMapper: sourceMapperMock
+        sourceMapper: sourceMapperMock,
       };
       sut = createSut();
       const actualRunResult = await sut.run();
@@ -222,7 +222,7 @@ describe('InitialTestExecutor run', () => {
         expectedRunResult.tests = [
           testResult({ name: 'foobar test' }),
           testResult({ name: 'example test', status: TestStatus.Failed, failureMessages: ['expected error'] }),
-          testResult({ name: '2nd example test', status: TestStatus.Failed })
+          testResult({ name: '2nd example test', status: TestStatus.Failed }),
         ];
       });
 

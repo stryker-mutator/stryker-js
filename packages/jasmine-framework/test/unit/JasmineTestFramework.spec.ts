@@ -21,7 +21,7 @@ describe('JasmineTestFramework', () => {
       expect(
         sut.filter([
           { id: 5, name: 'test five' },
-          { id: 8, name: 'test eight' }
+          { id: 8, name: 'test eight' },
         ])
       )
         .to.contain('jasmine.getEnv().specFilter = function (spec)')

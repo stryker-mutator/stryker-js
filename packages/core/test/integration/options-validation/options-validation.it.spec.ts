@@ -11,7 +11,7 @@ describe('Options validation integration', () => {
   it('should log about unknown properties in log file', () => {
     const optionsProvider = createPluginResolverInjector(
       {
-        configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json')
+        configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json'),
       },
       testInjector.injector
     );

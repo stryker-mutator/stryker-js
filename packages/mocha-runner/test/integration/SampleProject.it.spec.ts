@@ -57,7 +57,7 @@ describe('Running a sample project', () => {
     beforeEach(() => {
       spec = [resolve('testResources/sampleProject/MyMath.js'), resolve('testResources/sampleProject/MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({
-        files: spec
+        files: spec,
       });
       sut = createSut();
       return sut.init();

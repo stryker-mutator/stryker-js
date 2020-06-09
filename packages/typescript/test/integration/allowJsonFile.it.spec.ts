@@ -28,7 +28,7 @@ describe('AllowJsonFiles integration', () => {
     expect(outputFiles.length).to.eq(2);
     expect(outputFiles.map((f) => f.name)).deep.eq([
       path.resolve(__dirname, '..', '..', 'testResources', 'allowJsonFiles', 'json.json'),
-      path.resolve(__dirname, '..', '..', 'testResources', 'allowJsonFiles', 'index.js')
+      path.resolve(__dirname, '..', '..', 'testResources', 'allowJsonFiles', 'index.js'),
     ]);
   });
 

@@ -63,11 +63,11 @@ describe(InputFileResolver.name, () => {
       stdout: Buffer.from(`
     file1.js
     foo/bar/baz.ts
-    `)
+    `),
     });
     const result = await sut.resolve();
     expect(childProcessExecStub).calledWith('git ls-files --others --exclude-standard --cached --exclude /.stryker-tmp/*', {
-      maxBuffer: 10 * 1000 * 1024
+      maxBuffer: 10 * 1000 * 1024,
     });
     expect(result.files.map((file) => file.name)).deep.eq([path.resolve('file1.js'), path.resolve('foo/bar/baz.ts')]);
   });
@@ -77,7 +77,7 @@ describe(InputFileResolver.name, () => {
     testInjector.options.tempDirName = 'foo-bar';
     sut = createSut();
     childProcessExecStub.resolves({
-      stdout: Buffer.from('')
+      stdout: Buffer.from(''),
     });
 
     // Act
@@ -113,7 +113,7 @@ describe(InputFileResolver.name, () => {
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
       deleted/file.js
-    `)
+    `),
     });
     const error = fileNotFoundError();
     readFileStub.withArgs('deleted/file.js').rejects(error);
@@ -126,7 +126,7 @@ describe(InputFileResolver.name, () => {
     childProcessExecStub.resolves({
       stdout: Buffer.from(`
       submoduleDir
-    `)
+    `),
     });
     const fileIsDirError = createIsDirError();
     readFileStub.withArgs('submoduleDir').rejects(fileIsDirError);
@@ -146,7 +146,7 @@ describe(InputFileResolver.name, () => {
         path.resolve('/mute1.js'),
         path.resolve('/file2.js'),
         path.resolve('/mute2.js'),
-        path.resolve('/file3.js')
+        path.resolve('/file3.js'),
       ]);
     });
 
@@ -168,7 +168,7 @@ describe(InputFileResolver.name, () => {
         { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
         { path: path.resolve('/file2.js'), content: 'file 2 content' },
         { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
-        { path: path.resolve('/file3.js'), content: 'file 3 content' }
+        { path: path.resolve('/file3.js'), content: 'file 3 content' },
       ];
       expect(reporterMock.onAllSourceFilesRead).calledWith(expected);
     });
@@ -183,7 +183,7 @@ describe(InputFileResolver.name, () => {
         { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
         { path: path.resolve('/file2.js'), content: 'file 2 content' },
         { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
-        { path: path.resolve('/file3.js'), content: 'file 3 content' }
+        { path: path.resolve('/file3.js'), content: 'file 3 content' },
       ];
       expected.forEach((sourceFile) => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
     });

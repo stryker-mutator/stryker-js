@@ -31,7 +31,7 @@ export class JavaScriptMutator implements Mutator {
                 fileName: fileName,
                 mutatorName: mutatorName,
                 range: [original.start, original.end],
-                replacement
+                replacement,
               });
 
               this.log.trace(`Generated mutant for mutator ${mutatorName} in file ${fileName} with replacement code "${replacement}"`);

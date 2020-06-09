@@ -14,7 +14,7 @@ export default class ArrayDeclarationMutator implements NodeMutator {
         // replace [...]
         node.elements.length
           ? [node, { raw: '[]' }] // raw string here
-          : [node, { raw: '["Stryker was here"]' }]
+          : [node, { raw: '["Stryker was here"]' }],
       ];
     } else if ((types.isCallExpression(node) || types.isNewExpression(node)) && types.isIdentifier(node.callee) && node.callee.name === 'Array') {
       const newPrefix = types.isNewExpression(node) ? 'new ' : '';

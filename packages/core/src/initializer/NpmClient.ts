@@ -25,7 +25,7 @@ const getName = (packageName: string) => {
 const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOption[] =>
   searchResults.results.map((result) => ({
     name: getName(result.package.name),
-    pkg: result.package
+    pkg: result.package,
   }));
 
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
@@ -88,7 +88,7 @@ export default class NpmClient {
         this.log.error(`Unable to reach npms.io (for query ${path}). Please check your internet connection.`, errorToString(err));
         const result: NpmSearchResult = {
           results: [],
-          total: 0
+          total: 0,
         };
         return result;
       });

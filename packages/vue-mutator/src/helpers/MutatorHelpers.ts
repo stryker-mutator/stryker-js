@@ -8,7 +8,7 @@ import {
   Plugin,
   PluginKind,
   PluginResolver,
-  tokens
+  tokens,
 } from '@stryker-mutator/api/plugin';
 
 export const MUTATORS_TOKEN = 'mutators';

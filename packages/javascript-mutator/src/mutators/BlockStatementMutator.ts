@@ -13,7 +13,7 @@ export default class BlockStatementMutator implements NodeMutator {
   public mutate(node: types.Node): Array<[types.Node, types.Node | { raw: string }]> {
     return types.isBlockStatement(node) && node.body.length > 0
       ? [
-          [node, NodeGenerator.createMutatedCloneWithProperties(node, { body: [] })] // `{}`
+          [node, NodeGenerator.createMutatedCloneWithProperties(node, { body: [] })], // `{}`
         ]
       : [];
   }

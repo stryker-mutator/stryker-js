@@ -110,11 +110,11 @@ function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
 
   function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
     const params: TypeParams = {
-      type: typeErrors.map((error) => (error.params as TypeParams).type).join(',')
+      type: typeErrors.map((error) => (error.params as TypeParams).type).join(','),
     };
     return {
       ...typeErrors[0],
-      params
+      params,
     };
   }
 }

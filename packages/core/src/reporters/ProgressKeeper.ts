@@ -9,7 +9,7 @@ abstract class ProgressKeeper implements Reporter {
     survived: 0,
     timedOut: 0,
     tested: 0,
-    total: 0
+    total: 0,
   };
 
   private mutantIdsWithoutCoverage: string[];

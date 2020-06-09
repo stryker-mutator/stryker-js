@@ -30,15 +30,15 @@ describe('Source mapper integration', () => {
         fileName: resolve('external-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
-          start: { line: 7, column: 8 }
-        }
+          start: { line: 7, column: 8 },
+        },
       });
       expect(actual).deep.eq({
         fileName: resolve('external-source-maps', 'js', 'math.js'),
         location: {
           end: { line: 16, column: 0 },
-          start: { line: 15, column: 10 }
-        }
+          start: { line: 15, column: 10 },
+        },
       });
     });
   });
@@ -53,15 +53,15 @@ describe('Source mapper integration', () => {
         fileName: resolve('inline-source-maps', 'ts', 'src', 'math.ts'),
         location: {
           end: { line: 7, column: 42 },
-          start: { line: 7, column: 8 }
-        }
+          start: { line: 7, column: 8 },
+        },
       });
       expect(actual).deep.eq({
         fileName: resolve('inline-source-maps', 'js', 'math.js'),
         location: {
           end: { line: 16, column: 0 },
-          start: { line: 15, column: 10 }
-        }
+          start: { line: 15, column: 10 },
+        },
       });
     });
   });

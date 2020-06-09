@@ -7,7 +7,7 @@ const replaceTokens: ts.MapLike<string> = {
   [ts.SyntaxKind.MinusToken]: '+',
   [ts.SyntaxKind.SlashToken]: '*',
   [ts.SyntaxKind.AsteriskToken]: '/',
-  [ts.SyntaxKind.PercentToken]: '*'
+  [ts.SyntaxKind.PercentToken]: '*',
 };
 
 export default class ArithmeticOperatorMutator extends NodeMutator<ts.BinaryExpression> {

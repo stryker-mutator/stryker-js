@@ -19,7 +19,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
       eject,
       projectRoot,
-      relativePath: resolve('test')
+      relativePath: resolve('test'),
     }));
 
     requireResolveStub = sinon.stub();
@@ -40,7 +40,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     expect(config).to.deep.equal({
       eject: false,
       projectRoot: '/path/to/project',
-      relativePath: path.join('node_modules', 'react-scripts', 'test')
+      relativePath: path.join('node_modules', 'react-scripts', 'test'),
     });
   });
 

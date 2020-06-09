@@ -33,7 +33,7 @@ describe(buildSchemaWithPluginContributions.name, () => {
     const actual = buildSchemaWithPluginContributions(input, pluginResolverStub, testInjector.logger);
     expect(actual).deep.eq({
       properties: {},
-      definitions: { ...input.definitions, ...additionalSchema.definitions, ...additionalSchema2.definitions }
+      definitions: { ...input.definitions, ...additionalSchema.definitions, ...additionalSchema2.definitions },
     });
   });
 });

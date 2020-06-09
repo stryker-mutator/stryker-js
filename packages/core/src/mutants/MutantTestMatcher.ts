@@ -17,7 +17,7 @@ import LocationHelper from '../utils/LocationHelper';
 
 const enum StatementIndexKind {
   Function,
-  Statement
+  Statement,
 }
 
 /**
@@ -68,7 +68,7 @@ export class MutantTestMatcher {
   public async enrichWithCoveredTests(testableMutant: TestableMutant) {
     const transpiledLocation = await this.initialRunResult.sourceMapper.transpiledLocationFor({
       fileName: testableMutant.mutant.fileName,
-      location: testableMutant.location
+      location: testableMutant.location,
     });
     const fileCoverage = this.initialRunResult.coverageMaps[transpiledLocation.fileName];
     const statementIndex = this.findMatchingStatement(new LocationHelper(transpiledLocation.location), fileCoverage);
@@ -150,7 +150,7 @@ export class MutantTestMatcher {
       replacement: testableMutant.mutant.replacement,
       runAllTests: testableMutant.runAllTests,
       scopedTestIds: testableMutant.selectedTests.map((testSelection) => testSelection.id),
-      timeSpentScopedTests: testableMutant.timeSpentScopedTests
+      timeSpentScopedTests: testableMutant.timeSpentScopedTests,
     };
     return Object.freeze(matchedMutant);
   }
@@ -160,14 +160,14 @@ export class MutantTestMatcher {
     if (statementIndex) {
       return {
         index: statementIndex,
-        kind: StatementIndexKind.Statement
+        kind: StatementIndexKind.Statement,
       };
     } else {
       const functionIndex = this.findMatchingStatementInMap(location, fileCoverage.fnMap);
       if (functionIndex) {
         return {
           index: functionIndex,
-          kind: StatementIndexKind.Function
+          kind: StatementIndexKind.Function,
         };
       } else {
         return null;
@@ -184,7 +184,7 @@ export class MutantTestMatcher {
   private findMatchingStatementInMap(needle: LocationHelper, haystack: StatementMap): string | null {
     let smallestStatement: { index: string | null; location: LocationHelper } = {
       index: null,
-      location: LocationHelper.MAX_VALUE
+      location: LocationHelper.MAX_VALUE,
     };
     if (haystack) {
       Object.keys(haystack).forEach((statementId) => {
@@ -193,7 +193,7 @@ export class MutantTestMatcher {
         if (needle.isCoveredBy(statementLocation) && smallestStatement.location.isSmallerArea(statementLocation)) {
           smallestStatement = {
             index: statementId,
-            location: new LocationHelper(statementLocation)
+            location: new LocationHelper(statementLocation),
           };
         }
       });

@@ -41,16 +41,16 @@ export default class JasmineTestRunner implements TestRunner {
           resolve({
             errorMessages: [],
             status: RunStatus.Complete,
-            tests
+            tests,
           });
-        }
+        },
       };
       jasmine.addReporter(reporter);
       jasmine.execute();
     }).catch((error) => ({
       errorMessages: [`An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`],
       status: RunStatus.Error,
-      tests: []
+      tests: [],
     }));
   }
 

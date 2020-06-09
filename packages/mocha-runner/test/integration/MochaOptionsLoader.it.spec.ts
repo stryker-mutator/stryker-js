@@ -29,7 +29,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       package: false, // mocha sets package: false after loading it...
       extension: ['js'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -43,7 +43,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       config: configFile,
       extension: ['json', 'js'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -57,7 +57,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       package: false, // mocha sets package: false after loading it...
       extension: ['jsonc', 'js'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -76,7 +76,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       require: ['@babel/register'],
       spec: ['test/**/*.spec.js'],
       timeout: false,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -94,7 +94,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       opts: configFile,
       spec: ['/tests/**/*.js', '/foo/*.js'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -105,7 +105,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ['async-only']: true,
       extension: ['json'],
       timeout: 20,
-      ui: 'tdd'
+      ui: 'tdd',
     });
   });
 
@@ -116,7 +116,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ['async-only']: true,
       extension: ['js', 'json'],
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     });
   });
 
@@ -125,7 +125,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const actualConfig = actLoad({
       'no-config': true,
       'no-package': true,
-      'no-opts': true
+      'no-opts': true,
     });
     const expectedOptions = {
       extension: ['js'],
@@ -133,7 +133,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ['no-opts']: true,
       ['no-package']: true,
       timeout: 2000,
-      ui: 'bdd'
+      ui: 'bdd',
     };
     expect(actualConfig).deep.include(expectedOptions);
   });

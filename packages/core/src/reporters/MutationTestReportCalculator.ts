@@ -50,7 +50,7 @@ export class MutationTestReportCalculator {
     return {
       files: this.toFileResults(results),
       schemaVersion: '1.0',
-      thresholds: this.options.thresholds
+      thresholds: this.options.thresholds,
     };
   }
 
@@ -66,7 +66,7 @@ export class MutationTestReportCalculator {
           resultDictionary[mutantResult.sourceFilePath] = {
             language: this.determineLanguage(sourceFile.name),
             mutants: [this.toMutantResult(mutantResult)],
-            source: sourceFile.textContent
+            source: sourceFile.textContent,
           };
         } else {
           this.log.warn(
@@ -99,21 +99,21 @@ export class MutationTestReportCalculator {
       location: this.toLocation(mutantResult.location),
       mutatorName: mutantResult.mutatorName,
       replacement: mutantResult.replacement,
-      status: this.toStatus(mutantResult.status)
+      status: this.toStatus(mutantResult.status),
     };
   }
 
   private toLocation(location: Location): mutationTestReportSchema.Location {
     return {
       end: this.toPosition(location.end),
-      start: this.toPosition(location.start)
+      start: this.toPosition(location.start),
     };
   }
 
   private toPosition(pos: Position): mutationTestReportSchema.Position {
     return {
       column: pos.column + 1, // convert from 0-based to 1-based
-      line: pos.line + 1
+      line: pos.line + 1,
     };
   }
 

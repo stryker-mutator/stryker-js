@@ -20,9 +20,9 @@ describe(BabelConfigReader.name, () => {
     const babelConfig: StrykerBabelConfig = {
       extensions: ['.ts'],
       options: {
-        presets: ['env']
+        presets: ['env'],
       },
-      optionsFile: null
+      optionsFile: null,
     };
     const options = factory.strykerWithPluginOptions({ babel: babelConfig });
     const result = sut.readConfig(options);
@@ -48,7 +48,7 @@ describe(BabelConfigReader.name, () => {
     const expectedConfig: StrykerBabelConfig = {
       extensions: ['.ts'],
       options: { presets: ['env'] },
-      optionsFile: null
+      optionsFile: null,
     };
     sut.readConfig(factory.strykerWithPluginOptions({ babel: expectedConfig }));
     expect(testInjector.logger.debug).calledWith(`Babel config is: ${JSON.stringify(expectedConfig, null, 2)}`);
@@ -56,7 +56,7 @@ describe(BabelConfigReader.name, () => {
 
   it('should log a warning if the babelrc file does not exist', () => {
     const babelConfig = {
-      optionsFile: '.nonExistingBabelrc'
+      optionsFile: '.nonExistingBabelrc',
     };
     sut.readConfig(factory.strykerWithPluginOptions({ babel: createStrykerBabelConfig(babelConfig) }));
     expect(testInjector.logger.error).calledWith(`babelrc file does not exist at: ${path.resolve(babelConfig.optionsFile)}`);
@@ -77,7 +77,7 @@ describe(BabelConfigReader.name, () => {
     const expected: StrykerBabelConfig = {
       extensions: [],
       options: {},
-      optionsFile: '.babelrc'
+      optionsFile: '.babelrc',
     };
     const result = sut.readConfig(factory.strykerWithPluginOptions({ babel: expected }));
     expect(result).deep.equal(expected);

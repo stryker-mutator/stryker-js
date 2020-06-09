@@ -41,7 +41,7 @@ export default class TranspilingLanguageService {
     this.diagnosticsFormatter = {
       getCanonicalFileName: (fileName) => fileName,
       getCurrentDirectory: () => projectDirectory,
-      getNewLine: () => os.EOL
+      getNewLine: () => os.EOL,
     };
   }
 
@@ -113,7 +113,7 @@ export default class TranspilingLanguageService {
         return this.files[fileName] && this.files[fileName].version.toString();
       },
       readDirectory: ts.sys.readDirectory,
-      readFile: ts.sys.readFile
+      readFile: ts.sys.readFile,
     };
   }
 

@@ -108,7 +108,7 @@ export class MochaTestRunner implements TestRunner {
               resolve({
                 errorMessages: [errorMsg],
                 status: RunStatus.Error,
-                tests: []
+                tests: [],
               });
             }
           });
@@ -116,7 +116,7 @@ export class MochaTestRunner implements TestRunner {
           resolve({
             errorMessages: [error],
             status: RunStatus.Error,
-            tests: []
+            tests: [],
           });
         }
       } catch (error) {

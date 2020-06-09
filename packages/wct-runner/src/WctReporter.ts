@@ -31,7 +31,7 @@ export default class WctReporter {
       failureMessages: this.toFailureMessages(result.error),
       name: this.testNamePartsToString(result.test),
       status: this.toTestResultStatus(result.state),
-      timeSpentMs: new Date().getTime() - this.before.getTime()
+      timeSpentMs: new Date().getTime() - this.before.getTime(),
     });
   };
 

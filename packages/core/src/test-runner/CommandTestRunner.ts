@@ -39,7 +39,7 @@ export default class CommandTestRunner implements TestRunner {
   constructor(private readonly workingDir: string, options: StrykerOptions) {
     this.settings = Object.assign(
       {
-        command: 'npm test'
+        command: 'npm test',
       },
       options.commandRunner
     );
@@ -87,7 +87,7 @@ export default class CommandTestRunner implements TestRunner {
         return {
           errorMessages: [errorToString(error)],
           status: RunStatus.Error,
-          tests: []
+          tests: [],
         };
       }
 
@@ -100,9 +100,9 @@ export default class CommandTestRunner implements TestRunner {
               {
                 name: 'All tests',
                 status: TestStatus.Success,
-                timeSpentMs: duration
-              }
-            ]
+                timeSpentMs: duration,
+              },
+            ],
           };
         } else {
           return {
@@ -112,9 +112,9 @@ export default class CommandTestRunner implements TestRunner {
                 failureMessages: [output.map((buf) => buf.toString()).join(os.EOL)],
                 name: 'All tests',
                 status: TestStatus.Failed,
-                timeSpentMs: duration
-              }
-            ]
+                timeSpentMs: duration,
+              },
+            ],
           };
         }
       }

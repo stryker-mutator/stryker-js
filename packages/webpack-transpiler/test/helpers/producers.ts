@@ -19,8 +19,8 @@ export function createFakeWebpackConfig(): Configuration {
     entry: ['index.js'],
     output: {
       filename: 'bundle.js',
-      path: '/out'
-    }
+      path: '/out',
+    },
   };
 }
 
@@ -34,7 +34,7 @@ function createFactory<T>(defaultFn: () => T): (overrides?: Partial<T>) => T {
 
 export const createWebpackOptions = createFactory<WebpackOptions>(() => ({
   context: '/path/to/project/root',
-  silent: true
+  silent: true,
 }));
 
 export function createWebpackMock(): WebpackCompilerMock {
@@ -43,8 +43,8 @@ export function createWebpackMock(): WebpackCompilerMock {
     outputFileSystem: { fileSystem: {} },
     resolvers: {
       context: { fileSystem: {} },
-      normal: { fileSystem: {} }
+      normal: { fileSystem: {} },
     },
-    run: () => {}
+    run: () => {},
   };
 }

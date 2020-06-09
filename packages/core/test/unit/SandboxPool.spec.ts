@@ -25,7 +25,7 @@ import { Mock, mock, transpiledMutant } from '../helpers/producers';
 const OVERHEAD_TIME_MS = 42;
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
-  port: 4200
+  port: 4200,
 });
 
 describe(SandboxPool.name, () => {
@@ -71,8 +71,8 @@ describe(SandboxPool.name, () => {
       runResult: { tests: [], status: RunStatus.Complete },
       sourceMapper: {
         transpiledFileNameFor: (n) => n,
-        transpiledLocationFor: (n) => Promise.resolve(n)
-      }
+        transpiledLocationFor: (n) => Promise.resolve(n),
+      },
     };
 
     return testInjector.injector
@@ -154,7 +154,7 @@ describe(SandboxPool.name, () => {
           if (allResults.length === 2) {
             secondResultTask.resolve(undefined);
           }
-        }
+        },
       });
       expect(allResults).lengthOf(0);
       expect(createStub).callCount(2);

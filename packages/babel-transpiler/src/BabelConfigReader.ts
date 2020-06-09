@@ -18,7 +18,7 @@ export class BabelConfigReader {
     const babelConfig = { ...strykerOptions.babel };
     babelConfig.options = {
       ...this.readBabelOptionsFromFile(babelConfig.optionsFile),
-      ...babelConfig.options
+      ...babelConfig.options,
     };
     this.log.debug(`Babel config is: ${JSON.stringify(babelConfig, null, 2)}`);
     return babelConfig;
@@ -68,9 +68,9 @@ const noopBabelConfigApi: ConfigAPI = {
     never: noop,
     using() {
       return noop as any;
-    }
+    },
   },
   env: noop as any,
   caller: noop as any,
-  version: noop as any
+  version: noop as any,
 };

@@ -30,7 +30,7 @@ describe('ResilientTestRunnerFactory integration', () => {
       plugins: [require.resolve('./AdditionalTestRunners')],
       someRegex: /someRegex/,
       testFramework: 'jasmine',
-      testRunner: 'karma'
+      testRunner: 'karma',
     });
     alreadyDisposed = false;
   });

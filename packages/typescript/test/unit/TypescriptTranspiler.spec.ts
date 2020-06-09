@@ -21,7 +21,7 @@ describe(TypescriptTranspiler.name, () => {
     languageService = sinon.createStubInstance(TranspilingLanguageService);
     transpileFilterMock = {
       // Cannot use `mock<T>` as it is an abstract class
-      isIncluded: sinon.stub()
+      isIncluded: sinon.stub(),
     };
     sinon.stub(TranspileFilter, 'create').returns(transpileFilterMock);
     sinon.stub(transpilingLanguageService, 'default').returns(languageService);
@@ -83,7 +83,7 @@ describe(TypescriptTranspiler.name, () => {
       (testInjector.options as TypescriptWithStrykerOptions).tsconfig = {
         options: {
           // no outDir
-        }
+        },
       };
       const input = [new File('file1.json', '')];
       arrangeIncludedFiles();
@@ -131,7 +131,7 @@ describe(TypescriptTranspiler.name, () => {
   function multiResult(file: File): EmitOutput {
     return {
       outputFiles: [file],
-      singleResult: false
+      singleResult: false,
     };
   }
 

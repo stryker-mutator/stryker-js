@@ -38,7 +38,7 @@ describe(StrykerInitializer.name, () => {
     presets = [];
     presetMock = {
       createConfig: sinon.stub(),
-      name: 'awesome-preset'
+      name: 'awesome-preset',
     };
     childExec = sinon.stub(childProcessAsPromised, 'exec');
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
@@ -82,8 +82,8 @@ describe(StrykerInitializer.name, () => {
         'stryker-hyper-framework': null,
         'stryker-hyper-runner': {
           files: [],
-          someOtherSetting: 'enabled'
-        }
+          someOtherSetting: 'enabled',
+        },
       });
       fsWriteFile.resolves({});
       presets.push(presetMock);
@@ -96,7 +96,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
       });
 
       await sut.initialize();
@@ -108,18 +108,18 @@ describe(StrykerInitializer.name, () => {
         promptTestFramework,
         promptMutator,
         promptPackageManagers,
-        promptConfigTypes
+        promptConfigTypes,
       ]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(6).args[0],
-        inquirerPrompt.getCall(7).args[0]
+        inquirerPrompt.getCall(7).args[0],
       ];
       const [promptTranspilers, promptReporters]: Array<inquirer.CheckboxQuestion<string>> = [
         inquirerPrompt.getCall(4).args[0],
-        inquirerPrompt.getCall(5).args[0]
+        inquirerPrompt.getCall(5).args[0],
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
@@ -145,7 +145,7 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON'
+        configType: 'JSON',
       });
       resolvePresetConfig();
       await sut.initialize();
@@ -160,12 +160,12 @@ describe(StrykerInitializer.name, () => {
       const handbookUrl = 'https://awesome-preset.org';
       const config = {
         comment: `This config was generated using a preset. Please see the handbook for more information: ${handbookUrl}`,
-        awesomeConf: 'awesome'
+        awesomeConf: 'awesome',
       };
       childExec.resolves();
       resolvePresetConfig({
         config,
-        handbookUrl
+        handbookUrl,
       });
       const expectedOutput = `/**
          * @type {import('@stryker-mutator/api/core').StrykerOptions}
@@ -177,7 +177,7 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JavaScript'
+        configType: 'JavaScript',
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
@@ -191,7 +191,7 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JavaScript'
+        configType: 'JavaScript',
       });
       resolvePresetConfig();
 
@@ -208,7 +208,7 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
@@ -220,14 +220,14 @@ describe(StrykerInitializer.name, () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
       const [promptPreset, promptConfigType, promptPackageManager]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0]
+        inquirerPrompt.getCall(2).args[0],
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
@@ -251,7 +251,7 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'None/other',
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(8);
@@ -267,7 +267,7 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'awesome',
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
@@ -287,7 +287,7 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'awesome',
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       const matchNormalized = (expected: string) =>
@@ -312,7 +312,7 @@ describe(StrykerInitializer.name, () => {
         testFramework: 'hyper',
         testRunner: 'hyper',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"someOtherSetting": "enabled"'));
@@ -326,7 +326,7 @@ describe(StrykerInitializer.name, () => {
           reporters: ['dimension', 'mars'],
           testRunner: 'ghost',
           transpilers: ['webpack'],
-          configType: 'JSON'
+          configType: 'JSON',
         })
       );
 
@@ -353,7 +353,7 @@ describe(StrykerInitializer.name, () => {
         reporters: [],
         testRunner: 'ghost',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
 
       return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
@@ -366,7 +366,7 @@ describe(StrykerInitializer.name, () => {
         reporters: [],
         testRunner: 'ghost',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       stubTranspilers('@stryker-mutator/webpack-transpiler');
       stubPackageClient({ '@stryker-mutator/webpack-transpiler': null });
@@ -391,7 +391,7 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
 
       await sut.initialize();
@@ -411,7 +411,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['clear-text'],
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       stubMutators('stryker-javascript');
       stubTranspilers('stryker-webpack');
@@ -438,7 +438,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['clear-text'],
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-webpack': null });
 
@@ -461,7 +461,7 @@ describe(StrykerInitializer.name, () => {
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        configType: 'JSON'
+        configType: 'JSON',
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null });
 
@@ -485,7 +485,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['clear-text'],
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
 
@@ -508,7 +508,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['clear-text'],
         testRunner: 'awesome',
         transpilers: ['webpack'],
-        configType: 'JSON'
+        configType: 'JSON',
       });
       restClientPackage.get.rejects();
 
@@ -533,45 +533,45 @@ describe(StrykerInitializer.name, () => {
   const stubTestRunners = (...testRunners: string[]) => {
     restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves({
       result: {
-        results: testRunners.map((testRunner) => ({ package: { name: testRunner, version: '1.1.1' } }))
+        results: testRunners.map((testRunner) => ({ package: { name: testRunner, version: '1.1.1' } })),
       },
-      statusCode: 200
+      statusCode: 200,
     });
   };
 
   const stubTestFrameworks = (...testFrameworks: PackageInfo[]) => {
     restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin').resolves({
       result: {
-        results: testFrameworks.map((testFramework) => ({ package: testFramework }))
+        results: testFrameworks.map((testFramework) => ({ package: testFramework })),
       },
-      statusCode: 200
+      statusCode: 200,
     });
   };
 
   const stubMutators = (...mutators: string[]) => {
     restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves({
       result: {
-        results: mutators.map((mutator) => ({ package: { name: mutator, version: '1.1.1' } }))
+        results: mutators.map((mutator) => ({ package: { name: mutator, version: '1.1.1' } })),
       },
-      statusCode: 200
+      statusCode: 200,
     });
   };
 
   const stubTranspilers = (...transpilers: string[]) => {
     restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin').resolves({
       result: {
-        results: transpilers.map((transpiler) => ({ package: { name: transpiler, version: '1.1.1' } }))
+        results: transpilers.map((transpiler) => ({ package: { name: transpiler, version: '1.1.1' } })),
       },
-      statusCode: 200
+      statusCode: 200,
     });
   };
 
   const stubReporters = (...reporters: string[]) => {
     restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves({
       result: {
-        results: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1' } }))
+        results: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1' } })),
       },
-      statusCode: 200
+      statusCode: 200,
     });
   };
   const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null }) => {
@@ -579,7 +579,7 @@ describe(StrykerInitializer.name, () => {
       const pkgConfig: PackageInfo & { initStrykerConfig?: object } = {
         keywords: [],
         name: packageName,
-        version: '1.1.1'
+        version: '1.1.1',
       };
       const cfg = packageConfigPerPackage[packageName];
       if (cfg) {
@@ -587,7 +587,7 @@ describe(StrykerInitializer.name, () => {
       }
       restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves({
         result: pkgConfig,
-        statusCode: 200
+        statusCode: 200,
       });
     });
   };
@@ -611,7 +611,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testFramework: 'awesome',
         testRunner: 'awesome',
-        transpilers: ['webpack']
+        transpilers: ['webpack'],
       },
       answerOverrides
     );
@@ -622,7 +622,7 @@ describe(StrykerInitializer.name, () => {
     const presetConfig: PresetConfiguration = {
       config: {},
       dependencies: [],
-      handbookUrl: ''
+      handbookUrl: '',
     };
     presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
   }

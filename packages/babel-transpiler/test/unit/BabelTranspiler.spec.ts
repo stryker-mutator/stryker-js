@@ -24,7 +24,7 @@ describe(BabelTranspiler.name, () => {
     babelConfig = {
       extensions: [],
       options: {},
-      optionsFile: null
+      optionsFile: null,
     };
     babelConfigReaderMock = mock(BabelConfigReader);
     transformStub = sinon.stub();
@@ -33,7 +33,7 @@ describe(BabelTranspiler.name, () => {
     files = [
       new File(path.resolve('main.js'), 'const main = () => { sum(2); divide(2); }'),
       new File(path.resolve('sum.js'), 'const sum = (number) => number + number;'),
-      new File(path.resolve('divide.js'), 'const divide = (number) => number / number;')
+      new File(path.resolve('divide.js'), 'const divide = (number) => number / number;'),
     ];
     babelConfigReaderMock.readConfig.returns(babelConfig);
   });
@@ -78,7 +78,7 @@ describe(BabelTranspiler.name, () => {
         expect(transformStub).calledWith(file.textContent, {
           cwd: process.cwd(),
           filename: file.name,
-          filenameRelative: path.relative(process.cwd(), file.name)
+          filenameRelative: path.relative(process.cwd(), file.name),
         });
       });
       expect(actualResultFiles).deep.eq(files.map((file) => new File(file.name, 'code')));
@@ -94,7 +94,7 @@ describe(BabelTranspiler.name, () => {
           cwd: process.cwd(),
           filename: file.name,
           filenameRelative: path.relative(process.cwd(), file.name),
-          plugins
+          plugins,
         });
       });
     });
@@ -108,7 +108,7 @@ describe(BabelTranspiler.name, () => {
       expect(transformStub).calledWith(files[0].textContent, {
         cwd: process.cwd(),
         filename: files[0].name,
-        filenameRelative: path.relative(process.cwd(), files[0].name)
+        filenameRelative: path.relative(process.cwd(), files[0].name),
       });
     });
 
@@ -142,7 +142,7 @@ describe(BabelTranspiler.name, () => {
         new File('js.js', 'js = true'),
         new File('es.es', 'es = true'),
         new File('jsx.jsx', 'jsx = true'),
-        new File('ignored.njs', 'ignored')
+        new File('ignored.njs', 'ignored'),
       ];
       const actualResultFiles = await sut.transpile(inputFiles);
       expect(transformStub).callCount(inputFiles.length - 1);

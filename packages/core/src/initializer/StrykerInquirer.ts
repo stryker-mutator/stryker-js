@@ -19,7 +19,7 @@ export class StrykerInquirer {
       choices,
       message: 'Are you using one of these frameworks? Then select a preset configuration.',
       name: 'preset',
-      type: 'list'
+      type: 'list',
     });
     return options.find((_) => _.name === answers.preset);
   }
@@ -34,7 +34,7 @@ export class StrykerInquirer {
       message:
         'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
       name: 'testRunner',
-      type: 'list'
+      type: 'list',
     });
     return options.filter((_) => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
   }
@@ -44,7 +44,7 @@ export class StrykerInquirer {
       choices: options.map((_) => _.name),
       message: 'Which test framework do you want to use?',
       name: 'testFramework',
-      type: 'list'
+      type: 'list',
     });
     return options.filter((_) => _.name === answers.testFramework)[0];
   }
@@ -54,7 +54,7 @@ export class StrykerInquirer {
       choices: options.map((_) => _.name),
       message: 'What kind of code do you want to mutate?',
       name: 'mutator',
-      type: 'list'
+      type: 'list',
     });
     return options.filter((_) => _.name === answers.mutator)[0];
   }
@@ -64,7 +64,7 @@ export class StrykerInquirer {
       choices: options.map((_) => _.name),
       message: '[optional] What kind transformations should be applied to your code?',
       name: 'transpilers',
-      type: 'checkbox'
+      type: 'checkbox',
     });
     return options.filter((option) => answers.transpilers.some((transpilerName) => option.name === transpilerName));
   }
@@ -75,7 +75,7 @@ export class StrykerInquirer {
       default: ['html', 'clear-text', 'progress'],
       message: 'Which reporter(s) do you want to use?',
       name: 'reporters',
-      type: 'checkbox'
+      type: 'checkbox',
     });
     return options.filter((option) => answers.reporters.some((reporterName) => option.name === reporterName));
   }
@@ -86,7 +86,7 @@ export class StrykerInquirer {
       default: ['npm'],
       message: 'Which package manager do you want to use?',
       name: 'packageManager',
-      type: 'list'
+      type: 'list',
     });
     return options.filter((_) => _.name === answers.packageManager)[0];
   }
@@ -99,7 +99,7 @@ export class StrykerInquirer {
       default: json,
       message: 'What file type do you want for your config file?',
       name: 'configType',
-      type: 'list'
+      type: 'list',
     });
     return answers.configType === json;
   }

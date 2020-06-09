@@ -18,15 +18,7 @@ module.exports = {
         "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
       }
     ],
-    'prettier/prettier': [
-      'error',
-      {
-        'printWidth': 150,
-        'singleQuote': true,
-        'endOfLine': 'auto',
-        'trailingComma': 'none'
-      }
-    ],
+    'prettier/prettier': ['error'],
     'sort-imports': 'off',
     'no-case-declarations': 'off',
     'no-constant-condition': 'error',

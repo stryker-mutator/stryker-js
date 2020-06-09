@@ -33,7 +33,7 @@ describe('JavaScriptMutator', () => {
       fileName: files[0].name,
       mutatorName: 'ArithmeticOperator',
       range: [22, 27],
-      replacement: '1 - 2'
+      replacement: '1 - 2',
     });
   });
 
@@ -58,7 +58,7 @@ describe('JavaScriptMutator', () => {
             document.getElementById('appContainer')
           )
         `
-      )
+      ),
     ];
 
     const mutants = mutator.mutate(files);
@@ -68,7 +68,7 @@ describe('JavaScriptMutator', () => {
       fileName: 'testFile.jsx',
       mutatorName: 'ConditionalExpression',
       range: [197, 202],
-      replacement: 'true'
+      replacement: 'true',
     });
   });
 
@@ -87,7 +87,7 @@ describe('JavaScriptMutator', () => {
         </body>
       </html>
     `
-      )
+      ),
     ];
     const mutants = mutator.mutate(files);
 
@@ -121,7 +121,7 @@ describe('JavaScriptMutator', () => {
 
           export default App
         `
-      )
+      ),
     ];
 
     const mutants = mutator.mutate(files);
@@ -131,7 +131,7 @@ describe('JavaScriptMutator', () => {
       fileName: 'testFile.js',
       mutatorName: 'ConditionalExpression',
       range: [121, 128],
-      replacement: 'false'
+      replacement: 'false',
     });
   });
 
@@ -159,7 +159,7 @@ describe('JavaScriptMutator', () => {
             import('./guy').then(a)
           }
         `
-      )
+      ),
     ];
 
     const mutants = sut.mutate(files);
@@ -186,7 +186,7 @@ describe('JavaScriptMutator', () => {
             bar = 'bar';
           };
         `
-      )
+      ),
     ];
 
     const mutants = sut.mutate(files);

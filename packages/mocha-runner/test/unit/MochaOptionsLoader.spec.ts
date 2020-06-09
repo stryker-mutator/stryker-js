@@ -46,7 +46,7 @@ describe(MochaOptionsLoader.name, () => {
         package: 'alternative-package.json',
         config: 'alternative-config.yaml',
         opts: 'alternative.opts',
-        extension: ['.js'] // should not appear in serialized arguments
+        extension: ['.js'], // should not appear in serialized arguments
       };
       sut.load(options);
       expect(LibWrapper.loadOptions).calledWith([
@@ -58,7 +58,7 @@ describe(MochaOptionsLoader.name, () => {
         '--opts',
         'alternative.opts',
         '--config',
-        'alternative-config.yaml'
+        'alternative-config.yaml',
       ]);
     });
 
@@ -86,7 +86,7 @@ describe(MochaOptionsLoader.name, () => {
         spec: ['test/**/*.js'],
         timeout: 4200,
         'async-only': true,
-        ui: 'quux'
+        ui: 'quux',
       });
       expect(result).deep.eq({ ...expected });
     });
@@ -94,7 +94,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should trace log the mocha call', () => {
       testInjector.logger.isTraceEnabled.returns(true);
       options.mochaOptions = {
-        'no-config': true
+        'no-config': true,
       };
       rawOptions.baz = 'qux';
       sut.load(options);
@@ -130,7 +130,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should load a mocha.opts file if specified', () => {
       readFileStub.returns('');
       options.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       sut.load(options);
       expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
@@ -141,7 +141,7 @@ describe(MochaOptionsLoader.name, () => {
       readFileStub.returns('');
       existsFileStub.returns(false);
       options.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
 
       sut.load(options);
@@ -159,7 +159,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it("shouldn't load anything if mocha['no-opts'] = true", () => {
       options.mochaOptions = {
-        'no-opts': true
+        'no-opts': true,
       };
       sut.load(options);
       expect(fs.readFileSync).not.called;
@@ -184,7 +184,7 @@ describe(MochaOptionsLoader.name, () => {
       options.mochaOptions = { opts: '.' };
       const mochaOptions = sut.load(options);
       expect(mochaOptions).deep.include({
-        require: ['src/test/support/setup', 'babel-require']
+        require: ['src/test/support/setup', 'babel-require'],
       });
     });
 
@@ -218,7 +218,7 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
         timeout: 4000,
-        ui: 'exports'
+        ui: 'exports',
       };
       const mochaOptions = sut.load(options);
       expect(mochaOptions).deep.equal(
@@ -229,7 +229,7 @@ describe(MochaOptionsLoader.name, () => {
           require: ['ts-node/register'],
           spec: ['test'],
           timeout: 4000,
-          ui: 'exports'
+          ui: 'exports',
         })
       );
     });
@@ -240,7 +240,7 @@ describe(MochaOptionsLoader.name, () => {
       --ignore-leaks
       `);
       options.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const mochaOptions = sut.load(options);
       expect(mochaOptions).not.have.property('reporter');
@@ -255,7 +255,7 @@ describe(MochaOptionsLoader.name, () => {
       --ui
       `);
       options.mochaOptions = {
-        opts: 'some/mocha.opts/file'
+        opts: 'some/mocha.opts/file',
       };
       const mochaOptions = sut.load(options);
       expect(mochaOptions).deep.eq(
@@ -264,7 +264,7 @@ describe(MochaOptionsLoader.name, () => {
           opts: 'some/mocha.opts/file',
           spec: ['test'],
           timeout: 2000,
-          ui: 'bdd'
+          ui: 'bdd',
         })
       );
     });
@@ -284,7 +284,7 @@ describe(MochaOptionsLoader.name, () => {
       spec: ['test'],
       timeout: 2000,
       ui: 'bdd',
-      ...overrides
+      ...overrides,
     };
   }
 });

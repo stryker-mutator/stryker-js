@@ -81,8 +81,8 @@ export class TranspiledSourceMapper extends SourceMapper {
       fileName: sourceMap.transpiledFile.name,
       location: {
         end,
-        start
-      }
+        start,
+      },
     };
   }
 
@@ -239,12 +239,12 @@ class SourceMap {
       bias: SourceMapConsumer.LEAST_UPPER_BOUND,
       column: originalPosition.column,
       line: originalPosition.line + 1, // SourceMapConsumer works 1-based
-      source: relativeSource
+      source: relativeSource,
     });
 
     return Promise.resolve({
       column: transpiledPosition.column || 0,
-      line: (transpiledPosition.line || 1) - 1 // Stryker works 0-based
+      line: (transpiledPosition.line || 1) - 1, // Stryker works 0-based
     });
   }
 }

@@ -43,7 +43,7 @@ describe(StrykerCli.name, () => {
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
       [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
-      [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }]
+      [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
     ];
     testCases.forEach(([args, expected]) => {
       it(`should expect option "${args.join(' ')}"`, () => {
@@ -62,7 +62,7 @@ describe(StrykerCli.name, () => {
         module: 'baz/module',
         project: 'github.com/fooOrg/barProject',
         version: '1.5.3',
-        reportType: ReportType.Full
+        reportType: ReportType.Full,
       };
       actRun([
         '--dashboard.version',
@@ -74,10 +74,10 @@ describe(StrykerCli.name, () => {
         '--dashboard.baseUrl',
         expectedDashboardOptions.baseUrl,
         '--dashboard.reportType',
-        'full'
+        'full',
       ]);
       expect(runMutationTestingStub).calledWithMatch({
-        dashboard: expectedDashboardOptions
+        dashboard: expectedDashboardOptions,
       });
     });
 

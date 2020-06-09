@@ -91,7 +91,7 @@ export default class InitialTestExecutor {
       coverageMaps,
       overheadTimeMS: timing.overhead,
       runResult,
-      sourceMapper
+      sourceMapper,
     };
   }
 
@@ -151,7 +151,7 @@ export default class InitialTestExecutor {
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
       net: netTimeMS,
-      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS
+      overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
     };
   }
 

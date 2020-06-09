@@ -59,7 +59,7 @@ describe('ConfigLoader', () => {
     // Arrange
     const bazPlugin = { baz: true, apply() {} };
     const webpackConfig: Configuration = {
-      plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin]
+      plugins: [new FooPlugin(), new ProgressPlugin(), new BarPlugin(), bazPlugin],
     };
 
     requireStub.returns(webpackConfig);
@@ -79,7 +79,7 @@ describe('ConfigLoader', () => {
 
   it('should not remove "ProgressPlugin" if silent is `false`', async () => {
     const webpackConfig: Configuration = {
-      plugins: [new ProgressPlugin(), new BarPlugin()]
+      plugins: [new ProgressPlugin(), new BarPlugin()],
     };
 
     requireStub.returns(webpackConfig);

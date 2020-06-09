@@ -16,7 +16,7 @@ export default class ProgressBarReporter extends ProgressKeeper {
       incomplete: ' ',
       stream: process.stdout,
       total: this.progress.total,
-      width: 50
+      width: 50,
     });
   }
 

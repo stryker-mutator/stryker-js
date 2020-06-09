@@ -21,12 +21,12 @@ describe(ClearTextScoreTable.name, () => {
               {
                 childResults: [],
                 metrics: metrics({ mutationScore: 59.99 }),
-                name: 'some/test/for/a/deep/file.js'
-              }
+                name: 'some/test/for/a/deep/file.js',
+              },
             ],
             metrics: metrics({ mutationScore: 60 }),
-            name: 'child1'
-          }
+            name: 'child1',
+          },
         ],
         metrics: metrics({
           compileErrors: 7,
@@ -35,9 +35,9 @@ describe(ClearTextScoreTable.name, () => {
           noCoverage: 4,
           runtimeErrors: 4,
           survived: 3,
-          timeout: 2
+          timeout: 2,
         }),
-        name: 'root'
+        name: 'root',
       };
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
 
@@ -51,7 +51,7 @@ describe(ClearTextScoreTable.name, () => {
         `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |      11 |`,
         ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |       0 |`,
         `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |       0 |`,
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|'
+        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
       ]);
     });
 
@@ -59,9 +59,9 @@ describe(ClearTextScoreTable.name, () => {
       const metricsResult: MetricsResult = {
         childResults: [],
         metrics: metrics({
-          killed: 1000000000
+          killed: 1000000000,
         }),
-        name: 'root'
+        name: 'root',
       };
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
 
@@ -81,9 +81,9 @@ describe(ClearTextScoreTable.name, () => {
           metricsResult({ metrics: metrics({ mutationScore: 59.99 }) }),
           metricsResult({ metrics: metrics({ mutationScore: 50.01 }) }),
           metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })
+          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) }),
         ],
-        metrics: metrics({ mutationScore: 60.01 })
+        metrics: metrics({ mutationScore: 60.01 }),
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 
@@ -101,7 +101,7 @@ describe(ClearTextScoreTable.name, () => {
       const thresholds: MutationScoreThresholds = { high: 50, low: 50, break: 0 };
       const input: MetricsResult = metricsResult({
         childResults: [metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }), metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })],
-        metrics: metrics({ mutationScore: 50.01 })
+        metrics: metrics({ mutationScore: 50.01 }),
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 

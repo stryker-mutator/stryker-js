@@ -17,7 +17,7 @@ class FunctionDeclarationMutator extends NodeMutator<ts.FunctionDeclaration> {
   protected identifyReplacements(node: ts.FunctionDeclaration): NodeReplacement[] {
     return [
       { node, replacement: '// Function declaration removed' },
-      { node, replacement: 'changedToOtherCall()' }
+      { node, replacement: 'changedToOtherCall()' },
     ];
   }
 }
@@ -102,20 +102,20 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 39],
-            replacement: '"stryker was here"'
+            replacement: '"stryker was here"',
           },
           {
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
-            replacement: '// Function declaration removed'
+            replacement: '// Function declaration removed',
           },
           {
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
-            replacement: 'changedToOtherCall()'
-          }
+            replacement: 'changedToOtherCall()',
+          },
         ]);
       });
 
@@ -132,8 +132,8 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 50],
-            replacement: '"stryker was here"'
-          }
+            replacement: '"stryker was here"',
+          },
         ]);
       });
 
@@ -156,8 +156,8 @@ describe('TypescriptMutator', () => {
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 85],
-            replacement: '"stryker was here"'
-          }
+            replacement: '"stryker was here"',
+          },
         ]);
       });
     });
