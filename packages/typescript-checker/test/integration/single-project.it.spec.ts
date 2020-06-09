@@ -26,7 +26,7 @@ describe('Typescript checker on a single project', () => {
     process.chdir(resolveTestResource());
     testInjector.options.typescriptChecker = createTypescriptOptions();
     sut = testInjector.injector.injectClass(TypescriptChecker);
-    return sut.initialize();
+    return sut.init();
   });
 
   it('should not write output to disk', () => {

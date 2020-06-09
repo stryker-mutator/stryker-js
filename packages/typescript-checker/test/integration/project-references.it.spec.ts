@@ -26,7 +26,7 @@ describe('Typescript checker on a project with project references', () => {
     process.chdir(resolveTestResource());
     testInjector.options.typescriptChecker = createTypescriptOptions({ tsconfigFile: 'tsconfig.root.json' });
     sut = testInjector.injector.injectClass(TypescriptChecker);
-    return sut.initialize();
+    return sut.init();
   });
 
   it('should not write output to disk', () => {

@@ -45,7 +45,7 @@ export class TypescriptChecker implements Checker {
   /**
    * Starts the typescript compiler and does a dry run
    */
-  public async initialize(): Promise<void> {
+  public async init(): Promise<void> {
     guardTSVersion();
     this.guardTSConfigFileExists();
     this.currentTask = new Task();
