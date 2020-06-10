@@ -8,6 +8,7 @@ import { TestRunner } from '../../test_runner';
 import { Transpiler } from '../../transpile';
 import { OptionsEditor } from '../core/OptionsEditor';
 import { TestRunner2 } from '../../test_runner2';
+import { Checker } from '../../check';
 
 import { PluginContexts } from './Contexts';
 import { PluginKind } from './PluginKind';
@@ -92,6 +93,7 @@ export interface PluginInterfaces {
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.TestRunner2]: TestRunner2;
   [PluginKind.Transpiler]: Transpiler;
+  [PluginKind.Checker]: Checker;
 }
 
 /**

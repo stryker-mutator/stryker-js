@@ -1,8 +1,7 @@
 import * as path from 'path';
 
-import { File, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
+import { Mutant, File, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus } from '@stryker-mutator/api/test_runner';

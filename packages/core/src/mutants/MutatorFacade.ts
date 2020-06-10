@@ -1,6 +1,6 @@
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
+import { Mutant, File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 
 import { coreTokens, PluginCreator } from '../di';

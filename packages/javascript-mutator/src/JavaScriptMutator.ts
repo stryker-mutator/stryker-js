@@ -1,7 +1,7 @@
 import * as types from '@babel/types';
-import { File } from '@stryker-mutator/api/core';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import BabelParser from './helpers/BabelParser';

@@ -1,5 +1,4 @@
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, File, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import * as ts from 'typescript';
 

@@ -7,6 +7,7 @@ export enum PluginKind {
    */
   ConfigEditor = 'ConfigEditor',
   OptionsEditor = 'OptionsEditor',
+  Checker = 'Checker',
   TestRunner = 'TestRunner',
   TestRunner2 = 'TestRunner2',
   TestFramework = 'TestFramework',
