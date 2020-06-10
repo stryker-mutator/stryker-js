@@ -19,7 +19,7 @@ export interface RunResult {
   /**
    * If `state` is `error`, this collection should contain the error messages
    */
-  errorMessages?: string[];
+  errorMessage?: string;
 
   /**
    * The status of the run
