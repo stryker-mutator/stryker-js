@@ -11,7 +11,7 @@ export const ID = Object.freeze({
   GLOBAL: '__global_69fa48',
   MUTATION_COVERAGE_OBJECT: '__mutationCoverage__',
   COVER_MUTANT_HELPER_METHOD: '__coverMutant__',
-  ACTIVE_MUTANT: 'activeMutant',
+  ACTIVE_MUTANT: '__activeMutant__',
 } as const);
 
 /**
