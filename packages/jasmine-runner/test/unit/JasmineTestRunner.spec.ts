@@ -14,7 +14,7 @@ type SinonStubbedInstance<TType> = {
   [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
 };
 
-describe.only('JasmineTestRunner', () => {
+describe('JasmineTestRunner', () => {
   let jasmineStub: SinonStubbedInstance<Jasmine>;
   let jasmineEnvStub: SinonStubbedInstance<jasmine.Env>;
   let evalGlobalStub: sinon.SinonStub;
@@ -49,7 +49,7 @@ describe.only('JasmineTestRunner', () => {
       failFast: true,
       oneFailurePerSpec: true,
     });
-    expect(jasmineStub.exit.toString()).eq('() => { }');
+    expect(jasmineStub.exit).ok.and.not.eq(process.exit);
     expect(jasmineStub.env.clearReporters).called;
     expect(jasmineStub.randomizeTests).calledWith(false);
   });
