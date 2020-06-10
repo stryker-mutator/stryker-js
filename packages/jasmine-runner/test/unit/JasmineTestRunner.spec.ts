@@ -8,36 +8,35 @@ import Jasmine = require('jasmine');
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
+import { createEnvStub, createRunDetails } from '../helpers/mockFactories';
 
 type SinonStubbedInstance<TType> = {
   [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
 };
 
 describe('JasmineTestRunner', () => {
-  let sandbox: sinon.SinonSandbox;
   let jasmineStub: SinonStubbedInstance<Jasmine>;
+  let jasmineEnvStub: SinonStubbedInstance<jasmine.Env>;
   let evalGlobalStub: sinon.SinonStub;
   let sut: JasmineTestRunner;
   let fileNames: string[];
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
-    sandbox = sinon.createSandbox();
-    jasmineStub = sandbox.createStubInstance(Jasmine);
-    jasmineStub.env = {
-      throwOnExpectationFailure: sandbox.stub(),
-    };
-    evalGlobalStub = sandbox.stub(helpers, 'evalGlobal');
-    sandbox.stub(helpers, 'Jasmine').returns(jasmineStub);
+    jasmineStub = sinon.createStubInstance(Jasmine);
+    jasmineEnvStub = createEnvStub();
+    jasmineStub.env = (jasmineEnvStub as unknown) as jasmine.Env;
+    evalGlobalStub = sinon.stub(helpers, 'evalGlobal');
+    sinon.stub(helpers, 'Jasmine').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
-    clock = sandbox.useFakeTimers();
+    clock = sinon.useFakeTimers();
     sut = new JasmineTestRunner(fileNames, factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }));
   });
 
   afterEach(() => {
     delete require.cache['foo.js'];
     delete require.cache['bar.js'];
-    sandbox.restore();
+    sinon.restore();
   });
 
   it('should configure jasmine on run', async () => {
@@ -46,10 +45,12 @@ describe('JasmineTestRunner', () => {
     expect(helpers.Jasmine).calledWithNew;
     expect(helpers.Jasmine).calledWith({ projectBaseDir: process.cwd() });
     expect(jasmineStub.loadConfigFile).calledWith('jasmineConfFile');
-    expect(jasmineStub.stopSpecOnExpectationFailure).calledWith(true);
-    expect(jasmineStub.env.throwOnExpectationFailure).calledWith(true);
-    expect(jasmineStub.exit).ok;
-    expect(jasmineStub.clearReporters).called;
+    expect(jasmineStub.env.configure).calledWith({
+      failFast: true,
+      oneFailurePerSpec: true,
+    });
+    expect(jasmineStub.exit).ok.and.not.eq(process.exit);
+    expect(jasmineStub.env.clearReporters).called;
     expect(jasmineStub.randomizeTests).calledWith(false);
   });
 
@@ -64,14 +65,20 @@ describe('JasmineTestRunner', () => {
   it('should report completed specs', async () => {
     // Arrange
     function addReporter(rep: jasmine.CustomReporter) {
-      rep.specDone({ id: 'spec0', fullName: 'foo spec', status: 'success' });
-      rep.specDone({ id: 'spec1', fullName: 'bar spec', status: 'failure', failedExpectations: [{ message: 'bar failed' }] });
-      rep.specDone({ id: 'spec2', fullName: 'disabled', status: 'disabled' });
-      rep.specDone({ id: 'spec3', fullName: 'pending', status: 'pending' });
-      rep.specDone({ id: 'spec4', fullName: 'excluded', status: 'excluded' });
-      rep.jasmineDone();
+      rep.specDone!({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' });
+      rep.specDone!({
+        id: 'spec1',
+        fullName: 'bar spec',
+        status: 'failure',
+        failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
+        description: 'string',
+      });
+      rep.specDone!({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' });
+      rep.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
+      rep.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
+      rep.jasmineDone!(createRunDetails());
     }
-    jasmineStub.addReporter.callsFake(addReporter);
+    jasmineEnvStub.addReporter.callsFake(addReporter);
 
     // Act
     const result = await sut.run({});
@@ -89,12 +96,13 @@ describe('JasmineTestRunner', () => {
 
   it('should time spec duration', async () => {
     function addReporter(rep: jasmine.CustomReporter) {
-      rep.specStarted();
+      const spec = { fullName: 'foobar spec', id: 'spec0', description: '' };
+      rep.specStarted!(spec);
       clock.tick(10);
-      rep.specDone({ fullName: 'foobar spec', id: 'spec0' });
-      rep.jasmineDone();
+      rep.specDone!(spec);
+      rep.jasmineDone!(createRunDetails());
     }
-    jasmineStub.addReporter.callsFake(addReporter);
+    jasmineEnvStub.addReporter.callsFake(addReporter);
     const result = await sut.run({});
     const expectedTestResult: TestResult = {
       failureMessages: undefined,
@@ -124,9 +132,9 @@ describe('JasmineTestRunner', () => {
 
   function actRunWithoutTests(testHooks?: string) {
     function addReporter(rep: jasmine.CustomReporter) {
-      rep.jasmineDone();
+      rep.jasmineDone!(createRunDetails());
     }
-    jasmineStub.addReporter.callsFake(addReporter);
+    jasmineEnvStub.addReporter.callsFake(addReporter);
     return sut.run({ testHooks });
   }
 });

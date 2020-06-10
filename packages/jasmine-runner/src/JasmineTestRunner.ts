@@ -45,7 +45,7 @@ export default class JasmineTestRunner implements TestRunner {
           });
         },
       };
-      jasmine.addReporter(reporter);
+      jasmine.env.addReporter(reporter);
       jasmine.execute();
     }).catch((error) => ({
       errorMessages: [`An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`],
@@ -58,11 +58,13 @@ export default class JasmineTestRunner implements TestRunner {
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default
     jasmine.loadConfigFile(this.jasmineConfigFile);
-    jasmine.stopSpecOnExpectationFailure(true);
-    jasmine.env.throwOnExpectationFailure(true);
+    jasmine.env.configure({
+      failFast: true,
+      oneFailurePerSpec: true,
+    });
 
     jasmine.exit = () => {};
-    jasmine.clearReporters();
+    jasmine.env.clearReporters();
     jasmine.randomizeTests(false);
     return jasmine;
   }
