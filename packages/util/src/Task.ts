@@ -1,5 +1,3 @@
-import { timeout, TimeoutExpired } from './objectUtils';
-
 /**
  * Wraps a promise in a Task api for convenience.
  */
@@ -38,9 +36,27 @@ export class Task<T = void> {
 /**
  * A task that can expire after the given time.
  */
-export class ExpirableTask<T = void> extends Task<T | typeof TimeoutExpired> {
+export class ExpirableTask<T = void> extends Task<T | typeof ExpirableTask.TimeoutExpired> {
+  public static readonly TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
+
   constructor(timeoutMS: number) {
     super();
-    this._promise = timeout(this._promise, timeoutMS);
+    this._promise = ExpirableTask.timeout(this._promise, timeoutMS);
+  }
+
+  public static timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof ExpirableTask.TimeoutExpired> {
+    const sleep = new Promise<T | typeof ExpirableTask.TimeoutExpired>((res, rej) => {
+      const timer = setTimeout(() => res(ExpirableTask.TimeoutExpired), ms);
+      promise
+        .then((result) => {
+          clearTimeout(timer);
+          res(result);
+        })
+        .catch((error) => {
+          clearTimeout(timer);
+          rej(error);
+        });
+    });
+    return sleep;
   }
 }
