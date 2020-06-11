@@ -1,5 +1,3 @@
-import { TestSelection } from './TestSelection';
-
 export enum MutantRunStatus {
   Killed = 'killed',
   Survived = 'survived',
@@ -15,7 +13,13 @@ export interface TimeoutMutantRunResult {
 
 export interface KilledMutantRunResult {
   status: MutantRunStatus.Killed;
-  killedBy: TestSelection;
+  /**
+   * The id of the test that killed this mutant
+   */
+  killedBy: string;
+  /**
+   * The failure message that was reported by the test
+   */
   failureMessage: string;
 }
 

@@ -1,7 +1,5 @@
 import { Mutant } from '../../core';
 
-import { TestSelection } from './TestSelection';
-
 export interface RunOptions {
   /**
    * The amount of time (in milliseconds) the TestRunner has to complete the test run before a timeout occurs.
@@ -17,7 +15,7 @@ export interface DryRunOptions extends RunOptions {
 }
 
 export interface MutantRunOptions extends RunOptions {
-  testFilter?: TestSelection[];
+  testFilter?: string[];
   activeMutant: Mutant;
 }
 
