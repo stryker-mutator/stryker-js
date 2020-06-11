@@ -1,4 +1,3 @@
-import { TestSelection } from '../../test_framework';
 import { Mutant } from '../../core';
 
 export interface RunOptions {
@@ -12,11 +11,11 @@ export interface DryRunOptions extends RunOptions {
   /**
    * Indicates whether or not mutant coverage should be collected.
    */
-  reportMutantCoverage: boolean;
+  coverageAnalysis: 'off' | 'all' | 'perTest';
 }
 
 export interface MutantRunOptions extends RunOptions {
-  testFilter?: TestSelection[];
+  testFilter?: string[];
   activeMutant: Mutant;
 }
 
