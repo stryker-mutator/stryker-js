@@ -20,7 +20,6 @@ import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
-import { MutantRunOptions } from '@stryker-mutator/api/test_runner2';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -179,7 +178,7 @@ export const testSelection = factoryMethod<TestSelection>(() => ({
   name: 'foo should bar',
 }));
 
-export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
+export const mutantRunOptions = factoryMethod<{ activeMutant: Mutant; timeout: number }>(() => ({
   activeMutant: mutant(),
   timeout: 2000,
 }));
