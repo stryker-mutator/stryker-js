@@ -1,4 +1,4 @@
-export default interface TestSelection {
+export interface TestSelection {
   id: number;
   name: string;
 }

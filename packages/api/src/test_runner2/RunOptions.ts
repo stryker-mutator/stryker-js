@@ -1,5 +1,6 @@
-import { TestSelection } from '../../test_framework';
 import { Mutant } from '../../core';
+
+import { TestSelection } from './TestSelection';
 
 export interface RunOptions {
   /**

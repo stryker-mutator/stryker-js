@@ -1,39 +1,6 @@
-import { TestSelection } from '../../test_framework';
-
 import { MutantCoverage } from './MutantCoverage';
 import { RunStatus } from './RunStatus';
 import { TestResult } from './TestResult';
-
-export enum MutantRunStatus {
-  Killed = 'killed',
-  Survived = 'survived',
-  TimedOut = 'timedOut',
-  Error = 'error',
-}
-
-export type MutantRunResult = KilledMutantRunResult | SurvivedMutantRunResult;
-
-export interface TimedOutMutantRunResult {
-  status: MutantRunStatus.TimedOut;
-}
-
-export interface TimedOutMutantRunResult {
-  status: MutantRunStatus.TimedOut;
-}
-
-export interface KilledMutantRunResult {
-  status: MutantRunStatus.Killed;
-  killedBy: TestSelection;
-}
-
-export interface SurvivedMutantRunResult {
-  status: MutantRunStatus.Survived;
-}
-
-export interface ErrorMutantRunResult {
-  status: MutantRunStatus.Error;
-  errorMessage: string;
-}
 
 export type DryRunResult = CompleteDryRunResult | TimeoutDryRunResult | ErrorDryRunResult;
 
