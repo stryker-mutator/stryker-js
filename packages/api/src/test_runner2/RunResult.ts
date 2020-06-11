@@ -7,31 +7,37 @@ import { TestResult } from './TestResult';
 export enum MutantRunStatus {
   Killed = 'killed',
   Survived = 'survived',
+  TimedOut = 'timedOut',
+  Error = 'error',
 }
 
 export type MutantRunResult = KilledMutantRunResult | SurvivedMutantRunResult;
 
-export interface KilledMutantRunResult extends RunResult {
+export interface TimedOutMutantRunResult {
+  status: MutantRunStatus.TimedOut;
+}
+
+export interface TimedOutMutantRunResult {
+  status: MutantRunStatus.TimedOut;
+}
+
+export interface KilledMutantRunResult {
   status: MutantRunStatus.Killed;
-  culpritTest: TestSelection;
+  killedBy: TestSelection;
 }
 
-export interface SurvivedMutantRunResult extends RunResult {
+export interface SurvivedMutantRunResult {
   status: MutantRunStatus.Survived;
-  testSelection: TestSelection[] | false;
 }
 
-/**
- * Represents the result of a test run.
- */
-export interface RunResult {
-  /**
-   * If `state` is `error`, this collection should contain the error messages
-   */
-  errorMessage?: string;
+export interface ErrorMutantRunResult {
+  status: MutantRunStatus.Error;
+  errorMessage: string;
 }
 
-export interface DryRunResult extends RunResult {
+export type DryRunResult = CompleteDryRunResult | TimeoutDryRunResult | ErrorDryRunResult;
+
+export interface CompleteDryRunResult {
   /**
    * The individual test results.
    */
@@ -42,5 +48,23 @@ export interface DryRunResult extends RunResult {
   /**
    * The status of the run
    */
-  status: RunStatus;
+  status: RunStatus.Complete;
+}
+export interface TimeoutDryRunResult {
+  /**
+   * The status of the run
+   */
+  status: RunStatus.Timeout;
+}
+
+export interface ErrorDryRunResult {
+  /**
+   * The status of the run
+   */
+  status: RunStatus.Error;
+
+  /**
+   * If `state` is `error`, this collection should contain the error messages
+   */
+  errorMessage: string;
 }

@@ -1,7 +1,6 @@
-export type MutantCoverage = StaticCoverage & CoveragePerTestId;
-
-export interface StaticCoverage {
+export interface MutantCoverage {
   static: CoverageData;
+  perTest: CoveragePerTestId;
 }
 
 export interface CoveragePerTestId {
