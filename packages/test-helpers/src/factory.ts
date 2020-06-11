@@ -105,6 +105,7 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutation
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
+  id: 42,
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
@@ -170,6 +171,16 @@ export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
+}));
+
+export const testSelection = factoryMethod<TestSelection>(() => ({
+  id: 23,
+  name: 'foo should bar',
+}));
+
+export const mutantRunOptions = factoryMethod<{ activeMutant: Mutant; timeout: number }>(() => ({
+  activeMutant: mutant(),
+  timeout: 2000,
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({

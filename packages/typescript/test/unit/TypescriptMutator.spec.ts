@@ -99,18 +99,21 @@ describe('TypescriptMutator', () => {
         // Assert
         expect(mutants).to.deep.equal([
           {
+            id: 42,
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 39],
             replacement: '"stryker was here"',
           },
           {
+            id: 42,
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
             replacement: '// Function declaration removed',
           },
           {
+            id: 42,
             fileName: 'file1.ts',
             mutatorName: 'FunctionDeclarationForTest',
             range: [0, 39],
@@ -129,6 +132,7 @@ describe('TypescriptMutator', () => {
         // Assert
         expect(mutants).to.deep.equal([
           {
+            id: 42,
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 50],
@@ -153,6 +157,7 @@ describe('TypescriptMutator', () => {
         // Assert
         expect(mutants).to.deep.equal([
           {
+            id: 42,
             fileName: 'file1.ts',
             mutatorName: 'SourceFileForTest',
             range: [0, 85],
