@@ -30,6 +30,7 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(1);
     expect(mutants[0]).to.deep.equal({
+      id: 42,
       fileName: files[0].name,
       mutatorName: 'ArithmeticOperator',
       range: [22, 27],
@@ -65,6 +66,7 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(6);
     expect(mutants).to.deep.include({
+      id: 42,
       fileName: 'testFile.jsx',
       mutatorName: 'ConditionalExpression',
       range: [197, 202],
@@ -128,6 +130,7 @@ describe('JavaScriptMutator', () => {
 
     expect(mutants.length).to.equal(6);
     expect(mutants).to.deep.include({
+      id: 42,
       fileName: 'testFile.js',
       mutatorName: 'ConditionalExpression',
       range: [121, 128],
