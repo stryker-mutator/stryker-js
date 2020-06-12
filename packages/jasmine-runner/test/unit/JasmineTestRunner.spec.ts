@@ -99,7 +99,7 @@ describe(JasmineTestRunner.name, () => {
         rep.jasmineDone!(createRunDetails());
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
-      const result = await sut.dryRun();
+      const result = await sut.dryRun(factory.dryRunOptions());
       expectCompleted(result);
       const expectedTestResult: TestResult = {
         id: 'spec0',
@@ -129,7 +129,7 @@ describe(JasmineTestRunner.name, () => {
       jasmineEnvStub.addReporter.callsFake(addReporter);
 
       // Act
-      const result = await sut.dryRun();
+      const result = await sut.dryRun(factory.dryRunOptions());
 
       // Assert
       expectCompleted(result);
@@ -144,7 +144,7 @@ describe(JasmineTestRunner.name, () => {
     it('should report errors on run', async () => {
       const error = new Error('foobar');
       jasmineStub.execute.throws(error);
-      const result = await sut.dryRun();
+      const result = await sut.dryRun(factory.dryRunOptions());
       expectErrored(result);
       expect(result.errorMessage)
         .matches(/An error occurred while loading your jasmine specs.*/)

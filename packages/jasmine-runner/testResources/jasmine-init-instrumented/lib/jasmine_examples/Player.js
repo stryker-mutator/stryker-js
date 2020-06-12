@@ -1,14 +1,15 @@
 // @ts-nocheck
 var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] =  g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -20,6 +21,9 @@ var __global_69fa48 = function (g) {
 
   return g;
 }(new Function("return this")());
+
+// Randomly add coverage for a static mutant for testing purposes
+__global_69fa48.__coverMutant__(664)
 
 function Player() {
   switch (__global_69fa48.__activeMutant__) {

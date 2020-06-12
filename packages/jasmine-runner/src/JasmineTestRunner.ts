@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, CoverageAnalysis } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
   RunStatus,
@@ -11,6 +11,8 @@ import {
   MutantRunResult,
   toMutantRunResult,
   ErrorDryRunResult,
+  DryRunOptions,
+  MutantCoverage,
 } from '@stryker-mutator/api/test_runner2';
 import { errorToString, Task } from '@stryker-mutator/util';
 
@@ -27,8 +29,8 @@ export default class JasmineTestRunner implements TestRunner2 {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
   }
 
-  public dryRun(): Promise<DryRunResult> {
-    return this.run();
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    return this.run(undefined, options.coverageAnalysis);
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -37,7 +39,7 @@ export default class JasmineTestRunner implements TestRunner2 {
     return toMutantRunResult(runResult);
   }
 
-  private async run(testFilter?: string[]): Promise<DryRunResult> {
+  private async run(testFilter?: string[], coverageAnalysis?: CoverageAnalysis): Promise<DryRunResult> {
     this.clearRequireCache();
     try {
       const jasmine = this.createJasmineRunner(testFilter);
@@ -46,16 +48,24 @@ export default class JasmineTestRunner implements TestRunner2 {
       const runTask = new Task<DryRunResult>();
       let startTimeCurrentSpec = 0;
       const reporter: jasmine.CustomReporter = {
-        specStarted() {
+        specStarted(spec) {
+          if (coverageAnalysis && coverageAnalysis === 'perTest') {
+            global.__currentTestId__ = spec.id;
+          }
           startTimeCurrentSpec = new self.Date().getTime();
         },
         specDone(result: jasmine.CustomReporterResult) {
           tests.push(toStrykerTestResult(result, new self.Date().getTime() - startTimeCurrentSpec));
         },
         jasmineDone() {
+          let mutantCoverage: MutantCoverage | undefined = undefined;
+          if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
+            mutantCoverage = global.__mutantCoverage__;
+          }
           runTask.resolve({
             status: RunStatus.Complete,
             tests,
+            mutantCoverage,
           });
         },
       };
