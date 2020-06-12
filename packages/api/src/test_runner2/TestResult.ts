@@ -1,4 +1,4 @@
-import TestStatus from './TestStatus';
+import { TestStatus } from './TestStatus';
 
 /**
  * Indicates the result of a single test

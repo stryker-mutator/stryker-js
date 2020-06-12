@@ -10,7 +10,7 @@ export interface CompleteDryRunResult {
    */
   tests: TestResult[];
 
-  mutationCoverage?: MutantCoverage;
+  mutantCoverage?: MutantCoverage;
 
   /**
    * The status of the run

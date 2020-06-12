@@ -1,4 +1,4 @@
-import TestStatus from './TestStatus';
+import { TestStatus } from './TestStatus';
 import { DryRunResult } from './DryRunResult';
 import { MutantRunResult } from './MutantRunResult';
 import { RunStatus } from './RunStatus';

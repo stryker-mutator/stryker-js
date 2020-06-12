@@ -26,6 +26,15 @@
         "Trace"
       ]
     },
+    "coverageAnalysis": {
+      "title": "CoverageAnalysis",
+      "type": "string",
+      "enum": [
+        "off",
+        "all",
+        "perTest"
+      ]
+    },
     "reportType": {
       "title": "ReportType",
       "type": "string",
@@ -201,13 +210,8 @@
       "default": true
     },
     "coverageAnalysis": {
+      "$ref": "#/definitions/coverageAnalysis",
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
-      "type": "string",
-      "enum": [
-        "off",
-        "all",
-        "perTest"
-      ],
       "default": "off"
     },
     "clearTextReporter": {
