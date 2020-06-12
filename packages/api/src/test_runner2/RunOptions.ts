@@ -1,4 +1,4 @@
-import { Mutant } from '../../core';
+import { Mutant, CoverageAnalysis } from '../../core';
 
 export interface RunOptions {
   /**
@@ -11,7 +11,7 @@ export interface DryRunOptions extends RunOptions {
   /**
    * Indicates whether or not mutant coverage should be collected.
    */
-  coverageAnalysis: 'off' | 'all' | 'perTest';
+  coverageAnalysis: CoverageAnalysis;
 }
 
 export interface MutantRunOptions extends RunOptions {
