@@ -13,15 +13,16 @@ exports[`instrumenter integration should be able to instrument html 1`] = `
 <body>
     <script>
 var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -35,7 +36,7 @@ var __global_69fa48 = function (g) {
 }(new Function(\\"return this\\")());
 
 function add(a, b) {
-  switch (__global_69fa48.activeMutant) {
+  switch (__global_69fa48.__activeMutant__) {
     case 0:
       {}
       break;
@@ -43,7 +44,7 @@ function add(a, b) {
     default:
       __global_69fa48.__coverMutant__(0);
       {
-        return __global_69fa48.activeMutant === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
+        return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
       }
       break;
   }
