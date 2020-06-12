@@ -2,9 +2,17 @@ import { EOL } from 'os';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { RunResult, RunStatus, TestResult, TestRunner2, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner2';
+import {
+  RunStatus,
+  TestResult,
+  TestRunner2,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+  toMutantRunResult,
+  ErrorDryRunResult,
+} from '@stryker-mutator/api/test_runner2';
 import { errorToString, Task } from '@stryker-mutator/util';
-import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 
@@ -23,18 +31,19 @@ export default class JasmineTestRunner implements TestRunner2 {
     return this.run();
   }
 
-  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     global.__activeMutant__ = options.activeMutant.id;
-    return this.run(options.testFilter);
+    const runResult = await this.run(options.testFilter);
+    return toMutantRunResult(runResult);
   }
 
-  private async run(testFilter?: TestSelection[]) {
+  private async run(testFilter?: string[]): Promise<DryRunResult> {
     this.clearRequireCache();
     try {
       const jasmine = this.createJasmineRunner(testFilter);
       const self = this;
       const tests: TestResult[] = [];
-      const runTask = new Task<RunResult>();
+      const runTask = new Task<DryRunResult>();
       let startTimeCurrentSpec = 0;
       const reporter: jasmine.CustomReporter = {
         specStarted() {
@@ -56,20 +65,18 @@ export default class JasmineTestRunner implements TestRunner2 {
       const result = await runTask.promise;
       return result;
     } catch (error) {
-      const errorResult: RunResult = {
+      const errorResult: ErrorDryRunResult = {
         errorMessage: `An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`,
         status: RunStatus.Error,
-        tests: [],
       };
       return errorResult;
     }
   }
 
-  private createJasmineRunner(testFilter: undefined | TestSelection[]) {
+  private createJasmineRunner(testFilter: undefined | string[]) {
     let specFilter: undefined | Function = undefined;
     if (testFilter) {
-      const specNames = testFilter.map((test) => test.name);
-      specFilter = (spec: jasmine.Spec) => specNames.includes(spec.getFullName());
+      specFilter = (spec: jasmine.Spec) => testFilter.includes(spec.id.toString());
     }
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default

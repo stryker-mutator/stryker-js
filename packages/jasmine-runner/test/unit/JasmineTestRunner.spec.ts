@@ -1,14 +1,13 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
-import { RunStatus, TestResult } from '@stryker-mutator/api/test_runner2';
+import { TestResult } from '@stryker-mutator/api/test_runner2';
 import { TestStatus } from '@stryker-mutator/api/test_runner';
-import { TestSelection } from '@stryker-mutator/api/test_framework';
 
 import Jasmine = require('jasmine');
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { expectTestResultsToEqual } from '../helpers/assertions';
+import { expectTestResultsToEqual, expectCompleted, expectErrored } from '../helpers/assertions';
 import { createEnvStub, createRunDetails } from '../helpers/mockFactories';
 
 type SinonStubbedInstance<TType> = {
@@ -64,46 +63,14 @@ describe(JasmineTestRunner.name, () => {
       expect(require.cache['bar.js']).not.ok;
     });
 
-    it('should report completed specs', async () => {
-      // Arrange
-      function addReporter(rep: jasmine.CustomReporter) {
-        rep.specDone!({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' });
-        rep.specDone!({
-          id: 'spec1',
-          fullName: 'bar spec',
-          status: 'failure',
-          failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
-          description: 'string',
-        });
-        rep.specDone!({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' });
-        rep.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
-        rep.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
-        rep.jasmineDone!(createRunDetails());
-      }
-      jasmineEnvStub.addReporter.callsFake(addReporter);
-
-      // Act
-      const result = await sut.mutantRun({ timeout: 0, activeMutant: factory.mutant() });
-
-      // Assert
-      expect(result.status).eq(RunStatus.Complete);
-      expectTestResultsToEqual(result.tests, [
-        { name: 'foo spec', status: TestStatus.Success, failureMessage: undefined },
-        { name: 'bar spec', status: TestStatus.Failed, failureMessage: 'bar failed' },
-        { name: 'disabled', status: TestStatus.Skipped, failureMessage: undefined },
-        { name: 'pending', status: TestStatus.Skipped, failureMessage: undefined },
-        { name: 'excluded', status: TestStatus.Skipped, failureMessage: undefined },
-      ]);
-    });
-
     it('should filter tests based on testFilter', async () => {
-      await actEmptyMutantRun([{ id: 1, name: 'foo should bar' }]);
+      await actEmptyMutantRun(['1']);
       expect(jasmineEnvStub.configure).calledWithMatch({
         specFilter: sinon.match.func,
       });
-      const actualSpecFilter: (spec: Pick<jasmine.Spec, 'getFullName'>) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter;
-      expect(actualSpecFilter({ getFullName: () => 'foo should bar' })).true;
-      expect(actualSpecFilter({ getFullName: () => 'foo should baz' })).false;
+      const actualSpecFilter: (spec: Pick<jasmine.Spec, 'id'>) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter;
+      expect(actualSpecFilter({ id: 1 })).true;
+      expect(actualSpecFilter({ id: 2 })).false;
     });
 
     it('should set the __activeMutant__ on global scope', async () => {
@@ -111,7 +78,7 @@ describe(JasmineTestRunner.name, () => {
       expect(global.__activeMutant__).eq(23);
     });
 
-    function actEmptyMutantRun(testFilter?: TestSelection[], activeMutant = factory.mutant()) {
+    function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant()) {
       let reporter: jasmine.CustomReporter;
       function addReporter(rep: jasmine.CustomReporter) {
         reporter = rep;
@@ -133,8 +100,9 @@ describe(JasmineTestRunner.name, () => {
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
       const result = await sut.dryRun();
+      expectCompleted(result);
       const expectedTestResult: TestResult = {
-        failureMessage: undefined,
+        id: 'spec0',
         name: 'foobar spec',
         status: TestStatus.Success,
         timeSpentMs: 10,
@@ -142,11 +110,42 @@ describe(JasmineTestRunner.name, () => {
       expect(result.tests).deep.eq([expectedTestResult]);
     });
 
+    it('should report completed specs', async () => {
+      // Arrange
+      function addReporter(rep: jasmine.CustomReporter) {
+        rep.specDone!({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' });
+        rep.specDone!({
+          id: 'spec1',
+          fullName: 'bar spec',
+          status: 'failure',
+          failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
+          description: 'string',
+        });
+        rep.specDone!({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' });
+        rep.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
+        rep.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
+        rep.jasmineDone!(createRunDetails());
+      }
+      jasmineEnvStub.addReporter.callsFake(addReporter);
+
+      // Act
+      const result = await sut.dryRun();
+
+      // Assert
+      expectCompleted(result);
+      expectTestResultsToEqual(result.tests, [
+        { id: 'spec0', name: 'foo spec', status: TestStatus.Success },
+        { id: 'spec1', name: 'bar spec', status: TestStatus.Failed, failureMessage: 'bar failed' },
+        { id: 'spec2', name: 'disabled', status: TestStatus.Skipped },
+        { id: 'spec3', name: 'pending', status: TestStatus.Skipped },
+        { id: 'spec4', name: 'excluded', status: TestStatus.Skipped },
+      ]);
+    });
     it('should report errors on run', async () => {
       const error = new Error('foobar');
       jasmineStub.execute.throws(error);
       const result = await sut.dryRun();
-      expect(result.status).eq(RunStatus.Error);
+      expectErrored(result);
       expect(result.errorMessage)
         .matches(/An error occurred while loading your jasmine specs.*/)
         .and.matches(/.*Error: foobar.*/);
