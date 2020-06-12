@@ -14,7 +14,6 @@ describe('JasmineRunner integration with code instrumentation', () => {
   beforeEach(() => {
     process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init-instrumented'));
     sut = new JasmineTestRunner(resolveJasmineInitFiles(), factory.strykerOptions());
-    delete global.__mutantCoverage__;
   });
 
   describe('dryRun', () => {

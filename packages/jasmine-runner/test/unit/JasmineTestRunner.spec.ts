@@ -1,20 +1,21 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
-import { TestResult } from '@stryker-mutator/api/test_runner2';
-import { TestStatus } from '@stryker-mutator/api/test_runner';
+import { TestStatus, CompleteDryRunResult, RunStatus } from '@stryker-mutator/api/test_runner2';
 
-import Jasmine = require('jasmine');
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual, expectCompleted, expectErrored } from '../helpers/assertions';
-import { createEnvStub, createRunDetails } from '../helpers/mockFactories';
+import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
+
+import Jasmine = require('jasmine');
 
 type SinonStubbedInstance<TType> = {
   [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
 };
 
 describe(JasmineTestRunner.name, () => {
+  let reporter: jasmine.CustomReporter;
   let jasmineStub: SinonStubbedInstance<Jasmine>;
   let jasmineEnvStub: SinonStubbedInstance<jasmine.Env>;
   let sut: JasmineTestRunner;
@@ -28,14 +29,13 @@ describe(JasmineTestRunner.name, () => {
     sinon.stub(helpers, 'Jasmine').returns(jasmineStub);
     fileNames = ['foo.js', 'bar.js'];
     clock = sinon.useFakeTimers();
+    jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
     sut = new JasmineTestRunner(fileNames, factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }));
   });
 
   afterEach(() => {
     delete require.cache['foo.js'];
     delete require.cache['bar.js'];
-    delete global.__activeMutant__;
-    sinon.restore();
   });
 
   describe('mutantRun', () => {
@@ -91,42 +91,132 @@ describe(JasmineTestRunner.name, () => {
 
   describe('dryRun', () => {
     it('should time spec duration', async () => {
-      function addReporter(rep: jasmine.CustomReporter) {
-        const spec = { fullName: 'foobar spec', id: 'spec0', description: '' };
-        rep.specStarted!(spec);
+      // Arrange
+      clock.setSystemTime(new Date(2010, 1, 1));
+      jasmineStub.execute.callsFake(() => {
+        const spec = createCustomReporterResult();
+        reporter.specStarted!(spec);
         clock.tick(10);
-        rep.specDone!(spec);
-        rep.jasmineDone!(createRunDetails());
-      }
-      jasmineEnvStub.addReporter.callsFake(addReporter);
+        reporter.specDone!(spec);
+        reporter.jasmineDone!(createRunDetails());
+      });
+
+      // Act
       const result = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
       expectCompleted(result);
-      const expectedTestResult: TestResult = {
-        id: 'spec0',
-        name: 'foobar spec',
-        status: TestStatus.Success,
-        timeSpentMs: 10,
+      expect(result.tests[0].timeSpentMs).deep.eq(10);
+    });
+
+    (['perTest', 'all'] as const).forEach((coverageAnalysis) =>
+      it(`should report mutation coverage when coverage analysis is ${coverageAnalysis}`, async () => {
+        // Arrange
+        const expectedMutationCoverage = {
+          perTest: {
+            [1]: [2, 3],
+          },
+          static: {},
+        };
+        global.__mutantCoverage__ = expectedMutationCoverage;
+        jasmineStub.execute.callsFake(() => {
+          reporter.jasmineDone!(createRunDetails());
+        });
+
+        // Act
+        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis }));
+
+        // Assert
+        const expectedResult: CompleteDryRunResult = {
+          status: RunStatus.Complete,
+          tests: [],
+          mutantCoverage: expectedMutationCoverage,
+        };
+        expect(result).deep.eq(expectedResult);
+      })
+    );
+
+    it('should not report mutation coverage when coverage analysis is "off"', async () => {
+      // Arrange
+      const expectedMutationCoverage = {
+        perTest: {},
+        static: {},
       };
-      expect(result.tests).deep.eq([expectedTestResult]);
+      global.__mutantCoverage__ = expectedMutationCoverage;
+      jasmineStub.execute.callsFake(() => {
+        reporter.jasmineDone!(createRunDetails());
+      });
+
+      // Act
+      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+
+      // Assert
+      const expectedResult: CompleteDryRunResult = {
+        status: RunStatus.Complete,
+        tests: [],
+        mutantCoverage: undefined,
+      };
+      expect(result).deep.eq(expectedResult);
+    });
+
+    it('set current test id between specs when coverageAnalysis = "perTest"', async () => {
+      // Arrange
+      let firstCurrentTestId: string | undefined;
+      let secondCurrentTestId: string | undefined;
+      jasmineStub.execute.callsFake(() => {
+        const spec0 = createCustomReporterResult({ id: 'spec0' });
+        const spec1 = createCustomReporterResult({ id: 'spec23' });
+        reporter.specStarted!(spec0);
+        firstCurrentTestId = global.__currentTestId__;
+        reporter.specDone!(spec0);
+        reporter.specStarted!(spec1);
+        secondCurrentTestId = global.__currentTestId__;
+        reporter.specDone!(spec1);
+        reporter.jasmineDone!(createRunDetails());
+      });
+
+      // Act
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+
+      // Assert
+      expect(firstCurrentTestId).eq('spec0');
+      expect(secondCurrentTestId).eq('spec23');
+    });
+
+    it('not set current test id between specs when coverageAnalysis = "all"', async () => {
+      // Arrange
+      let firstCurrentTestId: string | undefined;
+      jasmineStub.execute.callsFake(() => {
+        const spec0 = createCustomReporterResult({ id: 'spec0' });
+        reporter.specStarted!(spec0);
+        firstCurrentTestId = global.__currentTestId__;
+        reporter.specDone!(spec0);
+        reporter.jasmineDone!(createRunDetails());
+      });
+
+      // Act
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+
+      // Assert
+      expect(firstCurrentTestId).undefined;
     });
 
     it('should report completed specs', async () => {
       // Arrange
-      function addReporter(rep: jasmine.CustomReporter) {
-        rep.specDone!({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' });
-        rep.specDone!({
+      jasmineStub.execute.callsFake(() => {
+        reporter.specDone!({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' });
+        reporter.specDone!({
           id: 'spec1',
           fullName: 'bar spec',
           status: 'failure',
           failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
           description: 'string',
         });
-        rep.specDone!({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' });
-        rep.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
-        rep.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
-        rep.jasmineDone!(createRunDetails());
-      }
-      jasmineEnvStub.addReporter.callsFake(addReporter);
+        reporter.specDone!({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' });
+        reporter.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
+        reporter.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
+        reporter.jasmineDone!(createRunDetails());
+      });
 
       // Act
       const result = await sut.dryRun(factory.dryRunOptions());
@@ -141,6 +231,7 @@ describe(JasmineTestRunner.name, () => {
         { id: 'spec4', name: 'excluded', status: TestStatus.Skipped },
       ]);
     });
+
     it('should report errors on run', async () => {
       const error = new Error('foobar');
       jasmineStub.execute.throws(error);

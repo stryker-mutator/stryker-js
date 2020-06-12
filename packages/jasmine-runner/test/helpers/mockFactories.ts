@@ -11,6 +11,15 @@ export function createRunDetails(): jasmine.RunDetails {
   };
 }
 
+export function createCustomReporterResult(overrides?: Partial<jasmine.CustomReporterResult>): jasmine.CustomReporterResult {
+  return {
+    description: 'should have bar',
+    fullName: 'Foo should have bar',
+    id: 'spec0',
+    ...overrides,
+  };
+}
+
 export function createEnvStub(): sinon.SinonStubbedInstance<jasmine.Env> {
   return {
     currentSpec: sinon.stub(),
