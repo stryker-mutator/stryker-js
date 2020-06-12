@@ -48,7 +48,7 @@ describe(switchCaseMutantPlacer.name, () => {
     expect(actual).true;
     expect(actualCode).contains(
       normalizeWhitespaces(`{
-      switch (__global_69fa48.activeMutant) {
+      switch (__global_69fa48.__activeMutant__) {
         case 1:
           const foo = bar >>> baz;
           break;
@@ -88,7 +88,7 @@ describe(switchCaseMutantPlacer.name, () => {
     // Assert
     expect(actualCode).contains(
       normalizeWhitespaces(`{
-        switch (__global_69fa48.activeMutant) {
+        switch (__global_69fa48.__activeMutant__) {
           case 52:
             const foo = bar >>> baz;
             break;
