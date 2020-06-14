@@ -1,5 +1,4 @@
-var expect = require('chai').expect;
-var addModule = require('../src/Add');
+var addModule = require('../../src/Add');
 var add = addModule.add;
 var addOne = addModule.addOne;
 var isNegativeNumber = addModule.isNegativeNumber;

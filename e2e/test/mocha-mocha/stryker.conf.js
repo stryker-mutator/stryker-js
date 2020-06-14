@@ -5,8 +5,5 @@ module.exports = function (config) {
     testRunner: 'mocha',
     reporters: ['clear-text', 'html', 'event-recorder'],
     maxConcurrentTestRunners: 2,
-    mochaOptions: {
-      spec: ['test/*.js', 'helpers/*.js']
-    },
   });
 };

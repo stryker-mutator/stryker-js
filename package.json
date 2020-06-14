@@ -33,7 +33,7 @@
     "json-schema-to-typescript": "~9.1.0",
     "lerna": "^3.10.7",
     "link-parent-bin": "~1.0.0",
-    "mocha": "^6.1.2",
+    "mocha": "^8.0.1",
     "nyc": "^15.0.0",
     "prettier": "2.0.5",
     "rimraf": "^3.0.0",
