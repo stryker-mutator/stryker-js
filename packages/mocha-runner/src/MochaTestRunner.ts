@@ -164,14 +164,16 @@ export class MochaTestRunner implements TestRunner {
   }
 
   private async additionalRequires() {
-    if (LibWrapper.handleRequires) {
-      // handle requires is available since mocha 7.2
-      const rawRootHooks = await LibWrapper.handleRequires(this.mochaOptions.require);
-      this.rootHooks = await LibWrapper.loadRootHooks!(rawRootHooks);
-    }
     if (this.mochaOptions.require) {
-      const modulesToRequire = this.mochaOptions.require.map((moduleName) => (moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName));
-      modulesToRequire.forEach(LibWrapper.require);
+      if (LibWrapper.handleRequires) {
+        const rawRootHooks = await LibWrapper.handleRequires(this.mochaOptions.require);
+        if (rawRootHooks) {
+          this.rootHooks = await LibWrapper.loadRootHooks!(rawRootHooks);
+        }
+      } else {
+        const modulesToRequire = this.mochaOptions.require.map((moduleName) => (moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName));
+        modulesToRequire.forEach(LibWrapper.require);
+      }
     }
   }
 }
