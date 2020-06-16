@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@stryker-mutator/api": "^3.3.0",
-    "enhanced-resolve": "~4.1.0",
+    "enhanced-resolve": "~4.2.0",
     "memfs": "^3.1.2"
   },
   "initStrykerConfig": {
