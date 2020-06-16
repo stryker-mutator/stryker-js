@@ -5,7 +5,7 @@ import { NodeMutation } from '../mutant';
 
 import { NodeMutator } from '.';
 
-export default class ArrowFunctionMutator implements NodeMutator {
+export class ArrowFunctionMutator implements NodeMutator {
   public name = 'ArrowFunction';
 
   public mutate(path: NodePath): NodeMutation[] {
