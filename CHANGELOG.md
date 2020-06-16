@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/stryker-mutator/stryker/compare/v3.2.4...v3.3.0) (2020-06-16)
+
+
+### Features
+
+* **mocha-runner:** support mocha 8 ([#2259](https://github.com/stryker-mutator/stryker/issues/2259)) ([917d965](https://github.com/stryker-mutator/stryker/commit/917d965e72871a2199dd9b2d710d40b350509431))
+
+
+
+
+
 ## [3.2.4](https://github.com/stryker-mutator/stryker/compare/v3.2.3...v3.2.4) (2020-05-18)
 
 
