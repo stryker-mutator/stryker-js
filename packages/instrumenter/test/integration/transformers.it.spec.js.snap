@@ -24,7 +24,7 @@ Object {
         Node {
           "declarations": Array [
             Node {
-              "end": 520,
+              "end": 521,
               "id": Node {
                 "end": 19,
                 "loc": SourceLocation {
@@ -49,7 +49,7 @@ Object {
                     "callee": Node {
                       "arguments": Array [
                         Node {
-                          "end": 516,
+                          "end": 517,
                           "extra": Object {
                             "raw": "\\"return this\\"",
                             "rawValue": "return this",
@@ -64,13 +64,13 @@ Object {
                               "line": 14,
                             },
                           },
-                          "start": 503,
+                          "start": 504,
                           "type": "StringLiteral",
                           "value": "return this",
                         },
                       ],
                       "callee": Node {
-                        "end": 502,
+                        "end": 503,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 15,
@@ -83,10 +83,10 @@ Object {
                           },
                         },
                         "name": "Function",
-                        "start": 494,
+                        "start": 495,
                         "type": "Identifier",
                       },
-                      "end": 517,
+                      "end": 518,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 30,
@@ -97,10 +97,10 @@ Object {
                           "line": 14,
                         },
                       },
-                      "start": 490,
+                      "start": 491,
                       "type": "NewExpression",
                     },
-                    "end": 519,
+                    "end": 520,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 32,
@@ -111,7 +111,7 @@ Object {
                         "line": 14,
                       },
                     },
-                    "start": 490,
+                    "start": 491,
                     "type": "CallExpression",
                   },
                 ],
@@ -386,9 +386,9 @@ Object {
                         "type": "ExpressionStatement",
                       },
                       Node {
-                        "end": 474,
+                        "end": 475,
                         "expression": Node {
-                          "end": 473,
+                          "end": 474,
                           "left": Node {
                             "computed": false,
                             "end": 133,
@@ -451,7 +451,7 @@ Object {
                           },
                           "operator": "=",
                           "right": Node {
-                            "end": 473,
+                            "end": 474,
                             "left": Node {
                               "computed": false,
                               "end": 153,
@@ -655,7 +655,7 @@ Object {
                                     "consequent": Node {
                                       "body": Array [
                                         Node {
-                                          "end": 361,
+                                          "end": 362,
                                           "expression": Node {
                                             "end": 361,
                                             "left": Node {
@@ -1037,7 +1037,7 @@ Object {
                                           },
                                           "loc": SourceLocation {
                                             "end": Position {
-                                              "column": 118,
+                                              "column": 119,
                                               "line": 6,
                                             },
                                             "start": Position {
@@ -1050,7 +1050,7 @@ Object {
                                         },
                                       ],
                                       "directives": Array [],
-                                      "end": 367,
+                                      "end": 368,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 5,
@@ -1064,7 +1064,7 @@ Object {
                                       "start": 241,
                                       "type": "BlockStatement",
                                     },
-                                    "end": 367,
+                                    "end": 368,
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 5,
@@ -1131,9 +1131,9 @@ Object {
                                   Node {
                                     "declarations": Array [
                                       Node {
-                                        "end": 389,
+                                        "end": 390,
                                         "id": Node {
-                                          "end": 377,
+                                          "end": 378,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 9,
@@ -1146,11 +1146,11 @@ Object {
                                             },
                                           },
                                           "name": "a",
-                                          "start": 376,
+                                          "start": 377,
                                           "type": "Identifier",
                                         },
                                         "init": Node {
-                                          "end": 389,
+                                          "end": 390,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 21,
@@ -1163,7 +1163,7 @@ Object {
                                             },
                                           },
                                           "name": "arguments",
-                                          "start": 380,
+                                          "start": 381,
                                           "type": "Identifier",
                                         },
                                         "loc": SourceLocation {
@@ -1176,11 +1176,11 @@ Object {
                                             "line": 8,
                                           },
                                         },
-                                        "start": 376,
+                                        "start": 377,
                                         "type": "VariableDeclarator",
                                       },
                                     ],
-                                    "end": 390,
+                                    "end": 391,
                                     "kind": "var",
                                     "loc": SourceLocation {
                                       "end": Position {
@@ -1192,19 +1192,19 @@ Object {
                                         "line": 8,
                                       },
                                     },
-                                    "start": 372,
+                                    "start": 373,
                                     "type": "VariableDeclaration",
                                   },
                                   Node {
                                     "body": Node {
                                       "body": Array [
                                         Node {
-                                          "end": 463,
+                                          "end": 464,
                                           "expression": Node {
-                                            "end": 462,
+                                            "end": 463,
                                             "left": Node {
                                               "computed": true,
-                                              "end": 441,
+                                              "end": 442,
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 13,
@@ -1216,7 +1216,7 @@ Object {
                                                 },
                                               },
                                               "object": Node {
-                                                "end": 435,
+                                                "end": 436,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 7,
@@ -1229,12 +1229,12 @@ Object {
                                                   },
                                                 },
                                                 "name": "c",
-                                                "start": 434,
+                                                "start": 435,
                                                 "type": "Identifier",
                                               },
                                               "property": Node {
                                                 "computed": true,
-                                                "end": 440,
+                                                "end": 441,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 12,
@@ -1246,7 +1246,7 @@ Object {
                                                   },
                                                 },
                                                 "object": Node {
-                                                  "end": 437,
+                                                  "end": 438,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 9,
@@ -1259,11 +1259,11 @@ Object {
                                                     },
                                                   },
                                                   "name": "a",
-                                                  "start": 436,
+                                                  "start": 437,
                                                   "type": "Identifier",
                                                 },
                                                 "property": Node {
-                                                  "end": 439,
+                                                  "end": 440,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 11,
@@ -1276,13 +1276,13 @@ Object {
                                                     },
                                                   },
                                                   "name": "i",
-                                                  "start": 438,
+                                                  "start": 439,
                                                   "type": "Identifier",
                                                 },
-                                                "start": 436,
+                                                "start": 437,
                                                 "type": "MemberExpression",
                                               },
-                                              "start": 434,
+                                              "start": 435,
                                               "type": "MemberExpression",
                                             },
                                             "loc": SourceLocation {
@@ -1297,16 +1297,16 @@ Object {
                                             },
                                             "operator": "=",
                                             "right": Node {
-                                              "end": 462,
+                                              "end": 463,
                                               "left": Node {
-                                                "end": 457,
+                                                "end": 458,
                                                 "extra": Object {
-                                                  "parenStart": 444,
+                                                  "parenStart": 445,
                                                   "parenthesized": true,
                                                 },
                                                 "left": Node {
                                                   "computed": true,
-                                                  "end": 452,
+                                                  "end": 453,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 24,
@@ -1318,7 +1318,7 @@ Object {
                                                     },
                                                   },
                                                   "object": Node {
-                                                    "end": 446,
+                                                    "end": 447,
                                                     "loc": SourceLocation {
                                                       "end": Position {
                                                         "column": 18,
@@ -1331,12 +1331,12 @@ Object {
                                                       },
                                                     },
                                                     "name": "c",
-                                                    "start": 445,
+                                                    "start": 446,
                                                     "type": "Identifier",
                                                   },
                                                   "property": Node {
                                                     "computed": true,
-                                                    "end": 451,
+                                                    "end": 452,
                                                     "loc": SourceLocation {
                                                       "end": Position {
                                                         "column": 23,
@@ -1348,7 +1348,7 @@ Object {
                                                       },
                                                     },
                                                     "object": Node {
-                                                      "end": 448,
+                                                      "end": 449,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 20,
@@ -1361,11 +1361,11 @@ Object {
                                                         },
                                                       },
                                                       "name": "a",
-                                                      "start": 447,
+                                                      "start": 448,
                                                       "type": "Identifier",
                                                     },
                                                     "property": Node {
-                                                      "end": 450,
+                                                      "end": 451,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 22,
@@ -1378,13 +1378,13 @@ Object {
                                                         },
                                                       },
                                                       "name": "i",
-                                                      "start": 449,
+                                                      "start": 450,
                                                       "type": "Identifier",
                                                     },
-                                                    "start": 447,
+                                                    "start": 448,
                                                     "type": "MemberExpression",
                                                   },
-                                                  "start": 445,
+                                                  "start": 446,
                                                   "type": "MemberExpression",
                                                 },
                                                 "loc": SourceLocation {
@@ -1399,7 +1399,7 @@ Object {
                                                 },
                                                 "operator": "||",
                                                 "right": Node {
-                                                  "end": 457,
+                                                  "end": 458,
                                                   "extra": Object {
                                                     "raw": "0",
                                                     "rawValue": 0,
@@ -1414,11 +1414,11 @@ Object {
                                                       "line": 10,
                                                     },
                                                   },
-                                                  "start": 456,
+                                                  "start": 457,
                                                   "type": "NumericLiteral",
                                                   "value": 0,
                                                 },
-                                                "start": 445,
+                                                "start": 446,
                                                 "type": "LogicalExpression",
                                               },
                                               "loc": SourceLocation {
@@ -1433,7 +1433,7 @@ Object {
                                               },
                                               "operator": "+",
                                               "right": Node {
-                                                "end": 462,
+                                                "end": 463,
                                                 "extra": Object {
                                                   "raw": "1",
                                                   "rawValue": 1,
@@ -1448,14 +1448,14 @@ Object {
                                                     "line": 10,
                                                   },
                                                 },
-                                                "start": 461,
+                                                "start": 462,
                                                 "type": "NumericLiteral",
                                                 "value": 1,
                                               },
-                                              "start": 444,
+                                              "start": 445,
                                               "type": "BinaryExpression",
                                             },
-                                            "start": 434,
+                                            "start": 435,
                                             "type": "AssignmentExpression",
                                           },
                                           "loc": SourceLocation {
@@ -1468,12 +1468,12 @@ Object {
                                               "line": 10,
                                             },
                                           },
-                                          "start": 434,
+                                          "start": 435,
                                           "type": "ExpressionStatement",
                                         },
                                       ],
                                       "directives": Array [],
-                                      "end": 469,
+                                      "end": 470,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 5,
@@ -1484,16 +1484,16 @@ Object {
                                           "line": 9,
                                         },
                                       },
-                                      "start": 426,
+                                      "start": 427,
                                       "type": "BlockStatement",
                                     },
-                                    "end": 469,
+                                    "end": 470,
                                     "init": Node {
                                       "declarations": Array [
                                         Node {
-                                          "end": 406,
+                                          "end": 407,
                                           "id": Node {
-                                            "end": 404,
+                                            "end": 405,
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 13,
@@ -1506,11 +1506,11 @@ Object {
                                               },
                                             },
                                             "name": "i",
-                                            "start": 403,
+                                            "start": 404,
                                             "type": "Identifier",
                                           },
                                           "init": Node {
-                                            "end": 406,
+                                            "end": 407,
                                             "extra": Object {
                                               "raw": "0",
                                               "rawValue": 0,
@@ -1525,7 +1525,7 @@ Object {
                                                 "line": 9,
                                               },
                                             },
-                                            "start": 405,
+                                            "start": 406,
                                             "type": "NumericLiteral",
                                             "value": 0,
                                           },
@@ -1539,11 +1539,11 @@ Object {
                                               "line": 9,
                                             },
                                           },
-                                          "start": 403,
+                                          "start": 404,
                                           "type": "VariableDeclarator",
                                         },
                                       ],
-                                      "end": 406,
+                                      "end": 407,
                                       "kind": "var",
                                       "loc": SourceLocation {
                                         "end": Position {
@@ -1555,7 +1555,7 @@ Object {
                                           "line": 9,
                                         },
                                       },
-                                      "start": 399,
+                                      "start": 400,
                                       "type": "VariableDeclaration",
                                     },
                                     "loc": SourceLocation {
@@ -1568,11 +1568,11 @@ Object {
                                         "line": 9,
                                       },
                                     },
-                                    "start": 395,
+                                    "start": 396,
                                     "test": Node {
-                                      "end": 420,
+                                      "end": 421,
                                       "left": Node {
-                                        "end": 409,
+                                        "end": 410,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 18,
@@ -1585,7 +1585,7 @@ Object {
                                           },
                                         },
                                         "name": "i",
-                                        "start": 408,
+                                        "start": 409,
                                         "type": "Identifier",
                                       },
                                       "loc": SourceLocation {
@@ -1601,7 +1601,7 @@ Object {
                                       "operator": "<",
                                       "right": Node {
                                         "computed": false,
-                                        "end": 420,
+                                        "end": 421,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 29,
@@ -1613,7 +1613,7 @@ Object {
                                           },
                                         },
                                         "object": Node {
-                                          "end": 413,
+                                          "end": 414,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -1626,11 +1626,11 @@ Object {
                                             },
                                           },
                                           "name": "a",
-                                          "start": 412,
+                                          "start": 413,
                                           "type": "Identifier",
                                         },
                                         "property": Node {
-                                          "end": 420,
+                                          "end": 421,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 29,
@@ -1643,19 +1643,19 @@ Object {
                                             },
                                           },
                                           "name": "length",
-                                          "start": 414,
+                                          "start": 415,
                                           "type": "Identifier",
                                         },
-                                        "start": 412,
+                                        "start": 413,
                                         "type": "MemberExpression",
                                       },
-                                      "start": 408,
+                                      "start": 409,
                                       "type": "BinaryExpression",
                                     },
                                     "type": "ForStatement",
                                     "update": Node {
                                       "argument": Node {
-                                        "end": 423,
+                                        "end": 424,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 32,
@@ -1668,10 +1668,10 @@ Object {
                                           },
                                         },
                                         "name": "i",
-                                        "start": 422,
+                                        "start": 423,
                                         "type": "Identifier",
                                       },
-                                      "end": 425,
+                                      "end": 426,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 34,
@@ -1684,13 +1684,13 @@ Object {
                                       },
                                       "operator": "++",
                                       "prefix": false,
-                                      "start": 422,
+                                      "start": 423,
                                       "type": "UpdateExpression",
                                     },
                                   },
                                 ],
                                 "directives": Array [],
-                                "end": 473,
+                                "end": 474,
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 3,
@@ -1704,7 +1704,7 @@ Object {
                                 "start": 169,
                                 "type": "BlockStatement",
                               },
-                              "end": 473,
+                              "end": 474,
                               "generator": false,
                               "id": null,
                               "loc": SourceLocation {
@@ -1742,7 +1742,7 @@ Object {
                       },
                       Node {
                         "argument": Node {
-                          "end": 485,
+                          "end": 486,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 10,
@@ -1755,10 +1755,10 @@ Object {
                             },
                           },
                           "name": "g",
-                          "start": 484,
+                          "start": 485,
                           "type": "Identifier",
                         },
-                        "end": 486,
+                        "end": 487,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 11,
@@ -1769,12 +1769,12 @@ Object {
                             "line": 13,
                           },
                         },
-                        "start": 477,
+                        "start": 478,
                         "type": "ReturnStatement",
                       },
                     ],
                     "directives": Array [],
-                    "end": 488,
+                    "end": 489,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -1788,7 +1788,7 @@ Object {
                     "start": 34,
                     "type": "BlockStatement",
                   },
-                  "end": 488,
+                  "end": 489,
                   "extra": Object {
                     "parenStart": 22,
                     "parenthesized": true,
@@ -1827,7 +1827,7 @@ Object {
                   "start": 23,
                   "type": "FunctionExpression",
                 },
-                "end": 520,
+                "end": 521,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 33,
@@ -1855,7 +1855,7 @@ Object {
               "type": "VariableDeclarator",
             },
           ],
-          "end": 520,
+          "end": 521,
           "kind": "var",
           "loc": SourceLocation {
             "end": Position {
@@ -2140,7 +2140,7 @@ Object {
         Node {
           "declarations": Array [
             Node {
-              "end": 520,
+              "end": 521,
               "id": Node {
                 "end": 19,
                 "loc": SourceLocation {
@@ -2165,7 +2165,7 @@ Object {
                     "callee": Node {
                       "arguments": Array [
                         Node {
-                          "end": 516,
+                          "end": 517,
                           "extra": Object {
                             "raw": "\\"return this\\"",
                             "rawValue": "return this",
@@ -2180,13 +2180,13 @@ Object {
                               "line": 14,
                             },
                           },
-                          "start": 503,
+                          "start": 504,
                           "type": "StringLiteral",
                           "value": "return this",
                         },
                       ],
                       "callee": Node {
-                        "end": 502,
+                        "end": 503,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 15,
@@ -2199,10 +2199,10 @@ Object {
                           },
                         },
                         "name": "Function",
-                        "start": 494,
+                        "start": 495,
                         "type": "Identifier",
                       },
-                      "end": 517,
+                      "end": 518,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 30,
@@ -2213,10 +2213,10 @@ Object {
                           "line": 14,
                         },
                       },
-                      "start": 490,
+                      "start": 491,
                       "type": "NewExpression",
                     },
-                    "end": 519,
+                    "end": 520,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 32,
@@ -2227,7 +2227,7 @@ Object {
                         "line": 14,
                       },
                     },
-                    "start": 490,
+                    "start": 491,
                     "type": "CallExpression",
                   },
                 ],
@@ -2502,9 +2502,9 @@ Object {
                         "type": "ExpressionStatement",
                       },
                       Node {
-                        "end": 474,
+                        "end": 475,
                         "expression": Node {
-                          "end": 473,
+                          "end": 474,
                           "left": Node {
                             "computed": false,
                             "end": 133,
@@ -2567,7 +2567,7 @@ Object {
                           },
                           "operator": "=",
                           "right": Node {
-                            "end": 473,
+                            "end": 474,
                             "left": Node {
                               "computed": false,
                               "end": 153,
@@ -2771,7 +2771,7 @@ Object {
                                     "consequent": Node {
                                       "body": Array [
                                         Node {
-                                          "end": 361,
+                                          "end": 362,
                                           "expression": Node {
                                             "end": 361,
                                             "left": Node {
@@ -3153,7 +3153,7 @@ Object {
                                           },
                                           "loc": SourceLocation {
                                             "end": Position {
-                                              "column": 118,
+                                              "column": 119,
                                               "line": 6,
                                             },
                                             "start": Position {
@@ -3166,7 +3166,7 @@ Object {
                                         },
                                       ],
                                       "directives": Array [],
-                                      "end": 367,
+                                      "end": 368,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 5,
@@ -3180,7 +3180,7 @@ Object {
                                       "start": 241,
                                       "type": "BlockStatement",
                                     },
-                                    "end": 367,
+                                    "end": 368,
                                     "loc": SourceLocation {
                                       "end": Position {
                                         "column": 5,
@@ -3247,9 +3247,9 @@ Object {
                                   Node {
                                     "declarations": Array [
                                       Node {
-                                        "end": 389,
+                                        "end": 390,
                                         "id": Node {
-                                          "end": 377,
+                                          "end": 378,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 9,
@@ -3262,11 +3262,11 @@ Object {
                                             },
                                           },
                                           "name": "a",
-                                          "start": 376,
+                                          "start": 377,
                                           "type": "Identifier",
                                         },
                                         "init": Node {
-                                          "end": 389,
+                                          "end": 390,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 21,
@@ -3279,7 +3279,7 @@ Object {
                                             },
                                           },
                                           "name": "arguments",
-                                          "start": 380,
+                                          "start": 381,
                                           "type": "Identifier",
                                         },
                                         "loc": SourceLocation {
@@ -3292,11 +3292,11 @@ Object {
                                             "line": 8,
                                           },
                                         },
-                                        "start": 376,
+                                        "start": 377,
                                         "type": "VariableDeclarator",
                                       },
                                     ],
-                                    "end": 390,
+                                    "end": 391,
                                     "kind": "var",
                                     "loc": SourceLocation {
                                       "end": Position {
@@ -3308,19 +3308,19 @@ Object {
                                         "line": 8,
                                       },
                                     },
-                                    "start": 372,
+                                    "start": 373,
                                     "type": "VariableDeclaration",
                                   },
                                   Node {
                                     "body": Node {
                                       "body": Array [
                                         Node {
-                                          "end": 463,
+                                          "end": 464,
                                           "expression": Node {
-                                            "end": 462,
+                                            "end": 463,
                                             "left": Node {
                                               "computed": true,
-                                              "end": 441,
+                                              "end": 442,
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 13,
@@ -3332,7 +3332,7 @@ Object {
                                                 },
                                               },
                                               "object": Node {
-                                                "end": 435,
+                                                "end": 436,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 7,
@@ -3345,12 +3345,12 @@ Object {
                                                   },
                                                 },
                                                 "name": "c",
-                                                "start": 434,
+                                                "start": 435,
                                                 "type": "Identifier",
                                               },
                                               "property": Node {
                                                 "computed": true,
-                                                "end": 440,
+                                                "end": 441,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 12,
@@ -3362,7 +3362,7 @@ Object {
                                                   },
                                                 },
                                                 "object": Node {
-                                                  "end": 437,
+                                                  "end": 438,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 9,
@@ -3375,11 +3375,11 @@ Object {
                                                     },
                                                   },
                                                   "name": "a",
-                                                  "start": 436,
+                                                  "start": 437,
                                                   "type": "Identifier",
                                                 },
                                                 "property": Node {
-                                                  "end": 439,
+                                                  "end": 440,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 11,
@@ -3392,13 +3392,13 @@ Object {
                                                     },
                                                   },
                                                   "name": "i",
-                                                  "start": 438,
+                                                  "start": 439,
                                                   "type": "Identifier",
                                                 },
-                                                "start": 436,
+                                                "start": 437,
                                                 "type": "MemberExpression",
                                               },
-                                              "start": 434,
+                                              "start": 435,
                                               "type": "MemberExpression",
                                             },
                                             "loc": SourceLocation {
@@ -3413,16 +3413,16 @@ Object {
                                             },
                                             "operator": "=",
                                             "right": Node {
-                                              "end": 462,
+                                              "end": 463,
                                               "left": Node {
-                                                "end": 457,
+                                                "end": 458,
                                                 "extra": Object {
-                                                  "parenStart": 444,
+                                                  "parenStart": 445,
                                                   "parenthesized": true,
                                                 },
                                                 "left": Node {
                                                   "computed": true,
-                                                  "end": 452,
+                                                  "end": 453,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 24,
@@ -3434,7 +3434,7 @@ Object {
                                                     },
                                                   },
                                                   "object": Node {
-                                                    "end": 446,
+                                                    "end": 447,
                                                     "loc": SourceLocation {
                                                       "end": Position {
                                                         "column": 18,
@@ -3447,12 +3447,12 @@ Object {
                                                       },
                                                     },
                                                     "name": "c",
-                                                    "start": 445,
+                                                    "start": 446,
                                                     "type": "Identifier",
                                                   },
                                                   "property": Node {
                                                     "computed": true,
-                                                    "end": 451,
+                                                    "end": 452,
                                                     "loc": SourceLocation {
                                                       "end": Position {
                                                         "column": 23,
@@ -3464,7 +3464,7 @@ Object {
                                                       },
                                                     },
                                                     "object": Node {
-                                                      "end": 448,
+                                                      "end": 449,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 20,
@@ -3477,11 +3477,11 @@ Object {
                                                         },
                                                       },
                                                       "name": "a",
-                                                      "start": 447,
+                                                      "start": 448,
                                                       "type": "Identifier",
                                                     },
                                                     "property": Node {
-                                                      "end": 450,
+                                                      "end": 451,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 22,
@@ -3494,13 +3494,13 @@ Object {
                                                         },
                                                       },
                                                       "name": "i",
-                                                      "start": 449,
+                                                      "start": 450,
                                                       "type": "Identifier",
                                                     },
-                                                    "start": 447,
+                                                    "start": 448,
                                                     "type": "MemberExpression",
                                                   },
-                                                  "start": 445,
+                                                  "start": 446,
                                                   "type": "MemberExpression",
                                                 },
                                                 "loc": SourceLocation {
@@ -3515,7 +3515,7 @@ Object {
                                                 },
                                                 "operator": "||",
                                                 "right": Node {
-                                                  "end": 457,
+                                                  "end": 458,
                                                   "extra": Object {
                                                     "raw": "0",
                                                     "rawValue": 0,
@@ -3530,11 +3530,11 @@ Object {
                                                       "line": 10,
                                                     },
                                                   },
-                                                  "start": 456,
+                                                  "start": 457,
                                                   "type": "NumericLiteral",
                                                   "value": 0,
                                                 },
-                                                "start": 445,
+                                                "start": 446,
                                                 "type": "LogicalExpression",
                                               },
                                               "loc": SourceLocation {
@@ -3549,7 +3549,7 @@ Object {
                                               },
                                               "operator": "+",
                                               "right": Node {
-                                                "end": 462,
+                                                "end": 463,
                                                 "extra": Object {
                                                   "raw": "1",
                                                   "rawValue": 1,
@@ -3564,14 +3564,14 @@ Object {
                                                     "line": 10,
                                                   },
                                                 },
-                                                "start": 461,
+                                                "start": 462,
                                                 "type": "NumericLiteral",
                                                 "value": 1,
                                               },
-                                              "start": 444,
+                                              "start": 445,
                                               "type": "BinaryExpression",
                                             },
-                                            "start": 434,
+                                            "start": 435,
                                             "type": "AssignmentExpression",
                                           },
                                           "loc": SourceLocation {
@@ -3584,12 +3584,12 @@ Object {
                                               "line": 10,
                                             },
                                           },
-                                          "start": 434,
+                                          "start": 435,
                                           "type": "ExpressionStatement",
                                         },
                                       ],
                                       "directives": Array [],
-                                      "end": 469,
+                                      "end": 470,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 5,
@@ -3600,16 +3600,16 @@ Object {
                                           "line": 9,
                                         },
                                       },
-                                      "start": 426,
+                                      "start": 427,
                                       "type": "BlockStatement",
                                     },
-                                    "end": 469,
+                                    "end": 470,
                                     "init": Node {
                                       "declarations": Array [
                                         Node {
-                                          "end": 406,
+                                          "end": 407,
                                           "id": Node {
-                                            "end": 404,
+                                            "end": 405,
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 13,
@@ -3622,11 +3622,11 @@ Object {
                                               },
                                             },
                                             "name": "i",
-                                            "start": 403,
+                                            "start": 404,
                                             "type": "Identifier",
                                           },
                                           "init": Node {
-                                            "end": 406,
+                                            "end": 407,
                                             "extra": Object {
                                               "raw": "0",
                                               "rawValue": 0,
@@ -3641,7 +3641,7 @@ Object {
                                                 "line": 9,
                                               },
                                             },
-                                            "start": 405,
+                                            "start": 406,
                                             "type": "NumericLiteral",
                                             "value": 0,
                                           },
@@ -3655,11 +3655,11 @@ Object {
                                               "line": 9,
                                             },
                                           },
-                                          "start": 403,
+                                          "start": 404,
                                           "type": "VariableDeclarator",
                                         },
                                       ],
-                                      "end": 406,
+                                      "end": 407,
                                       "kind": "var",
                                       "loc": SourceLocation {
                                         "end": Position {
@@ -3671,7 +3671,7 @@ Object {
                                           "line": 9,
                                         },
                                       },
-                                      "start": 399,
+                                      "start": 400,
                                       "type": "VariableDeclaration",
                                     },
                                     "loc": SourceLocation {
@@ -3684,11 +3684,11 @@ Object {
                                         "line": 9,
                                       },
                                     },
-                                    "start": 395,
+                                    "start": 396,
                                     "test": Node {
-                                      "end": 420,
+                                      "end": 421,
                                       "left": Node {
-                                        "end": 409,
+                                        "end": 410,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 18,
@@ -3701,7 +3701,7 @@ Object {
                                           },
                                         },
                                         "name": "i",
-                                        "start": 408,
+                                        "start": 409,
                                         "type": "Identifier",
                                       },
                                       "loc": SourceLocation {
@@ -3717,7 +3717,7 @@ Object {
                                       "operator": "<",
                                       "right": Node {
                                         "computed": false,
-                                        "end": 420,
+                                        "end": 421,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 29,
@@ -3729,7 +3729,7 @@ Object {
                                           },
                                         },
                                         "object": Node {
-                                          "end": 413,
+                                          "end": 414,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 22,
@@ -3742,11 +3742,11 @@ Object {
                                             },
                                           },
                                           "name": "a",
-                                          "start": 412,
+                                          "start": 413,
                                           "type": "Identifier",
                                         },
                                         "property": Node {
-                                          "end": 420,
+                                          "end": 421,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 29,
@@ -3759,19 +3759,19 @@ Object {
                                             },
                                           },
                                           "name": "length",
-                                          "start": 414,
+                                          "start": 415,
                                           "type": "Identifier",
                                         },
-                                        "start": 412,
+                                        "start": 413,
                                         "type": "MemberExpression",
                                       },
-                                      "start": 408,
+                                      "start": 409,
                                       "type": "BinaryExpression",
                                     },
                                     "type": "ForStatement",
                                     "update": Node {
                                       "argument": Node {
-                                        "end": 423,
+                                        "end": 424,
                                         "loc": SourceLocation {
                                           "end": Position {
                                             "column": 32,
@@ -3784,10 +3784,10 @@ Object {
                                           },
                                         },
                                         "name": "i",
-                                        "start": 422,
+                                        "start": 423,
                                         "type": "Identifier",
                                       },
-                                      "end": 425,
+                                      "end": 426,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 34,
@@ -3800,13 +3800,13 @@ Object {
                                       },
                                       "operator": "++",
                                       "prefix": false,
-                                      "start": 422,
+                                      "start": 423,
                                       "type": "UpdateExpression",
                                     },
                                   },
                                 ],
                                 "directives": Array [],
-                                "end": 473,
+                                "end": 474,
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 3,
@@ -3820,7 +3820,7 @@ Object {
                                 "start": 169,
                                 "type": "BlockStatement",
                               },
-                              "end": 473,
+                              "end": 474,
                               "generator": false,
                               "id": null,
                               "loc": SourceLocation {
@@ -3858,7 +3858,7 @@ Object {
                       },
                       Node {
                         "argument": Node {
-                          "end": 485,
+                          "end": 486,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 10,
@@ -3871,10 +3871,10 @@ Object {
                             },
                           },
                           "name": "g",
-                          "start": 484,
+                          "start": 485,
                           "type": "Identifier",
                         },
-                        "end": 486,
+                        "end": 487,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 11,
@@ -3885,12 +3885,12 @@ Object {
                             "line": 13,
                           },
                         },
-                        "start": 477,
+                        "start": 478,
                         "type": "ReturnStatement",
                       },
                     ],
                     "directives": Array [],
-                    "end": 488,
+                    "end": 489,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 1,
@@ -3904,7 +3904,7 @@ Object {
                     "start": 34,
                     "type": "BlockStatement",
                   },
-                  "end": 488,
+                  "end": 489,
                   "extra": Object {
                     "parenStart": 22,
                     "parenthesized": true,
@@ -3943,7 +3943,7 @@ Object {
                   "start": 23,
                   "type": "FunctionExpression",
                 },
-                "end": 520,
+                "end": 521,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 33,
@@ -3971,7 +3971,7 @@ Object {
               "type": "VariableDeclarator",
             },
           ],
-          "end": 520,
+          "end": 521,
           "kind": "var",
           "loc": SourceLocation {
             "end": Position {
@@ -4292,7 +4292,7 @@ Object {
               Node {
                 "declarations": Array [
                   Node {
-                    "end": 520,
+                    "end": 521,
                     "id": Node {
                       "end": 19,
                       "loc": SourceLocation {
@@ -4317,7 +4317,7 @@ Object {
                           "callee": Node {
                             "arguments": Array [
                               Node {
-                                "end": 516,
+                                "end": 517,
                                 "extra": Object {
                                   "raw": "\\"return this\\"",
                                   "rawValue": "return this",
@@ -4332,13 +4332,13 @@ Object {
                                     "line": 14,
                                   },
                                 },
-                                "start": 503,
+                                "start": 504,
                                 "type": "StringLiteral",
                                 "value": "return this",
                               },
                             ],
                             "callee": Node {
-                              "end": 502,
+                              "end": 503,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 15,
@@ -4351,10 +4351,10 @@ Object {
                                 },
                               },
                               "name": "Function",
-                              "start": 494,
+                              "start": 495,
                               "type": "Identifier",
                             },
-                            "end": 517,
+                            "end": 518,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 30,
@@ -4365,10 +4365,10 @@ Object {
                                 "line": 14,
                               },
                             },
-                            "start": 490,
+                            "start": 491,
                             "type": "NewExpression",
                           },
-                          "end": 519,
+                          "end": 520,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 32,
@@ -4379,7 +4379,7 @@ Object {
                               "line": 14,
                             },
                           },
-                          "start": 490,
+                          "start": 491,
                           "type": "CallExpression",
                         },
                       ],
@@ -4654,9 +4654,9 @@ Object {
                               "type": "ExpressionStatement",
                             },
                             Node {
-                              "end": 474,
+                              "end": 475,
                               "expression": Node {
-                                "end": 473,
+                                "end": 474,
                                 "left": Node {
                                   "computed": false,
                                   "end": 133,
@@ -4719,7 +4719,7 @@ Object {
                                 },
                                 "operator": "=",
                                 "right": Node {
-                                  "end": 473,
+                                  "end": 474,
                                   "left": Node {
                                     "computed": false,
                                     "end": 153,
@@ -4923,7 +4923,7 @@ Object {
                                           "consequent": Node {
                                             "body": Array [
                                               Node {
-                                                "end": 361,
+                                                "end": 362,
                                                 "expression": Node {
                                                   "end": 361,
                                                   "left": Node {
@@ -5305,7 +5305,7 @@ Object {
                                                 },
                                                 "loc": SourceLocation {
                                                   "end": Position {
-                                                    "column": 118,
+                                                    "column": 119,
                                                     "line": 6,
                                                   },
                                                   "start": Position {
@@ -5318,7 +5318,7 @@ Object {
                                               },
                                             ],
                                             "directives": Array [],
-                                            "end": 367,
+                                            "end": 368,
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 5,
@@ -5332,7 +5332,7 @@ Object {
                                             "start": 241,
                                             "type": "BlockStatement",
                                           },
-                                          "end": 367,
+                                          "end": 368,
                                           "loc": SourceLocation {
                                             "end": Position {
                                               "column": 5,
@@ -5399,9 +5399,9 @@ Object {
                                         Node {
                                           "declarations": Array [
                                             Node {
-                                              "end": 389,
+                                              "end": 390,
                                               "id": Node {
-                                                "end": 377,
+                                                "end": 378,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 9,
@@ -5414,11 +5414,11 @@ Object {
                                                   },
                                                 },
                                                 "name": "a",
-                                                "start": 376,
+                                                "start": 377,
                                                 "type": "Identifier",
                                               },
                                               "init": Node {
-                                                "end": 389,
+                                                "end": 390,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 21,
@@ -5431,7 +5431,7 @@ Object {
                                                   },
                                                 },
                                                 "name": "arguments",
-                                                "start": 380,
+                                                "start": 381,
                                                 "type": "Identifier",
                                               },
                                               "loc": SourceLocation {
@@ -5444,11 +5444,11 @@ Object {
                                                   "line": 8,
                                                 },
                                               },
-                                              "start": 376,
+                                              "start": 377,
                                               "type": "VariableDeclarator",
                                             },
                                           ],
-                                          "end": 390,
+                                          "end": 391,
                                           "kind": "var",
                                           "loc": SourceLocation {
                                             "end": Position {
@@ -5460,19 +5460,19 @@ Object {
                                               "line": 8,
                                             },
                                           },
-                                          "start": 372,
+                                          "start": 373,
                                           "type": "VariableDeclaration",
                                         },
                                         Node {
                                           "body": Node {
                                             "body": Array [
                                               Node {
-                                                "end": 463,
+                                                "end": 464,
                                                 "expression": Node {
-                                                  "end": 462,
+                                                  "end": 463,
                                                   "left": Node {
                                                     "computed": true,
-                                                    "end": 441,
+                                                    "end": 442,
                                                     "loc": SourceLocation {
                                                       "end": Position {
                                                         "column": 13,
@@ -5484,7 +5484,7 @@ Object {
                                                       },
                                                     },
                                                     "object": Node {
-                                                      "end": 435,
+                                                      "end": 436,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 7,
@@ -5497,12 +5497,12 @@ Object {
                                                         },
                                                       },
                                                       "name": "c",
-                                                      "start": 434,
+                                                      "start": 435,
                                                       "type": "Identifier",
                                                     },
                                                     "property": Node {
                                                       "computed": true,
-                                                      "end": 440,
+                                                      "end": 441,
                                                       "loc": SourceLocation {
                                                         "end": Position {
                                                           "column": 12,
@@ -5514,7 +5514,7 @@ Object {
                                                         },
                                                       },
                                                       "object": Node {
-                                                        "end": 437,
+                                                        "end": 438,
                                                         "loc": SourceLocation {
                                                           "end": Position {
                                                             "column": 9,
@@ -5527,11 +5527,11 @@ Object {
                                                           },
                                                         },
                                                         "name": "a",
-                                                        "start": 436,
+                                                        "start": 437,
                                                         "type": "Identifier",
                                                       },
                                                       "property": Node {
-                                                        "end": 439,
+                                                        "end": 440,
                                                         "loc": SourceLocation {
                                                           "end": Position {
                                                             "column": 11,
@@ -5544,13 +5544,13 @@ Object {
                                                           },
                                                         },
                                                         "name": "i",
-                                                        "start": 438,
+                                                        "start": 439,
                                                         "type": "Identifier",
                                                       },
-                                                      "start": 436,
+                                                      "start": 437,
                                                       "type": "MemberExpression",
                                                     },
-                                                    "start": 434,
+                                                    "start": 435,
                                                     "type": "MemberExpression",
                                                   },
                                                   "loc": SourceLocation {
@@ -5565,16 +5565,16 @@ Object {
                                                   },
                                                   "operator": "=",
                                                   "right": Node {
-                                                    "end": 462,
+                                                    "end": 463,
                                                     "left": Node {
-                                                      "end": 457,
+                                                      "end": 458,
                                                       "extra": Object {
-                                                        "parenStart": 444,
+                                                        "parenStart": 445,
                                                         "parenthesized": true,
                                                       },
                                                       "left": Node {
                                                         "computed": true,
-                                                        "end": 452,
+                                                        "end": 453,
                                                         "loc": SourceLocation {
                                                           "end": Position {
                                                             "column": 24,
@@ -5586,7 +5586,7 @@ Object {
                                                           },
                                                         },
                                                         "object": Node {
-                                                          "end": 446,
+                                                          "end": 447,
                                                           "loc": SourceLocation {
                                                             "end": Position {
                                                               "column": 18,
@@ -5599,12 +5599,12 @@ Object {
                                                             },
                                                           },
                                                           "name": "c",
-                                                          "start": 445,
+                                                          "start": 446,
                                                           "type": "Identifier",
                                                         },
                                                         "property": Node {
                                                           "computed": true,
-                                                          "end": 451,
+                                                          "end": 452,
                                                           "loc": SourceLocation {
                                                             "end": Position {
                                                               "column": 23,
@@ -5616,7 +5616,7 @@ Object {
                                                             },
                                                           },
                                                           "object": Node {
-                                                            "end": 448,
+                                                            "end": 449,
                                                             "loc": SourceLocation {
                                                               "end": Position {
                                                                 "column": 20,
@@ -5629,11 +5629,11 @@ Object {
                                                               },
                                                             },
                                                             "name": "a",
-                                                            "start": 447,
+                                                            "start": 448,
                                                             "type": "Identifier",
                                                           },
                                                           "property": Node {
-                                                            "end": 450,
+                                                            "end": 451,
                                                             "loc": SourceLocation {
                                                               "end": Position {
                                                                 "column": 22,
@@ -5646,13 +5646,13 @@ Object {
                                                               },
                                                             },
                                                             "name": "i",
-                                                            "start": 449,
+                                                            "start": 450,
                                                             "type": "Identifier",
                                                           },
-                                                          "start": 447,
+                                                          "start": 448,
                                                           "type": "MemberExpression",
                                                         },
-                                                        "start": 445,
+                                                        "start": 446,
                                                         "type": "MemberExpression",
                                                       },
                                                       "loc": SourceLocation {
@@ -5667,7 +5667,7 @@ Object {
                                                       },
                                                       "operator": "||",
                                                       "right": Node {
-                                                        "end": 457,
+                                                        "end": 458,
                                                         "extra": Object {
                                                           "raw": "0",
                                                           "rawValue": 0,
@@ -5682,11 +5682,11 @@ Object {
                                                             "line": 10,
                                                           },
                                                         },
-                                                        "start": 456,
+                                                        "start": 457,
                                                         "type": "NumericLiteral",
                                                         "value": 0,
                                                       },
-                                                      "start": 445,
+                                                      "start": 446,
                                                       "type": "LogicalExpression",
                                                     },
                                                     "loc": SourceLocation {
@@ -5701,7 +5701,7 @@ Object {
                                                     },
                                                     "operator": "+",
                                                     "right": Node {
-                                                      "end": 462,
+                                                      "end": 463,
                                                       "extra": Object {
                                                         "raw": "1",
                                                         "rawValue": 1,
@@ -5716,14 +5716,14 @@ Object {
                                                           "line": 10,
                                                         },
                                                       },
-                                                      "start": 461,
+                                                      "start": 462,
                                                       "type": "NumericLiteral",
                                                       "value": 1,
                                                     },
-                                                    "start": 444,
+                                                    "start": 445,
                                                     "type": "BinaryExpression",
                                                   },
-                                                  "start": 434,
+                                                  "start": 435,
                                                   "type": "AssignmentExpression",
                                                 },
                                                 "loc": SourceLocation {
@@ -5736,12 +5736,12 @@ Object {
                                                     "line": 10,
                                                   },
                                                 },
-                                                "start": 434,
+                                                "start": 435,
                                                 "type": "ExpressionStatement",
                                               },
                                             ],
                                             "directives": Array [],
-                                            "end": 469,
+                                            "end": 470,
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 5,
@@ -5752,16 +5752,16 @@ Object {
                                                 "line": 9,
                                               },
                                             },
-                                            "start": 426,
+                                            "start": 427,
                                             "type": "BlockStatement",
                                           },
-                                          "end": 469,
+                                          "end": 470,
                                           "init": Node {
                                             "declarations": Array [
                                               Node {
-                                                "end": 406,
+                                                "end": 407,
                                                 "id": Node {
-                                                  "end": 404,
+                                                  "end": 405,
                                                   "loc": SourceLocation {
                                                     "end": Position {
                                                       "column": 13,
@@ -5774,11 +5774,11 @@ Object {
                                                     },
                                                   },
                                                   "name": "i",
-                                                  "start": 403,
+                                                  "start": 404,
                                                   "type": "Identifier",
                                                 },
                                                 "init": Node {
-                                                  "end": 406,
+                                                  "end": 407,
                                                   "extra": Object {
                                                     "raw": "0",
                                                     "rawValue": 0,
@@ -5793,7 +5793,7 @@ Object {
                                                       "line": 9,
                                                     },
                                                   },
-                                                  "start": 405,
+                                                  "start": 406,
                                                   "type": "NumericLiteral",
                                                   "value": 0,
                                                 },
@@ -5807,11 +5807,11 @@ Object {
                                                     "line": 9,
                                                   },
                                                 },
-                                                "start": 403,
+                                                "start": 404,
                                                 "type": "VariableDeclarator",
                                               },
                                             ],
-                                            "end": 406,
+                                            "end": 407,
                                             "kind": "var",
                                             "loc": SourceLocation {
                                               "end": Position {
@@ -5823,7 +5823,7 @@ Object {
                                                 "line": 9,
                                               },
                                             },
-                                            "start": 399,
+                                            "start": 400,
                                             "type": "VariableDeclaration",
                                           },
                                           "loc": SourceLocation {
@@ -5836,11 +5836,11 @@ Object {
                                               "line": 9,
                                             },
                                           },
-                                          "start": 395,
+                                          "start": 396,
                                           "test": Node {
-                                            "end": 420,
+                                            "end": 421,
                                             "left": Node {
-                                              "end": 409,
+                                              "end": 410,
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 18,
@@ -5853,7 +5853,7 @@ Object {
                                                 },
                                               },
                                               "name": "i",
-                                              "start": 408,
+                                              "start": 409,
                                               "type": "Identifier",
                                             },
                                             "loc": SourceLocation {
@@ -5869,7 +5869,7 @@ Object {
                                             "operator": "<",
                                             "right": Node {
                                               "computed": false,
-                                              "end": 420,
+                                              "end": 421,
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 29,
@@ -5881,7 +5881,7 @@ Object {
                                                 },
                                               },
                                               "object": Node {
-                                                "end": 413,
+                                                "end": 414,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 22,
@@ -5894,11 +5894,11 @@ Object {
                                                   },
                                                 },
                                                 "name": "a",
-                                                "start": 412,
+                                                "start": 413,
                                                 "type": "Identifier",
                                               },
                                               "property": Node {
-                                                "end": 420,
+                                                "end": 421,
                                                 "loc": SourceLocation {
                                                   "end": Position {
                                                     "column": 29,
@@ -5911,19 +5911,19 @@ Object {
                                                   },
                                                 },
                                                 "name": "length",
-                                                "start": 414,
+                                                "start": 415,
                                                 "type": "Identifier",
                                               },
-                                              "start": 412,
+                                              "start": 413,
                                               "type": "MemberExpression",
                                             },
-                                            "start": 408,
+                                            "start": 409,
                                             "type": "BinaryExpression",
                                           },
                                           "type": "ForStatement",
                                           "update": Node {
                                             "argument": Node {
-                                              "end": 423,
+                                              "end": 424,
                                               "loc": SourceLocation {
                                                 "end": Position {
                                                   "column": 32,
@@ -5936,10 +5936,10 @@ Object {
                                                 },
                                               },
                                               "name": "i",
-                                              "start": 422,
+                                              "start": 423,
                                               "type": "Identifier",
                                             },
-                                            "end": 425,
+                                            "end": 426,
                                             "loc": SourceLocation {
                                               "end": Position {
                                                 "column": 34,
@@ -5952,13 +5952,13 @@ Object {
                                             },
                                             "operator": "++",
                                             "prefix": false,
-                                            "start": 422,
+                                            "start": 423,
                                             "type": "UpdateExpression",
                                           },
                                         },
                                       ],
                                       "directives": Array [],
-                                      "end": 473,
+                                      "end": 474,
                                       "loc": SourceLocation {
                                         "end": Position {
                                           "column": 3,
@@ -5972,7 +5972,7 @@ Object {
                                       "start": 169,
                                       "type": "BlockStatement",
                                     },
-                                    "end": 473,
+                                    "end": 474,
                                     "generator": false,
                                     "id": null,
                                     "loc": SourceLocation {
@@ -6010,7 +6010,7 @@ Object {
                             },
                             Node {
                               "argument": Node {
-                                "end": 485,
+                                "end": 486,
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 10,
@@ -6023,10 +6023,10 @@ Object {
                                   },
                                 },
                                 "name": "g",
-                                "start": 484,
+                                "start": 485,
                                 "type": "Identifier",
                               },
-                              "end": 486,
+                              "end": 487,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 11,
@@ -6037,12 +6037,12 @@ Object {
                                   "line": 13,
                                 },
                               },
-                              "start": 477,
+                              "start": 478,
                               "type": "ReturnStatement",
                             },
                           ],
                           "directives": Array [],
-                          "end": 488,
+                          "end": 489,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 1,
@@ -6056,7 +6056,7 @@ Object {
                           "start": 34,
                           "type": "BlockStatement",
                         },
-                        "end": 488,
+                        "end": 489,
                         "extra": Object {
                           "parenStart": 22,
                           "parenthesized": true,
@@ -6095,7 +6095,7 @@ Object {
                         "start": 23,
                         "type": "FunctionExpression",
                       },
-                      "end": 520,
+                      "end": 521,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 33,
@@ -6123,7 +6123,7 @@ Object {
                     "type": "VariableDeclarator",
                   },
                 ],
-                "end": 520,
+                "end": 521,
                 "kind": "var",
                 "loc": SourceLocation {
                   "end": Position {
