@@ -1,5 +1,4 @@
-var expect = require('chai').expect;
-var circleModule = require('../src/Circle');
+var circleModule = require('../../src/Circle');
 var getCircumference = circleModule.getCircumference;
 
 describe('Circle', function() {
