@@ -106,6 +106,12 @@ describe(MochaOptionsLoader.name, () => {
       const actualOptions = sut.load(options);
       expect(actualOptions).deep.eq(createMochaOptions());
     });
+
+    it('should not allow to set parallel', () => {
+      rawOptions['parallel'] = true;
+      const actualOptions = sut.load(options);
+      expect((actualOptions as any).parallel).undefined;
+    });
   });
 
   describe('with mocha < 6', () => {
