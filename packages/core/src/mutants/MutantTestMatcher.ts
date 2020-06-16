@@ -1,6 +1,5 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { CoverageCollection, CoveragePerTestResult, CoverageResult, StatementMap } from '@stryker-mutator/api/test_runner';

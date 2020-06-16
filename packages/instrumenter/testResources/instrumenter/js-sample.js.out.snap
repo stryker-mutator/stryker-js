@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration should be able to instrument a simple js file 1`] = `
+"var __global_69fa48 = function (g) {
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
+  };
+
+  g.__coverMutant__ = g.__coverMutant__ || function () {
+    var c = g.__mutantCoverage__.static;
+
+    if (g.__currentTestId__) {
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
+    }
+
+    var a = arguments;
+
+    for (var i = 0; i < a.length; i++) {
+      c[a[i]] = (c[a[i]] || 0) + 1;
+    }
+  };
+
+  return g;
+}(new Function(\\"return this\\")());
+
+function add(a, b) {
+  switch (__global_69fa48.__activeMutant__) {
+    case 0:
+      {}
+      break;
+
+    default:
+      __global_69fa48.__coverMutant__(0);
+      {
+        return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
+      }
+      break;
+  }
+}
+
+add(40, 2);"
+`;

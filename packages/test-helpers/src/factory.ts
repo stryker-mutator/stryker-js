@@ -8,9 +8,9 @@ import {
   MutatorDescriptor,
   strykerCoreSchema,
   WarningOptions,
+  Mutant,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant } from '@stryker-mutator/api/mutant';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
@@ -105,6 +105,7 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutation
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
+  id: 42,
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
@@ -170,6 +171,16 @@ export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
+}));
+
+export const testSelection = factoryMethod<TestSelection>(() => ({
+  id: 23,
+  name: 'foo should bar',
+}));
+
+export const mutantRunOptions = factoryMethod<{ activeMutant: Mutant; timeout: number }>(() => ({
+  activeMutant: mutant(),
+  timeout: 2000,
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({

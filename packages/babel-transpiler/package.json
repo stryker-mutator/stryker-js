@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/babel-transpiler",
-  "version": "3.2.2",
+  "version": "3.3.0",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
@@ -43,8 +43,8 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^3.2.2",
-    "@stryker-mutator/util": "^3.2.2",
+    "@stryker-mutator/api": "^3.3.0",
+    "@stryker-mutator/util": "^3.3.0",
     "minimatch": "~3.0.4"
   },
   "peerDependencies": {
@@ -52,14 +52,14 @@
     "@stryker-mutator/core": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "~7.8.3",
-    "@babel/core": "~7.9.0",
+    "@babel/cli": "~7.10.1",
+    "@babel/core": "~7.10.1",
     "@babel/plugin-transform-typescript": "^7.8.3",
-    "@babel/preset-env": "~7.9.5",
+    "@babel/preset-env": "~7.10.2",
     "@babel/preset-flow": "^7.8.3",
     "@babel/preset-stage-2": "^7.8.3",
     "@babel/preset-typescript": "^7.8.3",
-    "@stryker-mutator/test-helpers": "^3.2.2",
+    "@stryker-mutator/test-helpers": "^3.3.0",
     "@types/babel__core": "~7.1.0",
     "@types/babel__generator": "~7.6.0",
     "@types/babel__template": "~7.0.1",

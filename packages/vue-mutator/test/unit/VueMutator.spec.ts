@@ -1,6 +1,6 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { Mutant, File } from '@stryker-mutator/api/core';
+import { Mutator } from '@stryker-mutator/api/mutant';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { SinonStubbedInstance } from 'sinon';
 import * as sinon from 'sinon';
@@ -347,12 +347,12 @@ describe('VueMutator', () => {
     <script>${script}</script>`
     );
     const files = [vueFile];
-    const jsMutant: Mutant = {
+    const jsMutant: Mutant = factory.mutant({
       fileName: `${vueFile.name}.js`,
       mutatorName: 'StringLiteral',
       range: [script.indexOf(codeToMutate), script.indexOf(codeToMutate) + codeToMutate.length],
       replacement: '',
-    };
+    });
     stubJavaScriptMutator.mutate.returns([jsMutant]);
     const sut = createSut();
 

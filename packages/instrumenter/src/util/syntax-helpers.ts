@@ -4,37 +4,40 @@ import { parse } from '@babel/parser';
 
 import { Mutant } from '../mutant';
 
-export const GLOBAL = '__global_69fa48';
-export const MUTATION_COVERAGE_OBJECT = '__mutationCoverage__';
-export const COVER_MUTANT_HELPER_METHOD = '__coverMutant__';
-export const ACTIVE_MUTANT = 'activeMutant';
+/**
+ * Identifiers used when instrumenting the code
+ */
+export const ID = Object.freeze({
+  GLOBAL: '__global_69fa48',
+  MUTATION_COVERAGE_OBJECT: '__mutantCoverage__',
+  COVER_MUTANT_HELPER_METHOD: '__coverMutant__',
+  ACTIVE_MUTANT: '__activeMutant__',
+} as const);
 
 /**
  * Returns syntax for the global header
  */
-export function declareGlobal(): types.VariableDeclaration {
-  return parse(`var ${GLOBAL} = (function(g){ 
-    g.${MUTATION_COVERAGE_OBJECT} = g.${MUTATION_COVERAGE_OBJECT} || { static: {} };
-    g.${COVER_MUTANT_HELPER_METHOD} = g.${COVER_MUTANT_HELPER_METHOD} || function () {
-      var c = g.${MUTATION_COVERAGE_OBJECT}.static;
-      if (g.__currentTestId__) {
-        c = g.${MUTATION_COVERAGE_OBJECT}[g.__currentTestId__];
-      }
-      var a = arguments;
-      for(var i=0; i < a.length; i++){
-        c[a[i]] = (c[a[i]] || 0) + 1;
-      }
-    };
-    return g;
-  })(new Function("return this")())`).program.body[0] as types.VariableDeclaration;
-}
+export const declareGlobal = parse(`var ${ID.GLOBAL} = (function(g){
+  g.${ID.MUTATION_COVERAGE_OBJECT} = g.${ID.MUTATION_COVERAGE_OBJECT} || { static: {}, perTest: {} };
+  g.${ID.COVER_MUTANT_HELPER_METHOD} = g.${ID.COVER_MUTANT_HELPER_METHOD} || function () {
+    var c = g.${ID.MUTATION_COVERAGE_OBJECT}.static;
+    if (g.__currentTestId__) {
+      c = g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] =  g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] || {};
+    }
+    var a = arguments;
+    for(var i=0; i < a.length; i++){
+      c[a[i]] = (c[a[i]] || 0) + 1;
+    }
+  };
+  return g;
+})(new Function("return this")())`).program.body[0] as types.VariableDeclaration;
 
 /**
  * returns syntax for `global.activeMutant === $mutantId`
  * @param mutantId The id of the mutant to switch
  */
 export function mutantTestExpression(mutantId: number): types.BinaryExpression {
-  return types.binaryExpression('===', memberExpressionChain(GLOBAL, ACTIVE_MUTANT), types.numericLiteral(mutantId));
+  return types.binaryExpression('===', memberExpressionChain(ID.GLOBAL, ID.ACTIVE_MUTANT), types.numericLiteral(mutantId));
 }
 
 /**
@@ -51,26 +54,6 @@ export function memberExpressionChain(...identifiers: Array<string | number>): t
       /* computed */ typeof currentIdentifier === 'number'
     );
   }
-}
-
-/**
- * Returns a sequence of mutation coverage counters with an optional last expression.
- *
- * @example (global.__coverMutant__(0), global.__coverMutant__(1), 40 + 2)
- * @param mutants The mutant ids for which covering syntax needs to be generated
- * @param targetExpression The original expression
- */
-export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpression?: types.Expression): types.Expression {
-  const sequence: types.Expression[] = [
-    types.callExpression(
-      memberExpressionChain(GLOBAL, COVER_MUTANT_HELPER_METHOD),
-      mutants.map((mutant) => types.numericLiteral(mutant.id))
-    ),
-  ];
-  if (targetExpression) {
-    sequence.push(targetExpression);
-  }
-  return types.sequenceExpression(sequence);
 }
 
 interface Position {
@@ -93,8 +76,9 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
   const offsetNode = (node: types.Node): void => {
     node.start! += position;
     node.end! += position;
-    node.loc!.start.line += line;
-    node.loc!.end.line += line;
+    //  we need to subtract 1, as lines always start at 1
+    node.loc!.start.line += line - 1;
+    node.loc!.end.line += line - 1;
     if (node.loc!.start.line === line) {
       node.loc!.start.column += column;
     }
@@ -107,6 +91,9 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
       offsetNode(path.node);
     },
   });
+  // Don't forget the file itself!
+  file.start! += position;
+  file.end! += position;
 }
 
 export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>, mutant: Mutant): T {
@@ -135,6 +122,26 @@ export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>,
     }
     return mutatedAst;
   }
+}
+
+/**
+ * Returns a sequence of mutation coverage counters with an optional last expression.
+ *
+ * @example (global.__coverMutant__(0, 1), 40 + 2)
+ * @param mutants The mutant ids for which covering syntax needs to be generated
+ * @param targetExpression The original expression
+ */
+export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpression?: types.Expression): types.Expression {
+  const sequence: types.Expression[] = [
+    types.callExpression(
+      memberExpressionChain(ID.GLOBAL, ID.COVER_MUTANT_HELPER_METHOD),
+      mutants.map((mutant) => types.numericLiteral(mutant.id))
+    ),
+  ];
+  if (targetExpression) {
+    sequence.push(targetExpression);
+  }
+  return types.sequenceExpression(sequence);
 }
 
 export function isTypeAnnotation(path: NodePath): boolean {

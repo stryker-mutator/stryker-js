@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { File } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 

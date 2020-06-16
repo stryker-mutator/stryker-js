@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant } from '@stryker-mutator/api/core';
 import * as ts from 'typescript';
 
 export interface NodeReplacement {
@@ -20,6 +20,7 @@ export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
 
   private createMutant(original: ts.Node, replacement: string, sourceFile: ts.SourceFile): Mutant {
     return {
+      id: 42, // TODO this code will be removed in #1514. Temp fill it with a string.
       fileName: sourceFile.fileName.replace(/\//g, path.sep),
       mutatorName: this.name,
       range: [original.getStart(sourceFile), original.getEnd()],
