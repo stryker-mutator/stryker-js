@@ -24,7 +24,9 @@ export function placeMutant(node: NodePath, mutants: Mutant[], mutantPlacers: re
         }
       } catch (error) {
         throw new Error(
-          `Error while placing mutants on ${node.node.loc?.start.line}:${node.node.loc?.start.column} with ${placer.name}. ${error.stack}`
+          `Error while placing mutants of type(s) "${mutants.map((mutant) => mutant.mutatorName).join(', ')}" on ${node.node.loc?.start.line}:${
+            node.node.loc?.start.column
+          } with ${placer.name}. ${error.stack}`
         );
       }
     }
