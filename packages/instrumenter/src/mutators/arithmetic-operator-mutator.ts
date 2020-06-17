@@ -4,33 +4,9 @@ import { NodeMutation } from '../mutant';
 
 import { NodeMutator } from './node-mutator';
 
-type Operator =
-  | '+'
-  | '-'
-  | '/'
-  | '%'
-  | '*'
-  | '**'
-  | '&'
-  | '|'
-  | '>>'
-  | '>>>'
-  | '<<'
-  | '^'
-  | '=='
-  | '==='
-  | '!='
-  | '!=='
-  | 'in'
-  | 'instanceof'
-  | '>'
-  | '<'
-  | '>='
-  | '<=';
-
 export class ArithmeticOperatorMutator implements NodeMutator {
   private readonly operators: {
-    [op: string]: Operator | undefined;
+    [op: string]: BinaryOperator | undefined;
   } = Object.freeze({
     '+': '-',
     '-': '+',

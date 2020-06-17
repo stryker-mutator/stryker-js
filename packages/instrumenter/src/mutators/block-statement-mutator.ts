@@ -8,7 +8,7 @@ export class BlockStatementMutator implements NodeMutator {
   public name = 'BlockStatement';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (path.isBlockStatement()) {
+    if (path.isBlockStatement() && path.node.body.length) {
       const replacement = types.cloneNode(path.node, false);
       replacement.body = [];
       return [{ original: path.node, replacement }];
