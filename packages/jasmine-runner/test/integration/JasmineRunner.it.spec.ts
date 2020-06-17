@@ -1,11 +1,11 @@
 import * as path from 'path';
 
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test_runner';
 
 import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { expectTestResultsToEqual, expectSurvived, expectCompleted, expectErrored } from '../helpers/assertions';
+import { expectTestResultsToEqual } from '../helpers/assertions';
 
 import { resolveJasmineInitFiles, jasmineInitSuccessResults } from './helpers';
 
@@ -28,14 +28,14 @@ describe('JasmineRunner integration', () => {
 
     it('should run the specs', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
-      expectCompleted(runResult);
+      assertions.expectCompleted(runResult);
       expectTestResultsToEqual(runResult.tests, jasmineInitSuccessResults);
     });
 
     it('should be able to run twice in short succession', async () => {
       await sut.dryRun(factory.dryRunOptions());
       const secondRunResult = await sut.dryRun(factory.dryRunOptions());
-      expectCompleted(secondRunResult);
+      assertions.expectCompleted(secondRunResult);
       expectTestResultsToEqual(secondRunResult.tests, jasmineInitSuccessResults);
     });
 
@@ -48,7 +48,7 @@ describe('JasmineRunner integration', () => {
       const runResult = await sut.mutantRun(factory.mutantRunOptions({ testFilter }));
 
       // Assert
-      expectSurvived(runResult);
+      assertions.expectSurvived(runResult);
       expect(global.__testsInCurrentJasmineRun).deep.eq(['spec1', 'spec3']);
     });
 
@@ -93,7 +93,7 @@ describe('JasmineRunner integration', () => {
 
     it('should be able to tell the error', async () => {
       const result = await sut.dryRun(factory.dryRunOptions());
-      expectErrored(result);
+      assertions.expectErrored(result);
       expect(result.errorMessage)
         .matches(/^An error occurred while loading your jasmine specs.*/)
         .matches(/.*SyntaxError: Unexpected identifier.*/);
@@ -108,7 +108,7 @@ describe('JasmineRunner integration', () => {
 
     it('should complete with one test failure', async () => {
       const result = await sut.dryRun(factory.dryRunOptions());
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
         {
           id: 'spec0',

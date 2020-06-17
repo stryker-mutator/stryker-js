@@ -2,9 +2,9 @@ import path = require('path');
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { assertions } from '@stryker-mutator/test-helpers';
 
 import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { expectKilled, expectSurvived, expectCompleted } from '../helpers/assertions';
 
 import { resolveJasmineInitFiles } from './helpers';
 
@@ -19,13 +19,13 @@ describe('JasmineRunner integration with code instrumentation', () => {
   describe('dryRun', () => {
     it('should not report coverage when coverageAnalysis is "off"', async () => {
       const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expect(result.mutantCoverage).undefined;
     });
 
     it('should report static coverage when coverageAnalysis is "all"', async () => {
       const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expect(result.mutantCoverage).not.undefined;
       expect(Object.keys(result.mutantCoverage!.perTest).length).eq(0);
       expect(Object.keys(result.mutantCoverage!.static).length).eq(11);
@@ -33,7 +33,7 @@ describe('JasmineRunner integration with code instrumentation', () => {
 
     it('should report static and perTest coverage when coverageAnalysis is "perTest"', async () => {
       const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expect(result.mutantCoverage).not.undefined;
       expect(Object.keys(result.mutantCoverage!.perTest).length).eq(5); // 5 tests
       expect(Object.keys(result.mutantCoverage!.static).length).eq(1);
@@ -43,14 +43,14 @@ describe('JasmineRunner integration with code instrumentation', () => {
   describe('mutantRun', () => {
     it('should be able to kill a mutant', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 1 }) }));
-      expectKilled(result);
+      assertions.expectKilled(result);
       expect(result.killedBy).eq('spec0');
       expect(result.failureMessage).eq('Expected undefined to equal Song({  }).');
     });
 
     it('should be able report "survive" when a mutant is invincible', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 9 }) }));
-      expectSurvived(result);
+      assertions.expectSurvived(result);
     });
 
     it('should be able to kill again after a mutant survived', async () => {

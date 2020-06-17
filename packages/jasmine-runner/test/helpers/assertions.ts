@@ -1,17 +1,4 @@
-import {
-  TestResult,
-  SuccessTestResult,
-  FailedTestResult,
-  SkippedTestResult,
-  MutantRunStatus,
-  MutantRunResult,
-  RunStatus,
-  DryRunResult,
-  SurvivedMutantRunResult,
-  ErrorDryRunResult,
-  CompleteDryRunResult,
-  KilledMutantRunResult,
-} from '@stryker-mutator/api/test_runner2';
+import { TestResult, SuccessTestResult, FailedTestResult, SkippedTestResult } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
 
 type TimelessTestResult = Omit<SuccessTestResult, 'timeSpentMs'> | Omit<FailedTestResult, 'timeSpentMs'> | Omit<SkippedTestResult, 'timeSpentMs'>;
@@ -35,18 +22,4 @@ export function expectTestResultsToEqual(actualTestResults: TestResult[], expect
       );
     }
   });
-}
-
-export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
-  expect(result.status).eq(MutantRunStatus.Killed);
-}
-
-export function expectCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
-  expect(runResult.status).eq(RunStatus.Complete);
-}
-export function expectErrored(runResult: DryRunResult): asserts runResult is ErrorDryRunResult {
-  expect(runResult.status).eq(RunStatus.Error);
-}
-export function expectSurvived(runResult: MutantRunResult): asserts runResult is SurvivedMutantRunResult {
-  expect(runResult.status).eq(MutantRunStatus.Survived);
 }

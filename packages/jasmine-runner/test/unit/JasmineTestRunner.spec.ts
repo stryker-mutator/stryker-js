@@ -1,11 +1,11 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestStatus, CompleteDryRunResult, RunStatus } from '@stryker-mutator/api/test_runner2';
 
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
-import { expectTestResultsToEqual, expectCompleted, expectErrored } from '../helpers/assertions';
+import { expectTestResultsToEqual } from '../helpers/assertions';
 import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
 
 import Jasmine = require('jasmine');
@@ -105,7 +105,7 @@ describe(JasmineTestRunner.name, () => {
       const result = await sut.dryRun(factory.dryRunOptions());
 
       // Assert
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expect(result.tests[0].timeSpentMs).deep.eq(10);
     });
 
@@ -222,7 +222,7 @@ describe(JasmineTestRunner.name, () => {
       const result = await sut.dryRun(factory.dryRunOptions());
 
       // Assert
-      expectCompleted(result);
+      assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
         { id: 'spec0', name: 'foo spec', status: TestStatus.Success },
         { id: 'spec1', name: 'bar spec', status: TestStatus.Failed, failureMessage: 'bar failed' },
@@ -236,7 +236,7 @@ describe(JasmineTestRunner.name, () => {
       const error = new Error('foobar');
       jasmineStub.execute.throws(error);
       const result = await sut.dryRun(factory.dryRunOptions());
-      expectErrored(result);
+      assertions.expectErrored(result);
       expect(result.errorMessage)
         .matches(/An error occurred while loading your jasmine specs.*/)
         .and.matches(/.*Error: foobar.*/);
