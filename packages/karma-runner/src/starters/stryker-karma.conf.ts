@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Config, ConfigOptions } from 'karma';
+import { Config, ConfigOptions, ClientOptions } from 'karma';
 import { noopLogger } from '@stryker-mutator/util';
 
 import StrykerReporter from '../StrykerReporter';
@@ -63,6 +63,18 @@ function setClientOptions(config: Config) {
   // As far as I can see clearing the context only has a visible effect (you don't see the result of the last test).
   // If this is true, disabling it is safe to do and solves the race condition issue.
   config.set({ client: { clearContext: false } });
+
+  // Disable randomized tests with using jasmine.
+  // Stryker doesn't play nice with a random test order, since spec id's tent to move around
+  if (config.frameworks?.includes('jasmine')) {
+    config.set({
+      client: {
+        jasmine: {
+          random: false,
+        },
+      } as Partial<ClientOptions>,
+    });
+  }
 }
 
 function setUserKarmaConfig(config: Config) {

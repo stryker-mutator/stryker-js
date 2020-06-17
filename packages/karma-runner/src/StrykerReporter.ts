@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { CoverageCollection, CoverageCollectionPerTest, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { RunStatus, TestResult, TestStatus, MutantCoverage } from '@stryker-mutator/api/test_runner2';
 import * as karma from 'karma';
 
 export interface KarmaSpec {
@@ -42,18 +42,30 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
 
   public readonly onSpecComplete = (_browser: any, spec: KarmaSpec) => {
     const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
-    let status = TestStatus.Failed;
+    let testResult: TestResult;
     if (spec.skipped) {
-      status = TestStatus.Skipped;
+      testResult = {
+        id: spec.id,
+        name,
+        timeSpentMs: spec.time,
+        status: TestStatus.Skipped,
+      };
     } else if (spec.success) {
-      status = TestStatus.Success;
+      testResult = {
+        id: spec.id,
+        name,
+        timeSpentMs: spec.time,
+        status: TestStatus.Success,
+      };
+    } else {
+      testResult = {
+        id: spec.id,
+        name,
+        timeSpentMs: spec.time,
+        status: TestStatus.Failed,
+        failureMessage: spec.log.join(','),
+      };
     }
-    const testResult: TestResult = {
-      failureMessages: spec.log,
-      name,
-      status,
-      timeSpentMs: spec.time,
-    };
     this.emit('test_result', testResult);
   };
 
@@ -65,7 +77,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     this.emit('load_error', ...args);
   };
 
-  public readonly onBrowserComplete = (_browser: any, result: { coverage: CoverageCollection | CoverageCollectionPerTest }) => {
+  public readonly onBrowserComplete = (_browser: any, result: { coverage: MutantCoverage }) => {
     this.emit('coverage_report', result.coverage);
   };
 

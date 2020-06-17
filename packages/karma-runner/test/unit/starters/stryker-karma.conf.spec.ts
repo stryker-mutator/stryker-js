@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { Config, ConfigOptions } from 'karma';
+import { Config, ConfigOptions, ClientOptions } from 'karma';
 import * as sinon from 'sinon';
 
 import sut = require('../../../src/starters/stryker-karma.conf');
@@ -48,6 +48,7 @@ describe('stryker-karma.conf.js', () => {
     requireModuleStub.returns((conf: Config) =>
       conf.set({
         basePath: 'foobar',
+        frameworks: ['mocha'],
       })
     );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
@@ -57,6 +58,7 @@ describe('stryker-karma.conf.js', () => {
 
     // Assert
     expect(config).deep.include({ basePath: 'foobar' });
+    expect(config).deep.include({ frameworks: ['mocha'] });
     expect(requireModuleStub).calledWith(path.resolve('foobar.conf.js'));
   });
 
@@ -98,13 +100,26 @@ describe('stryker-karma.conf.js', () => {
   // See https://github.com/stryker-mutator/stryker/issues/2049
   it('should force clearContext to false', () => {
     // Arrange
-    requireModuleStub.returns((conf: Config) => conf.set({ client: { clearContext: true } }));
+    sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
+    requireModuleStub.returns((conf: Config) => conf.set({ client: { clearContext: true }, frameworks: ['mocha'] }));
 
     // Act
     sut(config);
 
     // Assert
     expect(config).deep.include({ client: { clearContext: false } });
+  });
+
+  it('should force random `false` when dealing with jasmine', () => {
+    // Arrange
+    sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
+    requireModuleStub.returns((conf: Config) => conf.set({ client: { jasmine: { random: true } } as ClientOptions, frameworks: ['jasmine'] }));
+
+    // Act
+    sut(config);
+
+    // Assert
+    expect(config).deep.include({ client: { jasmine: { random: false } } });
   });
 
   it('should configure the tests hooks middleware', () => {
