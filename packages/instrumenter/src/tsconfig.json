@@ -1,0 +1,20 @@
+{
+  "extends": "../../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "../dist/src",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": [
+      "node"
+    ]
+  },
+  "references": [
+    {
+      "path": "../../api/tsconfig.src.json"
+    },
+    {
+      "path": "../../util/tsconfig.src.json"
+    }
+  ]
+}

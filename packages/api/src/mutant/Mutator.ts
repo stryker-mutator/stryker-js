@@ -1,6 +1,4 @@
-import { File } from '../../core';
-
-import Mutant from './Mutant';
+import { File, Mutant } from '../../core';
 
 export default interface Mutator {
   mutate(inputFiles: readonly File[]): readonly Mutant[];

@@ -1,7 +1,7 @@
 import * as types from '@babel/types';
-import { File } from '@stryker-mutator/api/core';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant, Mutator } from '@stryker-mutator/api/mutant';
+import { Mutator } from '@stryker-mutator/api/mutant';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import BabelParser from './helpers/BabelParser';
@@ -28,6 +28,7 @@ export class JavaScriptMutator implements Mutator {
               const replacement = types.isNode(mutation) ? this.parser.generateCode(mutation) : mutation.raw;
 
               mutants.push({
+                id: 42, // TODO this code will be removed in #1514. Temp fill it with a string.
                 fileName: fileName,
                 mutatorName: mutatorName,
                 range: [original.start, original.end],

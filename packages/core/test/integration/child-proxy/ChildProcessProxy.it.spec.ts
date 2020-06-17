@@ -7,11 +7,11 @@ import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as log4js from 'log4js';
 import { filter } from 'rxjs/operators';
+import { Task } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import { Task } from '../../../src/utils/Task';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';

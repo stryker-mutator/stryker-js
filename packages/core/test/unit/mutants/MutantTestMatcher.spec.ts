@@ -1,10 +1,9 @@
-import { File } from '@stryker-mutator/api/core';
-import { Mutant } from '@stryker-mutator/api/mutant';
+import { Mutant, File } from '@stryker-mutator/api/core';
 import { MatchedMutant } from '@stryker-mutator/api/report';
 import { TestSelection } from '@stryker-mutator/api/test_framework';
 import { CoverageCollection, CoveragePerTestResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutant, testResult } from '@stryker-mutator/test-helpers/src/factory';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -58,21 +57,21 @@ describe(MutantTestMatcher.name, () => {
         let testResultTwo: TestResult;
 
         beforeEach(() => {
-          mutantOne = {
+          mutantOne = factory.mutant({
             fileName: 'fileWithMutantOne',
             mutatorName: 'myMutator',
             range: [9, 9], // line 4:5 -> line 4:5
             replacement: '>',
             // location: { start: { line: 4, column: 5 }, end: { line: 4, column: 5 } },
-          };
+          });
 
-          mutantTwo = {
+          mutantTwo = factory.mutant({
             fileName: 'fileWithMutantTwo',
             mutatorName: 'myMutator',
             range: [9, 9], // line 9:0 -> line 9:0
             replacement: '<',
             // location: { start: { line: 9, column: 0 }, end: { line: 9, column: 0 } },
-          };
+          });
 
           testResultOne = {
             name: 'test one',
@@ -333,7 +332,7 @@ describe(MutantTestMatcher.name, () => {
         sourceFile.getLocation = () => ({ start: { line: 13, column: 38 }, end: { line: 24, column: 5 } });
         const testableMutant = new TestableMutant(
           '1',
-          mutant({
+          factory.mutant({
             fileName: 'juice-shop\\app\\js\\controllers\\SearchResultController.js',
           }),
           sourceFile
@@ -456,8 +455,8 @@ describe(MutantTestMatcher.name, () => {
     });
 
     it('should match all mutants to all tests and log a warning when there is no coverage data', async () => {
-      mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
-      initialRunResult.runResult.tests.push(testResult(), testResult());
+      mutants.push(factory.mutant({ fileName: 'fileWithMutantOne' }), factory.mutant({ fileName: 'fileWithMutantTwo' }));
+      initialRunResult.runResult.tests.push(factory.testResult(), factory.testResult());
 
       const result = await sut.matchWithMutants(mutants);
 
@@ -486,7 +485,7 @@ describe(MutantTestMatcher.name, () => {
 
       it('should retrieves source mapped location', async () => {
         // Arrange
-        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+        mutants.push(factory.mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
 
         // Act
         await sut.matchWithMutants(mutants);
@@ -504,8 +503,8 @@ describe(MutantTestMatcher.name, () => {
 
       it('should match mutant to single test result', async () => {
         // Arrange
-        mutants.push(mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
-        initialRunResult.runResult.tests.push(testResult({ name: 'test 1' }), testResult({ name: 'test 2' }));
+        mutants.push(factory.mutant({ fileName: 'fileWithMutantOne', range: [4, 5] }));
+        initialRunResult.runResult.tests.push(factory.testResult({ name: 'test 1' }), factory.testResult({ name: 'test 2' }));
 
         // Act
         const result = await sut.matchWithMutants(mutants);
@@ -534,8 +533,8 @@ describe(MutantTestMatcher.name, () => {
     });
 
     it('should match all mutants to all tests', async () => {
-      mutants.push(mutant({ fileName: 'fileWithMutantOne' }), mutant({ fileName: 'fileWithMutantTwo' }));
-      initialRunResult.runResult.tests.push(testResult(), testResult());
+      mutants.push(factory.mutant({ fileName: 'fileWithMutantOne' }), factory.mutant({ fileName: 'fileWithMutantTwo' }));
+      initialRunResult.runResult.tests.push(factory.testResult(), factory.testResult());
 
       const result = await sut.matchWithMutants(mutants);
 

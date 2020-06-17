@@ -21,11 +21,15 @@ describe(MochaTestRunner.name, () => {
   let sut: MochaTestRunner;
   let requireStub: sinon.SinonStub;
   let handleFilesStub: sinon.SinonStub;
+  let handleRequiresStub: sinon.SinonStub;
+  let loadRootHooks: sinon.SinonStub;
 
   beforeEach(() => {
     MochaStub = sinon.stub(LibWrapper, 'Mocha');
     requireStub = sinon.stub(LibWrapper, 'require');
     handleFilesStub = sinon.stub(LibWrapper, 'handleFiles');
+    handleRequiresStub = sinon.stub(LibWrapper, 'handleRequires');
+    loadRootHooks = sinon.stub(LibWrapper, 'loadRootHooks');
     sinon.stub(utils, 'evalGlobal');
     mocha = sinon.createStubInstance(Mocha) as any;
     mocha.suite = sinon.createStubInstance(EventEmitter) as Mocha.Suite & sinon.SinonStubbedInstance<EventEmitter>;
@@ -109,7 +113,7 @@ describe(MochaTestRunner.name, () => {
       actAssertMatchedPatterns(undefined, expectedGlobPatterns);
     });
 
-    it('should throw an error if no files could be discovered', () => {
+    it('should reject if no files could be discovered', async () => {
       // Arrange
       multimatchStub.returns([]);
       const files = ['foo.js', 'bar.js'];
@@ -119,10 +123,10 @@ describe(MochaTestRunner.name, () => {
 
       // Act
       sut = createSut({ fileNames: files });
-      const actFn = () => sut.init();
+      const onGoingWork = sut.init();
 
       // Assert
-      expect(actFn).throws(
+      await expect(onGoingWork).rejectedWith(
         `[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing}). Please specify the files (glob patterns) containing your tests in mochaOptions.spec in your config file.`
       );
       expect(testInjector.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
@@ -200,17 +204,21 @@ describe(MochaTestRunner.name, () => {
       expect(mocha.asyncOnly).not.called;
     });
 
-    it('should pass require additional require options when constructed', () => {
+    it('should pass require additional require options when constructed', async () => {
+      handleRequiresStub.value(undefined);
       const mochaOptions: Partial<MochaOptions> = { require: ['ts-node', 'babel-register'] };
-      createSut({ mochaOptions });
+      sut = createSut({ mochaOptions });
+      await sut.init();
       expect(requireStub).calledTwice;
       expect(requireStub).calledWith('ts-node');
       expect(requireStub).calledWith('babel-register');
     });
 
-    it('should pass and resolve relative require options when constructed', () => {
+    it('should pass and resolve relative require options when constructed', async () => {
+      handleRequiresStub.value(undefined);
       const mochaOptions: Partial<MochaOptions> = { require: ['./setup.js', 'babel-register'] };
-      createSut({ mochaOptions });
+      sut = createSut({ mochaOptions });
+      await sut.init();
       const resolvedRequire = path.resolve('./setup.js');
       expect(requireStub).calledTwice;
       expect(requireStub).calledWith(resolvedRequire);
@@ -244,6 +252,32 @@ describe(MochaTestRunner.name, () => {
       expect(require.cache['foo.js']).undefined;
       expect(require.cache['bar.js']).undefined;
       expect(require.cache['baz.js']).eq('baz');
+    });
+  });
+
+  describe('when mocha version >=8', () => {
+    beforeEach(() => {
+      handleFilesStub.returns(['src/math.js', 'test/math.spec.js']);
+    });
+
+    it('should handle require and allow for rootHooks', async () => {
+      handleRequiresStub.resolves(['root-hook1', 'bar-hook']);
+      const mochaOptions: Partial<MochaOptions> = { require: ['./setup.js', 'babel-register'] };
+      sut = createSut({ mochaOptions });
+      await sut.init();
+      expect(handleRequiresStub).calledWithExactly(['./setup.js', 'babel-register']);
+      expect(loadRootHooks).calledWithExactly(['root-hook1', 'bar-hook']);
+    });
+
+    it('should pass rootHooks to the mocha instance', async () => {
+      handleRequiresStub.resolves(['root-hook1', 'bar-hook']);
+      const rootHooks = { beforeEach() {} };
+      loadRootHooks.resolves(rootHooks);
+      const mochaOptions: Partial<MochaOptions> = { require: ['./setup.js', 'babel-register'] };
+      sut = createSut({ mochaOptions });
+      await sut.init();
+      await actRun();
+      expect(LibWrapper.Mocha).calledWithMatch({ rootHooks });
     });
   });
 
