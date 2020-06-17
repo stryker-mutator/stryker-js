@@ -9,6 +9,11 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 afterEach(() => {
-  sinon.reset();
+  delete global.__activeMutant__;
+  delete global.__currentTestId__;
+  delete global.__mutantCoverage__;
+  delete global.__testsInCurrentJasmineRun;
+
+  sinon.restore();
   testInjector.reset();
 });

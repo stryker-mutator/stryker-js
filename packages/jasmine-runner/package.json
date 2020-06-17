@@ -40,7 +40,6 @@
     "jasmine": ">=2"
   },
   "devDependencies": {
-    "@stryker-mutator/jasmine-framework": "^3.3.0",
     "@stryker-mutator/test-helpers": "^3.3.0",
     "@types/node": "^14.0.1"
   },
