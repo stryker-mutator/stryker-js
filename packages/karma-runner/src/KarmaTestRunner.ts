@@ -18,7 +18,7 @@ import {
 } from '../../api/test_runner2';
 
 import ProjectStarter from './starters/ProjectStarter';
-import StrykerReporter from './StrykerReporter';
+import StrykerReporter from './karma-plugins/StrykerReporter';
 import TestHooksMiddleware from './TestHooksMiddleware';
 import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
 

@@ -12,7 +12,7 @@ import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
-import StrykerReporter from '../../src/StrykerReporter';
+import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
 import TestHooksMiddleware from '../../src/TestHooksMiddleware';
 
 describe('KarmaTestRunner', () => {

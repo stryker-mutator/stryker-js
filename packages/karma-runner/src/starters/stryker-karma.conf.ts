@@ -4,7 +4,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions } from 'karma';
 import { noopLogger } from '@stryker-mutator/util';
 
-import StrykerReporter from '../StrykerReporter';
+import StrykerReporter from '../karma-plugins/StrykerReporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
 import { requireModule } from '../utils';
 
