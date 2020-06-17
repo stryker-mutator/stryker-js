@@ -4,7 +4,7 @@ import fs from 'fs';
 import { expect } from 'chai';
 import { Mutant, Range } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { TypescriptChecker } from '../../src';
 import { createTypescriptOptions } from '../helpers/factories';
@@ -63,10 +63,10 @@ function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: s
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
   const range: Range = [originalOffset + offset, originalOffset + findText.length];
-  return {
+  return factory.mutant({
     fileName: resolveTestResource(fileName),
     mutatorName: 'foo-mutator',
     range,
     replacement,
-  };
+  });
 }

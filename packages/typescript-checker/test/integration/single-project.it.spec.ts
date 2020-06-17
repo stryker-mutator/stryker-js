@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Mutant, Range } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
@@ -121,10 +121,10 @@ function createMutant(
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
   const range: Range = [originalOffset + offset, originalOffset + findText.length];
-  return {
+  return factory.mutant({
     fileName: resolveTestResource('src', fileName),
     mutatorName: 'foo-mutator',
     range,
     replacement,
-  };
+  });
 }
