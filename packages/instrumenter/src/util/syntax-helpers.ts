@@ -9,20 +9,20 @@ import { Mutant } from '../mutant';
  */
 export const ID = Object.freeze({
   GLOBAL: '__global_69fa48',
-  MUTATION_COVERAGE_OBJECT: '__mutationCoverage__',
+  MUTATION_COVERAGE_OBJECT: '__mutantCoverage__',
   COVER_MUTANT_HELPER_METHOD: '__coverMutant__',
-  ACTIVE_MUTANT: 'activeMutant',
+  ACTIVE_MUTANT: '__activeMutant__',
 } as const);
 
 /**
  * Returns syntax for the global header
  */
 export const declareGlobal = parse(`var ${ID.GLOBAL} = (function(g){
-  g.${ID.MUTATION_COVERAGE_OBJECT} = g.${ID.MUTATION_COVERAGE_OBJECT} || { static: {} };
+  g.${ID.MUTATION_COVERAGE_OBJECT} = g.${ID.MUTATION_COVERAGE_OBJECT} || { static: {}, perTest: {} };
   g.${ID.COVER_MUTANT_HELPER_METHOD} = g.${ID.COVER_MUTANT_HELPER_METHOD} || function () {
     var c = g.${ID.MUTATION_COVERAGE_OBJECT}.static;
     if (g.__currentTestId__) {
-      c = g.${ID.MUTATION_COVERAGE_OBJECT}[g.__currentTestId__];
+      c = g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] =  g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] || {};
     }
     var a = arguments;
     for(var i=0; i < a.length; i++){

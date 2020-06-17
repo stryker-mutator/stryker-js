@@ -28,6 +28,7 @@ export class JavaScriptMutator implements Mutator {
               const replacement = types.isNode(mutation) ? this.parser.generateCode(mutation) : mutation.raw;
 
               mutants.push({
+                id: 42, // TODO this code will be removed in #1514. Temp fill it with a string.
                 fileName: fileName,
                 mutatorName: mutatorName,
                 range: [original.start, original.end],

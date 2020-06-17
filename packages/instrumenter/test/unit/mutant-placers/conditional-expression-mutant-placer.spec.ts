@@ -48,7 +48,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains('const foo = __global_69fa48.activeMutant === 1 ? bar >>> baz');
+    expect(actualCode).contains('const foo = __global_69fa48.__activeMutant__ === 1 ? bar >>> baz');
   });
 
   it('should place the original code as the alternative', () => {
@@ -90,6 +90,6 @@ describe(conditionalExpressionMutantPlacer.name, () => {
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
-    expect(actualCode).contains('const foo = __global_69fa48.activeMutant === 659 ? bar : __global_69fa48.activeMutant === 52 ? bar - baz');
+    expect(actualCode).contains('const foo = __global_69fa48.__activeMutant__ === 659 ? bar : __global_69fa48.__activeMutant__ === 52 ? bar - baz');
   });
 });

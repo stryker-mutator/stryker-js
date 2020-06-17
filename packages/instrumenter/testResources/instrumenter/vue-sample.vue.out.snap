@@ -88,15 +88,16 @@ exports[`instrumenter integration should be able to instrument a vue sample 1`] 
 
 <script>
 var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -109,11 +110,11 @@ var __global_69fa48 = function (g) {
   return g;
 }(new Function(\\"return this\\")());
 
-export default __global_69fa48.activeMutant === 0 ? {
+export default __global_69fa48.__activeMutant__ === 0 ? {
   name: \\"\\",
 
   data() {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 1:
         {}
         break;
@@ -121,7 +122,7 @@ export default __global_69fa48.activeMutant === 0 ? {
       default:
         __global_69fa48.__coverMutant__(1);
         {
-          return __global_69fa48.activeMutant === 2 ? {
+          return __global_69fa48.__activeMutant__ === 2 ? {
             msg: \\"\\"
           } : (__global_69fa48.__coverMutant__(2), {
             msg: 'Welcome to Your Vue.js App'
@@ -135,7 +136,7 @@ export default __global_69fa48.activeMutant === 0 ? {
   name: 'HelloWorld',
 
   data() {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 1:
         {}
         break;
@@ -143,7 +144,7 @@ export default __global_69fa48.activeMutant === 0 ? {
       default:
         __global_69fa48.__coverMutant__(1);
         {
-          return __global_69fa48.activeMutant === 2 ? {
+          return __global_69fa48.__activeMutant__ === 2 ? {
             msg: \\"\\"
           } : (__global_69fa48.__coverMutant__(2), {
             msg: 'Welcome to Your Vue.js App'
@@ -157,15 +158,16 @@ export default __global_69fa48.activeMutant === 0 ? {
 </script>
 <script>
 var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -178,7 +180,7 @@ var __global_69fa48 = function (g) {
   return g;
 }(new Function(\\"return this\\")());
 
-const b = __global_69fa48.activeMutant === 3 ? a - c : (__global_69fa48.__coverMutant__(3), a + c);
+const b = __global_69fa48.__activeMutant__ === 3 ? a - c : (__global_69fa48.__coverMutant__(3), a + c);
 </script>
 
 <!-- Add \\"scoped\\" attribute to limit CSS to this component only -->

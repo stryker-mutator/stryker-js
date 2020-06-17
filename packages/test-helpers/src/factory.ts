@@ -20,6 +20,7 @@ import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
+import { MutantRunOptions, DryRunOptions } from '@stryker-mutator/api/test_runner2';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -105,6 +106,7 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutation
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
+  id: 42,
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
@@ -170,6 +172,21 @@ export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
+}));
+
+export const testSelection = factoryMethod<TestSelection>(() => ({
+  id: 23,
+  name: 'foo should bar',
+}));
+
+export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
+  activeMutant: mutant(),
+  timeout: 2000,
+}));
+
+export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
+  coverageAnalysis: 'off',
+  timeout: 2000,
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({

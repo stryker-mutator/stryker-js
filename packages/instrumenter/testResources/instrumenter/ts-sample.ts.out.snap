@@ -2,15 +2,16 @@
 
 exports[`instrumenter integration should be able to instrument a simple ts file 1`] = `
 "var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -23,5 +24,5 @@ exports[`instrumenter integration should be able to instrument a simple ts file 
   return g;
 }(new Function(\\"return this\\")());
 
-const bar: number = __global_69fa48.activeMutant === 0 ? 40 - 2 : (__global_69fa48.__coverMutant__(0), 40 + 2);"
+const bar: number = __global_69fa48.__activeMutant__ === 0 ? 40 - 2 : (__global_69fa48.__coverMutant__(0), 40 + 2);"
 `;

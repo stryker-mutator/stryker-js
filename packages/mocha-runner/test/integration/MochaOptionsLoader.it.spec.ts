@@ -25,7 +25,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ...DEFAULT_MOCHA_OPTIONS,
       config: configFile,
-      opts: false, // mocha sets opts: false after loading it...
+      opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       extension: ['js'],
       timeout: 2000,
@@ -38,7 +38,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     const actualConfig = actLoad({ config: configFile });
     expect(actualConfig).deep.eq({
       ...DEFAULT_MOCHA_OPTIONS,
-      opts: false, // mocha sets opts: false after loading it...
+      opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       config: configFile,
       extension: ['json', 'js'],
@@ -53,7 +53,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.eq({
       ...DEFAULT_MOCHA_OPTIONS,
       config: configFile,
-      opts: false, // mocha sets opts: false after loading it...
+      opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       extension: ['jsonc', 'js'],
       timeout: 2000,
@@ -68,7 +68,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ...DEFAULT_MOCHA_OPTIONS,
       'async-only': false,
       config: configFile,
-      opts: false, // mocha sets opts: false after loading it...
+      opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       extension: ['yml', 'js'],
       file: ['/path/to/some/file', '/path/to/some/other/file'],
@@ -76,24 +76,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       require: ['@babel/register'],
       spec: ['test/**/*.spec.js'],
       timeout: false,
-      ui: 'bdd',
-    });
-  });
-
-  it('should support loading from "mocha.opts" (including providing files)', () => {
-    const configFile = resolveMochaConfig('mocha.opts');
-    const actualConfig = actLoad({ opts: configFile });
-    expect(actualConfig).deep.eq({
-      ...DEFAULT_MOCHA_OPTIONS,
-      'async-only': true,
-      extension: ['js'],
-      config: false, // mocha sets config: false after loading it...
-      package: false, // mocha sets package: false after loading it...
-      file: [],
-      ignore: [],
-      opts: configFile,
-      spec: ['/tests/**/*.js', '/foo/*.js'],
-      timeout: 2000,
       ui: 'bdd',
     });
   });
@@ -128,7 +110,7 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       'no-opts': true,
     });
     const expectedOptions = {
-      extension: ['js'],
+      extension: ['js', 'cjs', 'mjs'],
       ['no-config']: true,
       ['no-opts']: true,
       ['no-package']: true,

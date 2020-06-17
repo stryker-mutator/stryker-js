@@ -9,6 +9,7 @@ export enum PluginKind {
   OptionsEditor = 'OptionsEditor',
   Checker = 'Checker',
   TestRunner = 'TestRunner',
+  TestRunner2 = 'TestRunner2',
   TestFramework = 'TestFramework',
   Transpiler = 'Transpiler',
   Mutator = 'Mutator',

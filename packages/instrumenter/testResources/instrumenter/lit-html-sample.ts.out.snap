@@ -2,15 +2,16 @@
 
 exports[`instrumenter integration should be able to instrument a lit-html file 1`] = `
 "var __global_69fa48 = function (g) {
-  g.__mutationCoverage__ = g.__mutationCoverage__ || {
-    static: {}
+  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+    static: {},
+    perTest: {}
   };
 
   g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutationCoverage__.static;
+    var c = g.__mutantCoverage__.static;
 
     if (g.__currentTestId__) {
-      c = g.__mutationCoverage__[g.__currentTestId__];
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
 
     var a = arguments;
@@ -36,11 +37,11 @@ export class MutationTestReportTotalsComponent extends LitElement {
   public thresholds: Thresholds | undefined;
   @property()
   public currentPath: string[] = [];
-  private readonly fileIcon = __global_69fa48.activeMutant === 0 ? svg\`\` : (__global_69fa48.__coverMutant__(0), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
-  private readonly directoryIcon = __global_69fa48.activeMutant === 1 ? svg\`\` : (__global_69fa48.__coverMutant__(1), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
+  private readonly fileIcon = __global_69fa48.__activeMutant__ === 0 ? svg\`\` : (__global_69fa48.__coverMutant__(0), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
+  private readonly directoryIcon = __global_69fa48.__activeMutant__ === 1 ? svg\`\` : (__global_69fa48.__coverMutant__(1), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
 
   public render() {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 2:
         {}
         break;
@@ -48,8 +49,8 @@ export class MutationTestReportTotalsComponent extends LitElement {
       default:
         __global_69fa48.__coverMutant__(2);
         {
-          if (__global_69fa48.activeMutant === 4 ? false : __global_69fa48.activeMutant === 3 ? true : (__global_69fa48.__coverMutant__(3, 4), this.model)) {
-            switch (__global_69fa48.activeMutant) {
+          if (__global_69fa48.__activeMutant__ === 4 ? false : __global_69fa48.__activeMutant__ === 3 ? true : (__global_69fa48.__coverMutant__(3, 4), this.model)) {
+            switch (__global_69fa48.__activeMutant__) {
               case 5:
                 {}
                 break;
@@ -57,7 +58,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
               default:
                 __global_69fa48.__coverMutant__(5);
                 {
-                  return __global_69fa48.activeMutant === 6 ? html\`\` : (__global_69fa48.__coverMutant__(6), html\`
+                  return __global_69fa48.__activeMutant__ === 6 ? html\`\` : (__global_69fa48.__coverMutant__(6), html\`
         <table class=\\"table table-sm table-hover table-bordered table-no-top\\">
           \${this.renderHead()} \${this.renderTableBody(this.model)}
         </table>
@@ -66,7 +67,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
                 break;
             }
           } else {
-            switch (__global_69fa48.activeMutant) {
+            switch (__global_69fa48.__activeMutant__) {
               case 7:
                 {}
                 break;
@@ -85,7 +86,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderHead() {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 8:
         {}
         break;
@@ -93,7 +94,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
       default:
         __global_69fa48.__coverMutant__(8);
         {
-          return __global_69fa48.activeMutant === 9 ? html\`\` : (__global_69fa48.__coverMutant__(9), html\`<thead>
+          return __global_69fa48.__activeMutant__ === 9 ? html\`\` : (__global_69fa48.__coverMutant__(9), html\`<thead>
       <tr>
         <th colspan=\\"2\\" style=\\"width: 217px\\">
           <div><span>File / Directory</span></div>
@@ -139,7 +140,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderTableBody(model: MetricsResult) {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 10:
         {}
         break;
@@ -148,7 +149,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
         __global_69fa48.__coverMutant__(10);
         {
           const renderChildren = () => {
-            switch (__global_69fa48.activeMutant) {
+            switch (__global_69fa48.__activeMutant__) {
               case 11:
                 {}
                 break;
@@ -156,8 +157,8 @@ export class MutationTestReportTotalsComponent extends LitElement {
               default:
                 __global_69fa48.__coverMutant__(11);
                 {
-                  if (__global_69fa48.activeMutant === 13 ? false : __global_69fa48.activeMutant === 12 ? true : (__global_69fa48.__coverMutant__(12, 13), model.file)) {
-                    switch (__global_69fa48.activeMutant) {
+                  if (__global_69fa48.__activeMutant__ === 13 ? false : __global_69fa48.__activeMutant__ === 12 ? true : (__global_69fa48.__coverMutant__(12, 13), model.file)) {
+                    switch (__global_69fa48.__activeMutant__) {
                       case 14:
                         {}
                         break;
@@ -170,7 +171,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
                         break;
                     }
                   } else {
-                    switch (__global_69fa48.activeMutant) {
+                    switch (__global_69fa48.__activeMutant__) {
                       case 15:
                         {}
                         break;
@@ -179,7 +180,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
                         __global_69fa48.__coverMutant__(15);
                         {
                           return model.childResults.map(childResult => {
-                            switch (__global_69fa48.activeMutant) {
+                            switch (__global_69fa48.__activeMutant__) {
                               case 16:
                                 {}
                                 break;
@@ -189,8 +190,8 @@ export class MutationTestReportTotalsComponent extends LitElement {
                                 {
                                   let fullName: string = childResult.name;
 
-                                  while (__global_69fa48.activeMutant === 17 ? false : (__global_69fa48.__coverMutant__(17), !childResult.file && (__global_69fa48.activeMutant === 19 ? false : __global_69fa48.activeMutant === 18 ? true : (__global_69fa48.__coverMutant__(18, 19), childResult.childResults.length === 1)))) {
-                                    switch (__global_69fa48.activeMutant) {
+                                  while (__global_69fa48.__activeMutant__ === 17 ? false : (__global_69fa48.__coverMutant__(17), !childResult.file && (__global_69fa48.__activeMutant__ === 19 ? false : __global_69fa48.__activeMutant__ === 18 ? true : (__global_69fa48.__coverMutant__(18, 19), childResult.childResults.length === 1)))) {
+                                    switch (__global_69fa48.__activeMutant__) {
                                       case 20:
                                         {}
                                         break;
@@ -219,7 +220,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
             }
           };
 
-          return __global_69fa48.activeMutant === 21 ? html\`\` : (__global_69fa48.__coverMutant__(21), html\`
+          return __global_69fa48.__activeMutant__ === 21 ? html\`\` : (__global_69fa48.__coverMutant__(21), html\`
       <tbody>
         \${this.renderRow(model.name, model, undefined)} \${renderChildren()}
       </tbody>
@@ -230,7 +231,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderRow(name: string, row: MetricsResult, path: string | undefined) {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 22:
         {}
         break;
@@ -244,16 +245,16 @@ export class MutationTestReportTotalsComponent extends LitElement {
           const scoreIsPresent = !isNaN(mutationScore);
           const coloringClass = this.determineColoringClass(mutationScore);
           const mutationScoreRounded = mutationScore.toFixed(2);
-          const progressBarStyle = __global_69fa48.activeMutant === 23 ? \`\` : (__global_69fa48.__coverMutant__(23), \`width: \${mutationScore}%\`);
-          return __global_69fa48.activeMutant === 24 ? html\`\` : (__global_69fa48.__coverMutant__(24), html\` <tr title=\\"\${row.name}\\">
+          const progressBarStyle = __global_69fa48.__activeMutant__ === 23 ? \`\` : (__global_69fa48.__coverMutant__(23), \`width: \${mutationScore}%\`);
+          return __global_69fa48.__activeMutant__ === 24 ? html\`\` : (__global_69fa48.__coverMutant__(24), html\` <tr title=\\"\${row.name}\\">
       <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\"
         >\${row.file ? this.fileIcon : this.directoryIcon}</td
       >
       <td width=\\"\\" class=\\"no-border-left\\"
-        >\${(__global_69fa48.activeMutant === 26 ? false : __global_69fa48.activeMutant === 25 ? true : (__global_69fa48.__coverMutant__(25, 26), typeof path === (__global_69fa48.activeMutant === 27 ? \\"\\" : (__global_69fa48.__coverMutant__(27), 'string')))) ? __global_69fa48.activeMutant === 28 ? html\`\` : (__global_69fa48.__coverMutant__(28), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : __global_69fa48.activeMutant === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\`<span>\${row.name}</span>\`)}</td
+        >\${(__global_69fa48.__activeMutant__ === 26 ? false : __global_69fa48.__activeMutant__ === 25 ? true : (__global_69fa48.__coverMutant__(25, 26), typeof path === (__global_69fa48.__activeMutant__ === 27 ? \\"\\" : (__global_69fa48.__coverMutant__(27), 'string')))) ? __global_69fa48.__activeMutant__ === 28 ? html\`\` : (__global_69fa48.__coverMutant__(28), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : __global_69fa48.__activeMutant__ === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\`<span>\${row.name}</span>\`)}</td
       >
       <td class=\\"no-border-right vertical-middle\\">
-        \${scoreIsPresent ? __global_69fa48.activeMutant === 30 ? html\`\` : (__global_69fa48.__coverMutant__(30), html\` <div class=\\"progress\\">
+        \${scoreIsPresent ? __global_69fa48.__activeMutant__ === 30 ? html\`\` : (__global_69fa48.__coverMutant__(30), html\` <div class=\\"progress\\">
               <div
                 class=\\"progress-bar bg-\${coloringClass}\\"
                 role=\\"progressbar\\"
@@ -264,7 +265,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
               >
                 \${mutationScoreRounded}%
               </div>
-            </div>\`) : __global_69fa48.activeMutant === 31 ? html\`\` : (__global_69fa48.__coverMutant__(31), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
+            </div>\`) : __global_69fa48.__activeMutant__ === 31 ? html\`\` : (__global_69fa48.__coverMutant__(31), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
       </td>
       <td style=\\"width: 50px;\\" class=\\"no-border-left font-weight-bold text-center text-\${coloringClass}\\">
         \${scoreIsPresent ? mutationScoreRounded : undefined}
@@ -286,7 +287,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private determineColoringClass(mutationScore: number) {
-    switch (__global_69fa48.activeMutant) {
+    switch (__global_69fa48.__activeMutant__) {
       case 32:
         {}
         break;
@@ -294,8 +295,8 @@ export class MutationTestReportTotalsComponent extends LitElement {
       default:
         __global_69fa48.__coverMutant__(32);
         {
-          if (__global_69fa48.activeMutant === 34 ? false : __global_69fa48.activeMutant === 33 ? true : (__global_69fa48.__coverMutant__(33, 34), !isNaN(mutationScore) && this.thresholds)) {
-            switch (__global_69fa48.activeMutant) {
+          if (__global_69fa48.__activeMutant__ === 34 ? false : __global_69fa48.__activeMutant__ === 33 ? true : (__global_69fa48.__coverMutant__(33, 34), !isNaN(mutationScore) && this.thresholds)) {
+            switch (__global_69fa48.__activeMutant__) {
               case 35:
                 {}
                 break;
@@ -303,8 +304,8 @@ export class MutationTestReportTotalsComponent extends LitElement {
               default:
                 __global_69fa48.__coverMutant__(35);
                 {
-                  if (__global_69fa48.activeMutant === 37 ? false : __global_69fa48.activeMutant === 36 ? true : (__global_69fa48.__coverMutant__(36, 37), mutationScore < this.thresholds.low)) {
-                    switch (__global_69fa48.activeMutant) {
+                  if (__global_69fa48.__activeMutant__ === 37 ? false : __global_69fa48.__activeMutant__ === 36 ? true : (__global_69fa48.__coverMutant__(36, 37), mutationScore < this.thresholds.low)) {
+                    switch (__global_69fa48.__activeMutant__) {
                       case 38:
                         {}
                         break;
@@ -312,12 +313,12 @@ export class MutationTestReportTotalsComponent extends LitElement {
                       default:
                         __global_69fa48.__coverMutant__(38);
                         {
-                          return __global_69fa48.activeMutant === 39 ? \\"\\" : (__global_69fa48.__coverMutant__(39), 'danger');
+                          return __global_69fa48.__activeMutant__ === 39 ? \\"\\" : (__global_69fa48.__coverMutant__(39), 'danger');
                         }
                         break;
                     }
-                  } else if (__global_69fa48.activeMutant === 41 ? false : __global_69fa48.activeMutant === 40 ? true : (__global_69fa48.__coverMutant__(40, 41), mutationScore < this.thresholds.high)) {
-                    switch (__global_69fa48.activeMutant) {
+                  } else if (__global_69fa48.__activeMutant__ === 41 ? false : __global_69fa48.__activeMutant__ === 40 ? true : (__global_69fa48.__coverMutant__(40, 41), mutationScore < this.thresholds.high)) {
+                    switch (__global_69fa48.__activeMutant__) {
                       case 42:
                         {}
                         break;
@@ -325,12 +326,12 @@ export class MutationTestReportTotalsComponent extends LitElement {
                       default:
                         __global_69fa48.__coverMutant__(42);
                         {
-                          return __global_69fa48.activeMutant === 43 ? \\"\\" : (__global_69fa48.__coverMutant__(43), 'warning');
+                          return __global_69fa48.__activeMutant__ === 43 ? \\"\\" : (__global_69fa48.__coverMutant__(43), 'warning');
                         }
                         break;
                     }
                   } else {
-                    switch (__global_69fa48.activeMutant) {
+                    switch (__global_69fa48.__activeMutant__) {
                       case 44:
                         {}
                         break;
@@ -338,7 +339,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
                       default:
                         __global_69fa48.__coverMutant__(44);
                         {
-                          return __global_69fa48.activeMutant === 45 ? \\"\\" : (__global_69fa48.__coverMutant__(45), 'success');
+                          return __global_69fa48.__activeMutant__ === 45 ? \\"\\" : (__global_69fa48.__coverMutant__(45), 'success');
                         }
                         break;
                     }
@@ -347,7 +348,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
                 break;
             }
           } else {
-            switch (__global_69fa48.activeMutant) {
+            switch (__global_69fa48.__activeMutant__) {
               case 46:
                 {}
                 break;
@@ -355,7 +356,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
               default:
                 __global_69fa48.__coverMutant__(46);
                 {
-                  return __global_69fa48.activeMutant === 47 ? \\"\\" : (__global_69fa48.__coverMutant__(47), 'default');
+                  return __global_69fa48.__activeMutant__ === 47 ? \\"\\" : (__global_69fa48.__coverMutant__(47), 'default');
                 }
                 break;
             }
