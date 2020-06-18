@@ -405,5 +405,5 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 
 Default: `[]`
 
-With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.
+With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the order of the array. This defaults to an empty array meaning no transpilation will be done.
 
