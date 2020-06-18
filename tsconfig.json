@@ -15,6 +15,7 @@
     { "path": "packages/mocha-runner" },
     { "path": "packages/mutator-specification" },
     { "path": "packages/typescript" },
+    { "path": "packages/typescript-checker" },
     { "path": "packages/vue-mutator" },
     { "path": "packages/wct-runner" },
     { "path": "packages/webpack-transpiler" },

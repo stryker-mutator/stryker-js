@@ -1,0 +1,6 @@
+*
+
+!dist/src/**/*.js
+!dist/src/**/*.map
+!dist/src/**/*.ts
+!src/**/*
