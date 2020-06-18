@@ -6,7 +6,7 @@ import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-pl
 
 import sinon = require('sinon');
 
-describe.only(TestHooksMiddleware.name, () => {
+describe(TestHooksMiddleware.name, () => {
   let sut: TestHooksMiddleware;
 
   beforeEach(() => {
