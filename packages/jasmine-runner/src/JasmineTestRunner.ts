@@ -84,7 +84,7 @@ export default class JasmineTestRunner implements TestRunner2 {
   }
 
   private createJasmineRunner(testFilter: undefined | string[]) {
-    let specFilter: undefined | Function = undefined;
+    let specFilter: undefined | ((spec: jasmine.Spec) => boolean) = undefined;
     if (testFilter) {
       specFilter = (spec: jasmine.Spec) => testFilter.includes(spec.id.toString());
     }
