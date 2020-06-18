@@ -42,24 +42,25 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
 
   public readonly onSpecComplete = (_browser: any, spec: KarmaSpec) => {
     const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
+    const id = spec.id || name;
     let testResult: TestResult;
     if (spec.skipped) {
       testResult = {
-        id: spec.id,
+        id,
         name,
         timeSpentMs: spec.time,
         status: TestStatus.Skipped,
       };
     } else if (spec.success) {
       testResult = {
-        id: spec.id,
+        id,
         name,
         timeSpentMs: spec.time,
         status: TestStatus.Success,
       };
     } else {
       testResult = {
-        id: spec.id,
+        id,
         name,
         timeSpentMs: spec.time,
         status: TestStatus.Failed,
@@ -77,8 +78,8 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     this.emit('load_error', ...args);
   };
 
-  public readonly onBrowserComplete = (_browser: any, result: { coverage: MutantCoverage }) => {
-    this.emit('coverage_report', result.coverage);
+  public readonly onBrowserComplete = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
+    this.emit('coverage_report', result.mutantCoverage);
   };
 
   public readonly onBrowsersReady = () => {
@@ -110,3 +111,7 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     }
   }
 }
+
+// export function isStrykerCoverageReport(event: unknown): event is { event: 'strykerCoverageReport', mutantCoverage: MutantCoverage } {
+
+// }

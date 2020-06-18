@@ -7,15 +7,14 @@ import { expect } from 'chai';
 import { FilePattern } from 'karma';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
+import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
 
 function setOptions(
   files: ReadonlyArray<FilePattern | string> = [
     'testResources/sampleProject/src-instrumented/Add.js',
     'testResources/sampleProject/test-jasmine/AddSpec.js',
-  ],
-  coverageAnalysis: 'all' | 'perTest' | 'off' = 'off'
+  ]
 ): void {
-  testInjector.options.coverageAnalysis = coverageAnalysis;
   testInjector.options.karma = {
     config: {
       files,
@@ -50,6 +49,9 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
+    after(() => {
+      StrykerReporter.instance.removeAllListeners();
+    });
 
     describe('dryRun()', () => {
       it('should report completed tests', async () => {
@@ -83,6 +85,9 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
+    after(() => {
+      StrykerReporter.instance.removeAllListeners();
+    });
     describe('dryRun', () => {
       it('should report failed tests', async () => {
         const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -112,6 +117,9 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
+    after(() => {
+      StrykerReporter.instance.removeAllListeners();
+    });
     describe('dryRun', () => {
       it('should report Error with the error message', async () => {
         const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -135,7 +143,9 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-
+    after(() => {
+      StrykerReporter.instance.removeAllListeners();
+    });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
@@ -154,24 +164,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-
+    after(() => {
+      StrykerReporter.instance.removeAllListeners();
+    });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
-    });
-  });
-
-  describe('when coverage data is available', () => {
-    before(() => {
-      setOptions(['testResources/sampleProject/src-instrumented/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js'], 'all');
-      sut = createSut();
-      return sut.init();
-    });
-
-    it('should report coverage data', async () => {
-      const runResult = await sut.dryRun(factory.dryRunOptions());
-      assertions.expectCompleted(runResult);
-      expect(runResult.mutantCoverage).to.be.ok;
     });
   });
 
@@ -189,6 +187,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       if (dummyServer) {
         await dummyServer.dispose();
       }
+      StrykerReporter.instance.removeAllListeners();
     });
 
     it('should choose different port automatically and report Complete without errors', async () => {
@@ -197,64 +196,6 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       assertions.expectCompleted(actualResult);
     });
   });
-});
-
-describe('runMutant', () => {
-  // it('should be able to filter tests', async () => {
-  //   const testHooks = wrapInClosure(
-  //     new JasmineTestFramework().filter([
-  //       { id: 0, name: 'Add should be able to add two numbers' },
-  //       { id: 3, name: 'Add should be able to recognize a negative number' },
-  //     ])
-  //   );
-  //   const result = await sut.dryRun({ testHooks });
-  //   assertions.expectCompleted(result);
-  //   expectTestResults(result, [
-  //     { name: 'Add should be able to add two numbers', status: TestStatus.Success },
-  //     { name: 'Add should be able 1 to a number', status: TestStatus.Skipped },
-  //     { name: 'Add should be able negate a number', status: TestStatus.Skipped },
-  //     { name: 'Add should be able to recognize a negative number', status: TestStatus.Success },
-  //     { name: 'Add should be able to recognize that 0 is not a negative number', status: TestStatus.Skipped },
-  //   ]);
-  // });
-  // describe('with mocha', () => {
-  //   let testFramework: MochaTestFramework;
-  //   const test0: Readonly<TestSelection> = Object.freeze({
-  //     id: 0,
-  //     name: 'Add should be able to add two numbers',
-  //   });
-  //   const test3: Readonly<TestSelection> = {
-  //     id: 3,
-  //     name: 'Add should be able to recognize a negative number',
-  //   };
-  //   before(() => {
-  //     testFramework = new MochaTestFramework();
-  //     setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-mocha/AddSpec.js']);
-  //     (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma.config!.frameworks = ['mocha', 'chai'];
-  //     sut = createSut();
-  //     return sut.init();
-  //   });
-  //   it('should report completed tests', async () => {
-  //     const runResult = await sut.dryRun(factory.dryRunOptions());
-  //     assertions.expectCompleted(runResult);
-  //     expectToHaveSuccessfulTests(runResult, 5);
-  //     expectToHaveFailedTests(runResult, []);
-  //   });
-  //   it('should be able to filter tests', async () => {
-  //     const testHooks = wrapInClosure(testFramework.filter([test0, test3]));
-  //     const actualResult = await sut.dryRun({ testHooks });
-  //     assertions.expectCompleted(actualResult);
-  //     expectToHaveSuccessfulTests(actualResult, 2);
-  //     expect(actualResult.tests[0].name).eq(test0.name);
-  //     expect(actualResult.tests[1].name).eq(test3.name);
-  //   });
-  //   it('should be able to clear the filter after a filtered run', async () => {
-  //     await sut.dryRun({ testHooks: wrapInClosure(testFramework.filter([test0, test3])) });
-  //     const actualResult = await sut.dryRun({ testHooks: wrapInClosure(testFramework.filter([])) });
-  //     assertions.expectCompleted(actualResult);
-  //     expect(actualResult.tests).lengthOf(5);
-  //   });
-  // });
 });
 
 class DummyServer {

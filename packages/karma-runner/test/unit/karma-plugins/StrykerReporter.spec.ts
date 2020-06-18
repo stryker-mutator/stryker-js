@@ -121,7 +121,7 @@ describe('StrykerReporter', () => {
     it('should emit "coverage_report"', () => {
       const events = listenTo('coverage_report');
       const expectedCoverage: MutantCoverage = { static: { [1]: 4 }, perTest: {} };
-      sut.onBrowserComplete(undefined, { coverage: expectedCoverage });
+      sut.onBrowserComplete(undefined, { mutantCoverage: expectedCoverage });
       expect(events()).lengthOf(1);
       expect(events()[0]).eq(expectedCoverage);
     });

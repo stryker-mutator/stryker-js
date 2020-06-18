@@ -13,23 +13,25 @@ import KarmaTestRunner from '../../src/KarmaTestRunner';
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
 import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
-import TestHooksMiddleware from '../../src/TestHooksMiddleware';
+import TestHooksMiddleware from '../../src/karma-plugins/TestHooksMiddleware';
 
-describe('KarmaTestRunner', () => {
+describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
   let setGlobalsStub: sinon.SinonStub;
   let reporterMock: EventEmitter;
   let karmaRunStub: sinon.SinonStub;
   let getLogger: LoggerFactoryMethod;
+  let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
 
   beforeEach(() => {
     reporterMock = new EventEmitter();
     projectStarterMock = sinon.createStubInstance(ProjectStarter);
+    testHooksMiddlewareMock = sinon.createStubInstance(TestHooksMiddleware);
     sinon.stub(projectStarterModule, 'default').returns(projectStarterMock);
     sinon.stub(StrykerReporter, 'instance').value(reporterMock);
     setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
     karmaRunStub = sinon.stub(karma.runner, 'run');
-    sinon.stub(TestHooksMiddleware, 'instance').value({});
+    sinon.stub(TestHooksMiddleware, 'instance').value(testHooksMiddlewareMock);
     getLogger = testInjector.injector.resolve(commonTokens.getLogger);
   });
 
@@ -136,9 +138,9 @@ describe('KarmaTestRunner', () => {
       expect(actualSecondResult.tests).lengthOf(0);
     });
 
-    it('should set testHooks middleware to empty if no testHooks provided', async () => {
-      await sut.dryRun(factory.dryRunOptions());
-      expect(TestHooksMiddleware.instance.currentTestHooks).eq('');
+    it('should configure the coverage analysis in the test hooks middleware', async () => {
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      expect(testHooksMiddlewareMock.configureCoverageAnalysis).calledWithExactly('all');
     });
 
     it('should add a test result when the on reporter raises the "test_result" event', async () => {

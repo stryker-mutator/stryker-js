@@ -19,8 +19,8 @@ import {
 
 import ProjectStarter from './starters/ProjectStarter';
 import StrykerReporter from './karma-plugins/StrykerReporter';
-import TestHooksMiddleware from './TestHooksMiddleware';
 import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
+import TestHooksMiddleware from './karma-plugins/TestHooksMiddleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
@@ -30,7 +30,6 @@ export default class KarmaTestRunner implements TestRunner2 {
   private currentTestResults: TestResult[];
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;
-  private readonly testHooksMiddleware = TestHooksMiddleware.instance;
   private readonly starter: ProjectStarter;
   public port: undefined | number;
 
@@ -54,15 +53,18 @@ export default class KarmaTestRunner implements TestRunner2 {
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run({});
+    TestHooksMiddleware.instance.configureCoverageAnalysis(options.coverageAnalysis);
+    return this.run();
   }
+
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    const dryRunResult = await this.run({});
+    TestHooksMiddleware.instance.configureActiveMutant(options);
+    const dryRunResult = await this.run();
     return toMutantRunResult(dryRunResult);
   }
 
-  private async run({ testHooks }: { testHooks?: string }): Promise<DryRunResult> {
-    this.testHooksMiddleware.currentTestHooks = testHooks || '';
+  private async run(): Promise<DryRunResult> {
+    // this.testHooksMiddleware.currentTestHooks = testHooks || '';
     if (!this.currentErrorMessage) {
       // Only run when there was no compile error
       // An compile error can happen in case of angular-cli

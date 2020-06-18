@@ -7,7 +7,7 @@ import * as sinon from 'sinon';
 
 import sut = require('../../../src/starters/stryker-karma.conf');
 import StrykerReporter from '../../../src/karma-plugins/StrykerReporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/TestHooksMiddleware';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/TestHooksMiddleware';
 import * as utils from '../../../src/utils';
 
 describe('stryker-karma.conf.js', () => {
@@ -123,12 +123,23 @@ describe('stryker-karma.conf.js', () => {
   });
 
   it('should configure the tests hooks middleware', () => {
+    // Arrange
+    sinon.stub(TestHooksMiddleware.instance, 'configureTestFramework');
+    requireModuleStub.returns((conf: Config) =>
+      conf.set({
+        frameworks: ['my', 'framework'],
+      })
+    );
+    sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
+
+    // Act
     sut(config);
-    expect(config).deep.include({
-      files: [{ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }],
-    });
+
+    // Assert
+    expect(config.files).deep.include({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true });
     expect(config.plugins).include('karma-*');
     expect(config.plugins).deep.include({ ['middleware:TestHooksMiddleware']: ['value', TestHooksMiddleware.instance.handler] });
+    expect(TestHooksMiddleware.instance.configureTestFramework).calledWith(['my', 'framework']);
   });
 
   it('should configure the stryker reporter', () => {
