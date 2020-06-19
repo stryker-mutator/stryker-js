@@ -1,8 +1,9 @@
-import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
 import { TestResults } from 'karma';
+import { MutantCoverage } from '@stryker-mutator/api/test_runner2';
 
-import StrykerReporter, { KarmaSpec } from '../../src/StrykerReporter';
+import StrykerReporter, { KarmaSpec } from '../../../src/karma-plugins/StrykerReporter';
 
 describe('StrykerReporter', () => {
   let sut: StrykerReporter;
@@ -30,6 +31,7 @@ describe('StrykerReporter', () => {
       sut.onSpecComplete(
         undefined,
         karmaSpec({
+          id: '23',
           description: '3',
           success: true,
           suite: ['1', '2'],
@@ -37,7 +39,7 @@ describe('StrykerReporter', () => {
         })
       );
       const expectedTestResult: TestResult = {
-        failureMessages: [],
+        id: '23',
         name: '1 2 3',
         status: TestStatus.Success,
         timeSpentMs: 64,
@@ -118,8 +120,8 @@ describe('StrykerReporter', () => {
   describe('onBrowserComplete', () => {
     it('should emit "coverage_report"', () => {
       const events = listenTo('coverage_report');
-      const expectedCoverage = { ['foobar.js']: { s: [] } };
-      sut.onBrowserComplete(undefined, { coverage: expectedCoverage });
+      const expectedCoverage: MutantCoverage = { static: { [1]: 4 }, perTest: {} };
+      sut.onBrowserComplete(undefined, { mutantCoverage: expectedCoverage });
       expect(events()).lengthOf(1);
       expect(events()[0]).eq(expectedCoverage);
     });

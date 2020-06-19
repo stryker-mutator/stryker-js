@@ -2,8 +2,8 @@ import { EventEmitter } from 'events';
 
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { RunStatus } from '@stryker-mutator/api/test_runner2';
+import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as karma from 'karma';
 import * as sinon from 'sinon';
@@ -12,24 +12,26 @@ import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
-import StrykerReporter from '../../src/StrykerReporter';
-import TestHooksMiddleware from '../../src/TestHooksMiddleware';
+import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
+import TestHooksMiddleware from '../../src/karma-plugins/TestHooksMiddleware';
 
-describe('KarmaTestRunner', () => {
+describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
   let setGlobalsStub: sinon.SinonStub;
   let reporterMock: EventEmitter;
   let karmaRunStub: sinon.SinonStub;
   let getLogger: LoggerFactoryMethod;
+  let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
 
   beforeEach(() => {
     reporterMock = new EventEmitter();
     projectStarterMock = sinon.createStubInstance(ProjectStarter);
+    testHooksMiddlewareMock = sinon.createStubInstance(TestHooksMiddleware);
     sinon.stub(projectStarterModule, 'default').returns(projectStarterMock);
     sinon.stub(StrykerReporter, 'instance').value(reporterMock);
     setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
     karmaRunStub = sinon.stub(karma.runner, 'run');
-    sinon.stub(TestHooksMiddleware, 'instance').value({});
+    sinon.stub(TestHooksMiddleware, 'instance').value(testHooksMiddlewareMock);
     getLogger = testInjector.injector.resolve(commonTokens.getLogger);
   });
 
@@ -111,7 +113,7 @@ describe('KarmaTestRunner', () => {
     });
   });
 
-  describe('run', () => {
+  describe('dryRun', () => {
     let sut: KarmaTestRunner;
 
     beforeEach(() => {
@@ -121,92 +123,77 @@ describe('KarmaTestRunner', () => {
 
     it('should not execute "karma run" when results are already clear', async () => {
       reporterMock.emit('compile_error', ['foobar']);
-      await sut.run({});
+      await sut.dryRun(factory.dryRunOptions());
       expect(karmaRunStub).not.called;
     });
 
     it('should clear run results between runs', async () => {
-      const firstTestResult = testResult();
+      const firstTestResult = factory.testResult();
       reporterMock.emit('test_result', firstTestResult);
-      const actualFirstResult = await sut.run({});
-      const actualSecondResult = await sut.run({});
+      const actualFirstResult = await sut.dryRun(factory.dryRunOptions());
+      const actualSecondResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(actualFirstResult);
+      assertions.expectCompleted(actualSecondResult);
       expect(actualFirstResult.tests).deep.eq([firstTestResult]);
       expect(actualSecondResult.tests).lengthOf(0);
     });
 
-    it('should set testHooks middleware to empty if no testHooks provided', async () => {
-      await sut.run({});
-      expect(TestHooksMiddleware.instance.currentTestHooks).eq('');
-    });
-
-    it('should set testHooks middleware when testHooks are provided', async () => {
-      await sut.run({ testHooks: 'foobar' });
-      expect(TestHooksMiddleware.instance.currentTestHooks).eq('foobar');
+    it('should configure the coverage analysis in the test hooks middleware', async () => {
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      expect(testHooksMiddlewareMock.configureCoverageAnalysis).calledWithExactly('all');
     });
 
     it('should add a test result when the on reporter raises the "test_result" event', async () => {
-      const expected = testResult();
+      const expected = factory.testResult();
       reporterMock.emit('test_result', expected);
-      const actualResult = await sut.run({});
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(actualResult);
       expect(actualResult.tests).deep.eq([expected]);
     });
 
     it('should add coverage report when the reporter raises the "coverage_report" event', async () => {
       const expectedCoverageReport = { some: 'coverage' };
       reporterMock.emit('coverage_report', expectedCoverageReport);
-      const actualResult = await sut.run({});
-      expect(actualResult.coverage).eq(expectedCoverageReport);
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(actualResult);
+      expect(actualResult.mutantCoverage).eq(expectedCoverageReport);
     });
 
     it('should add error when the reporter raises the "browser_error" event', async () => {
       const expectedError = 'Global variable undefined';
       reporterMock.emit('browser_error', expectedError);
-      const actualResult = await sut.run({});
-      expect(actualResult.errorMessages).deep.eq([expectedError]);
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectErrored(actualResult);
+      expect(actualResult.errorMessage).deep.eq(expectedError);
     });
 
     it('should add error when the reporter raises the "compile_error" event', async () => {
       const expectedErrors = ['foo', 'bar'];
       reporterMock.emit('compile_error', expectedErrors);
-      const actualResult = await sut.run({});
-      expect(actualResult.errorMessages).deep.eq(expectedErrors);
-    });
-
-    it('should set result status when the reporter raises the "run_complete" event', async () => {
-      reporterMock.emit('run_complete', RunStatus.Timeout);
-      const actualResult = await sut.run({});
-      expect(actualResult.status).eq(RunStatus.Timeout);
-    });
-
-    it('should convert run state Error to a Complete when no tests where ran or no error messages where reported', async () => {
-      reporterMock.emit('run_complete', RunStatus.Error);
-      const actualResult = await sut.run({});
-      expect(actualResult.status).eq(RunStatus.Complete);
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectErrored(actualResult);
+      expect(actualResult.errorMessage).deep.eq('foo, bar');
     });
 
     it('should report state Error when tests where ran and run completed in an error', async () => {
-      reporterMock.emit('test_result', testResult());
-      reporterMock.emit('run_complete', RunStatus.Error);
-      const actualResult = await sut.run({});
-      expect(actualResult.status).eq(RunStatus.Error);
+      reporterMock.emit('test_result', factory.testResult());
+      reporterMock.emit('browser_error', 'some error');
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectErrored(actualResult);
     });
 
     it('should report state Error when error messages were reported', async () => {
       reporterMock.emit('browser_error', 'Undefined var');
       reporterMock.emit('run_complete', RunStatus.Complete);
-      const actualResult = await sut.run({});
-      expect(actualResult.status).eq(RunStatus.Error);
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectErrored(actualResult);
     });
   });
 
-  function testResult(overrides?: Partial<TestResult>): TestResult {
-    return Object.assign(
-      {
-        name: 'foobar',
-        status: TestStatus.Success,
-        timeSpentMs: 0,
-      },
-      overrides
-    );
-  }
+  describe('mutantRun', () => {
+    // it('should set testHooks middleware when testHooks are provided', async () => {
+    //   await sut.run({ testHooks: 'foobar' });
+    //   expect(TestHooksMiddleware.instance.currentTestHooks).eq('foobar');
+    // });
+  });
 });

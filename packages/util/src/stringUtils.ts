@@ -17,3 +17,10 @@ export function normalizeWhitespaces(str: string) {
 export function propertyPath<T>(prop: keyof Pick<T, KnownKeys<T>>, prop2?: keyof Pick<T, KnownKeys<T>>[typeof prop]): string {
   return [prop, prop2].filter(notEmpty).join('.');
 }
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+ */
+export function escapeRegExp(input: string) {
+  return input.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
