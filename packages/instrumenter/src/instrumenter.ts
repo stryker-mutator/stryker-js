@@ -21,7 +21,7 @@ export class Instrumenter {
 
   constructor(private readonly logger: Logger) {}
 
-  public async instrument(files: File[]): Promise<InstrumentResult> {
+  public async instrument(files: readonly File[]): Promise<InstrumentResult> {
     this.logger.debug('Instrumenting %d source files with mutants', files.length);
     const mutantCollector = new MutantCollector();
     const outFiles: File[] = [];
