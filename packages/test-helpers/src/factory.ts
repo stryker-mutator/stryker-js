@@ -110,6 +110,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
+  location: location(),
   replacement: 'replacement',
 }));
 

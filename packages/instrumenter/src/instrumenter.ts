@@ -39,7 +39,7 @@ export class Instrumenter {
     }
     return {
       files: outFiles,
-      mutants: mutantCollector.mutants,
+      mutants: mutantCollector.mutants.map((mutant) => mutant.toApiMutant()),
     };
   }
 }

@@ -29,6 +29,7 @@ export class JavaScriptMutator implements Mutator {
 
               mutants.push({
                 id: 42, // TODO this code will be removed in #1514. Temp fill it with a string.
+                location: { end: { column: 0, line: 0 }, start: { line: 0, column: 0 } }, // TODO this code will be removed in #1514. Temp fill it now.
                 fileName: fileName,
                 mutatorName: mutatorName,
                 range: [original.start, original.end],
