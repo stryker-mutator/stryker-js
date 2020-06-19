@@ -64,7 +64,6 @@ export default class KarmaTestRunner implements TestRunner2 {
   }
 
   private async run(): Promise<DryRunResult> {
-    // this.testHooksMiddleware.currentTestHooks = testHooks || '';
     if (!this.currentErrorMessage) {
       // Only run when there was no compile error
       // An compile error can happen in case of angular-cli
