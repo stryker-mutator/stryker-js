@@ -30,6 +30,8 @@ const plugins = [
   'v8intrinsic',
   'partialApplication',
   ['decorators', { decoratorsBeforeExport: false }],
+  'jsx',
+  'typescript',
 ] as ParserPlugin[];
 
 export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]) {
@@ -46,10 +48,14 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
     },
   });
   expect(mutants).lengthOf(expectedReplacements.length);
-  const actualReplacements = mutants.map(jsMutantToString);
+  const actualReplacements = mutants.map((mutant) => jsMutantToString(mutant, originalCode));
   expectedReplacements.forEach((expected) => expect(actualReplacements, `was: ${actualReplacements.join(',')}`).to.include(expected));
 }
 
-function jsMutantToString(mutant: NodeMutation): string {
-  return generate(mutant.replacement).code;
+function jsMutantToString(mutant: NodeMutation, originalCode: string): string {
+  const mutatedCode = generate(mutant.replacement).code;
+  const beforeMutatedCode = originalCode.substring(0, mutant.original.start || 0);
+  const afterMutatedCode = originalCode.substring(mutant.original.end || 0);
+
+  return `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
 }
