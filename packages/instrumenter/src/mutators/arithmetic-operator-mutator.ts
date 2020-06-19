@@ -18,7 +18,7 @@ export class ArithmeticOperatorMutator implements NodeMutator {
   public name = 'ArithmeticOperator';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (types.isBinaryExpression(path.node)) {
+    if (path.isBinaryExpression()) {
       const mutatedOperator = this.operators[path.node.operator];
       if (mutatedOperator) {
         const replacement = types.cloneNode(path.node, false);

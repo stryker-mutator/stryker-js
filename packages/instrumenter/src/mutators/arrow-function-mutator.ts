@@ -9,7 +9,7 @@ export class ArrowFunctionMutator implements NodeMutator {
   public name = 'ArrowFunction';
 
   public mutate(path: NodePath): NodeMutation[] {
-    return types.isArrowFunctionExpression(path.node) && !types.isBlockStatement(path.node.body)
+    return path.isArrowFunctionExpression() && !types.isBlockStatement(path.node.body)
       ? [{ original: path.node, replacement: types.arrowFunctionExpression([], types.identifier('undefined')) }]
       : [];
   }

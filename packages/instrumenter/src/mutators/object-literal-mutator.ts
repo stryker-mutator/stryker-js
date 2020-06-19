@@ -9,8 +9,6 @@ export class ObjectLiteralMutator implements NodeMutator {
   public name = 'ObjectLiteral';
 
   public mutate(path: NodePath): NodeMutation[] {
-    return types.isObjectExpression(path.node) && path.node.properties.length > 0
-      ? [{ original: path.node, replacement: types.objectExpression([]) }]
-      : [];
+    return path.isObjectExpression() && path.node.properties.length > 0 ? [{ original: path.node, replacement: types.objectExpression([]) }] : [];
   }
 }

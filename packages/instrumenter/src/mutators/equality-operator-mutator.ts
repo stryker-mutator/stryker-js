@@ -19,7 +19,7 @@ export class EqualityOperatorMutator implements NodeMutator {
   public name = 'EqualityOperator';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (types.isBinaryExpression(path.node)) {
+    if (path.isBinaryExpression()) {
       let mutatedOperators = this.operators[path.node.operator];
       if (mutatedOperators) {
         return mutatedOperators.map((mutatedOperator) => {

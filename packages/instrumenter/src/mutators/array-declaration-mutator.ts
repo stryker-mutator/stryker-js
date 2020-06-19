@@ -8,21 +8,15 @@ export class ArrayDeclarationMutator implements NodeMutator {
   public name = 'ArrayDeclaration';
 
   public mutate(path: NodePath): NodeMutation[] {
-    const currentNode = path.node;
-
-    if (types.isArrayExpression(currentNode)) {
-      const replacement = currentNode.elements.length ? types.arrayExpression() : types.arrayExpression([types.stringLiteral('Stryker was here')]);
-      return [{ original: currentNode, replacement }];
-    } else if (
-      (types.isCallExpression(currentNode) || types.isNewExpression(currentNode)) &&
-      types.isIdentifier(currentNode.callee) &&
-      currentNode.callee.name === 'Array'
-    ) {
-      const mutatedCallArgs = currentNode.arguments && currentNode.arguments.length ? [] : [types.arrayExpression()];
+    if (path.isArrayExpression()) {
+      const replacement = path.node.elements.length ? types.arrayExpression() : types.arrayExpression([types.stringLiteral('Stryker was here')]);
+      return [{ original: path.node, replacement }];
+    } else if ((path.isCallExpression() || path.isNewExpression()) && types.isIdentifier(path.node.callee) && path.node.callee.name === 'Array') {
+      const mutatedCallArgs = path.node.arguments && path.node.arguments.length ? [] : [types.arrayExpression()];
       const replacement = types.isNewExpression(path)
-        ? types.newExpression(currentNode.callee, mutatedCallArgs)
-        : types.callExpression(currentNode.callee, mutatedCallArgs);
-      return [{ original: currentNode, replacement }];
+        ? types.newExpression(path.node.callee, mutatedCallArgs)
+        : types.callExpression(path.node.callee, mutatedCallArgs);
+      return [{ original: path.node, replacement }];
     } else {
       return [];
     }

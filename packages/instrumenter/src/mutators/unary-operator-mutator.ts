@@ -15,7 +15,7 @@ export class UnaryOperatorMutator implements NodeMutator {
   };
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (types.isUnaryExpression(path.node) && this.operators[path.node.operator] !== undefined && path.node.prefix) {
+    if (path.isUnaryExpression() && this.operators[path.node.operator] !== undefined && path.node.prefix) {
       return this.operators[path.node.operator].length > 0
         ? [
             {
