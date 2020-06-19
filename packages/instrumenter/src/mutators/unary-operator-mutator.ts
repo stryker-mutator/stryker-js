@@ -26,7 +26,7 @@ export class UnaryOperatorMutator implements NodeMutator {
         : [
             {
               original: path.node,
-              replacement: path.node.argument,
+              replacement: types.cloneNode(path.node.argument, false),
             },
           ];
     }
