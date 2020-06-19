@@ -43,16 +43,17 @@ export default class TestHooksMiddleware {
         this.configurePerTestCoverageAnalysis();
         break;
       case 'all':
-        this.currentTestHooks = `window.${SHOULD_REPORT_COVERAGE_FLAG} = true`;
+        this.currentTestHooks = `window.${SHOULD_REPORT_COVERAGE_FLAG} = true;`;
         break;
       case 'off':
-        this.currentTestHooks = `window.${SHOULD_REPORT_COVERAGE_FLAG} = false`;
+        this.currentTestHooks = `window.${SHOULD_REPORT_COVERAGE_FLAG} = false;`;
         break;
     }
   }
 
   public configureActiveMutant({ activeMutant, testFilter }: MutantRunOptions) {
-    this.currentTestHooks = `window.${SHOULD_REPORT_COVERAGE_FLAG} = false;window.__activeMutant__=${activeMutant.id};`;
+    this.configureCoverageAnalysis('off');
+    this.currentTestHooks += `window.__activeMutant__=${activeMutant.id};`;
     if (testFilter) {
       switch (this.testFramework) {
         case 'jasmine':
