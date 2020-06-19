@@ -111,7 +111,3 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     }
   }
 }
-
-// export function isStrykerCoverageReport(event: unknown): event is { event: 'strykerCoverageReport', mutantCoverage: MutantCoverage } {
-
-// }
