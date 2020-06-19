@@ -8,7 +8,7 @@ import { NodeMutator } from '.';
 export class UpdateOperatorMutator implements NodeMutator {
   public name = 'UpdateOperator';
 
-  private readonly operators: { [targetedOperator: string]: string } = {
+  private readonly operators: { [targetedOperator: string]: '--' | '++' } = {
     '++': '--',
     '--': '++',
   };
@@ -18,7 +18,7 @@ export class UpdateOperatorMutator implements NodeMutator {
       ? [
           {
             original: path.node,
-            replacement: types.updateExpression(this.operators[path.node.operator] as any, path.node.argument, path.node.prefix),
+            replacement: types.updateExpression(this.operators[path.node.operator], path.node.argument, path.node.prefix),
           },
         ]
       : [];
