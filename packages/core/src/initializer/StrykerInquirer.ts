@@ -7,7 +7,7 @@ import PromptOption from './PromptOption';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
-  additionalConfig: Record<string, any>;
+  additionalConfig: Record<string, unknown>;
 }
 
 export class StrykerInquirer {

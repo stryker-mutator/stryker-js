@@ -17,7 +17,7 @@ export class OptionsValidator {
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
-  constructor(schema: Record<string, any>, private readonly log: Logger) {
+  constructor(schema: Record<string, unknown>, private readonly log: Logger) {
     this.validateFn = ajv.compile(schema);
   }
 
@@ -76,7 +76,7 @@ export function validateOptions(options: unknown, optionsValidator: OptionsValid
 }
 
 markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function markUnknownOptions(options: StrykerOptions, schema: Record<string, any>, log: Logger): StrykerOptions {
+export function markUnknownOptions(options: StrykerOptions, schema: Record<string, unknown>, log: Logger): StrykerOptions {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
   if (isWarningEnabled('unknownOptions', options.warnings)) {
     const unknownPropertyNames = Object.keys(options)

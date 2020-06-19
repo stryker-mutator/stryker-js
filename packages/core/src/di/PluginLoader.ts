@@ -16,12 +16,12 @@ interface PluginModule {
 }
 
 interface SchemaValidationContribution {
-  strykerValidationSchema: Record<string, any>;
+  strykerValidationSchema: Record<string, unknown>;
 }
 
 export class PluginLoader implements PluginResolver {
   private readonly pluginsByKind: Map<PluginKind, Array<Plugin<any>>> = new Map();
-  private readonly contributedValidationSchemas: Array<Record<string, any>> = [];
+  private readonly contributedValidationSchemas: Array<Record<string, unknown>> = [];
 
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
@@ -32,7 +32,7 @@ export class PluginLoader implements PluginResolver {
     });
   }
 
-  public resolveValidationSchemaContributions(): Array<Record<string, any>> {
+  public resolveValidationSchemaContributions(): Array<Record<string, unknown>> {
     return this.contributedValidationSchemas;
   }
 

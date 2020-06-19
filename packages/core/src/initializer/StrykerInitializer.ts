@@ -245,7 +245,7 @@ export default class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<Array<Record<string, any>>> {
+  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<Array<Record<string, unknown>>> {
     return (await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)))).filter(notEmpty);
   }
 }

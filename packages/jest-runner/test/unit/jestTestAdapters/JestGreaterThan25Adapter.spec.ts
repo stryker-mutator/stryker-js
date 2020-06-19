@@ -15,7 +15,7 @@ describe(JestGreaterThan25Adapter.name, () => {
 
   beforeEach(() => {
     runCLIStub = sinon.stub(jestWrapper, 'runCLI');
-    runCLIStub.callsFake((config: Record<string, any>) =>
+    runCLIStub.callsFake((config: Record<string, unknown>) =>
       Promise.resolve({
         config,
         result: 'testResult',

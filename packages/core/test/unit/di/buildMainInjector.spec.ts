@@ -26,7 +26,7 @@ describe(buildMainInjector.name, () => {
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
-  let validationSchemaContributions: Array<Record<string, any>>;
+  let validationSchemaContributions: Array<Record<string, unknown>>;
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);

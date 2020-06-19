@@ -1,3 +1,3 @@
-const strykerCoreSchema: Record<string, any> = require('../../schema/stryker-core.json');
+const strykerCoreSchema: Record<string, unknown> = require('../../schema/stryker-core.json');
 
 export { strykerCoreSchema };

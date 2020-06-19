@@ -109,5 +109,5 @@ export type Plugins = {
 export interface PluginResolver {
   resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];
   resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]>;
-  resolveValidationSchemaContributions(): Array<Record<string, any>>;
+  resolveValidationSchemaContributions(): Array<Record<string, unknown>>;
 }
