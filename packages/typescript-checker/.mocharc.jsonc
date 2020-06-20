@@ -1,0 +1,12 @@
+{
+  "require": ["source-map-support/register"],
+  "file": [
+    // This file is included first
+    "dist/test/helpers/setup-tests.js"
+  ],
+  "spec": [
+    "dist/test/unit/**/*.js",
+    "dist/test/integration/**/*.js"
+  ],
+  "timeout": 10000
+}

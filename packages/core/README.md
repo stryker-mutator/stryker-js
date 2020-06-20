@@ -267,7 +267,7 @@ Config file: `plugins: ['@stryker-mutator/jasmine-framework', '@stryker-mutator/
 With `plugins`, you can add additional Node modules for Stryker to load (or `require`).
 By default, all `node_modules` starting with `@stryker-mutator/*` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
-you can consult [npm](https://www.npmjs.com/search?q=%40stryker-plugin) or
+you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or
 [stryker-mutator.io](https://stryker-mutator.io).
 
 <a name="reporters"></a>
@@ -405,5 +405,5 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 
 Default: `[]`
 
-With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.
+With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the order of the array. This defaults to an empty array meaning no transpilation will be done.
 

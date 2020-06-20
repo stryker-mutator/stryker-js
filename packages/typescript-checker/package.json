@@ -1,0 +1,45 @@
+{
+  "name": "@stryker-mutator/typescript-checker",
+  "version": "3.2.2",
+  "description": "A typescript type checker plugin to be used in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "mocha": "mocha",
+    "stryker": "node ../core/bin/stryker run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker",
+    "directory": "packages/typescript-checker"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "contributors": [
+    "Simon de Lang <simondelang@gmail.com>",
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://stryker-mutator.io",
+  "dependencies": {
+    "@stryker-mutator/api": "^3.2.2",
+    "@stryker-mutator/util": "^3.2.2",
+    "semver": "^7.3.2"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "^3.2.2",
+    "@types/semver": "^7.2.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=3.6",
+    "@stryker-mutator/core": "3.2.4"
+  }
+}
