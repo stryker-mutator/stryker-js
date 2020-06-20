@@ -24,6 +24,7 @@ export function testFrameworkFactory(
 }
 testFrameworkFactory.inject = tokens(commonTokens.injector);
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function | undefined) {
   return getLogger(target ? target.name : 'UNKNOWN');
 }

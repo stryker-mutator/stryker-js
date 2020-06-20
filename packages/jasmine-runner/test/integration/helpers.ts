@@ -1,4 +1,5 @@
 import path = require('path');
+
 import { TestStatus, SuccessTestResult } from '@stryker-mutator/api/test_runner2';
 
 export function resolveJasmineInitFiles(): readonly string[] {
