@@ -53,7 +53,7 @@
     "prebuild": "npm run generate",
     "build": "tsc -b && lerna run build",
     "test": "npm run mocha",
-    "mocha": "lerna run test --stream --concurrency 4",
+    "mocha": "lerna run test --stream --concurrency 4 --ignore @stryker-mutator/javascript-mutator --ignore @stryker-mutator/typescript",
     "e2e": "cd e2e && npm ci && npm t && cd ..",
     "perf": "cd perf && npm ci && npm t && cd ..",
     "start": "tsc -b -w",
