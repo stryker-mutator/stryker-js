@@ -45,6 +45,7 @@
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",
     "@stryker-mutator/core": "../packages/core",
+    "@stryker-mutator/instrumenter": "../packages/instrumenter",
     "@stryker-mutator/api": "../packages/api",
     "@stryker-mutator/babel-transpiler": "../packages/babel-transpiler",
     "@stryker-mutator/jasmine-framework": "../packages/jasmine-framework",

@@ -39,6 +39,7 @@
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
     "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
     "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
     "@stryker-mutator/webpack-transpiler": "../../../packages/webpack-transpiler",
     "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",

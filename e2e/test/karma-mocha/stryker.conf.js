@@ -13,6 +13,7 @@ module.exports = function (config) {
     },
     timeoutMS: 60000,
     maxConcurrentTestRunners: 2,
-    coverageAnalysis: 'perTest'
+    coverageAnalysis: 'perTest',
+    plugins: ['@stryker-mutator/karma-runner']
   });
 };
