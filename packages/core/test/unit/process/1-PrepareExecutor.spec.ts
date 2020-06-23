@@ -2,7 +2,6 @@
 //   expect(configureMainProcessStub).calledTwice;
 // });
 
-
 // it('should reject when logging server rejects', async () => {
 //   const expectedError = Error('expected error');
 //   configureLoggingServerStub.rejects(expectedError);
@@ -14,7 +13,6 @@
 //   inputFileResolverMock.resolve.rejects(expectedError);
 //   await expect(sut.runMutationTest()).rejectedWith(expectedError);
 // });
-
 
 // it('should configure the logging server', async () => {
 //   sut = new Stryker({});

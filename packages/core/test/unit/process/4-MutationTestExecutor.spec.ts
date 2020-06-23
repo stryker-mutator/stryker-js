@@ -81,14 +81,11 @@ describe(MutationTestExecutor.name, () => {
   });
 });
 
-
 // it('should report mutation test report ready', async () => {
 //   sut = new Stryker({});
 //   await sut.runMutationTest();
 //   expect(mutationTestReportCalculatorMock.report).called;
 // });
-
-
 
 // it('should let the reporters wrapUp any async tasks', async () => {
 //   sut = new Stryker({});

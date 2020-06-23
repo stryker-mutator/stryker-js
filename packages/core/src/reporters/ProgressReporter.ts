@@ -33,11 +33,11 @@ export default class ProgressBarReporter extends ProgressKeeper {
     }
   }
 
-  private tick(tickObj: object): void {
+  private tick(tickObj: Record<string, unknown>): void {
     this.progressBar.tick(tickObj);
   }
 
-  private render(renderObj: object): void {
+  private render(renderObj: Record<string, unknown>): void {
     this.progressBar.render(renderObj);
   }
 }

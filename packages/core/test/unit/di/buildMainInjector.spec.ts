@@ -27,7 +27,7 @@ describe(buildMainInjector.name, () => {
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
-  let validationSchemaContributions: object[];
+  let validationSchemaContributions: Array<Record<string, unknown>>;
   let injector: CliOptionsProvider;
   let cliOptions: PartialStrykerOptions;
 

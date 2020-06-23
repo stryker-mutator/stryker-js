@@ -1,4 +1,5 @@
 import path = require('path');
+
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';

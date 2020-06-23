@@ -3,7 +3,6 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as karma from 'karma';
 
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 import {
   TestRunner2,
@@ -16,6 +15,8 @@ import {
   MutantRunResult,
   toMutantRunResult,
 } from '../../api/test_runner2';
+
+import strykerKarmaConf = require('./starters/stryker-karma.conf');
 
 import ProjectStarter from './starters/ProjectStarter';
 import StrykerReporter from './karma-plugins/StrykerReporter';

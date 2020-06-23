@@ -8,7 +8,7 @@ import { buildSchemaWithPluginContributions } from '../../../src/config';
 
 describe(buildSchemaWithPluginContributions.name, () => {
   let pluginResolverStub: sinon.SinonStubbedInstance<PluginResolver>;
-  let pluginContributions: object[];
+  let pluginContributions: Array<Record<string, any>>;
 
   beforeEach(() => {
     pluginResolverStub = factory.pluginResolver();

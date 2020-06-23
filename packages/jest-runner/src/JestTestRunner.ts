@@ -117,7 +117,7 @@ export default class JestTestRunner implements TestRunner {
   }
 
   private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {
-    const stringify = (obj: object) => JSON.stringify(obj, null, 2);
+    const stringify = (obj: Record<string, any>) => JSON.stringify(obj, null, 2);
     this.log.trace(
       `Merging file-based config ${stringify(configFromFile)} 
       with custom config ${stringify(config)}
