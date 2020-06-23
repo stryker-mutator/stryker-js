@@ -14,7 +14,7 @@ import * as sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 
 import { coreTokens } from '../../src/di';
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../src/logging';
 import { InitialTestRunResult } from '../../src/process/InitialTestExecutor';
 import Sandbox from '../../src/Sandbox';
 import { SandboxPool } from '../../src/SandboxPool';

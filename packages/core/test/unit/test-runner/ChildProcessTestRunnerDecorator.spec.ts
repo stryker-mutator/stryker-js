@@ -7,7 +7,7 @@ import { Task } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../../src/logging';
 import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';

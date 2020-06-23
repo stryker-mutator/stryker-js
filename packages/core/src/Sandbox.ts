@@ -9,7 +9,7 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import * as mkdirp from 'mkdirp';
 
-import LoggingClientContext from './logging/LoggingClientContext';
+import { LoggingClientContext } from './logging';
 import ResilientTestRunnerFactory from './test-runner/ResilientTestRunnerFactory';
 import TestableMutant, { TestSelectionResult } from './TestableMutant';
 import TranspiledMutant from './TranspiledMutant';

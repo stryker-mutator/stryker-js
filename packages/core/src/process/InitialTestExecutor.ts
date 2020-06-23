@@ -9,7 +9,7 @@ import { Transpiler } from '@stryker-mutator/api/transpile';
 
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging/LoggingClientContext';
 import Sandbox from '../Sandbox';
 import { coveragePerTestHooks } from '../transpiler/coverageHooks';
 import CoverageInstrumenterTranspiler, { CoverageMapsByFile } from '../transpiler/CoverageInstrumenterTranspiler';

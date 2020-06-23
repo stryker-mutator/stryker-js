@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as sinon from 'sinon';
 
-import LoggingClientContext from '../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../src/logging';
 import Sandbox from '../../src/Sandbox';
 import SourceFile from '../../src/SourceFile';
 import ResilientTestRunnerFactory from '../../src/test-runner/ResilientTestRunnerFactory';

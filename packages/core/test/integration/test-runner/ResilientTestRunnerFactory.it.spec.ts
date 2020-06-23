@@ -8,7 +8,7 @@ import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer } from '@stryker-mutator/test-helpers';
 
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../../src/logging';
 import ResilientTestRunnerFactory from '../../../src/test-runner/ResilientTestRunnerFactory';
 import { sleep } from '../../helpers/testUtils';
 

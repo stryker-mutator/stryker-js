@@ -10,7 +10,7 @@ import { filter, flatMap, map, merge, tap, zip } from 'rxjs/operators';
 import { Disposable } from 'typed-inject';
 
 import { coreTokens } from './di';
-import LoggingClientContext from './logging/LoggingClientContext';
+import { LoggingClientContext } from './logging/LoggingClientContext';
 import { InitialTestRunResult } from './process/InitialTestExecutor';
 import Sandbox from './Sandbox';
 import TranspiledMutant from './TranspiledMutant';

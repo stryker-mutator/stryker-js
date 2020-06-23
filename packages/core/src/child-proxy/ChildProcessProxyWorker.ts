@@ -5,7 +5,7 @@ import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
 
 import { buildChildProcessInjector } from '../di';
-import LogConfigurator from '../logging/LogConfigurator';
+import { LogConfigurator } from '../logging';
 import { deserialize, serialize } from '../utils/objectUtils';
 
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';

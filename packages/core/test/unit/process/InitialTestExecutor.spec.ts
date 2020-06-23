@@ -12,7 +12,7 @@ import * as sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../../src/logging';
 import InitialTestExecutor, { InitialTestRunResult } from '../../../src/process/InitialTestExecutor';
 import Sandbox from '../../../src/Sandbox';
 import * as coverageHooks from '../../../src/transpiler/coverageHooks';
