@@ -4,12 +4,17 @@ import { FileCoverageData } from 'istanbul-lib-coverage';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 
+import { of } from 'rxjs';
+
+import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+
 import SourceFile from '../../src/SourceFile';
 import TestableMutant from '../../src/TestableMutant';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
+import { TestRunnerPool } from '../../src/test-runner-2';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -34,6 +39,16 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   logTests: true,
   maxTestsToLog: 3,
 }));
+
+export function createTestRunnerPoolMock(
+  ...testRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner2>>>
+): sinon.SinonStubbedInstance<TestRunnerPool> {
+  return {
+    dispose: sinon.stub(),
+    recycle: sinon.stub(),
+    testRunner$: of(...testRunners),
+  };
+}
 
 export const logger = (): Mock<Logger> => {
   return {

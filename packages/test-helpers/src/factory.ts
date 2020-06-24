@@ -20,7 +20,18 @@ import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
-import { MutantRunOptions, DryRunOptions } from '@stryker-mutator/api/test_runner2';
+import {
+  MutantRunOptions,
+  DryRunOptions,
+  DryRunStatus,
+  TestRunner2,
+  SuccessTestResult,
+  FailedTestResult,
+  SkippedTestResult,
+  CompleteDryRunResult,
+  ErrorDryRunResult,
+  TimeoutDryRunResult,
+} from '@stryker-mutator/api/test_runner2';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -169,10 +180,38 @@ export function testFramework(): TestFramework {
   };
 }
 
+export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner2>> {
+  return {
+    init: sinon.stub(),
+    dryRun: sinon.stub(),
+    mutantRun: sinon.stub(),
+    dispose: sinon.stub(),
+  };
+}
+
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
+}));
+export const successTestResult = factoryMethod<SuccessTestResult>(() => ({
+  id: 'spec1',
+  name: 'foo should be bar',
+  status: TestStatus.Success,
+  timeSpentMs: 32,
+}));
+export const failedTestResult = factoryMethod<FailedTestResult>(() => ({
+  id: 'spec2',
+  name: 'foo should be bar',
+  status: TestStatus.Failed,
+  timeSpentMs: 32,
+  failureMessage: 'foo was baz',
+}));
+export const skippedTestResult = factoryMethod<SkippedTestResult>(() => ({
+  id: 'spec31',
+  status: TestStatus.Skipped,
+  timeSpentMs: 0,
+  name: 'qux should be quux',
 }));
 
 export const testSelection = factoryMethod<TestSelection>(() => ({
@@ -188,6 +227,20 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
   coverageAnalysis: 'off',
   timeout: 2000,
+}));
+
+export const completeDryRunResult = factoryMethod<CompleteDryRunResult>(() => ({
+  status: DryRunStatus.Complete,
+  tests: [],
+}));
+
+export const errorDryRunResult = factoryMethod<ErrorDryRunResult>(() => ({
+  status: DryRunStatus.Error,
+  errorMessage: 'example error',
+}));
+
+export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
+  status: DryRunStatus.Timeout,
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({

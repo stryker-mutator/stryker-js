@@ -1,4 +1,4 @@
-import { RunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 import { getLogger } from 'log4js';
 import { ExpirableTask } from '@stryker-mutator/util';
 
@@ -14,7 +14,7 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
     const result = await this.run(options, () => super.dryRun(options));
     if (result === ExpirableTask.TimeoutExpired) {
       return {
-        status: RunStatus.Timeout,
+        status: DryRunStatus.Timeout,
       };
     } else {
       return result;

@@ -7,7 +7,7 @@ import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import {
   DryRunResult,
   TestRunner2,
-  RunStatus,
+  DryRunStatus,
   CompleteDryRunResult,
   TestStatus,
   TestResult,
@@ -16,11 +16,15 @@ import {
 } from '@stryker-mutator/api/test_runner2';
 import { first } from 'rxjs/operators';
 
+import { I } from '@stryker-mutator/util';
+
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
 import Timer from '../utils/Timer';
 import { TestRunnerPool, createTestRunnerFactory } from '../test-runner-2';
 import { MutationTestReportCalculator } from '../reporters/MutationTestReportCalculator';
+
+import { ConfigError } from '../errors';
 
 import { MutationTestContext } from './4-MutationTestExecutor';
 import { MutantInstrumenterContext } from './2-MutantInstrumenterExecutor';
@@ -62,7 +66,7 @@ export class DryRunExecutor {
     private readonly injector: Injector<DryRunContext>,
     private readonly log: Logger,
     private readonly options: StrykerOptions,
-    private readonly timer: Timer,
+    private readonly timer: I<Timer>,
     private readonly mutants: readonly Mutant[]
   ) {}
 
@@ -93,20 +97,20 @@ export class DryRunExecutor {
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
     switch (runResult.status) {
-      case RunStatus.Complete:
+      case DryRunStatus.Complete:
         const failedTests = runResult.tests.filter(isFailedTest);
         if (failedTests.length) {
           this.logFailedTestsInInitialRun(failedTests);
-          throw new Error('There were failed tests in the initial test run.');
+          throw new ConfigError('There were failed tests in the initial test run.');
         }
         if (runResult.tests.length === 0) {
           this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
         }
         return;
-      case RunStatus.Error:
+      case DryRunStatus.Error:
         this.logErrorsInInitialRun(runResult);
         break;
-      case RunStatus.Timeout:
+      case DryRunStatus.Timeout:
         this.logTimeoutInitialRun();
         break;
     }

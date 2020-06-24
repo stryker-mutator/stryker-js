@@ -1,4 +1,4 @@
-import { RunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 
@@ -18,7 +18,7 @@ export default class RetryDecorator extends TestRunnerDecorator {
     const result = await this.run(() => super.dryRun(options));
     if (typeof result === 'string') {
       return {
-        status: RunStatus.Error,
+        status: DryRunStatus.Error,
         errorMessage: result,
       };
     } else {
