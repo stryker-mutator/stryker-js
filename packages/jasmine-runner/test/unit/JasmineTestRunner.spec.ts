@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, RunStatus } from '@stryker-mutator/api/test_runner2';
+import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner2';
 
 import Jasmine = require('jasmine');
 
@@ -124,7 +124,7 @@ describe(JasmineTestRunner.name, () => {
 
         // Assert
         const expectedResult: CompleteDryRunResult = {
-          status: RunStatus.Complete,
+          status: DryRunStatus.Complete,
           tests: [],
           mutantCoverage: expectedMutationCoverage,
         };
@@ -148,7 +148,7 @@ describe(JasmineTestRunner.name, () => {
 
       // Assert
       const expectedResult: CompleteDryRunResult = {
-        status: RunStatus.Complete,
+        status: DryRunStatus.Complete,
         tests: [],
         mutantCoverage: undefined,
       };

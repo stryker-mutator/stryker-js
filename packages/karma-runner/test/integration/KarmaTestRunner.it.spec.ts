@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import * as http from 'http';
 
-import { RunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test_runner2';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
@@ -94,7 +94,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         assertions.expectCompleted(runResult);
         expectToHaveSuccessfulTests(runResult, 5);
         expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
-        expect(runResult.status).to.be.eq(RunStatus.Complete);
+        expect(runResult.status).to.be.eq(DryRunStatus.Complete);
       });
     });
     describe('runMutant()', () => {

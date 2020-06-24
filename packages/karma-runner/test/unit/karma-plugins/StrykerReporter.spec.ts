@@ -1,4 +1,4 @@
-import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
 import { TestResults } from 'karma';
 import { MutantCoverage } from '@stryker-mutator/api/test_runner2';
@@ -69,7 +69,7 @@ describe('StrykerReporter', () => {
   });
 
   describe('onRunComplete', () => {
-    let events: () => RunStatus[];
+    let events: () => DryRunStatus[];
 
     beforeEach(() => {
       events = listenTo('run_complete');
@@ -86,7 +86,7 @@ describe('StrykerReporter', () => {
           error: true,
         })
       );
-      expect(events()[0]).eq(RunStatus.Error);
+      expect(events()[0]).eq(DryRunStatus.Error);
     });
 
     it('should convert disconnected to RunState.Timeout', () => {
@@ -95,7 +95,7 @@ describe('StrykerReporter', () => {
           disconnected: true,
         })
       );
-      expect(events()[0]).eq(RunStatus.Timeout);
+      expect(events()[0]).eq(DryRunStatus.Timeout);
     });
   });
 

@@ -3,7 +3,7 @@ import { EOL } from 'os';
 import { StrykerOptions, CoverageAnalysis } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
-  RunStatus,
+  DryRunStatus,
   TestResult,
   TestRunner2,
   MutantRunOptions,
@@ -63,7 +63,7 @@ export default class JasmineTestRunner implements TestRunner2 {
             mutantCoverage = global.__mutantCoverage__;
           }
           runTask.resolve({
-            status: RunStatus.Complete,
+            status: DryRunStatus.Complete,
             tests,
             mutantCoverage,
           });
@@ -77,7 +77,7 @@ export default class JasmineTestRunner implements TestRunner2 {
     } catch (error) {
       const errorResult: ErrorDryRunResult = {
         errorMessage: `An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`,
-        status: RunStatus.Error,
+        status: DryRunStatus.Error,
       };
       return errorResult;
     }

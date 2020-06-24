@@ -1,5 +1,5 @@
 import { MutantCoverage } from './MutantCoverage';
-import { RunStatus } from './RunStatus';
+import { DryRunStatus } from './DryRunStatus';
 import { TestResult } from './TestResult';
 
 export type DryRunResult = CompleteDryRunResult | TimeoutDryRunResult | ErrorDryRunResult;
@@ -15,20 +15,20 @@ export interface CompleteDryRunResult {
   /**
    * The status of the run
    */
-  status: RunStatus.Complete;
+  status: DryRunStatus.Complete;
 }
 export interface TimeoutDryRunResult {
   /**
    * The status of the run
    */
-  status: RunStatus.Timeout;
+  status: DryRunStatus.Timeout;
 }
 
 export interface ErrorDryRunResult {
   /**
    * The status of the run
    */
-  status: RunStatus.Error;
+  status: DryRunStatus.Error;
 
   /**
    * If `state` is `error`, this collection should contain the error messages
