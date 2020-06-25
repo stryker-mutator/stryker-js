@@ -1,17 +1,16 @@
 import { from } from 'rxjs';
-import { zip, flatMap, tap, toArray } from 'rxjs/operators';
+import { zip, flatMap, toArray } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { CompleteDryRunResult, MutantRunOptions, TestRunner2, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 import { Logger } from '@stryker-mutator/api/logging';
+import { I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
 import { TestRunnerPool } from '../test-runner-2';
-import { mutatedLines, originalLines } from '../utils/mutantUtils';
-import InputFileCollection from '../input/InputFileCollection';
-import { matchMutantsWithTests, MatchedMutant } from '../mutants/MutantTestMatcher2';
+import { MutantTestCoverage } from '../mutants/MutantTestMatcher2';
 import { MutationTestReportCalculator } from '../reporters/MutationTestReportCalculator';
 import Timer from '../utils/Timer';
 
@@ -22,6 +21,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.dryRunResult]: CompleteDryRunResult;
   [coreTokens.timeOverheadMS]: number;
   [coreTokens.mutationTestReportCalculator]: MutationTestReportCalculator;
+  [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
 }
 
 export class MutationTestExecutor {
@@ -29,10 +29,8 @@ export class MutationTestExecutor {
     commonTokens.options,
     coreTokens.reporter,
     coreTokens.testRunnerPool,
-    coreTokens.dryRunResult,
-    coreTokens.inputFiles,
     coreTokens.timeOverheadMS,
-    coreTokens.mutants,
+    coreTokens.mutantsWithTestCoverage,
     coreTokens.mutationTestReportCalculator,
     commonTokens.logger,
     coreTokens.timer
@@ -41,29 +39,24 @@ export class MutationTestExecutor {
   constructor(
     private readonly options: StrykerOptions,
     private readonly reporter: StrictReporter,
-    private readonly testRunnerPool: TestRunnerPool,
-    private readonly dryRunResult: CompleteDryRunResult,
-    private readonly inputFileCollection: InputFileCollection,
+    private readonly testRunnerPool: I<TestRunnerPool>,
     private readonly timeOverheadMS: number,
-    private readonly allMutants: readonly Mutant[],
-    private readonly mutationTestReportCalculator: MutationTestReportCalculator,
+    private readonly matchedMutants: readonly MutantTestCoverage[],
+    private readonly mutationTestReportCalculator: I<MutationTestReportCalculator>,
     private readonly log: Logger,
-    private readonly timer: Timer
+    private readonly timer: I<Timer>
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
-    const matchedMutants = matchMutantsWithTests(this.dryRunResult, this.allMutants);
-    const results = await this.testRunnerPool.testRunner$
-      .pipe(zip(from(matchedMutants)), flatMap(this.runInTestRunner), tap(this.reportResult), toArray(), tap(this.reportAll))
-      .toPromise();
+    const results = await this.testRunnerPool.testRunner$.pipe(zip(from(this.matchedMutants)), flatMap(this.runInTestRunner), toArray()).toPromise();
 
-    this.mutationTestReportCalculator.report(results);
+    this.mutationTestReportCalculator.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
     return results;
   }
 
-  private createMutantRunOptions(mutant: MatchedMutant): MutantRunOptions {
+  private createMutantRunOptions(mutant: MutantTestCoverage): MutantRunOptions {
     return {
       activeMutant: mutant.mutant,
       timeout: this.calculateTimeout(mutant),
@@ -71,32 +64,18 @@ export class MutationTestExecutor {
     };
   }
 
-  private calculateTimeout(mutant: MatchedMutant) {
+  private calculateTimeout(mutant: MutantTestCoverage) {
     return this.options.timeoutFactor * mutant.estimatedNetTime + this.options.timeoutMS + this.timeOverheadMS;
   }
 
-  private readonly runInTestRunner = async ([testRunner, matchedMutant]: [Required<TestRunner2>, MatchedMutant]): Promise<MutantResult> => {
-    const { mutant } = matchedMutant;
-    const originalFileTextContent = this.inputFileCollection.filesToMutate.find((fileToMutate) => fileToMutate.name === mutant.fileName)!.textContent;
-    const allTestNames = this.dryRunResult.tests.map((t) => t.name);
-    const mutantResult: MutantResult = {
-      id: mutant.id.toString(),
-      location: mutant.location,
-      mutatedLines: mutatedLines(originalFileTextContent, mutant),
-      mutatorName: mutant.mutatorName,
-      originalLines: originalLines(originalFileTextContent, mutant),
-      range: mutant.range,
-      replacement: mutant.replacement,
-      sourceFilePath: mutant.fileName,
-      status: MutantStatus.NoCoverage,
-      testsRan: [],
-    };
+  private readonly runInTestRunner = async ([testRunner, matchedMutant]: [Required<TestRunner2>, MutantTestCoverage]): Promise<MutantResult> => {
+    let mutantResult: MutantResult;
     if (matchedMutant.coveredByTests) {
       const mutantRunOptions = this.createMutantRunOptions(matchedMutant);
       const result = await testRunner.mutantRun(mutantRunOptions);
-      const { testFilter } = mutantRunOptions;
-      mutantResult.testsRan = testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : allTestNames;
-      mutantResult.status = this.toResultStatus(result.status);
+      mutantResult = this.mutationTestReportCalculator.reportOne(matchedMutant, this.toResultStatus(result.status));
+    } else {
+      mutantResult = this.mutationTestReportCalculator.reportOne(matchedMutant, MutantStatus.NoCoverage);
     }
     this.testRunnerPool.recycle(testRunner);
     return mutantResult;
@@ -114,14 +93,6 @@ export class MutationTestExecutor {
         return MutantStatus.TimedOut;
     }
   }
-
-  private readonly reportResult = (mutantResult: MutantResult): void => {
-    this.reporter.onMutantTested(mutantResult);
-  };
-
-  private readonly reportAll = (mutantResults: MutantResult[]): void => {
-    this.reporter.onAllMutantsTested(mutantResults);
-  };
 
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());

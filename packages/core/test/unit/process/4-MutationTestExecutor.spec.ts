@@ -1,94 +1,178 @@
-import { File } from '@stryker-mutator/api/core';
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { of } from 'rxjs';
-import { from, Observable } from 'rxjs';
-import * as sinon from 'sinon';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { Reporter, MutantStatus } from '@stryker-mutator/api/report';
+import { TestRunner2, MutantRunStatus, MutantRunOptions } from '@stryker-mutator/api/test_runner2';
 
+import sinon = require('sinon');
+
+import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
-import InputFileCollection from '../../../src/input/InputFileCollection';
-import { MutationTestExecutor } from '../../../src/process/MutationTestExecutor';
-import BroadcastReporter from '../../../src/reporters/BroadcastReporter';
-import { SandboxPool } from '../../../src/SandboxPool';
-import TestableMutant from '../../../src/TestableMutant';
-import TranspiledMutant from '../../../src/TranspiledMutant';
-import { MutantTranspileScheduler } from '../../../src/transpiler/MutantTranspileScheduler';
-import { Mock, mock, testableMutant, transpiledMutant } from '../../helpers/producers';
+import { createTestRunnerPoolMock, createMutantTestCoverage, TestRunnerPoolMock } from '../../helpers/producers';
+import { MutantTestCoverage } from '../../../src/mutants/MutantTestMatcher2';
+import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
+import Timer from '../../../src/utils/Timer';
 
 describe(MutationTestExecutor.name, () => {
-  let sandboxPoolMock: Mock<SandboxPool>;
-  let mutantTranspileSchedulerMock: Mock<MutantTranspileScheduler>;
-  let transpiledMutants: Observable<TranspiledMutant>;
-  let inputFiles: InputFileCollection;
-  let reporter: Mock<BroadcastReporter>;
+  let reporterMock: Required<Reporter>;
+  let testRunnerPoolMock: TestRunnerPoolMock;
   let sut: MutationTestExecutor;
-  let mutants: TestableMutant[];
-  let mutantResults: MutantResult[];
+  let mutants: MutantTestCoverage[];
+  let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportCalculator>;
+  let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
 
   beforeEach(() => {
-    sandboxPoolMock = mock(SandboxPool);
-    mutantTranspileSchedulerMock = mock(MutantTranspileScheduler);
-    mutantTranspileSchedulerMock.scheduleNext = sinon.stub();
-    sandboxPoolMock.dispose.resolves();
-    reporter = mock(BroadcastReporter);
-    inputFiles = new InputFileCollection([new File('input.ts', '')], []);
-    mutants = [testableMutant()];
-    transpiledMutants = of(transpiledMutant('foo.js'), transpiledMutant('bar.js'));
-    mutantResults = [factory.mutantResult({ status: MutantStatus.RuntimeError }), factory.mutantResult({ status: MutantStatus.Survived })];
-    mutantTranspileSchedulerMock.scheduleTranspileMutants.returns(transpiledMutants);
-    sandboxPoolMock.runMutants.returns(from(mutantResults));
-    sut = createSut();
+    reporterMock = factory.reporter();
+    mutationTestReportCalculatorMock = sinon.createStubInstance(MutationTestReportCalculator);
+    timerMock = sinon.createStubInstance(Timer);
+    testRunner1 = factory.testRunner();
+    testRunner2 = factory.testRunner();
+    testRunnerPoolMock = createTestRunnerPoolMock();
+
+    mutants = [];
+    sut = testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
+      .provideValue(coreTokens.timeOverheadMS, 42)
+      .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
+      .provideValue(coreTokens.mutationTestReportCalculator, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.timer, timerMock)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
+      .injectClass(MutationTestExecutor);
   });
 
-  function createSut(): MutationTestExecutor {
-    return testInjector.injector
-      .provideValue(coreTokens.sandboxPool, (sandboxPoolMock as unknown) as SandboxPool)
-      .provideValue(coreTokens.mutantTranspileScheduler, (mutantTranspileSchedulerMock as unknown) as MutantTranspileScheduler)
-      .provideValue(coreTokens.inputFiles, inputFiles)
-      .provideValue(coreTokens.reporter, reporter)
-      .injectClass(MutationTestExecutor);
-  }
+  it('should run the mutants in the test runners from the test runner pool', async () => {
+    // Arrange
+    testRunnerPoolMock.testRunner$.next(testRunner1);
+    testRunnerPoolMock.testRunner$.next(testRunner2);
+    const mutant1 = factory.mutant({ id: 1 });
+    const mutant2 = factory.mutant({ id: 2 });
+    mutants.push(createMutantTestCoverage({ mutant: mutant1 }));
+    mutants.push(createMutantTestCoverage({ mutant: mutant2 }));
+    testRunner1.mutantRun.resolves(factory.survivedMutantRunResult());
+    testRunner2.mutantRun.resolves(factory.survivedMutantRunResult());
 
-  describe('run', () => {
-    it('should have ran the mutants in the sandbox pool', async () => {
-      await sut.run(mutants);
-      expect(mutantTranspileSchedulerMock.scheduleTranspileMutants).calledWith(mutants);
-      expect(sandboxPoolMock.runMutants).calledWith(transpiledMutants);
-    });
+    // Act
+    await sut.execute();
 
-    it('should schedule next mutants to be transpiled', async () => {
-      await sut.run(mutants);
-      expect(mutantTranspileSchedulerMock.scheduleNext).callCount(2);
-    });
+    // Assert
+    expect(testRunner1.mutantRun).calledOnce;
+    expect(testRunner1.mutantRun).calledWithMatch({ activeMutant: mutant1 });
+    expect(testRunner2.mutantRun).calledOnce;
+    expect(testRunner2.mutantRun).calledWithMatch({ activeMutant: mutant2 });
+  });
 
-    it('should have reported `onMutantTested` on all mutants', async () => {
-      await sut.run(mutants);
-      expect(reporter.onMutantTested).to.have.callCount(2);
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[0]);
-      expect(reporter.onMutantTested).to.have.been.calledWith(mutantResults[1]);
-    });
+  it('should calculate timeout correctly', async () => {
+    // Arrange
+    testRunnerPoolMock.testRunner$.next(testRunner1);
+    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), estimatedNetTime: 10 }));
+    testInjector.options.timeoutFactor = 1.5;
+    testInjector.options.timeoutMS = 27;
+    testRunner1.mutantRun.resolves(factory.survivedMutantRunResult());
 
-    it('should have reported `onAllMutantsTested`', async () => {
-      const actualResults = await sut.run(mutants);
-      expect(reporter.onAllMutantsTested).to.have.been.calledWith(actualResults);
-    });
+    // Act
+    await sut.execute();
 
-    it('should eventually resolve the correct mutant results', async () => {
-      const actualResults = await sut.run(mutants);
-      expect(actualResults).deep.eq(mutantResults);
+    // Assert
+    const expected: Partial<MutantRunOptions> = { timeout: 84 }; // 42 (overhead) + 10*1.5 + 27
+    expect(testRunner1.mutantRun).calledWithMatch(expected);
+  });
+
+  it('should passthrough the test filter', async () => {
+    // Arrange
+    const expectedTestFilter = ['spec1', 'foo', 'bar'];
+    testRunnerPoolMock.testRunner$.next(testRunner1);
+    mutants.push(createMutantTestCoverage({ testFilter: expectedTestFilter }));
+    testInjector.options.timeoutFactor = 1.5;
+    testInjector.options.timeoutMS = 27;
+    testRunner1.mutantRun.resolves(factory.survivedMutantRunResult());
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    const expected: Partial<MutantRunOptions> = { testFilter: expectedTestFilter };
+    expect(testRunner1.mutantRun).calledWithMatch(expected);
+  });
+
+  it('should recycle a test runner after it is done with it', async () => {
+    // Arrange
+    testRunnerPoolMock.testRunner$.next(testRunner1); // schedule only one test runner
+    testRunnerPoolMock.recycle.callsFake((testRunner) => testRunnerPoolMock.testRunner$.next(testRunner));
+    const mutant1 = factory.mutant({ id: 1 });
+    const mutant2 = factory.mutant({ id: 2 });
+    mutants.push(createMutantTestCoverage({ mutant: mutant1 }));
+    mutants.push(createMutantTestCoverage({ mutant: mutant2 }));
+    testRunner1.mutantRun.resolves(factory.survivedMutantRunResult());
+    testRunner2.mutantRun.resolves(factory.survivedMutantRunResult());
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(testRunner1.mutantRun).calledTwice;
+    expect(testRunner1.mutantRun).calledWithMatch({ activeMutant: mutant1 });
+    expect(testRunner1.mutantRun).calledWithMatch({ activeMutant: mutant2 });
+    expect(testRunner2.mutantRun).not.called;
+  });
+
+  it('should not run mutants that are uncovered by tests', async () => {
+    // Arrange
+    testRunnerPoolMock.testRunner$.next(testRunner1);
+    const mutant1 = factory.mutant({ id: 1 });
+    mutants.push(createMutantTestCoverage({ mutant: mutant1, coveredByTests: false }));
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(testRunner1.mutantRun).not.called;
+    expect(testRunnerPoolMock.recycle).calledWith(testRunner1);
+  });
+
+  it('should report an uncovered mutant with `NoCoverage`', async () => {
+    // Arrange
+    testRunnerPoolMock.testRunner$.next(testRunner1);
+    const mutant = createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), coveredByTests: false });
+    mutants.push(mutant);
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(mutationTestReportCalculatorMock.reportOne).calledWithExactly(mutant, MutantStatus.NoCoverage);
+  });
+
+  [
+    [MutantStatus.Killed, MutantRunStatus.Killed] as const,
+    [MutantStatus.RuntimeError, MutantRunStatus.Error] as const,
+    [MutantStatus.Survived, MutantRunStatus.Survived] as const,
+    [MutantStatus.TimedOut, MutantRunStatus.Timeout] as const,
+  ].forEach(([expected, actual]) => {
+    it(`should report ${actual} as ${MutantStatus[expected]}`, async () => {
+      // Arrange
+      testRunnerPoolMock.testRunner$.next(testRunner1);
+      const mutant = createMutantTestCoverage();
+      mutants.push(mutant);
+      testRunner1.mutantRun.resolves({ status: actual });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(mutationTestReportCalculatorMock.reportOne).calledWithExactly(mutant, expected);
     });
+  });
+
+  it('should log a done message when it is done', async () => {
+    // Arrange
+    timerMock.humanReadableElapsed.returns('2 seconds, tops!');
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(testInjector.logger.info).calledWithExactly('Done in %s.', '2 seconds, tops!');
   });
 });
-
-// it('should report mutation test report ready', async () => {
-//   sut = new Stryker({});
-//   await sut.runMutationTest();
-//   expect(mutationTestReportCalculatorMock.report).called;
-// });
-
-// it('should let the reporters wrapUp any async tasks', async () => {
-//   sut = new Stryker({});
-//   await sut.runMutationTest();
-//   expect(reporterMock.wrapUp).to.have.been.called;
-// });

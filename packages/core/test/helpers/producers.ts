@@ -4,7 +4,7 @@ import { FileCoverageData } from 'istanbul-lib-coverage';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 
-import { of } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
 
@@ -15,6 +15,7 @@ import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspile
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
 import { TestRunnerPool } from '../../src/test-runner-2';
+import { MutantTestCoverage } from '../../src/mutants/MutantTestMatcher2';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -40,13 +41,24 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   maxTestsToLog: 3,
 }));
 
-export function createTestRunnerPoolMock(
-  ...testRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner2>>>
-): sinon.SinonStubbedInstance<TestRunnerPool> {
+export type TestRunnerPoolMock = sinon.SinonStubbedInstance<TestRunnerPool> & {
+  testRunner$: ReplaySubject<sinon.SinonStubbedInstance<Required<TestRunner2>>>;
+};
+
+export function createTestRunnerPoolMock(): TestRunnerPoolMock {
   return {
     dispose: sinon.stub(),
     recycle: sinon.stub(),
-    testRunner$: of(...testRunners),
+    testRunner$: new ReplaySubject<sinon.SinonStubbedInstance<Required<TestRunner2>>>(),
+  };
+}
+
+export function createMutantTestCoverage(overrides?: Partial<MutantTestCoverage>): MutantTestCoverage {
+  return {
+    coveredByTests: true,
+    mutant: factory.mutant(),
+    estimatedNetTime: 10,
+    ...overrides,
   };
 }
 

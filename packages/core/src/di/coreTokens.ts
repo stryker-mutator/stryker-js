@@ -7,6 +7,7 @@ export const dryRunResult = 'dryRunResult';
 export const transpiledFiles = 'transpiledFiles'; // TODO: Remove if unused post mutation switching
 export const files = 'files';
 export const mutants = 'mutants';
+export const mutantsWithTestCoverage = 'mutantsWithTestCoverage';
 export const mutantTranspileScheduler = 'mutantTranspileScheduler'; // TODO: Remove if unused post mutation switching
 export const sandboxPool = 'sandboxPool'; // TODO: Remove if unused post mutation switching
 export const temporaryDirectory = 'temporaryDirectory';

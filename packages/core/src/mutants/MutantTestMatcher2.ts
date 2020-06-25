@@ -1,14 +1,18 @@
 import { CompleteDryRunResult, TestResult, CoveragePerTestId } from '@stryker-mutator/api/test_runner2';
 import { Mutant } from '@stryker-mutator/api/core';
+import { tokens } from '@stryker-mutator/api/plugin';
 
-export interface MatchedMutant {
+import { coreTokens } from '../di';
+
+export interface MutantTestCoverage {
   estimatedNetTime: number;
   coveredByTests: boolean;
   testFilter?: string[];
   mutant: Mutant;
 }
 
-export function matchMutantsWithTests(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[]): MatchedMutant[] {
+findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants);
+export function findMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[]): MutantTestCoverage[] {
   const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
@@ -26,7 +30,7 @@ export function matchMutantsWithTests(dryRunResult: CompleteDryRunResult, mutant
         return {
           mutant,
           estimatedNetTime: calculateTotalTime(tests),
-          testFilter: undefined,
+          testFilter: toTestIds(tests),
           coveredByTests: true,
         };
       } else {
@@ -72,4 +76,12 @@ function calculateTotalTime(testResults: Iterable<TestResult>): number {
     total += test.timeSpentMs;
   }
   return total;
+}
+
+function toTestIds(testResults: Iterable<TestResult>): string[] {
+  const result = [];
+  for (const test of testResults) {
+    result.push(test.id);
+  }
+  return result;
 }

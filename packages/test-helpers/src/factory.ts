@@ -31,6 +31,11 @@ import {
   CompleteDryRunResult,
   ErrorDryRunResult,
   TimeoutDryRunResult,
+  KilledMutantRunResult,
+  SurvivedMutantRunResult,
+  MutantRunStatus,
+  TimeoutMutantRunResult,
+  ErrorMutantRunResult,
 } from '@stryker-mutator/api/test_runner2';
 
 const ajv = new Ajv({ useDefaults: true });
@@ -241,6 +246,25 @@ export const errorDryRunResult = factoryMethod<ErrorDryRunResult>(() => ({
 
 export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
   status: DryRunStatus.Timeout,
+}));
+
+export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => ({
+  status: MutantRunStatus.Killed,
+  killedBy: 'spec1',
+  failureMessage: 'foo should be bar',
+}));
+
+export const survivedMutantRunResult = factoryMethod<SurvivedMutantRunResult>(() => ({
+  status: MutantRunStatus.Survived,
+}));
+
+export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(() => ({
+  status: MutantRunStatus.Timeout,
+}));
+
+export const errorMutantRunResult = factoryMethod<ErrorMutantRunResult>(() => ({
+  status: MutantRunStatus.Error,
+  errorMessage: 'Cannot find foo of undefined',
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({

@@ -26,6 +26,8 @@ import { MutationTestReportCalculator } from '../reporters/MutationTestReportCal
 
 import { ConfigError } from '../errors';
 
+import { findMutantTestCoverage } from '../mutants/MutantTestMatcher2';
+
 import { MutationTestContext } from './4-MutationTestExecutor';
 import { MutantInstrumenterContext } from './2-MutantInstrumenterExecutor';
 
@@ -86,7 +88,8 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
-      .provideClass(coreTokens.mutationTestReportCalculator, MutationTestReportCalculator);
+      .provideClass(coreTokens.mutationTestReportCalculator, MutationTestReportCalculator)
+      .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
   }
 
   private logTraceLogLevelHint() {

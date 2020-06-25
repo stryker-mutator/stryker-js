@@ -13,14 +13,13 @@ import { expect } from 'chai';
 
 import Timer from '../../../src/utils/Timer';
 import { DryRunExecutor } from '../../../src/process';
-import { TestRunnerPool } from '../../../src/test-runner-2';
 import { coreTokens } from '../../../src/di';
-import { createTestRunnerPoolMock } from '../../helpers/producers';
+import { createTestRunnerPoolMock, TestRunnerPoolMock } from '../../helpers/producers';
 import { ConfigError } from '../../../src/errors';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
-  let testRunnerPoolMock: sinon.SinonStubbedInstance<TestRunnerPool>;
+  let testRunnerPoolMock: TestRunnerPoolMock;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let mutants: Mutant[];
@@ -29,7 +28,8 @@ describe(DryRunExecutor.name, () => {
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
     testRunnerMock = factory.testRunner();
-    testRunnerPoolMock = createTestRunnerPoolMock(testRunnerMock);
+    testRunnerPoolMock = createTestRunnerPoolMock();
+    testRunnerPoolMock.testRunner$.next(testRunnerMock);
     mutants = [];
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock);
