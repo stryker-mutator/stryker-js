@@ -16,7 +16,7 @@ import { coreTokens } from '../../../src/di';
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 import * as fileUtils from '../../../src/utils/fileUtils';
 
-describe.only(Sandbox.name, () => {
+describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let files: File[];
   let mkdirpSyncStub: sinon.SinonStub;

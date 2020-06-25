@@ -72,6 +72,7 @@ export class TestRunnerPool implements Disposable {
   private isDisposed = false;
   public async dispose(): Promise<void> {
     this.isDisposed = true;
+    this.testRunnerRecycleBin.complete();
     await Promise.all(this.allCreatedTestRunners.map((testRunner) => testRunner.dispose()));
   }
 }
