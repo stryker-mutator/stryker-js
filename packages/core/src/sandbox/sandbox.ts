@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import * as mkdirp from 'mkdirp';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
@@ -12,7 +12,7 @@ import { findNodeModules, symlinkJunction, writeFile } from '../utils/fileUtils'
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
-  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: TemporaryDirectory): Promise<Sandbox>;
+  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>): Promise<Sandbox>;
   inject: [typeof commonTokens.options, typeof commonTokens.getLogger, typeof coreTokens.files, typeof coreTokens.temporaryDirectory];
 }
 
@@ -23,7 +23,7 @@ export class Sandbox {
   private constructor(
     private readonly options: StrykerOptions,
     private readonly log: Logger,
-    temporaryDirectory: TemporaryDirectory,
+    temporaryDirectory: I<TemporaryDirectory>,
     private readonly files: File[]
   ) {
     this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
@@ -36,7 +36,7 @@ export class Sandbox {
   }
 
   public static create: SandboxFactory = Object.assign(
-    async (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: TemporaryDirectory): Promise<Sandbox> => {
+    async (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>): Promise<Sandbox> => {
       const sandbox = new Sandbox(options, getLogger(Sandbox.name), tempDir, files);
       await sandbox.initialize();
       return sandbox;
