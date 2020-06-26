@@ -14,7 +14,7 @@ interface MatchedMutant {
   /**
    * If not all tests will run for this mutant, this array will contain the ids of the tests that will run.
    */
-  readonly scopedTestIds: number[];
+  readonly testFilter: string[] | undefined;
   /**
    * The time spent on the tests that will run in initial test run
    */

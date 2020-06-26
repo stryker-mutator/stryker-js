@@ -333,21 +333,15 @@ export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
   };
 }
 
-export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString(), runAllTests = false): MatchedMutant {
-  const scopedTestIds: number[] = [];
-  for (let i = 0; i < numberOfTests; i++) {
-    scopedTestIds.push(1);
-  }
-  return {
-    fileName: '',
-    id: mutantId,
-    mutatorName: '',
-    runAllTests,
-    replacement: '',
-    scopedTestIds,
-    timeSpentScopedTests: 0,
-  };
-}
+export const matchedMutant = factoryMethod<MatchedMutant>(() => ({
+  testFilter: undefined,
+  fileName: '',
+  id: '1',
+  mutatorName: '',
+  runAllTests: false,
+  replacement: '',
+  timeSpentScopedTests: 0,
+}));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {
   const injectorMock: sinon.SinonStubbedInstance<Injector> = {

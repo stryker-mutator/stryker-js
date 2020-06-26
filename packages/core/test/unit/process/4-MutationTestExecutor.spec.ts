@@ -9,7 +9,7 @@ import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { createTestRunnerPoolMock, createMutantTestCoverage, TestRunnerPoolMock } from '../../helpers/producers';
 import { MutantTestCoverage } from '../../../src/mutants/MutantTestMatcher2';
-import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
+import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import Timer from '../../../src/utils/Timer';
 
 describe(MutationTestExecutor.name, () => {
@@ -17,14 +17,14 @@ describe(MutationTestExecutor.name, () => {
   let testRunnerPoolMock: TestRunnerPoolMock;
   let sut: MutationTestExecutor;
   let mutants: MutantTestCoverage[];
-  let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportCalculator>;
+  let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
   let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
-    mutationTestReportCalculatorMock = sinon.createStubInstance(MutationTestReportCalculator);
+    mutationTestReportCalculatorMock = sinon.createStubInstance(MutationTestReportHelper);
     timerMock = sinon.createStubInstance(Timer);
     testRunner1 = factory.testRunner();
     testRunner2 = factory.testRunner();

@@ -2,7 +2,10 @@ import { CompleteDryRunResult, TestResult, CoveragePerTestId } from '@stryker-mu
 import { Mutant } from '@stryker-mutator/api/core';
 import { tokens } from '@stryker-mutator/api/plugin';
 
+import { MatchedMutant } from '@stryker-mutator/api/report';
+
 import { coreTokens } from '../di';
+import StrictReporter from '../reporters/StrictReporter';
 
 export interface MutantTestCoverage {
   estimatedNetTime: number;
@@ -11,12 +14,34 @@ export interface MutantTestCoverage {
   mutant: Mutant;
 }
 
-findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants);
-export function findMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[]): MutantTestCoverage[] {
+findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants, coreTokens.reporter);
+export function findMutantTestCoverage(
+  dryRunResult: CompleteDryRunResult,
+  mutants: readonly Mutant[],
+  reporter: StrictReporter
+): MutantTestCoverage[] {
+  const mutantTestCoverage = mapToMutantTestCoverage(dryRunResult, mutants);
+  reporter.onAllMutantsMatchedWithTests(mutantTestCoverage.map(toMatchedMutant));
+  return mutantTestCoverage;
+}
+
+function toMatchedMutant({ mutant, testFilter, coveredByTests, estimatedNetTime }: MutantTestCoverage): MatchedMutant {
+  return {
+    fileName: mutant.fileName,
+    id: mutant.id.toString(),
+    mutatorName: mutant.mutatorName,
+    replacement: mutant.replacement,
+    runAllTests: !testFilter && coveredByTests,
+    testFilter: testFilter,
+    timeSpentScopedTests: estimatedNetTime,
+  };
+}
+
+function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[]) {
   const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
-  return mutants.map((mutant) => {
+  const mutantCoverage = mutants.map((mutant) => {
     if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
       return {
         mutant,
@@ -43,6 +68,7 @@ export function findMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutan
       }
     }
   });
+  return mutantCoverage;
 }
 
 function findTestsByMutant(coverageData: CoveragePerTestId | undefined, allTests: TestResult[]) {

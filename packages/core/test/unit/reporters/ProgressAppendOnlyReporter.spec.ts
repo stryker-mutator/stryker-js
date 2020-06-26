@@ -13,7 +13,7 @@ const HUNDRED_SECONDS = SECOND * 100;
 const THOUSAND_SECONDS = SECOND * 1000;
 const TEN_THOUSAND_SECONDS = SECOND * 10000;
 
-describe('ProgressAppendOnlyReporter', () => {
+describe(ProgressAppendOnlyReporter.name, () => {
   let sut: ProgressAppendOnlyReporter;
 
   beforeEach(() => {
@@ -24,7 +24,11 @@ describe('ProgressAppendOnlyReporter', () => {
 
   describe('onAllMutantsMatchedWithTests() with 3 mutants to test', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1), matchedMutant(1)]);
+      sut.onAllMutantsMatchedWithTests([
+        matchedMutant({ runAllTests: true }),
+        matchedMutant({ runAllTests: true }),
+        matchedMutant({ runAllTests: true }),
+      ]);
     });
 
     it('should not show show progress directly', () => {

@@ -15,7 +15,10 @@ import { setExitCode } from '../utils/objectUtils';
 import { MutantTestCoverage } from '../mutants/MutantTestMatcher2';
 import { mutatedLines, originalLines } from '../utils/mutantUtils';
 
-export class MutationTestReportCalculator {
+/**
+ * A helper class to convert and report mutants that survived or get killed
+ */
+export class MutationTestReportHelper {
   public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
   private readonly allTestNames: string[];
 

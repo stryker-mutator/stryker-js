@@ -11,7 +11,7 @@ import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
 import { TestRunnerPool } from '../test-runner-2';
 import { MutantTestCoverage } from '../mutants/MutantTestMatcher2';
-import { MutationTestReportCalculator } from '../reporters/MutationTestReportCalculator';
+import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
 import Timer from '../utils/Timer';
 
 import { DryRunContext } from './3-DryRunExecutor';
@@ -20,7 +20,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: TestRunnerPool;
   [coreTokens.dryRunResult]: CompleteDryRunResult;
   [coreTokens.timeOverheadMS]: number;
-  [coreTokens.mutationTestReportCalculator]: MutationTestReportCalculator;
+  [coreTokens.mutationTestReportCalculator]: MutationTestReportHelper;
   [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
 }
 
@@ -42,7 +42,7 @@ export class MutationTestExecutor {
     private readonly testRunnerPool: I<TestRunnerPool>,
     private readonly timeOverheadMS: number,
     private readonly matchedMutants: readonly MutantTestCoverage[],
-    private readonly mutationTestReportCalculator: I<MutationTestReportCalculator>,
+    private readonly mutationTestReportCalculator: I<MutationTestReportHelper>,
     private readonly log: Logger,
     private readonly timer: I<Timer>
   ) {}

@@ -1,10 +1,28 @@
-import { factory } from '@stryker-mutator/test-helpers';
-
+import sinon = require('sinon');
 import { expect } from 'chai';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { Mutant } from '@stryker-mutator/api/core';
+import { Reporter, MatchedMutant } from '@stryker-mutator/api/report';
 
 import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/MutantTestMatcher2';
+import { coreTokens } from '../../../src/di';
 
 describe(sut.name, () => {
+  let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
+
+  beforeEach(() => {
+    reporterMock = factory.reporter();
+  });
+
+  function act(dryRunResult: CompleteDryRunResult, mutants: Mutant[]) {
+    return testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.mutants, mutants)
+      .injectFunction(sut);
+  }
+
   describe('without mutant coverage data', () => {
     it('should disable test filtering', () => {
       // Arrange
@@ -14,7 +32,7 @@ describe(sut.name, () => {
       const dryRunResult = factory.completeDryRunResult({ mutantCoverage: undefined });
 
       // Act
-      const result = sut(dryRunResult, mutants);
+      const result = act(dryRunResult, mutants);
 
       // Assert
       const expected: MutantTestCoverage[] = [
@@ -34,10 +52,47 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = sut(dryRunResult, mutants);
+      const result = act(dryRunResult, mutants);
 
       // Assert
       expect(result[0].estimatedNetTime).eq(42);
+    });
+
+    it('should report onAllMutantsMatchedWithTests', () => {
+      // Arrange
+      const mutants = [
+        factory.mutant({ id: 1, fileName: 'foo.js', mutatorName: 'fooMutator', replacement: '<=' }),
+        factory.mutant({ id: 2, fileName: 'bar.js', mutatorName: 'barMutator', replacement: '{}' }),
+      ];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
+        mutantCoverage: undefined,
+      });
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithExactly([
+        factory.matchedMutant({
+          id: '1',
+          fileName: 'foo.js',
+          mutatorName: 'fooMutator',
+          replacement: '<=',
+          runAllTests: true,
+          testFilter: undefined,
+          timeSpentScopedTests: 42,
+        }),
+        factory.matchedMutant({
+          id: '2',
+          fileName: 'bar.js',
+          mutatorName: 'barMutator',
+          replacement: '{}',
+          runAllTests: true,
+          testFilter: undefined,
+          timeSpentScopedTests: 42,
+        }),
+      ]);
     });
   });
 
@@ -52,7 +107,7 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = sut(dryRunResult, mutants);
+      const result = act(dryRunResult, mutants);
 
       // Assert
       const expected: MutantTestCoverage[] = [{ mutant, estimatedNetTime: 0, testFilter: undefined, coveredByTests: true }];
@@ -69,10 +124,35 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = sut(dryRunResult, mutants);
+      const result = act(dryRunResult, mutants);
 
       // Assert
       expect(result[0].estimatedNetTime).eq(42);
+    });
+
+    it('should report onAllMutantsMatchedWithTests with correct `runAllTests` value', () => {
+      // Arrange
+      const mutants = [factory.mutant({ id: 1 }), factory.mutant({ id: 2 })];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [factory.successTestResult()],
+        mutantCoverage: { static: { 1: 1 }, perTest: {} },
+      });
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      const expectedFirstMatch: Partial<MatchedMutant> = {
+        id: '1',
+        runAllTests: true,
+        testFilter: undefined,
+      };
+      const expectedSecondMatch: Partial<MatchedMutant> = {
+        id: '2',
+        runAllTests: false,
+        testFilter: undefined,
+      };
+      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
   });
 
@@ -88,7 +168,7 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = sut(dryRunResult, mutants);
+      const result = act(dryRunResult, mutants);
 
       // Assert
       const expected: MutantTestCoverage[] = [
@@ -113,11 +193,36 @@ describe(sut.name, () => {
       });
 
       // Act
-      const actualMatches = sut(dryRunResult, mutants);
+      const actualMatches = act(dryRunResult, mutants);
 
       // Assert
       expect(actualMatches.find((mutant) => mutant.mutant.id === 1)?.estimatedNetTime).eq(42); // spec1 + spec3
       expect(actualMatches.find((mutant) => mutant.mutant.id === 2)?.estimatedNetTime).eq(10); // spec2
+    });
+
+    it('should report onAllMutantsMatchedWithTests with correct `testFilter` value', () => {
+      // Arrange
+      const mutants = [factory.mutant({ id: 1 }), factory.mutant({ id: 2 })];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 })],
+        mutantCoverage: { static: { 1: 0 }, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
+      });
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      const expectedFirstMatch: Partial<MatchedMutant> = {
+        id: '1',
+        runAllTests: false,
+        testFilter: ['spec1'],
+      };
+      const expectedSecondMatch: Partial<MatchedMutant> = {
+        id: '2',
+        runAllTests: false,
+        testFilter: ['spec2'],
+      };
+      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
   });
 });

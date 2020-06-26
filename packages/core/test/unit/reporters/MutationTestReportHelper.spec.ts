@@ -8,11 +8,11 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
-import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
+import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import { createMutantTestCoverage } from '../../helpers/producers';
 
-describe(MutationTestReportCalculator.name, () => {
+describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let inputFiles: InputFileCollection;
   let files: File[];
@@ -36,11 +36,11 @@ describe(MutationTestReportCalculator.name, () => {
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.inputFiles, inputFiles)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
-      .injectClass(MutationTestReportCalculator);
+      .injectClass(MutationTestReportHelper);
   }
 
-  describe(MutationTestReportCalculator.prototype.reportAll.name, () => {
-    let sut: MutationTestReportCalculator;
+  describe(MutationTestReportHelper.prototype.reportAll.name, () => {
+    let sut: MutationTestReportHelper;
 
     beforeEach(() => {
       sut = createSut();
@@ -204,7 +204,7 @@ describe(MutationTestReportCalculator.name, () => {
     }
   });
 
-  describe(MutationTestReportCalculator.prototype.reportOne.name, () => {
+  describe(MutationTestReportHelper.prototype.reportOne.name, () => {
     beforeEach(() => {
       inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js']);
     });
