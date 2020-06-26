@@ -5,7 +5,7 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Reporter, MatchedMutant } from '@stryker-mutator/api/report';
 
-import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/MutantTestMatcher2';
+import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage';
 import { coreTokens } from '../../../src/di';
 
 describe(sut.name, () => {

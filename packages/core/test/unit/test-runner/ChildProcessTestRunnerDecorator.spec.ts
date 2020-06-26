@@ -11,8 +11,8 @@ import { factory } from '@stryker-mutator/test-helpers';
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { LoggingClientContext } from '../../../src/logging';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner-2/ChildProcessTestRunnerDecorator';
-import { ChildProcessTestRunnerWorker } from '../../../src/test-runner-2/ChildProcessTestRunnerWorker';
+import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
@@ -42,7 +42,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
 
   it('should create the child process proxy', () => {
     expect(childProcessProxyCreateStub).calledWith(
-      require.resolve('../../../src/test-runner-2/ChildProcessTestRunnerWorker.js'),
+      require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
       loggingContext,
       options,
       { sandboxFileNames: [] },

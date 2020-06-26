@@ -1,7 +1,6 @@
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { getLogger } from 'log4js';
 
 import {
@@ -17,13 +16,12 @@ import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
 
-import { loggerFactory, mutatorDescriptorFactory, applyOptionsEditors, pluginResolverFactory, testFrameworkFactory } from './factoryMethods';
+import { loggerFactory, mutatorDescriptorFactory, applyOptionsEditors, pluginResolverFactory } from './factoryMethods';
 
 import { coreTokens, PluginCreator } from '.';
 
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;
-  [coreTokens.testFramework]: TestFramework | null;
   [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
   [coreTokens.pluginCreatorConfigEditor]: PluginCreator<PluginKind.ConfigEditor>;
   [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
@@ -47,7 +45,6 @@ export function buildMainInjector(injector: CliOptionsProvider): Injector<MainCo
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)
-    .provideFactory(coreTokens.testFramework, testFrameworkFactory)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
     .provideClass(coreTokens.timer, Timer);
 }

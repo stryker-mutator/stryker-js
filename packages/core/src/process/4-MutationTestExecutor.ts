@@ -9,8 +9,8 @@ import { I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
-import { TestRunnerPool } from '../test-runner-2';
-import { MutantTestCoverage } from '../mutants/MutantTestMatcher2';
+import { TestRunnerPool } from '../test-runner';
+import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
 import Timer from '../utils/Timer';
 
@@ -20,7 +20,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: TestRunnerPool;
   [coreTokens.dryRunResult]: CompleteDryRunResult;
   [coreTokens.timeOverheadMS]: number;
-  [coreTokens.mutationTestReportCalculator]: MutationTestReportHelper;
+  [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
 }
 
@@ -31,7 +31,7 @@ export class MutationTestExecutor {
     coreTokens.testRunnerPool,
     coreTokens.timeOverheadMS,
     coreTokens.mutantsWithTestCoverage,
-    coreTokens.mutationTestReportCalculator,
+    coreTokens.mutationTestReportHelper,
     commonTokens.logger,
     coreTokens.timer
   );

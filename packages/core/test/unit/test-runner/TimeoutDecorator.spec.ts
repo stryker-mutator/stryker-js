@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import TimeoutDecorator from '../../../src/test-runner-2/TimeoutDecorator';
+import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
 
 describe('TimeoutDecorator', () => {
   let sut: TimeoutDecorator;

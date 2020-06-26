@@ -8,7 +8,7 @@ import sinon = require('sinon');
 import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { createTestRunnerPoolMock, createMutantTestCoverage, TestRunnerPoolMock } from '../../helpers/producers';
-import { MutantTestCoverage } from '../../../src/mutants/MutantTestMatcher2';
+import { MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage';
 import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import Timer from '../../../src/utils/Timer';
 
@@ -36,7 +36,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
-      .provideValue(coreTokens.mutationTestReportCalculator, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .injectClass(MutationTestExecutor);

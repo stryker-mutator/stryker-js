@@ -12,7 +12,7 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 import { setExitCode } from '../utils/objectUtils';
-import { MutantTestCoverage } from '../mutants/MutantTestMatcher2';
+import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
 import { mutatedLines, originalLines } from '../utils/mutantUtils';
 
 /**

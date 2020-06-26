@@ -9,7 +9,7 @@ import { TestRunner2, DryRunStatus } from '@stryker-mutator/api/test_runner2';
 import { expectCompleted, expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
 import { LoggingClientContext } from '../../../src/logging';
-import { createTestRunnerFactory } from '../../../src/test-runner-2';
+import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/testUtils';
 import { coreTokens } from '../../../src/di';
 

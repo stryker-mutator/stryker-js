@@ -1,6 +1,5 @@
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -14,13 +13,10 @@ import ConfigReader, * as configReaderModule from '../../../src/config/ConfigRea
 import { PluginCreator, PluginLoader, coreTokens } from '../../../src/di';
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
-import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
-  let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
-  let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<optionsEditorApplierModule.OptionsEditorApplier>;
@@ -36,9 +32,6 @@ describe(buildMainInjector.name, () => {
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     optionsEditorApplierMock = sinon.createStubInstance(optionsEditorApplierModule.OptionsEditorApplier);
-    testFrameworkMock = factory.testFramework();
-    testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
-    testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     optionsValidatorStub = sinon.createStubInstance(optionsValidatorModule.OptionsValidator);
     validationSchemaContributions = [];
@@ -54,7 +47,6 @@ describe(buildMainInjector.name, () => {
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
-    stubInjectable(testFrameworkOrchestratorModule, 'default').returns(testFrameworkOrchestratorMock);
   });
 
   function stubInjectable<T>(obj: T, method: keyof T) {
@@ -119,11 +111,6 @@ describe(buildMainInjector.name, () => {
     };
     const mutatorDescriptor = buildMainInjector(injector).resolve(commonTokens.mutatorDescriptor);
     expect(mutatorDescriptor).deep.eq(expected);
-  });
-
-  it('should be able to supply the test framework', () => {
-    const actualTestFramework = buildMainInjector(injector).resolve(coreTokens.testFramework);
-    expect(testFrameworkMock).eq(actualTestFramework);
   });
 
   it('should be able to supply the reporter', () => {

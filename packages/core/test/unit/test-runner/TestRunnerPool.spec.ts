@@ -10,7 +10,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { Task } from '@stryker-mutator/util';
 
-import { TestRunnerPool } from '../../../src/test-runner-2';
+import { TestRunnerPool } from '../../../src/test-runner';
 import { coreTokens } from '../../../src/di';
 
 describe(TestRunnerPool.name, () => {

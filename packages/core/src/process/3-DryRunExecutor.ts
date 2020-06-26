@@ -1,6 +1,7 @@
 import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
+import { I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
@@ -16,17 +17,13 @@ import {
 } from '@stryker-mutator/api/test_runner2';
 import { first } from 'rxjs/operators';
 
-import { I } from '@stryker-mutator/util';
-
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
 import Timer from '../utils/Timer';
-import { TestRunnerPool, createTestRunnerFactory } from '../test-runner-2';
+import { TestRunnerPool, createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
-
 import { ConfigError } from '../errors';
-
-import { findMutantTestCoverage } from '../mutants/MutantTestMatcher2';
+import { findMutantTestCoverage } from '../mutants';
 
 import { MutationTestContext } from './4-MutationTestExecutor';
 import { MutantInstrumenterContext } from './2-MutantInstrumenterExecutor';
@@ -88,7 +85,7 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
-      .provideClass(coreTokens.mutationTestReportCalculator, MutationTestReportHelper)
+      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
       .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
   }
 

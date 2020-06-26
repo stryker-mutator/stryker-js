@@ -14,8 +14,8 @@ import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
-import { TestRunnerPool } from '../../src/test-runner-2';
-import { MutantTestCoverage } from '../../src/mutants/MutantTestMatcher2';
+import { TestRunnerPool } from '../../src/test-runner';
+import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
