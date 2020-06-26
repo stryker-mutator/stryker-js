@@ -120,7 +120,7 @@ describe(TestRunnerPool.name, () => {
 
     it('should share test runners across subscribers (for sharing between dry runner and mutation test runner)', async () => {
       // Arrange
-      testInjector.options.maxConcurrentTestRunners = 3;
+      testInjector.options.maxConcurrentTestRunners = 2;
       arrangeTestRunners();
       const sut = createSut();
 
@@ -129,8 +129,8 @@ describe(TestRunnerPool.name, () => {
       const secondResult = await actSubscribeAllTestRunners(sut);
 
       // Assert
-      expect(await firstResultPromise).lengthOf(3);
-      expect(secondResult).lengthOf(3);
+      expect(await firstResultPromise).lengthOf(2);
+      expect(secondResult).lengthOf(2);
     });
   });
 
