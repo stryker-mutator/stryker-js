@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 import generate from '@babel/generator';
-import { Mutant as ApiMutant } from '@stryker-mutator/api/core';
+import { Mutant as ApiMutant, Location, Position } from '@stryker-mutator/api/core';
 
 export interface NodeMutation {
   replacement: types.Node;
@@ -21,10 +21,24 @@ export class Mutant {
     return {
       fileName: this.fileName,
       id: this.id,
-      location: this.original.loc!,
+      location: toApiLocation(this.original.loc!),
       mutatorName: this.mutatorName,
       range: [this.original.start!, this.original.end!],
       replacement: this.replacementCode,
     };
   }
+}
+
+function toApiLocation(source: types.SourceLocation): Location {
+  return {
+    start: toPosition(source.start),
+    end: toPosition(source.end),
+  };
+}
+
+function toPosition(source: Position): Position {
+  return {
+    column: source.column,
+    line: source.line - 1, // Stryker works 0-based internally
+  };
 }

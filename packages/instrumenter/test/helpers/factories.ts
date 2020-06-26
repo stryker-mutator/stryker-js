@@ -55,5 +55,6 @@ export function createNamedNodeMutation(overrides?: Partial<NamedNodeMutation>):
     mutatorName: 'fooMutator',
     original: types.identifier('foo'),
     replacement: types.identifier('bar'),
+    ...overrides,
   };
 }
