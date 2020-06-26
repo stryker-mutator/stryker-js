@@ -22,6 +22,7 @@ export function expectCompleted(runResult: DryRunResult): asserts runResult is C
 
 export function expectErrored(runResult: MutantRunResult): asserts runResult is ErrorMutantRunResult;
 export function expectErrored(runResult: DryRunResult): asserts runResult is ErrorDryRunResult;
+export function expectErrored(runResult: DryRunResult | MutantRunResult): asserts runResult is ErrorDryRunResult | MutantRunResult;
 export function expectErrored(runResult: DryRunResult | MutantRunResult): void {
   assert.equal(runResult.status, DryRunStatus.Error);
 }

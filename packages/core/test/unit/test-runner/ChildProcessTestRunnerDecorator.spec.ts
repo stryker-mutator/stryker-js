@@ -1,23 +1,24 @@
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import { RunOptions } from '@stryker-mutator/api/test_runner';
 import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 
+import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+
+import { factory } from '@stryker-mutator/test-helpers';
+
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
 import { LoggingClientContext } from '../../../src/logging';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
-import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import { Mock, mock } from '../../helpers/producers';
+import ChildProcessTestRunnerDecorator from '../../../src/test-runner-2/ChildProcessTestRunnerDecorator';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner-2/ChildProcessTestRunnerWorker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
   let options: StrykerOptions;
   let childProcessProxyMock: {
-    proxy: Mock<TestRunnerDecorator>;
+    proxy: sinon.SinonStubbedInstance<Required<TestRunner2>>;
     dispose: sinon.SinonStub;
   };
   let childProcessProxyCreateStub: sinon.SinonStub;
@@ -28,7 +29,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     clock = sinon.useFakeTimers();
     childProcessProxyMock = {
       dispose: sinon.stub(),
-      proxy: mock(TestRunnerDecorator),
+      proxy: factory.testRunner(),
     };
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
@@ -41,7 +42,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
 
   it('should create the child process proxy', () => {
     expect(childProcessProxyCreateStub).calledWith(
-      require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
+      require.resolve('../../../src/test-runner-2/ChildProcessTestRunnerWorker.js'),
       loggingContext,
       options,
       { sandboxFileNames: [] },
@@ -55,13 +56,26 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     return expect(sut.init()).eventually.eq(42);
   });
 
-  it('should forward `run` calls', async () => {
-    childProcessProxyMock.proxy.run.resolves(42);
-    const runOptions: RunOptions = {
+  it('should forward `dryRun` calls', async () => {
+    const expectedResult = factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage() });
+    childProcessProxyMock.proxy.dryRun.resolves(expectedResult);
+    const runOptions = factory.dryRunOptions({
       timeout: 234,
-    };
-    await expect(sut.run(runOptions)).eventually.eq(42);
-    expect(childProcessProxyMock.proxy.run).calledWith(runOptions);
+    });
+    const actualResult = await sut.dryRun(runOptions);
+    expect(actualResult).eq(expectedResult);
+    expect(childProcessProxyMock.proxy.dryRun).calledWith(runOptions);
+  });
+
+  it('should forward `mutantRun` calls', async () => {
+    const expectedResult = factory.survivedMutantRunResult();
+    childProcessProxyMock.proxy.mutantRun.resolves(expectedResult);
+    const runOptions = factory.mutantRunOptions({
+      timeout: 234,
+    });
+    const actualResult = await sut.mutantRun(runOptions);
+    expect(actualResult).eq(expectedResult);
+    expect(childProcessProxyMock.proxy.mutantRun).calledWith(runOptions);
   });
 
   describe('dispose', () => {
