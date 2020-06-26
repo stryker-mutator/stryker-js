@@ -1,6 +1,16 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner2';
+import {
+  TestRunner2,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  DryRunResult,
+  DryRunStatus,
+  MutantRunStatus,
+} from '@stryker-mutator/api/test_runner2';
+
+import { errorToString } from '@stryker-mutator/util';
 
 import { PluginCreator } from '../di';
 
@@ -27,10 +37,22 @@ export class ChildProcessTestRunnerWorker implements TestRunner2 {
     }
   }
 
-  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.underlyingTestRunner.dryRun(options);
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    const dryRunResult = await this.underlyingTestRunner.dryRun(options);
+    if (dryRunResult.status === DryRunStatus.Complete && !dryRunResult.mutantCoverage && options.coverageAnalysis !== 'off') {
+      // @ts-expect-error
+      dryRunResult.mutantCoverage = global.__mutantCoverage__;
+    }
+    if (dryRunResult.status === DryRunStatus.Error) {
+      dryRunResult.errorMessage = errorToString(dryRunResult.errorMessage);
+    }
+    return dryRunResult;
   }
-  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    return this.underlyingTestRunner.mutantRun(options);
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    const result = await this.underlyingTestRunner.mutantRun(options);
+    if (result.status === MutantRunStatus.Error) {
+      result.errorMessage = errorToString(result.errorMessage);
+    }
+    return result;
   }
 }

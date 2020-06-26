@@ -8,7 +8,7 @@ import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
 import { deserialize, serialize } from '../utils/objectUtils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
+import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './messageProtocol';
 
 export default class ChildProcessProxyWorker {
   private log: Logger;
@@ -31,40 +31,13 @@ export default class ChildProcessProxyWorker {
     const message = deserialize<WorkerMessage>(serializedMessage, [File]);
     switch (message.kind) {
       case WorkerMessageKind.Init:
-        LogConfigurator.configureChildProcess(message.loggingContext);
-        this.log = getLogger(ChildProcessProxyWorker.name);
-        this.handlePromiseRejections();
-        let injector = buildChildProcessInjector(message.options);
-        const locals = message.additionalInjectableValues as any;
-        for (const token of Object.keys(locals)) {
-          injector = injector.provideValue(token, locals[token]);
-        }
-        const RealSubjectClass = require(message.requirePath)[message.requireName];
-        const workingDir = path.resolve(message.workingDirectory);
-        if (process.cwd() !== workingDir) {
-          this.log.debug(`Changing current working directory for this process to ${workingDir}`);
-          process.chdir(workingDir);
-        }
-        this.realSubject = injector.injectClass(RealSubjectClass);
-        this.send({ kind: ParentMessageKind.Initialized });
+        this.handleInit(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Call:
-        new Promise((resolve) => resolve(this.doCall(message)))
-          .then((result) => {
-            this.send({
-              correlationId: message.correlationId,
-              kind: ParentMessageKind.Result,
-              result,
-            });
-          })
-          .catch((error) => {
-            this.send({
-              correlationId: message.correlationId,
-              error: errorToString(error),
-              kind: ParentMessageKind.Rejection,
-            });
-          });
+        this.handleCall(message).catch(() => {
+          // Idle, it is already handled by sending a message to the child process
+        });
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Dispose:
@@ -73,6 +46,42 @@ export default class ChildProcessProxyWorker {
         };
         LogConfigurator.shutdown().then(sendCompleted).catch(sendCompleted);
         break;
+    }
+  }
+
+  private handleInit(message: InitMessage) {
+    LogConfigurator.configureChildProcess(message.loggingContext);
+    this.log = getLogger(ChildProcessProxyWorker.name);
+    this.handlePromiseRejections();
+    let injector = buildChildProcessInjector(message.options);
+    const locals = message.additionalInjectableValues as any;
+    for (const token of Object.keys(locals)) {
+      injector = injector.provideValue(token, locals[token]);
+    }
+    const RealSubjectClass = require(message.requirePath)[message.requireName];
+    const workingDir = path.resolve(message.workingDirectory);
+    if (process.cwd() !== workingDir) {
+      this.log.debug(`Changing current working directory for this process to ${workingDir}`);
+      process.chdir(workingDir);
+    }
+    this.realSubject = injector.injectClass(RealSubjectClass);
+    this.send({ kind: ParentMessageKind.Initialized });
+  }
+
+  private async handleCall(message: CallMessage) {
+    try {
+      const result = await this.doCall(message);
+      this.send({
+        correlationId: message.correlationId,
+        kind: ParentMessageKind.Result,
+        result,
+      });
+    } catch (err) {
+      this.send({
+        correlationId: message.correlationId,
+        error: errorToString(err),
+        kind: ParentMessageKind.Rejection,
+      });
     }
   }
 

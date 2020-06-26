@@ -36,6 +36,7 @@ import {
   MutantRunStatus,
   TimeoutMutantRunResult,
   ErrorMutantRunResult,
+  MutantCoverage,
 } from '@stryker-mutator/api/test_runner2';
 
 const ajv = new Ajv({ useDefaults: true });
@@ -237,6 +238,11 @@ export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
 export const completeDryRunResult = factoryMethod<CompleteDryRunResult>(() => ({
   status: DryRunStatus.Complete,
   tests: [],
+}));
+
+export const mutantCoverage = factoryMethod<MutantCoverage>(() => ({
+  perTest: {},
+  static: {},
 }));
 
 export const errorDryRunResult = factoryMethod<ErrorDryRunResult>(() => ({

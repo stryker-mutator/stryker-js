@@ -15,7 +15,7 @@ export { TestRunnerPool } from './TestRunnerPool';
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(
   options: StrykerOptions,
-  sandbox: Sandbox,
+  sandbox: Pick<Sandbox, 'sandboxFileNames' | 'workingDirectory'>,
   loggingContext: LoggingClientContext
 ): () => Required<TestRunner2> {
   // if (CommandTestRunner.is(options.testRunner)) {
