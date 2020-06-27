@@ -35,9 +35,7 @@ export default class ChildProcessProxyWorker {
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Call:
-        this.handleCall(message).catch(() => {
-          // Idle, it is already handled by sending a message to the child process
-        });
+        this.handleCall(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Dispose:
