@@ -1,3 +1,5 @@
+import os = require('os');
+
 import Ajv = require('ajv');
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
@@ -39,6 +41,12 @@ export class OptionsValidator {
           Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.`
         )
       );
+    }
+    if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
+      this.log.warn('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
+      if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
+        options.concurrency = options.maxConcurrentTestRunners;
+      }
     }
 
     additionalErrors.forEach((error) => this.log.error(error));
