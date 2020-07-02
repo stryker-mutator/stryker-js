@@ -16,6 +16,7 @@
     "chai-as-promised": "~7.1.1",
     "cross-env": "~5.2.0",
     "grunt": "~1.0.4",
+    "jasmine": "^3.5.0",
     "jasmine-core": "~3.5.0",
     "jest": "^26.0.1",
     "karma": "^5.0.4",

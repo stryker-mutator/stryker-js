@@ -9,9 +9,9 @@ import { tap, mergeAll, map, filter } from 'rxjs/operators';
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
 const mutationSwitchingTempWhiteList = [
-  'jasmine-jasmine',
+  'jasmine-ts-node',
   'karma-mocha',
-  'karma-jasmine',
+  'karma-jasmine'
 ]
 
 function runE2eTests() {
