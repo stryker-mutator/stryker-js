@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { RunStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus } from '@stryker-mutator/api/test_runner2';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as karma from 'karma';
@@ -184,7 +184,7 @@ describe(KarmaTestRunner.name, () => {
 
     it('should report state Error when error messages were reported', async () => {
       reporterMock.emit('browser_error', 'Undefined var');
-      reporterMock.emit('run_complete', RunStatus.Complete);
+      reporterMock.emit('run_complete', DryRunStatus.Complete);
       const actualResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectErrored(actualResult);
     });

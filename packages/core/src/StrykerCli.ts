@@ -4,7 +4,7 @@ import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stry
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { initializerFactory } from './initializer';
-import LogConfigurator from './logging/LogConfigurator';
+import { LogConfigurator } from './logging';
 import Stryker from './Stryker';
 import { defaultOptions } from './config/OptionsValidator';
 import { retrieveCause, ConfigError } from './errors';

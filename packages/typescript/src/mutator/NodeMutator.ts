@@ -21,6 +21,7 @@ export default abstract class NodeMutator<T extends ts.Node = ts.Node> {
   private createMutant(original: ts.Node, replacement: string, sourceFile: ts.SourceFile): Mutant {
     return {
       id: 42, // TODO this code will be removed in #1514. Temp fill it with a string.
+      location: { end: { column: 0, line: 0 }, start: { line: 0, column: 0 } }, // TODO this code will be removed in #1514. Temp fill it now.
       fileName: sourceFile.fileName.replace(/\//g, path.sep),
       mutatorName: this.name,
       range: [original.getStart(sourceFile), original.getEnd()],

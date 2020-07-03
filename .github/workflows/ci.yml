@@ -29,19 +29,19 @@ jobs:
     - name: Build & lint & test
       run: npm run all
 
-  # e2e:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: ['ubuntu-latest', 'windows-latest']
+  e2e:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest']
 
-  #   steps:
-  #   - uses: actions/checkout@v1
-  #   - name: Install dependencies
-  #     run: npm install
-  #   - name: Build packages
-  #     run: npm run build
-  #   - name: Run e2e tests
-  #     run: npm run e2e
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: npm install
+    - name: Build packages
+      run: npm run build
+    - name: Run e2e tests
+      run: npm run e2e
 

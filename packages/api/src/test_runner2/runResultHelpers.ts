@@ -1,13 +1,13 @@
 import { TestStatus } from './TestStatus';
 import { DryRunResult } from './DryRunResult';
 import { MutantRunResult } from './MutantRunResult';
-import { RunStatus } from './RunStatus';
+import { DryRunStatus } from './DryRunStatus';
 import { MutantRunStatus } from './MutantRunResult';
 import { FailedTestResult } from './TestResult';
 
 export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
   switch (dryRunResult.status) {
-    case RunStatus.Complete: {
+    case DryRunStatus.Complete: {
       const killedBy = dryRunResult.tests.find<FailedTestResult>((test): test is FailedTestResult => test.status === TestStatus.Failed);
       if (killedBy) {
         return {
@@ -21,12 +21,12 @@ export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
         };
       }
     }
-    case RunStatus.Error:
+    case DryRunStatus.Error:
       return {
         status: MutantRunStatus.Error,
         errorMessage: dryRunResult.errorMessage,
       };
-    case RunStatus.Timeout:
+    case DryRunStatus.Timeout:
       return {
         status: MutantRunStatus.Timeout,
       };

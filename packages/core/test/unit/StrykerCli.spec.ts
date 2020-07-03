@@ -5,7 +5,7 @@ import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import LogConfigurator from '../../src/logging/LogConfigurator';
+import { LogConfigurator } from '../../src/logging';
 import StrykerCli from '../../src/StrykerCli';
 
 describe(StrykerCli.name, () => {

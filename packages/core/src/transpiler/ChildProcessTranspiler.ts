@@ -5,7 +5,7 @@ import { Disposable } from 'typed-inject';
 
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
 import { coreTokens } from '../di';
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging';
 
 import { ChildProcessTranspilerWorker } from './ChildProcessTranspilerWorker';
 

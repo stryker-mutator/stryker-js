@@ -7,23 +7,58 @@ import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
 
+import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
 import { setExitCode } from '../utils/objectUtils';
+import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
+import { mutatedLines, originalLines } from '../utils/mutantUtils';
 
-export class MutationTestReportCalculator {
-  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger);
+/**
+ * A helper class to convert and report mutants that survived or get killed
+ */
+export class MutationTestReportHelper {
+  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
+  private readonly allTestNames: string[];
 
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
     private readonly inputFiles: InputFileCollection,
-    private readonly log: Logger
-  ) {}
+    private readonly log: Logger,
+    private readonly dryRunResult: CompleteDryRunResult
+  ) {
+    this.allTestNames = this.dryRunResult.tests.map((t) => t.name);
+  }
 
-  public report(results: readonly MutantResult[]) {
+  public reportOne(mutantWithTestCoverage: MutantTestCoverage, resultStatus: MutantStatus): MutantResult {
+    const { mutant, testFilter } = mutantWithTestCoverage;
+    const originalFileTextContent = this.inputFiles.filesToMutate.find((fileToMutate) => fileToMutate.name === mutant.fileName)!.textContent;
+    const mutantResult: MutantResult = {
+      id: mutant.id.toString(),
+      location: mutant.location,
+      mutatedLines: mutatedLines(originalFileTextContent, mutant),
+      mutatorName: mutant.mutatorName,
+      originalLines: originalLines(originalFileTextContent, mutant),
+      range: mutant.range,
+      replacement: mutant.replacement,
+      sourceFilePath: mutant.fileName,
+      status: resultStatus,
+      testsRan: [],
+    };
+
+    if (resultStatus !== MutantStatus.NoCoverage) {
+      mutantResult.testsRan = testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : this.allTestNames;
+    }
+    this.reporter.onMutantTested(mutantResult);
+    return mutantResult;
+  }
+
+  public reportAll(results: MutantResult[]) {
     const report = this.mutationTestReport(results);
     this.reporter.onMutationTestReportReady(report);
+    this.reporter.onAllMutantsTested(results);
     this.determineExitCode(report);
   }
 

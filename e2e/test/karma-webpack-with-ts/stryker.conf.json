@@ -15,5 +15,6 @@
     "configFile": "karma.conf.js",
     "projectType": "custom"
   },
-  "tsconfigFile": "tsconfig.json"
+  "tsconfigFile": "tsconfig.json",
+  "logLevel": "trace"
 }

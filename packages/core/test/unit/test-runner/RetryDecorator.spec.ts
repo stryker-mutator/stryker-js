@@ -1,32 +1,32 @@
 import { Logger } from '@stryker-mutator/api/logging';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
+import { TestRunner2, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
+
+import { factory } from '@stryker-mutator/test-helpers';
+
+import { expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
 import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
 import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
 import RetryDecorator from '../../../src/test-runner/RetryDecorator';
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import currentLogMock from '../../helpers/logMock';
-import { Mock } from '../../helpers/producers';
-import TestRunnerMock from '../../helpers/TestRunnerMock';
 
-describe('RetryDecorator', () => {
+describe(RetryDecorator.name, () => {
   let sut: RetryDecorator;
-  let testRunner1: TestRunnerMock;
-  let testRunner2: TestRunnerMock;
-  let availableTestRunners: TestRunnerMock[];
-  let logMock: Mock<Logger>;
-  const options = { timeout: 2 };
-  const expectedResult = 'something';
+  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner2>>>;
+  let logMock: sinon.SinonStubbedInstance<Logger>;
   const crashedError = new ChildProcessCrashedError(42, '');
 
   beforeEach(() => {
-    testRunner1 = new TestRunnerMock();
-    testRunner2 = new TestRunnerMock();
+    testRunner1 = factory.testRunner();
+    testRunner2 = factory.testRunner();
     logMock = currentLogMock();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new RetryDecorator(() => availableTestRunners.shift() || new TestRunnerMock());
+    sut = new RetryDecorator(() => availableTestRunners.shift() || factory.testRunner());
   });
 
   it('should not override `init`', () => {
@@ -37,55 +37,96 @@ describe('RetryDecorator', () => {
     expect(sut.dispose).to.be.eq(TestRunnerDecorator.prototype.dispose);
   });
 
-  describe('run', () => {
-    it('should pass through resolved values', () => {
-      testRunner1.run.resolves(expectedResult);
-      const result = sut.run(options);
-      expect(testRunner1.run).to.have.been.calledWith(options);
-      return expect(result).to.eventually.eq(expectedResult);
+  describeRun(
+    'dryRun',
+    (sut, options) => sut.dryRun(options),
+    () => factory.dryRunOptions({ timeout: 23 }),
+    () => factory.completeDryRunResult()
+  );
+  describeRun(
+    'mutantRun',
+    (sut, options) => sut.mutantRun(options),
+    () => factory.mutantRunOptions({ timeout: 23 }),
+    () => factory.survivedMutantRunResult()
+  );
+
+  interface RunOptionsByMethod {
+    dryRun: DryRunOptions;
+    mutantRun: MutantRunOptions;
+  }
+  interface RunResultByMethod {
+    dryRun: DryRunResult;
+    mutantRun: MutantRunResult;
+  }
+
+  function describeRun<T extends keyof RunOptionsByMethod>(
+    runMethod: T,
+    act: (sut: RetryDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
+    optionsFactory: () => RunOptionsByMethod[T],
+    resultFactory: () => RunResultByMethod[T]
+  ) {
+    describe(runMethod, () => {
+      let options: RunOptionsByMethod[T];
+      let expectedRunResult: RunResultByMethod[T];
+
+      beforeEach(() => {
+        options = optionsFactory();
+        expectedRunResult = resultFactory();
+      });
+
+      it('should pass through resolved values', async () => {
+        const expectedResult = factory.completeDryRunResult();
+        testRunner1[runMethod].resolves(expectedResult);
+        const result = await act(sut, options);
+        expect(testRunner1[runMethod]).to.have.been.calledWith(options);
+        expect(result).to.eq(expectedResult);
+      });
+
+      it('should retry on a new test runner if a run is rejected', async () => {
+        testRunner1[runMethod].rejects(new Error('Error'));
+        testRunner2[runMethod].resolves(expectedRunResult);
+        const result = await act(sut, options);
+        expect(result).to.eq(expectedRunResult);
+      });
+
+      it('should retry if a `ChildProcessCrashedError` occurred reject appears', async () => {
+        testRunner1[runMethod].rejects(crashedError);
+        testRunner2[runMethod].resolves(expectedRunResult);
+        const result = await act(sut, options);
+        expect(result).to.eq(expectedRunResult);
+      });
+
+      it('should log and retry when an `OutOfMemoryError` occurred.', async () => {
+        testRunner1[runMethod].rejects(new OutOfMemoryError(123, 123));
+        testRunner2[runMethod].resolves(expectedRunResult);
+        const result = await act(sut, options);
+        expect(result).to.eq(expectedRunResult);
+        expect(logMock.info).calledWith(
+          "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
+          123
+        );
+      });
+
+      it('should dispose a test runner when it rejected, before creating a new one', async () => {
+        testRunner1[runMethod].rejects(crashedError);
+        testRunner2[runMethod].resolves(expectedRunResult);
+        await act(sut, options);
+        expect(testRunner1.dispose).calledBefore(testRunner2.init);
+      });
+
+      it('should retry at most 1 times before rejecting', async () => {
+        const finalError = new Error('foo');
+
+        testRunner1[runMethod].rejects(new Error('bar'));
+        testRunner2[runMethod].rejects(finalError);
+
+        const result = await act(sut, options);
+        expectErrored(result);
+        expect((result as any).errorMessage).to.be.deep.eq(
+          `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`
+        );
+        expect(availableTestRunners).to.have.lengthOf(0);
+      });
     });
-
-    it('should retry on a new test runner if a run is rejected', () => {
-      testRunner1.run.rejects(new Error('Error'));
-      testRunner2.run.resolves(expectedResult);
-      return expect(sut.run(options)).to.eventually.eq(expectedResult);
-    });
-
-    it('should retry if a `ChildProcessCrashedError` occurred reject appears', () => {
-      testRunner1.run.rejects(crashedError);
-      testRunner2.run.resolves(expectedResult);
-      return expect(sut.run(options)).to.eventually.eq(expectedResult);
-    });
-
-    it('should log and retry when an `OutOfMemoryError` occurred.', async () => {
-      testRunner1.run.rejects(new OutOfMemoryError(123, 123));
-      testRunner2.run.resolves(expectedResult);
-      await expect(sut.run(options)).to.eventually.eq(expectedResult);
-      expect(logMock.info).calledWith(
-        "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
-        123
-      );
-    });
-
-    it('should dispose a test runner when it rejected, before creating a new one', async () => {
-      testRunner1.run.rejects(crashedError);
-      testRunner2.run.resolves(expectedResult);
-      await sut.run(options);
-      expect(testRunner1.dispose).calledBefore(testRunner2.init);
-    });
-
-    it('should retry at most 1 times before rejecting', async () => {
-      const finalError = new Error('foo');
-
-      testRunner1.run.rejects(new Error('bar'));
-      testRunner2.run.rejects(finalError);
-
-      const runResult = await sut.run(options);
-      expect(runResult.status).to.be.eq(RunStatus.Error);
-      expect(runResult.errorMessages).to.be.deep.eq([
-        `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`,
-      ]);
-      expect(availableTestRunners).to.have.lengthOf(0);
-    });
-  });
+  }
 });

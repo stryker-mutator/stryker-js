@@ -1,21 +1,23 @@
 import sinon = require('sinon');
-import { File } from '@stryker-mutator/api/core';
+import { File, Location, Range } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { mutantResult } from '@stryker-mutator/test-helpers/src/factory';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
-import { MutationTestReportCalculator } from '../../../src/reporters/MutationTestReportCalculator';
+import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import * as objectUtils from '../../../src/utils/objectUtils';
+import { createMutantTestCoverage } from '../../helpers/producers';
 
-describe(MutationTestReportCalculator.name, () => {
+describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
-  let sut: MutationTestReportCalculator;
   let inputFiles: InputFileCollection;
   let files: File[];
   let setExitCodeStub: sinon.SinonStub;
+  let dryRunResult: CompleteDryRunResult;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -26,25 +28,36 @@ describe(MutationTestReportCalculator.name, () => {
       filesToMutate: [],
       logFiles: () => {},
     };
-    sut = testInjector.injector
-      .provideValue(coreTokens.reporter, reporterMock as Required<Reporter>)
-      .provideValue(coreTokens.inputFiles, inputFiles)
-      .injectClass(MutationTestReportCalculator);
+    dryRunResult = factory.completeDryRunResult();
   });
 
-  describe(MutationTestReportCalculator.prototype.report.name, () => {
+  function createSut() {
+    return testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .provideValue(coreTokens.inputFiles, inputFiles)
+      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .injectClass(MutationTestReportHelper);
+  }
+
+  describe(MutationTestReportHelper.prototype.reportAll.name, () => {
+    let sut: MutationTestReportHelper;
+
+    beforeEach(() => {
+      sut = createSut();
+    });
+
     it('should report "mutationTestReportReady"', () => {
-      sut.report([]);
+      sut.reportAll([]);
       expect(reporterMock.onMutationTestReportReady).calledOnce;
     });
 
     it('should copy thresholds', () => {
-      const actualReport = actReport();
+      const actualReport = actReportAll();
       expect(actualReport.thresholds).eq(testInjector.options.thresholds);
     });
 
     it('should set correct schema version', () => {
-      const actualReport = actReport();
+      const actualReport = actReportAll();
       expect(actualReport.schemaVersion).eq('1.0');
     });
 
@@ -58,7 +71,7 @@ describe(MutationTestReportCalculator.name, () => {
       const inputMutants = files.map((file) => factory.mutantResult({ sourceFilePath: file.name }));
 
       // Act
-      const actualReport = actReport(inputMutants);
+      const actualReport = actReportAll(inputMutants);
 
       // Assert
       expect(Object.keys(actualReport.files)).lengthOf(5);
@@ -103,7 +116,7 @@ describe(MutationTestReportCalculator.name, () => {
       files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
 
       // Act
-      const actualReport = actReport(inputMutants);
+      const actualReport = actReportAll(inputMutants);
 
       // Assert
       expect(Object.keys(actualReport.files)).lengthOf(6);
@@ -123,7 +136,7 @@ describe(MutationTestReportCalculator.name, () => {
     it('should offset location correctly', () => {
       const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
       files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
-      const actualReport = actReport(inputMutants);
+      const actualReport = actReportAll(inputMutants);
       expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
     });
 
@@ -142,7 +155,7 @@ describe(MutationTestReportCalculator.name, () => {
       files.push(new File('foo.js', ''));
 
       // Act
-      const actualReport = actReport(inputMutants);
+      const actualReport = actReportAll(inputMutants);
 
       // Assert
       expect(Object.keys(actualReport.files)).lengthOf(1);
@@ -151,7 +164,7 @@ describe(MutationTestReportCalculator.name, () => {
 
     it('should log a warning if source file could not be found', () => {
       const inputMutants = [factory.mutantResult({ sourceFilePath: 'not-found.js' })];
-      const actualReport = actReport(inputMutants);
+      const actualReport = actReportAll(inputMutants);
       expect(Object.keys(actualReport.files)).lengthOf(0);
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
     });
@@ -162,7 +175,7 @@ describe(MutationTestReportCalculator.name, () => {
       });
 
       it('should not set exit code = 1 if `threshold.break` is not configured', () => {
-        actReport([mutantResult({ status: MutantStatus.Survived })]);
+        actReportAll([mutantResult({ status: MutantStatus.Survived })]);
 
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.debug).calledWith(
@@ -172,23 +185,83 @@ describe(MutationTestReportCalculator.name, () => {
 
       it('should not set exit code = 1 if `threshold.break` === score', () => {
         testInjector.options.thresholds.break = 50;
-        actReport([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        actReportAll([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.info).calledWith('Final mutation score of 50.00 is greater than or equal to break threshold 50');
       });
 
       it('should set exit code = 1 if `threshold.break` > score', () => {
         testInjector.options.thresholds.break = 50.01;
-        actReport([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        actReportAll([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
         expect(setExitCodeStub).calledWith(1);
         expect(testInjector.logger.error).calledWith('Final mutation score 50.00 under breaking threshold 50.01, setting exit code to 1 (failure).');
         expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
       });
     });
+    function actReportAll(input: MutantResult[] = []): mutationTestReportSchema.MutationTestResult {
+      sut.reportAll(input);
+      return reporterMock.onMutationTestReportReady.firstCall.args[0];
+    }
   });
 
-  function actReport(input: readonly MutantResult[] = []): mutationTestReportSchema.MutationTestResult {
-    sut.report(input);
-    return reporterMock.onMutationTestReportReady.firstCall.args[0];
-  }
+  describe(MutationTestReportHelper.prototype.reportOne.name, () => {
+    beforeEach(() => {
+      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js']);
+    });
+
+    it('should map simple attributes to the mutant result', () => {
+      // Arrange
+      const sut = createSut();
+      const location: Location = Object.freeze({ start: Object.freeze({ line: 1, column: 5 }), end: Object.freeze({ line: 3, column: 1 }) });
+      const range: Range = [21, 35];
+
+      // Act
+      const actual = sut.reportOne(
+        createMutantTestCoverage({
+          mutant: factory.mutant({
+            id: 32,
+            fileName: 'add.js',
+            location,
+            replacement: '{}',
+            mutatorName: 'fooMutator',
+            range,
+          }),
+        }),
+        MutantStatus.Killed
+      );
+
+      // Assert
+      const expected: Partial<MutantResult> = {
+        id: '32',
+        location,
+        mutatorName: 'fooMutator',
+        range,
+        status: MutantStatus.Killed,
+        sourceFilePath: 'add.js',
+        replacement: '{}',
+      };
+      const partialActualResult = Object.keys(expected).reduce((obj, prop) => ({ ...obj, [prop]: actual[prop as keyof MutantResult] }), {});
+      expect(partialActualResult).deep.eq(expected);
+    });
+
+    it('should report onMutantTested', () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportOne(
+        createMutantTestCoverage({
+          mutant: factory.mutant({
+            fileName: 'add.js',
+          }),
+        }),
+        MutantStatus.Killed
+      );
+
+      // Assert
+      expect(reporterMock.onMutantTested).calledWithExactly(actual);
+    });
+
+    // TODO: Report `killedBy` and `runTests` fields.
+  });
 });

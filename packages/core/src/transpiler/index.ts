@@ -3,7 +3,7 @@ import { commonTokens, Disposable, Injector, tokens, TranspilerPluginContext } f
 import { Transpiler } from '@stryker-mutator/api/transpile';
 
 import { coreTokens } from '../di';
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging';
 
 import { ChildProcessTranspiler } from './ChildProcessTranspiler';
 

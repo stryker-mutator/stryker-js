@@ -17,7 +17,10 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
     },
     {
       "type": "node",
@@ -30,7 +33,10 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
     },
     {
       "type": "node",
@@ -45,6 +51,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     },
     {
@@ -63,6 +72,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     },
     {
@@ -88,6 +100,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     },
     {
@@ -114,33 +129,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "name": "Run stryker help",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/stryker",
-      // "preLaunchTask": "build",
-      "stopOnEntry": false,
-      "args": [
-        "--logLevel",
-        "debug",
-        "run"
       ],
-      "cwd": "${workspaceRoot}/.",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     }
   ]

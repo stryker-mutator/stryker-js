@@ -8,12 +8,19 @@ import { tap, mergeAll, map, filter } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
+const mutationSwitchingTempWhiteList = [
+  'jasmine-jasmine',
+  'karma-mocha',
+  'karma-jasmine',
+]
+
 function runE2eTests() {
   const testDirs = fs.readdirSync(testRootDir);
 
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(
     filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
+    filter(dir => mutationSwitchingTempWhiteList.includes(dir)),
     map(testDir => defer(() => runTest(testDir)))
   );
 

@@ -8,7 +8,7 @@ import {
   TestRunner2,
   TestResult,
   MutantCoverage,
-  RunStatus,
+  DryRunStatus,
   DryRunOptions,
   MutantRunOptions,
   DryRunResult,
@@ -138,12 +138,12 @@ export default class KarmaTestRunner implements TestRunner2 {
   private collectRunResult(): DryRunResult {
     if (this.currentErrorMessage) {
       return {
-        status: RunStatus.Error,
+        status: DryRunStatus.Error,
         errorMessage: this.currentErrorMessage,
       };
     } else {
       return {
-        status: RunStatus.Complete,
+        status: DryRunStatus.Complete,
         tests: this.currentTestResults,
         mutantCoverage: this.currentCoverageReport,
       };

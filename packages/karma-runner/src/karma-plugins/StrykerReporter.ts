@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { RunStatus, TestResult, TestStatus, MutantCoverage } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TestResult, TestStatus, MutantCoverage } from '@stryker-mutator/api/test_runner2';
 import * as karma from 'karma';
 
 export interface KarmaSpec {
@@ -101,13 +101,13 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     this.emit('compile_error', errors);
   };
 
-  private collectRunState(runResult: karma.TestResults): RunStatus {
+  private collectRunState(runResult: karma.TestResults): DryRunStatus {
     if (runResult.disconnected) {
-      return RunStatus.Timeout;
+      return DryRunStatus.Timeout;
     } else if (runResult.error) {
-      return RunStatus.Error;
+      return DryRunStatus.Error;
     } else {
-      return RunStatus.Complete;
+      return DryRunStatus.Complete;
     }
   }
 }

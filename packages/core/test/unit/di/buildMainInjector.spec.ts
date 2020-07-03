@@ -1,25 +1,22 @@
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestFramework } from '@stryker-mutator/api/test_framework';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
+import { MutatorDescriptor, StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { rootInjector } from 'typed-inject';
 
 import * as optionsEditorApplierModule from '../../../src/config/OptionsEditorApplier';
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
 import * as pluginLoaderModule from '../../../src/di/PluginLoader';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
 import { PluginCreator, PluginLoader, coreTokens } from '../../../src/di';
-import { buildMainInjector } from '../../../src/di/buildMainInjector';
+import { buildMainInjector, CliOptionsProvider } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
-import TestFrameworkOrchestrator, * as testFrameworkOrchestratorModule from '../../../src/TestFrameworkOrchestrator';
 import currentLogMock from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
-  let testFrameworkOrchestratorMock: sinon.SinonStubbedInstance<TestFrameworkOrchestrator>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
-  let testFrameworkMock: TestFramework;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
   let optionsEditorApplierMock: sinon.SinonStubbedInstance<optionsEditorApplierModule.OptionsEditorApplier>;
@@ -27,15 +24,14 @@ describe(buildMainInjector.name, () => {
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
   let validationSchemaContributions: Array<Record<string, unknown>>;
+  let injector: CliOptionsProvider;
+  let cliOptions: PartialStrykerOptions;
 
   beforeEach(() => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     optionsEditorApplierMock = sinon.createStubInstance(optionsEditorApplierModule.OptionsEditorApplier);
-    testFrameworkMock = factory.testFramework();
-    testFrameworkOrchestratorMock = sinon.createStubInstance(TestFrameworkOrchestrator);
-    testFrameworkOrchestratorMock.determineTestFramework.returns(testFrameworkMock);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     optionsValidatorStub = sinon.createStubInstance(optionsValidatorModule.OptionsValidator);
     validationSchemaContributions = [];
@@ -43,13 +39,14 @@ describe(buildMainInjector.name, () => {
     expectedConfig = factory.strykerOptions();
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
+    cliOptions = {};
+    injector = rootInjector.provideValue(coreTokens.cliOptions, cliOptions);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(optionsEditorApplierModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
-    stubInjectable(testFrameworkOrchestratorModule, 'default').returns(testFrameworkOrchestratorMock);
   });
 
   function stubInjectable<T>(obj: T, method: keyof T) {
@@ -61,47 +58,47 @@ describe(buildMainInjector.name, () => {
 
   describe('resolve options', () => {
     it('should supply readonly stryker options', () => {
-      const actualOptions = buildMainInjector({}).resolve(commonTokens.options);
+      const actualOptions = buildMainInjector(injector).resolve(commonTokens.options);
       expect(actualOptions).frozen;
     });
 
     it('should load default plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector(injector).resolve(commonTokens.options);
       expect(PluginLoader).calledWithNew;
       expect(PluginLoader).calledWith(currentLogMock(), ['@stryker-mutator/*', require.resolve('../../../src/reporters')]);
     });
 
     it('should load plugins', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector(injector).resolve(commonTokens.options);
       expect(pluginLoaderMock.load).called;
     });
 
     it('should apply config editors', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector(injector).resolve(commonTokens.options);
       expect(optionsEditorApplierMock.edit).called;
     });
 
     it('should cache the config', () => {
-      const injector = buildMainInjector({});
-      injector.resolve(commonTokens.options);
-      injector.resolve(commonTokens.options);
+      const actualInjector = buildMainInjector(injector);
+      actualInjector.resolve(commonTokens.options);
+      actualInjector.resolve(commonTokens.options);
       expect(configReaderMock.readConfig).calledOnce;
     });
 
     it('should inject the `cliOptions` in the config reader', () => {
-      const expectedCliOptions = { foo: 'bar' };
-      buildMainInjector(expectedCliOptions).resolve(commonTokens.options);
-      expect(configReaderModule.default).calledWith(expectedCliOptions);
+      cliOptions.mutate = ['some', 'files'];
+      buildMainInjector(injector).resolve(commonTokens.options);
+      expect(configReaderModule.default).calledWith(cliOptions);
     });
 
     it('should validate the options', () => {
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector(injector).resolve(commonTokens.options);
       expect(optionsValidatorStub.validate).calledWith(expectedConfig);
     });
 
     it('should warn about unknown properties', () => {
       expectedConfig.foo = 'bar';
-      buildMainInjector({}).resolve(commonTokens.options);
+      buildMainInjector(injector).resolve(commonTokens.options);
       expect(currentLogMock().warn).calledWithMatch('Unknown stryker config option "foo"');
     });
   });
@@ -112,24 +109,19 @@ describe(buildMainInjector.name, () => {
       plugins: null,
       excludedMutations: [],
     };
-    const mutatorDescriptor = buildMainInjector({}).resolve(commonTokens.mutatorDescriptor);
+    const mutatorDescriptor = buildMainInjector(injector).resolve(commonTokens.mutatorDescriptor);
     expect(mutatorDescriptor).deep.eq(expected);
   });
 
-  it('should be able to supply the test framework', () => {
-    const actualTestFramework = buildMainInjector({}).resolve(coreTokens.testFramework);
-    expect(testFrameworkMock).eq(actualTestFramework);
-  });
-
   it('should be able to supply the reporter', () => {
-    const actualReporter = buildMainInjector({}).resolve(coreTokens.reporter);
+    const actualReporter = buildMainInjector(injector).resolve(coreTokens.reporter);
     expect(actualReporter).eq(broadcastReporterMock);
   });
 
   it('should supply pluginCreators for Reporter, ConfigEditor and TestFramework plugins', () => {
-    const injector = buildMainInjector({});
-    expect(injector.resolve(coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
-    expect(injector.resolve(coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
-    expect(injector.resolve(coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
+    const actualInjector = buildMainInjector(injector);
+    expect(actualInjector.resolve(coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
+    expect(actualInjector.resolve(coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
+    expect(actualInjector.resolve(coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
   });
 });
