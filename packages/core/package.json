@@ -53,8 +53,8 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.0",
-    "@stryker-mutator/util": "^3.3.0",
+    "@stryker-mutator/api": "3.3.0",
+    "@stryker-mutator/util": "3.3.0",
     "ajv": "^6.12.0",
     "chalk": "~4.0.0",
     "commander": "~5.1.0",

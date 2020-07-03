@@ -39,7 +39,7 @@
     "@babel/generator": "~7.9.4",
     "@babel/parser": "~7.9.4",
     "@babel/traverse": "~7.9.5",
-    "@stryker-mutator/api": "^3.3.0",
+    "@stryker-mutator/api": "3.3.0",
     "tslib": "~2.0.0"
   },
   "peerDependencies": {

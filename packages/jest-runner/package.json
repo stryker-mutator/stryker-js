@@ -52,7 +52,7 @@
     "jest": ">= 22.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.0",
+    "@stryker-mutator/api": "3.3.0",
     "semver": "~6.3.0"
   },
   "initStrykerConfig": {
