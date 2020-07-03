@@ -209,6 +209,18 @@
       "type": "boolean",
       "default": true
     },
+    "checkers": {
+      "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "concurrency": {
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine. This is a sane default for most use cases.",
+      "type": "number"
+    },
     "coverageAnalysis": {
       "$ref": "#/definitions/coverageAnalysis",
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
@@ -247,7 +259,7 @@
       "default": "info"
     },
     "maxConcurrentTestRunners": {
-      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
+      "description": "[DEPRECATED please use \"concurrency\" instead]. Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
       "type": "number",
       "default": 9007199254740991
     },

@@ -40,6 +40,14 @@ describe(Instrumenter.name, () => {
     expect(testInjector.logger.debug).calledWith('Instrumenting %d source files with mutants', 2);
   });
 
+  it('should log about the result', async () => {
+    helper.transformerStub.callsFake((_, collector: transformers.MutantCollector) => {
+      collector.add('foo.js', createNamedNodeMutation());
+    });
+    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')]);
+    expect(testInjector.logger.info).calledWith('Instrumented %d source file(s) with %d mutant(s)', 2, 2);
+  });
+
   it('should log between each file', async () => {
     // Arrange
     testInjector.logger.isDebugEnabled.returns(true);

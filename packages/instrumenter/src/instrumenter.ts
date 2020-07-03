@@ -37,9 +37,11 @@ export class Instrumenter {
         this.logger.debug(`Instrumented ${path.relative(process.cwd(), file.name)} (${nrOfMutantsInFile} mutant(s))`);
       }
     }
+    const mutants = mutantCollector.mutants.map((mutant) => mutant.toApiMutant());
+    this.logger.info('Instrumented %d source file(s) with %d mutant(s)', files.length, mutants.length);
     return {
       files: outFiles,
-      mutants: mutantCollector.mutants.map((mutant) => mutant.toApiMutant()),
+      mutants,
     };
   }
 }

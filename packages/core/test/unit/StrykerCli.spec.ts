@@ -44,9 +44,11 @@ describe(StrykerCli.name, () => {
       [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
+      [['--concurrency', '5'], { concurrency: 5 }],
+      [['-c', '6'], { concurrency: 6 }],
     ];
     testCases.forEach(([args, expected]) => {
-      it(`should expect option "${args.join(' ')}"`, () => {
+      it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {
         arrangeActAssertConfigOption(args, expected);
       });
     });

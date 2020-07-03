@@ -14,26 +14,29 @@ import { expect } from 'chai';
 import Timer from '../../../src/utils/Timer';
 import { DryRunExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
-import { createTestRunnerPoolMock, TestRunnerPoolMock } from '../../helpers/producers';
 import { ConfigError } from '../../../src/errors';
+import { ConcurrencyTokenProvider } from '../../../src/concurrent';
+import { createTestRunnerPoolMock, PoolMock } from '../../helpers/producers';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
-  let testRunnerPoolMock: TestRunnerPoolMock;
+  let testRunnerPoolMock: PoolMock<TestRunner2>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let mutants: Mutant[];
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
 
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
     testRunnerMock = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
-    testRunnerPoolMock.testRunner$.next(testRunnerMock);
+    testRunnerPoolMock.worker$.next(testRunnerMock);
+    concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     mutants = [];
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock);
-    sut = new DryRunExecutor(injectorMock, testInjector.logger, testInjector.options, timerMock, mutants);
+    sut = new DryRunExecutor(injectorMock, testInjector.logger, testInjector.options, timerMock, mutants, concurrencyTokenProviderMock);
   });
 
   it('should pass through any rejections', async () => {

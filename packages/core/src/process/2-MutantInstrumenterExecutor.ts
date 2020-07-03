@@ -7,6 +7,9 @@ import InputFileCollection from '../input/InputFileCollection';
 import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 
+import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
+import { createCheckerFactory } from '../checker/CheckerFacade';
+
 import { DryRunContext } from './3-DryRunExecutor';
 
 export interface MutantInstrumenterContext extends MainContext {
@@ -19,12 +22,27 @@ export class MutantInstrumenterExecutor {
   constructor(private readonly injector: Injector<MutantInstrumenterContext>, private readonly inputFiles: InputFileCollection) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {
+    // Create the checker and instrumenter
     const instrumenter = this.injector.injectClass(Instrumenter);
+
+    // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate);
     const files = this.replaceWith(instrumentResult);
-    const sandbox = await this.injector.provideValue(coreTokens.files, files).injectFunction(Sandbox.create);
 
-    return this.injector.provideValue(coreTokens.mutants, instrumentResult.mutants).provideValue(coreTokens.sandbox, sandbox);
+    // Initialize the checker pool
+    const concurrencyTokenProviderProvider = this.injector.provideClass(coreTokens.concurrencyTokenProvider, ConcurrencyTokenProvider);
+    const concurrencyTokenProvider = concurrencyTokenProviderProvider.resolve(coreTokens.concurrencyTokenProvider);
+
+    const checkerPoolProvider = concurrencyTokenProviderProvider
+      .provideValue(coreTokens.checkerConcurrencyTokens, concurrencyTokenProvider.checkerToken$)
+      .provideFactory(coreTokens.checkerFactory, createCheckerFactory)
+      .provideFactory(coreTokens.checkerPool, createCheckerPool);
+    const checkerPool = checkerPoolProvider.resolve(coreTokens.checkerPool);
+    await checkerPool.init();
+
+    // Feed the sandbox
+    const sandbox = await this.injector.provideValue(coreTokens.files, files).injectFunction(Sandbox.create);
+    return checkerPoolProvider.provideValue(coreTokens.sandbox, sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
   }
 
   private replaceWith(instrumentResult: InstrumentResult): File[] {

@@ -144,7 +144,7 @@ class VerifyWorkingFolderTestRunner implements TestRunner2 {
 class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner2 {
   public promise: Promise<void>;
 
-  public init() {
+  public async init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
   public async dryRun(): Promise<DryRunResult> {

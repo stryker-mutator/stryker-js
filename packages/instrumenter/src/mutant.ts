@@ -11,10 +11,10 @@ export interface NamedNodeMutation extends NodeMutation {
 }
 
 export class Mutant {
-  constructor(public id: number, public original: types.Node, public replacement: types.Node, public fileName: string, public mutatorName: string) {}
+  public readonly replacementCode: string;
 
-  public get replacementCode() {
-    return generate(this.replacement).code;
+  constructor(public id: number, public original: types.Node, public replacement: types.Node, public fileName: string, public mutatorName: string) {
+    this.replacementCode = generate(this.replacement).code;
   }
 
   public toApiMutant(): ApiMutant {
