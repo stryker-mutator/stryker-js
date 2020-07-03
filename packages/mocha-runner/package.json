@@ -36,8 +36,8 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/mocha-runner#readme",
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.0",
-    "@stryker-mutator/util": "^3.3.0",
+    "@stryker-mutator/api": "3.3.0",
+    "@stryker-mutator/util": "3.3.0",
     "multimatch": "~4.0.0",
     "tslib": "~2.0.0"
   },

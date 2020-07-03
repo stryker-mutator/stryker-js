@@ -40,7 +40,7 @@
     "vue-template-compiler": "^2.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.0"
+    "@stryker-mutator/api": "3.3.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^3.0.0",
