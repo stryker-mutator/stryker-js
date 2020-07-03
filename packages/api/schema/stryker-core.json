@@ -4,6 +4,17 @@
   "description": "JSON schema for the Stryker Mutator configuration file",
   "type": "object",
   "definitions": {
+    "commandRunnerOptions": {
+      "title": "CommandRunnerOptions",
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "The command to test each mutant. For example \"npm run mocha\". Defaults to \"npm test\".",
+          "type": "string",
+          "default": "npm test"
+        }
+      }
+    },
     "logLevel": {
       "title": "LogLevel",
       "type": "string",
@@ -199,6 +210,11 @@
       "description": "The 'allowConsoleColors' value indicates whether Stryker should use colors in console.",
       "type": "boolean",
       "default": true
+    },
+    "commandRunner": {
+      "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
+      "$ref": "#/definitions/commandRunnerOptions",
+      "default": {}
     },
     "coverageAnalysis": {
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",

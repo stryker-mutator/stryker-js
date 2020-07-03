@@ -1,16 +1,12 @@
 import { exec } from 'child_process';
 import * as os from 'os';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, CommandRunnerOptions } from '@stryker-mutator/api/core';
 import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 
 import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
-
-export interface CommandRunnerSettings {
-  command: string;
-}
 
 /**
  * A test runner that uses a (bash or cmd) command to execute the tests.
@@ -32,17 +28,12 @@ export default class CommandTestRunner implements TestRunner {
     return this.runnerName === name.toLowerCase();
   }
 
-  private readonly settings: CommandRunnerSettings;
+  private readonly settings: CommandRunnerOptions;
 
   private timeoutHandler: undefined | (() => Promise<void>);
 
   constructor(private readonly workingDir: string, options: StrykerOptions) {
-    this.settings = Object.assign(
-      {
-        command: 'npm test',
-      },
-      options.commandRunner
-    );
+    this.settings = options.commandRunner;
   }
 
   public run(): Promise<RunResult> {
