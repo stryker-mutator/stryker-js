@@ -4,3 +4,4 @@
 !dist/src/**/*.map
 !dist/src/**/*.ts
 !src/**/*
+!schema/*.json
