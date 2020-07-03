@@ -1,6 +1,5 @@
-import { File, ClearTextReporterOptions } from '@stryker-mutator/api/core';
+import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
-import { FileCoverageData } from 'istanbul-lib-coverage';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 
@@ -10,12 +9,6 @@ import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
 
 import { Checker } from '@stryker-mutator/api/check';
 
-import SourceFile from '../../src/SourceFile';
-import TestableMutant from '../../src/TestableMutant';
-import TranspiledMutant from '../../src/TranspiledMutant';
-import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
-import { MappedLocation } from '../../src/transpiler/SourceMapper';
-import TranspileResult from '../../src/transpiler/TranspileResult';
 import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
 import { Worker, Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
@@ -114,44 +107,3 @@ export const logger = (): Mock<Logger> => {
     warn: sinon.stub(),
   };
 };
-
-export const mappedLocation = factoryMethod<MappedLocation>(() => ({
-  fileName: 'file.js',
-  location: factory.location(),
-}));
-
-export const coverageMaps = factoryMethod<CoverageMaps>(() => ({
-  fnMap: {},
-  statementMap: {},
-}));
-
-export const fileCoverageData = factoryMethod<FileCoverageData>(() => ({
-  b: {},
-  branchMap: {},
-  f: {},
-  fnMap: {},
-  path: '',
-  s: {},
-  statementMap: {},
-}));
-
-export const transpileResult = factoryMethod<TranspileResult>(() => ({
-  error: null,
-  outputFiles: [factory.file(), factory.file()],
-}));
-
-export const sourceFile = () => new SourceFile(factory.file());
-
-export const testableMutant = (fileName = 'file', mutatorName = 'foobarMutator') =>
-  new TestableMutant(
-    '1337',
-    factory.mutant({
-      fileName,
-      mutatorName,
-      range: [12, 13],
-      replacement: '-',
-    }),
-    new SourceFile(new File(fileName, Buffer.from('const a = 4 + 5')))
-  );
-
-export const transpiledMutant = (fileName = 'file') => new TranspiledMutant(testableMutant(fileName), transpileResult(), true);
