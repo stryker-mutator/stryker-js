@@ -58,6 +58,7 @@
     "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
     "@stryker-mutator/util": "../packages/util",
     "@stryker-mutator/typescript": "../packages/typescript",
+    "@stryker-mutator/typescript-checker": "../packages/typescript-checker",
     "@stryker-mutator/vue-mutator": "../packages/vue-mutator",
     "@stryker-mutator/webpack-transpiler": "../packages/webpack-transpiler"
   }
