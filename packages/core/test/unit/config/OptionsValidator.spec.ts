@@ -1,3 +1,5 @@
+import os = require('os');
+
 import sinon = require('sinon');
 import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -178,6 +180,28 @@ describe(OptionsValidator.name, () => {
     it('should be invalid for a wrong reportType', () => {
       breakConfig('dashboard', { reportType: 'empty' });
       actValidationErrors('Config option "dashboard.reportType" should be one of the allowed values ("full", "mutationScore"), but was "empty".');
+    });
+  });
+
+  describe('maxConcurrentTestRunners', () => {
+    it('should report a deprecation warning', () => {
+      testInjector.options.maxConcurrentTestRunners = 8;
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
+    });
+
+    it('should not configure "concurrency" if "maxConcurrentTestRunners" is >= cpus-1', () => {
+      testInjector.options.maxConcurrentTestRunners = 2;
+      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).undefined;
+    });
+
+    it('should configure "concurrency" if "maxConcurrentTestRunners" is set with a lower value', () => {
+      testInjector.options.maxConcurrentTestRunners = 1;
+      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq(1);
     });
   });
 

@@ -17,13 +17,19 @@ import {
 } from '@stryker-mutator/api/test_runner2';
 import { first } from 'rxjs/operators';
 
+import { Checker } from '@stryker-mutator/api/check';
+
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
 import Timer from '../utils/Timer';
-import { TestRunnerPool, createTestRunnerFactory } from '../test-runner';
+import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
+
+import { Pool, createTestRunnerPool } from '../concurrent/pool';
+
+import { ConcurrencyTokenProvider } from '../concurrent';
 
 import { MutationTestContext } from './4-MutationTestExecutor';
 import { MutantInstrumenterContext } from './2-MutantInstrumenterExecutor';
@@ -37,6 +43,8 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: Sandbox;
   [coreTokens.mutants]: readonly Mutant[];
+  [coreTokens.checkerPool]: I<Pool<Checker>>;
+  [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
 }
 
 /**
@@ -59,22 +67,31 @@ function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
 }
 
 export class DryRunExecutor {
-  public static readonly inject = tokens(commonTokens.injector, commonTokens.logger, commonTokens.options, coreTokens.timer, coreTokens.mutants);
+  public static readonly inject = tokens(
+    commonTokens.injector,
+    commonTokens.logger,
+    commonTokens.options,
+    coreTokens.timer,
+    coreTokens.mutants,
+    coreTokens.concurrencyTokenProvider
+  );
 
   constructor(
     private readonly injector: Injector<DryRunContext>,
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
-    private readonly mutants: readonly Mutant[]
+    private readonly mutants: readonly Mutant[],
+    private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
   ) {}
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
       .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
-      .provideClass(coreTokens.testRunnerPool, TestRunnerPool);
+      .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
+      .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const testRunner = await testRunnerPool.testRunner$.pipe(first()).toPromise();
+    const testRunner = await testRunnerPool.worker$.pipe(first()).toPromise();
     const { dryRunResult, grossTimeMS } = await this.timeDryRun(testRunner);
     this.validateResultCompleted(dryRunResult);
     const timing = this.calculateTiming(grossTimeMS, dryRunResult.tests);
@@ -116,7 +133,7 @@ export class DryRunExecutor {
     }
     throw new Error('Something went wrong in the initial test run');
   }
-  private async timeDryRun(testRunner: Required<TestRunner2>): Promise<{ dryRunResult: DryRunResult; grossTimeMS: number }> {
+  private async timeDryRun(testRunner: TestRunner2): Promise<{ dryRunResult: DryRunResult; grossTimeMS: number }> {
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const dryRunResult = await testRunner.dryRun({ timeout: INITIAL_RUN_TIMEOUT, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);

@@ -23,6 +23,7 @@ import { coreTokens, PluginCreator } from '.';
 export interface MainContext extends OptionsContext {
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
+  [coreTokens.pluginCreatorChecker]: PluginCreator<PluginKind.Checker>;
   [coreTokens.pluginCreatorConfigEditor]: PluginCreator<PluginKind.ConfigEditor>;
   [coreTokens.pluginCreatorMutator]: PluginCreator<PluginKind.Mutator>;
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
@@ -42,6 +43,7 @@ export function buildMainInjector(injector: CliOptionsProvider): Injector<MainCo
   return pluginResolverProvider
     .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
+    .provideFactory(coreTokens.pluginCreatorChecker, PluginCreator.createFactory(PluginKind.Checker))
     .provideFactory(coreTokens.pluginCreatorTestFramework, PluginCreator.createFactory(PluginKind.TestFramework))
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)

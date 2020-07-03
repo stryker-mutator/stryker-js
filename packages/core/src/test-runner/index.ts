@@ -10,8 +10,6 @@ import RetryDecorator from './RetryDecorator';
 import TimeoutDecorator from './TimeoutDecorator';
 import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
 
-export { TestRunnerPool } from './TestRunnerPool';
-
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(
   options: StrykerOptions,

@@ -8,14 +8,16 @@ import { ReplaySubject } from 'rxjs';
 
 import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
 
+import { Checker } from '@stryker-mutator/api/check';
+
 import SourceFile from '../../src/SourceFile';
 import TestableMutant from '../../src/TestableMutant';
 import TranspiledMutant from '../../src/TranspiledMutant';
 import { CoverageMaps } from '../../src/transpiler/CoverageInstrumenterTranspiler';
 import { MappedLocation } from '../../src/transpiler/SourceMapper';
 import TranspileResult from '../../src/transpiler/TranspileResult';
-import { TestRunnerPool } from '../../src/test-runner';
 import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
+import { Worker, Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -41,15 +43,39 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   maxTestsToLog: 3,
 }));
 
-export type TestRunnerPoolMock = sinon.SinonStubbedInstance<TestRunnerPool> & {
-  testRunner$: ReplaySubject<sinon.SinonStubbedInstance<Required<TestRunner2>>>;
+export type PoolMock<T extends Worker> = sinon.SinonStubbedInstance<Pool<T>> & {
+  worker$: ReplaySubject<sinon.SinonStubbedInstance<T>>;
 };
 
-export function createTestRunnerPoolMock(): TestRunnerPoolMock {
+export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<ConcurrencyTokenProvider> & {
+  testRunnerToken$: ReplaySubject<number>;
+  checkerToken$: ReplaySubject<number>;
+};
+
+export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMock {
+  return {
+    checkerToken$: new ReplaySubject(),
+    testRunnerToken$: new ReplaySubject(),
+    dispose: sinon.stub(),
+    freeCheckers: sinon.stub(),
+  };
+}
+
+export function createTestRunnerPoolMock(): PoolMock<TestRunner2> {
   return {
     dispose: sinon.stub(),
     recycle: sinon.stub(),
-    testRunner$: new ReplaySubject<sinon.SinonStubbedInstance<Required<TestRunner2>>>(),
+    init: sinon.stub(),
+    worker$: new ReplaySubject<sinon.SinonStubbedInstance<TestRunner2>>(),
+  };
+}
+
+export function createCheckerPoolMock(): PoolMock<Checker> {
+  return {
+    dispose: sinon.stub(),
+    recycle: sinon.stub(),
+    init: sinon.stub(),
+    worker$: new ReplaySubject<sinon.SinonStubbedInstance<Checker>>(),
   };
 }
 

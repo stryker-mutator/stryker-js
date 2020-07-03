@@ -38,6 +38,7 @@ import {
   ErrorMutantRunResult,
   MutantCoverage,
 } from '@stryker-mutator/api/test_runner2';
+import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -194,6 +195,17 @@ export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner2>> 
     dispose: sinon.stub(),
   };
 }
+
+export function checker(): sinon.SinonStubbedInstance<Checker> {
+  return {
+    check: sinon.stub(),
+    init: sinon.stub(),
+  };
+}
+
+export const checkResult = factoryMethod<CheckResult>(() => ({
+  status: CheckStatus.Passed,
+}));
 
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
