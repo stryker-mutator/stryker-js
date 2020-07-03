@@ -10,8 +10,9 @@ const testRootDir = path.resolve(__dirname, '..', 'test');
 
 const mutationSwitchingTempWhiteList = [
   'jasmine-ts-node',
+  'jasmine-jasmine',
   'karma-mocha',
-  'karma-jasmine'
+  'karma-jasmine',
 ]
 
 function runE2eTests() {

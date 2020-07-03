@@ -26,9 +26,7 @@ import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
-
 import { Pool, createTestRunnerPool } from '../concurrent/pool';
-
 import { ConcurrencyTokenProvider } from '../concurrent';
 
 import { MutationTestContext } from './4-MutationTestExecutor';

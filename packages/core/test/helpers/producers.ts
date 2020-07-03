@@ -2,11 +2,8 @@ import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
-
 import { ReplaySubject } from 'rxjs';
-
 import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
-
 import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
