@@ -4,8 +4,9 @@ import { RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import CommandTestRunner, { CommandRunnerSettings } from '../../../src/test-runner/CommandTestRunner';
+import CommandTestRunner from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
@@ -48,7 +49,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
     expect(killSpy).called;
   });
 
-  function createSut(settings?: CommandRunnerSettings) {
+  function createSut(settings?: CommandRunnerOptions) {
     const strykerOptions = factory.strykerOptions();
     if (settings) {
       strykerOptions.commandRunner = settings;

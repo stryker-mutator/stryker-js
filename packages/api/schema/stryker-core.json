@@ -4,6 +4,17 @@
   "description": "JSON schema for the Stryker Mutator configuration file",
   "type": "object",
   "definitions": {
+    "commandRunnerOptions": {
+      "title": "CommandRunnerOptions",
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "The command to test each mutant. For example \"npm run mocha\". Defaults to \"npm test\".",
+          "type": "string",
+          "default": "npm test"
+        }
+      }
+    },
     "logLevel": {
       "title": "LogLevel",
       "type": "string",
@@ -220,6 +231,11 @@
     "concurrency": {
       "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine. This is a sane default for most use cases.",
       "type": "number"
+    },
+    "commandRunner": {
+      "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
+      "$ref": "#/definitions/commandRunnerOptions",
+      "default": {}
     },
     "coverageAnalysis": {
       "$ref": "#/definitions/coverageAnalysis",
