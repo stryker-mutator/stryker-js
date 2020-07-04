@@ -11,7 +11,8 @@
         "epic/*"
       ],
       "conventionalCommits": true,
-      "forcePublish": true
+      "forcePublish": true,
+      "exact": true
     }
   }
 }
