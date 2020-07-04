@@ -46,6 +46,14 @@ describe(StringLiteralMutator.name, () => {
     expectJSMutation(sut, 'import "foo";');
   });
 
+  it('should not mutate require call statements', () => {
+    expectJSMutation(sut, 'require("./lib/square");');
+  });
+
+  it('should mutate other call statements', () => {
+    expectJSMutation(sut, 'require2("./lib/square");', 'require2("");');
+  });
+
   it('should not mutate export statements', () => {
     expectJSMutation(sut, 'export * from "./foo";');
     expectJSMutation(sut, 'export { foo as boo } from "./foo";');
