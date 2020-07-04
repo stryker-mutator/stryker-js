@@ -10,7 +10,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "unit": "cross-env BABEL_ENV=test karma start test/karma.conf.js --single-run",
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js --fileLogLevel trace --logLevel debug",
+    "test": "stryker run --fileLogLevel trace",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "dependencies": {

@@ -1,14 +1,14 @@
 import path = require('path');
 
+import execa = require('execa');
+import npmRunPath = require('npm-run-path');
 import { expect } from 'chai';
 import sinon = require('sinon');
 import * as mkdirp from 'mkdirp';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
-
 import { fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
-
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox';
@@ -23,17 +23,19 @@ describe(Sandbox.name, () => {
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesStub: sinon.SinonStub;
+  let execaStub: sinon.SinonStub;
+  const SANDBOX_WORKING_DIR = 'sandbox-123';
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    temporaryDirectoryMock.createRandomDirectory.returns('sandbox-123');
+    temporaryDirectoryMock.createRandomDirectory.returns(SANDBOX_WORKING_DIR);
     mkdirpSyncStub = sinon.stub(mkdirp, 'sync');
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
+    execaStub = sinon.stub();
     symlinkJunctionStub.resolves();
     findNodeModulesStub.resolves('node_modules');
-
     files = [];
   });
 
@@ -41,6 +43,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
+      .provideValue(coreTokens.execa, (execaStub as unknown) as typeof execa)
       .injectFunction(Sandbox.create);
   }
 
@@ -56,8 +59,8 @@ describe(Sandbox.name, () => {
       files.push(fileB);
       files.push(fileE);
       await createSut();
-      expect(writeFileStub).calledWith(path.join('sandbox-123', 'a', 'b.js'), fileB.content);
-      expect(writeFileStub).calledWith(path.join('sandbox-123', 'c', 'd', 'e.js'), fileE.content);
+      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'a', 'b.js'), fileB.content);
+      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.js'), fileE.content);
     });
 
     it('should make the dir before copying the file', async () => {
@@ -65,20 +68,20 @@ describe(Sandbox.name, () => {
       files.push(new File(path.resolve('c', 'd', 'e.js'), 'e content'));
       await createSut();
       expect(mkdirpSyncStub).calledTwice;
-      expect(mkdirpSyncStub).calledWithExactly(path.join('sandbox-123', 'a'));
-      expect(mkdirpSyncStub).calledWithExactly(path.join('sandbox-123', 'c', 'd'));
+      expect(mkdirpSyncStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'a'));
+      expect(mkdirpSyncStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'c', 'd'));
     });
 
     it('should be able to copy a local file', async () => {
       files.push(new File('localFile.js', 'foobar'));
       await createSut();
-      expect(fileUtils.writeFile).calledWith(path.join('sandbox-123', 'localFile.js'), Buffer.from('foobar'));
+      expect(fileUtils.writeFile).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.js'), Buffer.from('foobar'));
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {
       await createSut();
       expect(findNodeModulesStub).calledWith(process.cwd());
-      expect(symlinkJunctionStub).calledWith('node_modules', path.join('sandbox-123', 'node_modules'));
+      expect(symlinkJunctionStub).calledWith('node_modules', path.join(SANDBOX_WORKING_DIR, 'node_modules'));
     });
 
     it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
@@ -119,6 +122,19 @@ describe(Sandbox.name, () => {
       expect(symlinkJunctionStub).not.called;
       expect(findNodeModulesStub).not.called;
     });
+
+    it('should execute the buildCommand in the sandbox', async () => {
+      testInjector.options.buildCommand = 'npm run build';
+      await createSut();
+      expect(execaStub).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
+      expect(testInjector.logger.info).calledWith('Running build command "%s" in the sandbox at "%s".', 'npm run build', SANDBOX_WORKING_DIR);
+    });
+
+    it('should not execute a build command when non is configured', async () => {
+      testInjector.options.buildCommand = undefined;
+      await createSut();
+      expect(execaStub).not.called;
+    });
   });
 
   describe('get sandboxFileNames()', () => {
@@ -126,13 +142,13 @@ describe(Sandbox.name, () => {
       files.push(new File('a.js', ''));
       files.push(new File(path.resolve('b', 'c', 'e.js'), ''));
       const sut = await createSut();
-      expect(sut.sandboxFileNames).deep.eq([path.join('sandbox-123', 'a.js'), path.join('sandbox-123', 'b', 'c', 'e.js')]);
+      expect(sut.sandboxFileNames).deep.eq([path.join(SANDBOX_WORKING_DIR, 'a.js'), path.join(SANDBOX_WORKING_DIR, 'b', 'c', 'e.js')]);
     });
   });
   describe('workingDirectory', () => {
     it('should retrieve the sandbox directory', async () => {
       const sut = await createSut();
-      expect(sut.workingDirectory).eq('sandbox-123');
+      expect(sut.workingDirectory).eq(SANDBOX_WORKING_DIR);
     });
   });
 });

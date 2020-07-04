@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js",
+    "test": "stryker run",
+    "test:unit": "karma start",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "author": "",
