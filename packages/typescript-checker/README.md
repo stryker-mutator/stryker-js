@@ -1,6 +1,5 @@
-**NOTE:** This readme describes a checker plugin set to release in Stryker v4. It is not usable yet! 
-Please see the [master branch](https://github.com/stryker-mutator/stryker/tree/master) for the current release of Stryker. 
-
+**NOTE:** This readme describes a checker plugin set to release in Stryker v4. It is not usable yet!
+Please see the [master branch](https://github.com/stryker-mutator/stryker/tree/master) for the current release of Stryker.
 
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dtypescript)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=typescript-checker)
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
@@ -12,7 +11,7 @@ Please see the [master branch](https://github.com/stryker-mutator/stryker/tree/m
 
 # Typescript checker
 
-A TypeScript type checker plugin for [Stryker](https://stryker-mutator.io), the ~~JavaScript~~ *TypeScript* Mutation testing framework.
+A TypeScript type checker plugin for [Stryker](https://stryker-mutator.io), the ~~JavaScript~~ _TypeScript_ Mutation testing framework.
 This plugin enables type checking on mutants, so you won't have to waste time on mutants which results in a type error.
 
 ## Features
@@ -20,7 +19,7 @@ This plugin enables type checking on mutants, so you won't have to waste time on
 👽 Type check each mutant. Invalid mutants will be marked as `CompileError` in your Stryker report.  
 🧒 Easy to setup, only your `tsconfig.json` file is needed.  
 🔢 Type check is done in-memory, no side effects on disk.  
-🎁 Support for both single typescript projects as well as projects with project references (`--build` mode).  
+🎁 Support for both single typescript projects as well as projects with project references (`--build` mode).
 
 ## Install
 
@@ -40,19 +39,17 @@ You can configure the typescript checker in the `stryker.conf.js` (or `stryker.c
 // stryker.conf.json
 {
   "checkers": ["typescript"],
-  "typescriptChecker": {
-    "tsconfigFile": "tsconfig.json"
-  }
+  "tsconfigFile": "tsconfig.json"
 }
 ```
 
-### `typescriptChecker.tsconfigFile` [`string`]
+### `tsconfigFile` [`string`]
 
 Default: `'tsconfig.json'`
 
 The path to your [tsconfig](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html). Project references _are supported_, `--build` mode will be enabled automatically when references are found in your tsconfig.json file.
 
-*Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to ovoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker/issues/391#issue-259829320) for more information on this*
+_Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to ovoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker/issues/391#issue-259829320) for more information on this_
 
 ```json
 {
@@ -66,19 +63,16 @@ The path to your [tsconfig](https://www.typescriptlang.org/docs/handbook/tsconfi
 
 ## Peer dependencies
 
-The `@stryker-mutator/typescript-checker` package  for `stryker` to enable `typescript` support. As such, you should make sure you have the correct versions of its dependencies installed:
+The `@stryker-mutator/typescript-checker` package for `stryker` to enable `typescript` support. As such, you should make sure you have the correct versions of its dependencies installed:
 
-* `typescript`
-* `@stryker-mutator/core`
+- `typescript`
+- `@stryker-mutator/core`
 
 For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/typescript/package.json).
-
 
 ## Load the plugin
 
 In this plugin the `@stryker-mutator/typescript-checker`' must be loaded into Stryker.
-The easiest way to achieve this, is *not have a `plugins` section* in your config file. That way, all plugins starting with `"@stryker-mutator/"` will be loaded.
+The easiest way to achieve this, is _not have a `plugins` section_ in your config file. That way, all plugins starting with `"@stryker-mutator/"` will be loaded.
 
 If you do decide to choose specific modules, don't forget to add `"@stryker-mutator/typescript-checker"` to the list of plugins to load.
-
-

@@ -33,30 +33,5 @@
     "Nico Jansen <jansennico@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/typescript#readme",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@stryker-mutator/api": "^3.3.1",
-    "@stryker-mutator/util": "^3.3.1",
-    "lodash.flatmap": "~4.5.0",
-    "semver": "~6.3.0",
-    "tslib": "~2.0.0"
-  },
-  "devDependencies": {
-    "@stryker-mutator/mutator-specification": "^3.3.1",
-    "@stryker-mutator/test-helpers": "^3.3.1",
-    "@types/lodash.flatmap": "~4.5.3",
-    "@types/node": "^14.0.1",
-    "@types/semver": "~7.3.1",
-    "surrial": "~2.0.2"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
-    "typescript": "^3.0.3"
-  },
-  "initStrykerConfig": {
-    "tsconfigFile": "tsconfig.json",
-    "mutate": [
-      "src/**/*.ts"
-    ]
-  }
+  "license": "Apache-2.0"
 }

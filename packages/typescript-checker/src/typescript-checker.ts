@@ -8,10 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { TypescriptCheckerOptions } from '../src-generated/typescript-checker-options';
-
 import { HybridFileSystem } from './fs';
-import { TypescriptCheckerWithStrykerOptions } from './typescript-checker-with-stryker-options';
 import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
@@ -38,7 +35,7 @@ export class TypescriptChecker implements Checker {
   private readonly tsconfigFile: string;
 
   constructor(private readonly logger: Logger, options: StrykerOptions) {
-    this.tsconfigFile = (options as TypescriptCheckerWithStrykerOptions).typescriptChecker.tsconfigFile;
+    this.tsconfigFile = options.tsconfigFile;
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
 
@@ -111,10 +108,7 @@ export class TypescriptChecker implements Checker {
       throw new Error(
         `The tsconfig file does not exist at: "${path.resolve(
           this.tsconfigFile
-        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<TypescriptCheckerOptions>(
-          'typescriptChecker',
-          'tsconfigFile'
-        )}"`
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>('tsconfigFile')}"`
       );
     }
   }
