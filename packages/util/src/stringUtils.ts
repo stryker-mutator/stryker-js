@@ -21,6 +21,6 @@ export function propertyPath<T>(prop: keyof Pick<T, KnownKeys<T>>, prop2?: keyof
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
  */
-export function escapeRegExp(input: string) {
-  return input.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+export function escapeRegExpLiteral(input: string) {
+  return input.replace(/[.*+\-?^${}()|[\]\\/]/g, '\\$&'); // $& means the whole matched string
 }
