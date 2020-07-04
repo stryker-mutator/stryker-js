@@ -3,6 +3,7 @@
   "description": "A test project for karma with the karma-webpack plugin and the ts-loader.",
   "scripts": {
     "test": "stryker run",
+    "test:unit": "karma start",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   },
   "dependencies": {

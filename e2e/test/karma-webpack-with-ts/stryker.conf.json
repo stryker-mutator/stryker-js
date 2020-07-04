@@ -1,14 +1,16 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "typescript",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "mutate": [
     "src/components/mutation-test-totals.ts"
   ],
   "packageManager": "npm",
   "testRunner": "karma",
-  "maxConcurrentTestRunners": 2,
-  "coverageAnalysis": "off",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
   "reporters": [
+    "html",
+    "clear-text",
+    "progress",
     "event-recorder"
   ],
   "karma": {
@@ -16,5 +18,8 @@
     "projectType": "custom"
   },
   "tsconfigFile": "tsconfig.json",
-  "logLevel": "trace"
+  "logLevel": "info",
+  "plugins": [
+    "@stryker-mutator/karma-runner"
+  ]
 }

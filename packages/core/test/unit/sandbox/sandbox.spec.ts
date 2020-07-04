@@ -53,14 +53,25 @@ describe(Sandbox.name, () => {
       expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
     });
 
-    it('should copy input files', async () => {
-      const fileB = new File(path.resolve('a', 'b.js'), 'b content');
-      const fileE = new File(path.resolve('c', 'd', 'e.js'), 'e content');
+    it('should copy regular input files', async () => {
+      const fileB = new File(path.resolve('a', 'b.txt'), 'b content');
+      const fileE = new File(path.resolve('c', 'd', 'e.log'), 'e content');
       files.push(fileB);
       files.push(fileE);
       await createSut();
-      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'a', 'b.js'), fileB.content);
-      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.js'), fileE.content);
+      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'a', 'b.txt'), fileB.content);
+      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.log'), fileE.content);
+    });
+
+    ['.js', '.ts', '.d.ts', '.jsx', '.cjs', '.mjs'].forEach((ext) => {
+      it(`should prefix a ${ext} with a ignore header`, async () => {
+        files.push(new File(`foo${ext}`, 'console.log("foo")'));
+        await createSut();
+        expect(writeFileStub).calledWith(
+          path.join(SANDBOX_WORKING_DIR, `foo${ext}`),
+          Buffer.from('/* eslint-disable */\n// @ts-nocheck\nconsole.log("foo")')
+        );
+      });
     });
 
     it('should make the dir before copying the file', async () => {
@@ -73,9 +84,9 @@ describe(Sandbox.name, () => {
     });
 
     it('should be able to copy a local file', async () => {
-      files.push(new File('localFile.js', 'foobar'));
+      files.push(new File('localFile.txt', 'foobar'));
       await createSut();
-      expect(fileUtils.writeFile).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.js'), Buffer.from('foobar'));
+      expect(fileUtils.writeFile).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.txt'), Buffer.from('foobar'));
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {

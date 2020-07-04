@@ -38,6 +38,16 @@ export function importModule(moduleName: string): unknown {
   return require(moduleName);
 }
 
+const JS_OR_FRIEND_EXTENSION = Object.freeze(['.js', '.ts', '.jsx', '.tsx', '.cjs', '.mjs']);
+/**
+ * Returns true if given file is a js or friend file (ts/js/jsx, etc)
+ * @param fileName The file name
+ */
+export function isJSOrFriend(fileName: string): boolean {
+  const ext = path.extname(fileName);
+  return JS_OR_FRIEND_EXTENSION.includes(ext.toLowerCase());
+}
+
 /**
  * Writes data to a specified file.
  * @param fileName The path to the file.
