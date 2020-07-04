@@ -1,5 +1,7 @@
-import * as path from 'path';
+import path = require('path');
 
+import execa = require('execa');
+import npmRunPath = require('npm-run-path');
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, I } from '@stryker-mutator/util';
@@ -12,8 +14,14 @@ import { findNodeModules, symlinkJunction, writeFile } from '../utils/fileUtils'
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
-  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>): Promise<Sandbox>;
-  inject: [typeof commonTokens.options, typeof commonTokens.getLogger, typeof coreTokens.files, typeof coreTokens.temporaryDirectory];
+  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>, exec: typeof execa): Promise<Sandbox>;
+  inject: [
+    typeof commonTokens.options,
+    typeof commonTokens.getLogger,
+    typeof coreTokens.files,
+    typeof coreTokens.temporaryDirectory,
+    typeof coreTokens.execa
+  ];
 }
 
 export class Sandbox {
@@ -24,7 +32,8 @@ export class Sandbox {
     private readonly options: StrykerOptions,
     private readonly log: Logger,
     temporaryDirectory: I<TemporaryDirectory>,
-    private readonly files: File[]
+    private readonly files: File[],
+    private readonly exec: typeof execa
   ) {
     this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
     this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
@@ -33,15 +42,22 @@ export class Sandbox {
   private async initialize(): Promise<void> {
     await this.fillSandbox();
     await this.symlinkNodeModulesIfNeeded();
+    await this.runBuildCommand();
   }
 
   public static create: SandboxFactory = Object.assign(
-    async (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>): Promise<Sandbox> => {
-      const sandbox = new Sandbox(options, getLogger(Sandbox.name), tempDir, files);
+    async (
+      options: StrykerOptions,
+      getLogger: LoggerFactoryMethod,
+      files: File[],
+      tempDir: I<TemporaryDirectory>,
+      exec: typeof execa
+    ): Promise<Sandbox> => {
+      const sandbox = new Sandbox(options, getLogger(Sandbox.name), tempDir, files, exec);
       await sandbox.initialize();
       return sandbox;
     },
-    { inject: tokens(commonTokens.options, commonTokens.getLogger, coreTokens.files, coreTokens.temporaryDirectory) }
+    { inject: tokens(commonTokens.options, commonTokens.getLogger, coreTokens.files, coreTokens.temporaryDirectory, coreTokens.execa) }
   );
 
   public get sandboxFileNames(): string[] {
@@ -51,6 +67,13 @@ export class Sandbox {
   private fillSandbox(): Promise<void[]> {
     const copyPromises = this.files.map((file) => this.fillFile(file));
     return Promise.all(copyPromises);
+  }
+
+  private async runBuildCommand() {
+    if (this.options.buildCommand) {
+      this.log.info('Running build command "%s" in the sandbox at "%s".', this.options.buildCommand, this.workingDirectory);
+      await this.exec(this.options.buildCommand, { cwd: this.workingDirectory, env: npmRunPath.env() });
+    }
   }
 
   private async symlinkNodeModulesIfNeeded(): Promise<void> {

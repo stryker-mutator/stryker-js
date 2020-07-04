@@ -220,6 +220,15 @@
       "type": "boolean",
       "default": true
     },
+    "buildCommand": {
+      "type": "string",
+      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+      "examples": [
+        "tsc -b",
+        "babel src --out-dir lib",
+        "npm run build"
+      ]
+    },
     "checkers": {
       "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
       "type": "array",

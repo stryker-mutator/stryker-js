@@ -36,7 +36,8 @@
     "ts-loader": "^7.0.3",
     "ts-node": "~7.0.0",
     "typescript": "~3.9.2",
-    "webpack": "~4.41.2"
+    "webpack": "~4.41.2",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",

@@ -1,6 +1,7 @@
 export const checkerPool = 'checkerPool';
 export const checkerFactory = 'checkerFactory';
 export const checkerConcurrencyTokens = 'checkerConcurrencyTokens';
+export const execa = 'execa';
 export const cliOptions = 'cliOptions';
 export const configReader = 'configReader';
 export const configOptionsApplier = 'configOptionsApplier'; // TODO: Remove if unused post mutation switching

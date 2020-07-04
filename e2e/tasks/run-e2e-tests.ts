@@ -13,6 +13,8 @@ const mutationSwitchingTempWhiteList = [
   'jasmine-jasmine',
   'karma-mocha',
   'karma-jasmine',
+  'webpack-zero-conf-karma',
+  'vue-javascript'
 ]
 
 function runE2eTests() {
@@ -27,7 +29,7 @@ function runE2eTests() {
 
   let testsRan = 0;
   return test$.pipe(
-    mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs
+    mergeAll(os.cpus().length && 2), // use mergeAll to limit concurrent test runs
     tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
   );
 }

@@ -1,3 +1,4 @@
+import execa = require('execa');
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
@@ -29,6 +30,7 @@ export interface MainContext extends OptionsContext {
   [coreTokens.pluginCreatorTestFramework]: PluginCreator<PluginKind.TestFramework>;
   [coreTokens.timer]: Timer;
   [coreTokens.temporaryDirectory]: TemporaryDirectory;
+  [coreTokens.execa]: typeof execa;
 }
 
 type BasicInjector = Injector<Pick<MainContext, 'logger' | 'getLogger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }>;
@@ -48,7 +50,8 @@ export function buildMainInjector(injector: CliOptionsProvider): Injector<MainCo
     .provideFactory(coreTokens.pluginCreatorMutator, PluginCreator.createFactory(PluginKind.Mutator))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer);
+    .provideClass(coreTokens.timer, Timer)
+    .provideValue(coreTokens.execa, execa);
 }
 
 export function createPluginResolverProvider(parent: BasicInjector): PluginResolverProvider {
