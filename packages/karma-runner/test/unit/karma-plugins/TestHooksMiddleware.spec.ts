@@ -85,6 +85,15 @@ describe(TestHooksMiddleware.name, () => {
       sut.configureActiveMutant(factory.mutantRunOptions({ testFilter: ['foo.spec', 'bar?spec'] }));
       expect(sut.currentTestHooks).contains('mocha.grep(/(foo\\.spec)|(bar\\?spec)/)');
     });
+    it('should escape `/` in the regex literal', () => {
+      sut.configureTestFramework(['mocha']);
+      sut.configureActiveMutant(
+        factory.mutantRunOptions({ testFilter: ['MutationTestReportTotalsComponent should show N/A when no mutation score is available'] })
+      );
+      expect(sut.currentTestHooks).contains(
+        'mocha.grep(/(MutationTestReportTotalsComponent should show N\\/A when no mutation score is available)/)'
+      );
+    });
   });
 
   describe('handler', () => {

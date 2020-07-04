@@ -4,7 +4,7 @@ import * as url from 'url';
 import { RequestHandler } from 'express';
 import { CoverageAnalysis } from '@stryker-mutator/api/core';
 import { MutantRunOptions } from '@stryker-mutator/api/test_runner2';
-import { escapeRegExp } from '@stryker-mutator/util';
+import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
 export const TEST_HOOKS_FILE_NAME = __filename;
 
@@ -62,7 +62,7 @@ export default class TestHooksMiddleware {
           }})`;
           break;
         case 'mocha':
-          const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+          const metaRegExp = testFilter.map((testId) => `(${escapeRegExpLiteral(testId)})`).join('|');
           this.currentTestHooks += `mocha.grep(/${metaRegExp}/)`;
           break;
       }
