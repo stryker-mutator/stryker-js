@@ -3,7 +3,6 @@ import path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createTypescriptOptions } from '../helpers/factories';
 import { TypescriptChecker } from '../../src';
 
 const resolveTestResource = (path.resolve.bind(
@@ -20,7 +19,6 @@ describe('Typescript checker errors', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    testInjector.options.typescriptChecker = createTypescriptOptions();
     sut = testInjector.injector.injectClass(TypescriptChecker);
   });
 
@@ -40,7 +38,7 @@ describe('Typescript checker errors', () => {
       `The tsconfig file does not exist at: "${resolveTestResource(
         'empty-dir',
         'tsconfig.json'
-      )}". Please configure the tsconfig file in your stryker.conf file using "typescriptChecker.tsconfigFile"`
+      )}". Please configure the tsconfig file in your stryker.conf file using "tsconfigFile"`
     );
   });
 });

@@ -8,16 +8,17 @@ import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantInstrumenterExecutor } from '../../../src/process';
 import InputFileCollection from '../../../src/input/InputFileCollection';
-import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, PoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/CheckerFacade';
+import { SandboxTSConfigRewriter, Sandbox } from '../../../src/sandbox';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
   let inputFiles: InputFileCollection;
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
   let instrumenterMock: sinon.SinonStubbedInstance<Instrumenter>;
+  let sandboxTSConfigRewriterMock: sinon.SinonStubbedInstance<SandboxTSConfigRewriter>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let checkerPoolMock: PoolMock<Checker>;
@@ -39,10 +40,13 @@ describe(MutantInstrumenterExecutor.name, () => {
     };
     sandboxMock = sinon.createStubInstance(Sandbox);
     instrumenterMock = sinon.createStubInstance(Instrumenter);
+    sandboxTSConfigRewriterMock = sinon.createStubInstance(SandboxTSConfigRewriter);
+    sandboxTSConfigRewriterMock.rewrite.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
     sut = new MutantInstrumenterExecutor(injectorMock, inputFiles);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
+    injectorMock.injectClass.withArgs(SandboxTSConfigRewriter).returns(sandboxTSConfigRewriterMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);
     injectorMock.resolve
       .withArgs(coreTokens.concurrencyTokenProvider)
@@ -60,6 +64,12 @@ describe(MutantInstrumenterExecutor.name, () => {
   it('result in the new injector', async () => {
     const result = await sut.execute();
     expect(result).eq(injectorMock);
+  });
+
+  it('should rewrite tsconfig files before initializing the sandbox', async () => {
+    await sut.execute();
+    expect(sandboxTSConfigRewriterMock.rewrite).calledWithExactly([mutatedFile, testFile]);
+    expect(sandboxTSConfigRewriterMock.rewrite).calledBefore(injectorMock.injectFunction);
   });
 
   it('should provide the mutated files to the sandbox', async () => {

@@ -7,7 +7,6 @@ import { Mutant, Range } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { TypescriptChecker } from '../../src';
-import { createTypescriptOptions } from '../helpers/factories';
 
 const resolveTestResource = (path.resolve.bind(
   path,
@@ -24,7 +23,6 @@ describe('Typescript checker on a single project', () => {
 
   beforeEach(() => {
     process.chdir(resolveTestResource());
-    testInjector.options.typescriptChecker = createTypescriptOptions();
     sut = testInjector.injector.injectClass(TypescriptChecker);
     return sut.init();
   });

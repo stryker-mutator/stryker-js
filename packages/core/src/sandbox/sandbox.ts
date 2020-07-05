@@ -14,7 +14,9 @@ import { findNodeModules, symlinkJunction, writeFile, isJSOrFriend } from '../ut
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
-  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: File[], tempDir: I<TemporaryDirectory>, exec: typeof execa): Promise<Sandbox>;
+  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: readonly File[], tempDir: I<TemporaryDirectory>, exec: typeof execa): Promise<
+    Sandbox
+  >;
   inject: [
     typeof commonTokens.options,
     typeof commonTokens.getLogger,
@@ -36,7 +38,7 @@ export class Sandbox {
     private readonly options: StrykerOptions,
     private readonly log: Logger,
     temporaryDirectory: I<TemporaryDirectory>,
-    private readonly files: File[],
+    private readonly files: readonly File[],
     private readonly exec: typeof execa
   ) {
     this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
@@ -53,7 +55,7 @@ export class Sandbox {
     async (
       options: StrykerOptions,
       getLogger: LoggerFactoryMethod,
-      files: File[],
+      files: readonly File[],
       tempDir: I<TemporaryDirectory>,
       exec: typeof execa
     ): Promise<Sandbox> => {
@@ -66,6 +68,10 @@ export class Sandbox {
 
   public get sandboxFileNames(): string[] {
     return [...this.fileMap.entries()].map(([, to]) => to);
+  }
+
+  public sandboxFileFor(fileName: string) {
+    return this.fileMap.get(fileName);
   }
 
   private fillSandbox(): Promise<void[]> {
