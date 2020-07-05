@@ -10,6 +10,8 @@ import { LoggingClientContext } from '../logging';
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
 import { createCheckerFactory } from '../checker/CheckerFacade';
 
+import { SandboxTSConfigRewriter } from '../sandbox';
+
 import { DryRunContext } from './3-DryRunExecutor';
 
 export interface MutantInstrumenterContext extends MainContext {
@@ -27,7 +29,10 @@ export class MutantInstrumenterExecutor {
 
     // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate);
-    const files = this.replaceWith(instrumentResult);
+
+    // Rewrite tsconfig file references
+    const tsconfigFileRewriter = this.injector.injectClass(SandboxTSConfigRewriter);
+    const files = await tsconfigFileRewriter.rewrite(this.replaceWith(instrumentResult));
 
     // Initialize the checker pool
     const concurrencyTokenProviderProvider = this.injector.provideClass(coreTokens.concurrencyTokenProvider, ConcurrencyTokenProvider);
