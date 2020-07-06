@@ -38,7 +38,7 @@
   "dependencies": {
     "@babel/parser": "~7.10.2",
     "@babel/traverse": "~7.10.1",
-    "@babel/generator": "~7.9.4",
+    "@babel/generator": "~7.10.4",
     "@stryker-mutator/api": "^3.3.1",
     "tslib": "~2.0.0"
   },
