@@ -5,8 +5,8 @@ import { RunStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { createMochaOptions } from '../helpers/factories';
+import { createMochaTestRunner } from '../../src';
 
 describe('QUnit sample', () => {
   let files: string[];
@@ -16,7 +16,7 @@ describe('QUnit sample', () => {
   });
 
   function createSut() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, files).injectClass(MochaTestRunner);
+    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, files).injectFunction(createMochaTestRunner);
   }
 
   it('should work when configured with "qunit" ui', async () => {

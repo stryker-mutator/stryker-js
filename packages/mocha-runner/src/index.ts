@@ -1,19 +1,20 @@
-import { BaseContext, commonTokens, declareClassPlugin, declareFactoryPlugin, Injector, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, declareFactoryPlugin, Injector, PluginKind, tokens, TestRunnerPluginContext } from '@stryker-mutator/api/plugin';
 
 import * as strykerValidationSchema from '../schema/mocha-runner-options.json';
 
-import MochaOptionsEditor from './MochaOptionsEditor';
+import * as pluginTokens from './plugin-tokens';
 import MochaOptionsLoader from './MochaOptionsLoader';
 import { MochaTestRunner } from './MochaTestRunner';
+import { MochaAdapter } from './MochaAdapter';
 
-export const strykerPlugins = [
-  declareFactoryPlugin(PluginKind.OptionsEditor, 'mocha-runner', mochaOptionsEditorFactory),
-  declareClassPlugin(PluginKind.TestRunner, 'mocha', MochaTestRunner),
-];
-
-mochaOptionsEditorFactory.inject = tokens(commonTokens.injector);
-function mochaOptionsEditorFactory(injector: Injector<BaseContext>): MochaOptionsEditor {
-  return injector.provideClass('loader', MochaOptionsLoader).injectClass(MochaOptionsEditor);
+createMochaTestRunner.inject = tokens(commonTokens.injector);
+export function createMochaTestRunner(injector: Injector<TestRunnerPluginContext>): MochaTestRunner {
+  return injector
+    .provideClass(pluginTokens.loader, MochaOptionsLoader)
+    .provideClass(pluginTokens.mochaAdapter, MochaAdapter)
+    .injectClass(MochaTestRunner);
 }
 
-export { strykerValidationSchema };
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'mocha', createMochaTestRunner)];
+
+export { strykerValidationSchema, MochaTestRunner };
