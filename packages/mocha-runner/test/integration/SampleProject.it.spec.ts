@@ -6,8 +6,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { createMochaOptions } from '../helpers/factories';
+import { createMochaTestRunner, MochaTestRunner } from '../../src';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -26,7 +26,7 @@ describe('Running a sample project', () => {
   let spec: string[];
 
   function createSut() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, spec).injectClass(MochaTestRunner);
+    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, spec).injectFunction(createMochaTestRunner);
   }
 
   describe('when tests pass', () => {
