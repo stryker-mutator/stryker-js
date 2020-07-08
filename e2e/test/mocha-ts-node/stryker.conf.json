@@ -1,16 +1,17 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "typescript",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "mutate": [
     "{src,lib}/**/*.ts?(x)"
   ],
   "packageManager": "npm",
   "testRunner": "mocha",
-  "maxConcurrentTestRunners": 2,
-  "coverageAnalysis": "off",
-  "reporters": ["event-recorder"],
-  "mocha": {
-    "package": "package.json"
-  },
-  "tsconfigFile": "tsconfig.json"
+  "concurrency": 1,
+  "coverageAnalysis": "perTest",
+  "reporters": ["event-recorder", "html", "progress", "clear-text"],
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.json",
+  "plugins": [
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/typescript-checker"
+  ]
 }
