@@ -12,7 +12,7 @@ function resolve(fileName: string) {
   return path.resolve(__dirname, '..', '..', fileName);
 }
 
-describe.only('Running an instrumented project', () => {
+describe('Running an instrumented project', () => {
   let sut: MochaTestRunner;
 
   beforeEach(async () => {
@@ -85,11 +85,31 @@ describe.only('Running an instrumented project', () => {
       };
       expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
     });
+
+    it('should not report mutantCoverage when coverage analysis is "off"', async () => {
+      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      assertions.expectCompleted(result);
+      expect(result.mutantCoverage).undefined;
+    });
   });
 
   describe('mutantRun', () => {
+    it('should be able to survive a mutant', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 0 }) }));
+      assertions.expectSurvived(result);
+    });
+
     it('should be able to kill a mutant', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }) }));
+      assertions.expectKilled(result);
+      expect(result.killedBy).eq('MyMath should be able to add two numbers');
+      expect(result.failureMessage).eq('expected -3 to equal 7');
+    });
+
+    it('should be able to kill a mutant with filtered test', async () => {
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }), testFilter: ['MyMath should be able to add two numbers'] })
+      );
       assertions.expectKilled(result);
       expect(result.killedBy).eq('MyMath should be able to add two numbers');
       expect(result.failureMessage).eq('expected -3 to equal 7');

@@ -1,8 +1,11 @@
+import path = require('path');
+
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
+
+import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
@@ -11,16 +14,15 @@ import * as pluginTokens from '../../src/plugin-tokens';
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { createMochaOptions } from '../helpers/factories';
 
-describe.only(MochaTestRunner.name, () => {
-  let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<Mocha.Suite> };
+describe(MochaTestRunner.name, () => {
+  let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<Mocha.Suite>; dispose?: sinon.SinonStub };
   let mochaAdapterMock: sinon.SinonStubbedInstance<MochaAdapter>;
   let mochaOptionsLoaderMock: sinon.SinonStubbedInstance<MochaOptionsLoader>;
-  let sandboxFileNames: string[];
   let reporterMock: sinon.SinonStubbedInstance<StrykerMochaReporter>;
 
   beforeEach(() => {
-    sandboxFileNames = [];
     reporterMock = sinon.createStubInstance(StrykerMochaReporter);
+    reporterMock.tests = [];
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
@@ -30,15 +32,14 @@ describe.only(MochaTestRunner.name, () => {
 
   afterEach(() => {
     // These keys can be used to test the nodejs cache
-    delete require.cache['foo.js'];
-    delete require.cache['bar.js'];
-    delete require.cache['baz.js'];
+    delete require.cache[path.resolve('foo.js')];
+    delete require.cache[path.resolve('bar.js')];
+    delete require.cache[path.resolve('baz.js')];
     delete StrykerMochaReporter.log;
   });
 
   function createSut(): MochaTestRunner {
     return testInjector.injector
-      .provideValue(commonTokens.sandboxFileNames, sandboxFileNames)
       .provideValue(pluginTokens.mochaAdapter, mochaAdapterMock)
       .provideValue(pluginTokens.loader, mochaOptionsLoaderMock)
       .injectClass(MochaTestRunner);
@@ -75,7 +76,7 @@ describe.only(MochaTestRunner.name, () => {
       expect(sut.testFileNames).eq(expectedTestFileNames);
     });
 
-    it('should not handle requires when there are not requires', async () => {
+    it('should not handle requires when there are no `requires`', async () => {
       mochaOptionsLoaderMock.load.returns({});
       await sut.init();
       expect(mochaAdapterMock.handleRequires).not.called;
@@ -196,26 +197,90 @@ describe.only(MochaTestRunner.name, () => {
       expect(result.errorMessage).eq("Mocha didn't instantiate the StrykerMochaReporter correctly. Test result cannot be reported.");
     });
 
-    it('should purge cached sandbox files', async () => {
+    it('should collect and purge the project files between runs', async () => {
       // Arrange
-      sandboxFileNames.push('foo.js', 'bar.js');
-      testFileNames.push('foo.js'); // should still purge 'bar.js'
-      require.cache['foo.js'] = 'foo' as any;
-      require.cache['bar.js'] = 'bar' as any;
-      require.cache['baz.js'] = 'baz' as any;
+      const sandboxDir = 'sandbox-dir';
+      const cwdStub = sinon.stub(process, 'cwd');
+      cwdStub.returns(sandboxDir);
+      const projectFile = path.join(sandboxDir, 'foo.js');
+      const testFile = path.join(sandboxDir, 'foo.spec.js');
+      const dependencyFile = path.join(sandboxDir, 'node_modules', 'baz.js');
+      testFileNames.push(testFile);
+      require.cache[projectFile] = 'foo' as any;
+      require.cache[testFile] = 'bar' as any;
+      require.cache[dependencyFile] = 'baz' as any;
 
       // Act
       await actDryRun();
+      const onGoingTest = sut.mutantRun(factory.mutantRunOptions());
 
       // Assert
-      expect(require.cache['foo.js']).undefined;
-      expect(require.cache['bar.js']).undefined;
-      expect(require.cache['baz.js']).eq('baz');
+      expect(require.cache[projectFile]).undefined;
+      expect(require.cache[testFile]).undefined;
+      expect(require.cache[dependencyFile]).eq('baz');
+      mocha.run.callArg(0);
+      await onGoingTest;
+      delete require.cache[projectFile];
+      delete require.cache[testFile];
+      delete require.cache[dependencyFile];
+    });
+
+    it('should dispose of mocha when it supports it', async () => {
+      mocha.dispose = sinon.stub();
+      await actDryRun();
+      expect(mocha.dispose).called;
     });
 
     async function actDryRun(options = factory.dryRunOptions()) {
-      mocha.run.callsArg(0);
+      mocha.run.onFirstCall().callsArg(0);
       return sut.dryRun(options);
+    }
+  });
+
+  describe(MochaTestRunner.prototype.mutantRun.name, () => {
+    let sut: MochaTestRunner;
+    beforeEach(() => {
+      sut = createSut();
+      sut.testFileNames = [];
+      sut.mochaOptions = {};
+      StrykerMochaReporter.currentInstance = reporterMock;
+    });
+
+    it('should active the given mutant', async () => {
+      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      expect(global.__activeMutant__).eq(42);
+    });
+
+    it('should use `grep` to when the test filter is specified', async () => {
+      await actMutantRun(factory.mutantRunOptions({ testFilter: ['foo should be bar', 'baz should be qux'] }));
+      expect(mocha.grep).calledWith(new RegExp('(foo should be bar)|(baz should be qux)'));
+    });
+
+    it('should escape regex characters when filtering', async () => {
+      await actMutantRun(factory.mutantRunOptions({ testFilter: ['should escape *.\\, but not /'] }));
+      expect(mocha.grep).calledWith(new RegExp('(should escape \\*\\.\\\\, but not /)'));
+    });
+
+    it('should be able to report a killed mutant when a test fails', async () => {
+      reporterMock.tests = [factory.successTestResult(), factory.failedTestResult({ id: 'foo should be bar', failureMessage: 'foo was baz' })];
+      const result = await actMutantRun();
+      const expectedResult: KilledMutantRunResult = {
+        failureMessage: 'foo was baz',
+        killedBy: 'foo should be bar',
+        status: MutantRunStatus.Killed,
+      };
+      expect(result).deep.eq(expectedResult);
+    });
+
+    it('should be able report a survived mutant when all test succeed', async () => {
+      reporterMock.tests = [factory.successTestResult(), factory.successTestResult()];
+      const result = await actMutantRun();
+      assertions.expectSurvived(result);
+    });
+
+    async function actMutantRun(options = factory.mutantRunOptions()) {
+      mocha.run.callsArg(0);
+      return sut.mutantRun(options);
     }
   });
 });
