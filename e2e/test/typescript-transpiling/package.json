@@ -5,9 +5,19 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "pretest:unit": "npm run build",
+    "test:unit": "mocha",
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "test": "stryker run",
+    "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/*.ts"
+  },
+  "mocha": {
+    "spec":  [
+      "dist/test/**/*.js"
+    ]
   },
   "author": "",
   "license": "ISC"

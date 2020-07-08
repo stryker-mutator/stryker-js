@@ -146,6 +146,13 @@ describe(Sandbox.name, () => {
       await createSut();
       expect(execaStub).not.called;
     });
+
+    it('should execute the buildCommand before the node_modules are symlinked', async () => {
+      // It is important to first run the buildCommand, otherwise the build dependencies are not correctly resolved
+      testInjector.options.buildCommand = 'npm run build';
+      await createSut();
+      expect(execaStub).calledBefore(symlinkJunctionStub);
+    });
   });
 
   describe('get sandboxFileNames()', () => {

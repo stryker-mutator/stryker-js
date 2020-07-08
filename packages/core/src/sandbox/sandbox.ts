@@ -47,8 +47,8 @@ export class Sandbox {
 
   private async initialize(): Promise<void> {
     await this.fillSandbox();
-    await this.symlinkNodeModulesIfNeeded();
     await this.runBuildCommand();
+    await this.symlinkNodeModulesIfNeeded();
   }
 
   public static create: SandboxFactory = Object.assign(
