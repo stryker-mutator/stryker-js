@@ -74,7 +74,7 @@
     "rxjs": "~6.6.0",
     "source-map": "~0.7.3",
     "surrial": "~2.0.2",
-    "tree-kill": "~1.2.0",
+    "tree-kill": "~1.2.2",
     "tslib": "~2.0.0",
     "typed-inject": "~2.2.1",
     "typed-rest-client": "~1.7.1"
