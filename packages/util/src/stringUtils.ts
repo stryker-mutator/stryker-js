@@ -24,3 +24,10 @@ export function propertyPath<T>(prop: keyof Pick<T, KnownKeys<T>>, prop2?: keyof
 export function escapeRegExpLiteral(input: string) {
   return input.replace(/[.*+\-?^${}()|[\]\\/]/g, '\\$&'); // $& means the whole matched string
 }
+
+/**
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+ */
+export function escapeRegExp(input: string) {
+  return input.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}

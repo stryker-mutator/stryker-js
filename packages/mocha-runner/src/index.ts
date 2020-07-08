@@ -15,6 +15,6 @@ export function createMochaTestRunner(injector: Injector<TestRunnerPluginContext
     .injectClass(MochaTestRunner);
 }
 
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'mocha', createMochaTestRunner)];
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner2, 'mocha', createMochaTestRunner)];
 
 export { strykerValidationSchema, MochaTestRunner };

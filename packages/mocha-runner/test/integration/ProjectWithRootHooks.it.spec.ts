@@ -1,9 +1,10 @@
 import * as path from 'path';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
+
+import { expectCompleted } from '@stryker-mutator/test-helpers/src/assertions';
 
 import { createMochaTestRunner, MochaTestRunner } from '../../src';
 
@@ -23,9 +24,8 @@ describe('Running a project with root hooks', () => {
   });
 
   it('should have run the root hooks', async () => {
-    const result = await sut.run({});
-    expect(result.status).eq(RunStatus.Complete);
+    const result = await sut.dryRun(factory.dryRunOptions({}));
+    expectCompleted(result);
     expect(result.tests).has.lengthOf(2);
-    expect(result.errorMessages).lengthOf(0);
   });
 });

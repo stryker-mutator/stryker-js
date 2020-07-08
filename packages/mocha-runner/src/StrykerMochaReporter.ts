@@ -1,5 +1,7 @@
 import { Logger } from '@stryker-mutator/api/logging';
-import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { FailedTestResult, TestResult, SuccessTestResult, TestStatus } from '@stryker-mutator/api/test_runner2';
+
+import { I } from '@stryker-mutator/util';
 
 import Timer from './Timer';
 
@@ -10,11 +12,11 @@ export class StrykerMochaReporter {
    * data to reporters...
    */
   public static log: Logger;
-  public runResult: RunResult;
   private readonly timer = new Timer();
   private passedCount = 0;
+  public tests: TestResult[];
 
-  public static currentInstance: StrykerMochaReporter | undefined;
+  public static currentInstance: I<StrykerMochaReporter> | undefined;
 
   constructor(private readonly runner: NodeJS.EventEmitter) {
     this.registerEvents();
@@ -25,43 +27,40 @@ export class StrykerMochaReporter {
     this.runner.on('start', () => {
       this.passedCount = 0;
       this.timer.reset();
-      this.runResult = {
-        errorMessages: [],
-        status: RunStatus.Error,
-        tests: [],
-      };
+      this.tests = [];
       StrykerMochaReporter.log.debug('Starting Mocha test run');
     });
 
     this.runner.on('pass', (test: any) => {
-      this.runResult.tests.push({
-        name: test.fullTitle(),
+      const title: string = test.fullTitle();
+      const result: SuccessTestResult = {
+        id: title,
+        name: title,
         status: TestStatus.Success,
         timeSpentMs: this.timer.elapsedMs(),
-      });
+      };
+      this.tests.push(result);
       this.passedCount++;
       this.timer.reset();
     });
 
     this.runner.on('fail', (test: any, err: any) => {
-      this.runResult.tests.push({
-        failureMessages: [err.message],
-        name: test.fullTitle(),
+      const title = test.fullTitle();
+      const result: FailedTestResult = {
+        id: title,
+        failureMessage: err.message,
+        name: title,
         status: TestStatus.Failed,
         timeSpentMs: this.timer.elapsedMs(),
-      });
-      if (!this.runResult.errorMessages) {
-        this.runResult.errorMessages = [];
-      }
-      this.runResult.errorMessages.push(err.message);
+      };
+      this.tests.push(result);
       if (StrykerMochaReporter.log.isTraceEnabled()) {
         StrykerMochaReporter.log.trace(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
       }
     });
 
     this.runner.on('end', () => {
-      this.runResult.status = RunStatus.Complete;
-      StrykerMochaReporter.log.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.runResult.tests.length);
+      StrykerMochaReporter.log.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.tests.length);
     });
   }
 }

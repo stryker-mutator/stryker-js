@@ -15,7 +15,9 @@ const mutationSwitchingTempWhiteList = [
   'karma-jasmine',
   'webpack-zero-conf-karma',
   'vue-javascript',
-  'karma-webpack-with-ts'
+  'karma-webpack-with-ts',
+  'mocha-mocha',
+  'mocha-ts-node'
 ]
 
 function runE2eTests() {

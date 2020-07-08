@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral } from '../../src';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp } from '../../src';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -37,6 +37,20 @@ describe('stringUtils', () => {
     for (const letter of '.*+-?^${}()|[]\\/') {
       it(`should escape "${letter}"`, () => {
         expect(escapeRegExpLiteral(letter)).eq(`\\${letter}`);
+      });
+    }
+  });
+
+  describe(escapeRegExp.name, () => {
+    it('should return input if no special chars are found', () => {
+      expect(escapeRegExp('something normal')).eq('something normal');
+    });
+
+    it("should not escape `/` (that's only needed for regex literals)");
+
+    for (const letter of '.*+-?^${}()|[]\\') {
+      it(`should escape "${letter}"`, () => {
+        expect(escapeRegExp(letter)).eq(`\\${letter}`);
       });
     }
   });

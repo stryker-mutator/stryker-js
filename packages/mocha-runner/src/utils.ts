@@ -2,15 +2,6 @@ import { MochaOptions } from '../src-generated/mocha-runner-options';
 
 import mochaSchema = require('../schema/mocha-runner-options.json');
 
-/**
- * Executes a piece of javascript code in global scope while passing the `require` function
- * @param body The JavaScript to execute
- */
-export function evalGlobal(body: string) {
-  const fn = new Function('require', body);
-  fn(require);
-}
-
 export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
   const args: string[] = [];
   if (mochaOptions['no-config']) {

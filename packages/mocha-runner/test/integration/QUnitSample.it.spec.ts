@@ -1,8 +1,7 @@
 import * as path from 'path';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';
@@ -29,8 +28,8 @@ describe('QUnit sample', () => {
     files = mochaOptions.spec!;
     const sut = createSut();
     await sut.init();
-    const actualResult = await sut.run({});
-    expect(actualResult.status).eq(RunStatus.Complete);
+    const actualResult = await sut.dryRun(factory.dryRunOptions());
+    assertions.expectCompleted(actualResult);
     expect(actualResult.tests.map((t) => t.name)).deep.eq([
       'Math should be able to add two numbers',
       'Math should be able 1 to a number',
@@ -47,8 +46,8 @@ describe('QUnit sample', () => {
     });
     const sut = createSut();
     await sut.init();
-    const actualResult = await sut.run({});
-    expect(actualResult.status).eq(RunStatus.Complete);
+    const actualResult = await sut.dryRun(factory.dryRunOptions());
+    assertions.expectCompleted(actualResult);
     expect(actualResult.tests).lengthOf(0);
   });
 });
