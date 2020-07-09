@@ -23,7 +23,7 @@ describe(Sandbox.name, () => {
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesStub: sinon.SinonStub;
-  let execaStub: sinon.SinonStub;
+  let execaMock: sinon.SinonStubbedInstance<typeof execa>;
   const SANDBOX_WORKING_DIR = 'sandbox-123';
 
   beforeEach(() => {
@@ -33,7 +33,12 @@ describe(Sandbox.name, () => {
     writeFileStub = sinon.stub(fileUtils, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
-    execaStub = sinon.stub();
+    execaMock = {
+      command: sinon.stub(),
+      commandSync: sinon.stub(),
+      node: sinon.stub(),
+      sync: sinon.stub(),
+    };
     symlinkJunctionStub.resolves();
     findNodeModulesStub.resolves('node_modules');
     files = [];
@@ -43,7 +48,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(coreTokens.execa, (execaStub as unknown) as typeof execa)
+      .provideValue(coreTokens.execa, (execaMock as unknown) as typeof execa)
       .injectFunction(Sandbox.create);
   }
 
@@ -137,21 +142,21 @@ describe(Sandbox.name, () => {
     it('should execute the buildCommand in the sandbox', async () => {
       testInjector.options.buildCommand = 'npm run build';
       await createSut();
-      expect(execaStub).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
+      expect(execaMock.command).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
       expect(testInjector.logger.info).calledWith('Running build command "%s" in the sandbox at "%s".', 'npm run build', SANDBOX_WORKING_DIR);
     });
 
     it('should not execute a build command when non is configured', async () => {
       testInjector.options.buildCommand = undefined;
       await createSut();
-      expect(execaStub).not.called;
+      expect(execaMock.command).not.called;
     });
 
     it('should execute the buildCommand before the node_modules are symlinked', async () => {
       // It is important to first run the buildCommand, otherwise the build dependencies are not correctly resolved
       testInjector.options.buildCommand = 'npm run build';
       await createSut();
-      expect(execaStub).calledBefore(symlinkJunctionStub);
+      expect(execaMock.command).calledBefore(symlinkJunctionStub);
     });
   });
 
