@@ -81,8 +81,10 @@ export class Sandbox {
 
   private async runBuildCommand() {
     if (this.options.buildCommand) {
+      const env = npmRunPath.env();
       this.log.info('Running build command "%s" in the sandbox at "%s".', this.options.buildCommand, this.workingDirectory);
-      await this.exec(this.options.buildCommand, { cwd: this.workingDirectory, env: npmRunPath.env() });
+      this.log.debug('(using PATH: %s)', env.PATH);
+      await this.exec.command(this.options.buildCommand, { cwd: this.workingDirectory, env });
     }
   }
 
