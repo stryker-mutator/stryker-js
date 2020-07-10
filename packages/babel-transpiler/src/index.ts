@@ -1,8 +1,3 @@
-import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
-
-import * as strykerValidationSchema from '../schema/babel-transpiler-options.json';
-
-import { babelTranspilerFactory } from './BabelTranspiler';
-
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'babel', babelTranspilerFactory)];
-export { strykerValidationSchema };
+console.warn(
+  'Transpiler plugins are no longer supported since Stryker 4.0. Please use `"buildCommand": "babel"` instead. You can remove "@stryker-mutator/babel-transpiler" from your devDependencies.'
+);

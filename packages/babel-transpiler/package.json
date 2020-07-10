@@ -4,9 +4,6 @@
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 80 --branches 80 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 100000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
   },
   "nyc": {
     "exclude": [
@@ -23,7 +20,6 @@
   },
   "keywords": [
     "stryker",
-    "@stryker-mutator/transpiler-plugin",
     "javascript",
     "babel"
   ],
@@ -43,37 +39,8 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/babel-transpiler#readme",
   "license": "Apache-2.0",
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.1",
-    "@stryker-mutator/util": "^3.3.1",
-    "minimatch": "~3.0.4"
   },
   "peerDependencies": {
-    "@babel/core": "^7",
-    "@stryker-mutator/core": "^3.0.0"
   },
-  "devDependencies": {
-    "@babel/cli": "~7.10.1",
-    "@babel/core": "~7.10.1",
-    "@babel/plugin-transform-typescript": "^7.8.3",
-    "@babel/preset-env": "~7.10.2",
-    "@babel/preset-flow": "^7.8.3",
-    "@babel/preset-stage-2": "^7.8.3",
-    "@babel/preset-typescript": "^7.8.3",
-    "@stryker-mutator/test-helpers": "^3.3.1",
-    "@types/babel__core": "~7.1.0",
-    "@types/babel__generator": "~7.6.0",
-    "@types/babel__template": "~7.0.1",
-    "@types/babel__traverse": "~7.0.5",
-    "@types/glob": "~7.1.0",
-    "@types/minimatch": "~3.0.3",
-    "@types/node": "^14.0.1",
-    "babel-plugin-transform-es2015-spread": "~6.22.0",
-    "glob": "~7.1.2"
-  },
-  "initStrykerConfig": {
-    "babel": {
-      "optionsFile": ".babelrc"
-    },
-    "coverageAnalysis": "off"
-  }
+  "devDependencies": {}
 }
