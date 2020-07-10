@@ -1,7 +1,17 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
-import { RunOptions, RunResult, RunStatus, TestResult, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
+import {
+  TestRunner2,
+  DryRunOptions,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+  toMutantRunResult,
+  RunStatus,
+  TestResult,
+  TestStatus,
+} from '@stryker-mutator/api/test_runner2';
 
 import { jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
@@ -21,7 +31,7 @@ export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
 }
 jestTestRunnerFactory.inject = tokens(commonTokens.injector);
 
-export default class JestTestRunner implements TestRunner {
+export default class JestTestRunner implements TestRunner2 {
   private readonly jestConfig: Jest.Configuration;
 
   private readonly enableFindRelatedTests: boolean;
@@ -60,24 +70,39 @@ export default class JestTestRunner implements TestRunner {
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
-  public async run(options: RunOptions): Promise<RunResult> {
+  public dryRun(_: DryRunOptions): Promise<DryRunResult> {
+    return this.run();
+  }
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    process.env.__ACTIVE_MUTANT__ = options.activeMutant.id.toString();
+    const fileUnderTest = undefined; //this.enableFindRelatedTests ? options.activeMutant.fileName : undefined;
+    const dryRunResult = await this.run(fileUnderTest);
+    return toMutantRunResult(dryRunResult);
+  }
+
+  private async run(fileUnderTest: string | undefined = undefined): Promise<DryRunResult> {
     this.setNodeEnv();
-    const { results } = await this.jestTestAdapter.run(
-      this.jestConfig,
-      process.cwd(),
-      this.enableFindRelatedTests ? options.mutatedFileName : undefined
-    );
+    const all = await this.jestTestAdapter.run(this.jestConfig, process.cwd(), fileUnderTest);
 
-    // Get the non-empty errorMessages from the jest RunResult, it's safe to cast to Array<string> here because we filter the empty error messages
-    const errorMessages = results.testResults
-      .map((testSuite: Jest.TestResult) => testSuite.failureMessage)
-      .filter((errorMessage) => errorMessage) as string[];
+    return this.collectRunResult(all.results);
+  }
 
-    return {
-      errorMessages,
-      status: results.numRuntimeErrorTestSuites > 0 ? RunStatus.Error : RunStatus.Complete,
-      tests: this.processTestResults(results.testResults),
-    };
+  private collectRunResult(results: Jest.AggregatedResult): DryRunResult {
+    if (results.numRuntimeErrorTestSuites) {
+      const errorMessage = results.testResults
+        .map((testSuite: Jest.TestResult) => testSuite.testExecError?.message)
+        .filter((errorMessage) => errorMessage)
+        .join(', ');
+      return {
+        status: RunStatus.Error,
+        errorMessage,
+      };
+    } else {
+      return {
+        status: RunStatus.Complete,
+        tests: this.processTestResults(results.testResults),
+      };
+    }
   }
 
   private setNodeEnv() {
@@ -93,27 +118,42 @@ export default class JestTestRunner implements TestRunner {
 
     for (const suiteResult of suiteResults) {
       for (const testResult of suiteResult.testResults) {
-        testResults.push({
-          failureMessages: testResult.failureMessages,
-          name: testResult.fullName,
-          status: this.determineTestResultStatus(testResult.status),
-          timeSpentMs: testResult.duration ? testResult.duration : 0,
-        });
+        let result: TestResult;
+        let timeSpentMs = testResult.duration ? testResult.duration : 0;
+
+        switch (testResult.status) {
+          case 'passed':
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
+              status: TestStatus.Success,
+              timeSpentMs,
+            };
+            break;
+          case 'failed':
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
+              failureMessage: testResult.failureMessages?.join(', '),
+              status: TestStatus.Failed,
+              timeSpentMs,
+            };
+            break;
+          default:
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
+              status: TestStatus.Skipped,
+              timeSpentMs,
+            };
+            break;
+        }
+
+        testResults.push(result);
       }
     }
 
     return testResults;
-  }
-
-  private determineTestResultStatus(status: Jest.Status) {
-    switch (status) {
-      case 'passed':
-        return TestStatus.Success;
-      case 'failed':
-        return TestStatus.Failed;
-      default:
-        return TestStatus.Skipped;
-    }
   }
 
   private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {

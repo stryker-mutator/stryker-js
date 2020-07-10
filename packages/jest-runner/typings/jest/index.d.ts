@@ -37,6 +37,14 @@ declare namespace Jest {
   interface TestResult {
     failureMessage?: string | null;
     testResults: AssertionResult[];
+    testExecError?: SerializableError;
+  }
+
+  interface SerializableError {
+    code?: any;
+    message: string;
+    stack?: string | null | undefined;
+    type?: string;
   }
 
   // Taken from https://goo.gl/drWMCB, removed all stuff that we are not using

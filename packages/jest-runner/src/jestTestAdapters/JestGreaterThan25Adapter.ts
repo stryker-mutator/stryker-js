@@ -25,6 +25,7 @@ export default class JestGreaterThan25Adapter implements JestTestAdapter {
         config,
         runInBand: true,
         silent: true,
+        color: false,
       },
       [projectRoot]
     );
