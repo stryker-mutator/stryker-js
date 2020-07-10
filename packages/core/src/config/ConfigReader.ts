@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { Config } from '@stryker-mutator/api/config';
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -45,8 +44,8 @@ export default class ConfigReader {
     return options;
   }
 
-  private loadConfigModule(): ((config: Config) => void) | PartialStrykerOptions {
-    let configModule: PartialStrykerOptions | ((config: Config) => void) = {};
+  private loadConfigModule(): ((options: StrykerOptions) => void) | PartialStrykerOptions {
+    let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
 
     if (!this.cliOptions.configFile) {
       try {

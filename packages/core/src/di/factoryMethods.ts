@@ -1,9 +1,6 @@
 import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
-import { deepFreeze } from '@stryker-mutator/util';
-
-import { OptionsEditorApplier } from '../config';
 
 import { coreTokens, PluginLoader } from '.';
 
@@ -21,12 +18,6 @@ export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function |
   return getLogger(target ? target.name : 'UNKNOWN');
 }
 loggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-
-export function applyOptionsEditors(options: StrykerOptions, optionsEditorApplier: OptionsEditorApplier): StrykerOptions {
-  optionsEditorApplier.edit(options);
-  return deepFreeze(options) as StrykerOptions;
-}
-applyOptionsEditors.inject = tokens(commonTokens.options, coreTokens.configOptionsApplier);
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   const defaults: MutatorDescriptor = {

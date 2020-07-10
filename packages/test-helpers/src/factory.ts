@@ -1,5 +1,4 @@
 import Ajv = require('ajv');
-import { ConfigEditor } from '@stryker-mutator/api/config';
 import {
   File,
   Location,
@@ -12,13 +11,10 @@ import {
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
-import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {
   MutantRunOptions,
@@ -173,20 +169,6 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testFramework(): TestFramework {
-  return {
-    beforeEach(codeFragment: string) {
-      return `beforeEach(){ ${codeFragment}}`;
-    },
-    afterEach(codeFragment: string) {
-      return `afterEach(){ ${codeFragment}}`;
-    },
-    filter(selections: TestSelection[]) {
-      return `filter: ${selections}`;
-    },
-  };
-}
-
 export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner2>> {
   return {
     init: sinon.stub(),
@@ -230,11 +212,6 @@ export const skippedTestResult = factoryMethod<SkippedTestResult>(() => ({
   status: TestStatus.Skipped,
   timeSpentMs: 0,
   name: 'qux should be quux',
-}));
-
-export const testSelection = factoryMethod<TestSelection>(() => ({
-  id: 23,
-  name: 'foo should bar',
 }));
 
 export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
@@ -326,23 +303,6 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
   const reporter = { name } as any;
   ALL_REPORTER_EVENTS.forEach((event) => (reporter[event] = sinon.stub()));
   return reporter;
-}
-
-export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
-  return {
-    edit: sinon.stub(),
-  };
-}
-export function optionsEditor(): sinon.SinonStubbedInstance<OptionsEditor> {
-  return {
-    edit: sinon.stub(),
-  };
-}
-
-export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
-  return {
-    transpile: sinon.stub(),
-  };
 }
 
 export const matchedMutant = factoryMethod<MatchedMutant>(() => ({
