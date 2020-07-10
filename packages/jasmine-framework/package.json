@@ -4,9 +4,6 @@
   "description": "A plugin to use the Jasmine test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 100  npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",
@@ -14,10 +11,7 @@
   },
   "keywords": [
     "stryker",
-    "jasmine",
-    "@stryker-mutator/test-framework-plugin",
-    "@stryker-mutator/karma-runner",
-    "@stryker-mutator/jasmine-runner"
+    "jasmine"
   ],
   "publishConfig": {
     "access": "public"
@@ -28,18 +22,11 @@
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine#readme",
-  "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
-    "jasmine-core": ">=2"
-  },
-  "dependencies": {
-    "@stryker-mutator/api": "^3.3.1"
-  },
+  "peerDependencies": {},
+  "dependencies": {},
   "contributors": [],
   "engines": {
     "node": ">=10"
   },
-  "devDependencies": {
-    "@types/node": "^14.0.1"
-  }
+  "devDependencies": {}
 }

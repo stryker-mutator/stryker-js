@@ -24,13 +24,6 @@ export interface OptionsContext extends BaseContext {
 }
 
 /**
- * The dependency injection context for a `TranspilerPlugin`
- */
-export interface TranspilerPluginContext extends OptionsContext {
-  [commonTokens.produceSourceMaps]: boolean;
-}
-
-/**
  * The dependency injection context for a `TestRunnerPlugin`
  */
 export interface TestRunnerPluginContext extends OptionsContext {
@@ -41,13 +34,8 @@ export interface TestRunnerPluginContext extends OptionsContext {
  * Lookup type for plugin contexts by kind.
  */
 export interface PluginContexts {
-  [PluginKind.ConfigEditor]: BaseContext;
-  [PluginKind.OptionsEditor]: BaseContext;
-  [PluginKind.Mutator]: OptionsContext;
   [PluginKind.Reporter]: OptionsContext;
-  [PluginKind.TestFramework]: OptionsContext;
   [PluginKind.TestRunner]: TestRunnerPluginContext;
   [PluginKind.TestRunner2]: TestRunnerPluginContext;
-  [PluginKind.Transpiler]: TranspilerPluginContext;
   [PluginKind.Checker]: OptionsContext;
 }

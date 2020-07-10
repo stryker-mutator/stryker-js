@@ -1,12 +1,7 @@
 import { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
 
-import { ConfigEditor } from '../../config';
-import { Mutator } from '../../mutant';
 import { Reporter } from '../../report';
-import { TestFramework } from '../../test_framework';
 import { TestRunner } from '../../test_runner';
-import { Transpiler } from '../../transpile';
-import { OptionsEditor } from '../core/OptionsEditor';
 import { TestRunner2 } from '../../test_runner2';
 import { Checker } from '../../check';
 
@@ -85,14 +80,9 @@ export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens exte
  * Lookup type for plugin interfaces by kind.
  */
 export interface PluginInterfaces {
-  [PluginKind.ConfigEditor]: ConfigEditor;
-  [PluginKind.OptionsEditor]: OptionsEditor;
-  [PluginKind.Mutator]: Mutator;
   [PluginKind.Reporter]: Reporter;
-  [PluginKind.TestFramework]: TestFramework;
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.TestRunner2]: TestRunner2;
-  [PluginKind.Transpiler]: Transpiler;
   [PluginKind.Checker]: Checker;
 }
 
