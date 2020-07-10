@@ -49,10 +49,6 @@
       "path": "packages/mocha-runner"
     },
     {
-      "name": "mutator-specification",
-      "path": "packages/mutator-specification"
-    },
-    {
       "name": "typescript",
       "path": "packages/typescript"
     },

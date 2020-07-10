@@ -3,7 +3,7 @@ import os = require('os');
 import Ajv = require('ajv');
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, normalizeWhitespaces, propertyPath } from '@stryker-mutator/util';
+import { noopLogger, normalizeWhitespaces, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
@@ -80,7 +80,7 @@ export function defaultOptions(): StrykerOptions {
 validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
 export function validateOptions(options: unknown, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
-  return options;
+  return deepFreeze(options) as StrykerOptions;
 }
 
 markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);

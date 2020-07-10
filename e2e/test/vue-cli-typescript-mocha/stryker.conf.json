@@ -8,11 +8,7 @@
   "testRunner": "mocha",
   "concurrency": 2,
   "coverageAnalysis": "perTest",
-  "reporters": ["event-recorder"],
-  "transpilers": ["webpack"],
-  "webpack": {
-    "configFile": "webpack.test.config.js"
-  },
+  "reporters": ["progress", "clear-text", "event-recorder"],
   "buildCommand": "webpack --config webpack.test.config.js",
   "mochaOptions": {
     "package": "package.json",
