@@ -1,3 +1,1 @@
-console.warn(
-  'The @stryker-mutator/vue-mutator package does not serve any function in Stryker 4.0. You can simply remove it from your devDependencies.'
-);
+console.warn('Mutator plugins are no longer needed in Stryker 4.0. Please remove "@stryker-mutator/vue-mutator" from your devDependencies.');

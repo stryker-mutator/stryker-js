@@ -10,12 +10,5 @@
   "include": [
     "test"
   ],
-  "references": [
-    {
-      "path": "tsconfig.src.json"
-    },
-    {
-      "path": "../test-helpers/tsconfig.src.json"
-    }
-  ]
+  "references": []
 }

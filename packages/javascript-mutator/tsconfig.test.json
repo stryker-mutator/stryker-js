@@ -13,12 +13,6 @@
   "references": [
     {
       "path": "./tsconfig.src.json"
-    },
-    {
-      "path": "../mutator-specification/tsconfig.src.json"
-    },
-    {
-      "path": "../test-helpers/tsconfig.src.json"
     }
   ]
 }
