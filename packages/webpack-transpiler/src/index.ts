@@ -1,16 +1,3 @@
-import { commonTokens, declareFactoryPlugin, Injector, PluginKind, tokens, TranspilerPluginContext } from '@stryker-mutator/api/plugin';
-
-import * as strykerValidationSchema from '../schema/webpack-transpiler-options.json';
-
-import ConfigLoader from './compiler/ConfigLoader';
-import { pluginTokens } from './pluginTokens';
-import WebpackTranspiler from './WebpackTranspiler';
-
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'webpack', webpackTranspilerFactory)];
-
-function webpackTranspilerFactory(injector: Injector<TranspilerPluginContext>) {
-  return injector.provideValue(pluginTokens.require, require).provideClass(pluginTokens.configLoader, ConfigLoader).injectClass(WebpackTranspiler);
-}
-webpackTranspilerFactory.inject = tokens(commonTokens.injector);
-
-export { strykerValidationSchema };
+console.warn(
+  'Transpiler plugins are no longer supported since Stryker 4.0. Please use `"buildCommand": "webpack --config webpack.conf.js"` instead. You can remove "@stryker-mutator/webpack-transpiler" from your devDependencies.'
+);
