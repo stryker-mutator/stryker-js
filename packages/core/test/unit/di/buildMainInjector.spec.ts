@@ -6,7 +6,6 @@ import * as sinon from 'sinon';
 import { MutatorDescriptor, StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { rootInjector } from 'typed-inject';
 
-import * as optionsEditorApplierModule from '../../../src/config/OptionsEditorApplier';
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
 import * as pluginLoaderModule from '../../../src/di/PluginLoader';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
@@ -19,7 +18,6 @@ describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
-  let optionsEditorApplierMock: sinon.SinonStubbedInstance<optionsEditorApplierModule.OptionsEditorApplier>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;
@@ -31,7 +29,6 @@ describe(buildMainInjector.name, () => {
     configReaderMock = sinon.createStubInstance(ConfigReader);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    optionsEditorApplierMock = sinon.createStubInstance(optionsEditorApplierModule.OptionsEditorApplier);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     optionsValidatorStub = sinon.createStubInstance(optionsValidatorModule.OptionsValidator);
     validationSchemaContributions = [];
@@ -42,7 +39,6 @@ describe(buildMainInjector.name, () => {
     cliOptions = {};
     injector = rootInjector.provideValue(coreTokens.cliOptions, cliOptions);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
-    stubInjectable(optionsEditorApplierModule, 'OptionsEditorApplier').returns(optionsEditorApplierMock);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
@@ -71,11 +67,6 @@ describe(buildMainInjector.name, () => {
     it('should load plugins', () => {
       buildMainInjector(injector).resolve(commonTokens.options);
       expect(pluginLoaderMock.load).called;
-    });
-
-    it('should apply config editors', () => {
-      buildMainInjector(injector).resolve(commonTokens.options);
-      expect(optionsEditorApplierMock.edit).called;
     });
 
     it('should cache the config', () => {
@@ -118,10 +109,9 @@ describe(buildMainInjector.name, () => {
     expect(actualReporter).eq(broadcastReporterMock);
   });
 
-  it('should supply pluginCreators for Reporter, ConfigEditor and TestFramework plugins', () => {
+  it('should supply pluginCreators for Reporter and Checker plugins', () => {
     const actualInjector = buildMainInjector(injector);
     expect(actualInjector.resolve(coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
-    expect(actualInjector.resolve(coreTokens.pluginCreatorTestFramework)).eq(pluginCreatorMock);
-    expect(actualInjector.resolve(coreTokens.pluginCreatorConfigEditor)).eq(pluginCreatorMock);
+    expect(actualInjector.resolve(coreTokens.pluginCreatorChecker)).eq(pluginCreatorMock);
   });
 });
