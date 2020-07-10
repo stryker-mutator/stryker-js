@@ -57,8 +57,8 @@ export class MutationTestReportHelper {
 
   public reportAll(results: MutantResult[]) {
     const report = this.mutationTestReport(results);
-    this.reporter.onMutationTestReportReady(report);
     this.reporter.onAllMutantsTested(results);
+    this.reporter.onMutationTestReportReady(report);
     this.determineExitCode(report);
   }
 
