@@ -101,6 +101,11 @@ describe('html-parser', () => {
         await parse(`<script type="${actualType}">${code}</script>`, 'test.html', contextStub);
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
+      it(`should parse <script lang="${actualType}"> as ${expectedType}`, async () => {
+        const code = 'foo.bar(40,2)';
+        await parse(`<script lang="${actualType}">${code}</script>`, 'test.html', contextStub);
+        expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
+      });
     });
 
     it('should parse <script> without a "type" as js', async () => {
