@@ -1,10 +1,9 @@
 {
   "name": "@stryker-mutator/javascript-mutator",
-  "version": "3.3.1",
+  "version": "4.0.0-beta.0",
   "description": "A plugin for javascript projects using Stryker",
   "main": "src/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
@@ -31,10 +30,5 @@
     "Sander Koenders <sanderkoenders@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/javascript-mutator#readme",
-  "license": "Apache-2.0",
-  "dependencies": {
-  },
-  "peerDependencies": {
-  },
-  "devDependencies": {}
+  "license": "Apache-2.0"
 }
