@@ -13,9 +13,7 @@
     "node": ">=10"
   },
   "keywords": [
-    "stryker",
-    "vuejs",
-    "@stryker-mutator/mutator-plugin"
+    "stryker"
   ],
   "publishConfig": {
     "access": "public"
