@@ -68,6 +68,15 @@ describe('fs', () => {
         expect(helper.getModifiedTimeStub).calledWith('test/foo/a.js');
       });
 
+      it('should support empty files', () => {
+        helper.readFileStub.returns('');
+        helper.getModifiedTimeStub.returns(new Date(2010, 1, 1));
+        const actual = sut.getFile('foo.js');
+        expect(actual).ok;
+        expect(actual!.fileName).eq('foo.js');
+        expect(actual!.content).eq('');
+      });
+
       it("should cache a file that doesn't exists", () => {
         sut.getFile('not-exists.js');
         sut.getFile('not-exists.js');

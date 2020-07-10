@@ -8,6 +8,7 @@
   "testRunner": "mocha",
   "concurrency": 2,
   "coverageAnalysis": "perTest",
+  "symlinkNodeModules": false,
   "reporters": ["progress", "clear-text", "event-recorder"],
   "buildCommand": "webpack --config webpack.test.config.js",
   "mochaOptions": {
@@ -21,5 +22,8 @@
   "plugins": [
     "@stryker-mutator/mocha-runner",
     "@stryker-mutator/typescript-checker"
+  ],
+  "checkers": [
+    "typescript"
   ]
 }
