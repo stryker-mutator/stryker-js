@@ -87,6 +87,7 @@ exports[`instrumenter integration should be able to instrument a vue sample 1`] 
 </template>
 
 <script>
+// @ts-nocheck
 var __global_69fa48 = function (g) {
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},
@@ -157,6 +158,7 @@ export default __global_69fa48.__activeMutant__ === 1 ? {
 });
 </script>
 <script>
+// @ts-nocheck
 var __global_69fa48 = function (g) {
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},

@@ -7,6 +7,7 @@ import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
 import { Instrumenter } from '../../src';
+import { createInstrumenterOptions } from '../helpers/factories';
 
 const resolveTestResource = path.resolve.bind(
   path,
@@ -43,10 +44,10 @@ describe('instrumenter integration', () => {
     await arrangeAndActAssert('vue-sample.vue');
   });
 
-  async function arrangeAndActAssert(fileName: string) {
+  async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource(fileName);
     const file = new File(fullFileName, await fs.readFile(fullFileName));
-    const result = await sut.instrument([file]);
+    const result = await sut.instrument([file], options);
     expect(result.files).lengthOf(1);
     chaiJestSnapshot.setFilename(resolveTestResource(`${fileName}.out.snap`));
     expect(result.files[0].textContent).matchSnapshot();

@@ -12,6 +12,7 @@ exports[`instrumenter integration should be able to instrument html 1`] = `
 
 <body>
     <script>
+// @ts-nocheck
 var __global_69fa48 = function (g) {
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},

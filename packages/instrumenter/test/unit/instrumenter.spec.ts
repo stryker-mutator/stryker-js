@@ -7,13 +7,14 @@ import { Instrumenter } from '../../src';
 import * as parsers from '../../src/parsers';
 import * as transformers from '../../src/transformers';
 import * as printers from '../../src/printers';
-import { createJSAst, createTSAst, createNamedNodeMutation } from '../helpers/factories';
+import { createJSAst, createTSAst, createNamedNodeMutation, createInstrumenterOptions } from '../helpers/factories';
 
 describe(Instrumenter.name, () => {
   let sut: Instrumenter;
 
   class Helper {
-    public parserStub = sinon.stub(parsers, 'parse');
+    public parserStub = sinon.stub();
+    public createParserStub = sinon.stub(parsers, 'createParser').returns(this.parserStub);
     public transformerStub = sinon.stub(transformers, 'transform');
     public printerStub = sinon.stub(printers, 'print');
   }
@@ -29,14 +30,14 @@ describe(Instrumenter.name, () => {
     const { input, output } = arrangeTwoFiles();
 
     // Act
-    const actualResult = await sut.instrument(input);
+    const actualResult = await sut.instrument(input, createInstrumenterOptions());
 
     // Assert
     expect(actualResult.files).deep.eq([new File('foo.js', output[0]), new File('bar.ts', output[1])]);
   });
 
   it('should log about instrumenting', async () => {
-    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')]);
+    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
     expect(testInjector.logger.debug).calledWith('Instrumenting %d source files with mutants', 2);
   });
 
@@ -44,7 +45,7 @@ describe(Instrumenter.name, () => {
     helper.transformerStub.callsFake((_, collector: transformers.MutantCollector) => {
       collector.add('foo.js', createNamedNodeMutation());
     });
-    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')]);
+    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
     expect(testInjector.logger.info).calledWith('Instrumented %d source file(s) with %d mutant(s)', 2, 2);
   });
 
@@ -64,7 +65,7 @@ describe(Instrumenter.name, () => {
     helper.transformerStub.callsFake(fakeTransform);
 
     // Act
-    await sut.instrument(input);
+    await sut.instrument(input, createInstrumenterOptions());
 
     // Assert
     expect(testInjector.logger.debug).calledWith('Instrumented foo.js (1 mutant(s))');
