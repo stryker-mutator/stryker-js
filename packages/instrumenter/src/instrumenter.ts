@@ -4,10 +4,11 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { File } from '@stryker-mutator/api/core';
 
-import { parse } from './parsers';
+import { createParser } from './parsers';
 import { transform, MutantCollector } from './transformers';
 import { print } from './printers';
 import { InstrumentResult } from './instrument-result';
+import { InstrumenterOptions } from './instrumenter-options';
 
 /**
  * The instrumenter is responsible for
@@ -21,11 +22,12 @@ export class Instrumenter {
 
   constructor(private readonly logger: Logger) {}
 
-  public async instrument(files: readonly File[]): Promise<InstrumentResult> {
+  public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {
     this.logger.debug('Instrumenting %d source files with mutants', files.length);
     const mutantCollector = new MutantCollector();
     const outFiles: File[] = [];
     let mutantCount = 0;
+    const parse = createParser(options);
     for await (const file of files) {
       const ast = await parse(file.textContent, file.name);
       transform(ast, mutantCollector);

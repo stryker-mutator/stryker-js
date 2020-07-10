@@ -1,6 +1,6 @@
 import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
@@ -20,15 +20,19 @@ export interface MutantInstrumenterContext extends MainContext {
 }
 
 export class MutantInstrumenterExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.inputFiles);
-  constructor(private readonly injector: Injector<MutantInstrumenterContext>, private readonly inputFiles: InputFileCollection) {}
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.inputFiles, commonTokens.mutatorDescriptor);
+  constructor(
+    private readonly injector: Injector<MutantInstrumenterContext>,
+    private readonly inputFiles: InputFileCollection,
+    private readonly mutatorDescriptor: MutatorDescriptor
+  ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {
     // Create the checker and instrumenter
     const instrumenter = this.injector.injectClass(Instrumenter);
 
     // Instrument files in-memory
-    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate);
+    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, { plugins: this.mutatorDescriptor.plugins });
 
     // Rewrite tsconfig file references
     const tsconfigFileRewriter = this.injector.injectClass(SandboxTSConfigRewriter);

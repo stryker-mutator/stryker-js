@@ -2,8 +2,24 @@ import { types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
 import { Mutant, NamedNodeMutation } from '../../src/mutant';
+import { ParserOptions } from '../../src/parsers';
+import { InstrumenterOptions } from '../../src';
 
 import { parseTS, parseJS, findNodePath } from './syntax-test-helpers';
+
+export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
+  return {
+    plugins: null,
+    ...overrides,
+  };
+}
+
+export function createInstrumenterOptions(overrides?: Partial<InstrumenterOptions>): InstrumenterOptions {
+  return {
+    ...createParserOptions(),
+    ...overrides,
+  };
+}
 
 export function createHtmlAst(overrides?: Partial<HtmlAst>): HtmlAst {
   return {

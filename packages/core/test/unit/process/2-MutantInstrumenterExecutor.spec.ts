@@ -1,9 +1,9 @@
 import sinon = require('sinon');
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
 import { factory } from '@stryker-mutator/test-helpers';
-import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
+import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantInstrumenterExecutor } from '../../../src/process';
@@ -26,6 +26,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let mutatedFile: File;
   let originalFile: File;
   let testFile: File;
+  let mutatorDescriptor: MutatorDescriptor;
 
   beforeEach(() => {
     mutatedFile = new File('foo.js', 'console.log(global.activeMutant === 1? "": "bar")');
@@ -44,7 +45,8 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxTSConfigRewriterMock.rewrite.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
-    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles);
+    mutatorDescriptor = factory.mutatorDescriptor({ plugins: ['functionSent'] });
+    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles, mutatorDescriptor);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectClass.withArgs(SandboxTSConfigRewriter).returns(sandboxTSConfigRewriterMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);
@@ -58,7 +60,8 @@ describe(MutantInstrumenterExecutor.name, () => {
 
   it('should instrument the given files', async () => {
     await sut.execute();
-    expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile]);
+    const expectedInstrumenterOptions: InstrumenterOptions = { plugins: ['functionSent'] };
+    expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile], expectedInstrumenterOptions);
   });
 
   it('result in the new injector', async () => {

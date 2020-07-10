@@ -6837,6 +6837,196 @@ Object {
 }
 `;
 
+exports[`parsers integration should allow a plugin that conflicts with the default plugins as long as plugins are emptied out 1`] = `
+Object {
+  "format": "js",
+  "originFileName": "js-in-babel-project/src/app.js",
+  "rawContent": "class App {}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 13,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "body": Node {
+            "body": Array [],
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "start": 10,
+            "type": "ClassBody",
+          },
+          "end": 12,
+          "id": Node {
+            "end": 9,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "identifierName": "App",
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "name": "App",
+            "start": 6,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "start": 0,
+          "superClass": null,
+          "type": "ClassDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 13,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
+exports[`parsers integration should allow custom babel config to override default options when overriding plugins 1`] = `
+Object {
+  "format": "js",
+  "originFileName": "js-in-babel-project/src/app.js",
+  "rawContent": "class App {}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 13,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "body": Node {
+            "body": Array [],
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "start": 10,
+            "type": "ClassBody",
+          },
+          "end": 12,
+          "id": Node {
+            "end": 9,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "identifierName": "App",
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "name": "App",
+            "start": 6,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "start": 0,
+          "superClass": null,
+          "type": "ClassDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 13,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse a *.vue file 1`] = `
 Object {
   "format": "html",
@@ -12165,6 +12355,121 @@ Object {
         },
       },
     ],
+  },
+}
+`;
+
+exports[`parsers integration should ignore configuration when parsing ts files 1`] = `
+Object {
+  "format": "ts",
+  "originFileName": "ts-in-babel-project/src/app.ts",
+  "rawContent": "class App {}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 13,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "body": Node {
+            "body": Array [],
+            "end": 12,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 12,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 10,
+                "line": 1,
+              },
+            },
+            "range": Array [
+              10,
+              12,
+            ],
+            "start": 10,
+            "type": "ClassBody",
+          },
+          "end": 12,
+          "id": Node {
+            "end": 9,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 9,
+                "line": 1,
+              },
+              "identifierName": "App",
+              "start": Position {
+                "column": 6,
+                "line": 1,
+              },
+            },
+            "name": "App",
+            "range": Array [
+              6,
+              9,
+            ],
+            "start": 6,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 12,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "range": Array [
+            0,
+            12,
+          ],
+          "start": 0,
+          "superClass": null,
+          "type": "ClassDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 13,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "range": Array [
+        0,
+        13,
+      ],
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "range": Array [
+      0,
+      13,
+    ],
+    "start": 0,
+    "type": "File",
   },
 }
 `;
