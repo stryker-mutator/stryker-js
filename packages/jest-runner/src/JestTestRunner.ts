@@ -8,7 +8,6 @@ import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
 import { configLoaderFactory } from './configLoaders';
-import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
@@ -120,13 +119,13 @@ export default class JestTestRunner implements TestRunner {
     }
   }
 
-  private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {
-    const stringify = (obj: Record<string, any>) => JSON.stringify(obj, null, 2);
-    this.log.trace(
-      `Merging file-based config ${stringify(configFromFile)} 
-      with custom config ${stringify(config)}
-      and default (internal) stryker config ${JEST_OVERRIDE_OPTIONS}`
-    );
-    return Object.assign(configFromFile, config, JEST_OVERRIDE_OPTIONS);
-  }
+  // private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {
+  //   const stringify = (obj: Record<string, any>) => JSON.stringify(obj, null, 2);
+  //   this.log.trace(
+  //     `Merging file-based config ${stringify(configFromFile)}
+  //     with custom config ${stringify(config)}
+  //     and default (internal) stryker config ${JEST_OVERRIDE_OPTIONS}`
+  //   );
+  //   return Object.assign(configFromFile, config, JEST_OVERRIDE_OPTIONS);
+  // }
 }
