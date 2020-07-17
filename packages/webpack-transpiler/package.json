@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/webpack-transpiler",
-  "version": "4.0.0-beta.0",
+  "version": "4.0.0-beta.1",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
   "scripts": {},
