@@ -44,7 +44,7 @@
     "karma-mocha": "^2.0.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^4.0.0"
+    "@stryker-mutator/core": "4.0.0-beta.1"
   },
   "dependencies": {
     "@stryker-mutator/api": "4.0.0-beta.1",
