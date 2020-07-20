@@ -3,7 +3,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
 
-function mergedSchema(mainSchema: any, additionalSchemas: any[]): Record<string, unknown> {
+function mergedSchema(mainSchema: Record<string, any>, additionalSchemas: Array<Record<string, any>>): Record<string, unknown> {
   const schema = {
     ...mainSchema,
     properties: {

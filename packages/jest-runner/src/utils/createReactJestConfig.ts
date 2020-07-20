@@ -1,11 +1,11 @@
-const resolveCreateJestConfig = (path: string, loader?: NodeRequire): ((...args: any) => any) => {
+const resolveCreateJestConfig = (path: string, loader?: NodeRequire): ((...args: any[]) => any) => {
   loader = loader || /* istanbul ignore next */ require;
 
   return loader(path);
 };
 
 export function createReactJestConfig(
-  resolve: (...args: any) => any,
+  resolve: (...args: any[]) => any,
   projectRoot: string,
   ejected: boolean,
   loader?: NodeRequire
@@ -14,7 +14,7 @@ export function createReactJestConfig(
 }
 
 export function createReactTsJestConfig(
-  resolve: (...args: any) => any,
+  resolve: (...args: any[]) => any,
   projectRoot: string,
   ejected: boolean,
   loader?: NodeRequire

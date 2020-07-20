@@ -14,7 +14,7 @@ export default class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
   private readonly allWork: Array<Promise<void>> = [];
-  private readonly createBaseFolderTask: Promise<any>;
+  private readonly createBaseFolderTask: Promise<string | undefined>;
   private index = 0;
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
@@ -65,7 +65,7 @@ export default class EventRecorderReporter implements StrictReporter {
     this.work('onAllMutantsTested', results);
   }
 
-  public async wrapUp(): Promise<any> {
+  public async wrapUp(): Promise<void[]> {
     await this.createBaseFolderTask;
     return Promise.all(this.allWork);
   }
