@@ -8,7 +8,7 @@
   "tempDirName": "stryker-tmp",
   "packageManager": "npm",
   "testRunner": "jest",
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder",

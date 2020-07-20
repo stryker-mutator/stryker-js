@@ -6,7 +6,7 @@ module.exports = function (config) {
     testFramework: 'jasmine',
     testRunner: 'jasmine',
     reporters: ['clear-text', 'event-recorder'],
-    maxConcurrentTestRunners: 2,
+    concurrency: 2,
     jasmineConfigFile: 'spec/support/jasmine.json',
     fileLogLevel: 'debug',
     plugins: ['@stryker-mutator/jasmine-runner']

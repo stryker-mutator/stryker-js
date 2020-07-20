@@ -8,7 +8,7 @@
     "src/App/TodoList/Item/index.tsx",
     "src/NotFound.tsx"
   ],
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder"

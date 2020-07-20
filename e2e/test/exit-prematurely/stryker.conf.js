@@ -11,7 +11,7 @@ module.exports = {
   ],
   timeoutMS: 60000,
   reporters: ['clear-text', 'html', 'event-recorder'],
-  maxConcurrentTestRunners: 2,
+  concurrency: 2,
   logLevel: 'info',
   fileLogLevel: 'info'
 }
