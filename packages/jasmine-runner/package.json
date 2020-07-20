@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine-runner#readme",
   "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
+    "@stryker-mutator/core": "^4.0.0",
     "jasmine": ">=2"
   },
   "devDependencies": {
