@@ -3,6 +3,8 @@ import { getLogger } from 'log4js';
 import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
+import { MutantResult } from '@stryker-mutator/api/report';
+
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
 import Stryker from './Stryker';
@@ -152,7 +154,8 @@ export default class StrykerCli {
     };
 
     if (Object.keys(commands).includes(this.command)) {
-      Promise.resolve(commands[this.command as keyof typeof commands]).catch((err) => {
+      const promise: Promise<void | MutantResult[]> = commands[this.command as keyof typeof commands]();
+      promise.catch((err) => {
         const error = retrieveCause(err);
         if (error instanceof ConfigError) {
           this.log.error(error.message);
