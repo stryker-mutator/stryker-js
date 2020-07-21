@@ -1,4 +1,5 @@
 import * as inquirer from 'inquirer';
+import Separator = require('inquirer/lib/objects/separator');
 
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 
@@ -10,9 +11,11 @@ export interface PromptResult {
   additionalConfig: Record<string, unknown>;
 }
 
+export type ChoiceType<A> = string | inquirer.ChoiceOptions<A> | Separator;
+
 export class StrykerInquirer {
   public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
-    const choices: Array<inquirer.ChoiceType<string>> = options.map((_) => _.name);
+    const choices: Array<ChoiceType<string>> = options.map((_) => _.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');
     const answers = await inquirer.prompt<{ preset: string }>({
@@ -25,7 +28,7 @@ export class StrykerInquirer {
   }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const choices: Array<inquirer.ChoiceType<string>> = options.map((_) => _.name);
+    const choices: Array<ChoiceType<string>> = options.map((_) => _.name);
     choices.push(new inquirer.Separator());
     choices.push(CommandTestRunner.runnerName);
     const answers = await inquirer.prompt<{ testRunner: string }>({

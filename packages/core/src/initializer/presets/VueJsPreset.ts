@@ -1,6 +1,8 @@
 import inquirer = require('inquirer');
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
+import { ChoiceType } from '../StrykerInquirer';
+
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 
@@ -42,14 +44,14 @@ export class VueJsPreset implements Preset {
   };
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const testRunnerChoices: Array<inquirer.ChoiceType<string>> = ['karma', 'jest'];
+    const testRunnerChoices: Array<ChoiceType<string>> = ['karma', 'jest'];
     const testRunnerAnswers = await inquirer.prompt<{ testRunner: string }>({
       choices: testRunnerChoices,
       message: 'Which test runner do you want to use?',
       name: 'testRunner',
       type: 'list',
     });
-    const scriptChoices: Array<inquirer.ChoiceType<string>> = ['typescript', 'javascript'];
+    const scriptChoices: Array<ChoiceType<string>> = ['typescript', 'javascript'];
     const scriptAnswers = await inquirer.prompt<{ script: string }>({
       choices: scriptChoices,
       message: 'Which language does your project use?',

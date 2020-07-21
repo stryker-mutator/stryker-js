@@ -1,6 +1,8 @@
 import inquirer = require('inquirer');
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
+import { ChoiceType } from '../StrykerInquirer';
+
 import Preset from './Preset';
 import PresetConfiguration from './PresetConfiguration';
 
@@ -38,7 +40,7 @@ export class ReactPreset implements Preset {
   };
 
   public async createConfig(): Promise<PresetConfiguration> {
-    const choices: Array<inquirer.ChoiceType<string>> = ['JSX', 'TSX'];
+    const choices: Array<ChoiceType<string>> = ['JSX', 'TSX'];
     const answers = await inquirer.prompt<{ choice: string }>({
       choices,
       message: 'Is your project a JSX project or a TSX project?',
