@@ -48,10 +48,9 @@ export default class BroadcastReporter implements StrictReporter {
     return Promise.all(
       Object.keys(this.reporters).map(async (reporterName) => {
         const reporter = this.reporters[reporterName];
-        const method = reporter[methodName];
-        if (typeof method === 'function') {
+        if (typeof reporter[methodName] === 'function') {
           try {
-            await method(eventArgs);
+            await (reporter[methodName] as any)(eventArgs);
           } catch (error) {
             this.handleError(error, methodName, reporterName);
           }
