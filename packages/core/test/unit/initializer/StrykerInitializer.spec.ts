@@ -109,7 +109,7 @@ describe(StrykerInitializer.name, () => {
         promptMutator,
         promptPackageManagers,
         promptConfigTypes,
-      ]: Array<inquirer.ListQuestion<string>> = [
+      ]: Array<inquirer.ListQuestion<inquirer.Answers>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
@@ -117,7 +117,7 @@ describe(StrykerInitializer.name, () => {
         inquirerPrompt.getCall(6).args[0],
         inquirerPrompt.getCall(7).args[0],
       ];
-      const [promptTranspilers, promptReporters]: Array<inquirer.CheckboxQuestion<string>> = [
+      const [promptTranspilers, promptReporters]: Array<inquirer.CheckboxQuestion<inquirer.Answers>> = [
         inquirerPrompt.getCall(4).args[0],
         inquirerPrompt.getCall(5).args[0],
       ];
@@ -224,7 +224,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
-      const [promptPreset, promptConfigType, promptPackageManager]: Array<inquirer.ListQuestion<string>> = [
+      const [promptPreset, promptConfigType, promptPackageManager]: Array<inquirer.ListQuestion<inquirer.Answers>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
