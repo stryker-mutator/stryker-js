@@ -28,14 +28,14 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "4.0.0-beta.1",
     "@types/node": "^14.0.1",
-    "@types/socket.io": "^2.1.0",
+    "@types/socket.io": "~2.1.9",
     "chai": "~4.2.0",
     "mocha": "~5.2.0",
-    "sinon": "^9.0.0",
+    "sinon": "~9.0.2",
     "web-component-tester": "~6.9.2"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
+    "@stryker-mutator/core": "4.0.0-beta.1",
     "web-component-tester": "^6.9.0"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",

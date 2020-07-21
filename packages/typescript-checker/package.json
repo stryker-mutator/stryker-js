@@ -32,14 +32,14 @@
   "dependencies": {
     "@stryker-mutator/api": "4.0.0-beta.1",
     "@stryker-mutator/util": "4.0.0-beta.1",
-    "semver": "^7.3.2"
+    "semver": "~7.3.2"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "4.0.0-beta.1",
-    "@types/semver": "^7.2.0"
+    "@types/semver": "~7.3.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "3.2.4",
+    "@stryker-mutator/core": "4.0.0-beta.1",
     "typescript": ">=3.6"
   }
 }
