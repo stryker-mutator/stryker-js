@@ -10,7 +10,7 @@
     "build": "tsc",
     "pretest:unit": "npm run build",
     "test:unit": "mocha",
-    "pretest": "rimraf \"reports\"",
+    "pretest": "rimraf \"reports\" \"dist\"",
     "test": "stryker run",
     "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/*.ts"
   },
