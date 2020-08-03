@@ -12,7 +12,7 @@ export default class JestLessThan25TestAdapter implements JestTestAdapter {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public run(jestConfig: any, projectRoot: string, fileNameUnderTest?: string): Promise<any> {
+  public run(jestConfig: Record<string, unknown>, projectRoot: string, fileNameUnderTest?: string) {
     jestConfig.reporters = [];
     const config = JSON.stringify(jestConfig);
     this.log.trace(`Invoking Jest with config ${config}`);

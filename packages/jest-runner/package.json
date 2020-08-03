@@ -48,7 +48,7 @@
     "react-scripts-ts": "~3.1.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
+    "@stryker-mutator/core": "4.0.0-beta.1",
     "jest": ">= 22.0.0"
   },
   "dependencies": {

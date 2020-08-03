@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Config, ConfigOptions, ClientOptions } from 'karma';
+import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
 import { noopLogger } from '@stryker-mutator/util';
 
 import StrykerReporter from '../karma-plugins/StrykerReporter';
@@ -94,7 +94,7 @@ function setBasePath(config: Config) {
   }
 }
 
-function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: any) {
+function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: string | Record<string, InlinePluginType>) {
   karmaConfig.plugins = karmaConfig.plugins || ['karma-*'];
   karmaConfig.plugins.push(karmaPlugin);
 }
@@ -109,7 +109,7 @@ function configureTestHooksMiddleware(config: Config) {
   config.files = config.files || [];
 
   config.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
-  const middleware: string[] = (config as any).beforeMiddleware || ((config as any).beforeMiddleware = []);
+  const middleware: string[] = config.beforeMiddleware || (config.beforeMiddleware = []);
   middleware.unshift(TestHooksMiddleware.name);
 
   TestHooksMiddleware.instance.configureTestFramework(config.frameworks);

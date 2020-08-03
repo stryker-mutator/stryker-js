@@ -10,7 +10,7 @@ module.exports = function(config) {
     wct: {
       npm: true
     },
-    maxConcurrentTestRunners: 2,
+    concurrency: 2,
     timeoutMS: 30000
   });
 };

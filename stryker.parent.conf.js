@@ -12,7 +12,7 @@ module.exports = {
   testFramework: 'mocha',
   testRunner: 'mocha',
   reporters: ['progress', 'html', 'dashboard'],
-  maxConcurrentTestRunners: 4,
+  concurrency: 4,
   plugins: [
     require.resolve('./packages/mocha-runner/src/index'),
     require.resolve('./packages/mocha-framework/src/index'),

@@ -52,8 +52,8 @@ export default class ChildProcessProxyWorker {
     this.log = getLogger(ChildProcessProxyWorker.name);
     this.handlePromiseRejections();
     let injector = buildChildProcessInjector(message.options);
-    const locals = message.additionalInjectableValues as any;
-    for (const token of Object.keys(locals)) {
+    const locals = message.additionalInjectableValues as Record<string, unknown>;
+    for (const token in locals) {
       injector = injector.provideValue(token, locals[token]);
     }
     const RealSubjectClass = require(message.requirePath)[message.requireName];

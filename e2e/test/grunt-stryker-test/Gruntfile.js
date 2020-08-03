@@ -19,7 +19,7 @@ module.exports = function (grunt) {
           testFramework: 'jasmine',
           testRunner: 'karma',
           logLevel: 'info',
-          maxConcurrentTestRunners: 2,
+          concurrency: 2,
           tempDirName: '.stryker-tmp-2'
         },
       },

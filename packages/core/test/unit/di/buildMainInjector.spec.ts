@@ -1,4 +1,4 @@
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -17,7 +17,7 @@ import currentLogMock from '../../helpers/logMock';
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
-  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<any>>;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind>>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
   let expectedConfig: StrykerOptions;

@@ -58,8 +58,8 @@ export class TestRunnerPool implements Disposable {
       numConcurrentRunners--;
     }
     let numConcurrentRunnersSource = 'CPU count';
-    if (numConcurrentRunners > this.options.maxConcurrentTestRunners && this.options.maxConcurrentTestRunners > 0) {
-      numConcurrentRunners = this.options.maxConcurrentTestRunners;
+    if (this.options.concurrency && numConcurrentRunners > this.options.concurrency && this.options.concurrency > 0) {
+      numConcurrentRunners = this.options.concurrency;
       numConcurrentRunnersSource = 'maxConcurrentTestRunners config';
     }
     if (numConcurrentRunners <= 0) {

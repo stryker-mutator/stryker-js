@@ -28,7 +28,7 @@ describe('MultiAppender', () => {
       categoryName: 'category',
       context: null,
       data: ['foo data'],
-      level: (log4js.levels as any).DEBUG,
+      level: log4js.levels.DEBUG,
       pid: 42,
       startTime: new Date(42),
     };

@@ -4,7 +4,7 @@ module.exports = function (config) {
     testFramework: 'jasmine',
     testRunner: 'karma',
     reporters: ['clear-text', 'html', 'event-recorder'],
-    maxConcurrentTestRunners: 2,
+    concurrency: 2,
     karma: {
       config: {
         files: ['src/*.js', 'test/*.js'],

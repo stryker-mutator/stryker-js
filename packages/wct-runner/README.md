@@ -36,7 +36,7 @@ Make sure you set the `testRunner` option to "wct" and set `coverageAnalysis` to
 {
     testRunner: 'wct'
     coverageAnalysis: 'off', // coverage analysis is not supported yet for the @stryker-mutator/wct-runner.
-    maxConcurrentTestRunners: 4, // A maximum of half your CPU's is recommended
+    concurrency: 4, // A maximum of half your CPU's is recommended
     timeoutMS: 10000 // A higher timeout is recommended to allow for browser startup
 }
 ```

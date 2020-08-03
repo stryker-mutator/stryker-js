@@ -5,7 +5,7 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "transpilers": [],
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "clear-text",
