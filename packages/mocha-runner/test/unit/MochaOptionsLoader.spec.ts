@@ -68,7 +68,7 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.require = ['bar'];
       rawOptions.timeout = 4200;
       rawOptions['async-only'] = true;
-      rawOptions.ui = 'quux';
+      rawOptions.ui = 'qunit';
       rawOptions.grep = 'quuz';
       rawOptions.ignore = ['garply'];
       rawOptions.file = ['grault'];
@@ -86,7 +86,7 @@ describe(MochaOptionsLoader.name, () => {
         spec: ['test/**/*.js'],
         timeout: 4200,
         'async-only': true,
-        ui: 'quux',
+        ui: 'qunit',
       });
       expect(result).deep.eq({ ...expected });
     });

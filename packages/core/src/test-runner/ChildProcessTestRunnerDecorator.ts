@@ -1,10 +1,10 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { RunOptions, RunResult, TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner2';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
 import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging';
 
 import { ChildProcessTestRunnerWorker } from './ChildProcessTestRunnerWorker';
 
@@ -13,7 +13,7 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 /**
  * Runs the given test runner in a child process and forwards reports about test results
  */
-export default class ChildProcessTestRunnerDecorator implements TestRunner {
+export default class ChildProcessTestRunnerDecorator implements TestRunner2 {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
   constructor(options: StrykerOptions, sandboxFileNames: readonly string[], sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
@@ -31,8 +31,11 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
     return this.worker.proxy.init();
   }
 
-  public run(options: RunOptions): Promise<RunResult> {
-    return this.worker.proxy.run(options);
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    return this.worker.proxy.dryRun(options);
+  }
+  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    return this.worker.proxy.mutantRun(options);
   }
 
   public async dispose(): Promise<void> {

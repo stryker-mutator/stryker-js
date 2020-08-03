@@ -13,7 +13,6 @@
     { "path": "packages/karma-runner" },
     { "path": "packages/mocha-framework" },
     { "path": "packages/mocha-runner" },
-    { "path": "packages/mutator-specification" },
     { "path": "packages/typescript" },
     { "path": "packages/typescript-checker" },
     { "path": "packages/vue-mutator" },

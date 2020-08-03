@@ -24,7 +24,7 @@ export class StringLiteralMutator implements NodeMutator {
           },
         ];
       }
-    } else if (this.isDeclarationOrJSX(path.parent) && path.isStringLiteral()) {
+    } else if (path.isStringLiteral() && this.isValidParent(path.parent)) {
       return [
         {
           original: path.node,
@@ -36,7 +36,16 @@ export class StringLiteralMutator implements NodeMutator {
     }
   }
 
-  private isDeclarationOrJSX(parent?: types.Node): boolean {
-    return !types.isImportDeclaration(parent) && !types.isExportDeclaration(parent) && !types.isJSXAttribute(parent);
+  private isValidParent(parent?: types.Node): boolean {
+    return !(
+      types.isImportDeclaration(parent) ||
+      types.isExportDeclaration(parent) ||
+      types.isModuleDeclaration(parent) ||
+      types.isTSExternalModuleReference(parent) ||
+      types.isJSXAttribute(parent) ||
+      types.isExpressionStatement(parent) ||
+      types.isTSLiteralType(parent) ||
+      (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'require' }))
+    );
   }
 }

@@ -42,8 +42,9 @@
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
     "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
     "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
-    "@stryker-mutator/typescript": "../../../packages/typescript",
+    "@stryker-mutator/typescript-checker": "../../../packages/typescript-checker",
     "@stryker-mutator/util": "../../../packages/util"
   }
 }

@@ -5,8 +5,8 @@ import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
+import { createMochaTestRunner } from '../../src';
 
 describe('Mocha 6 file resolving integration', () => {
   const cwd = process.cwd();
@@ -40,7 +40,7 @@ describe('Mocha 6 file resolving integration', () => {
   }
 
   function createTestRunner() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectClass(MochaTestRunner);
+    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectFunction(createMochaTestRunner);
   }
 
   function resolveTestDir(fileName = '.') {

@@ -10,7 +10,7 @@ describe('Verify stryker has ran correctly', () => {
       noCoverage: 0,
       survived: 0,
       timeout: 0,
-      runtimeErrors: 1
+      compileErrors: 1
     });
   });
 });

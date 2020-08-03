@@ -87,6 +87,7 @@ exports[`instrumenter integration should be able to instrument a vue sample 1`] 
 </template>
 
 <script>
+// @ts-nocheck
 var __global_69fa48 = function (g) {
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},
@@ -110,21 +111,21 @@ var __global_69fa48 = function (g) {
   return g;
 }(new Function(\\"return this\\")());
 
-export default __global_69fa48.__activeMutant__ === 0 ? {
+export default __global_69fa48.__activeMutant__ === 1 ? {
   name: \\"\\",
 
   data() {
     switch (__global_69fa48.__activeMutant__) {
-      case 1:
+      case 2:
         {}
         break;
 
       default:
-        __global_69fa48.__coverMutant__(1);
+        __global_69fa48.__coverMutant__(2);
         {
-          return __global_69fa48.__activeMutant__ === 2 ? {
+          return __global_69fa48.__activeMutant__ === 4 ? {
             msg: \\"\\"
-          } : (__global_69fa48.__coverMutant__(2), {
+          } : __global_69fa48.__activeMutant__ === 3 ? {} : (__global_69fa48.__coverMutant__(3, 4), {
             msg: 'Welcome to Your Vue.js App'
           });
         }
@@ -132,21 +133,21 @@ export default __global_69fa48.__activeMutant__ === 0 ? {
     }
   }
 
-} : (__global_69fa48.__coverMutant__(0), {
+} : __global_69fa48.__activeMutant__ === 0 ? {} : (__global_69fa48.__coverMutant__(0, 1), {
   name: 'HelloWorld',
 
   data() {
     switch (__global_69fa48.__activeMutant__) {
-      case 1:
+      case 2:
         {}
         break;
 
       default:
-        __global_69fa48.__coverMutant__(1);
+        __global_69fa48.__coverMutant__(2);
         {
-          return __global_69fa48.__activeMutant__ === 2 ? {
+          return __global_69fa48.__activeMutant__ === 4 ? {
             msg: \\"\\"
-          } : (__global_69fa48.__coverMutant__(2), {
+          } : __global_69fa48.__activeMutant__ === 3 ? {} : (__global_69fa48.__coverMutant__(3, 4), {
             msg: 'Welcome to Your Vue.js App'
           });
         }
@@ -157,6 +158,7 @@ export default __global_69fa48.__activeMutant__ === 0 ? {
 });
 </script>
 <script>
+// @ts-nocheck
 var __global_69fa48 = function (g) {
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},
@@ -180,7 +182,7 @@ var __global_69fa48 = function (g) {
   return g;
 }(new Function(\\"return this\\")());
 
-const b = __global_69fa48.__activeMutant__ === 3 ? a - c : (__global_69fa48.__coverMutant__(3), a + c);
+const b = __global_69fa48.__activeMutant__ === 5 ? a - c : (__global_69fa48.__coverMutant__(5), a + c);
 </script>
 
 <!-- Add \\"scoped\\" attribute to limit CSS to this component only -->

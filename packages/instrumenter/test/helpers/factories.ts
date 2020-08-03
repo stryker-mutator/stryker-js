@@ -2,8 +2,24 @@ import { types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
 import { Mutant, NamedNodeMutation } from '../../src/mutant';
+import { ParserOptions } from '../../src/parsers';
+import { InstrumenterOptions } from '../../src';
 
-import { parseTS, parseJS } from './syntax-test-helpers';
+import { parseTS, parseJS, findNodePath } from './syntax-test-helpers';
+
+export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
+  return {
+    plugins: null,
+    ...overrides,
+  };
+}
+
+export function createInstrumenterOptions(overrides?: Partial<InstrumenterOptions>): InstrumenterOptions {
+  return {
+    ...createParserOptions(),
+    ...overrides,
+  };
+}
 
 export function createHtmlAst(overrides?: Partial<HtmlAst>): HtmlAst {
   return {
@@ -53,7 +69,8 @@ export function createMutant(overrides?: Partial<Mutant>): Mutant {
 export function createNamedNodeMutation(overrides?: Partial<NamedNodeMutation>): NamedNodeMutation {
   return {
     mutatorName: 'fooMutator',
-    original: types.identifier('foo'),
-    replacement: types.identifier('bar'),
+    original: findNodePath(parseJS('foo'), (t) => t.isIdentifier()).node,
+    replacement: findNodePath(parseJS('bar'), (t) => t.isIdentifier()).node,
+    ...overrides,
   };
 }

@@ -16,6 +16,7 @@
     "chai-as-promised": "~7.1.1",
     "cross-env": "~5.2.0",
     "grunt": "~1.0.4",
+    "jasmine": "^3.5.0",
     "jasmine-core": "~3.5.0",
     "jest": "^26.0.1",
     "karma": "^5.0.4",
@@ -35,7 +36,8 @@
     "ts-loader": "^7.0.3",
     "ts-node": "~7.0.0",
     "typescript": "~3.9.2",
-    "webpack": "~4.41.2"
+    "webpack": "~4.41.2",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
@@ -45,18 +47,13 @@
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",
     "@stryker-mutator/core": "../packages/core",
+    "@stryker-mutator/instrumenter": "../packages/instrumenter",
     "@stryker-mutator/api": "../packages/api",
-    "@stryker-mutator/babel-transpiler": "../packages/babel-transpiler",
-    "@stryker-mutator/jasmine-framework": "../packages/jasmine-framework",
     "@stryker-mutator/jasmine-runner": "../packages/jasmine-runner",
-    "@stryker-mutator/javascript-mutator": "../packages/javascript-mutator",
     "@stryker-mutator/jest-runner": "../packages/jest-runner",
     "@stryker-mutator/karma-runner": "../packages/karma-runner",
-    "@stryker-mutator/mocha-framework": "../packages/mocha-framework",
     "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
     "@stryker-mutator/util": "../packages/util",
-    "@stryker-mutator/typescript": "../packages/typescript",
-    "@stryker-mutator/vue-mutator": "../packages/vue-mutator",
-    "@stryker-mutator/webpack-transpiler": "../packages/webpack-transpiler"
+    "@stryker-mutator/typescript-checker": "../packages/typescript-checker"
   }
 }

@@ -1,11 +1,11 @@
 import * as path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Config, ConfigOptions } from 'karma';
+import { Config, ConfigOptions, ClientOptions } from 'karma';
 import { noopLogger } from '@stryker-mutator/util';
 
-import StrykerReporter from '../StrykerReporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../TestHooksMiddleware';
+import StrykerReporter from '../karma-plugins/StrykerReporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../karma-plugins/TestHooksMiddleware';
 import { requireModule } from '../utils';
 
 function setDefaultOptions(config: Config) {
@@ -63,6 +63,18 @@ function setClientOptions(config: Config) {
   // As far as I can see clearing the context only has a visible effect (you don't see the result of the last test).
   // If this is true, disabling it is safe to do and solves the race condition issue.
   config.set({ client: { clearContext: false } });
+
+  // Disable randomized tests with using jasmine.
+  // Stryker doesn't play nice with a random test order, since spec id's tent to move around
+  if (config.frameworks?.includes('jasmine')) {
+    config.set({
+      client: {
+        jasmine: {
+          random: false,
+        },
+      } as Partial<ClientOptions>,
+    });
+  }
 }
 
 function setUserKarmaConfig(config: Config) {
@@ -97,9 +109,23 @@ function configureTestHooksMiddleware(config: Config) {
   config.files = config.files || [];
 
   config.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
-  const middleware: string[] = (config as any).middleware || ((config as any).middleware = []);
+  const middleware: string[] = (config as any).beforeMiddleware || ((config as any).beforeMiddleware = []);
   middleware.unshift(TestHooksMiddleware.name);
+
+  TestHooksMiddleware.instance.configureTestFramework(config.frameworks);
+
   addPlugin(config, { [`middleware:${TestHooksMiddleware.name}`]: ['value', TestHooksMiddleware.instance.handler] });
+}
+
+function configureStrykerMutantCoverageAdapter(config: Config) {
+  config.files = config.files || [];
+  config.files.unshift({
+    pattern: require.resolve('../karma-plugins/StrykerMutantCoverageAdapter'),
+    included: true,
+    watched: false,
+    served: true,
+    nocache: true,
+  });
 }
 
 function configureStrykerReporter(config: Config) {
@@ -120,28 +146,28 @@ const globalSettings: {
   },
 };
 
-export = Object.assign(
-  (config: Config) => {
-    const log = globalSettings.getLogger(path.basename(__filename));
-    setDefaultOptions(config);
-    setUserKarmaConfigFile(config, log);
-    setUserKarmaConfig(config);
-    setBasePath(config);
-    setLifeCycleOptions(config);
-    setClientOptions(config);
-    configureTestHooksMiddleware(config);
-    configureStrykerReporter(config);
-  },
-  {
-    /**
-     * Provide global settings for next configuration
-     * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
-     * (not counting environment variables)
-     */
-    setGlobals(globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; getLogger?: LoggerFactoryMethod }) {
-      globalSettings.karmaConfig = globals.karmaConfig;
-      globalSettings.karmaConfigFile = globals.karmaConfigFile;
-      globalSettings.getLogger = globals.getLogger || (() => noopLogger);
-    },
-  }
-);
+function configureKarma(config: Config) {
+  const log = globalSettings.getLogger(path.basename(__filename));
+  setDefaultOptions(config);
+  setUserKarmaConfigFile(config, log);
+  setUserKarmaConfig(config);
+  setBasePath(config);
+  setLifeCycleOptions(config);
+  setClientOptions(config);
+  configureTestHooksMiddleware(config);
+  configureStrykerMutantCoverageAdapter(config);
+  configureStrykerReporter(config);
+}
+
+/**
+ * Provide global settings for next configuration
+ * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
+ * (not counting environment variables)
+ */
+configureKarma.setGlobals = (globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; getLogger?: LoggerFactoryMethod }) => {
+  globalSettings.karmaConfig = globals.karmaConfig;
+  globalSettings.karmaConfigFile = globals.karmaConfigFile;
+  globalSettings.getLogger = globals.getLogger || (() => noopLogger);
+};
+
+export = configureKarma;

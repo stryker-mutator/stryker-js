@@ -1,13 +1,9 @@
 {
   "name": "@stryker-mutator/mocha-framework",
-  "version": "3.3.0",
+  "version": "4.0.0-beta.1",
   "description": "A plugin to use the mocha test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
-  "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --include src/**/*.js --reporter=html --report-dir=reports/coverage --lines 100 --functions 100 --branches 100 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 10000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
@@ -44,7 +40,7 @@
     "mocha": ">= 2.3.3 < 8"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.0",
-    "@stryker-mutator/util": "^3.3.0"
+    "@stryker-mutator/api": "4.0.0-beta.1",
+    "@stryker-mutator/util": "4.0.0-beta.1"
   }
 }

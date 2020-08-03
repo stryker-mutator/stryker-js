@@ -8,18 +8,34 @@ import { tap, mergeAll, map, filter } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
+const mutationSwitchingTempWhiteList = [
+  'jasmine-ts-node',
+  'jasmine-jasmine',
+  'karma-mocha',
+  'karma-jasmine',
+  'webpack-zero-conf-karma',
+  'vue-javascript',
+  'karma-webpack-with-ts',
+  'mocha-mocha',
+  'mocha-ts-node',
+  'babel-transpiling',
+  'typescript-transpiling',
+  'vue-cli-typescript-mocha'
+]
+
 function runE2eTests() {
   const testDirs = fs.readdirSync(testRootDir);
 
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(
     filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
+    filter(dir => mutationSwitchingTempWhiteList.includes(dir)),
     map(testDir => defer(() => runTest(testDir)))
   );
 
   let testsRan = 0;
   return test$.pipe(
-    mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs
+    mergeAll(os.cpus().length && 2), // use mergeAll to limit concurrent test runs
     tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
   );
 }

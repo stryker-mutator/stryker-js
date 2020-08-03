@@ -2,20 +2,26 @@ import path from 'path';
 
 import { AstFormat, AstByFormat } from '../syntax';
 
-import { parse as jsParse } from './js-parser';
+import { createParser as createJSParser } from './js-parser';
 import { parse as tsParse } from './ts-parser';
 import { parse as htmlParse } from './html-parser';
+import { ParserOptions } from './parser-options';
 
-export function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
-  const format = getFormat(fileName, formatOverride);
-  switch (format) {
-    case AstFormat.JS:
-      return jsParse(code, fileName) as Promise<AstByFormat[T]>;
-    case AstFormat.TS:
-      return tsParse(code, fileName) as Promise<AstByFormat[T]>;
-    case AstFormat.Html:
-      return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
-  }
+export { ParserOptions };
+
+export function createParser(parserOptions: ParserOptions) {
+  const jsParse = createJSParser(parserOptions);
+  return function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
+    const format = getFormat(fileName, formatOverride);
+    switch (format) {
+      case AstFormat.JS:
+        return jsParse(code, fileName) as Promise<AstByFormat[T]>;
+      case AstFormat.TS:
+        return tsParse(code, fileName) as Promise<AstByFormat[T]>;
+      case AstFormat.Html:
+        return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
+    }
+  };
 }
 
 function getFormat(fileName: string, override: AstFormat | undefined): AstFormat {

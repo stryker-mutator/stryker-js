@@ -10,12 +10,12 @@ describe('Verify stryker has ran correctly', () => {
         killed: 24,
         mutationScore: 55.81,
         mutationScoreBasedOnCoveredCode: 55.81,
-        runtimeErrors: 2,
+        runtimeErrors: 1,
         survived: 19,
         totalCovered: 43,
         totalDetected: 24,
-        totalInvalid: 2,
-        totalMutants: 45,
+        totalInvalid: 1,
+        totalMutants: 44,
         totalUndetected: 19,
         totalValid: 43
       })

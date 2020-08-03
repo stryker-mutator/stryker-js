@@ -52,10 +52,9 @@ export default class MochaOptionsLoader {
 
   private loadMocha6Options(overrides: MochaOptions) {
     const args = serializeMochaLoadOptionsArguments(overrides);
-    const loadOptions = LibWrapper.loadOptions || (() => ({}));
-    const rawConfig = loadOptions(args) || {};
+    const rawConfig = LibWrapper.loadOptions!(args) || {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     if (this.log.isDebugEnabled()) {
@@ -122,7 +121,7 @@ export default class MochaOptionsLoader {
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = this.parseNextString(args) ?? DEFAULT_MOCHA_OPTIONS.ui!;
+            mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'tdd' | 'qunit' | 'exports') ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g':

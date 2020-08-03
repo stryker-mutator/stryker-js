@@ -1,13 +1,12 @@
 import * as path from 'path';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { RunStatus } from '@stryker-mutator/api/test_runner';
 
-import { MochaTestRunner } from '../../src/MochaTestRunner';
-import MochaOptionsEditor from '../../src/MochaOptionsEditor';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import { expectCompleted } from '@stryker-mutator/test-helpers/src/assertions';
+
+import { createMochaTestRunner, MochaTestRunner } from '../../src';
 
 describe('Running a project with root hooks', () => {
   const cwd = process.cwd();
@@ -16,8 +15,7 @@ describe('Running a project with root hooks', () => {
 
   beforeEach(async () => {
     process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'parallel-with-root-hooks-sample'));
-    testInjector.injector.provideClass('loader', MochaOptionsLoader).injectClass(MochaOptionsEditor).edit(testInjector.options);
-    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectClass(MochaTestRunner);
+    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectFunction(createMochaTestRunner);
     await sut.init();
   });
 
@@ -26,9 +24,8 @@ describe('Running a project with root hooks', () => {
   });
 
   it('should have run the root hooks', async () => {
-    const result = await sut.run({});
-    expect(result.status).eq(RunStatus.Complete);
+    const result = await sut.dryRun(factory.dryRunOptions({}));
+    expectCompleted(result);
     expect(result.tests).has.lengthOf(2);
-    expect(result.errorMessages).lengthOf(0);
   });
 });

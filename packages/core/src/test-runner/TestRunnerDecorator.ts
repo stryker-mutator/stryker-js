@@ -1,9 +1,10 @@
-import { RunOptions, RunResult, TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner2';
+import { Disposable } from 'typed-inject';
 
-export default class TestRunnerDecorator implements Required<TestRunner> {
-  protected innerRunner: TestRunner;
+export default class TestRunnerDecorator implements Required<TestRunner2>, Disposable {
+  protected innerRunner: TestRunner2;
 
-  constructor(private readonly testRunnerProducer: () => TestRunner) {
+  constructor(private readonly testRunnerProducer: () => TestRunner2) {
     this.createInnerRunner();
   }
 
@@ -14,13 +15,15 @@ export default class TestRunnerDecorator implements Required<TestRunner> {
       return Promise.resolve();
     }
   }
-
   protected createInnerRunner() {
     this.innerRunner = this.testRunnerProducer();
   }
 
-  public run(options: RunOptions): Promise<RunResult> {
-    return this.innerRunner.run(options);
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    return this.innerRunner.dryRun(options);
+  }
+  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    return this.innerRunner.mutantRun(options);
   }
 
   public dispose(): Promise<any> {

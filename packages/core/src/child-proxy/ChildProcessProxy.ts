@@ -7,7 +7,7 @@ import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
 import StringBuilder from '../utils/StringBuilder';
 

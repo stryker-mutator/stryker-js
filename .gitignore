@@ -25,6 +25,8 @@ packages/*/test/**/*.js
 packages/*/src/**/*.d.ts
 packages/*/test/**/*.d.ts
 packages/*/dist
+e2e/test/*/dist
+e2e/test/*/dist-test
 .idea
 *.iml
 *.tmp.txt

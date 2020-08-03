@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
-import { Task, ExpirableTask } from '../../src';
-
 import sinon = require('sinon');
+
+import { Task, ExpirableTask } from '../../src';
 
 describe(Task.name, () => {
   it('should give access to underlying promise', () => {

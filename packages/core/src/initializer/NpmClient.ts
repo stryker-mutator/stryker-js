@@ -15,7 +15,7 @@ interface NpmSearchResult {
 
 interface NpmPackage {
   name: string;
-  initStrykerConfig?: object;
+  initStrykerConfig?: Record<string, unknown>;
 }
 
 const getName = (packageName: string) => {
@@ -67,7 +67,7 @@ export default class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(pkg: PackageInfo): Promise<object> {
+  public getAdditionalConfig(pkg: PackageInfo): Promise<Record<string, unknown>> {
     const path = `/${pkg.name}@${pkg.version}/package.json`;
     return this.packageClient
       .get<NpmPackage>(path)

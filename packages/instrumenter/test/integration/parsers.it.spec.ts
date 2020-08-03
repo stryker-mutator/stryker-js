@@ -3,8 +3,9 @@ import path from 'path';
 
 import { expect } from 'chai';
 
-import { parse } from '../../src/parsers';
+import { createParser, ParserOptions } from '../../src/parsers';
 import { AstFormat, HtmlAst, TSAst, JSAst, Ast } from '../../src/syntax';
+import { createParserOptions } from '../helpers/factories';
 
 const resolveTestResource = path.resolve.bind(path, __dirname, '..' /* integration */, '..' /* test */, '..' /* dist */, 'testResources', 'parser');
 
@@ -38,25 +39,37 @@ describe('parsers integration', () => {
     expect(actual).to.matchSnapshot();
   });
 
-  async function act(testResourceFileName: string) {
+  it('should ignore configuration when parsing ts files', async () => {
+    process.chdir(resolveTestResource('ts-in-babel-project'));
+    const actual = await actAssertTS('ts-in-babel-project/src/app.ts');
+    expect(actual).to.matchSnapshot();
+  });
+
+  it('should allow a plugin that conflicts with the default plugins as long as plugins are emptied out', async () => {
+    process.chdir(resolveTestResource('js-in-babel-project'));
+    const actual = await actAssertJS('js-in-babel-project/src/app.js', createParserOptions({ plugins: [] }));
+    expect(actual).to.matchSnapshot();
+  });
+
+  async function act(testResourceFileName: string, options: ParserOptions) {
     const fileName = resolveTestResource(testResourceFileName);
     const input = await fs.readFile(fileName, 'utf8');
-    const actual = await parse(input, fileName);
+    const actual = await createParser(options)(input, fileName);
     cleanFileName(actual, testResourceFileName);
     return actual;
   }
-  async function actAssertHtml(testResourceFileName: string): Promise<HtmlAst> {
-    const actual = await act(testResourceFileName);
+  async function actAssertHtml(testResourceFileName: string, options = createParserOptions()): Promise<HtmlAst> {
+    const actual = await act(testResourceFileName, options);
     expect(actual.format).eq(AstFormat.Html);
     return actual as HtmlAst;
   }
-  async function actAssertTS(testResourceFileName: string): Promise<TSAst> {
-    const actual = await act(testResourceFileName);
+  async function actAssertTS(testResourceFileName: string, options = createParserOptions()): Promise<TSAst> {
+    const actual = await act(testResourceFileName, options);
     expect(actual.format).eq(AstFormat.TS);
     return actual as TSAst;
   }
-  async function actAssertJS(testResourceFileName: string): Promise<JSAst> {
-    const actual = await act(testResourceFileName);
+  async function actAssertJS(testResourceFileName: string, options = createParserOptions()): Promise<JSAst> {
+    const actual = await act(testResourceFileName, options);
     expect(actual.format).eq(AstFormat.JS);
     return actual as JSAst;
   }

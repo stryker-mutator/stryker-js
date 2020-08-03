@@ -3,7 +3,7 @@
   "packages": [
     "packages/*"
   ],
-  "version": "3.3.0",
+  "version": "4.0.0-beta.1",
   "command": {
     "version": {
       "allowBranch": [
@@ -11,7 +11,8 @@
         "epic/*"
       ],
       "conventionalCommits": true,
-      "forcePublish": true
+      "forcePublish": true,
+      "exact": true
     }
   }
 }

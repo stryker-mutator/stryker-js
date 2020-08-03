@@ -11,9 +11,6 @@
   "references": [
     {
       "path": "../api/tsconfig.src.json"
-    },
-    {
-      "path": "../mutator-specification/tsconfig.src.json"
     }
   ]
 }

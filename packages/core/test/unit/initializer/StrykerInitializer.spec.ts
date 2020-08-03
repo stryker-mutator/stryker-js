@@ -574,9 +574,9 @@ describe(StrykerInitializer.name, () => {
       statusCode: 200,
     });
   };
-  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: object | null }) => {
+  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: Record<string, unknown> | null }) => {
     Object.keys(packageConfigPerPackage).forEach((packageName) => {
-      const pkgConfig: PackageInfo & { initStrykerConfig?: object } = {
+      const pkgConfig: PackageInfo & { initStrykerConfig?: Record<string, unknown> } = {
         keywords: [],
         name: packageName,
         version: '1.1.1',

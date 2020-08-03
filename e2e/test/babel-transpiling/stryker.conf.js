@@ -5,15 +5,12 @@ module.exports = {
   testFramework: 'mocha',
   testRunner: 'mocha',
   coverageAnalysis: 'off',
-  mutator: {
-    name: 'javascript',
-    plugins: [['pipelineOperator', { proposal: 'minimal' }]]
-  },
-  transpilers: [
-    'babel'
-  ],
+  buildCommand: 'npm run build',
   timeoutMS: 60000,
-  reporters: ['clear-text', 'html', 'event-recorder'],
-  maxConcurrentTestRunners: 2,
-  logLevel: 'info'
+  reporters: ['clear-text', 'html', 'event-recorder', 'progress'],
+  concurrency: 1,
+  logLevel: 'info',
+  plugins: [
+    '@stryker-mutator/mocha-runner'
+  ]
 };

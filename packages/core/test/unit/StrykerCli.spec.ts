@@ -5,7 +5,7 @@ import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import LogConfigurator from '../../src/logging/LogConfigurator';
+import { LogConfigurator } from '../../src/logging';
 import StrykerCli from '../../src/StrykerCli';
 
 describe(StrykerCli.name, () => {
@@ -44,9 +44,11 @@ describe(StrykerCli.name, () => {
       [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
+      [['--concurrency', '5'], { concurrency: 5 }],
+      [['-c', '6'], { concurrency: 6 }],
     ];
     testCases.forEach(([args, expected]) => {
-      it(`should expect option "${args.join(' ')}"`, () => {
+      it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {
         arrangeActAssertConfigOption(args, expected);
       });
     });

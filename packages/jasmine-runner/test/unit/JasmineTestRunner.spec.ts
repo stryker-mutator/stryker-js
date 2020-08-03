@@ -1,23 +1,19 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, RunStatus } from '@stryker-mutator/api/test_runner2';
+import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner2';
+
+import Jasmine = require('jasmine');
 
 import * as helpers from '../../src/helpers';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
 
-import Jasmine = require('jasmine');
-
-type SinonStubbedInstance<TType> = {
-  [P in keyof TType]: TType[P] extends Function ? sinon.SinonStub : TType[P];
-};
-
 describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
-  let jasmineStub: SinonStubbedInstance<Jasmine>;
-  let jasmineEnvStub: SinonStubbedInstance<jasmine.Env>;
+  let jasmineStub: sinon.SinonStubbedInstance<Jasmine>;
+  let jasmineEnvStub: sinon.SinonStubbedInstance<jasmine.Env>;
   let sut: JasmineTestRunner;
   let fileNames: string[];
   let clock: sinon.SinonFakeTimers;
@@ -128,7 +124,7 @@ describe(JasmineTestRunner.name, () => {
 
         // Assert
         const expectedResult: CompleteDryRunResult = {
-          status: RunStatus.Complete,
+          status: DryRunStatus.Complete,
           tests: [],
           mutantCoverage: expectedMutationCoverage,
         };
@@ -152,7 +148,7 @@ describe(JasmineTestRunner.name, () => {
 
       // Assert
       const expectedResult: CompleteDryRunResult = {
-        status: RunStatus.Complete,
+        status: DryRunStatus.Complete,
         tests: [],
         mutantCoverage: undefined,
       };

@@ -1,15 +1,14 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es5",
-      "es2015.promise",
-      "es2015.core"
+    "target": "es2017",
+    "module": "commonjs",
+    "outDir": "dist",
+    "types": [
+      "mocha"
     ]
   },
-  "files": [
-    "src/Add.ts",
-    "src/Circle.ts",
-    "test/AddSpec.ts",
-    "test/CircleSpec.ts"
+  "include": [
+    "src",
+    "test",
   ]
 }

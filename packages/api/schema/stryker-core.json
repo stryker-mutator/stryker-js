@@ -4,6 +4,17 @@
   "description": "JSON schema for the Stryker Mutator configuration file",
   "type": "object",
   "definitions": {
+    "commandRunnerOptions": {
+      "title": "CommandRunnerOptions",
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "The command to test each mutant. For example \"npm run mocha\". Defaults to \"npm test\".",
+          "type": "string",
+          "default": "npm test"
+        }
+      }
+    },
     "logLevel": {
       "title": "LogLevel",
       "type": "string",
@@ -209,6 +220,32 @@
       "type": "boolean",
       "default": true
     },
+    "buildCommand": {
+      "type": "string",
+      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+      "examples": [
+        "tsc -b",
+        "babel src --out-dir lib",
+        "npm run build"
+      ]
+    },
+    "checkers": {
+      "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "concurrency": {
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine. This is a sane default for most use cases.",
+      "type": "number"
+    },
+    "commandRunner": {
+      "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
+      "$ref": "#/definitions/commandRunnerOptions",
+      "default": {}
+    },
     "coverageAnalysis": {
       "$ref": "#/definitions/coverageAnalysis",
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
@@ -247,7 +284,7 @@
       "default": "info"
     },
     "maxConcurrentTestRunners": {
-      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
+      "description": "[DEPRECATED please use \"concurrency\" instead]. Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
       "type": "number",
       "default": 9007199254740991
     },
@@ -348,6 +385,11 @@
         "type": "string"
       },
       "default": []
+    },
+    "tsconfigFile": {
+      "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",
+      "type": "string",
+      "default": "tsconfig.json"
     },
     "warnings": {
       "default": true,

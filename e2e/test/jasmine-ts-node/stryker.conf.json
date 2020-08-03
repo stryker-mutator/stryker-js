@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": [
+    "{src,lib}/**/*.ts?(x)"
+  ],
+  "checkers": [
+    "typescript"
+  ],
+  "testRunner": "jasmine",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "reporters": ["event-recorder", "clear-text"],
+  "plugins": [
+    "@stryker-mutator/typescript-checker",
+    "@stryker-mutator/jasmine-runner"
+  ]
+}

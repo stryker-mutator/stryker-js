@@ -2,81 +2,105 @@ import { isRegExp } from 'util';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner2, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner2';
+import { factory } from '@stryker-mutator/test-helpers';
 
-class CoverageReportingTestRunner implements TestRunner {
-  public run() {
-    (global as any).__coverage__ = 'overridden';
-    return Promise.resolve({ status: RunStatus.Complete, tests: [], coverage: 'realCoverage' as any });
+class CoverageReportingTestRunner implements TestRunner2 {
+  public async dryRun(): Promise<DryRunResult> {
+    (global as any).__mutantCoverage__ = 'overridden';
+    return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class TimeBombTestRunner implements TestRunner {
+class TimeBombTestRunner implements TestRunner2 {
   constructor() {
     // Setting a time bomb after 100 ms
     setTimeout(() => process.exit(), 500);
   }
-  public run() {
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+  public async dryRun(): Promise<DryRunResult> {
+    return factory.completeDryRunResult();
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class ProximityMineTestRunner implements TestRunner {
-  public run() {
+class ProximityMineTestRunner implements TestRunner2 {
+  public async dryRun(): Promise<DryRunResult> {
     process.exit(42);
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class DirectResolvedTestRunner implements TestRunner {
-  public run() {
-    (global as any).__coverage__ = 'coverageObject';
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+class DirectResolvedTestRunner implements TestRunner2 {
+  public async dryRun(): Promise<DryRunResult> {
+    (global as any).__mutantCoverage__ = 'coverageObject';
+    return factory.completeDryRunResult();
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class DiscoverRegexTestRunner implements TestRunner {
+class DiscoverRegexTestRunner implements TestRunner2 {
   public static inject = tokens(commonTokens.options);
   constructor(private readonly options: StrykerOptions) {}
 
-  public run(): Promise<RunResult> {
+  public async dryRun(): Promise<DryRunResult> {
     if (isRegExp(this.options.someRegex)) {
-      return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+      return factory.completeDryRunResult();
     } else {
-      return Promise.resolve({ status: RunStatus.Error, tests: [], errorMessages: ['No regex found in runnerOptions.strykerOptions.someRegex'] });
+      return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
     }
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class ErroredTestRunner implements TestRunner {
-  public run() {
+class ErroredTestRunner implements TestRunner2 {
+  public async dryRun(): Promise<DryRunResult> {
     let expectedError: any = null;
     try {
       throw new SyntaxError('This is invalid syntax!');
     } catch (error) {
       expectedError = error;
     }
-    return Promise.resolve({ status: RunStatus.Error, errorMessages: [expectedError], tests: [] });
+    return factory.errorDryRunResult({ errorMessage: expectedError });
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class RejectInitRunner implements TestRunner {
+class RejectInitRunner implements TestRunner2 {
   public init() {
     return Promise.reject(new Error('Init was rejected'));
   }
 
-  public run(): Promise<RunResult> {
+  public async dryRun(): Promise<DryRunResult> {
     throw new Error();
   }
-}
-
-class NeverResolvedTestRunner implements TestRunner {
-  public run() {
-    return new Promise<RunResult>(() => {});
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class SlowInitAndDisposeTestRunner implements TestRunner {
+class NeverResolvedTestRunner implements TestRunner2 {
+  public dryRun(): Promise<DryRunResult> {
+    return new Promise<DryRunResult>(() => {});
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
+  }
+}
+
+class SlowInitAndDisposeTestRunner implements TestRunner2 {
   public inInit: boolean;
 
   public init() {
@@ -89,52 +113,59 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
     });
   }
 
-  public run() {
+  public async dryRun() {
     if (this.inInit) {
       throw new Error('Test should fail! Not yet initialized!');
     }
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+    return factory.completeDryRunResult();
+  }
+
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 
   public dispose() {
     return this.init();
   }
 }
-class VerifyWorkingFolderTestRunner implements TestRunner {
-  public runResult: RunResult = { status: RunStatus.Complete, tests: [] };
-
-  public run() {
+class VerifyWorkingFolderTestRunner implements TestRunner2 {
+  public async dryRun(): Promise<DryRunResult> {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
-      return Promise.resolve(this.runResult);
+      return factory.completeDryRunResult();
     } else {
-      return Promise.reject(new Error(`Expected ${process.cwd()} to be ${__dirname}`));
+      throw new Error(`Expected ${process.cwd()} to be ${__dirname}`);
     }
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
-class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
+class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner2 {
   public promise: Promise<void>;
 
-  public init() {
+  public async init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
-
-  public run() {
+  public async dryRun(): Promise<DryRunResult> {
     this.promise.catch(() => {});
-    return Promise.resolve({ status: RunStatus.Complete, tests: [] });
+    return factory.completeDryRunResult();
+  }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
   }
 }
 
 export const strykerPlugins = [
-  declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'errored', ErroredTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'discover-regex', DiscoverRegexTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'direct-resolved', DirectResolvedTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'verify-working-folder', VerifyWorkingFolderTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'never-resolved', NeverResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'errored', ErroredTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'discover-regex', DiscoverRegexTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'direct-resolved', DirectResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'coverage-reporting', CoverageReportingTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'time-bomb', TimeBombTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'proximity-mine', ProximityMineTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
+  declareClassPlugin(PluginKind.TestRunner2, 'reject-init', RejectInitRunner),
 ];

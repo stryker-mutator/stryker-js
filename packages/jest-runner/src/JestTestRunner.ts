@@ -15,11 +15,9 @@ import {
 
 import { jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
-import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
 import { configLoaderFactory } from './configLoaders';
-import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
@@ -44,30 +42,35 @@ export default class JestTestRunner implements TestRunner2 {
     private readonly jestTestAdapter: JestTestAdapter,
     configLoader: JestConfigLoader
   ) {
-    const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
-    // Get jest configuration from stryker options and assign it to jestConfig
-    const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
+    const errorMessage =
+      'This version of Stryker does not (yet) support Jest, sorry! Follow https://github.com/stryker-mutator/stryker/issues/2321 for the latest status.';
+    this.log.error(errorMessage);
+    throw new Error(errorMessage);
 
-    // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
-    if (this.enableFindRelatedTests === undefined) {
-      this.enableFindRelatedTests = true;
-    }
+    // const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
+    // // Get jest configuration from stryker options and assign it to jestConfig
+    // const configFromFile = configLoader.loadConfig();
+    // this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
 
-    if (this.enableFindRelatedTests) {
-      this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
-    } else {
-      this.log.debug(
-        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
-      );
-    }
+    // // Get enableFindRelatedTests from stryker jest options or default to true
+    // this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
+    // if (this.enableFindRelatedTests === undefined) {
+    //   this.enableFindRelatedTests = true;
+    // }
 
-    // basePath will be used in future releases of Stryker as a way to define the project root
-    // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
-    // https://github.com/stryker-mutator/stryker/issues/650
-    this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
-    this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
+    // if (this.enableFindRelatedTests) {
+    //   this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
+    // } else {
+    //   this.log.debug(
+    //     'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
+    //   );
+    // }
+
+    // // basePath will be used in future releases of Stryker as a way to define the project root
+    // // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
+    // // https://github.com/stryker-mutator/stryker/issues/650
+    // this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
+    // this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
   public dryRun(_: DryRunOptions): Promise<DryRunResult> {

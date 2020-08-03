@@ -1,0 +1,16 @@
+{
+  "name": "jasmine-ts-node",
+  "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
+  "scripts": {
+    "test:unit": "jasmine",
+    "test": "stryker run",
+    "posttest": "mocha --no-package --require \"ts-node/register\" verify/verify.ts"
+  },
+  "mocha": {
+    "require": "ts-node/register/transpile-only",
+    "spec": "test/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^3.5.11"
+  }
+}

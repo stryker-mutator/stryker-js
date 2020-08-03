@@ -49,6 +49,8 @@ describe(placeMutant.name, () => {
     path.node.loc = { start: { column: 3, line: 2 }, end: { column: 5, line: 4 } };
     mutantPlacers[0].throws(expectedError);
     const mutants = [createMutant()];
-    expect(() => placeMutant(path, mutants, [fooPlacer])).throws('Error while placing mutants on 2:3 with fooPlacer. Error: expectedError');
+    expect(() => placeMutant(path, mutants, [fooPlacer])).throws(
+      'Error while placing mutants of type(s) "fooMutator" on 2:3 with fooPlacer. Error: expectedError'
+    );
   });
 });

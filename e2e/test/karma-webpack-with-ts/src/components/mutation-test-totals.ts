@@ -30,7 +30,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
     }
   }
 
-  private renderHead() {
+  public renderHead() {
     return html`<thead>
       <tr>
         <th colspan="2" style="width: 217px">

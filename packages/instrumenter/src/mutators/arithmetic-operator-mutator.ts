@@ -4,33 +4,9 @@ import { NodeMutation } from '../mutant';
 
 import { NodeMutator } from './node-mutator';
 
-type Operator =
-  | '+'
-  | '-'
-  | '/'
-  | '%'
-  | '*'
-  | '**'
-  | '&'
-  | '|'
-  | '>>'
-  | '>>>'
-  | '<<'
-  | '^'
-  | '=='
-  | '==='
-  | '!='
-  | '!=='
-  | 'in'
-  | 'instanceof'
-  | '>'
-  | '<'
-  | '>='
-  | '<=';
-
 export class ArithmeticOperatorMutator implements NodeMutator {
   private readonly operators: {
-    [op: string]: Operator | undefined;
+    [op: string]: BinaryOperator | undefined;
   } = Object.freeze({
     '+': '-',
     '-': '+',
@@ -42,7 +18,7 @@ export class ArithmeticOperatorMutator implements NodeMutator {
   public name = 'ArithmeticOperator';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (types.isBinaryExpression(path.node)) {
+    if (path.isBinaryExpression()) {
       const mutatedOperator = this.operators[path.node.operator];
       if (mutatedOperator) {
         const replacement = types.cloneNode(path.node, false);

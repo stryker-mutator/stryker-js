@@ -4,11 +4,13 @@ describe('Verify stryker has ran correctly', () => {
 
   it('should report correct score', async () => {
     await expectMetrics({
-      killed: 4,
-      survived: 13,
-      compileErrors: 0,
+      killed: 2,
+      survived: 1,
+      noCoverage: 11,
+      compileErrors: 3,
       runtimeErrors: 0,
-      timeout: 0
+      timeout: 0,
+      mutationScore: 14.29
     });
   });
 });

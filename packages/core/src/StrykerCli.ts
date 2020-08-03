@@ -4,7 +4,7 @@ import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stry
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { initializerFactory } from './initializer';
-import LogConfigurator from './logging/LogConfigurator';
+import { LogConfigurator } from './logging';
 import Stryker from './Stryker';
 import { defaultOptions } from './config/OptionsValidator';
 import { retrieveCause, ConfigError } from './errors';
@@ -84,6 +84,11 @@ export default class StrykerCli {
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
+      .option(
+        '-c, --concurrency <n>',
+        'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
+        parseInt
+      )
       .option(
         '--logLevel <level>',
         `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.logLevel}"`

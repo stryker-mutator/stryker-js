@@ -44,8 +44,8 @@ export default class ConfigReader {
     return options;
   }
 
-  private loadConfigModule(): Function | PartialStrykerOptions {
-    let configModule: Function | PartialStrykerOptions = {};
+  private loadConfigModule(): ((options: StrykerOptions) => void) | PartialStrykerOptions {
+    let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
 
     if (!this.cliOptions.configFile) {
       try {

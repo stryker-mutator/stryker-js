@@ -1,18 +1,20 @@
 import { expect } from 'chai';
 
+import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { factory } from '@stryker-mutator/test-helpers';
+
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import TestRunnerMock from '../../helpers/TestRunnerMock';
 
 describe('TestRunnerDecorator', () => {
   let sut: TestRunnerDecorator;
-  let testRunner: TestRunnerMock;
+  let testRunner: sinon.SinonStubbedInstance<Required<TestRunner2>>;
 
   beforeEach(() => {
-    testRunner = new TestRunnerMock();
+    testRunner = factory.testRunner();
     sut = new TestRunnerDecorator(() => testRunner as any);
   });
 
-  function actArrangeAssert(methodName: 'init' | 'dispose' | 'run') {
+  function actArrangeAssert(methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
         testRunner[methodName].resolves('some value');
@@ -28,5 +30,6 @@ describe('TestRunnerDecorator', () => {
 
   actArrangeAssert('init');
   actArrangeAssert('dispose');
-  actArrangeAssert('run');
+  actArrangeAssert('dryRun');
+  actArrangeAssert('mutantRun');
 });

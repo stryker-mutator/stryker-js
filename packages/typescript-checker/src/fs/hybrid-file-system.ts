@@ -53,7 +53,7 @@ export class HybridFileSystem {
     fileName = toTSFileName(fileName);
     if (!this.files.has(fileName)) {
       let content = ts.sys.readFile(fileName);
-      if (content) {
+      if (typeof content === 'string') {
         let modifiedTime = ts.sys.getModifiedTime!(fileName)!;
         this.files.set(fileName, new ScriptFile(content, fileName, modifiedTime));
       } else {

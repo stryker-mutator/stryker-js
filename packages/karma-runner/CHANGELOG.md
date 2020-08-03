@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.1](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.0...v4.0.0-beta.1) (2020-07-17)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.0](https://github.io/stryker-mutator/stryker/compare/v3.3.1...v4.0.0-beta.0) (2020-07-10)
+
+
+### Bug Fixes
+
+* **karma-runner:** mocha filtering with `/` ([#2290](https://github.io/stryker-mutator/stryker/issues/2290)) ([3918633](https://github.io/stryker-mutator/stryker/commit/3918633b21ff37d2e950df2cc14b8557ee7eb6b3))
+
+
+
+
+
+## [3.3.1](https://github.io/stryker-mutator/stryker/compare/v3.3.0...v3.3.1) (2020-07-04)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
 # [3.3.0](https://github.io/stryker-mutator/stryker/compare/v3.2.4...v3.3.0) (2020-06-16)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner

@@ -18,8 +18,8 @@ import {
   WorkResult,
 } from '../../../src/child-proxy/messageProtocol';
 import * as di from '../../../src/di';
-import LogConfigurator from '../../../src/logging/LogConfigurator';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LogConfigurator } from '../../../src/logging';
+import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';

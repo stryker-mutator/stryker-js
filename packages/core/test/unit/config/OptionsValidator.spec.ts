@@ -1,3 +1,5 @@
+import os = require('os');
+
 import sinon = require('sinon');
 import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -181,6 +183,28 @@ describe(OptionsValidator.name, () => {
     });
   });
 
+  describe('maxConcurrentTestRunners', () => {
+    it('should report a deprecation warning', () => {
+      testInjector.options.maxConcurrentTestRunners = 8;
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
+    });
+
+    it('should not configure "concurrency" if "maxConcurrentTestRunners" is >= cpus-1', () => {
+      testInjector.options.maxConcurrentTestRunners = 2;
+      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).undefined;
+    });
+
+    it('should configure "concurrency" if "maxConcurrentTestRunners" is set with a lower value', () => {
+      testInjector.options.maxConcurrentTestRunners = 1;
+      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq(1);
+    });
+  });
+
   describe('transpilers', () => {
     it('should be invalid with non-array transpilers', () => {
       breakConfig('transpilers', '@stryker-mutator/typescript');
@@ -233,7 +257,7 @@ describe(validateOptions.name, () => {
   it('should validate the options using given optionsValidator', () => {
     const options = { foo: 'bar' };
     const output = validateOptions(options, (optionsValidatorMock as unknown) as OptionsValidator);
-    expect(options).eq(output);
+    expect(options).deep.eq(output);
     expect(optionsValidatorMock.validate).calledWith(options);
   });
 });

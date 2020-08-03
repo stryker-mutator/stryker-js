@@ -1,13 +1,9 @@
 {
   "name": "@stryker-mutator/vue-mutator",
-  "version": "3.3.0",
+  "version": "4.0.0-beta.1",
   "description": "A plugin for VueJS projects using Stryker",
   "main": "src/index.js",
-  "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 90 --branches 60 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
@@ -16,9 +12,7 @@
     "node": ">=10"
   },
   "keywords": [
-    "stryker",
-    "vuejs",
-    "@stryker-mutator/mutator-plugin"
+    "stryker"
   ],
   "publishConfig": {
     "access": "public"
@@ -31,19 +25,5 @@
     "Nico Jansen <jansennico@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/vue-mutator#readme",
-  "license": "Apache-2.0",
-  "devDependencies": {
-    "@stryker-mutator/javascript-mutator": "^3.3.0",
-    "@stryker-mutator/test-helpers": "^3.3.0",
-    "@stryker-mutator/typescript": "^3.3.0",
-    "@types/node": "^14.0.1",
-    "vue-template-compiler": "^2.0.0"
-  },
-  "dependencies": {
-    "@stryker-mutator/api": "^3.3.0"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
-    "vue-template-compiler": "^2.0.0"
-  }
+  "license": "Apache-2.0"
 }

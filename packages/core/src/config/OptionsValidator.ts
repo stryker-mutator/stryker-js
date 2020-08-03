@@ -1,7 +1,9 @@
+import os = require('os');
+
 import Ajv = require('ajv');
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, normalizeWhitespaces, propertyPath } from '@stryker-mutator/util';
+import { noopLogger, normalizeWhitespaces, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
@@ -17,7 +19,7 @@ export class OptionsValidator {
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
-  constructor(schema: object, private readonly log: Logger) {
+  constructor(schema: Record<string, unknown>, private readonly log: Logger) {
     this.validateFn = ajv.compile(schema);
   }
 
@@ -39,6 +41,12 @@ export class OptionsValidator {
           Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.`
         )
       );
+    }
+    if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
+      this.log.warn('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
+      if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
+        options.concurrency = options.maxConcurrentTestRunners;
+      }
     }
 
     additionalErrors.forEach((error) => this.log.error(error));
@@ -72,11 +80,11 @@ export function defaultOptions(): StrykerOptions {
 validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
 export function validateOptions(options: unknown, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
-  return options;
+  return deepFreeze(options) as StrykerOptions;
 }
 
 markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function markUnknownOptions(options: StrykerOptions, schema: object, log: Logger): StrykerOptions {
+export function markUnknownOptions(options: StrykerOptions, schema: Record<string, unknown>, log: Logger): StrykerOptions {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
   if (isWarningEnabled('unknownOptions', options.warnings)) {
     const unknownPropertyNames = Object.keys(options)

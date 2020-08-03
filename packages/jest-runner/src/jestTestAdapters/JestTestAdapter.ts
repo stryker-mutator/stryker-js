@@ -1,3 +1,3 @@
 export default interface JestTestAdapter {
-  run(config: object, projectRoot: string, fileNameUnderTest?: string): Promise<Jest.RunResult>;
+  run(config: Record<string, any>, projectRoot: string, fileNameUnderTest?: string): Promise<Jest.RunResult>;
 }

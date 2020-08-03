@@ -1,5 +1,4 @@
 import Ajv = require('ajv');
-import { ConfigEditor } from '@stryker-mutator/api/config';
 import {
   File,
   Location,
@@ -12,15 +11,30 @@ import {
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
-import { TestFramework, TestSelection } from '@stryker-mutator/api/test_framework';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import { Transpiler } from '@stryker-mutator/api/transpile';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { OptionsEditor } from '@stryker-mutator/api/src/core/OptionsEditor';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
-import { MutantRunOptions, DryRunOptions } from '@stryker-mutator/api/test_runner2';
+import {
+  MutantRunOptions,
+  DryRunOptions,
+  DryRunStatus,
+  TestRunner2,
+  SuccessTestResult,
+  FailedTestResult,
+  SkippedTestResult,
+  CompleteDryRunResult,
+  ErrorDryRunResult,
+  TimeoutDryRunResult,
+  KilledMutantRunResult,
+  SurvivedMutantRunResult,
+  MutantRunStatus,
+  TimeoutMutantRunResult,
+  ErrorMutantRunResult,
+  MutantCoverage,
+} from '@stryker-mutator/api/test_runner2';
+import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -110,6 +124,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
+  location: location(),
   replacement: 'replacement',
 }));
 
@@ -154,29 +169,49 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testFramework(): TestFramework {
+export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner2>> {
   return {
-    beforeEach(codeFragment: string) {
-      return `beforeEach(){ ${codeFragment}}`;
-    },
-    afterEach(codeFragment: string) {
-      return `afterEach(){ ${codeFragment}}`;
-    },
-    filter(selections: TestSelection[]) {
-      return `filter: ${selections}`;
-    },
+    init: sinon.stub(),
+    dryRun: sinon.stub(),
+    mutantRun: sinon.stub(),
+    dispose: sinon.stub(),
   };
 }
+
+export function checker(): sinon.SinonStubbedInstance<Checker> {
+  return {
+    check: sinon.stub(),
+    init: sinon.stub(),
+  };
+}
+
+export const checkResult = factoryMethod<CheckResult>(() => ({
+  status: CheckStatus.Passed,
+}));
 
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
 }));
-
-export const testSelection = factoryMethod<TestSelection>(() => ({
-  id: 23,
-  name: 'foo should bar',
+export const successTestResult = factoryMethod<SuccessTestResult>(() => ({
+  id: 'spec1',
+  name: 'foo should be bar',
+  status: TestStatus.Success,
+  timeSpentMs: 32,
+}));
+export const failedTestResult = factoryMethod<FailedTestResult>(() => ({
+  id: 'spec2',
+  name: 'foo should be bar',
+  status: TestStatus.Failed,
+  timeSpentMs: 32,
+  failureMessage: 'foo was baz',
+}));
+export const skippedTestResult = factoryMethod<SkippedTestResult>(() => ({
+  id: 'spec31',
+  status: TestStatus.Skipped,
+  timeSpentMs: 0,
+  name: 'qux should be quux',
 }));
 
 export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
@@ -187,6 +222,44 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
   coverageAnalysis: 'off',
   timeout: 2000,
+}));
+
+export const completeDryRunResult = factoryMethod<CompleteDryRunResult>(() => ({
+  status: DryRunStatus.Complete,
+  tests: [],
+}));
+
+export const mutantCoverage = factoryMethod<MutantCoverage>(() => ({
+  perTest: {},
+  static: {},
+}));
+
+export const errorDryRunResult = factoryMethod<ErrorDryRunResult>(() => ({
+  status: DryRunStatus.Error,
+  errorMessage: 'example error',
+}));
+
+export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
+  status: DryRunStatus.Timeout,
+}));
+
+export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => ({
+  status: MutantRunStatus.Killed,
+  killedBy: 'spec1',
+  failureMessage: 'foo should be bar',
+}));
+
+export const survivedMutantRunResult = factoryMethod<SurvivedMutantRunResult>(() => ({
+  status: MutantRunStatus.Survived,
+}));
+
+export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(() => ({
+  status: MutantRunStatus.Timeout,
+}));
+
+export const errorMutantRunResult = factoryMethod<ErrorMutantRunResult>(() => ({
+  status: MutantRunStatus.Error,
+  errorMessage: 'Cannot find foo of undefined',
 }));
 
 export const runResult = factoryMethod<RunResult>(() => ({
@@ -232,38 +305,15 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
   return reporter;
 }
 
-export function configEditor(): sinon.SinonStubbedInstance<ConfigEditor> {
-  return {
-    edit: sinon.stub(),
-  };
-}
-export function optionsEditor(): sinon.SinonStubbedInstance<OptionsEditor> {
-  return {
-    edit: sinon.stub(),
-  };
-}
-
-export function transpiler(): sinon.SinonStubbedInstance<Transpiler> {
-  return {
-    transpile: sinon.stub(),
-  };
-}
-
-export function matchedMutant(numberOfTests: number, mutantId = numberOfTests.toString(), runAllTests = false): MatchedMutant {
-  const scopedTestIds: number[] = [];
-  for (let i = 0; i < numberOfTests; i++) {
-    scopedTestIds.push(1);
-  }
-  return {
-    fileName: '',
-    id: mutantId,
-    mutatorName: '',
-    runAllTests,
-    replacement: '',
-    scopedTestIds,
-    timeSpentScopedTests: 0,
-  };
-}
+export const matchedMutant = factoryMethod<MatchedMutant>(() => ({
+  testFilter: undefined,
+  fileName: '',
+  id: '1',
+  mutatorName: '',
+  runAllTests: false,
+  replacement: '',
+  timeSpentScopedTests: 0,
+}));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {
   const injectorMock: sinon.SinonStubbedInstance<Injector> = {
