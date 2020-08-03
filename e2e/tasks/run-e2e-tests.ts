@@ -20,6 +20,7 @@ const mutationSwitchingTempWhiteList = [
   'mocha-ts-node',
   'babel-transpiling',
   'typescript-transpiling',
+  'command',
   'vue-cli-typescript-mocha'
 ]
 
