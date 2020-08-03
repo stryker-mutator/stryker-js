@@ -1,18 +1,11 @@
+import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
 import { types, NodePath } from '@babel/core';
 import traverse from '@babel/traverse';
 import { parse } from '@babel/parser';
 
 import { Mutant } from '../mutant';
 
-/**
- * Identifiers used when instrumenting the code
- */
-export const ID = Object.freeze({
-  GLOBAL: '__global_69fa48',
-  MUTATION_COVERAGE_OBJECT: '__mutantCoverage__',
-  COVER_MUTANT_HELPER_METHOD: '__coverMutant__',
-  ACTIVE_MUTANT: '__activeMutant__',
-} as const);
+export { ID };
 
 /**
  * Returns syntax for the global header
