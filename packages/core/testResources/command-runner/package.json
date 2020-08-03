@@ -2,6 +2,7 @@
     "scripts": {
         "test": "node ok.js",
         "fail": "node nok.js",
-        "wait": "node wait.js"
+        "wait": "node wait.js",
+        "mutant": "node mutant.js"
     }
 }

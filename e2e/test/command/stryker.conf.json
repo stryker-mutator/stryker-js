@@ -1,14 +1,9 @@
 {
-  "mutate": [
-    "src/*.js"
-  ],
-  "testFramework": "mocha",
-  "coverageAnalysis": "off",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "reporters": [
     "clear-text",
     "event-recorder"
   ],
-  "mutator": "javascript",
   "concurrency": 2,
   "commandRunner": {
     "command": "npm run mocha"

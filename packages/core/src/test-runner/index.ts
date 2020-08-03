@@ -9,6 +9,7 @@ import { Sandbox } from '../sandbox/sandbox';
 import RetryDecorator from './RetryDecorator';
 import TimeoutDecorator from './TimeoutDecorator';
 import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
+import CommandTestRunner from './CommandTestRunner';
 
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(
@@ -16,13 +17,13 @@ export function createTestRunnerFactory(
   sandbox: Pick<Sandbox, 'sandboxFileNames' | 'workingDirectory'>,
   loggingContext: LoggingClientContext
 ): () => Required<TestRunner2> {
-  // if (CommandTestRunner.is(options.testRunner)) {
-  //   return new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandboxWorkingDirectory, options)));
-  // } else {
-  return () =>
-    new RetryDecorator(
-      () =>
-        new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.sandboxFileNames, sandbox.workingDirectory, loggingContext))
-    );
-  // }
+  if (CommandTestRunner.is(options.testRunner)) {
+    return () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
+  } else {
+    return () =>
+      new RetryDecorator(
+        () =>
+          new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.sandboxFileNames, sandbox.workingDirectory, loggingContext))
+      );
+  }
 }
