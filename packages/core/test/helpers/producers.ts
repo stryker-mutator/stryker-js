@@ -80,7 +80,6 @@ export function createMutantTestCoverage(overrides?: Partial<MutantTestCoverage>
 
 export const logger = (): Mock<Logger> => {
   return {
-    category: 'category',
     _log: sinon.stub(),
     addContext: sinon.stub(),
     clearContext: sinon.stub(),
@@ -92,7 +91,6 @@ export const logger = (): Mock<Logger> => {
     isErrorEnabled: sinon.stub(),
     isFatalEnabled: sinon.stub(),
     isInfoEnabled: sinon.stub(),
-
     isLevelEnabled: sinon.stub(),
     isTraceEnabled: sinon.stub(),
     isWarnEnabled: sinon.stub(),
