@@ -20,4 +20,8 @@ describe(ArrowFunctionMutator.name, () => {
   it('should not mutate an anonymous function with a block as a body', () => {
     expectJSMutation(sut, 'const b = () => { return 4; }');
   });
+
+  it('should not mutate an anonymous function with undefined as a body', () => {
+    expectJSMutation(sut, 'const b = () => undefined');
+  });
 });
