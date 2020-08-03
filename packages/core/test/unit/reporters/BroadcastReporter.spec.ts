@@ -158,14 +158,14 @@ describe('BroadcastReporter', () => {
   }
 
   function captureTTY() {
-    isTTY = (process.stdout as any).isTTY;
+    isTTY = process.stdout.isTTY;
   }
 
   function restoreTTY() {
-    (process.stdout as any).isTTY = isTTY;
+    process.stdout.isTTY = isTTY;
   }
 
   function setTTY(val: boolean) {
-    (process.stdout as any).isTTY = val;
+    process.stdout.isTTY = val;
   }
 });

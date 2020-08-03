@@ -20,7 +20,7 @@ module.exports = function(config) {
     },
     timeoutMS: 60000,
     reporters: ["progress", "clear-text", "html"],
-    maxConcurrentTestRunners: 2,
+    concurrency: 2,
     coverageAnalysis: 'off', // Coverage analysis with a transpiler is not supported a.t.m.
     tsconfigFile: 'tsconfig.json', // Location of your tsconfig.json file
   });

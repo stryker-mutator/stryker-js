@@ -4,7 +4,7 @@ import execa from 'execa';
 import * as semver from 'semver';
 import * as os from 'os';
 import { from, defer } from 'rxjs';
-import { tap, mergeAll, map, filter } from 'rxjs/operators';
+import { tap, mergeAll, map } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
@@ -24,14 +24,10 @@ const mutationSwitchingTempWhiteList = [
 ]
 
 function runE2eTests() {
-  const testDirs = fs.readdirSync(testRootDir);
+  const testDirs = fs.readdirSync(testRootDir).filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()).filter(dir => mutationSwitchingTempWhiteList.includes(dir));
 
   // Create test$, an observable of test runs
-  const test$ = from(testDirs).pipe(
-    filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
-    filter(dir => mutationSwitchingTempWhiteList.includes(dir)),
-    map(testDir => defer(() => runTest(testDir)))
-  );
+  const test$ = from(testDirs).pipe(map(testDir => defer(() => runTest(testDir))));
 
   let testsRan = 0;
   return test$.pipe(

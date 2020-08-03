@@ -9,7 +9,7 @@
     "event-recorder"
   ],
   "mutator": "javascript",
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 2,
   "commandRunner": {
     "command": "npm run mocha"
   },

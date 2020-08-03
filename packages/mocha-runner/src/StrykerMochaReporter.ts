@@ -31,7 +31,7 @@ export class StrykerMochaReporter {
       StrykerMochaReporter.log.debug('Starting Mocha test run');
     });
 
-    this.runner.on('pass', (test: any) => {
+    this.runner.on('pass', (test: Mocha.Test) => {
       const title: string = test.fullTitle();
       const result: SuccessTestResult = {
         id: title,
@@ -44,7 +44,7 @@ export class StrykerMochaReporter {
       this.timer.reset();
     });
 
-    this.runner.on('fail', (test: any, err: any) => {
+    this.runner.on('fail', (test: Mocha.Test, err: Error) => {
       const title = test.fullTitle();
       const result: FailedTestResult = {
         id: title,

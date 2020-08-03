@@ -11,7 +11,7 @@ describe('TestRunnerDecorator', () => {
 
   beforeEach(() => {
     testRunner = factory.testRunner();
-    sut = new TestRunnerDecorator(() => testRunner as any);
+    sut = new TestRunnerDecorator(() => testRunner);
   });
 
   function actArrangeAssert(methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {

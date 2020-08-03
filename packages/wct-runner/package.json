@@ -35,7 +35,7 @@
     "web-component-tester": "~6.9.2"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
+    "@stryker-mutator/core": "4.0.0-beta.1",
     "web-component-tester": "^6.9.0"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",
@@ -46,7 +46,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/wct-runner#readme",
   "initStrykerConfig": {
     "timeoutMS": 10000,
-    "maxConcurrentTestRunners": 4,
+    "concurrency": 4,
     "coverageAnalysis": "off"
   },
   "engines": {
