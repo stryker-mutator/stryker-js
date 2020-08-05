@@ -45,6 +45,7 @@ export class StringLiteralMutator implements NodeMutator {
       types.isJSXAttribute(parent) ||
       types.isExpressionStatement(parent) ||
       types.isTSLiteralType(parent) ||
+      types.isObjectProperty(parent) ||
       (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'require' }))
     );
   }
