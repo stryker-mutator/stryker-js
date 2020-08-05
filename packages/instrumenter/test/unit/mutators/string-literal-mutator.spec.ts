@@ -78,11 +78,14 @@ describe(StringLiteralMutator.name, () => {
   });
 
   describe('object properties', () => {
-    it('should not mutate inside object properties', () => {
+    it('should not mutate inside object property keys', () => {
       expectJSMutation(sut, 'const { className, "aria-label": label } = props;');
     });
-    it('should not mutate inside object properties', () => {
+    it('should not mutate inside object property keys', () => {
       expectJSMutation(sut, 'const foo = { className, ["aria-label"]: label };');
+    });
+    it('should still mutate inside object property values', () => {
+      expectJSMutation(sut, 'const foo = { bar: "baz" };', 'const foo = { bar: "" };');
     });
   });
 
