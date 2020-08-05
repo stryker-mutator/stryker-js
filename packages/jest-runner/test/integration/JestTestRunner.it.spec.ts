@@ -3,7 +3,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult, TestStatus, DryRunOptions } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner2';
 
 import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
@@ -49,14 +49,12 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    const runOptions: DryRunOptions = { timeout: 0, coverageAnalysis: 'off' };
-
     it('should run tests on the example React + TypeScript project', async () => {
       // TODO: Get a proper React TS project that works on Windows
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'react-ts' });
 
-      const runResult = await jestTestRunner.dryRun(runOptions);
+      const runResult = await jestTestRunner.dryRun();
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, 1);
@@ -66,7 +64,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'react-ts' });
 
-      const runResult = await jestTestRunner.dryRun(runOptions);
+      const runResult = await jestTestRunner.dryRun();
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests[0].name).to.equal('renders without crashing');
@@ -77,7 +75,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(getProjectRoot('exampleProject'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun(runOptions);
+      const runResult = await jestTestRunner.dryRun();
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -88,7 +86,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun(runOptions);
+      const runResult = await jestTestRunner.dryRun();
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);

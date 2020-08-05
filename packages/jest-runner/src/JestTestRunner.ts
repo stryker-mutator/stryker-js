@@ -3,7 +3,6 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import {
   TestRunner2,
-  DryRunOptions,
   MutantRunOptions,
   DryRunResult,
   MutantRunResult,
