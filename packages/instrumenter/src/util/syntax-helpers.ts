@@ -11,6 +11,9 @@ export { ID };
  * Returns syntax for the global header
  */
 export const declareGlobal = parse(`var ${ID.GLOBAL} = (function(g){
+  if (g.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
+    g.${ID.ACTIVE_MUTANT} = Number(g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE});
+  }
   g.${ID.MUTATION_COVERAGE_OBJECT} = g.${ID.MUTATION_COVERAGE_OBJECT} || { static: {}, perTest: {} };
   g.${ID.COVER_MUTANT_HELPER_METHOD} = g.${ID.COVER_MUTANT_HELPER_METHOD} || function () {
     var c = g.${ID.MUTATION_COVERAGE_OBJECT}.static;

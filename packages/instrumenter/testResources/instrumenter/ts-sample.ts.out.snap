@@ -2,6 +2,10 @@
 
 exports[`instrumenter integration should be able to instrument a simple ts file 1`] = `
 "var __global_69fa48 = function (g) {
+  if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+  }
+
   g.__mutantCoverage__ = g.__mutantCoverage__ || {
     static: {},
     perTest: {}
