@@ -180,7 +180,7 @@ export default class JestTestRunner implements TestRunner2 {
   }
 
   private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, config: jest.Config.InitialOptions): jest.Config.InitialOptions {
-    const stringify = (obj: object) => JSON.stringify(obj, null, 2);
+    const stringify = (obj: jest.Config.InitialOptions) => JSON.stringify(obj, null, 2);
     this.log.debug(
       `Merging file-based config ${stringify(configFromFile)} 
       with custom config ${stringify(config)}
