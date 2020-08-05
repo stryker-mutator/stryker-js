@@ -69,6 +69,8 @@ export function createJestTestResult(overrides?: Partial<TestResult>): TestResul
     numTodoTests: 0,
     openHandles: [],
     perfStats: {
+      runtime: 0,
+      slow: false,
       end: 0,
       start: 0,
     },
