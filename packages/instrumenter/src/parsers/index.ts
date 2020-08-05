@@ -33,6 +33,7 @@ function getFormat(fileName: string, override: AstFormat | undefined): AstFormat
       case '.js':
         return AstFormat.JS;
       case '.ts':
+      case '.tsx':
         return AstFormat.TS;
       case '.vue':
       case '.html':
