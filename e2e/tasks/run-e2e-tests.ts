@@ -24,7 +24,8 @@ const mutationSwitchingTempWhiteList = [
   'vue-cli-typescript-mocha',
   'jest-react-ts',
   'jest-node',
-  'jest-with-ts'
+  'jest-with-ts',
+  'jest-react',
 ]
 
 function runE2eTests() {

@@ -1,6 +1,6 @@
 import { expectMetrics } from '../../../helpers';
 
-describe('After running stryker on jest-react project', () => {
+describe('After running stryker on jest-react-ts project', () => {
   it('should report expected scores', async () => {
     await expectMetrics({
       survived: 53,

@@ -6,11 +6,11 @@ describe('Verify stryker has ran correctly', () => {
     await expectMetrics({
       killed: 2,
       survived: 1,
-      noCoverage: 11,
+      noCoverage: 10,
       compileErrors: 3,
       runtimeErrors: 0,
       timeout: 0,
-      mutationScore: 14.29
+      mutationScore: 15.38
     });
   });
 });
