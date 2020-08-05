@@ -8,28 +8,8 @@ import { tap, mergeAll, map } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
-const mutationSwitchingTempWhiteList = [
-  'jasmine-ts-node',
-  'jasmine-jasmine',
-  'karma-mocha',
-  'karma-jasmine',
-  'webpack-zero-conf-karma',
-  'vue-javascript',
-  'karma-webpack-with-ts',
-  'mocha-mocha',
-  'mocha-ts-node',
-  'babel-transpiling',
-  'typescript-transpiling',
-  'command',
-  'vue-cli-typescript-mocha',
-  'jest-react-ts',
-  'jest-node',
-  'jest-with-ts',
-  'jest-react',
-]
-
 function runE2eTests() {
-  const testDirs = fs.readdirSync(testRootDir).filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()).filter(dir => mutationSwitchingTempWhiteList.includes(dir));
+  const testDirs = fs.readdirSync(testRootDir).filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory());
 
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(map(testDir => defer(() => runTest(testDir))));

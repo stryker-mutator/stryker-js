@@ -1,6 +1,9 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "mutator": "vue",
+  "mutator": {
+    "name": "javascript",
+    "plugins": []
+  },
   "mutate": [
     "{src,lib}/**/*.+(js|vue)",
     "!{src,lib}/**/*.spec.js"

@@ -27,21 +27,12 @@ describe('The Stryker meta schema', () => {
     expect(validator(valid), ajv.errorsText(validator.errors)).true;
   });
 
-  it('should invalidate a invalid schema', async () => {
+  it('should invalidate an invalid schema', async () => {
     expect(validator(invalid)).false;
     expect(validator.errors).deep.eq(expectedErrors);
   });
 
   const expectedErrors = [
-    {
-      keyword: 'enum',
-      dataPath: '.babel.options.compact',
-      schemaPath: 'http://json.schemastore.org/babelrc/properties/compact/enum',
-      params: {
-        allowedValues: ['auto', true, false],
-      },
-      message: 'should be equal to one of the allowed values',
-    },
     {
       keyword: 'type',
       dataPath: '.jasmineConfigFile',
@@ -70,46 +61,9 @@ describe('The Stryker meta schema', () => {
       message: 'should be object',
     },
     {
-      keyword: 'enum',
-      dataPath: '.tsconfig.moduleResolution',
-      schemaPath:
-        'http://json.schemastore.org/tsconfig#/definitions/compilerOptionsDefinition/properties/compilerOptions/properties/moduleResolution/anyOf/0/enum',
-      params: {
-        allowedValues: ['Classic', 'Node'],
-      },
-      message: 'should be equal to one of the allowed values',
-    },
-    {
-      keyword: 'pattern',
-      dataPath: '.tsconfig.moduleResolution',
-      schemaPath:
-        'http://json.schemastore.org/tsconfig#/definitions/compilerOptionsDefinition/properties/compilerOptions/properties/moduleResolution/anyOf/1/pattern',
-      params: {
-        pattern: '^(([Nn]ode)|([Cc]lassic))$',
-      },
-      message: 'should match pattern "^(([Nn]ode)|([Cc]lassic))$"',
-    },
-    {
-      keyword: 'anyOf',
-      dataPath: '.tsconfig.moduleResolution',
-      schemaPath:
-        'http://json.schemastore.org/tsconfig#/definitions/compilerOptionsDefinition/properties/compilerOptions/properties/moduleResolution/anyOf',
-      params: {},
-      message: 'should match some schema in anyOf',
-    },
-    {
       keyword: 'type',
       dataPath: '.wct.configFile',
       schemaPath: '#/properties/wct/properties/configFile/type',
-      params: {
-        type: 'string',
-      },
-      message: 'should be string',
-    },
-    {
-      keyword: 'type',
-      dataPath: '.webpack.configFile',
-      schemaPath: '#/properties/webpack/properties/configFile/type',
       params: {
         type: 'string',
       },
