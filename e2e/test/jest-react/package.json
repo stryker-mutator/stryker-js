@@ -12,7 +12,7 @@
   "sideEffects": false,
   "scripts": {
     "report-coverage": "coveralls < ./coverage/lcov.info",
-    "test-original": "cross-env BABEL_ENV=test react-scripts test --env=jsdom",
+    "test-original": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
     "test": "stryker run",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
     "cover": "npm test -- --coverage",
@@ -52,25 +52,28 @@
   },
   "homepage": "https://github.com/reactstrap/reactstrap#readme",
   "dependencies": {
-    "react": "~16.11.0",
-    "react-dom": "~16.11.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "classnames": "~2.2.6",
     "prop-types": "~15.7.2",
-    "react-transition-group": "~4.3.0"
+    "react-transition-group": "~4.4.1"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   },
   "devDependencies": {
-    "babel-plugin-transform-object-rest-spread": "~6.26.0",
-    "babel-preset-es2015-rollup": "~3.0.0",
-    "babel-preset-react": "~6.24.1",
-    "babel-preset-react-app": "~9.0.2",
-    "enzyme": "~3.10.0",
-    "enzyme-adapter-react-16": "~1.15.1",
-    "jest": "^26.0.1",
-    "react-scripts": "~3.2.0"
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-export-default-from": "^7.2.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-react": "^7.0.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "react-scripts": "3.4.1"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
