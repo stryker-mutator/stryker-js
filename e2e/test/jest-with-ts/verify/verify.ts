@@ -5,12 +5,12 @@ describe('Verify stryker has ran correctly', () => {
   it('should report correct score', async () => {
     await expectMetrics({
       ignored: 0,
-      killed: 12,
-      mutationScore: 54.55,
+      killed: 15,
+      mutationScore: 53.57,
       noCoverage: 0,
-      survived: 10,
+      survived: 13,
       timeout: 0,
-      runtimeErrors: 32
+      compileErrors: 32
     });
   });
 });

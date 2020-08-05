@@ -74,14 +74,14 @@ describe(JasmineTestRunner.name, () => {
       expect(global.__activeMutant__).eq(23);
     });
 
-    function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant()) {
+    function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {
       let reporter: jasmine.CustomReporter;
       function addReporter(rep: jasmine.CustomReporter) {
         reporter = rep;
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
       jasmineStub.execute.callsFake(() => reporter.jasmineDone!(createRunDetails()));
-      return sut.mutantRun({ activeMutant, testFilter, timeout: 2000 });
+      return sut.mutantRun({ activeMutant, testFilter, timeout: 2000, sandboxFileName });
     }
   });
 

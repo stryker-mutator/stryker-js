@@ -1,6 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "typescript",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
@@ -11,7 +10,10 @@
   "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
-    "event-recorder"
+    "event-recorder",
+    "progress",
+    "clear-text",
+    "html"
   ],
   "jest": {
     "projectType": "create-react-app"

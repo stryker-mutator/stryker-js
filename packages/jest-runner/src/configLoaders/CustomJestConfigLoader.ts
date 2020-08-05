@@ -4,6 +4,7 @@ import path from 'path';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Config } from '@jest/types';
 
 import { loaderToken, projectRootToken } from '../pluginTokens';
 import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
@@ -24,7 +25,7 @@ export default class CustomJestConfigLoader implements JestConfigLoader {
     private readonly projectRoot: string
   ) {}
 
-  public loadConfig(): Jest.Configuration {
+  public loadConfig(): Config.InitialOptions {
     const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
     return jestConfig;
   }

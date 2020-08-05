@@ -13,6 +13,7 @@ import { MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage'
 import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import Timer from '../../../src/utils/Timer';
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
+import { Sandbox } from '../../../src/sandbox';
 
 describe(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;
@@ -27,6 +28,7 @@ describe(MutationTestExecutor.name, () => {
   let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
   let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
+  let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -39,6 +41,7 @@ describe(MutationTestExecutor.name, () => {
     checker1 = factory.checker();
     checker2 = factory.checker();
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
+    sandboxMock = sinon.createStubInstance(Sandbox);
 
     mutants = [];
     sut = testInjector.injector
@@ -48,6 +51,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
       .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
@@ -138,6 +142,24 @@ describe(MutationTestExecutor.name, () => {
     // Assert
     const expected: Partial<MutantRunOptions> = { testFilter: expectedTestFilter };
     expect(testRunner1.mutantRun).calledWithMatch(expected);
+  });
+
+  it('should provide the sandboxFileName', async () => {
+    // Arrange
+    arrangePools();
+    const expectedTestFilter = ['spec1', 'foo', 'bar'];
+    sandboxMock.sandboxFileFor.returns('.stryker-tmp/sandbox1234/src/foo.js');
+    mutants.push(createMutantTestCoverage({ testFilter: expectedTestFilter, mutant: factory.mutant({ fileName: 'src/foo.js' }) }));
+    testInjector.options.timeoutFactor = 1.5;
+    testInjector.options.timeoutMS = 27;
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    const expected: Partial<MutantRunOptions> = { sandboxFileName: '.stryker-tmp/sandbox1234/src/foo.js' };
+    expect(testRunner1.mutantRun).calledWithMatch(expected);
+    expect(sandboxMock.sandboxFileFor).calledWithExactly('src/foo.js');
   });
 
   it('should recycle a test runner after it is done with it', async () => {

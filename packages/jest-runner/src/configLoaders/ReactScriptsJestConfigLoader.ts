@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { tokens } from '@stryker-mutator/api/plugin';
+import { Config } from '@jest/types';
 
 import { createReactJestConfig } from '../utils/createReactJestConfig';
 import { projectRootToken, resolveToken } from '../pluginTokens';
@@ -12,7 +13,7 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
 
   constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
 
-  public loadConfig(): Jest.Configuration {
+  public loadConfig(): Config.InitialOptions {
     try {
       // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
       const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
@@ -33,7 +34,7 @@ export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
     return arg.code !== undefined;
   }
 
-  private createJestConfig(reactScriptsLocation: string): Jest.Configuration {
+  private createJestConfig(reactScriptsLocation: string): Config.InitialOptions {
     return createReactJestConfig((relativePath: string): string => path.join(reactScriptsLocation, relativePath), this.projectRoot, false);
   }
 }

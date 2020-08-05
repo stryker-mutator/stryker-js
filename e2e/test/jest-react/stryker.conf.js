@@ -1,9 +1,7 @@
 module.exports = function (config) {
   config.set({
     testRunner: "jest",
-    mutator: "javascript",
-    transpilers: [],
-    reporters: ["event-recorder"],
+    reporters: ["event-recorder", "html", "progress"],
     tempDirName: "stryker-tmp",
     coverageAnalysis: "off",
     timeoutMS: 60000, // High timeout to survive high build server load. Mutants created here should never timeout

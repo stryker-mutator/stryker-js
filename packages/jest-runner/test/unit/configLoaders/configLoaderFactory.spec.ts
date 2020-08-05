@@ -2,6 +2,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import Sinon, * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { Config } from '@jest/types';
 
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
@@ -24,7 +25,7 @@ describe(configLoaderFactory.name, () => {
     sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<Jest.Configuration> = {
+    const defaultOptions: Partial<Config.InitialOptions> = {
       collectCoverage: true,
       verbose: true,
       bail: false,

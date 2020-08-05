@@ -11516,6 +11516,302 @@ export default Badge;
 }
 `;
 
+exports[`parsers integration should allow to parse a tsx file 1`] = `
+Object {
+  "format": "ts",
+  "originFileName": "App.tsx",
+  "rawContent": "const app = <Html foo={bar}></Html>
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 36,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "line": 2,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "declarations": Array [
+            Node {
+              "end": 35,
+              "id": Node {
+                "end": 9,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 9,
+                    "line": 1,
+                  },
+                  "identifierName": "app",
+                  "start": Position {
+                    "column": 6,
+                    "line": 1,
+                  },
+                },
+                "name": "app",
+                "range": Array [
+                  6,
+                  9,
+                ],
+                "start": 6,
+                "type": "Identifier",
+              },
+              "init": Node {
+                "children": Array [],
+                "closingElement": Node {
+                  "end": 35,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 35,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 28,
+                      "line": 1,
+                    },
+                  },
+                  "name": Node {
+                    "end": 34,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 34,
+                        "line": 1,
+                      },
+                      "start": Position {
+                        "column": 30,
+                        "line": 1,
+                      },
+                    },
+                    "name": "Html",
+                    "range": Array [
+                      30,
+                      34,
+                    ],
+                    "start": 30,
+                    "type": "JSXIdentifier",
+                  },
+                  "range": Array [
+                    28,
+                    35,
+                  ],
+                  "start": 28,
+                  "type": "JSXClosingElement",
+                },
+                "end": 35,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 35,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 12,
+                    "line": 1,
+                  },
+                },
+                "openingElement": Node {
+                  "attributes": Array [
+                    Node {
+                      "end": 27,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 27,
+                          "line": 1,
+                        },
+                        "start": Position {
+                          "column": 18,
+                          "line": 1,
+                        },
+                      },
+                      "name": Node {
+                        "end": 21,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 21,
+                            "line": 1,
+                          },
+                          "start": Position {
+                            "column": 18,
+                            "line": 1,
+                          },
+                        },
+                        "name": "foo",
+                        "range": Array [
+                          18,
+                          21,
+                        ],
+                        "start": 18,
+                        "type": "JSXIdentifier",
+                      },
+                      "range": Array [
+                        18,
+                        27,
+                      ],
+                      "start": 18,
+                      "type": "JSXAttribute",
+                      "value": Node {
+                        "end": 27,
+                        "expression": Node {
+                          "end": 26,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 26,
+                              "line": 1,
+                            },
+                            "identifierName": "bar",
+                            "start": Position {
+                              "column": 23,
+                              "line": 1,
+                            },
+                          },
+                          "name": "bar",
+                          "range": Array [
+                            23,
+                            26,
+                          ],
+                          "start": 23,
+                          "type": "Identifier",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 27,
+                            "line": 1,
+                          },
+                          "start": Position {
+                            "column": 22,
+                            "line": 1,
+                          },
+                        },
+                        "range": Array [
+                          22,
+                          27,
+                        ],
+                        "start": 22,
+                        "type": "JSXExpressionContainer",
+                      },
+                    },
+                  ],
+                  "end": 28,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 28,
+                      "line": 1,
+                    },
+                    "start": Position {
+                      "column": 12,
+                      "line": 1,
+                    },
+                  },
+                  "name": Node {
+                    "end": 17,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 17,
+                        "line": 1,
+                      },
+                      "start": Position {
+                        "column": 13,
+                        "line": 1,
+                      },
+                    },
+                    "name": "Html",
+                    "range": Array [
+                      13,
+                      17,
+                    ],
+                    "start": 13,
+                    "type": "JSXIdentifier",
+                  },
+                  "range": Array [
+                    12,
+                    28,
+                  ],
+                  "selfClosing": false,
+                  "start": 12,
+                  "type": "JSXOpeningElement",
+                },
+                "range": Array [
+                  12,
+                  35,
+                ],
+                "start": 12,
+                "type": "JSXElement",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 35,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 6,
+                  "line": 1,
+                },
+              },
+              "range": Array [
+                6,
+                35,
+              ],
+              "start": 6,
+              "type": "VariableDeclarator",
+            },
+          ],
+          "end": 35,
+          "kind": "const",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 35,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "range": Array [
+            0,
+            35,
+          ],
+          "start": 0,
+          "type": "VariableDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 36,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "line": 2,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "range": Array [
+        0,
+        36,
+      ],
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "range": Array [
+      0,
+      36,
+    ],
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse html with script tags 1`] = `
 Object {
   "format": "html",

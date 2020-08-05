@@ -6,11 +6,13 @@
  * The loaderConfig method will return a usable config for Jest to use.
  */
 
+import { Config } from '@jest/types';
+
 export default interface JestConfigLoader {
   /*
    * Load the JSON representation of a Jest Configuration.
    *
    * @return {JestConfiguration} an object containing the Jest configuration.
    */
-  loadConfig(): Jest.Configuration;
+  loadConfig(): Config.InitialOptions;
 }
