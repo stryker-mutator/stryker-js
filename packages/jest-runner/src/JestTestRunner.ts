@@ -78,8 +78,8 @@ export default class JestTestRunner implements TestRunner2 {
   public dryRun(): Promise<DryRunResult> {
     return this.run(this.jestConfig);
   }
-  public async mutantRun({ activeMutant }: MutantRunOptions): Promise<MutantRunResult> {
-    const fileUnderTest = this.enableFindRelatedTests ? activeMutant.fileName : undefined;
+  public async mutantRun({ activeMutant, sandboxFileName }: MutantRunOptions): Promise<MutantRunResult> {
+    const fileUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
     const dryRunResult = await this.run(this.getMutantRunOptions(activeMutant), fileUnderTest);
     return toMutantRunResult(dryRunResult);
   }

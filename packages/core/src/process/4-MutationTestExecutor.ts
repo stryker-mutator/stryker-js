@@ -17,6 +17,8 @@ import Timer from '../utils/Timer';
 
 import { Pool, ConcurrencyTokenProvider } from '../concurrent';
 
+import { Sandbox } from '../sandbox';
+
 import { DryRunContext } from './3-DryRunExecutor';
 
 export interface MutationTestContext extends DryRunContext {
@@ -35,6 +37,7 @@ export class MutationTestExecutor {
     coreTokens.timeOverheadMS,
     coreTokens.mutantsWithTestCoverage,
     coreTokens.mutationTestReportHelper,
+    coreTokens.sandbox,
     commonTokens.logger,
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider
@@ -47,7 +50,8 @@ export class MutationTestExecutor {
     private readonly testRunnerPool: I<Pool<TestRunner2>>,
     private readonly timeOverheadMS: number,
     private readonly matchedMutants: readonly MutantTestCoverage[],
-    private readonly mutationTestReportCalculator: I<MutationTestReportHelper>,
+    private readonly mutationTestReportHelper: I<MutationTestReportHelper>,
+    private readonly sandbox: I<Sandbox>,
     private readonly log: Logger,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
@@ -58,7 +62,7 @@ export class MutationTestExecutor {
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
     const results = await merge(testRunnerResult$, checkResult$, noCoverageResult$).pipe(toArray()).toPromise();
-    this.mutationTestReportCalculator.reportAll(results);
+    this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
     return results;
@@ -68,7 +72,7 @@ export class MutationTestExecutor {
     const [coveredMutant$, noCoverageMatchedMutant$] = partition(input$.pipe(shareReplay()), (matchedMutant) => matchedMutant.coveredByTests);
     return {
       noCoverageResult$: noCoverageMatchedMutant$.pipe(
-        map((noCoverage) => this.mutationTestReportCalculator.reportOne(noCoverage, MutantStatus.NoCoverage))
+        map((noCoverage) => this.mutationTestReportHelper.reportOne(noCoverage, MutantStatus.NoCoverage))
       ),
       coveredMutant$,
     };
@@ -99,7 +103,7 @@ export class MutationTestExecutor {
     return {
       checkResult$: failedMutant$.pipe(
         map((failedMutant) =>
-          this.mutationTestReportCalculator.reportOne(
+          this.mutationTestReportHelper.reportOne(
             failedMutant.matchedMutant,
             this.checkStatusToResultStatus(failedMutant.checkResult.status as Exclude<CheckStatus, CheckStatus.Passed>)
           )
@@ -114,6 +118,7 @@ export class MutationTestExecutor {
       activeMutant: mutant.mutant,
       timeout: this.calculateTimeout(mutant),
       testFilter: mutant.testFilter,
+      sandboxFileName: this.sandbox.sandboxFileFor(mutant.mutant.fileName),
     };
   }
 
@@ -127,7 +132,7 @@ export class MutationTestExecutor {
         const mutantRunOptions = this.createMutantRunOptions(matchedMutant);
         const result = await testRunner.mutantRun(mutantRunOptions);
         this.testRunnerPool.recycle(testRunner);
-        return this.mutationTestReportCalculator.reportOne(matchedMutant, this.mutantRunStatusToResultStatus(result.status));
+        return this.mutationTestReportHelper.reportOne(matchedMutant, this.mutantRunStatusToResultStatus(result.status));
       })
     );
   }

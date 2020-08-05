@@ -70,8 +70,12 @@ export class Sandbox {
     return [...this.fileMap.entries()].map(([, to]) => to);
   }
 
-  public sandboxFileFor(fileName: string) {
-    return this.fileMap.get(fileName);
+  public sandboxFileFor(fileName: string): string {
+    const sandboxFileName = this.fileMap.get(fileName);
+    if (sandboxFileName === undefined) {
+      throw new Error(`Cannot find sandbox file for ${fileName}`);
+    }
+    return sandboxFileName;
   }
 
   private fillSandbox(): Promise<void[]> {

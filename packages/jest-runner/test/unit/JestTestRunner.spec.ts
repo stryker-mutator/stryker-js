@@ -210,14 +210,16 @@ describe(JestTestRunner.name, () => {
     it('should use correct fileUnderTest if findRelatedTests = true', async () => {
       options.jest.enableFindRelatedTests = true;
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }) }));
-      expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, 'foo.js');
+      await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' })
+      );
+      expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, '.stryker-tmp/sandbox2/foo.js');
     });
 
     it('should not set fileUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant() }));
       expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, undefined);
     });
 

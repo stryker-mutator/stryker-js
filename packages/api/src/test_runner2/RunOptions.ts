@@ -17,6 +17,7 @@ export interface DryRunOptions extends RunOptions {
 export interface MutantRunOptions extends RunOptions {
   testFilter?: string[];
   activeMutant: Mutant;
+  sandboxFileName: string;
 }
 
 export default RunOptions;
