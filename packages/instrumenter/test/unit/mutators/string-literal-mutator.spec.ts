@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 import { StringLiteralMutator } from '../../../src/mutators/string-literal-mutator';
 
-describe.only(StringLiteralMutator.name, () => {
+describe(StringLiteralMutator.name, () => {
   let sut: StringLiteralMutator;
   beforeEach(() => {
     sut = new StringLiteralMutator();
