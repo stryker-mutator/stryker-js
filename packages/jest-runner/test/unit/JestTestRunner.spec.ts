@@ -1,7 +1,7 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { DryRunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunOptions, DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { JestTestAdapter } from '../../src/jestTestAdapters';
 import JestTestRunner from '../../src/JestTestRunner';
@@ -53,18 +53,18 @@ describe('JestTestRunner', () => {
 
     const result = await jestTestRunner.dryRun(dryRunOptions);
 
-    expect(result).to.deep.equal({
-      errorMessages: [],
-      status: RunStatus.Complete,
+    const expectedRunResult: CompleteDryRunResult = {
+      status: DryRunStatus.Complete,
       tests: [
         {
-          failureMessages: [],
+          id: 'App renders without crashing',
           name: 'App renders without crashing',
           status: TestStatus.Success,
           timeSpentMs: 23,
         },
       ],
-    });
+    };
+    expect(result).to.deep.equal(expectedRunResult);
   });
 
   it('should call the jestTestRunner run method and return a skipped runResult', async () => {
@@ -72,43 +72,43 @@ describe('JestTestRunner', () => {
 
     const result = await jestTestRunner.dryRun(dryRunOptions);
 
-    expect(result).to.deep.equal({
-      errorMessages: [],
-      status: RunStatus.Complete,
+    const expectedRunResult: CompleteDryRunResult = {
+      status: DryRunStatus.Complete,
       tests: [
         {
-          failureMessages: [],
+          id: 'App renders without crashing',
           name: 'App renders without crashing',
           status: TestStatus.Skipped,
           timeSpentMs: 0,
         },
       ],
-    });
+    };
+
+    expect(result).to.deep.equal(expectedRunResult);
   });
 
   it('should call the jestTestRunner run method and return a todo runResult', async () => {
     jestTestAdapterMock.run.resolves({ results: producers.createTodoResult() });
 
     const result = await jestTestRunner.dryRun(dryRunOptions);
-
-    expect(result).to.deep.equal({
-      errorMessages: [],
-      status: RunStatus.Complete,
+    const expectedRunResult: CompleteDryRunResult = {
+      status: DryRunStatus.Complete,
       tests: [
         {
-          failureMessages: [],
+          id: 'App renders without crashing',
           name: 'App renders without crashing',
           status: TestStatus.Success,
           timeSpentMs: 4,
         },
         {
-          failureMessages: [],
+          id: 'App renders without crashing with children',
           name: 'App renders without crashing with children',
           status: TestStatus.Skipped,
           timeSpentMs: 0,
         },
       ],
-    });
+    };
+    expect(result).to.deep.equal(expectedRunResult);
   });
 
   it('should call the jestTestRunner run method and return a negative runResult', async () => {
@@ -116,42 +116,59 @@ describe('JestTestRunner', () => {
 
     const result = await jestTestRunner.dryRun(dryRunOptions);
 
-    expect(result).to.deep.equal({
-      errorMessages: ['test failed - App.test.js'],
-      status: RunStatus.Complete,
+    const expectedRunResult: CompleteDryRunResult = {
+      status: DryRunStatus.Complete,
       tests: [
         {
-          failureMessages: ['Fail message 1', 'Fail message 2'],
+          id: 'App render renders without crashing',
           name: 'App render renders without crashing',
+          failureMessage: 'Fail message 1, Fail message 2',
           status: TestStatus.Failed,
           timeSpentMs: 2,
         },
         {
-          failureMessages: ['Fail message 3', 'Fail message 4'],
+          id: 'App render renders without crashing',
           name: 'App render renders without crashing',
+          failureMessage: 'Fail message 3, Fail message 4',
           status: TestStatus.Failed,
           timeSpentMs: 0,
         },
         {
-          failureMessages: [],
+          id: 'App renders without crashing',
           name: 'App renders without crashing',
           status: TestStatus.Success,
           timeSpentMs: 23,
         },
       ],
-    });
+    };
+    expect(result).to.deep.equal(expectedRunResult);
   });
 
   it('should return an error result when a runtime error occurs', async () => {
-    jestTestAdapterMock.run.resolves({ results: { testResults: [], numRuntimeErrorTestSuites: 1 } });
+    const jestResult = producers.createJestAggregatedResult({
+      numRuntimeErrorTestSuites: 2,
+      testResults: [
+        producers.createJestTestResult({
+          testExecError: producers.createSerializableError({
+            code: 'ENOENT',
+            stack:
+              'Error\n  at [eval]:1:1\n  at Script.runInThisContext (vm.js:120:20)\n  at Object.runInThisContext (vm.js:311:38)\n  at Object.<anonymous> ([eval]-wrapper:10:26)',
+            message: 'test message',
+            type: 'test',
+          }),
+        }),
+      ],
+    });
+    jestTestAdapterMock.run.resolves({ results: jestResult });
 
     const result = await jestTestRunner.dryRun(dryRunOptions);
 
-    expect(result).to.deep.equal({
-      errorMessages: [],
-      status: RunStatus.Error,
-      tests: [],
-    });
+    const expectedRunResult: ErrorDryRunResult = {
+      status: DryRunStatus.Error,
+      errorMessage:
+        'ENOENT test message Error\n  at [eval]:1:1\n  at Script.runInThisContext (vm.js:120:20)\n  at Object.runInThisContext (vm.js:311:38)\n  at Object.<anonymous> ([eval]-wrapper:10:26)',
+    };
+    expect(result).to.deep.equal(expectedRunResult);
   });
 
   it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {

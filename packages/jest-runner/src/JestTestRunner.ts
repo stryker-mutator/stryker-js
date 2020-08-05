@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, INSTRUMENTER_CONSTANTS, Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -8,16 +8,23 @@ import {
   DryRunResult,
   MutantRunResult,
   toMutantRunResult,
-  RunStatus,
+  DryRunStatus,
   TestResult,
   TestStatus,
 } from '@stryker-mutator/api/test_runner2';
+import { notEmpty } from '@stryker-mutator/util';
+import type * as jest from '@jest/types';
+import type * as jestTestResult from '@jest/test-result';
+
+import { SerializableError } from '@jest/types/build/TestResult';
 
 import { jestTestAdapterFactory } from './jestTestAdapters';
 import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
 import JestConfigLoader from './configLoaders/JestConfigLoader';
 import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
 import { configLoaderFactory } from './configLoaders';
+import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
+import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
 export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
   return injector
@@ -30,7 +37,8 @@ export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
 jestTestRunnerFactory.inject = tokens(commonTokens.injector);
 
 export default class JestTestRunner implements TestRunner2 {
-  private readonly jestConfig: Jest.Configuration;
+  private readonly jestConfig: jest.Config.InitialOptions;
+  private mutantRunJestConfigCache: jest.Config.InitialOptions | undefined;
 
   private readonly enableFindRelatedTests: boolean;
 
@@ -42,87 +50,107 @@ export default class JestTestRunner implements TestRunner2 {
     private readonly jestTestAdapter: JestTestAdapter,
     configLoader: JestConfigLoader
   ) {
-    const errorMessage =
-      'This version of Stryker does not (yet) support Jest, sorry! Follow https://github.com/stryker-mutator/stryker/issues/2321 for the latest status.';
-    this.log.error(errorMessage);
-    throw new Error(errorMessage);
+    const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
+    // Get jest configuration from stryker options and assign it to jestConfig
+    const configFromFile = configLoader.loadConfig();
+    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
 
-    // const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
-    // // Get jest configuration from stryker options and assign it to jestConfig
-    // const configFromFile = configLoader.loadConfig();
-    // this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
+    // Get enableFindRelatedTests from stryker jest options or default to true
+    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
+    if (this.enableFindRelatedTests === undefined) {
+      this.enableFindRelatedTests = true;
+    }
 
-    // // Get enableFindRelatedTests from stryker jest options or default to true
-    // this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
-    // if (this.enableFindRelatedTests === undefined) {
-    //   this.enableFindRelatedTests = true;
-    // }
+    if (this.enableFindRelatedTests) {
+      this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
+    } else {
+      this.log.debug(
+        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
+      );
+    }
 
-    // if (this.enableFindRelatedTests) {
-    //   this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
-    // } else {
-    //   this.log.debug(
-    //     'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
-    //   );
-    // }
-
-    // // basePath will be used in future releases of Stryker as a way to define the project root
-    // // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
-    // // https://github.com/stryker-mutator/stryker/issues/650
-    // this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
-    // this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
+    // basePath will be used in future releases of Stryker as a way to define the project root
+    // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
+    // https://github.com/stryker-mutator/stryker/issues/650
+    this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
+    this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
   public dryRun(_: DryRunOptions): Promise<DryRunResult> {
-    return this.run();
+    return this.run(this.jestConfig);
   }
-  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    process.env.__ACTIVE_MUTANT__ = options.activeMutant.id.toString();
-    const fileUnderTest = undefined; //this.enableFindRelatedTests ? options.activeMutant.fileName : undefined;
-    const dryRunResult = await this.run(fileUnderTest);
+  public async mutantRun({ activeMutant }: MutantRunOptions): Promise<MutantRunResult> {
+    const fileUnderTest = this.enableFindRelatedTests ? activeMutant.fileName : undefined;
+    const dryRunResult = await this.run(this.getMutantRunOptions(activeMutant), fileUnderTest);
     return toMutantRunResult(dryRunResult);
   }
 
-  private async run(fileUnderTest: string | undefined = undefined): Promise<DryRunResult> {
-    this.setNodeEnv();
-    const all = await this.jestTestAdapter.run(this.jestConfig, process.cwd(), fileUnderTest);
+  private getMutantRunOptions(activeMutant: Mutant): jest.Config.InitialOptions {
+    if (!this.mutantRunJestConfigCache) {
+      const extraGlobals: string[] = [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT];
+      if (this.jestConfig.extraGlobals) {
+        extraGlobals.push(...this.jestConfig.extraGlobals);
+      }
+
+      this.mutantRunJestConfigCache = {
+        ...this.jestConfig,
+        globals: {
+          ...this.jestConfig.globals,
+        },
+        extraGlobals,
+      };
+    }
+    this.mutantRunJestConfigCache.globals![INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT] = activeMutant.id;
+    return this.mutantRunJestConfigCache;
+  }
+
+  private async run(config: jest.Config.InitialOptions, fileUnderTest: string | undefined = undefined): Promise<DryRunResult> {
+    this.setEnv();
+    const all = await this.jestTestAdapter.run(config, process.cwd(), fileUnderTest);
 
     return this.collectRunResult(all.results);
   }
 
-  private collectRunResult(results: Jest.AggregatedResult): DryRunResult {
+  private collectRunResult(results: jestTestResult.AggregatedResult): DryRunResult {
     if (results.numRuntimeErrorTestSuites) {
       const errorMessage = results.testResults
-        .map((testSuite: Jest.TestResult) => testSuite.testExecError?.message)
-        .filter((errorMessage) => errorMessage)
+        .map((testSuite) => this.collectSerializableErrorText(testSuite.testExecError))
+        .filter(notEmpty)
         .join(', ');
       return {
-        status: RunStatus.Error,
+        status: DryRunStatus.Error,
         errorMessage,
       };
     } else {
       return {
-        status: RunStatus.Complete,
+        status: DryRunStatus.Complete,
         tests: this.processTestResults(results.testResults),
       };
     }
   }
 
-  private setNodeEnv() {
+  private collectSerializableErrorText(error: SerializableError | undefined): string | undefined {
+    return error && `${error.code && `${error.code} `}${error.message} ${error.stack}`;
+  }
+
+  private setEnv() {
     // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
     // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
     if (!this.processEnvRef.NODE_ENV) {
       this.processEnvRef.NODE_ENV = 'test';
     }
+
+    // Force colors off: https://github.com/chalk/supports-color#info
+    process.env.FORCE_COLOR = '0';
   }
 
-  private processTestResults(suiteResults: Jest.TestResult[]): TestResult[] {
+  private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {
     const testResults: TestResult[] = [];
 
     for (const suiteResult of suiteResults) {
       for (const testResult of suiteResult.testResults) {
         let result: TestResult;
-        let timeSpentMs = testResult.duration ? testResult.duration : 0;
+        let timeSpentMs = testResult.duration ?? 0;
 
         switch (testResult.status) {
           case 'passed':
@@ -151,7 +179,6 @@ export default class JestTestRunner implements TestRunner2 {
             };
             break;
         }
-
         testResults.push(result);
       }
     }
@@ -159,13 +186,17 @@ export default class JestTestRunner implements TestRunner2 {
     return testResults;
   }
 
-  private mergeConfigSettings(configFromFile: Jest.Configuration, config: Jest.Configuration) {
+  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, config: jest.Config.InitialOptions): jest.Config.InitialOptions {
     const stringify = (obj: object) => JSON.stringify(obj, null, 2);
-    this.log.trace(
+    this.log.debug(
       `Merging file-based config ${stringify(configFromFile)} 
       with custom config ${stringify(config)}
       and default (internal) stryker config ${JEST_OVERRIDE_OPTIONS}`
     );
-    return Object.assign(configFromFile, config, JEST_OVERRIDE_OPTIONS);
+    return {
+      ...configFromFile,
+      ...config,
+      ...JEST_OVERRIDE_OPTIONS,
+    };
   }
 }

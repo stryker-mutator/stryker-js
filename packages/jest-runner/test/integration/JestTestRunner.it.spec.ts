@@ -1,10 +1,9 @@
 import * as path from 'path';
 
 import { expect } from 'chai';
-import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult, TestStatus, DryRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, TestStatus, DryRunOptions } from '@stryker-mutator/api/test_runner2';
 
 import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
@@ -22,8 +21,7 @@ const jestProjectRoot = process.cwd();
 process.env.BABEL_ENV = 'test';
 
 describe(`${JestTestRunner.name} integration test`, () => {
-  // Set timeout for integration tests to 10 seconds for travis
-  let processCwdStub: sinon.SinonStub;
+  const initialCwd = process.cwd();
 
   // Names of the tests in the example projects
   const testNames = [
@@ -35,8 +33,8 @@ describe(`${JestTestRunner.name} integration test`, () => {
     'Circle should have a circumference of 2PI when the radius is 1',
   ];
 
-  beforeEach(() => {
-    processCwdStub = sinon.stub(process, 'cwd');
+  afterEach(() => {
+    process.chdir(initialCwd);
   });
 
   function createSut(overrides?: Partial<JestOptions>) {
@@ -49,25 +47,13 @@ describe(`${JestTestRunner.name} integration test`, () => {
   const expectToHaveSuccessfulTests = (result: CompleteDryRunResult, n: number) => {
     expect(result.tests.filter((t) => t.status === TestStatus.Success)).to.have.length(n);
   };
-  // const expectToHaveFailedTests = (result: CompleteDryRunResult, expectedFailureMessages: string[]) => {
-  //   const actualFailedTests = result.tests.filter(isFailed);
-  //   expect(actualFailedTests).to.have.length(expectedFailureMessages.length);
-  //   actualFailedTests.forEach((failedTest) => {
-  //     const actualFailedMessage = failedTest.failureMessage.split('\n')[0];
-  //     expect(actualFailedMessage).to.be.oneOf(expectedFailureMessages);
-  //   });
-  // };
-
-  // function isFailed(t: TestResult): t is FailedTestResult {
-  //   return t.status === TestStatus.Failed;
-  // }
 
   describe('dryRun', () => {
     const runOptions: DryRunOptions = { timeout: 0, coverageAnalysis: 'off' };
 
-    it.skip('should run tests on the example React + TypeScript project', async () => {
+    it('should run tests on the example React + TypeScript project', async () => {
       // TODO: Get a proper React TS project that works on Windows
-      processCwdStub.returns(getProjectRoot('reactTsProject'));
+      process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'react-ts' });
 
       const runResult = await jestTestRunner.dryRun(runOptions);
@@ -76,8 +62,8 @@ describe(`${JestTestRunner.name} integration test`, () => {
       expectToHaveSuccessfulTests(runResult, 1);
     });
 
-    it.skip('should set the test name and timeSpentMs', async () => {
-      processCwdStub.returns(getProjectRoot('reactTsProject'));
+    it('should set the test name and timeSpentMs', async () => {
+      process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'react-ts' });
 
       const runResult = await jestTestRunner.dryRun(runOptions);
@@ -88,7 +74,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     });
 
     it('should run tests on the example custom project using package.json', async () => {
-      processCwdStub.returns(getProjectRoot('exampleProject'));
+      process.chdir(getProjectRoot('exampleProject'));
       const jestTestRunner = createSut();
 
       const runResult = await jestTestRunner.dryRun(runOptions);
@@ -98,7 +84,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     });
 
     it('should run tests on the example custom project using jest.config.js', async () => {
-      processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
+      process.chdir(getProjectRoot('exampleProjectWithExplicitJestConfig'));
 
       const jestTestRunner = createSut();
 
@@ -110,26 +96,34 @@ describe(`${JestTestRunner.name} integration test`, () => {
   });
 
   describe('mutantRun', () => {
-    it.only('should kill mutant 1', async () => {
-      processCwdStub.returns(getProjectRoot('exampleProject'));
+    it('should kill mutant 1', async () => {
+      const exampleProjectRoot = getProjectRoot('exampleProject');
+      process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
-      const mutantRunOptions = factory.mutantRunOptions();
+      const mutantRunOptions = factory.mutantRunOptions({
+        activeMutant: factory.mutant({
+          id: 1,
+          fileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        }),
+      });
       mutantRunOptions.activeMutant.id = 1;
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
-      expect(runResult.status).to.eq(MutantRunStatus.Killed);
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).eq('Add should be able to add two numbers');
+      expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
     });
 
     it('should let mutant 11 survive', async () => {
-      processCwdStub.returns(getProjectRoot('exampleProject'));
+      process.chdir(getProjectRoot('exampleProject'));
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions();
       mutantRunOptions.activeMutant.id = 11;
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
-      expect(runResult.status).to.eq(MutantRunStatus.Survived);
+      assertions.expectSurvived(runResult);
     });
   });
 });

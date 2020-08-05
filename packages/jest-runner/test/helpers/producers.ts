@@ -1,3 +1,5 @@
+import { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
+
 import { JestOptions } from '../../src-generated/jest-runner-options';
 
 export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
@@ -8,210 +10,181 @@ export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions
   };
 };
 
-export const createFailResult = () => ({
-  numFailedTests: 2,
-  numFailedTestSuites: 1,
-  numPassedTests: 0,
-  numPassedTestSuites: 0,
-  numPendingTests: 0,
-  numPendingTestSuites: 0,
-  numRuntimeErrorTestSuites: 0,
-  numTotalTests: 2,
-  numTotalTestSuites: 1,
-  startTime: 1513852010583,
-  success: false,
-  testResults: [
-    {
-      console: null,
-      coverage: undefined,
-      failureMessage: 'test failed - App.test.js',
-      numFailingTests: 2,
-      numPassingTests: 0,
-      numPendingTests: 0,
-      skipped: false,
-      sourceMaps: {},
-      testFilePath: 'App.test.js',
-      testResults: [
-        {
-          ancestorTitles: ['App'],
-          duration: 2,
-          failureMessages: ['Fail message 1', 'Fail message 2'],
-          fullName: 'App render renders without crashing',
-          numPassingAsserts: 0,
-          status: 'failed',
-          title: 'renders without crashing',
-        },
-        {
-          ancestorTitles: ['App'],
-          duration: 0,
-          failureMessages: ['Fail message 3', 'Fail message 4'],
-          fullName: 'App render renders without crashing',
-          numPassingAsserts: 0,
-          status: 'failed',
-          title: 'renders without crashing',
-        },
-      ],
-    },
-    {
-      console: null,
-      coverage: undefined,
-      failureMessage: null,
-      numFailingTests: 0,
-      numPassingTests: 1,
-      numPendingTests: 0,
-      perfStats: [Object],
-      skipped: false,
-      snapshot: [Object],
-      sourceMaps: {},
-      testFilePath: 'App.test.js',
-      testResults: [
-        {
-          ancestorTitles: ['App'],
-          duration: 23,
-          failureMessages: [],
-          fullName: 'App renders without crashing',
-          numPassingAsserts: 0,
-          status: 'passed',
-          title: 'renders without crashing',
-        },
-      ],
-    },
-  ],
-  wasInterrupted: false,
-});
+export function createAssertionResult(overrides?: Partial<AssertionResult>): AssertionResult {
+  return {
+    ancestorTitles: [],
+    failureMessages: [],
+    fullName: 'foo should be bar',
+    numPassingAsserts: 1,
+    status: 'passed',
+    title: 'should be bar',
+    duration: 25,
+    ...overrides,
+  };
+}
 
-export const createSuccessResult = () => ({
-  numFailedTests: 0,
-  numFailedTestSuites: 0,
-  numPassedTests: 1,
-  numPassedTestSuites: 1,
-  numPendingTests: 0,
-  numPendingTestSuites: 0,
-  numRuntimeErrorTestSuites: 0,
-  numTotalTests: 1,
-  numTotalTestSuites: 1,
-  startTime: 1513857548132,
-  success: true,
-  testResults: [
-    {
-      console: null,
-      coverage: undefined,
-      failureMessage: null,
-      numFailingTests: 0,
-      numPassingTests: 1,
-      numPendingTests: 0,
-      perfStats: [Object],
-      skipped: false,
-      snapshot: [Object],
-      sourceMaps: {},
-      testFilePath: 'App.test.js',
-      testResults: [
-        {
-          ancestorTitles: ['App'],
-          duration: 23,
-          failureMessages: [],
-          fullName: 'App renders without crashing',
-          numPassingAsserts: 0,
-          status: 'passed',
-          title: 'renders without crashing',
-        },
-      ],
+export function createJestAggregatedResult(overrides?: Partial<AggregatedResult>): AggregatedResult {
+  return {
+    numFailedTestSuites: 0,
+    numFailedTests: 0,
+    numPassedTestSuites: 0,
+    numPassedTests: 0,
+    numPendingTestSuites: 0,
+    numPendingTests: 0,
+    numRuntimeErrorTestSuites: 0,
+    numTodoTests: 0,
+    numTotalTestSuites: 0,
+    numTotalTests: 0,
+    openHandles: [],
+    snapshot: {
+      added: 0,
+      didUpdate: false,
+      failure: false,
+      filesAdded: 0,
+      filesRemoved: 0,
+      filesRemovedList: [],
+      filesUnmatched: 0,
+      filesUpdated: 0,
+      matched: 0,
+      total: 0,
+      unchecked: 0,
+      uncheckedKeysByFile: [],
+      unmatched: 0,
+      updated: 0,
     },
-  ],
-  wasInterrupted: false,
-});
+    startTime: 0,
+    success: true,
+    testResults: [],
+    wasInterrupted: false,
+    ...overrides,
+  };
+}
 
-export const createPendingResult = () => ({
-  numFailedTests: 0,
-  numFailedTestSuites: 0,
-  numPassedTests: 1,
-  numPassedTestSuites: 1,
-  numPendingTests: 0,
-  numPendingTestSuites: 0,
-  numRuntimeErrorTestSuites: 0,
-  numTotalTests: 1,
-  numTotalTestSuites: 1,
-  startTime: 1513857548132,
-  success: true,
-  testResults: [
-    {
-      console: null,
-      coverage: undefined,
-      failureMessage: null,
-      numFailingTests: 0,
-      numPassingTests: 1,
-      numPendingTests: 0,
-      perfStats: [Object],
-      skipped: false,
-      snapshot: [Object],
-      sourceMaps: {},
-      testResults: [
-        {
-          ancestorTitles: ['App'],
-          duration: 0,
-          failureMessages: [],
-          fullName: 'App renders without crashing',
-          numPassingAsserts: 0,
-          status: 'pending',
-          title: 'renders without crashing',
-        },
-      ],
+export function createJestTestResult(overrides?: Partial<TestResult>): TestResult {
+  return {
+    leaks: false,
+    numFailingTests: 0,
+    numPassingTests: 0,
+    numPendingTests: 0,
+    numTodoTests: 0,
+    openHandles: [],
+    perfStats: {
+      end: 0,
+      start: 0,
     },
-  ],
-  wasInterrupted: false,
-});
+    skipped: false,
+    snapshot: {
+      added: 0,
+      fileDeleted: false,
+      matched: 0,
+      unchecked: 0,
+      uncheckedKeys: [],
+      unmatched: 0,
+      updated: 0,
+    },
+    testFilePath: '',
+    testResults: [],
+    ...overrides,
+  };
+}
 
-export const createTodoResult = () => ({
-  numFailedTests: 0,
-  numFailedTestSuites: 0,
-  numPassedTests: 1,
-  numPassedTestSuites: 1,
-  numPendingTests: 0,
-  numPendingTestSuites: 0,
-  numRuntimeErrorTestSuites: 0,
-  numTodoTests: 1,
-  numTotalTests: 2,
-  numTotalTestSuites: 1,
-  startTime: 1551045971122,
-  success: true,
-  testResults: [
-    {
-      console: null,
-      coverage: undefined,
-      displayName: undefined,
-      failureMessage: null,
-      leaks: false,
-      numFailingTests: 0,
-      numPassingTests: 1,
-      numPendingTests: 0,
-      numTodoTests: 1,
-      perfStats: [Object],
-      skipped: false,
-      snapshot: [Object],
-      sourceMaps: {},
-      testResults: [
-        {
-          ancestorTitles: ['App'],
-          duration: 4,
-          failureMessages: [],
-          fullName: 'App renders without crashing',
-          location: null,
-          numPassingAsserts: 0,
-          status: 'passed',
-          title: 'renders without crashing',
-        },
-        {
-          ancestorTitles: ['App'],
-          duration: 0,
-          failureMessages: [],
-          fullName: 'App renders without crashing with children',
-          location: null,
-          numPassingAsserts: 0,
-          status: 'todo',
-          title: 'renders without crashing with children',
-        },
-      ],
-    },
-  ],
-  wasInterrupted: false,
-});
+export function createSerializableError(overrides?: Partial<SerializableError>): SerializableError {
+  return {
+    message: 'message',
+    stack: 'stack',
+    code: 'TEST',
+    type: 'FooError',
+    ...overrides,
+  };
+}
+
+export const createFailResult = (): AggregatedResult =>
+  createJestAggregatedResult({
+    success: false,
+    testResults: [
+      createJestTestResult({
+        testResults: [
+          createAssertionResult({
+            failureMessages: ['Fail message 1', 'Fail message 2'],
+            fullName: 'App render renders without crashing',
+            duration: 2,
+            status: 'failed',
+          }),
+          createAssertionResult({
+            duration: 0,
+            failureMessages: ['Fail message 3', 'Fail message 4'],
+            fullName: 'App render renders without crashing',
+            status: 'failed',
+          }),
+        ],
+      }),
+      createJestTestResult({
+        testResults: [
+          {
+            ancestorTitles: ['App'],
+            duration: 23,
+            failureMessages: [],
+            fullName: 'App renders without crashing',
+            numPassingAsserts: 0,
+            status: 'passed',
+            title: 'renders without crashing',
+          },
+        ],
+      }),
+    ],
+  });
+
+export const createSuccessResult = (): AggregatedResult =>
+  createJestAggregatedResult({
+    success: true,
+    testResults: [
+      createJestTestResult({
+        testResults: [
+          createAssertionResult({
+            fullName: 'App renders without crashing',
+            status: 'passed',
+            duration: 23,
+          }),
+        ],
+      }),
+    ],
+    wasInterrupted: false,
+  });
+
+export const createPendingResult = (): AggregatedResult =>
+  createJestAggregatedResult({
+    success: true,
+    testResults: [
+      createJestTestResult({
+        testResults: [
+          createAssertionResult({
+            duration: 0,
+            fullName: 'App renders without crashing',
+            status: 'pending',
+          }),
+        ],
+      }),
+    ],
+  });
+
+export const createTodoResult = (): AggregatedResult =>
+  createJestAggregatedResult({
+    success: true,
+    testResults: [
+      createJestTestResult({
+        skipped: false,
+        testResults: [
+          createAssertionResult({
+            duration: 4,
+            fullName: 'App renders without crashing',
+            status: 'passed',
+          }),
+          createAssertionResult({
+            duration: 0,
+            fullName: 'App renders without crashing with children',
+            status: 'todo',
+          }),
+        ],
+      }),
+    ],
+  });
