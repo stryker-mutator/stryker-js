@@ -76,7 +76,7 @@ export default class JestTestRunner implements TestRunner2 {
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
-  public dryRun(_: DryRunOptions): Promise<DryRunResult> {
+  public dryRun(): Promise<DryRunResult> {
     return this.run(this.jestConfig);
   }
   public async mutantRun({ activeMutant }: MutantRunOptions): Promise<MutantRunResult> {
@@ -87,17 +87,11 @@ export default class JestTestRunner implements TestRunner2 {
 
   private getMutantRunOptions(activeMutant: Mutant): jest.Config.InitialOptions {
     if (!this.mutantRunJestConfigCache) {
-      const extraGlobals: string[] = [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT];
-      if (this.jestConfig.extraGlobals) {
-        extraGlobals.push(...this.jestConfig.extraGlobals);
-      }
-
       this.mutantRunJestConfigCache = {
         ...this.jestConfig,
         globals: {
           ...this.jestConfig.globals,
         },
-        extraGlobals,
       };
     }
     this.mutantRunJestConfigCache.globals![INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT] = activeMutant.id;
