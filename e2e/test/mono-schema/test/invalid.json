@@ -1,11 +1,6 @@
 {
   "$schema": "../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "allowConsoleColors": true,
-  "babel": {
-    "options": {
-      "compact": "invalid"
-    }
-  },
   "jest": {
     "config": ""
   },
@@ -13,15 +8,9 @@
     "configFile": {}
   },
   "jasmineConfigFile": false,
-  "webpack": {
-    "configFile": []
-  },
   "karma": {
     "ngConfig": {
       "testArguments": "--test test"
     }
-  },
-  "tsconfig": {
-    "moduleResolution": "invalid"
   }
 }

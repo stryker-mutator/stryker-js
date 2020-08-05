@@ -3,19 +3,10 @@
   "mochaOptions": {
     "spec": "this should have been an array"
   },
-  "tsconfigFile": 42,
-  "babel": {
-    "extensions": "should be an array"
-  },
   "jasmineConfigFile": {
     "should": "be a string"
   },
   "karma": {
     "projectType": "Project type not supported"
-  },
-  "webpack": {
-    "configFile": [
-      "should be a string"
-    ]
   }
 }
