@@ -4,22 +4,22 @@ describe('After running stryker on jest-react project', () => {
   it('should report expected scores', async () => {
     await expectMetricsResult({
       metrics: produceMetrics({
-        killed: 27,
+        killed: 33,
         timeout: 0,
-        mutationScore: 65.85,
-        mutationScoreBasedOnCoveredCode: 65.85,
-        survived: 14,
-        totalCovered: 41,
-        totalDetected: 27,
-        totalMutants: 41,
-        totalUndetected: 14,
-        totalValid: 41
+        mutationScore: 67.35,
+        mutationScoreBasedOnCoveredCode: 67.35,
+        survived: 16,
+        totalCovered: 49,
+        totalDetected: 33,
+        totalMutants: 49,
+        totalUndetected: 16,
+        totalValid: 49
       }),
     });
     /*
-    ---------------|---------|----------|-----------|------------|----------|---------|
-    File           | % score | # killed | # timeout | # survived | # no cov | # error |
-    ---------------|---------|----------|-----------|------------|----------|---------|
-    All files      |   65.85 |       27 |         0 |         14 |        0 |       0 |*/
+      ---------------|---------|----------|-----------|------------|----------|---------|
+      File           | % score | # killed | # timeout | # survived | # no cov | # error |
+      ---------------|---------|----------|-----------|------------|----------|---------|
+      All files      |   67.35 |       33 |         0 |         16 |        0 |       0 |*/
   });
 });
