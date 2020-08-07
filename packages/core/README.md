@@ -113,6 +113,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [mutator](#mutator)
 * [plugins](#plugins)
 * [reporters](#reporters)
+* [sandboxFileHeaders](#sandboxFileHeaders)
 * [symlinkNodeModules](#symlinkNodeModules)
 * [tempDirName](#tempDirName)
 * [testFramework](#testFramework)
@@ -292,6 +293,19 @@ The `clear-text` reporter supports three additional config options:
 
 The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.*](#dashboard) configuration options. See [the Stryker handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md) for more info.
 
+<a name="sandboxFileHeaders"></a>
+### `sandboxFileHeaders` [`object`]
+
+Default: `{ "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
+Command line: *none*
+Config file: `sandboxFileHeaders: {}`
+
+Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This can be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. 
+
+The key here is a [glob expression](https://globster.xyz/), where the value points to the header to be used for matching files.
+
+*Note: The default setting should work for most use cases, only change this if you know what you are doing.*
+
 <a name="symlinkNodeModules"></a>
 ### `symlinkNodeModules` [`boolean`]
 
@@ -330,7 +344,7 @@ not check-in your chosen temp directory in your `.gitignore` file.
 
 Default: *none*
 Command line: `--testFramework jasmine`
-Config file: `testFramework: 'jasmine'`
+Config file: `testFramework: 'jasmine'` 
 
 Configure which test framework you are using.
 This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use),

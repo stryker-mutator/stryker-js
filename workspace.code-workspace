@@ -122,6 +122,7 @@
       "Surrializable",
       "execa",
       "memfs",
+      "preprocessors",
       "serializable",
       "surrialize"
     ]

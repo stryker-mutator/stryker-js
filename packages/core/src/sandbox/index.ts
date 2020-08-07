@@ -1,2 +1,3 @@
+export type { FilePreprocessor } from './file-preprocessor';
 export * from './sandbox';
-export * from './sandbox-tsconfig-rewriter';
+export * from './create-preprocessor';

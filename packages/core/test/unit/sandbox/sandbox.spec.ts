@@ -68,17 +68,6 @@ describe(Sandbox.name, () => {
       expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.log'), fileE.content);
     });
 
-    ['.js', '.ts', '.d.ts', '.jsx', '.cjs', '.mjs'].forEach((ext) => {
-      it(`should prefix a ${ext} with a ignore header`, async () => {
-        files.push(new File(`foo${ext}`, 'console.log("foo")'));
-        await createSut();
-        expect(writeFileStub).calledWith(
-          path.join(SANDBOX_WORKING_DIR, `foo${ext}`),
-          Buffer.from('/* eslint-disable */\n// @ts-nocheck\nconsole.log("foo")')
-        );
-      });
-    });
-
     it('should make the dir before copying the file', async () => {
       files.push(new File(path.resolve('a', 'b.js'), 'b content'));
       files.push(new File(path.resolve('c', 'd', 'e.js'), 'e content'));

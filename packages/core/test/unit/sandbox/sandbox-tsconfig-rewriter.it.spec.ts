@@ -4,38 +4,38 @@ import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { SandboxTSConfigRewriter } from '../../../src/sandbox';
+import { SandboxTSConfigPreprocessor } from '../../../src/sandbox/sandbox-tsconfig-preprocessor';
 
-describe(SandboxTSConfigRewriter.name, () => {
+describe(SandboxTSConfigPreprocessor.name, () => {
   let files: File[];
-  let sut: SandboxTSConfigRewriter;
+  let sut: SandboxTSConfigPreprocessor;
 
   beforeEach(() => {
     files = [];
-    sut = testInjector.injector.injectClass(SandboxTSConfigRewriter);
+    sut = testInjector.injector.injectClass(SandboxTSConfigPreprocessor);
   });
 
   it('should not do anything if the tsconfig file does not exist', async () => {
     files.push(new File('foo.js', 'console.log("foo");'));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).eq(files);
   });
 
   it('should ignore missing "extends"', async () => {
     files.push(tsconfigFile('tsconfig.json', { references: [{ path: './tsconfig.src.json' }] }));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq(files);
   });
 
   it('should ignore missing "references"', async () => {
     files.push(tsconfigFile('tsconfig.json', { extends: './tsconfig.settings.json' }));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq(files);
   });
 
   it('should rewrite "extends" if it falls outside of sandbox', async () => {
     files.push(tsconfigFile('tsconfig.json', { extends: '../tsconfig.settings.json' }));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq([tsconfigFile('tsconfig.json', { extends: '../../../tsconfig.settings.json' })]);
   });
 
@@ -52,13 +52,13 @@ describe(SandboxTSConfigRewriter.name, () => {
       }`
       )
     );
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq([tsconfigFile('tsconfig.json', { extends: '../../../tsconfig.settings.json', compilerOptions: { target: 'es5' } })]);
   });
 
   it('should rewrite "references" if it falls outside of sandbox', async () => {
     files.push(tsconfigFile('tsconfig.json', { references: [{ path: '../model' }] }));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq([tsconfigFile('tsconfig.json', { references: [{ path: '../../../model/tsconfig.json' }] })]);
   });
 
@@ -66,7 +66,7 @@ describe(SandboxTSConfigRewriter.name, () => {
     files.push(tsconfigFile('tsconfig.json', { extends: './tsconfig.settings.json', references: [{ path: './src' }] }));
     files.push(tsconfigFile('tsconfig.settings.json', { extends: '../../tsconfig.root-settings.json' }));
     files.push(tsconfigFile('src/tsconfig.json', { references: [{ path: '../../model' }] }));
-    const output = await sut.rewrite(files);
+    const output = await sut.preprocess(files);
     expect(output).deep.eq([
       tsconfigFile('tsconfig.json', { extends: './tsconfig.settings.json', references: [{ path: './src' }] }),
       tsconfigFile('tsconfig.settings.json', { extends: '../../../../tsconfig.root-settings.json' }),
@@ -87,7 +87,7 @@ describe(SandboxTSConfigRewriter.name, () => {
     testInjector.options.tsconfigFile = 'tsconfig.root.json';
 
     // Act
-    const actual = await sut.rewrite(files);
+    const actual = await sut.preprocess(files);
 
     // Assert
     const expected = [

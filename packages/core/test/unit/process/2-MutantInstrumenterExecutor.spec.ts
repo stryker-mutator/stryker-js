@@ -11,14 +11,14 @@ import InputFileCollection from '../../../src/input/InputFileCollection';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, PoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/CheckerFacade';
-import { SandboxTSConfigRewriter, Sandbox } from '../../../src/sandbox';
+import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
   let inputFiles: InputFileCollection;
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
   let instrumenterMock: sinon.SinonStubbedInstance<Instrumenter>;
-  let sandboxTSConfigRewriterMock: sinon.SinonStubbedInstance<SandboxTSConfigRewriter>;
+  let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let checkerPoolMock: PoolMock<Checker>;
@@ -41,14 +41,16 @@ describe(MutantInstrumenterExecutor.name, () => {
     };
     sandboxMock = sinon.createStubInstance(Sandbox);
     instrumenterMock = sinon.createStubInstance(Instrumenter);
-    sandboxTSConfigRewriterMock = sinon.createStubInstance(SandboxTSConfigRewriter);
-    sandboxTSConfigRewriterMock.rewrite.resolves([mutatedFile, testFile]);
+    sandboxFilePreprocessorMock = {
+      preprocess: sinon.stub(),
+    };
+    sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
     mutatorDescriptor = factory.mutatorDescriptor({ plugins: ['functionSent'] });
     sut = new MutantInstrumenterExecutor(injectorMock, inputFiles, mutatorDescriptor);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
-    injectorMock.injectClass.withArgs(SandboxTSConfigRewriter).returns(sandboxTSConfigRewriterMock);
+    injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);
     injectorMock.resolve
       .withArgs(coreTokens.concurrencyTokenProvider)
@@ -69,10 +71,10 @@ describe(MutantInstrumenterExecutor.name, () => {
     expect(result).eq(injectorMock);
   });
 
-  it('should rewrite tsconfig files before initializing the sandbox', async () => {
+  it('should preprocess files before initializing the sandbox', async () => {
     await sut.execute();
-    expect(sandboxTSConfigRewriterMock.rewrite).calledWithExactly([mutatedFile, testFile]);
-    expect(sandboxTSConfigRewriterMock.rewrite).calledBefore(injectorMock.injectFunction);
+    expect(sandboxFilePreprocessorMock.preprocess).calledWithExactly([mutatedFile, testFile]);
+    expect(sandboxFilePreprocessorMock.preprocess).calledBefore(injectorMock.injectFunction);
   });
 
   it('should provide the mutated files to the sandbox', async () => {

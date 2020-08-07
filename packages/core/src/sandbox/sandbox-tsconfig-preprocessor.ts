@@ -4,6 +4,8 @@ import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
+import { FilePreprocessor } from './file-preprocessor';
+
 /**
  * A helper class that rewrites `references` and `extends` file paths if they end up falling outside of the sandbox.
  * @example
@@ -21,13 +23,13 @@ import { Logger } from '@stryker-mutator/api/logging';
  *   }
  * }
  */
-export class SandboxTSConfigRewriter {
+export class SandboxTSConfigPreprocessor implements FilePreprocessor {
   private readonly touched: string[] = [];
   private readonly fs = new Map<string, File>();
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
 
-  public async rewrite(input: File[]): Promise<readonly File[]> {
+  public async preprocess(input: File[]): Promise<File[]> {
     const tsconfigFile = path.resolve(this.options.tsconfigFile);
     if (input.find((file) => file.name === tsconfigFile)) {
       this.fs.clear();

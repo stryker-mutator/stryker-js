@@ -315,7 +315,10 @@
       "errorMessage": "should be an \"object\" describing the mutator or a \"string\". See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
     },
     "packageManager": {
-      "enum": ["npm", "yarn"],
+      "enum": [
+        "npm",
+        "yarn"
+      ],
       "description": "The package manager Stryker can use to install missing dependencies."
     },
     "plugins": {
@@ -343,6 +346,17 @@
     "htmlReporter": {
       "description": "The options for the html reporter",
       "$ref": "#/definitions/htmlReporterOptions"
+    },
+    "sandboxFileHeaders": {
+      "type": "object",
+      "title": "SandboxFileHeaders",
+      "description": "Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This can be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. The default setting should work for most use cases.",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {
+        "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
+      }
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",

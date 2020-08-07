@@ -1,5 +1,7 @@
 import assert = require('assert');
 
+import { expect } from 'chai';
+
 import {
   MutantRunResult,
   SurvivedMutantRunResult,
@@ -14,6 +16,7 @@ import {
   FailedTestResult,
   TestStatus,
 } from '@stryker-mutator/api/test_runner2';
+import { File } from '@stryker-mutator/api/core';
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
   assert.equal(result.status, MutantRunStatus.Killed);
@@ -35,4 +38,19 @@ export function expectErrored(runResult: DryRunResult | MutantRunResult): void {
 }
 export function expectSurvived(runResult: MutantRunResult): asserts runResult is SurvivedMutantRunResult {
   assert.equal(runResult.status, MutantRunStatus.Survived);
+}
+
+export function expectTextFileEqual(actual: File, expected: File) {
+  expect(fileToJson(actual)).deep.eq(fileToJson(expected));
+}
+
+export function expectTextFilesEqual(actual: File[], expected: File[]) {
+  expect(actual.map(fileToJson)).deep.eq(expected.map(fileToJson));
+}
+
+function fileToJson(file: File) {
+  return {
+    name: file.name,
+    textContent: file.textContent,
+  };
 }
