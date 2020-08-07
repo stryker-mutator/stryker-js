@@ -20,6 +20,10 @@ describe(ConfigReader.name, () => {
       .injectClass(ConfigReader);
   }
 
+  function resolveTestResource(...segments: string[]) {
+    return path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', ...segments);
+  }
+
   let originalCwd: string;
 
   beforeEach(() => {
@@ -32,6 +36,7 @@ describe(ConfigReader.name, () => {
 
   describe('readConfig()', () => {
     it('should use cli options', () => {
+      process.chdir(resolveTestResource('empty-json'));
       sut = createSut({ some: 'option', someOther: 2 });
       const result = sut.readConfig();
       expect(result.some).to.be.eq('option');
@@ -46,7 +51,7 @@ describe(ConfigReader.name, () => {
 
     describe('without config file or CLI options', () => {
       it('should parse the stryker.conf.js config in cwd', () => {
-        process.chdir(path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'js'));
+        process.chdir(resolveTestResource('js'));
         sut = createSut({});
 
         const result = sut.readConfig();
@@ -56,7 +61,7 @@ describe(ConfigReader.name, () => {
       });
 
       it('should use the stryker.conf.json file in cwd', () => {
-        process.chdir(path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'json'));
+        process.chdir(resolveTestResource('json'));
         sut = createSut({});
 
         const result = sut.readConfig();
@@ -66,7 +71,7 @@ describe(ConfigReader.name, () => {
       });
 
       it('should use the stryker.conf.js file if both stryker.conf.js and stryker.conf.json are available', () => {
-        process.chdir(path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'json-and-js'));
+        process.chdir(resolveTestResource('json-and-js'));
         sut = createSut({});
 
         const result = sut.readConfig();
@@ -76,7 +81,7 @@ describe(ConfigReader.name, () => {
       });
 
       it('should use the default config if no stryker.conf file was found', () => {
-        process.chdir(path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', 'no-config'));
+        process.chdir(resolveTestResource('no-config'));
 
         sut = createSut({});
         const result = sut.readConfig();
