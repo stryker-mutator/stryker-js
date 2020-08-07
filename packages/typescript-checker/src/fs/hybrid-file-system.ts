@@ -1,5 +1,7 @@
 import ts from 'typescript';
 import { Mutant } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { ScriptFile } from './script-file';
 
@@ -18,12 +20,16 @@ export class HybridFileSystem {
   private readonly files = new Map<string, ScriptFile | undefined>();
   private mutatedFile: ScriptFile | undefined;
 
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) {}
+
   public writeFile(fileName: string, data: string) {
     fileName = toTSFileName(fileName);
     const existingFile = this.files.get(fileName);
     if (existingFile) {
       existingFile.write(data);
     } else {
+      this.log.trace('Writing to file "%s"', fileName);
       this.files.set(fileName, new ScriptFile(data, fileName));
     }
   }
@@ -46,6 +52,7 @@ export class HybridFileSystem {
     if (!file) {
       throw new Error(`Cannot find file ${fileName} for watching`);
     }
+    this.log.trace('Registering watcher for file "%s"', fileName);
     file.watcher = watcher;
   }
 
