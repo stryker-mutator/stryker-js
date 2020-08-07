@@ -63,17 +63,9 @@ describe(configLoaderFactory.name, () => {
     it('should warn when a configFile is set', () => {
       testConfigFileWarning(options);
     });
-
-    it('should log a deprecation warning', () => {
-      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-      expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED: The projectType "react" is deprecated. Use projectType "create-react-app" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
-    });
   });
 
-  describe('with "projectType": "react-ts"', () => {
+  describe('with "projectType": "create-react-app-ts"', () => {
     beforeEach(() => {
       options.jest.projectType = 'create-react-app-ts';
     });
@@ -86,14 +78,6 @@ describe(configLoaderFactory.name, () => {
 
     it('should warn when a configFile is set', () => {
       testConfigFileWarning(options);
-    });
-
-    it('should log a deprecation warning', () => {
-      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-      expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED: The projectType "react-ts" is deprecated. Use projectType "create-react-app-ts" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
     });
   });
 });
