@@ -4,8 +4,13 @@ import { SandboxTSConfigPreprocessor } from './sandbox-tsconfig-preprocessor';
 import { SandboxFileHeaderPreprocessor } from './sandbox-file-header-preprocessor';
 import { FilePreprocessor } from './file-preprocessor';
 import { MultiPreprocessor } from './multi-preprocessor';
+import { StripCommentsPreprocessor } from './strip-comments-preprocessor';
 
 createPreprocessor.inject = tokens(commonTokens.injector);
 export function createPreprocessor(injector: Injector<OptionsContext>): FilePreprocessor {
-  return new MultiPreprocessor([injector.injectClass(SandboxTSConfigPreprocessor), injector.injectClass(SandboxFileHeaderPreprocessor)]);
+  return new MultiPreprocessor([
+    injector.injectClass(StripCommentsPreprocessor),
+    injector.injectClass(SandboxTSConfigPreprocessor),
+    injector.injectClass(SandboxFileHeaderPreprocessor),
+  ]);
 }

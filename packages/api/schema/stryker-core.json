@@ -358,6 +358,10 @@
         "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
       }
     },
+    "sandboxStripComments": {
+      "type": "string",
+      "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+    },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
       "type": "boolean",

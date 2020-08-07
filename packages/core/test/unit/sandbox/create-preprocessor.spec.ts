@@ -5,7 +5,7 @@ import { File } from '@stryker-mutator/api/core';
 
 import { FilePreprocessor, createPreprocessor } from '../../../src/sandbox';
 
-describe('File preprocessor integration', () => {
+describe(createPreprocessor.name, () => {
   let sut: FilePreprocessor;
 
   beforeEach(() => {
@@ -20,5 +20,10 @@ describe('File preprocessor integration', () => {
   it('should add a header to .ts files', async () => {
     const output = await sut.preprocess([new File(path.resolve('app.ts'), 'foo.bar()')]);
     assertions.expectTextFilesEqual(output, [new File(path.resolve('app.ts'), '/* eslint-disable */\n// @ts-nocheck\nfoo.bar()')]);
+  });
+
+  it('should strip // @ts-expect-error (see https://github.com/stryker-mutator/stryker/issues/2364)', async () => {
+    const output = await sut.preprocess([new File(path.resolve('app.ts'), '// @ts-expect-error\nfoo.bar()')]);
+    assertions.expectTextFilesEqual(output, [new File(path.resolve('app.ts'), '/* eslint-disable */\n// @ts-nocheck\n\nfoo.bar()')]);
   });
 });
