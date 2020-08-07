@@ -49,10 +49,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    it.skip('should run tests on the example React + TypeScript project', async () => {
+    it('should run tests on the example React + TypeScript project', async () => {
       // TODO: Get a proper React TS project that works on Windows
       process.chdir(getProjectRoot('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'react-ts' });
+      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
       const runResult = await jestTestRunner.dryRun();
 
@@ -60,9 +60,9 @@ describe(`${JestTestRunner.name} integration test`, () => {
       expectToHaveSuccessfulTests(runResult, 1);
     });
 
-    it.skip('should set the test name and timeSpentMs', async () => {
+    it('should set the test name and timeSpentMs', async () => {
       process.chdir(getProjectRoot('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'react-ts' });
+      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
       const runResult = await jestTestRunner.dryRun();
 

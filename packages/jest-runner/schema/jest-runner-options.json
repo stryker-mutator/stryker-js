@@ -37,8 +37,6 @@
       "enum": [
         "create-react-app",
         "create-react-app-ts",
-        "react",
-        "react-ts",
         "custom"
       ]
     }
