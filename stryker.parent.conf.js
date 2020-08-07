@@ -1,26 +1,15 @@
 module.exports = {
   mutate: ['src/**/*.ts'],
   coverageAnalysis: 'perTest',
-  tsconfigFile: 'tsconfig.stryker.json',
-  mutator: 'typescript',
-  transpilers: [
-    'typescript'
-  ],
-  mochaOptions: {
-    spec: ['test/helpers/**/*.js', 'test/unit/**/*.js']
-  },
-  testFramework: 'mocha',
+  checkers: ['typescript'],
   testRunner: 'mocha',
   reporters: ['progress', 'html', 'dashboard'],
   concurrency: 4,
   plugins: [
-    require.resolve('./packages/mocha-runner/src/index'),
-    require.resolve('./packages/mocha-framework/src/index'),
-    require.resolve('./packages/typescript/src/index'),
+    require.resolve('./packages/mocha-runner'),
+    require.resolve('./packages/typescript-checker'),
   ],
-  dashboard: {
-    reportType: 'full'
-  },
+  buildCommand: 'tsc -b',
   files: [
     '{src,test,src-generated}/**/*.ts',
     '!{src,test,src-generated}/**/*.d.ts',

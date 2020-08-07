@@ -53,6 +53,11 @@ describe(DryRunExecutor.name, () => {
       testRunnerMock.dryRun.resolves(runResult);
     });
 
+    it('should log about that this might take a while', async () => {
+      await sut.execute();
+      expect(testInjector.logger.info).calledWith('Starting initial test run. This may take a while.');
+    });
+
     describe('with successful tests', () => {
       it('should calculate the overhead time milliseconds', async () => {
         // Arrange

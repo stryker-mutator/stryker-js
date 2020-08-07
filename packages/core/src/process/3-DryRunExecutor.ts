@@ -89,6 +89,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
+    this.log.info('Starting initial test run. This may take a while.');
     const testRunner = await testRunnerPool.worker$.pipe(first()).toPromise();
     const { dryRunResult, grossTimeMS } = await this.timeDryRun(testRunner);
     this.validateResultCompleted(dryRunResult);
