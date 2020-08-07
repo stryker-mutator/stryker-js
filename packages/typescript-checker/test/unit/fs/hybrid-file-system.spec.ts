@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { HybridFileSystem } from '../../../src/fs';
 
@@ -14,7 +15,7 @@ describe('fs', () => {
     let helper: Helper;
     beforeEach(() => {
       helper = new Helper();
-      sut = new HybridFileSystem();
+      sut = testInjector.injector.injectClass(HybridFileSystem);
     });
 
     describe(HybridFileSystem.prototype.writeFile.name, () => {
@@ -107,6 +108,13 @@ describe('fs', () => {
 
       it("should throw if file doesn't exist", () => {
         expect(() => sut.watchFile('not-exists.js', sinon.stub())).throws('Cannot find file not-exists.js for watching');
+      });
+
+      it('should log that the file is watched', () => {
+        helper.readFileStub.returns('foobar');
+        const watcherCallback = sinon.stub();
+        sut.watchFile('foo.js', watcherCallback);
+        expect(testInjector.logger.trace).calledWith('Registering watcher for file "%s"', 'foo.js');
       });
     });
 

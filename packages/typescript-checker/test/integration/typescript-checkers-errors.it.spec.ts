@@ -3,7 +3,8 @@ import path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { TypescriptChecker } from '../../src';
+import { createTypescriptChecker } from '../../src';
+import { TypescriptChecker } from '../../src/typescript-checker';
 
 const resolveTestResource = (path.resolve.bind(
   path,
@@ -19,7 +20,7 @@ describe('Typescript checker errors', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    sut = testInjector.injector.injectClass(TypescriptChecker);
+    sut = testInjector.injector.injectFunction(createTypescriptChecker);
   });
 
   it('should reject initialization if initial compilation failed', async () => {

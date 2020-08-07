@@ -35,7 +35,9 @@ describe('fs', () => {
 
       it('should throw when no watcher is registered', () => {
         sut.watcher = undefined;
-        expect(() => sut.mutate({ range: [21, 22], replacement: '-' })).throws('No watcher registered for add.js. Changes would go unnoticed');
+        expect(() => sut.mutate({ range: [21, 22], replacement: '-' })).throws(
+          'ried to check file "add.js" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project'
+        );
       });
 
       it('should mutate the current content', () => {
@@ -77,7 +79,9 @@ describe('fs', () => {
 
       it('should throw when no watcher is registered', () => {
         sut.watcher = undefined;
-        expect(() => sut.resetMutant()).throws('No watcher registered for add.js. Changes would go unnoticed');
+        expect(() => sut.resetMutant()).throws(
+          'ried to check file "add.js" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project'
+        );
       });
 
       it('should reset the content after two mutations', () => {

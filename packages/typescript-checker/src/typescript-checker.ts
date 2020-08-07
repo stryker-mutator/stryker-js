@@ -3,13 +3,14 @@ import path from 'path';
 
 import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Logger } from '@stryker-mutator/api/logging';
+import { tokens, commonTokens, OptionsContext, Injector, Scope } from '@stryker-mutator/api/plugin';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { HybridFileSystem } from './fs';
 import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers';
+import * as pluginTokens from './plugin-tokens';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -19,11 +20,26 @@ const diagnosticsHost: ts.FormatDiagnosticsHost = {
 
 const FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE = 6032;
 
+typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
+// eslint-disable-next-line @typescript-eslint/ban-types
+function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
+  const targetName = target?.name ?? TypescriptChecker.name;
+  const category = targetName === TypescriptChecker.name ? TypescriptChecker.name : `${TypescriptChecker.name}.${targetName}`;
+  return loggerFactory(category);
+}
+
+create.inject = tokens(commonTokens.injector);
+export function create(injector: Injector<OptionsContext>): TypescriptChecker {
+  return injector
+    .provideFactory(commonTokens.logger, typescriptCheckerLoggerFactory, Scope.Transient)
+    .provideClass(pluginTokens.fs, HybridFileSystem)
+    .injectClass(TypescriptChecker);
+}
+
 /**
  * An in-memory type checker implementation which validates type errors of mutants.
  */
 export class TypescriptChecker implements Checker {
-  private readonly fs = new HybridFileSystem();
   private currentTask: Task<CheckResult>;
   private readonly currentErrors: ts.Diagnostic[] = [];
   /**
@@ -31,10 +47,10 @@ export class TypescriptChecker implements Checker {
    */
   private readonly allTSConfigFiles: Set<string>;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
   private readonly tsconfigFile: string;
 
-  constructor(private readonly logger: Logger, options: StrykerOptions) {
+  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly fs: HybridFileSystem) {
     this.tsconfigFile = options.tsconfigFile;
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
@@ -59,7 +75,7 @@ export class TypescriptChecker implements Checker {
             return content;
           },
           watchFile: (path: string, callback: ts.FileWatcherCallback) => {
-            this.fs.getFile(path)!.watcher = callback;
+            this.fs.watchFile(path, callback);
             return {
               close: () => {
                 delete this.fs.getFile(path)!.watcher;

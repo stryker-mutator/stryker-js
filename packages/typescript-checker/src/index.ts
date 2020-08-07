@@ -1,7 +1,7 @@
-import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
+import { PluginKind, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
 
-import { TypescriptChecker } from './typescript-checker';
+import { create } from './typescript-checker';
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.Checker, 'typescript', TypescriptChecker)];
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.Checker, 'typescript', create)];
 
-export { TypescriptChecker };
+export const createTypescriptChecker = create;
