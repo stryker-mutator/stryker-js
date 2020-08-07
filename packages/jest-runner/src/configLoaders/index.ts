@@ -32,18 +32,6 @@ export function configLoaderFactory(options: StrykerOptions, injector: Injector<
     case 'create-react-app-ts':
       warnAboutConfigFile(optionsWithJest.jest.projectType, optionsWithJest.jest.configFile);
       return configLoaderInjector.injectClass(ReactScriptsTSJestConfigLoader);
-    case 'react':
-      log.warn(
-        'DEPRECATED: The projectType "react" is deprecated. Use projectType "create-react-app" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
-      warnAboutConfigFile(optionsWithJest.jest.projectType, optionsWithJest.jest.configFile);
-      return configLoaderInjector.injectClass(ReactScriptsJestConfigLoader);
-    case 'react-ts':
-      log.warn(
-        'DEPRECATED: The projectType "react-ts" is deprecated. Use projectType "create-react-app-ts" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
-      warnAboutConfigFile(optionsWithJest.jest.projectType, optionsWithJest.jest.configFile);
-      return configLoaderInjector.injectClass(ReactScriptsTSJestConfigLoader);
     default:
       throw new Error(`No configLoader available for ${optionsWithJest.jest.projectType}`);
   }

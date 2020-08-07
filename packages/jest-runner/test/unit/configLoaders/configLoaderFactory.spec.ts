@@ -49,9 +49,9 @@ describe(configLoaderFactory.name, () => {
     expect(sut).eq(customConfigLoaderStub);
   });
 
-  describe('with "projectType": "react"', () => {
+  describe('with "projectType": "create-react-app"', () => {
     beforeEach(() => {
-      options.jest.projectType = 'react';
+      options.jest.projectType = 'create-react-app';
     });
 
     it('should create a ReactScriptsJestConfigLoader', () => {
@@ -75,7 +75,7 @@ describe(configLoaderFactory.name, () => {
 
   describe('with "projectType": "react-ts"', () => {
     beforeEach(() => {
-      options.jest.projectType = 'react-ts';
+      options.jest.projectType = 'create-react-app-ts';
     });
 
     it('should create a ReactScriptsTSJestConfigLoader', () => {
