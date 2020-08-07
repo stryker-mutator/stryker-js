@@ -11,5 +11,4 @@ export class MultiPreprocessor implements FilePreprocessor {
     }
     return files;
   }
-  
 }
