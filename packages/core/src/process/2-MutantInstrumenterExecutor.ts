@@ -9,8 +9,7 @@ import { LoggingClientContext } from '../logging';
 
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
 import { createCheckerFactory } from '../checker/CheckerFacade';
-
-import { SandboxTSConfigRewriter } from '../sandbox';
+import { createPreprocessor } from '../sandbox';
 
 import { DryRunContext } from './3-DryRunExecutor';
 
@@ -34,9 +33,9 @@ export class MutantInstrumenterExecutor {
     // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, { plugins: this.mutatorDescriptor.plugins });
 
-    // Rewrite tsconfig file references
-    const tsconfigFileRewriter = this.injector.injectClass(SandboxTSConfigRewriter);
-    const files = await tsconfigFileRewriter.rewrite(this.replaceWith(instrumentResult));
+    // Preprocess sandbox files
+    const tsconfigFileRewriter = this.injector.injectFunction(createPreprocessor);
+    const files = await tsconfigFileRewriter.preprocess(this.replaceInstrumentedFiles(instrumentResult));
 
     // Initialize the checker pool
     const concurrencyTokenProviderProvider = this.injector.provideClass(coreTokens.concurrencyTokenProvider, ConcurrencyTokenProvider);
@@ -54,7 +53,7 @@ export class MutantInstrumenterExecutor {
     return checkerPoolProvider.provideValue(coreTokens.sandbox, sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
   }
 
-  private replaceWith(instrumentResult: InstrumentResult): File[] {
+  private replaceInstrumentedFiles(instrumentResult: InstrumentResult): File[] {
     return this.inputFiles.files.map((inputFile) => {
       const instrumentedFile = instrumentResult.files.find((instrumentedFile) => instrumentedFile.name === inputFile.name);
       if (instrumentedFile) {

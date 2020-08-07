@@ -10,7 +10,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
-import { findNodeModules, symlinkJunction, writeFile, isJSOrFriend } from '../utils/fileUtils';
+import { findNodeModules, symlinkJunction, writeFile } from '../utils/fileUtils';
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
@@ -25,10 +25,6 @@ interface SandboxFactory {
     typeof coreTokens.execa
   ];
 }
-
-const JS_HEADER = Buffer.from(`/* eslint-disable */
-// @ts-nocheck
-`);
 
 export class Sandbox {
   private readonly fileMap = new Map<string, string>();
@@ -121,11 +117,6 @@ export class Sandbox {
     mkdirp.sync(folderName);
     const targetFileName = path.join(folderName, path.basename(relativePath));
     this.fileMap.set(file.name, targetFileName);
-    if (isJSOrFriend(file.name)) {
-      // see https://github.com/stryker-mutator/stryker/issues/2276
-      return writeFile(targetFileName, Buffer.concat([JS_HEADER, file.content]));
-    } else {
-      return writeFile(targetFileName, file.content);
-    }
+    return writeFile(targetFileName, file.content);
   }
 }
