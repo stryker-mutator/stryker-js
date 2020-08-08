@@ -3,14 +3,14 @@ import path = require('path');
 import { testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 
-import { SandboxFileHeaderPreprocessor } from '../../../src/sandbox/sandbox-file-header-preprocessor';
+import { FileHeaderPreprocessor } from '../../../src/sandbox/file-header-preprocessor';
 
 const EXPECTED_DEFAULT_HEADER = '/* eslint-disable */\n// @ts-nocheck\n';
 
-describe(SandboxFileHeaderPreprocessor.name, () => {
-  let sut: SandboxFileHeaderPreprocessor;
+describe(FileHeaderPreprocessor.name, () => {
+  let sut: FileHeaderPreprocessor;
   beforeEach(() => {
-    sut = testInjector.injector.injectClass(SandboxFileHeaderPreprocessor);
+    sut = testInjector.injector.injectClass(FileHeaderPreprocessor);
   });
 
   it('should add preprocess any js or friend file by default', async () => {
@@ -39,7 +39,7 @@ describe(SandboxFileHeaderPreprocessor.name, () => {
   it('should also match a full file name', async () => {
     // Arrange
     const input = [new File(path.resolve('src', 'app.ts'), 'foo.bar()')];
-    testInjector.options.sandboxFileHeaders = {
+    testInjector.options.sandbox.fileHeaders = {
       ['+(src|test)/**/*+(.js|.ts)?(x)']: '// @ts-nocheck\n',
     };
 
@@ -56,7 +56,7 @@ describe(SandboxFileHeaderPreprocessor.name, () => {
       new File(path.resolve('src', 'app.ts'), 'foo.bar()'),
       new File(path.resolve('testResources', 'app.ts'), '// test file example that should be ignored'),
     ];
-    testInjector.options.sandboxFileHeaders = {
+    testInjector.options.sandbox.fileHeaders = {
       ['+(src|test)/**/*+(.js|.ts)?(x)']: '// @ts-nocheck\n',
     };
 
@@ -73,7 +73,7 @@ describe(SandboxFileHeaderPreprocessor.name, () => {
   it('should allow multiple headers', async () => {
     // Arrange
     const input = [new File('src/app.ts', 'foo.bar()'), new File('src/components/app.component.js', 'baz.qux()')];
-    testInjector.options.sandboxFileHeaders = {
+    testInjector.options.sandbox.fileHeaders = {
       ['**/*.ts']: '// @ts-nocheck\n',
       ['**/*.js']: '/* eslint-disable */\n',
     };

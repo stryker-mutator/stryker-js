@@ -164,6 +164,37 @@
       "minimum": 0,
       "maximum": 100
     },
+    "sandboxOptions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "fileHeaders": {
+          "type": "object",
+          "title": "SandboxFileHeaders",
+          "description": "Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code with mutants. The default setting should work for most use cases.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {
+            "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
+          }
+        },
+        "stripComments": {
+          "description": "Configure files to be stripped of comments (either single line with `//` or multi line with `/**/`. These comments will be stripped after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to remove any lingering `// @ts-check` or `// @ts-expect-error` comments that interfere with typescript compilation. The default setting allows comments to be stripped from all JavaScript and friend files in your sandbox, you can specify a different glob expression or set it to `false` to completely disable this behavior.",
+          "anyOf": [
+            {
+              "enum": [
+                false
+              ]
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+        }
+      }
+    },
     "mutatorDescriptor": {
       "type": "object",
       "additionalProperties": false,
@@ -347,20 +378,10 @@
       "description": "The options for the html reporter",
       "$ref": "#/definitions/htmlReporterOptions"
     },
-    "sandboxFileHeaders": {
-      "type": "object",
-      "title": "SandboxFileHeaders",
-      "description": "Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This can be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. The default setting should work for most use cases.",
-      "additionalProperties": {
-        "type": "string"
-      },
-      "default": {
-        "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
-      }
-    },
-    "sandboxStripComments": {
-      "type": "string",
-      "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+    "sandbox": {
+      "description": "Configure how the files in the sandbox behave. The sandbox is a copy of your source code where Stryker does mutation testing.",
+      "$ref": "#/definitions/sandboxOptions",
+      "default": {}
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",

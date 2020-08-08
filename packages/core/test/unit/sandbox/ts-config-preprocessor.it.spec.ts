@@ -4,15 +4,15 @@ import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { SandboxTSConfigPreprocessor } from '../../../src/sandbox/sandbox-tsconfig-preprocessor';
+import { TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor';
 
-describe(SandboxTSConfigPreprocessor.name, () => {
+describe(TSConfigPreprocessor.name, () => {
   let files: File[];
-  let sut: SandboxTSConfigPreprocessor;
+  let sut: TSConfigPreprocessor;
 
   beforeEach(() => {
     files = [];
-    sut = testInjector.injector.injectClass(SandboxTSConfigPreprocessor);
+    sut = testInjector.injector.injectClass(TSConfigPreprocessor);
   });
 
   it('should not do anything if the tsconfig file does not exist', async () => {

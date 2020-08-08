@@ -17,13 +17,17 @@ export class StripCommentsPreprocessor implements FilePreprocessor {
   constructor(private readonly options: StrykerOptions) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
-    const pattern = path.resolve(this.options.sandboxStripComments);
-    return files.map((file) => {
-      if (minimatch(path.resolve(file.name), pattern)) {
-        return new File(file.name, stripComments(file.textContent));
-      } else {
-        return file;
-      }
-    });
+    if (this.options.sandbox.stripComments === false) {
+      return files;
+    } else {
+      const pattern = path.resolve(this.options.sandbox.stripComments);
+      return files.map((file) => {
+        if (minimatch(path.resolve(file.name), pattern)) {
+          return new File(file.name, stripComments(file.textContent));
+        } else {
+          return file;
+        }
+      });
+    }
   }
 }
