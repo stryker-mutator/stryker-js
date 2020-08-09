@@ -6,5 +6,5 @@ import { File } from '@stryker-mutator/api/core';
  * This is a private api that we might want to open up in the future.
  */
 export interface FilePreprocessor {
-  preprocess(file: File[]): Promise<File[]>;
+  preprocess(files: File[]): Promise<File[]>;
 }

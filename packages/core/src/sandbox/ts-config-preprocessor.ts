@@ -23,7 +23,7 @@ import { FilePreprocessor } from './file-preprocessor';
  *   }
  * }
  */
-export class SandboxTSConfigPreprocessor implements FilePreprocessor {
+export class TSConfigPreprocessor implements FilePreprocessor {
   private readonly touched: string[] = [];
   private readonly fs = new Map<string, File>();
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);

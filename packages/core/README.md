@@ -113,7 +113,8 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [mutator](#mutator)
 * [plugins](#plugins)
 * [reporters](#reporters)
-* [sandboxFileHeaders](#sandboxFileHeaders)
+* [sandbox.fileHeaders](#sandbox.fileHeaders)
+* [sandbox.stripComments](#sandbox.stripComments)
 * [symlinkNodeModules](#symlinkNodeModules)
 * [tempDirName](#tempDirName)
 * [testFramework](#testFramework)
@@ -293,16 +294,27 @@ The `clear-text` reporter supports three additional config options:
 
 The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.*](#dashboard) configuration options. See [the Stryker handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md) for more info.
 
-<a name="sandboxFileHeaders"></a>
-### `sandboxFileHeaders` [`object`]
+<a name="sandbox.fileHeaders"></a>
+### `sandbox.fileHeaders` [`object`]
 
 Default: `{ "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
 Command line: *none*
-Config file: `sandboxFileHeaders: {}`
+Config file: `sandbox: { fileHeaders: {} }`
 
-Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This can be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. 
+Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. 
 
 The key here is a [glob expression](https://globster.xyz/), where the value points to the header to be used for matching files.
+
+*Note: The default setting should work for most use cases, only change this if you know what you are doing.*
+
+<a name="sandbox.stripComments"></a>
+### `sandbox.stripComments` [`false` | `string`]
+
+Default: `"**/*+(.js|.ts|.cjs|.mjs)?(x)"`
+Command line: *none*
+Config file: `sandbox: { stripComments: "" }`
+
+Configure files to be stripped of comments (either single line with `//` or multi line with `/**/`. These comments will be stripped after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to remove any lingering `// @ts-check` or `// @ts-expect-error` comments that interfere with typescript compilation. The default setting allows comments to be stripped from all JavaScript and friend files in your sandbox, you can specify a different [glob expression](https://globster.xyz/) or set it to `false` to completely disable this behavior.
 
 *Note: The default setting should work for most use cases, only change this if you know what you are doing.*
 

@@ -1,8 +1,9 @@
 const path = require('path');
 const settings = require('../../stryker.parent.conf');
 const moduleName = __dirname.split(path.sep).pop();
-settings.dashboard.module = moduleName;
-delete settings.mochaOptions.spec;
+settings.dashboard = { module: moduleName };
+settings.sandboxFileHeaders = {
+  '+(src|test)/**/*.ts': '// @ts-nocheck\n'
+}
 delete settings.files;
-settings.coverageAnalysis = 'perTest';
 module.exports = settings;

@@ -76,6 +76,7 @@
     "rimraf": "~3.0.0",
     "rxjs": "~6.6.0",
     "source-map": "~0.7.3",
+    "strip-comments": "~2.0.1",
     "surrial": "~2.0.2",
     "tree-kill": "~1.2.0",
     "tslib": "~2.0.0",
@@ -91,6 +92,7 @@
     "@types/minimatch": "^3.0.3",
     "@types/node": "^14.0.1",
     "@types/progress": "~2.0.1",
+    "@types/strip-comments": "^2.0.0",
     "flatted": "^3.0.2"
   }
 }
