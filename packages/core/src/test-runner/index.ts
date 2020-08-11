@@ -21,9 +21,6 @@ export function createTestRunnerFactory(
     return () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
   } else {
     return () =>
-      new RetryDecorator(
-        () =>
-          new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.sandboxFileNames, sandbox.workingDirectory, loggingContext))
-      );
+      new RetryDecorator(() => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)));
   }
 }

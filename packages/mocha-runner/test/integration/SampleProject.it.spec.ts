@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
@@ -22,7 +21,7 @@ describe('Running a sample project', () => {
   let spec: string[];
 
   function createSut() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, spec).injectFunction(createMochaTestRunner);
+    return testInjector.injector.injectFunction(createMochaTestRunner);
   }
 
   describe('when tests pass', () => {

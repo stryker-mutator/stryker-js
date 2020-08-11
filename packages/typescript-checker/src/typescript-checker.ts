@@ -3,7 +3,7 @@ import path from 'path';
 
 import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens, OptionsContext, Injector, Scope } from '@stryker-mutator/api/plugin';
+import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
@@ -29,7 +29,7 @@ function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, targ
 }
 
 create.inject = tokens(commonTokens.injector);
-export function create(injector: Injector<OptionsContext>): TypescriptChecker {
+export function create(injector: Injector<PluginContext>): TypescriptChecker {
   return injector
     .provideFactory(commonTokens.logger, typescriptCheckerLoggerFactory, Scope.Transient)
     .provideClass(pluginTokens.fs, HybridFileSystem)

@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -15,7 +14,7 @@ describe('Running a project with root hooks', () => {
 
   beforeEach(async () => {
     process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'parallel-with-root-hooks-sample'));
-    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectFunction(createMochaTestRunner);
+    sut = testInjector.injector.injectFunction(createMochaTestRunner);
     await sut.init();
   });
 

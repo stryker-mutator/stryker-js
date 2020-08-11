@@ -1,5 +1,5 @@
 import * as Mocha from 'mocha';
-import * as multimatch from 'multimatch';
+import glob = require('glob');
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
@@ -40,7 +40,7 @@ try {
 export default class LibWrapper {
   public static Mocha = Mocha;
   public static require = require;
-  public static multimatch = multimatch;
+  public static glob = glob.sync;
   public static loadOptions = loadOptions;
   public static collectFiles = collectFiles;
   public static handleRequires = handleRequires;

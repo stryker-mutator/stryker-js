@@ -19,9 +19,9 @@ const DEFAULT_TEST_PATTERN = 'test/**/*.js';
  * Currently supports mocha < 6
  */
 export class MochaAdapter {
-  public static readonly inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames);
+  public static readonly inject = tokens(commonTokens.logger);
 
-  constructor(private readonly log: Logger, private readonly allFileNames: readonly string[]) {}
+  constructor(private readonly log: Logger) {}
 
   public create(options: Mocha.MochaOptions) {
     return new LibWrapper.Mocha(options);
@@ -70,12 +70,12 @@ export class MochaAdapter {
 
   private legacyDiscoverFiles(options: MochaOptions): string[] {
     const globPatterns = this.mochaFileGlobPatterns(options);
-    const globPatternsAbsolute = globPatterns.map((glob) => path.resolve(glob));
-    const fileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
-    if (fileNames.length) {
+    const fileNames = new Set<string>();
+    globPatterns.forEach((patten) => LibWrapper.glob(patten).forEach((fileName) => fileNames.add(fileName)));
+    if (fileNames.size) {
       this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
     } else {
-      this.log.debug(`Tried ${JSON.stringify(globPatternsAbsolute, null, 2)} on files: ${JSON.stringify(this.allFileNames, null, 2)}.`);
+      this.log.debug(`Tried ${JSON.stringify(globPatterns, null, 2)} but did not result in any files.`);
       throw new Error(
         `[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(
           globPatterns,
@@ -87,7 +87,7 @@ export class MochaAdapter {
         )} in your config file.`
       );
     }
-    return fileNames;
+    return [...fileNames];
   }
 
   private mochaFileGlobPatterns(mochaOptions: MochaOptions): string[] {

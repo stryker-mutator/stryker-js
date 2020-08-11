@@ -1,4 +1,4 @@
-import { tokens, commonTokens, Injector, OptionsContext } from '@stryker-mutator/api/plugin';
+import { tokens, commonTokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -10,7 +10,7 @@ import ReactScriptsJestConfigLoader from './ReactScriptsJestConfigLoader';
 import ReactScriptsTSJestConfigLoader from './ReactScriptsTSJestConfigLoader';
 
 configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
-export function configLoaderFactory(options: StrykerOptions, injector: Injector<OptionsContext>, log: Logger) {
+export function configLoaderFactory(options: StrykerOptions, injector: Injector<PluginContext>, log: Logger) {
   const warnAboutConfigFile = (projectType: string, configFile: string | undefined) => {
     if (configFile) {
       log.warn(`Config setting "configFile" is not supported for projectType "${projectType}"`);

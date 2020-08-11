@@ -37,7 +37,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
       plugins: ['foo-plugin', 'bar-plugin'],
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };
-    sut = new ChildProcessTestRunnerDecorator(options, [], 'a working directory', loggingContext);
+    sut = new ChildProcessTestRunnerDecorator(options, 'a working directory', loggingContext);
   });
 
   it('should create the child process proxy', () => {
@@ -45,7 +45,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
       require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
       loggingContext,
       options,
-      { sandboxFileNames: [] },
+      {},
       'a working directory',
       ChildProcessTestRunnerWorker
     );

@@ -1,6 +1,6 @@
 import { StrykerOptions, INSTRUMENTER_CONSTANTS, Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Injector, OptionsContext, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
   TestRunner2,
   MutantRunOptions,
@@ -25,7 +25,7 @@ import { configLoaderFactory } from './configLoaders';
 import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
 import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
 
-export function jestTestRunnerFactory(injector: Injector<OptionsContext>) {
+export function jestTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
     .provideValue(processEnvToken, process.env)
     .provideValue(jestVersionToken, require('jest/package.json').version as string)

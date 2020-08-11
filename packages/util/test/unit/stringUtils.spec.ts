@@ -46,7 +46,9 @@ describe('stringUtils', () => {
       expect(escapeRegExp('something normal')).eq('something normal');
     });
 
-    it("should not escape `/` (that's only needed for regex literals)");
+    it("should not escape `/` (that's only needed for regex literals)", () => {
+      expect(escapeRegExp('n/a')).eq('n/a');
+    });
 
     for (const letter of '.*+-?^${}()|[]\\') {
       it(`should escape "${letter}"`, () => {

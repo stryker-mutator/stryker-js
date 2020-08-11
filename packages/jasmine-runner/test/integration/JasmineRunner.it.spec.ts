@@ -1,13 +1,13 @@
 import * as path from 'path';
 
-import { factory, assertions } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test_runner';
 
-import JasmineTestRunner from '../../src/JasmineTestRunner';
+import JasmineTestRunner, { createJasmineTestRunner } from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
-import { resolveJasmineInitFiles, jasmineInitSuccessResults } from './helpers';
+import { jasmineInitSuccessResults } from './helpers';
 
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
@@ -16,14 +16,16 @@ describe('JasmineRunner integration', () => {
     global.__testsInCurrentJasmineRun = [];
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     process.chdir(path.resolve(__dirname, '../../..'));
+    await sut.dispose();
   });
 
   describe('using the jasmine-init project', () => {
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
-      sut = new JasmineTestRunner(resolveJasmineInitFiles(), factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' }));
+      testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
+      sut = testInjector.injector.injectFunction(createJasmineTestRunner);
     });
 
     it('should run the specs', async () => {
@@ -88,7 +90,7 @@ describe('JasmineRunner integration', () => {
   describe('using a jasmine-project with errors', () => {
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/errors'));
-      sut = new JasmineTestRunner([path.resolve('lib', 'error.js'), path.resolve('spec', 'errorSpec.js')], factory.strykerOptions());
+      sut = testInjector.injector.injectFunction(createJasmineTestRunner);
     });
 
     it('should be able to tell the error', async () => {
@@ -103,7 +105,7 @@ describe('JasmineRunner integration', () => {
   describe('when it includes failed tests', () => {
     beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
-      sut = new JasmineTestRunner([path.resolve('lib', 'foo.js'), path.resolve('spec', 'fooSpec.js')], factory.strykerOptions());
+      sut = testInjector.injector.injectFunction(createJasmineTestRunner);
     });
 
     it('should complete with one test failure', async () => {

@@ -1,7 +1,6 @@
 import path = require('path');
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/test_runner2';
 
@@ -21,7 +20,7 @@ describe('Running an instrumented project', () => {
       resolve('./testResources/sample-project-instrumented/MyMathSpec.js'),
     ];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
-    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, spec).injectFunction(createMochaTestRunner);
+    sut = testInjector.injector.injectFunction(createMochaTestRunner);
     await sut.init();
   });
 

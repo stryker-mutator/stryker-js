@@ -4,7 +4,6 @@ import fs = require('fs');
 import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { MochaAdapter } from '../../src/MochaAdapter';
 import LibWrapper from '../../src/LibWrapper';
@@ -15,19 +14,17 @@ describe(MochaAdapter.name, () => {
   let handleRequiresStub: sinon.SinonStub;
   let loadRootHooks: sinon.SinonStub;
   let sut: MochaAdapter;
-  let sandboxFileNames: string[];
   let mochaConstructorStub: sinon.SinonStub;
   let existsSyncStub: sinon.SinonStub;
 
   beforeEach(() => {
-    sandboxFileNames = [];
     requireStub = sinon.stub(LibWrapper, 'require');
     mochaConstructorStub = sinon.stub(LibWrapper, 'Mocha');
     collectFilesStub = sinon.stub(LibWrapper, 'collectFiles');
     handleRequiresStub = sinon.stub(LibWrapper, 'handleRequires');
     loadRootHooks = sinon.stub(LibWrapper, 'loadRootHooks');
     existsSyncStub = sinon.stub(fs, 'existsSync');
-    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, sandboxFileNames).injectClass(MochaAdapter);
+    sut = testInjector.injector.injectClass(MochaAdapter);
   });
 
   describe(MochaAdapter.prototype.create.name, () => {
@@ -43,69 +40,61 @@ describe(MochaAdapter.name, () => {
   });
 
   describe(MochaAdapter.prototype.collectFiles.name, () => {
-    let multimatchStub: sinon.SinonStub;
+    let globStub: sinon.SinonStub;
 
     describe('when mocha version < 6', () => {
       beforeEach(() => {
         collectFilesStub.value(undefined);
-        multimatchStub = sinon.stub(LibWrapper, 'multimatch');
+        globStub = sinon.stub(LibWrapper, 'glob');
       });
 
       it('should log about mocha < 6 detection', async () => {
-        multimatchStub.returns(['foo.js']);
+        globStub.returns(['foo.js']);
         sut.collectFiles({});
         expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to discover files');
       });
 
       it('should support both `files` as `spec`', async () => {
-        multimatchStub.returns(['foo.js']);
-        sandboxFileNames.push('foo');
+        globStub.returns(['foo.js']);
         sut.collectFiles({
           files: ['bar'],
           spec: ['foo'],
         });
-        expect(multimatchStub).calledWith(['foo'], [path.resolve('foo'), path.resolve('bar')]);
-      });
-
-      it('should match given file names with configured mocha files as `array`', () => {
-        const relativeGlobPatterns = ['*.js', 'baz.js'];
-        const expectedGlobPatterns = relativeGlobPatterns.map((glob) => path.resolve(glob));
-        actAssertMatchedPatterns(relativeGlobPatterns, expectedGlobPatterns);
+        expect(globStub).calledWith('foo');
+        expect(globStub).calledWith('bar');
       });
 
       it('should match given file names with configured mocha files as `string`', () => {
+        // Arrange
         const relativeGlobPattern = '*.js';
-        const expectedGlobPatterns = [path.resolve(relativeGlobPattern)];
-        actAssertMatchedPatterns(relativeGlobPattern, expectedGlobPatterns);
+        const expectedFiles = ['foo.js', 'bar.js'];
+        globStub.returns(expectedFiles);
+
+        // Act
+        const actualFiles = sut.collectFiles({ files: relativeGlobPattern });
+
+        // Assert
+        expect(globStub).calledWith(relativeGlobPattern);
+        expect(actualFiles).deep.eq(expectedFiles);
       });
 
       it('should match given file names with default mocha pattern "test/**/*.js"', () => {
-        const expectedGlobPatterns = [path.resolve('test/**/*.js')];
-        actAssertMatchedPatterns(undefined, expectedGlobPatterns);
+        globStub.returns(['foo.js']);
+        sut.collectFiles({});
+        expect(globStub).calledWith('test/**/*.js');
       });
 
       it('should reject if no files could be discovered', async () => {
         // Arrange
-        multimatchStub.returns([]);
-        sandboxFileNames.push('foo.js', 'bar.js');
+        globStub.returns([]);
         const relativeGlobbing = JSON.stringify(['test/**/*.js'], null, 2);
-        const absoluteGlobbing = JSON.stringify([path.resolve('test/**/*.js')], null, 2);
-        const filesStringified = JSON.stringify(sandboxFileNames, null, 2);
 
         // Act & assert
         expect(() => sut.collectFiles({})).throws(
           `[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing}). Please specify the files (glob patterns) containing your tests in mochaOptions.spec in your config file.`
         );
-        expect(testInjector.logger.debug).calledWith(`Tried ${absoluteGlobbing} on files: ${filesStringified}.`);
+        expect(testInjector.logger.debug).calledWith(`Tried ${relativeGlobbing} but did not result in any files.`);
       });
-
-      function actAssertMatchedPatterns(relativeGlobPatterns: string | string[] | undefined, expectedGlobPatterns: string[]) {
-        const expectedFiles = ['foo.js', 'bar.js'];
-        sandboxFileNames.push(...expectedFiles);
-        multimatchStub.returns(['foo.js']);
-        sut.collectFiles({ files: relativeGlobPatterns });
-        expect(multimatchStub).calledWith(expectedFiles, expectedGlobPatterns);
-      }
     });
 
     describe('when mocha version >= 6', () => {
