@@ -99,5 +99,6 @@ function createModule(content: string, fileName: string): NodeModule {
     parent: null,
     paths: [],
     require,
+    path: '',
   };
 }

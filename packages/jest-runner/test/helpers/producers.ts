@@ -19,6 +19,7 @@ export function createAssertionResult(overrides?: Partial<AssertionResult>): Ass
     status: 'passed',
     title: 'should be bar',
     duration: 25,
+    failureDetails: [],
     ...overrides,
   };
 }
@@ -122,7 +123,7 @@ export const createFailResult = (): AggregatedResult =>
       }),
       createJestTestResult({
         testResults: [
-          {
+          createAssertionResult({
             ancestorTitles: ['App'],
             duration: 23,
             failureMessages: [],
@@ -130,7 +131,7 @@ export const createFailResult = (): AggregatedResult =>
             numPassingAsserts: 0,
             status: 'passed',
             title: 'renders without crashing',
-          },
+          }),
         ],
       }),
     ],
