@@ -45,7 +45,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
       require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
       loggingContext,
       options,
-      { sandboxFileNames: [] },
+      {},
       'a working directory',
       ChildProcessTestRunnerWorker
     );
