@@ -2,7 +2,7 @@ import { ChildProcess, fork } from 'child_process';
 import * as os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { OptionsContext } from '@stryker-mutator/api/plugin';
+import { PluginContext } from '@stryker-mutator/api/plugin';
 import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
@@ -71,13 +71,13 @@ export default class ChildProcessProxy<T> implements Disposable {
   /**
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
-  public static create<TAdditionalContext, R, Tokens extends Array<InjectionToken<OptionsContext & TAdditionalContext>>>(
+  public static create<TAdditionalContext, R, Tokens extends Array<InjectionToken<PluginContext & TAdditionalContext>>>(
     requirePath: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    InjectableClass: InjectableClass<TAdditionalContext & OptionsContext, R, Tokens>
+    InjectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>
   ): ChildProcessProxy<R> {
     return new ChildProcessProxy(requirePath, InjectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
   }

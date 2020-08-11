@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -8,14 +7,8 @@ import { createMochaOptions } from '../helpers/factories';
 import { createMochaTestRunner } from '../../src';
 
 describe('QUnit sample', () => {
-  let files: string[];
-
-  beforeEach(() => {
-    files = [];
-  });
-
   function createSut() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, files).injectFunction(createMochaTestRunner);
+    return testInjector.injector.injectFunction(createMochaTestRunner);
   }
 
   it('should work when configured with "qunit" ui', async () => {
@@ -25,7 +18,6 @@ describe('QUnit sample', () => {
       ui: 'qunit',
     });
     testInjector.options.mochaOptions = mochaOptions;
-    files = mochaOptions.spec!;
     const sut = createSut();
     await sut.init();
     const actualResult = await sut.dryRun(factory.dryRunOptions());
@@ -40,7 +32,6 @@ describe('QUnit sample', () => {
   });
 
   it('should not run tests when not configured with "qunit" ui', async () => {
-    files = [resolve('./testResources/qunit-sample/MyMathSpec.js'), resolve('./testResources/qunit-sample/MyMath.js')];
     testInjector.options.mochaOptions = createMochaOptions({
       files: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
     });

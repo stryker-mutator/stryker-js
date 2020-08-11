@@ -1,10 +1,8 @@
-import path = require('path');
-
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
-import { I, escapeRegExp } from '@stryker-mutator/util';
+import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
 
 import {
   TestRunner2,
@@ -27,22 +25,29 @@ import { MochaAdapter } from './MochaAdapter';
 
 export class MochaTestRunner implements TestRunner2 {
   public testFileNames: string[];
-  public allProjectFileNames: Set<string> | undefined;
   public rootHooks: any;
   public mochaOptions!: MochaOptions;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.loader, pluginTokens.mochaAdapter);
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    pluginTokens.loader,
+    pluginTokens.mochaAdapter,
+    pluginTokens.directoryRequireCache
+  );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly loader: I<MochaOptionsLoader>,
-    private readonly mochaAdapter: I<MochaAdapter>
+    private readonly mochaAdapter: I<MochaAdapter>,
+    private readonly requireCache: I<DirectoryRequireCache>
   ) {
     StrykerMochaReporter.log = log;
   }
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
+    this.requireCache.init(this.testFileNames);
     if (this.mochaOptions.require) {
       this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }
@@ -79,7 +84,7 @@ export class MochaTestRunner implements TestRunner2 {
   }
 
   public async run(intercept: (mocha: Mocha) => void): Promise<DryRunResult> {
-    this.purgeFiles();
+    this.requireCache.clear();
     const mocha = this.mochaAdapter.create({
       reporter: StrykerMochaReporter as any,
       bail: true,
@@ -94,7 +99,7 @@ export class MochaTestRunner implements TestRunner2 {
         // Since mocha 7.2
         (mocha as any).dispose();
       }
-      this.recordAllLoadedProjectFiles();
+      this.requireCache.record();
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
         const result: CompleteDryRunResult = {
@@ -122,26 +127,6 @@ export class MochaTestRunner implements TestRunner2 {
     return new Promise<void>((res) => {
       mocha.run(() => res());
     });
-  }
-
-  private recordAllLoadedProjectFiles() {
-    if (!this.allProjectFileNames) {
-      const sandboxDirectory = process.cwd();
-      this.allProjectFileNames = new Set(
-        Object.keys(require.cache).filter(
-          (fileName) => fileName.startsWith(sandboxDirectory) && !fileName.startsWith(path.join(sandboxDirectory, 'node_modules'))
-        )
-      );
-      // Just to be sure we're also adding the test files to the project files
-      // This should already have been done with the above code.
-      this.testFileNames.forEach((testFile) => this.allProjectFileNames!.add(testFile));
-    }
-  }
-
-  private purgeFiles() {
-    if (this.allProjectFileNames) {
-      this.allProjectFileNames.forEach((fileName) => delete require.cache[fileName]);
-    }
   }
 
   private addFiles(mocha: Mocha) {

@@ -4,7 +4,6 @@ import fs = require('fs');
 import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { MochaAdapter } from '../../src/MochaAdapter';
 import LibWrapper from '../../src/LibWrapper';
@@ -27,7 +26,7 @@ describe(MochaAdapter.name, () => {
     handleRequiresStub = sinon.stub(LibWrapper, 'handleRequires');
     loadRootHooks = sinon.stub(LibWrapper, 'loadRootHooks');
     existsSyncStub = sinon.stub(fs, 'existsSync');
-    sut = testInjector.injector.provideValue(commonTokens.sandboxFileNames, sandboxFileNames).injectClass(MochaAdapter);
+    sut = testInjector.injector.injectClass(MochaAdapter);
   });
 
   describe(MochaAdapter.prototype.create.name, () => {
@@ -48,7 +47,7 @@ describe(MochaAdapter.name, () => {
     describe('when mocha version < 6', () => {
       beforeEach(() => {
         collectFilesStub.value(undefined);
-        multimatchStub = sinon.stub(LibWrapper, 'multimatch');
+        multimatchStub = sinon.stub(LibWrapper, 'glob');
       });
 
       it('should log about mocha < 6 detection', async () => {

@@ -1,11 +1,11 @@
-import path = require('path');
-
 import { expect } from 'chai';
 import * as Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
 
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+
+import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
@@ -15,6 +15,7 @@ import MochaOptionsLoader from '../../src/MochaOptionsLoader';
 import { createMochaOptions } from '../helpers/factories';
 
 describe(MochaTestRunner.name, () => {
+  let directoryRequireCacheMock: sinon.SinonStubbedInstance<DirectoryRequireCache>;
   let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<Mocha.Suite>; dispose?: sinon.SinonStub };
   let mochaAdapterMock: sinon.SinonStubbedInstance<MochaAdapter>;
   let mochaOptionsLoaderMock: sinon.SinonStubbedInstance<MochaOptionsLoader>;
@@ -22,6 +23,7 @@ describe(MochaTestRunner.name, () => {
 
   beforeEach(() => {
     reporterMock = sinon.createStubInstance(StrykerMochaReporter);
+    directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);
     reporterMock.tests = [];
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
@@ -32,9 +34,6 @@ describe(MochaTestRunner.name, () => {
 
   afterEach(() => {
     // These keys can be used to test the nodejs cache
-    delete require.cache[path.resolve('foo.js')];
-    delete require.cache[path.resolve('bar.js')];
-    delete require.cache[path.resolve('baz.js')];
     delete StrykerMochaReporter.log;
   });
 
@@ -42,6 +41,7 @@ describe(MochaTestRunner.name, () => {
     return testInjector.injector
       .provideValue(pluginTokens.mochaAdapter, mochaAdapterMock)
       .provideValue(pluginTokens.loader, mochaOptionsLoaderMock)
+      .provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock)
       .injectClass(MochaTestRunner);
   }
 
@@ -74,6 +74,16 @@ describe(MochaTestRunner.name, () => {
 
       expect(mochaAdapterMock.collectFiles).calledWithExactly(mochaOptions);
       expect(sut.testFileNames).eq(expectedTestFileNames);
+    });
+
+    it('should init the directory require cache', async () => {
+      const expectedTestFileNames = ['foo.js', 'foo.spec.js'];
+      mochaAdapterMock.collectFiles.returns(expectedTestFileNames);
+      mochaOptionsLoaderMock.load.returns({});
+
+      await sut.init();
+
+      expect(directoryRequireCacheMock.init).calledWithExactly(expectedTestFileNames);
     });
 
     it('should not handle requires when there are no `requires`', async () => {
@@ -197,32 +207,17 @@ describe(MochaTestRunner.name, () => {
       expect(result.errorMessage).eq("Mocha didn't instantiate the StrykerMochaReporter correctly. Test result cannot be reported.");
     });
 
-    it('should collect and purge the project files between runs', async () => {
+    it('should collect and purge the requireCache between runs', async () => {
       // Arrange
-      const sandboxDir = 'sandbox-dir';
-      const cwdStub = sinon.stub(process, 'cwd');
-      cwdStub.returns(sandboxDir);
-      const projectFile = path.join(sandboxDir, 'foo.js');
-      const testFile = path.join(sandboxDir, 'foo.spec.js');
-      const dependencyFile = path.join(sandboxDir, 'node_modules', 'baz.js');
-      testFileNames.push(testFile);
-      require.cache[projectFile] = 'foo' as any;
-      require.cache[testFile] = 'bar' as any;
-      require.cache[dependencyFile] = 'baz' as any;
+      testFileNames.push('');
 
       // Act
-      await actDryRun();
-      const onGoingTest = sut.mutantRun(factory.mutantRunOptions());
+      await actDryRun(factory.dryRunOptions());
 
       // Assert
-      expect(require.cache[projectFile]).undefined;
-      expect(require.cache[testFile]).undefined;
-      expect(require.cache[dependencyFile]).eq('baz');
-      mocha.run.callArg(0);
-      await onGoingTest;
-      delete require.cache[projectFile];
-      delete require.cache[testFile];
-      delete require.cache[dependencyFile];
+      expect(directoryRequireCacheMock.clear).called;
+      expect(directoryRequireCacheMock.record).called;
+      expect(directoryRequireCacheMock.clear).calledBefore(directoryRequireCacheMock.record);
     });
 
     it('should dispose of mocha when it supports it', async () => {

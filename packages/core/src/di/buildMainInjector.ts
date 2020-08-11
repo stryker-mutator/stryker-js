@@ -1,6 +1,6 @@
 import execa = require('execa');
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, Injector, OptionsContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, Injector, PluginContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { getLogger } from 'log4js';
 
@@ -14,7 +14,7 @@ import { loggerFactory, mutatorDescriptorFactory, pluginResolverFactory } from '
 
 import { coreTokens, PluginCreator } from '.';
 
-export interface MainContext extends OptionsContext {
+export interface MainContext extends PluginContext {
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
   [coreTokens.pluginCreatorChecker]: PluginCreator<PluginKind.Checker>;

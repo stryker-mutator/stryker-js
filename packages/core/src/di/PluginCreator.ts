@@ -3,7 +3,7 @@ import {
   commonTokens,
   FactoryPlugin,
   Plugin,
-  PluginContexts,
+  PluginContext,
   PluginInterfaces,
   PluginKind,
   PluginResolver,
@@ -15,7 +15,7 @@ export class PluginCreator<TPluginKind extends PluginKind> {
   private constructor(
     private readonly kind: TPluginKind,
     private readonly pluginResolver: PluginResolver,
-    private readonly injector: Injector<PluginContexts[TPluginKind]>
+    private readonly injector: Injector<PluginContext>
   ) {}
 
   public create(name: string): PluginInterfaces[TPluginKind] {
@@ -29,14 +29,14 @@ export class PluginCreator<TPluginKind extends PluginKind> {
     }
   }
 
-  private isFactoryPlugin(plugin: Plugin<PluginKind>): plugin is FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContexts[TPluginKind]>>> {
-    return !!(plugin as FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContexts[TPluginKind]>>>).factory;
+  private isFactoryPlugin(plugin: Plugin<PluginKind>): plugin is FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>> {
+    return !!(plugin as FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>).factory;
   }
-  private isClassPlugin(plugin: Plugin<PluginKind>): plugin is ClassPlugin<TPluginKind, Array<InjectionToken<PluginContexts[TPluginKind]>>> {
-    return !!(plugin as ClassPlugin<TPluginKind, Array<InjectionToken<PluginContexts[TPluginKind]>>>).injectableClass;
+  private isClassPlugin(plugin: Plugin<PluginKind>): plugin is ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>> {
+    return !!(plugin as ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>).injectableClass;
   }
 
-  public static createFactory<TPluginKind extends PluginKind, TContext extends PluginContexts[TPluginKind]>(
+  public static createFactory<TPluginKind extends PluginKind, TContext extends PluginContext>(
     kind: TPluginKind
   ): InjectableFunctionWithInject<TContext, PluginCreator<TPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
     function factory(pluginResolver: PluginResolver, injector: Injector<TContext>): PluginCreator<TPluginKind> {

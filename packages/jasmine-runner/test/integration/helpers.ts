@@ -1,15 +1,4 @@
-import path = require('path');
-
 import { TestStatus, SuccessTestResult } from '@stryker-mutator/api/test_runner2';
-
-export function resolveJasmineInitFiles(): readonly string[] {
-  return [
-    path.resolve('lib', 'jasmine_examples', 'Player.js'),
-    path.resolve('lib', 'jasmine_examples', 'Song.js'),
-    path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
-    path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js'),
-  ];
-}
 
 export const jasmineInitResultTestNames = Object.freeze([
   'Player should be able to play a Song',

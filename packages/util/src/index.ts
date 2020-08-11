@@ -9,3 +9,4 @@ export * from './notEmpty';
 export * from './flatMap';
 export * from './I';
 export * from './Task';
+export * from './DirectoryRequireCache';

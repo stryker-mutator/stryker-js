@@ -1,11 +1,13 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
-import { factory, assertions } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
 import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner2';
 
 import Jasmine = require('jasmine');
+import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import * as helpers from '../../src/helpers';
+import * as pluginTokens from '../../src/pluginTokens';
 import JasmineTestRunner from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
@@ -14,8 +16,8 @@ describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
   let jasmineStub: sinon.SinonStubbedInstance<Jasmine>;
   let jasmineEnvStub: sinon.SinonStubbedInstance<jasmine.Env>;
+  let directoryRequireCacheMock: sinon.SinonStubbedInstance<DirectoryRequireCache>;
   let sut: JasmineTestRunner;
-  let fileNames: string[];
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
@@ -23,15 +25,11 @@ describe(JasmineTestRunner.name, () => {
     jasmineEnvStub = createEnvStub();
     jasmineStub.env = (jasmineEnvStub as unknown) as jasmine.Env;
     sinon.stub(helpers, 'Jasmine').returns(jasmineStub);
-    fileNames = ['foo.js', 'bar.js'];
     clock = sinon.useFakeTimers();
+    directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);
     jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
-    sut = new JasmineTestRunner(fileNames, factory.strykerOptions({ jasmineConfigFile: 'jasmineConfFile' }));
-  });
-
-  afterEach(() => {
-    delete require.cache['foo.js'];
-    delete require.cache['bar.js'];
+    testInjector.options.jasmineConfigFile = 'jasmineConfFile';
+    sut = testInjector.injector.provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock).injectClass(JasmineTestRunner);
   });
 
   describe('mutantRun', () => {
@@ -51,12 +49,11 @@ describe(JasmineTestRunner.name, () => {
       expect(jasmineStub.randomizeTests).calledWith(false);
     });
 
-    it('should clear require cache on run', async () => {
-      require.cache['foo.js'] = 'foo' as any;
-      require.cache['bar.js'] = 'bar' as any;
+    it('should clear require cache for each run', async () => {
       await actEmptyMutantRun();
-      expect(require.cache['foo.js']).not.ok;
-      expect(require.cache['bar.js']).not.ok;
+      expect(directoryRequireCacheMock.clear).called;
+      expect(directoryRequireCacheMock.record).called;
+      expect(directoryRequireCacheMock.clear).calledBefore(directoryRequireCacheMock.record);
     });
 
     it('should filter tests based on testFilter', async () => {

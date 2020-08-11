@@ -1,6 +1,5 @@
 import * as path from 'path';
 
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
@@ -40,7 +39,7 @@ describe('Mocha 6 file resolving integration', () => {
   }
 
   function createTestRunner() {
-    return testInjector.injector.provideValue(commonTokens.sandboxFileNames, []).injectFunction(createMochaTestRunner);
+    return testInjector.injector.injectFunction(createMochaTestRunner);
   }
 
   function resolveTestDir(fileName = '.') {

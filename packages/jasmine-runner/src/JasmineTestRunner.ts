@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 
 import { StrykerOptions, CoverageAnalysis } from '@stryker-mutator/api/core';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
 import {
   DryRunStatus,
   TestResult,
@@ -14,18 +14,24 @@ import {
   DryRunOptions,
   MutantCoverage,
 } from '@stryker-mutator/api/test_runner2';
-import { errorToString, Task } from '@stryker-mutator/util';
+import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 
 import { Jasmine, toStrykerTestResult } from './helpers';
+import * as pluginTokens from './pluginTokens';
+
+createJasmineTestRunner.inject = tokens(commonTokens.injector);
+export function createJasmineTestRunner(injector: Injector<PluginContext>) {
+  return injector.provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache).injectClass(JasmineTestRunner);
+}
 
 export default class JasmineTestRunner implements TestRunner2 {
   private readonly jasmineConfigFile: string | undefined;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
-  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options);
-  constructor(private readonly fileNames: readonly string[], options: StrykerOptions) {
+  public static inject = tokens(commonTokens.options, pluginTokens.directoryRequireCache);
+  constructor(options: StrykerOptions, private readonly requireCache: I<DirectoryRequireCache>) {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
   }
 
@@ -39,8 +45,12 @@ export default class JasmineTestRunner implements TestRunner2 {
     return toMutantRunResult(runResult);
   }
 
+  public async dispose(): Promise<void> {
+    this.requireCache.clear();
+  }
+
   private async run(testFilter?: string[], coverageAnalysis?: CoverageAnalysis): Promise<DryRunResult> {
-    this.clearRequireCache();
+    this.requireCache.clear();
     try {
       const jasmine = this.createJasmineRunner(testFilter);
       const self = this;
@@ -58,6 +68,7 @@ export default class JasmineTestRunner implements TestRunner2 {
           tests.push(toStrykerTestResult(result, new self.Date().getTime() - startTimeCurrentSpec));
         },
         jasmineDone() {
+          self.requireCache.record();
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
             mutantCoverage = global.__mutantCoverage__;
@@ -101,11 +112,5 @@ export default class JasmineTestRunner implements TestRunner2 {
     jasmine.env.clearReporters();
     jasmine.randomizeTests(false);
     return jasmine;
-  }
-
-  private clearRequireCache() {
-    this.fileNames.forEach((fileName) => {
-      delete require.cache[fileName];
-    });
   }
 }

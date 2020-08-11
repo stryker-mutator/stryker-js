@@ -16,12 +16,12 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 export default class ChildProcessTestRunnerDecorator implements TestRunner2 {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
-  constructor(options: StrykerOptions, sandboxFileNames: readonly string[], sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
+  constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
       require.resolve(`./${ChildProcessTestRunnerWorker.name}`),
       loggingContext,
       options,
-      { sandboxFileNames },
+      {},
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker
     );
