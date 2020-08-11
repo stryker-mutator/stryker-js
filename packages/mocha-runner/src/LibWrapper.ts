@@ -40,7 +40,7 @@ try {
 export default class LibWrapper {
   public static Mocha = Mocha;
   public static require = require;
-  public static glob = glob;
+  public static glob = glob.sync;
   public static loadOptions = loadOptions;
   public static collectFiles = collectFiles;
   public static handleRequires = handleRequires;

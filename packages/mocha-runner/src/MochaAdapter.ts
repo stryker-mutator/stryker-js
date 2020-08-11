@@ -71,7 +71,7 @@ export class MochaAdapter {
   private legacyDiscoverFiles(options: MochaOptions): string[] {
     const globPatterns = this.mochaFileGlobPatterns(options);
     const fileNames = new Set<string>();
-    globPatterns.forEach((patten) => LibWrapper.glob.sync(patten).forEach((fileName) => fileNames.add(fileName)));
+    globPatterns.forEach((patten) => LibWrapper.glob(patten).forEach((fileName) => fileNames.add(fileName)));
     if (fileNames.size) {
       this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
     } else {
