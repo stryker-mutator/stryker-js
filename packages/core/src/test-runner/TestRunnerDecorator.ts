@@ -10,7 +10,7 @@ export default class TestRunnerDecorator implements Required<TestRunner2>, Dispo
 
   public init(): Promise<void> {
     if (this.innerRunner.init) {
-      return this.innerRunner.init() || Promise.resolve();
+      return this.innerRunner.init();
     } else {
       return Promise.resolve();
     }
@@ -28,7 +28,7 @@ export default class TestRunnerDecorator implements Required<TestRunner2>, Dispo
 
   public dispose(): Promise<any> {
     if (this.innerRunner.dispose) {
-      return this.innerRunner.dispose() || Promise.resolve();
+      return this.innerRunner.dispose();
     } else {
       return Promise.resolve();
     }

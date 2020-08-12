@@ -14,9 +14,9 @@ export function glob(expression: string): Promise<string[]> {
 }
 
 export function deleteDir(dirToDelete: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>((_, reject) => {
     rimraf(dirToDelete, (error) => {
-      error ? reject(error) : resolve();
+      reject(error);
     });
   });
 }
