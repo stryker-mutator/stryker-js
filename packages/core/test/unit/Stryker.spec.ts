@@ -4,11 +4,14 @@ import * as sinon from 'sinon';
 import * as typedInject from 'typed-inject';
 import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../../src/logging';
 import Stryker from '../../src/Stryker';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from '../../src/process';
 import { coreTokens } from '../../src/di';
+import { ConfigError } from '../../src/errors';
 
 describe(Stryker.name, () => {
   let sut: Stryker;
@@ -16,6 +19,8 @@ describe(Stryker.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector>;
   let cliOptions: PartialStrykerOptions;
   let mutantResults: MutantResult[];
+  let loggerMock: sinon.SinonStubbedInstance<Logger>;
+  let getLoggerStub: sinon.SinonStub;
 
   let prepareExecutorMock: sinon.SinonStubbedInstance<PrepareExecutor>;
   let mutantInstrumenterExecutorMock: sinon.SinonStubbedInstance<MutantInstrumenterExecutor>;
@@ -24,6 +29,8 @@ describe(Stryker.name, () => {
 
   beforeEach(() => {
     injectorMock = factory.injector();
+    loggerMock = factory.logger();
+    getLoggerStub = sinon.stub();
     mutantResults = [];
     prepareExecutorMock = sinon.createStubInstance(PrepareExecutor);
     mutantInstrumenterExecutorMock = sinon.createStubInstance(MutantInstrumenterExecutor);
@@ -38,6 +45,8 @@ describe(Stryker.name, () => {
       .returns(dryRunExecutorMock)
       .withArgs(MutationTestExecutor)
       .returns(mutationTestExecutorMock);
+    injectorMock.resolve.withArgs(commonTokens.getLogger).returns(getLoggerStub);
+    getLoggerStub.returns(loggerMock);
 
     prepareExecutorMock.execute.resolves(injectorMock);
     mutantInstrumenterExecutorMock.execute.resolves(injectorMock);
@@ -50,7 +59,7 @@ describe(Stryker.name, () => {
 
   describe('runMutationTest()', () => {
     beforeEach(() => {
-      sut = new Stryker(cliOptions, injectorMock);
+      sut = new Stryker(cliOptions, () => injectorMock);
     });
 
     it('should execute the preparations', async () => {
@@ -85,25 +94,78 @@ describe(Stryker.name, () => {
       await expect(sut.runMutationTest()).rejectedWith(expectedError);
     });
 
+    it('should not log a stack trace for a config error', async () => {
+      const expectedError = new ConfigError('foo should be bar');
+      prepareExecutorMock.execute.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejected;
+      expect(loggerMock.error).calledWithExactly('foo should be bar');
+    });
+
     it('should reject when execute the mutant instrumenter rejects', async () => {
       const expectedError = new Error('expected error for testing');
       mutationTestExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejectedWith(expectedError);
     });
+
     it('should reject when execute the dry run rejects', async () => {
       const expectedError = new Error('expected error for testing');
       dryRunExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejectedWith(expectedError);
     });
+
     it('should reject when execute actual mutation testing rejects', async () => {
       const expectedError = new Error('expected error for testing');
       mutationTestExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejectedWith(expectedError);
     });
 
+    it('should log the error when prepare rejects unexpectedly', async () => {
+      const expectedError = new Error('expected error for testing');
+      prepareExecutorMock.execute.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejected;
+      expect(loggerMock.error).calledWith('an error occurred', expectedError);
+    });
+
+    it('should log the error when dry run rejects unexpectedly', async () => {
+      const expectedError = new Error('expected error for testing');
+      dryRunExecutorMock.execute.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejected;
+      expect(getLoggerStub).calledWith('Stryker');
+      expect(loggerMock.error).calledWith('an error occurred', expectedError);
+    });
+
+    it('should log a help message when log level "trace" is not enabled', async () => {
+      const expectedError = new Error('expected error for testing');
+      loggerMock.isTraceEnabled.returns(false);
+      dryRunExecutorMock.execute.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejected;
+      expect(loggerMock.info).calledWith(
+        'Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.'
+      );
+    });
+
+    it('should not log a help message when log level "trace" is enabled', async () => {
+      const expectedError = new Error('expected error for testing');
+      loggerMock.isTraceEnabled.returns(true);
+      dryRunExecutorMock.execute.rejects(expectedError);
+      await expect(sut.runMutationTest()).rejected;
+      expect(loggerMock.info).not.called;
+    });
+
     it('should dispose the injector', async () => {
       await sut.runMutationTest();
       expect(injectorMock.dispose).called;
+    });
+
+    it('should dispose also on a rejection injector', async () => {
+      prepareExecutorMock.execute.rejects(new Error('expected error'));
+      await expect(sut.runMutationTest()).rejected;
+      expect(injectorMock.dispose).called;
+    });
+
+    it('should shut down the logging server', async () => {
+      await sut.runMutationTest();
+      expect(shutdownLoggingStub).called;
     });
 
     it('should shut down the logging server', async () => {

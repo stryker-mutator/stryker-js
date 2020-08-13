@@ -2,7 +2,7 @@ import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../logging';
-import { buildMainInjector, coreTokens } from '../di';
+import { buildMainInjector, coreTokens, CliOptionsProvider } from '../di';
 import InputFileResolver from '../input/InputFileResolver';
 import { ConfigError } from '../errors';
 
@@ -10,10 +10,7 @@ import { MutantInstrumenterContext } from '.';
 
 export class PrepareExecutor {
   public static readonly inject = tokens(coreTokens.cliOptions, commonTokens.injector);
-  constructor(
-    private readonly cliOptions: PartialStrykerOptions,
-    private readonly injector: Injector<{ [coreTokens.cliOptions]: PartialStrykerOptions }>
-  ) {}
+  constructor(private readonly cliOptions: PartialStrykerOptions, private readonly injector: CliOptionsProvider) {}
 
   public async execute(): Promise<Injector<MutantInstrumenterContext>> {
     LogConfigurator.configureMainProcess(this.cliOptions.logLevel, this.cliOptions.fileLogLevel, this.cliOptions.allowConsoleColors);
