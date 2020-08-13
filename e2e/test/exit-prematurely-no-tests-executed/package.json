@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\" stryker.log .stryker-tmp ",
-    "test": "stryker run",
+    "test": "stryker run || node -e \"require('fs').appendFileSync('stryker.log', 'Exit with non-zero exit code');\"",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "keywords": [],
