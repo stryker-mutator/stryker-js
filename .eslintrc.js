@@ -11,9 +11,9 @@ module.exports = {
   extends: ['prettier', 'eslint:recommended'],
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
-    'import/newline-after-import': 2,
-    'import/no-default-export': 2,
-    'import/no-unused-modules': [2, {'unusedExports': true}],
+    'import/newline-after-import': 'error',
+    'import/no-default-export': 'error',
+    'import/no-unused-modules': ['error', {'unusedExports': true}],
     'import/order': [
       'error',
       {
@@ -69,7 +69,7 @@ module.exports = {
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
-    '@typescript-eslint/no-require-imports': 'error',
+    '@typescript-eslint/no-require-imports': 'off',
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-type-alias': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'off',
@@ -82,7 +82,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': 'off',
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
-    '@typescript-eslint/no-var-requires': 'error',
+    '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/prefer-for-of': 'error',
     '@typescript-eslint/prefer-function-type': 'error',
     '@typescript-eslint/prefer-includes': 'error',
