@@ -130,7 +130,9 @@ describe(MochaOptionsLoader.name, () => {
     it('should log deprecated mocha version warning', async () => {
       existsFileStub.returns(false);
       sut.load(options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.'
+      );
     });
 
     it('should load a mocha.opts file if specified', () => {
