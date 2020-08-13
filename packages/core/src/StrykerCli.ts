@@ -30,7 +30,7 @@ function parseBoolean(val: string) {
 }
 
 export default class StrykerCli {
-  private command: string = '';
+  private command = '';
   private strykerConfig: string | null = null;
 
   constructor(

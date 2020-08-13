@@ -5,7 +5,7 @@ import { AstFormat, JSAst } from '../syntax';
 
 import { ParserOptions } from './parser-options';
 
-const defaultPlugins = [
+const defaultPlugins: ParserPlugin[] = [
   'doExpressions',
   'objectRestSpread',
   'classProperties',
@@ -29,13 +29,13 @@ const defaultPlugins = [
   'v8intrinsic',
   'partialApplication',
   ['decorators', { decoratorsBeforeExport: false }],
-] as ParserPlugin[];
+];
 
 export function createParser({ plugins: pluginsOverride }: ParserOptions) {
   return async function parse(text: string, fileName: string): Promise<JSAst> {
     const ast = await parseAsync(text, {
       parserOpts: {
-        plugins: [...((pluginsOverride as ParserPlugin[]) ?? defaultPlugins)],
+        plugins: [...(pluginsOverride ?? defaultPlugins)] as ParserPlugin[],
       },
       filename: fileName,
       sourceType: 'module',

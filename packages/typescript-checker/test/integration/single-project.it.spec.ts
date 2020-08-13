@@ -109,12 +109,7 @@ const fileContents = Object.freeze({
   ['not-type-checked.js']: fs.readFileSync(resolveTestResource('src', 'not-type-checked.js'), 'utf8'),
 });
 
-function createMutant(
-  fileName: 'todo.ts' | 'todo.spec.ts' | 'not-type-checked.js',
-  findText: string,
-  replacement: string,
-  offset: number = 0
-): Mutant {
+function createMutant(fileName: 'todo.ts' | 'todo.spec.ts' | 'not-type-checked.js', findText: string, replacement: string, offset = 0): Mutant {
   const originalOffset: number = fileContents[fileName].indexOf(findText);
   if (originalOffset === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);

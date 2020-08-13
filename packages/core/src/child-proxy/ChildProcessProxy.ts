@@ -77,9 +77,9 @@ export default class ChildProcessProxy<T> implements Disposable {
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    InjectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>
+    injectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, InjectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
+    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
   }
 
   private send(message: WorkerMessage) {
@@ -102,7 +102,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   }
 
   private forward(methodName: string) {
-    return (...args: any[]) => {
+    return async (...args: any[]) => {
       if (this.currentError) {
         return Promise.reject(this.currentError);
       } else {

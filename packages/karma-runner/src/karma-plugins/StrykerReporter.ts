@@ -28,11 +28,8 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
     super();
   }
 
-  private static _instance = new StrykerReporter();
+  private static readonly _instance = new StrykerReporter();
   public static get instance(): StrykerReporter {
-    if (!this._instance) {
-      this._instance = new StrykerReporter();
-    }
     return this._instance;
   }
 

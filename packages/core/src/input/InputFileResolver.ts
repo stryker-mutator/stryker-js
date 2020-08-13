@@ -31,7 +31,7 @@ export default class InputFileResolver {
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
   constructor(private readonly log: Logger, { mutate, files, tempDirName }: StrykerOptions, private readonly reporter: StrictReporter) {
     this.tempDirName = tempDirName;
-    this.mutatePatterns = mutate || [];
+    this.mutatePatterns = mutate;
     if (files) {
       this.filePatterns = files;
     }
