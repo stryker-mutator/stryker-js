@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "concurrency": 1,
+  "coverageAnalysis": "off",
+  "reporters": ["clear-text", "html", "event-recorder"],
+  "mochaOptions": {
+    "spec": ["test/**/*.js"]
+  },
+  "fileLogLevel": "info",
+  "plugins": [
+    "@stryker-mutator/mocha-runner"
+  ]
+}
