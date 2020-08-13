@@ -11,8 +11,8 @@ export class StringBuilder {
     this.strings.push(str);
     this.currentLength += str.length;
     while (this.currentLength > this.maxSize && this.strings.length > 1) {
-      const popped = this.strings.shift() as string;
-      this.currentLength -= popped.length;
+      const shifted = this.strings.shift() as string;
+      this.currentLength -= shifted.length;
     }
   }
 

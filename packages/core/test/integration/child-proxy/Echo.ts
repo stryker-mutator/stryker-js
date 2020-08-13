@@ -27,7 +27,7 @@ export class Echo {
   public exit(code: number) {
     process.exit(code);
     return new Promise(() => {
-      /*never resolve*/
+      /* Never resolve */
     });
   }
 

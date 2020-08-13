@@ -38,9 +38,7 @@ export class ClearTextReporter implements Reporter {
     const writeLineFn = (input: string) => this.writeLine(input);
 
     mutantResults.forEach((result, index) => {
-      if (result.testsRan) {
-        totalTests += result.testsRan.length;
-      }
+      totalTests += result.testsRan.length;
       switch (result.status) {
         case MutantStatus.Killed:
           this.log.debug(chalk.bold.green('Mutant killed!'));
@@ -82,7 +80,7 @@ export class ClearTextReporter implements Reporter {
     logImplementation('');
     if (this.options.coverageAnalysis === 'perTest') {
       this.logExecutedTests(result, logImplementation);
-    } else if (result.testsRan && result.testsRan.length > 0) {
+    } else if (result.testsRan.length > 0) {
       logImplementation('Ran all tests for this mutant.');
     }
   }
@@ -90,7 +88,7 @@ export class ClearTextReporter implements Reporter {
   private colorSourceFileAndLocation(sourceFilePath: string, position: Position): string {
     const clearTextReporterConfig = this.options.clearTextReporter;
 
-    if (clearTextReporterConfig && clearTextReporterConfig.allowColor !== false) {
+    if (clearTextReporterConfig.allowColor !== false) {
       return `${sourceFilePath}:${position.line}:${position.column}`;
     }
 
@@ -102,7 +100,7 @@ export class ClearTextReporter implements Reporter {
       return;
     }
 
-    if (result.testsRan && result.testsRan.length > 0) {
+    if (result.testsRan.length > 0) {
       let testsToLog = this.options.clearTextReporter.maxTestsToLog;
 
       if (testsToLog > 0) {

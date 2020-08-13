@@ -25,7 +25,7 @@ class Column {
     this.width = this.pad(dots(maxContentSize)).length;
   }
 
-  protected determineValueSize(row: MetricsResult = this.rows, ancestorCount: number = 0): number {
+  protected determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
     const valueWidths = row.childResults.map((child) => this.determineValueSize(child, ancestorCount + 1));
     valueWidths.push(this.header.length);
     valueWidths.push(this.valueFactory(row, ancestorCount).length);

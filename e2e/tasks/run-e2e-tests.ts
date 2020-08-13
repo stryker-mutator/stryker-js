@@ -36,13 +36,13 @@ function execNpm(command: string, testDir: string, stream: boolean) {
   const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
   let stderr = '';
   let stdout = '';
-  testProcess.stderr.on('data', chunk => {
+  testProcess.stderr!.on('data', chunk => {
     stderr += chunk.toString();
     if (stream) {
       console.error(chunk.toString());
     }
   });
-  testProcess.stdout.on('data', chunk => {
+  testProcess.stdout!.on('data', chunk => {
     stdout += chunk.toString()
     if (stream) {
       console.log(chunk.toString());

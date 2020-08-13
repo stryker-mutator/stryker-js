@@ -55,10 +55,7 @@ export class JestTestRunner implements TestRunner2 {
     this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
-    if (this.enableFindRelatedTests === undefined) {
-      this.enableFindRelatedTests = true;
-    }
+    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests ?? true;
 
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
@@ -158,7 +155,7 @@ export class JestTestRunner implements TestRunner2 {
             result = {
               id: testResult.fullName,
               name: testResult.fullName,
-              failureMessage: testResult.failureMessages?.join(', '),
+              failureMessage: testResult.failureMessages.join(', '),
               status: TestStatus.Failed,
               timeSpentMs,
             };

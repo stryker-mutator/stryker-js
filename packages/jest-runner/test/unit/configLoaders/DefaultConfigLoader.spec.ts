@@ -9,7 +9,7 @@ import { CustomJestConfigLoader } from '../../../src/configLoaders/CustomJestCon
 
 describe(`${CustomJestConfigLoader.name} integration`, () => {
   let sut: CustomJestConfigLoader;
-  const projectRoot: string = '/path/to/project/root';
+  const projectRoot = '/path/to/project/root';
   const fsStub: FsStub = {};
   let requireStub: sinon.SinonStub;
 

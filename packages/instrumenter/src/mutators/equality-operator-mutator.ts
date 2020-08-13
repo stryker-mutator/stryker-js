@@ -4,8 +4,19 @@ import { NodeMutation } from '../mutant';
 
 import { NodeMutator } from './node-mutator';
 
+const enum EqualityOperators {
+  '<',
+  '<=',
+  '>',
+  '>=',
+  '==',
+  '!=',
+  '===',
+  '!==',
+}
+
 export class EqualityOperatorMutator implements NodeMutator {
-  private readonly operators: { [targetedOperator: string]: BinaryOperator[] } = {
+  private readonly operators = {
     '<': ['<=', '>='],
     '<=': ['<', '>'],
     '>': ['>=', '<='],
@@ -19,21 +30,24 @@ export class EqualityOperatorMutator implements NodeMutator {
   public name = 'EqualityOperator';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (path.isBinaryExpression()) {
-      let mutatedOperators = this.operators[path.node.operator];
-      if (mutatedOperators) {
-        return mutatedOperators.map((mutatedOperator) => {
-          const replacement = types.cloneNode(path.node, false) as types.BinaryExpression;
-          replacement.operator = mutatedOperator;
+    if (path.isBinaryExpression() && this.isSupported(path.node.operator)) {
+      const mutatedOperators: BinaryOperator[] = this.operators[path.node.operator];
 
-          return {
-            original: path.node,
-            replacement,
-          };
-        });
-      }
+      return mutatedOperators.map((mutatedOperator) => {
+        const replacement = types.cloneNode(path.node, false) as types.BinaryExpression;
+        replacement.operator = mutatedOperator;
+
+        return {
+          original: path.node,
+          replacement,
+        };
+      });
     }
 
     return [];
+  }
+
+  private isSupported(operator: string): operator is keyof EqualityOperators {
+    return Object.keys(this.operators).includes(operator);
   }
 }

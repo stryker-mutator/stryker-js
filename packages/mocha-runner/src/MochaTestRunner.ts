@@ -144,11 +144,9 @@ export class MochaTestRunner implements TestRunner2 {
       }
     }
 
-    if (options) {
-      setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
-      setIfDefined(options.timeout, mocha.timeout);
-      setIfDefined(options.ui, mocha.ui);
-      setIfDefined(options.grep, mocha.grep);
-    }
+    setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
+    setIfDefined(options.timeout, mocha.timeout);
+    setIfDefined(options.ui, mocha.ui);
+    setIfDefined(options.grep, mocha.grep);
   }
 }

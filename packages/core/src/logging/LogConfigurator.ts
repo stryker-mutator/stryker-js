@@ -82,7 +82,7 @@ export class LogConfigurator {
   public static configureMainProcess(
     consoleLogLevel: LogLevel = LogLevel.Information,
     fileLogLevel: LogLevel = LogLevel.Off,
-    allowConsoleColors: boolean = true
+    allowConsoleColors = true
   ) {
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));

@@ -10,14 +10,11 @@ export class ConditionalExpressionMutator implements NodeMutator {
   public name = 'ConditionalExpression';
 
   private hasValidParent(node: NodePath): boolean {
-    return (
-      !node.parent ||
-      !(
-        types.isForStatement(node.parent) ||
-        types.isWhileStatement(node.parent) ||
-        types.isIfStatement(node.parent) ||
-        types.isDoWhileStatement(node.parent)
-      )
+    return !(
+      types.isForStatement(node.parent) ||
+      types.isWhileStatement(node.parent) ||
+      types.isIfStatement(node.parent) ||
+      types.isDoWhileStatement(node.parent)
     );
   }
 
@@ -31,23 +28,27 @@ export class ConditionalExpressionMutator implements NodeMutator {
         { original: path.node, replacement: types.booleanLiteral(true) },
         { original: path.node, replacement: types.booleanLiteral(false) },
       ];
-    } else if (path.isDoWhileStatement() || path.isWhileStatement()) {
+    }
+    if (path.isDoWhileStatement() || path.isWhileStatement()) {
       return [{ original: path.node.test, replacement: types.booleanLiteral(false) }];
-    } else if (path.isForStatement()) {
+    }
+    if (path.isForStatement()) {
       if (!path.node.test) {
         const replacement = types.cloneNode(path.node, /* deep */ false);
         replacement.test = types.booleanLiteral(false);
         return [{ original: path.node, replacement }];
-      } else {
-        return [{ original: path.node.test, replacement: types.booleanLiteral(false) }];
       }
-    } else if (path.isIfStatement()) {
+
+      return [{ original: path.node.test, replacement: types.booleanLiteral(false) }];
+    }
+    if (path.isIfStatement()) {
       return [
         // raw string mutations in the `if` condition
         { original: path.node.test, replacement: types.booleanLiteral(true) },
         { original: path.node.test, replacement: types.booleanLiteral(false) },
       ];
-    } else if (
+    }
+    if (
       path.isSwitchCase() &&
       // if not a fallthrough case
       path.node.consequent.length > 0

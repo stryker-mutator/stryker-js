@@ -22,7 +22,7 @@ function isSupportedFramework(framework: string): framework is SupportedFramewor
 const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
 
 export class TestHooksMiddleware {
-  private static _instance: TestHooksMiddleware;
+  private static _instance?: TestHooksMiddleware;
   private testFramework: 'mocha' | 'jasmine' | undefined;
   public currentTestHooks = '';
 
