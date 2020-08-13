@@ -23,7 +23,7 @@ export default class StringBuilder {
   public static concat(...builders: StringBuilder[]): string {
     return builders
       .map((b) => b.toString())
-      .filter((str) => str !== '')
+      .filter(Boolean)
       .join(EOL);
   }
 }

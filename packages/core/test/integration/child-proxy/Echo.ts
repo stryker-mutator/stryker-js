@@ -26,6 +26,9 @@ export class Echo {
 
   public exit(code: number) {
     process.exit(code);
+    return new Promise(() => {
+      /* Never resolve */
+    });
   }
 
   public readFile() {
