@@ -1,18 +1,17 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
 
-import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
-import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { Mock, mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/Report';
 import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 
 describe(DashboardReporterClient.name, () => {
-  let sut: StrykerDashboardClient;
+  let sut: DashboardReporterClient;
   let httpClient: Mock<HttpClient>;
   let environment: EnvironmentVariableStore;
 

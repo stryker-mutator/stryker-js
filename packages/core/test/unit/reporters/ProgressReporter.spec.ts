@@ -1,12 +1,12 @@
 import { MatchedMutant, MutantStatus } from '@stryker-mutator/api/report';
 import { matchedMutant, mutantResult } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import ProgressBar = require('progress');
+import ProgressBar from 'progress';
 
 import * as progressBarModule from '../../../src/reporters/ProgressBar';
-import ProgressReporter from '../../../src/reporters/ProgressReporter';
+import { ProgressReporter } from '../../../src/reporters/ProgressReporter';
 import { Mock, mock } from '../../helpers/producers';
 
 const SECOND = 1000;
@@ -28,7 +28,7 @@ describe('ProgressReporter', () => {
     sut = new ProgressReporter();
 
     progressBar = mock(ProgressBar);
-    sinon.stub(progressBarModule, 'default').returns(progressBar);
+    sinon.stub(progressBarModule, 'ProgressBar').returns(progressBar);
   });
 
   describe('onAllMutantsMatchedWithTests()', () => {
@@ -40,7 +40,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 3', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
     describe("when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn't have tests", () => {
@@ -55,7 +55,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
     describe('when mutants match to all tests', () => {
@@ -66,7 +66,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
   });

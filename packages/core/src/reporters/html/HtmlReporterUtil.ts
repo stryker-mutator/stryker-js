@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 import { promisify } from 'util';
 import { createReadStream, createWriteStream, promises as fs } from 'fs';
 
-import mkdirp = require('mkdirp');
-import * as rimraf from 'rimraf';
+import mkdirp from 'mkdirp';
+import rimraf from 'rimraf';
 
 export function copyFile(fromFilename: string, toFilename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {

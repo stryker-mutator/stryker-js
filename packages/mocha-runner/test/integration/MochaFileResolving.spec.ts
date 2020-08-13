@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import { MochaOptionsLoader } from '../../src/MochaOptionsLoader';
 import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 import { createMochaTestRunner } from '../../src';
 

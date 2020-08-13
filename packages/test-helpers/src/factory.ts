@@ -1,4 +1,4 @@
-import Ajv = require('ajv');
+import Ajv from 'ajv';
 import {
   File,
   Location,
@@ -13,7 +13,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {

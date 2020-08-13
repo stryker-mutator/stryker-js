@@ -1,8 +1,8 @@
 import { Location, Range } from '../../core';
 
-import MutantStatus from './MutantStatus';
+import { MutantStatus } from './MutantStatus';
 
-interface MutantResult {
+export interface MutantResult {
   id: string;
   sourceFilePath: string;
   mutatorName: string;
@@ -14,5 +14,3 @@ interface MutantResult {
   location: Location;
   range: Range;
 }
-
-export default MutantResult;

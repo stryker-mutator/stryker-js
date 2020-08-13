@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 /**
  * A helper class that can be used by test runners.

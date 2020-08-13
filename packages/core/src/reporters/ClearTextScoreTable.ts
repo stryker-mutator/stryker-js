@@ -3,8 +3,8 @@ import * as os from 'os';
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { MetricsResult } from 'mutation-testing-metrics';
 
-import chalk = require('chalk');
-import flatMap = require('lodash.flatmap');
+import chalk from 'chalk';
+import flatMap from 'lodash.flatmap';
 
 const FILES_ROOT_NAME = 'All files';
 
@@ -84,7 +84,7 @@ class FileColumn extends Column {
 /**
  * Represents a clear text table for mutation score
  */
-export default class ClearTextScoreTable {
+export class ClearTextScoreTable {
   private readonly columns: Column[];
 
   constructor(private readonly metricsResult: MetricsResult, thresholds: MutationScoreThresholds) {

@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -7,11 +7,11 @@ import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '
 import { calculateMetrics } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 
-import ClearTextScoreTable from './ClearTextScoreTable';
+import { ClearTextScoreTable } from './ClearTextScoreTable';
 
-export default class ClearTextReporter implements Reporter {
+export class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
     this.configConsoleColor();

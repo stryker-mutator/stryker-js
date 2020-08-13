@@ -3,7 +3,7 @@ import { FailedTestResult, TestResult, SuccessTestResult, TestStatus } from '@st
 
 import { I } from '@stryker-mutator/util';
 
-import Timer from './Timer';
+import { Timer } from './Timer';
 
 export class StrykerMochaReporter {
   /*

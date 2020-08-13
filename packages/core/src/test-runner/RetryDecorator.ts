@@ -2,16 +2,16 @@ import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOp
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 
-import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
+import { OutOfMemoryError } from '../child-proxy/OutOfMemoryError';
 
-import TestRunnerDecorator from './TestRunnerDecorator';
+import { TestRunnerDecorator } from './TestRunnerDecorator';
 
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 
 /**
  * Wraps a test runner and implements the retry functionality.
  */
-export default class RetryDecorator extends TestRunnerDecorator {
+export class RetryDecorator extends TestRunnerDecorator {
   private readonly log = getLogger(RetryDecorator.name);
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {

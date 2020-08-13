@@ -5,7 +5,7 @@ import { CIProvider } from './Provider';
 /**
  * https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables
  */
-class CircleProvider implements CIProvider {
+export class CircleProvider implements CIProvider {
   public determineProject(): string {
     return `${this.determineProvider()}/${this.determineRepository()}`;
   }
@@ -32,5 +32,3 @@ class CircleProvider implements CIProvider {
     }
   }
 }
-
-export default CircleProvider;

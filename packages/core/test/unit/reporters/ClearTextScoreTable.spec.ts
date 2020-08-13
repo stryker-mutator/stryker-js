@@ -6,10 +6,10 @@ import { metrics, metricsResult } from '@stryker-mutator/test-helpers/src/factor
 import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
 
-import chalk = require('chalk');
-import flatMap = require('lodash.flatmap');
+import chalk from 'chalk';
+import flatMap from 'lodash.flatmap';
 
-import ClearTextScoreTable from '../../../src/reporters/ClearTextScoreTable';
+import { ClearTextScoreTable } from '../../../src/reporters/ClearTextScoreTable';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {

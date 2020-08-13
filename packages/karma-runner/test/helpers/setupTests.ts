@@ -1,10 +1,10 @@
 import 'source-map-support/register';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import * as chai from 'chai';
-import * as chaiAsPromised from 'chai-as-promised';
-import * as sinonChai from 'sinon-chai';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import sinonChai from 'sinon-chai';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);

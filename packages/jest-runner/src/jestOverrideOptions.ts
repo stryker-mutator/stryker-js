@@ -1,4 +1,4 @@
-const JEST_OVERRIDE_OPTIONS = Object.freeze({
+export const JEST_OVERRIDE_OPTIONS = Object.freeze({
   // Prevent the user from using his or her own testResultProcessor because this might
   // Mess with the way Stryker gets the results
   testResultsProcessor: undefined,
@@ -16,5 +16,3 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
   // the results each time Stryker runs the tests
   notify: false,
 } as const);
-
-export default JEST_OVERRIDE_OPTIONS;

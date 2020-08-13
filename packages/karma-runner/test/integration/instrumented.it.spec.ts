@@ -1,12 +1,12 @@
-import path = require('path');
+import path from 'path';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 
-import KarmaTestRunner from '../../src/KarmaTestRunner';
+import { KarmaTestRunner } from '../../src/KarmaTestRunner';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/KarmaRunnerOptionsWithStrykerOptions';
-import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
+import { StrykerReporter } from '../../src/karma-plugins/StrykerReporter';
 
 function createSut() {
   return testInjector.injector.injectClass(KarmaTestRunner);

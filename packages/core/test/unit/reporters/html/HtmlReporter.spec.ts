@@ -1,11 +1,11 @@
-import * as path from 'path';
+import path from 'path';
 
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import HtmlReporter from '../../../../src/reporters/html/HtmlReporter';
+import { HtmlReporter } from '../../../../src/reporters/html/HtmlReporter';
 import * as HtmlReporterUtil from '../../../../src/reporters/html/HtmlReporterUtil';
 import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bindMutationTestReport';
 

@@ -1,7 +1,7 @@
-import os = require('os');
+import os from 'os';
 
 import { expect } from 'chai';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { toArray } from 'rxjs/operators';
 import { testInjector } from '@stryker-mutator/test-helpers';
 

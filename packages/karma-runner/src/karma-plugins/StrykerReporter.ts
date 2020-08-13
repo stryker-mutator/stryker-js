@@ -21,7 +21,7 @@ export interface KarmaSpec {
  *
  * i.e. use `public readonly onFoo = () => {}` instead of `onFoo() { }`.
  */
-export default class StrykerReporter extends EventEmitter implements karma.Reporter {
+export class StrykerReporter extends EventEmitter implements karma.Reporter {
   public adapters: any[] = [];
 
   private constructor() {

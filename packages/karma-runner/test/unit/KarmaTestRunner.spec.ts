@@ -5,15 +5,16 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { DryRunStatus } from '@stryker-mutator/api/test_runner2';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as karma from 'karma';
-import * as sinon from 'sinon';
+import karma from 'karma';
+import sinon from 'sinon';
 
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
-import KarmaTestRunner from '../../src/KarmaTestRunner';
-import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
+import { KarmaTestRunner } from '../../src/KarmaTestRunner';
+import { ProjectStarter } from '../../src/starters/ProjectStarter';
+import * as projectStarterModule from '../../src/starters/ProjectStarter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
-import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
-import TestHooksMiddleware from '../../src/karma-plugins/TestHooksMiddleware';
+import { StrykerReporter } from '../../src/karma-plugins/StrykerReporter';
+import { TestHooksMiddleware } from '../../src/karma-plugins/TestHooksMiddleware';
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
@@ -27,7 +28,7 @@ describe(KarmaTestRunner.name, () => {
     reporterMock = new EventEmitter();
     projectStarterMock = sinon.createStubInstance(ProjectStarter);
     testHooksMiddlewareMock = sinon.createStubInstance(TestHooksMiddleware);
-    sinon.stub(projectStarterModule, 'default').returns(projectStarterMock);
+    sinon.stub(projectStarterModule, 'ProjectStarter').returns(projectStarterMock);
     sinon.stub(StrykerReporter, 'instance').value(reporterMock);
     setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
     karmaRunStub = sinon.stub(karma.runner, 'run');
@@ -65,7 +66,7 @@ describe(KarmaTestRunner.name, () => {
     });
 
     expect(testInjector.logger.warn).not.called;
-    expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
+    expect(projectStarterModule.ProjectStarter).calledWith(sinon.match.func, expectedSetup);
   });
   it('should run ng test with parameters from stryker options', () => {
     const ngConfig: NgConfigOptions = {};
@@ -88,7 +89,7 @@ describe(KarmaTestRunner.name, () => {
       karmaConfigFile: expectedSetup.configFile,
     });
     expect(testInjector.logger.warn).not.called;
-    expect(projectStarterModule.default).calledWith(sinon.match.func, expectedSetup);
+    expect(projectStarterModule.ProjectStarter).calledWith(sinon.match.func, expectedSetup);
   });
 
   describe('init', () => {

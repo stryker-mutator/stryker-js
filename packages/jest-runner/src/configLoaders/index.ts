@@ -5,9 +5,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
 import { loaderToken, resolveToken, projectRootToken } from '../pluginTokens';
 
-import CustomJestConfigLoader from './CustomJestConfigLoader';
-import ReactScriptsJestConfigLoader from './ReactScriptsJestConfigLoader';
-import ReactScriptsTSJestConfigLoader from './ReactScriptsTSJestConfigLoader';
+import { CustomJestConfigLoader } from './CustomJestConfigLoader';
+import { ReactScriptsJestConfigLoader } from './ReactScriptsJestConfigLoader';
+import { ReactScriptsTSJestConfigLoader } from './ReactScriptsTSJestConfigLoader';
 
 configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
 export function configLoaderFactory(options: StrykerOptions, injector: Injector<PluginContext>, log: Logger) {

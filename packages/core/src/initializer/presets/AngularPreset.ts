@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 

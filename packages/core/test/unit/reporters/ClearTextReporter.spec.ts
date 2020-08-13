@@ -4,11 +4,11 @@ import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-m
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { mutantResult, mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 
-import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
+import { ClearTextReporter } from '../../../src/reporters/ClearTextReporter';
 import { createClearTextReporterOptions } from '../../helpers/producers';
 
 const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {

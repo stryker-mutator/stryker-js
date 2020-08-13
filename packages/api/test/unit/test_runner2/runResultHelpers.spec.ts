@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { toMutantRunResult, DryRunStatus, MutantRunResult, MutantRunStatus } from '../../../test_runner2';
-import TestStatus from '../../../src/test_runner/TestStatus';
+import { TestStatus } from '../../../src/test_runner/TestStatus';
 
 describe('runResultHelpers', () => {
   describe(toMutantRunResult.name, () => {

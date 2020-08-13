@@ -6,10 +6,10 @@ import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 
 import { JestTestAdapter } from '../../src/jestTestAdapters';
-import JestTestRunner from '../../src/JestTestRunner';
+import { JestTestRunner } from '../../src/JestTestRunner';
 import * as producers from '../helpers/producers';
 import { processEnvToken, jestTestAdapterToken, configLoaderToken } from '../../src/pluginTokens';
-import JestConfigLoader from '../../src/configLoaders/JestConfigLoader';
+import { JestConfigLoader } from '../../src/configLoaders/JestConfigLoader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
 
 describe(JestTestRunner.name, () => {

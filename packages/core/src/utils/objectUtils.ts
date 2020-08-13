@@ -1,4 +1,4 @@
-import treeKill = require('tree-kill');
+import treeKill from 'tree-kill';
 import { StrykerError, KnownKeys } from '@stryker-mutator/util';
 import { WarningOptions } from '@stryker-mutator/api/core';
 

@@ -7,11 +7,11 @@ import { factory } from '@stryker-mutator/test-helpers';
 
 import { expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import RetryDecorator from '../../../src/test-runner/RetryDecorator';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import currentLogMock from '../../helpers/logMock';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/ChildProcessCrashedError';
+import { OutOfMemoryError } from '../../../src/child-proxy/OutOfMemoryError';
+import { RetryDecorator } from '../../../src/test-runner/RetryDecorator';
+import { TestRunnerDecorator } from '../../../src/test-runner/TestRunnerDecorator';
+import { currentLogMock } from '../../helpers/logMock';
 
 describe(RetryDecorator.name, () => {
   let sut: RetryDecorator;

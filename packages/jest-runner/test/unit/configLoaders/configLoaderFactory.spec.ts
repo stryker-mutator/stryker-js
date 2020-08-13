@@ -4,9 +4,12 @@ import Sinon, * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
-import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
-import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
-import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
+import { CustomJestConfigLoader } from '../../../src/configLoaders/CustomJestConfigLoader';
+import * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
+import { ReactScriptsJestConfigLoader } from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
+import * as reactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
+import { ReactScriptsTSJestConfigLoader } from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
+import * as reactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/JestRunnerOptionsWithStrykerOptions';
 import { configLoaderFactory } from '../../../src/configLoaders';
 
@@ -21,9 +24,9 @@ describe(configLoaderFactory.name, () => {
     reactScriptsJestConfigLoaderStub = sinon.createStubInstance(ReactScriptsJestConfigLoader);
     reactScriptsTSJestConfigLoaderStub = sinon.createStubInstance(ReactScriptsTSJestConfigLoader);
 
-    sinon.stub(defaultJestConfigLoader, 'default').returns(customConfigLoaderStub);
-    sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
-    sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
+    sinon.stub(defaultJestConfigLoader, 'CustomJestConfigLoader').returns(customConfigLoaderStub);
+    sinon.stub(reactScriptsJestConfigLoader, 'ReactScriptsJestConfigLoader').returns(reactScriptsJestConfigLoaderStub);
+    sinon.stub(reactScriptsTSJestConfigLoader, 'ReactScriptsTSJestConfigLoader').returns(reactScriptsTSJestConfigLoaderStub);
 
     const defaultOptions: Partial<Config.InitialOptions> = {
       collectCoverage: true,

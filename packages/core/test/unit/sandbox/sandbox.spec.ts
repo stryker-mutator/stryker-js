@@ -1,10 +1,10 @@
-import path = require('path');
+import path from 'path';
 
-import execa = require('execa');
-import npmRunPath = require('npm-run-path');
+import execa from 'execa';
+import npmRunPath from 'npm-run-path';
 import { expect } from 'chai';
-import sinon = require('sinon');
-import * as mkdirp from 'mkdirp';
+import sinon from 'sinon';
+import mkdirp from 'mkdirp';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';

@@ -4,9 +4,9 @@ import semver from 'semver';
 
 import { jestVersionToken } from '../pluginTokens';
 
-import JestLessThan25TestAdapter from './JestLessThan25Adapter';
-import JestTestAdapter from './JestTestAdapter';
-import JestGreaterThan25TestAdapter from './JestGreaterThan25Adapter';
+import { JestLessThan25TestAdapter } from './JestLessThan25Adapter';
+import { JestTestAdapter } from './JestTestAdapter';
+import { JestGreaterThan25TestAdapter } from './JestGreaterThan25TestAdapter';
 
 export function jestTestAdapterFactory(log: Logger, jestVersion: string, injector: Injector<BaseContext>) {
   if (semver.satisfies(jestVersion, '<22.0.0')) {

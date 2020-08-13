@@ -7,9 +7,9 @@ import { tokens } from 'typed-inject';
 import { coreTokens } from '../di';
 import { PluginCreator } from '../di/PluginCreator';
 
-import StrictReporter from './StrictReporter';
+import { StrictReporter } from './StrictReporter';
 
-export default class BroadcastReporter implements StrictReporter {
+export class BroadcastReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreatorReporter, commonTokens.logger);
 
   public readonly reporters: {

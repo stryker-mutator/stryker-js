@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { readdirSync } from 'fs';
 
 import { Logger } from '@stryker-mutator/api/logging';

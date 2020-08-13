@@ -5,13 +5,13 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { Mutant } from '@stryker-mutator/api/core';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { TestRunner2, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { expect } from 'chai';
 
-import Timer from '../../../src/utils/Timer';
+import { Timer } from '../../../src/utils/Timer';
 import { DryRunExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';

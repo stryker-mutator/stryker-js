@@ -1,5 +1,5 @@
-import path = require('path');
-import fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -7,7 +7,7 @@ import { propertyPath } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
-import LibWrapper from './LibWrapper';
+import { LibWrapper } from './LibWrapper';
 import { MochaTestRunner } from './MochaTestRunner';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';

@@ -1,5 +1,5 @@
-import RunOptions from './RunOptions';
-import RunResult from './RunResult';
+import { RunOptions } from './RunOptions';
+import { RunResult } from './RunResult';
 
 /**
  * Represents a TestRunner which can execute tests, resulting in a RunResult.
@@ -32,7 +32,7 @@ import RunResult from './RunResult';
  *
  * If it doesn't exists globally, you don't have to do anything. In that case it's not an initial test run and there was no code instrumented.
  */
-interface TestRunner {
+export interface TestRunner {
   /**
    * Optional. When implemented, will be called before runs are done on this test runner.
    * @returns A promise if stuff is initialized asynchronously, runs will not start until the promise is resolved.
@@ -54,5 +54,3 @@ interface TestRunner {
    */
   dispose?(): Promise<void> | void;
 }
-
-export default TestRunner;

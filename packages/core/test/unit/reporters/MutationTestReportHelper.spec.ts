@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { File, Location, Range } from '@stryker-mutator/api/core';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
@@ -7,7 +7,7 @@ import { mutantResult } from '@stryker-mutator/test-helpers/src/factory';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { coreTokens } from '../../../src/di';
-import InputFileCollection from '../../../src/input/InputFileCollection';
+import { InputFileCollection } from '../../../src/input/InputFileCollection';
 import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import { createMutantTestCoverage } from '../../helpers/producers';

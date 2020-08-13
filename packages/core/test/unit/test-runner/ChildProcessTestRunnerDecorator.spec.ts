@@ -8,10 +8,10 @@ import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/ChildProcessCrashedError';
+import { ChildProcessProxy } from '../../../src/child-proxy/ChildProcessProxy';
 import { LoggingClientContext } from '../../../src/logging';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
+import { ChildProcessTestRunnerDecorator } from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {

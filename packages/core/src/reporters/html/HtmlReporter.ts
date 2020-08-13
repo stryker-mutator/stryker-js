@@ -5,7 +5,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 
-import fileUrl = require('file-url');
+import fileUrl from 'file-url';
 
 import { bindMutationTestReport } from './templates/bindMutationTestReport';
 import * as HtmlReporterUtil from './HtmlReporterUtil';
@@ -13,7 +13,7 @@ import * as HtmlReporterUtil from './HtmlReporterUtil';
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
-export default class HtmlReporter implements Reporter {
+export class HtmlReporter implements Reporter {
   private _baseDir!: string;
   private mainPromise: Promise<void> | undefined;
 

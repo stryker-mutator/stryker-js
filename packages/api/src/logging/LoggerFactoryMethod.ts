@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import { Logger } from './Logger';
 
 /**
  * Represents a factory to get loggers by category name.
@@ -7,5 +7,4 @@ import Logger from './Logger';
  * @param   {String} [categoryName] name of category to log to.
  * @returns {Logger} instance of logger for the category
  */
-type LoggerFactoryMethod = (categoryName?: string) => Logger;
-export default LoggerFactoryMethod;
+export type LoggerFactoryMethod = (categoryName?: string) => Logger;

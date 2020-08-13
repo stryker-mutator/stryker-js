@@ -6,9 +6,9 @@ import { Config } from '@jest/types';
 import { jestWrapper } from '../utils/jestWrapper';
 import { JestRunResult } from '../JestRunResult';
 
-import JestTestAdapter from './JestTestAdapter';
+import { JestTestAdapter } from './JestTestAdapter';
 
-export default class JestGreaterThan25Adapter implements JestTestAdapter {
+export class JestGreaterThan25TestAdapter implements JestTestAdapter {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 

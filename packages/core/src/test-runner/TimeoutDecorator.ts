@@ -2,12 +2,12 @@ import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunR
 import { getLogger } from 'log4js';
 import { ExpirableTask } from '@stryker-mutator/util';
 
-import TestRunnerDecorator from './TestRunnerDecorator';
+import { TestRunnerDecorator } from './TestRunnerDecorator';
 
 /**
  * Wraps a test runner and implements the timeout functionality.
  */
-export default class TimeoutDecorator extends TestRunnerDecorator {
+export class TimeoutDecorator extends TestRunnerDecorator {
   private readonly log = getLogger(TimeoutDecorator.name);
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {

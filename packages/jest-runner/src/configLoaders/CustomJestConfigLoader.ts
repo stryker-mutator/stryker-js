@@ -1,4 +1,4 @@
-import fs = require('fs');
+import fs from 'fs';
 import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -9,13 +9,13 @@ import { Config } from '@jest/types';
 import { loaderToken, projectRootToken } from '../pluginTokens';
 import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
 
-import JestConfigLoader from './JestConfigLoader';
+import { JestConfigLoader } from './JestConfigLoader';
 import { NodeRequireFunction } from './NodeRequireFunction';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
-export default class CustomJestConfigLoader implements JestConfigLoader {
+export class CustomJestConfigLoader implements JestConfigLoader {
   public static inject = tokens(commonTokens.logger, commonTokens.options, loaderToken, projectRootToken);
 
   constructor(

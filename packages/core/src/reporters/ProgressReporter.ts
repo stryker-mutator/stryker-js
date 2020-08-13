@@ -1,9 +1,9 @@
 import { MatchedMutant, MutantResult } from '@stryker-mutator/api/report';
 
-import ProgressBar from './ProgressBar';
-import ProgressKeeper from './ProgressKeeper';
+import { ProgressBar } from './ProgressBar';
+import { ProgressKeeper } from './ProgressKeeper';
 
-export default class ProgressBarReporter extends ProgressKeeper {
+export class ProgressReporter extends ProgressKeeper {
   private progressBar: ProgressBar;
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {

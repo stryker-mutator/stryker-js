@@ -2,13 +2,13 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import jest from 'jest';
 
-import JestTestAdapter from './JestTestAdapter';
+import { JestTestAdapter } from './JestTestAdapter';
 
 /**
  * The adapter used for 22 < Jest < 25.
  * It has a lot of `any` typings here, since the installed typings are not in sync.
  */
-export default class JestLessThan25TestAdapter implements JestTestAdapter {
+export class JestLessThan25TestAdapter implements JestTestAdapter {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 

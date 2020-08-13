@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { Location, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -10,7 +10,7 @@ import { calculateMetrics } from 'mutation-testing-metrics';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
 
 import { coreTokens } from '../di';
-import InputFileCollection from '../input/InputFileCollection';
+import { InputFileCollection } from '../input/InputFileCollection';
 import { setExitCode } from '../utils/objectUtils';
 import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
 import { mutatedLines, originalLines } from '../utils/mutantUtils';

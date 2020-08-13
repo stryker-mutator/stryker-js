@@ -1,6 +1,6 @@
-import * as path from 'path';
+import path from 'path';
 
-import decamelize = require('decamelize');
+import decamelize from 'decamelize';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import * as semver from 'semver';
 

@@ -1,6 +1,6 @@
 import { Location } from '@stryker-mutator/api/core';
 
-export default class LocationHelper {
+export class LocationHelper {
   public static MAX_VALUE = new LocationHelper(
     Object.freeze({
       end: Object.freeze({ column: Number.POSITIVE_INFINITY, line: Number.POSITIVE_INFINITY }),

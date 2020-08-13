@@ -1,10 +1,10 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MatchedMutant } from '@stryker-mutator/api/report';
 
-import ProgressKeeper from './ProgressKeeper';
+import { ProgressKeeper } from './ProgressKeeper';
 
-export default class ProgressAppendOnlyReporter extends ProgressKeeper {
+export class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference: NodeJS.Timer;
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {

@@ -3,7 +3,7 @@ import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di';
-import InputFileCollection from '../input/InputFileCollection';
+import { InputFileCollection } from '../input/InputFileCollection';
 import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 

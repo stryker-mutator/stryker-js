@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';

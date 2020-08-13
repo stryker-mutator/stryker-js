@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 export function createRunDetails(): jasmine.RunDetails {
   return {

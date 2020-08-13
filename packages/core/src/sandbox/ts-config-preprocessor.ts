@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';

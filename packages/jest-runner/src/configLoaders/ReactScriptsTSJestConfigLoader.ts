@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { tokens } from '@stryker-mutator/api/plugin';
 
@@ -7,9 +7,9 @@ import { Config } from '@jest/types';
 import { createReactTsJestConfig } from '../utils/createReactJestConfig';
 import { projectRootToken, resolveToken } from '../pluginTokens';
 
-import JestConfigLoader from './JestConfigLoader';
+import { JestConfigLoader } from './JestConfigLoader';
 
-export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader {
+export class ReactScriptsTSJestConfigLoader implements JestConfigLoader {
   public static inject = tokens(resolveToken, projectRootToken);
 
   constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}

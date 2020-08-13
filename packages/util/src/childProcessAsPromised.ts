@@ -1,6 +1,6 @@
 import * as childProcess from 'child_process';
 import { promisify } from 'util';
 
-export default {
+export const childProcessAsPromised = {
   exec: promisify(childProcess.exec),
 };

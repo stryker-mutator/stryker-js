@@ -6,7 +6,7 @@ const getKeys = <T extends Record<string, unknown>>(object: T) => {
   return Object.keys(object) as Array<keyof T>;
 };
 
-export default class WctLogger {
+export class WctLogger {
   private readonly logProxy = {
     ['log:debug']: this.log.debug.bind(this.log),
     ['log:error']: this.log.error.bind(this.log),

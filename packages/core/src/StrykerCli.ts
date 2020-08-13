@@ -1,11 +1,11 @@
-import * as commander from 'commander';
+import commander from 'commander';
 import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { MutantResult } from '@stryker-mutator/api/report';
 
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
-import Stryker from './Stryker';
+import { Stryker } from './Stryker';
 import { defaultOptions } from './config/OptionsValidator';
 
 /**
@@ -29,7 +29,7 @@ function parseBoolean(val: string) {
   return v !== 'false' && v !== '0';
 }
 
-export default class StrykerCli {
+export class StrykerCli {
   private command: string = '';
   private strykerConfig: string | null = null;
 

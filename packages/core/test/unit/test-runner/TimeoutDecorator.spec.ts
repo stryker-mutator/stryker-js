@@ -1,10 +1,10 @@
 import { DryRunStatus, TimeoutDryRunResult, TestRunner2, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test_runner2';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import TimeoutDecorator from '../../../src/test-runner/TimeoutDecorator';
+import { TimeoutDecorator } from '../../../src/test-runner/TimeoutDecorator';
 
 describe('TimeoutDecorator', () => {
   let sut: TimeoutDecorator;

@@ -1,18 +1,18 @@
-import * as path from 'path';
+import path from 'path';
 
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
+import log4js from 'log4js';
 import { filter } from 'rxjs/operators';
 import { Task } from '@stryker-mutator/util';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import currentLogMock from '../../helpers/logMock';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/ChildProcessCrashedError';
+import { ChildProcessProxy } from '../../../src/child-proxy/ChildProcessProxy';
+import { OutOfMemoryError } from '../../../src/child-proxy/OutOfMemoryError';
+import { currentLogMock } from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 import { sleep } from '../../helpers/testUtils';
 

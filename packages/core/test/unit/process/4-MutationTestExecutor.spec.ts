@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter, MutantStatus } from '@stryker-mutator/api/report';
@@ -11,7 +11,7 @@ import { coreTokens } from '../../../src/di';
 import { createTestRunnerPoolMock, createMutantTestCoverage, PoolMock, createCheckerPoolMock } from '../../helpers/producers';
 import { MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage';
 import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
-import Timer from '../../../src/utils/Timer';
+import { Timer } from '../../../src/utils/Timer';
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { Sandbox } from '../../../src/sandbox';
 

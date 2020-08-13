@@ -6,10 +6,10 @@ import { LoggingClientContext } from '../logging';
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
 
-import RetryDecorator from './RetryDecorator';
-import TimeoutDecorator from './TimeoutDecorator';
-import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
-import CommandTestRunner from './CommandTestRunner';
+import { RetryDecorator } from './RetryDecorator';
+import { TimeoutDecorator } from './TimeoutDecorator';
+import { ChildProcessTestRunnerDecorator } from './ChildProcessTestRunnerDecorator';
+import { CommandTestRunner } from './CommandTestRunner';
 
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(

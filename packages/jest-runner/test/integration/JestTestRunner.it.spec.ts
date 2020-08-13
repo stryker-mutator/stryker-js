@@ -5,12 +5,13 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner2';
 
-import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
+import { JestTestRunner, jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 
 const paths = require('react-scripts-ts/config/paths');
+
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
 paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
 

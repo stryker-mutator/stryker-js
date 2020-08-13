@@ -1,4 +1,4 @@
-export default class Timer {
+export class Timer {
   private readonly now: () => Date;
   private start: Date;
   private markers: {

@@ -1,9 +1,9 @@
-import TestStatus from './TestStatus';
+import { TestStatus } from './TestStatus';
 
 /**
  * Indicates the result of a single test
  */
-interface TestResult {
+export interface TestResult {
   /**
    * The full human readable name of the test
    */
@@ -21,5 +21,3 @@ interface TestResult {
    */
   failureMessages?: string[];
 }
-
-export default TestResult;

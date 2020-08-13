@@ -1,12 +1,12 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import ClearTextReporter from './ClearTextReporter';
+import { ClearTextReporter } from './ClearTextReporter';
 import { dashboardReporterFactory } from './dashboard-reporter';
-import DotsReporter from './DotsReporter';
-import EventRecorderReporter from './EventRecorderReporter';
-import ProgressAppendOnlyReporter from './ProgressAppendOnlyReporter';
-import ProgressReporter from './ProgressReporter';
-import HtmlReporter from './html/HtmlReporter';
+import { DotsReporter } from './DotsReporter';
+import { EventRecorderReporter } from './EventRecorderReporter';
+import { ProgressAppendOnlyReporter } from './ProgressAppendOnlyReporter';
+import { ProgressReporter } from './ProgressReporter';
+import { HtmlReporter } from './html/HtmlReporter';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),

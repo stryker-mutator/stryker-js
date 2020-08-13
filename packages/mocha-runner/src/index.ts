@@ -4,7 +4,7 @@ import { DirectoryRequireCache } from '@stryker-mutator/util';
 import * as strykerValidationSchema from '../schema/mocha-runner-options.json';
 
 import * as pluginTokens from './plugin-tokens';
-import MochaOptionsLoader from './MochaOptionsLoader';
+import { MochaOptionsLoader } from './MochaOptionsLoader';
 import { MochaTestRunner } from './MochaTestRunner';
 import { MochaAdapter } from './MochaAdapter';
 

@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';

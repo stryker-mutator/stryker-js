@@ -7,7 +7,7 @@ import { CompletedState, TestEndData } from 'web-component-tester/runner/clirepo
 const TEST_START_EVENT = 'test-start';
 const TEST_END_EVENT = 'test-end';
 
-export default class WctReporter {
+export class WctReporter {
   public results: TestResult[] = [];
   private before = new Date();
 

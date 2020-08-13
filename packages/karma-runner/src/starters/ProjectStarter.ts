@@ -5,7 +5,7 @@ import { StrykerKarmaSetup } from '../../src-generated/karma-runner-options';
 import * as angularStarter from './angularStarter';
 import * as karmaStarter from './karmaStarter';
 
-export default class ProjectStarter {
+export class ProjectStarter {
   constructor(private readonly getLogger: LoggerFactoryMethod, private readonly setup: StrykerKarmaSetup) {}
   public start() {
     if (this.setup.projectType === 'angular-cli') {

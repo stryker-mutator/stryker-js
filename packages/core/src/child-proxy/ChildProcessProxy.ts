@@ -1,5 +1,5 @@
 import { ChildProcess, fork } from 'child_process';
-import * as os from 'os';
+import os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
@@ -9,7 +9,7 @@ import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
-import StringBuilder from '../utils/StringBuilder';
+import { StringBuilder } from '../utils/StringBuilder';
 
 import { ChildProcessCrashedError } from './ChildProcessCrashedError';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';

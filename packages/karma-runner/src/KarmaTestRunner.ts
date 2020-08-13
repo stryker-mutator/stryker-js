@@ -18,16 +18,16 @@ import {
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 
-import ProjectStarter from './starters/ProjectStarter';
-import StrykerReporter from './karma-plugins/StrykerReporter';
+import { ProjectStarter } from './starters/ProjectStarter';
+import { StrykerReporter } from './karma-plugins/StrykerReporter';
 import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
-import TestHooksMiddleware from './karma-plugins/TestHooksMiddleware';
+import { TestHooksMiddleware } from './karma-plugins/TestHooksMiddleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
 }
 
-export default class KarmaTestRunner implements TestRunner2 {
+export class KarmaTestRunner implements TestRunner2 {
   private currentTestResults: TestResult[];
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;

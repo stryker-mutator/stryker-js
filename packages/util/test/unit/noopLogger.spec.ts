@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { noopLogger } from '../../src/noopLogger';
 

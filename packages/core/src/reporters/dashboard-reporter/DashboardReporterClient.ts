@@ -16,7 +16,7 @@ interface ReportResponseBody {
 
 const STRYKER_DASHBOARD_API_KEY = 'STRYKER_DASHBOARD_API_KEY';
 
-export default class DashboardReporterClient {
+export class DashboardReporterClient {
   public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient, commonTokens.options);
   constructor(private readonly log: Logger, private readonly httpClient: HttpClient, private readonly options: StrykerOptions) {}
 

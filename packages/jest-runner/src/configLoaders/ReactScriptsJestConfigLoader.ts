@@ -6,9 +6,9 @@ import { Config } from '@jest/types';
 import { createReactJestConfig } from '../utils/createReactJestConfig';
 import { projectRootToken, resolveToken } from '../pluginTokens';
 
-import JestConfigLoader from './JestConfigLoader';
+import { JestConfigLoader } from './JestConfigLoader';
 
-export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
+export class ReactScriptsJestConfigLoader implements JestConfigLoader {
   public static inject = tokens(resolveToken, projectRootToken);
 
   constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}

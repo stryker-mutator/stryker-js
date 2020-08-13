@@ -19,5 +19,3 @@ export interface MutantRunOptions extends RunOptions {
   activeMutant: Mutant;
   sandboxFileName: string;
 }
-
-export default RunOptions;

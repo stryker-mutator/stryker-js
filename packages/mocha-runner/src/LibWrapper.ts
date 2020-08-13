@@ -1,5 +1,5 @@
-import * as Mocha from 'mocha';
-import glob = require('glob');
+import Mocha from 'mocha';
+import glob from 'glob';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
@@ -37,7 +37,7 @@ try {
 /**
  * Wraps Mocha class and require for testability
  */
-export default class LibWrapper {
+export class LibWrapper {
   public static Mocha = Mocha;
   public static require = require;
   public static glob = glob.sync;

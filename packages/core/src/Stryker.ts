@@ -13,7 +13,7 @@ import { retrieveCause, ConfigError } from './errors';
  * The main Stryker class.
  * It provides a single `runMutationTest()` function which runs mutation testing:
  */
-export default class Stryker {
+export class Stryker {
   /**
    * @constructor
    * @param cliOptions The cli options.

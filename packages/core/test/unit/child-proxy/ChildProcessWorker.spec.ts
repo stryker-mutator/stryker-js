@@ -1,12 +1,12 @@
-import * as path from 'path';
+import path from 'path';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
+import { ChildProcessProxyWorker } from '../../../src/child-proxy/ChildProcessProxyWorker';
 import {
   CallMessage,
   InitMessage,
@@ -20,7 +20,7 @@ import * as di from '../../../src/di';
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/objectUtils';
-import currentLogMock from '../../helpers/logMock';
+import { currentLogMock } from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
 import { HelloClass } from './HelloClass';

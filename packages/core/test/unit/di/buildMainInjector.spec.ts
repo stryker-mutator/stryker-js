@@ -2,17 +2,18 @@ import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { MutatorDescriptor, StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
 import * as pluginLoaderModule from '../../../src/di/PluginLoader';
-import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
+import { ConfigReader } from '../../../src/config/ConfigReader';
+import * as configReaderModule from '../../../src/config/ConfigReader';
 import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
-import currentLogMock from '../../helpers/logMock';
+import { currentLogMock } from '../../helpers/logMock';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
@@ -41,8 +42,8 @@ describe(buildMainInjector.name, () => {
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
-    stubInjectable(configReaderModule, 'default').returns(configReaderMock);
-    stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
+    stubInjectable(configReaderModule, 'ConfigReader').returns(configReaderMock);
+    stubInjectable(broadcastReporterModule, 'BroadcastReporter').returns(broadcastReporterMock);
   });
 
   function stubInjectable<T>(obj: T, method: keyof T) {
@@ -79,7 +80,7 @@ describe(buildMainInjector.name, () => {
     it('should inject the `cliOptions` in the config reader', () => {
       cliOptions.mutate = ['some', 'files'];
       buildMainInjector(injector).resolve(commonTokens.options);
-      expect(configReaderModule.default).calledWith(cliOptions);
+      expect(configReaderModule.ConfigReader).calledWith(cliOptions);
     });
 
     it('should validate the options', () => {

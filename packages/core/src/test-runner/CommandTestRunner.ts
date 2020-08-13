@@ -17,7 +17,7 @@ import {
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 
 import { kill } from '../utils/objectUtils';
-import Timer from '../utils/Timer';
+import { Timer } from '../utils/Timer';
 
 /**
  * A test runner that uses a (bash or cmd) command to execute the tests.
@@ -25,7 +25,7 @@ import Timer from '../utils/Timer';
  * instead, it mimics a simple test result based on the exit code.
  * The command can be configured, but defaults to `npm test`.
  */
-export default class CommandTestRunner implements TestRunner2 {
+export class CommandTestRunner implements TestRunner2 {
   /**
    * "command"
    */

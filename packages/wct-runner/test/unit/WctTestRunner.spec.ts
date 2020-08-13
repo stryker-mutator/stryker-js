@@ -1,14 +1,16 @@
 import { RunResult, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { steps } from 'web-component-tester';
 import * as wctModule from 'web-component-tester';
 import * as contextModule from 'web-component-tester/runner/context';
 
-import WctLogger, * as wctLoggerModule from '../../src/WctLogger';
-import WctReporter, * as wctReporterModule from '../../src/WctReporter';
-import WctTestRunner from '../../src/WctTestRunner';
+import { WctLogger } from '../../src/WctLogger';
+import { WctReporter } from '../../src/WctReporter';
+import * as wctLoggerModule from '../../src/WctLogger';
+import * as wctReporterModule from '../../src/WctReporter';
+import { WctTestRunner } from '../../src/WctTestRunner';
 
 describe(WctTestRunner.name, () => {
   let contextMock: sinon.SinonStubbedInstance<contextModule.Context>;
@@ -35,8 +37,8 @@ describe(WctTestRunner.name, () => {
     wctLoggerMock = sinon.createStubInstance(WctLogger);
     wctReporterMock = sinon.createStubInstance(WctReporter);
     sinon.stub(contextModule, 'Context').returns(contextMock);
-    sinon.stub(wctLoggerModule, 'default').returns(wctLoggerMock);
-    sinon.stub(wctReporterModule, 'default').returns(wctReporterMock);
+    sinon.stub(wctLoggerModule, 'WctLogger').returns(wctLoggerMock);
+    sinon.stub(wctReporterModule, 'WctReporter').returns(wctReporterMock);
     sinon.stub(wctModule, 'steps').value(stepsMock);
   });
 
@@ -51,15 +53,15 @@ describe(WctTestRunner.name, () => {
 
   it('should create a reporter', () => {
     createSut();
-    expect(wctReporterModule.default).calledWithNew;
-    expect(wctReporterModule.default).calledWith(contextMock);
+    expect(wctReporterModule.WctReporter).calledWithNew;
+    expect(wctReporterModule.WctReporter).calledWith(contextMock);
   });
 
   it('should create a logger', () => {
     contextMock.options.verbose = true;
     createSut();
-    expect(wctLoggerModule.default).calledWithNew;
-    expect(wctLoggerModule.default).calledWith(contextMock, true);
+    expect(wctLoggerModule.WctLogger).calledWithNew;
+    expect(wctLoggerModule.WctLogger).calledWith(contextMock, true);
   });
 
   it('should throw when coverageAnalysis != "off"', () => {

@@ -1,11 +1,11 @@
 import { CoverageCollection, CoveragePerTestResult } from './Coverage';
-import RunStatus from './RunStatus';
-import TestResult from './TestResult';
+import { RunStatus } from './RunStatus';
+import { TestResult } from './TestResult';
 
 /**
  * Represents the result of a test run.
  */
-interface RunResult {
+export interface RunResult {
   /**
    * The individual test results.
    */
@@ -26,5 +26,3 @@ interface RunResult {
    */
   coverage?: CoverageCollection | CoveragePerTestResult;
 }
-
-export default RunResult;

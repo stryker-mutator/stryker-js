@@ -1,13 +1,13 @@
 import { MutationTestResult } from 'mutation-testing-report-schema';
 
-import MatchedMutant from './MatchedMutant';
-import MutantResult from './MutantResult';
-import SourceFile from './SourceFile';
+import { MatchedMutant } from './MatchedMutant';
+import { MutantResult } from './MutantResult';
+import { SourceFile } from './SourceFile';
 
 /**
  * Represents a reporter which can report during or after a Stryker run
  */
-interface Reporter {
+export interface Reporter {
   /**
    * Called when a source file was loaded
    * @param file The immutable source file
@@ -53,5 +53,3 @@ interface Reporter {
    */
   wrapUp?(): void | Promise<void> | Promise<void[]>;
 }
-
-export default Reporter;

@@ -1,4 +1,4 @@
-export default function consoleLoggerFactory(category: string) {
+export function consoleLoggerFactory(category: string) {
   return {
     debug: console.log.bind(console, category, 'DEBUG'),
     error: console.log.bind(console, category, 'ERROR'),

@@ -3,7 +3,7 @@ import path from 'path';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
 
-import ReactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
+import { ReactScriptsTSJestConfigLoader } from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import * as helper from '../../../src/utils/createReactJestConfig';
 
 describe(ReactScriptsTSJestConfigLoader.name, () => {

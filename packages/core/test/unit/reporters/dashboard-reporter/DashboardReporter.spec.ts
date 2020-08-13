@@ -10,21 +10,18 @@ import * as sinon from 'sinon';
 import { ReportType } from '@stryker-mutator/api/core';
 
 import { CIProvider } from '../../../../src/reporters/ci/Provider';
-import DashboardReporter from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
-import {
-  default as DashboardReporterClient,
-  default as StrykerDashboardClient,
-} from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
+import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/DashboardReporter';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/DashboardReporterClient';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { mock, Mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/Report';
 
 describe(DashboardReporter.name, () => {
-  let dashboardClientMock: Mock<StrykerDashboardClient>;
+  let dashboardClientMock: Mock<DashboardReporterClient>;
   let ciProviderMock: Mock<CIProvider>;
 
   beforeEach(() => {
-    dashboardClientMock = mock(StrykerDashboardClient);
+    dashboardClientMock = mock(DashboardReporterClient);
     ciProviderMock = {
       determineProject: sinon.stub(),
       determineVersion: sinon.stub(),

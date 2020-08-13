@@ -3,11 +3,11 @@ import * as os from 'os';
 import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 
-import DotsReporter from '../../../src/reporters/DotsReporter';
+import { DotsReporter } from '../../../src/reporters/DotsReporter';
 
 describe('DotsReporter', () => {
   let sut: DotsReporter;

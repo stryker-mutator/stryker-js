@@ -1,10 +1,10 @@
-import * as child from 'child_process';
+import child from 'child_process';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import CommandTestRunner from '../test-runner/CommandTestRunner';
+import { CommandTestRunner } from '../test-runner/CommandTestRunner';
 
 import { NpmClient } from './NpmClient';
 import { PackageInfo } from './PackageInfo';

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { StrykerError } from '@stryker-mutator/util';
 
-import GithubActionsCIProvider from '../../../../src/reporters/ci/GithubActionsProvider';
+import { GithubActionsCIProvider } from '../../../../src/reporters/ci/GithubActionsProvider';
 import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 
 describe(GithubActionsCIProvider.name, () => {

@@ -1,6 +1,6 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-export default class TestRunnerMock {
+export class TestRunnerMock {
   public init: sinon.SinonStub = sinon.stub();
   public run: sinon.SinonStub = sinon.stub();
   public dispose: sinon.SinonStub = sinon.stub();

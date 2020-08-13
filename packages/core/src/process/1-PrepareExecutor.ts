@@ -3,7 +3,7 @@ import { commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../logging';
 import { buildMainInjector, coreTokens, CliOptionsProvider } from '../di';
-import InputFileResolver from '../input/InputFileResolver';
+import { InputFileResolver } from '../input/InputFileResolver';
 import { ConfigError } from '../errors';
 
 import { MutantInstrumenterContext } from '.';

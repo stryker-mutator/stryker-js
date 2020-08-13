@@ -8,10 +8,11 @@ import * as sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import CommandTestRunner from '../../../src/test-runner/CommandTestRunner';
+import { CommandTestRunner } from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
-import Timer, * as timerModule from '../../../src/utils/Timer';
-import ChildProcessMock from '../../helpers/ChildProcessMock';
+import { Timer } from '../../../src/utils/Timer';
+import * as timerModule from '../../../src/utils/Timer';
+import { ChildProcessMock } from '../../helpers/ChildProcessMock';
 import { Mock, mock } from '../../helpers/producers';
 
 describe(CommandTestRunner.name, () => {
@@ -24,7 +25,7 @@ describe(CommandTestRunner.name, () => {
     sinon.stub(childProcess, 'exec').returns(childProcessMock);
     killStub = sinon.stub(objectUtils, 'kill');
     timerMock = mock(Timer);
-    sinon.stub(timerModule, 'default').returns(timerMock);
+    sinon.stub(timerModule, 'Timer').returns(timerMock);
   });
 
   describe(CommandTestRunner.prototype.dryRun.name, () => {

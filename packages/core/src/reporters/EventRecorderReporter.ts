@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { promises as fs } from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
@@ -8,9 +8,9 @@ import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, Source
 
 import { cleanFolder } from '../utils/fileUtils';
 
-import StrictReporter from './StrictReporter';
+import { StrictReporter } from './StrictReporter';
 
-export default class EventRecorderReporter implements StrictReporter {
+export class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
   private readonly allWork: Array<Promise<void>> = [];

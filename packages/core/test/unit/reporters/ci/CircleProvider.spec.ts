@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
+import { CircleProvider } from '../../../../src/reporters/ci/CircleProvider';
 import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
 
 describe(CircleProvider.name, () => {

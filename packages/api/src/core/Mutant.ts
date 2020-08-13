@@ -1,7 +1,7 @@
-import Range from './Range';
-import Location from './Location';
+import { Range } from './Range';
+import { Location } from './Location';
 
-interface Mutant {
+export interface Mutant {
   id: number;
   mutatorName: string;
   fileName: string;
@@ -9,5 +9,3 @@ interface Mutant {
   location: Location;
   replacement: string;
 }
-
-export default Mutant;

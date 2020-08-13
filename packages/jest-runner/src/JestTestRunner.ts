@@ -18,12 +18,12 @@ import type * as jestTestResult from '@jest/test-result';
 import { SerializableError } from '@jest/types/build/TestResult';
 
 import { jestTestAdapterFactory } from './jestTestAdapters';
-import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
-import JestConfigLoader from './configLoaders/JestConfigLoader';
+import { JestTestAdapter } from './jestTestAdapters/JestTestAdapter';
+import { JestConfigLoader } from './configLoaders/JestConfigLoader';
 import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
 import { configLoaderFactory } from './configLoaders';
 import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
-import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
+import { JEST_OVERRIDE_OPTIONS } from './jestOverrideOptions';
 
 export function jestTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
@@ -35,7 +35,7 @@ export function jestTestRunnerFactory(injector: Injector<PluginContext>) {
 }
 jestTestRunnerFactory.inject = tokens(commonTokens.injector);
 
-export default class JestTestRunner implements TestRunner2 {
+export class JestTestRunner implements TestRunner2 {
   private readonly jestConfig: jest.Config.InitialOptions;
   private mutantRunJestConfigCache: jest.Config.InitialOptions | undefined;
 

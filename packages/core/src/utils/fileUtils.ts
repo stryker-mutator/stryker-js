@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 import { promises as fs } from 'fs';
 
-import * as nodeGlob from 'glob';
-import * as mkdirp from 'mkdirp';
-import * as rimraf from 'rimraf';
+import nodeGlob from 'glob';
+import mkdirp from 'mkdirp';
+import rimraf from 'rimraf';
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {

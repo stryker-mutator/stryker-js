@@ -1,23 +1,23 @@
-import * as child from 'child_process';
-import * as fs from 'fs';
+import child from 'child_process';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as inquirer from 'inquirer';
-import * as sinon from 'sinon';
+import inquirer from 'inquirer';
+import sinon from 'sinon';
 import { RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';
-import NpmClient from '../../../src/initializer/NpmClient';
+import { NpmClient } from '../../../src/initializer/NpmClient';
 import { PackageInfo } from '../../../src/initializer/PackageInfo';
-import Preset from '../../../src/initializer/presets/Preset';
-import PresetConfiguration from '../../../src/initializer/presets/PresetConfiguration';
-import StrykerConfigWriter from '../../../src/initializer/StrykerConfigWriter';
-import StrykerInitializer from '../../../src/initializer/StrykerInitializer';
+import { Preset } from '../../../src/initializer/presets/Preset';
+import { PresetConfiguration } from '../../../src/initializer/presets/PresetConfiguration';
+import { StrykerConfigWriter } from '../../../src/initializer/StrykerConfigWriter';
+import { StrykerInitializer } from '../../../src/initializer/StrykerInitializer';
 import { StrykerInquirer } from '../../../src/initializer/StrykerInquirer';
 import { Mock } from '../../helpers/producers';
-import GitignoreWriter from '../../../src/initializer/GitignoreWriter';
+import { GitignoreWriter } from '../../../src/initializer/GitignoreWriter';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;

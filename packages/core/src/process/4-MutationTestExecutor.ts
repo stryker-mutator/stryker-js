@@ -10,10 +10,10 @@ import { I } from '@stryker-mutator/util';
 import { CheckStatus, Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
-import StrictReporter from '../reporters/StrictReporter';
+import { StrictReporter } from '../reporters/StrictReporter';
 import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
-import Timer from '../utils/Timer';
+import { Timer } from '../utils/Timer';
 
 import { Pool, ConcurrencyTokenProvider } from '../concurrent';
 

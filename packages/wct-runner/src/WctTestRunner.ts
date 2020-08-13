@@ -5,15 +5,15 @@ import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runn
 import { steps } from 'web-component-tester';
 import { Context } from 'web-component-tester/runner/context';
 
-import WctLogger from './WctLogger';
-import WctReporter from './WctReporter';
+import { WctLogger } from './WctLogger';
+import { WctReporter } from './WctReporter';
 
 const WCT_PACKAGE = 'web-component-tester';
 const FORCED_WCT_OPTIONS = Object.freeze({
   persistent: false,
 });
 
-export default class WctTestRunner implements TestRunner {
+export class WctTestRunner implements TestRunner {
   private readonly reporter: WctReporter;
   private readonly context: Context;
   private readonly logger: WctLogger;

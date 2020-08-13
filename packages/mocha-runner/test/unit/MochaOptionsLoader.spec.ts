@@ -1,13 +1,13 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import LibWrapper from '../../src/LibWrapper';
+import { LibWrapper } from '../../src/LibWrapper';
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import { MochaOptionsLoader } from '../../src/MochaOptionsLoader';
 import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 
 describe(MochaOptionsLoader.name, () => {

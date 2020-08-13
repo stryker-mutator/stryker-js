@@ -3,10 +3,10 @@ import * as path from 'path';
 import { TestStatus } from '@stryker-mutator/api/test_runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 
-import KarmaTestRunner from '../../src/KarmaTestRunner';
+import { KarmaTestRunner } from '../../src/KarmaTestRunner';
 import { expectTestResults, TimelessTestResult } from '../helpers/assertions';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/KarmaRunnerOptionsWithStrykerOptions';
-import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
+import { StrykerReporter } from '../../src/karma-plugins/StrykerReporter';
 
 describe('Sample project', () => {
   afterEach(() => {

@@ -1,10 +1,10 @@
-import * as path from 'path';
+import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
-import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
+import { MochaOptionsLoader, DEFAULT_MOCHA_OPTIONS } from '../../src/MochaOptionsLoader';
 import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
 
 describe(`${MochaOptionsLoader.name} integration`, () => {

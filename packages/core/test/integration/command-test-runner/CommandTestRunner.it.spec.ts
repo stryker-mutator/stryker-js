@@ -1,14 +1,14 @@
-import * as path from 'path';
+import path from 'path';
 
 import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test_runner2';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import CommandTestRunner from '../../../src/test-runner/CommandTestRunner';
+import { CommandTestRunner } from '../../../src/test-runner/CommandTestRunner';
 import * as objectUtils from '../../../src/utils/objectUtils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
