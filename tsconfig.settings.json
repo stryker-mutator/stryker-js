@@ -18,6 +18,8 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "types": [
       "node"
     ],
