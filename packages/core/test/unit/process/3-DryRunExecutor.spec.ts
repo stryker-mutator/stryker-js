@@ -13,7 +13,7 @@ import { ConfigError } from '../../../src/errors';
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { createTestRunnerPoolMock, PoolMock } from '../../helpers/producers';
 
-describe.only(DryRunExecutor.name, () => {
+describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
   let testRunnerPoolMock: PoolMock<TestRunner2>;
   let sut: DryRunExecutor;
