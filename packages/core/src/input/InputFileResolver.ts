@@ -12,7 +12,7 @@ import StrictReporter from '../reporters/StrictReporter';
 import { glob } from '../utils/fileUtils';
 import { defaultOptions } from '../config/OptionsValidator';
 
-import InputFileCollection from './InputFileCollection';
+import { InputFileCollection } from './InputFileCollection';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -23,7 +23,7 @@ function toReportSourceFile(file: File): SourceFile {
 
 const IGNORE_PATTERN_CHARACTER = '!';
 
-export default class InputFileResolver {
+export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
   private readonly filePatterns: readonly string[] | undefined;
   private readonly tempDirName: string;

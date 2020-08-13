@@ -1,8 +1,8 @@
-import inquirer = require('inquirer');
+import inquirer from 'inquirer';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import Preset from './Preset';
-import PresetConfiguration from './PresetConfiguration';
+import { Preset } from './Preset';
+import { PresetConfiguration } from './PresetConfiguration';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react';
 

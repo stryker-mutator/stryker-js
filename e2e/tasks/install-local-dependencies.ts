@@ -1,5 +1,5 @@
 import { bootstrapLocalDependencies } from '../../helpers/bootstrap-local-dependencies';
-import path = require('path');
+import path from 'path';
 
 bootstrapLocalDependencies(path.resolve(__dirname, '..'))
   .then(() => console.log('Installed local dependencies'))

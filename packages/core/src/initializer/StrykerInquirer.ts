@@ -2,8 +2,8 @@ import * as inquirer from 'inquirer';
 
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 
-import Preset from './presets/Preset';
-import PromptOption from './PromptOption';
+import { Preset } from './presets/Preset';
+import { PromptOption } from './PromptOption';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];

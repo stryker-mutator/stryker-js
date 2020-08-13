@@ -6,13 +6,13 @@ import { notEmpty } from '@stryker-mutator/util';
 
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 
-import NpmClient from './NpmClient';
+import { NpmClient } from './NpmClient';
 import { PackageInfo } from './PackageInfo';
-import Preset from './presets/Preset';
-import PromptOption from './PromptOption';
-import StrykerConfigWriter from './StrykerConfigWriter';
+import { Preset } from './presets/Preset';
+import { PromptOption } from './PromptOption';
+import { StrykerConfigWriter } from './StrykerConfigWriter';
 import { StrykerInquirer } from './StrykerInquirer';
-import GitignoreWriter from './GitignoreWriter';
+import { GitignoreWriter } from './GitignoreWriter';
 
 import { initializerTokens } from '.';
 
@@ -21,7 +21,7 @@ const enum PackageManager {
   Yarn = 'yarn',
 }
 
-export default class StrykerInitializer {
+export class StrykerInitializer {
   public static inject = tokens(
     commonTokens.logger,
     initializerTokens.out,

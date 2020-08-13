@@ -1,6 +1,6 @@
-import os = require('os');
+import os from 'os';
 
-import Ajv = require('ajv');
+import Ajv from 'ajv';
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { noopLogger, normalizeWhitespaces, propertyPath, deepFreeze } from '@stryker-mutator/util';

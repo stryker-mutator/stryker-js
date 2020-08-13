@@ -1,5 +1,5 @@
 import { ListByPackage, LocalInstaller, progress } from 'install-local';
-import * as fs from 'fs';
+import fs from 'fs';
 import glob = require('glob');
 import path = require('path');
 

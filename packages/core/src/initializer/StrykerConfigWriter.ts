@@ -5,15 +5,15 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
-import PresetConfiguration from './presets/PresetConfiguration';
-import PromptOption from './PromptOption';
+import { PresetConfiguration } from './presets/PresetConfiguration';
+import { PromptOption } from './PromptOption';
 
 import { initializerTokens } from '.';
 
 const STRYKER_JS_CONFIG_FILE = 'stryker.conf.js';
 const STRYKER_JSON_CONFIG_FILE = 'stryker.conf.json';
 
-export default class StrykerConfigWriter {
+export class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 

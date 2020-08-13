@@ -1,7 +1,7 @@
-import path = require('path');
+import path from 'path';
 
-import execa = require('execa');
-import npmRunPath = require('npm-run-path');
+import execa from 'execa';
+import npmRunPath from 'npm-run-path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, I } from '@stryker-mutator/util';

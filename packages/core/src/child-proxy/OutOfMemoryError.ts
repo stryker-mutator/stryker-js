@@ -1,6 +1,6 @@
-import ChildProcessCrashedError from './ChildProcessCrashedError';
+import { ChildProcessCrashedError } from './ChildProcessCrashedError';
 
-export default class OutOfMemoryError extends ChildProcessCrashedError {
+export class OutOfMemoryError extends ChildProcessCrashedError {
   constructor(pid: number, exitCode: number) {
     super(pid, `Process ${pid} ran out of memory`, exitCode);
     this.message = 'Process ';

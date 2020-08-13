@@ -11,9 +11,9 @@ import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
 import StringBuilder from '../utils/StringBuilder';
 
-import ChildProcessCrashedError from './ChildProcessCrashedError';
+import { ChildProcessCrashedError } from './ChildProcessCrashedError';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
-import OutOfMemoryError from './OutOfMemoryError';
+import { OutOfMemoryError } from './OutOfMemoryError';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -27,7 +27,7 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
-export default class ChildProcessProxy<T> implements Disposable {
+export class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
   private readonly worker: ChildProcess;
