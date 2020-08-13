@@ -1,0 +1,24 @@
+{
+  "name": "mocha-old-version",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A test package for mocha 5",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  }
+}
