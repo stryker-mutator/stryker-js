@@ -9,8 +9,7 @@ describe('Verify stryker has ran correctly', () => {
     expect(strykerLog).contains('No tests were executed. Stryker will exit prematurely.');
   });
 
-
-  it('should warn about the globbing expression resulting in no files', () => {
-    expect(strykerLog).contains('Globbing expression "src/*.js" did not result in any files.');
+  it('should not report the mutant run', () => {
+    expect(fs.existsSync('reports'), 'Expected no reports to be written to disk, but they did').false;
   });
 });

@@ -2,13 +2,8 @@ import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-
-import { Mutant } from '@stryker-mutator/api/core';
-
 import sinon = require('sinon');
-
 import { TestRunner2, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner2';
-
 import { expect } from 'chai';
 
 import Timer from '../../../src/utils/Timer';
@@ -18,12 +13,11 @@ import { ConfigError } from '../../../src/errors';
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { createTestRunnerPoolMock, PoolMock } from '../../helpers/producers';
 
-describe(DryRunExecutor.name, () => {
+describe.only(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
   let testRunnerPoolMock: PoolMock<TestRunner2>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
-  let mutants: Mutant[];
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner2>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
 
@@ -33,10 +27,9 @@ describe(DryRunExecutor.name, () => {
     testRunnerPoolMock = createTestRunnerPoolMock();
     testRunnerPoolMock.worker$.next(testRunnerMock);
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
-    mutants = [];
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock);
-    sut = new DryRunExecutor(injectorMock, testInjector.logger, testInjector.options, timerMock, mutants, concurrencyTokenProviderMock);
+    sut = new DryRunExecutor(injectorMock, testInjector.logger, testInjector.options, timerMock, concurrencyTokenProviderMock);
   });
 
   it('should pass through any rejections', async () => {
@@ -54,6 +47,7 @@ describe(DryRunExecutor.name, () => {
     });
 
     it('should log about that this might take a while', async () => {
+      runResult.tests.push(factory.successTestResult());
       await sut.execute();
       expect(testInjector.logger.info).calledWith('Starting initial test run. This may take a while.');
     });
@@ -111,8 +105,8 @@ describe(DryRunExecutor.name, () => {
       });
 
       it('should log when there were no tests', async () => {
-        await sut.execute();
-        expect(testInjector.logger.warn).to.have.been.calledWith(
+        await expect(sut.execute()).rejectedWith(
+          ConfigError,
           'No tests were executed. Stryker will exit prematurely. Please check your configuration.'
         );
       });
