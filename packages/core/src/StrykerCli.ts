@@ -1,7 +1,5 @@
 import * as commander from 'commander';
-import { getLogger } from 'log4js';
 import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
 
 import { MutantResult } from '@stryker-mutator/api/report';
 
@@ -9,7 +7,6 @@ import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
 import Stryker from './Stryker';
 import { defaultOptions } from './config/OptionsValidator';
-import { retrieveCause, ConfigError } from './errors';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -39,8 +36,7 @@ export default class StrykerCli {
   constructor(
     private readonly argv: string[],
     private readonly program: commander.Command = new commander.Command(),
-    private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest(),
-    private readonly log: Logger = getLogger(StrykerCli.name)
+    private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 
   public run() {
@@ -156,19 +152,10 @@ export default class StrykerCli {
     if (Object.keys(commands).includes(this.command)) {
       const promise: Promise<void | MutantResult[]> = commands[this.command as keyof typeof commands]();
       promise.catch((err) => {
-        const error = retrieveCause(err);
-        if (error instanceof ConfigError) {
-          this.log.error(error.message);
-        } else {
-          this.log.error('an error occurred', err);
-          if (!this.log.isTraceEnabled()) {
-            this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
-          }
-        }
         process.exitCode = 1;
       });
     } else {
-      this.log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
+      console.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
   }
 }

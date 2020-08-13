@@ -1,5 +1,5 @@
 import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 
 import { coreTokens, PluginLoader } from '.';
@@ -12,12 +12,6 @@ export function pluginResolverFactory(
   return pluginLoader;
 }
 pluginResolverFactory.inject = tokens(commonTokens.injector);
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export function loggerFactory(getLogger: LoggerFactoryMethod, target: Function | undefined) {
-  return getLogger(target ? target.name : 'UNKNOWN');
-}
-loggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 
 export function mutatorDescriptorFactory(options: StrykerOptions): MutatorDescriptor {
   const defaults: MutatorDescriptor = {

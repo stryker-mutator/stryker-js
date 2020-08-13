@@ -4,12 +4,12 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { MutatorDescriptor, StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { rootInjector } from 'typed-inject';
+import { createInjector } from 'typed-inject';
 
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
 import * as pluginLoaderModule from '../../../src/di/PluginLoader';
 import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
-import { PluginCreator, PluginLoader, coreTokens } from '../../../src/di';
+import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/buildMainInjector';
 import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
 import currentLogMock from '../../helpers/logMock';
@@ -37,7 +37,7 @@ describe(buildMainInjector.name, () => {
     broadcastReporterMock = factory.reporter('broadcast');
     configReaderMock.readConfig.returns(expectedConfig);
     cliOptions = {};
-    injector = rootInjector.provideValue(coreTokens.cliOptions, cliOptions);
+    injector = provideLogger(createInjector()).provideValue(coreTokens.cliOptions, cliOptions);
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);

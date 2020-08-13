@@ -2,7 +2,7 @@ import { MutatorDescriptor, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginContext, PluginResolver } from '@stryker-mutator/api/plugin';
 import * as sinon from 'sinon';
-import { Injector, rootInjector, Scope } from 'typed-inject';
+import { Injector, createInjector, Scope } from 'typed-inject';
 
 import * as factory from './factory';
 
@@ -24,7 +24,7 @@ class TestInjector {
   public options: StrykerOptions;
   public mutatorDescriptor: MutatorDescriptor;
   public logger: sinon.SinonStubbedInstance<Logger>;
-  public injector: Injector<PluginContext> = rootInjector
+  public injector: Injector<PluginContext> = createInjector()
     .provideValue(commonTokens.getLogger, this.provideLogger)
     .provideFactory(commonTokens.logger, this.provideLogger, Scope.Transient)
     .provideFactory(commonTokens.options, this.provideOptions, Scope.Transient)

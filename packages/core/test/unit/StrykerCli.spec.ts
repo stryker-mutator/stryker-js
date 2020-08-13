@@ -1,7 +1,5 @@
 import { Command } from 'commander';
 import * as sinon from 'sinon';
-import { Logger } from '@stryker-mutator/api/logging';
-import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
@@ -11,11 +9,9 @@ import StrykerCli from '../../src/StrykerCli';
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
   let configureLoggerStub: sinon.SinonStub;
-  let logMock: sinon.SinonStubbedInstance<Logger>;
 
   beforeEach(() => {
     runMutationTestingStub = sinon.stub();
-    logMock = logger();
     configureLoggerStub = sinon.stub(LogConfigurator, 'configureMainProcess');
   });
 
@@ -93,7 +89,7 @@ describe(StrykerCli.name, () => {
   });
 
   function actRun(args: string[]): void {
-    new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub, logMock).run();
+    new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub).run();
   }
 
   function arrangeActAssertConfigOption(args: string[], expectedOptions: PartialStrykerOptions): void {

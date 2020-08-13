@@ -1,17 +1,14 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, Injector, PluginContext, Scope, tokens } from '@stryker-mutator/api/plugin';
-import { getLogger } from 'log4js';
-import { rootInjector } from 'typed-inject';
+import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import { createInjector } from 'typed-inject';
 
-import { loggerFactory, mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
+import { mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
 
-import { coreTokens } from '.';
+import { coreTokens, provideLogger } from '.';
 
 export function buildChildProcessInjector(options: StrykerOptions): Injector<PluginContext> {
-  return rootInjector
+  return provideLogger(createInjector())
     .provideValue(commonTokens.options, options)
-    .provideValue(commonTokens.getLogger, getLogger)
-    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
     .provideFactory(coreTokens.pluginDescriptors, pluginDescriptorsFactory)
     .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
     .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory);

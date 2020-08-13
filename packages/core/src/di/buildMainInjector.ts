@@ -1,8 +1,7 @@
 import execa = require('execa');
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, Injector, PluginContext, PluginKind, Scope, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { getLogger } from 'log4js';
 
 import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
 import ConfigReader from '../config/ConfigReader';
@@ -10,7 +9,7 @@ import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
 
-import { loggerFactory, mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
+import { mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
 
 import { coreTokens, PluginCreator } from '.';
 
@@ -23,15 +22,12 @@ export interface MainContext extends PluginContext {
   [coreTokens.execa]: typeof execa;
 }
 
-type BasicInjector = Injector<Pick<MainContext, 'logger' | 'getLogger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }>;
-type PluginResolverProvider = Injector<Pick<MainContext, 'logger' | 'getLogger' | 'options' | 'pluginResolver'>>;
-export type CliOptionsProvider = Injector<{ [coreTokens.cliOptions]: PartialStrykerOptions }>;
+type PluginResolverProvider = Injector<PluginContext>;
+export type CliOptionsProvider = Injector<Pick<MainContext, 'logger' | 'getLogger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }>;
 
 buildMainInjector.inject = tokens(commonTokens.injector);
 export function buildMainInjector(injector: CliOptionsProvider): Injector<MainContext> {
-  const pluginResolverProvider = createPluginResolverProvider(
-    injector.provideValue(commonTokens.getLogger, getLogger).provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-  );
+  const pluginResolverProvider = createPluginResolverProvider(injector);
   return pluginResolverProvider
     .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
@@ -42,7 +38,7 @@ export function buildMainInjector(injector: CliOptionsProvider): Injector<MainCo
     .provideValue(coreTokens.execa, execa);
 }
 
-export function createPluginResolverProvider(parent: BasicInjector): PluginResolverProvider {
+export function createPluginResolverProvider(parent: CliOptionsProvider): PluginResolverProvider {
   return parent
     .provideValue(coreTokens.validationSchema, strykerCoreSchema)
     .provideClass(coreTokens.optionsValidator, OptionsValidator)
