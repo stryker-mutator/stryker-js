@@ -76,12 +76,12 @@ describe(OptionsValidator.name, () => {
   describe('appendPlugins', () => {
     it('should be invalid with non-array plugins', () => {
       breakConfig('appendPlugins', '@stryker-mutator/typescript');
-      actValidationErrors('Config option "plugins" has the wrong type. It should be a array, but was a string.');
+      actValidationErrors('Config option "appendPlugins" has the wrong type. It should be a array, but was a string.');
     });
 
     it('should be invalid with non-string array elements', () => {
       breakConfig('appendPlugins', ['stryker-jest', 0]);
-      actValidationErrors('Config option "plugins[1]" has the wrong type. It should be a string, but was a number.');
+      actValidationErrors('Config option "appendPlugins[1]" has the wrong type. It should be a string, but was a number.');
     });
   });
 
