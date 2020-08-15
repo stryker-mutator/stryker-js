@@ -33,6 +33,7 @@ describe(StrykerCli.name, () => {
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],
+      [['--appendPlugins', 'foo,bar'], { appendPlugins: ['foo', 'bar'] }],
       [['--timeoutMS', '42'], { timeoutMS: 42 }],
       [['--timeoutFactor', '42'], { timeoutFactor: 42 }],
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],

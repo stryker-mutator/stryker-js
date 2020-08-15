@@ -186,6 +186,23 @@
           ],
           "default": null
         },
+        "appendPlugins": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "excludedMutations": {
           "type": "array",
           "items": {
@@ -319,6 +336,14 @@
       "default": [
         "@stryker-mutator/*"
       ]
+    },
+    "appendPlugins": {
+      "description": "With 'appendPlugins' you can add plugins to be resolved without overwriting plugins defined in the `plugins` config. This is primarily for when you want to have plugins appended by command line without overwriting plugins defined in a config file.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
     "reporters": {
       "description": "With reporters, you can set the reporters for stryker to use.",
