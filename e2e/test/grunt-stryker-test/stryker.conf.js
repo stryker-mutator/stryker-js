@@ -3,8 +3,10 @@ module.exports = function (config) {
     mutate: [
       'sampleProject/src/**'
     ],
-    karmaConfig: {
-      files: ['sampleProject/**']
+    karma: {
+      config: {
+        files: ['sampleProject/**']
+      }
     },
     testFramework: 'jasmine',
     testRunner: 'karma',
