@@ -56,6 +56,11 @@ describe('parsers integration', () => {
     expect(actual).to.matchSnapshot();
   });
 
+  it('should allow to parse a mjs file', async () => {
+    const actual = await actAssertJS('app.mjs');
+    expect(actual).to.matchSnapshot();
+  });
+
   async function act(testResourceFileName: string, options: ParserOptions) {
     const fileName = resolveTestResource(testResourceFileName);
     const input = await fs.readFile(fileName, 'utf8');

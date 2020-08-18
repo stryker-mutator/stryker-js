@@ -8506,6 +8506,117 @@ export class AppComponent {
 }
 `;
 
+exports[`parsers integration should allow to parse a mjs file 1`] = `
+Object {
+  "format": "js",
+  "originFileName": "app.mjs",
+  "rawContent": "export class App {}",
+  "root": Node {
+    "comments": Array [],
+    "end": 19,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 19,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "declaration": Node {
+            "body": Node {
+              "body": Array [],
+              "end": 19,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "type": "ClassBody",
+            },
+            "end": 19,
+            "id": Node {
+              "end": 16,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "line": 1,
+                },
+                "identifierName": "App",
+                "start": Position {
+                  "column": 13,
+                  "line": 1,
+                },
+              },
+              "name": "App",
+              "start": 13,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 7,
+                "line": 1,
+              },
+            },
+            "start": 7,
+            "superClass": null,
+            "type": "ClassDeclaration",
+          },
+          "end": 19,
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 19,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "source": null,
+          "specifiers": Array [],
+          "start": 0,
+          "type": "ExportNamedDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 19,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse a react file with custom babelrc file 1`] = `
 Object {
   "format": "js",

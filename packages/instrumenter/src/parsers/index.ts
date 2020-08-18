@@ -31,6 +31,7 @@ function getFormat(fileName: string, override: AstFormat | undefined): AstFormat
     const ext = path.extname(fileName).toLowerCase();
     switch (ext) {
       case '.js':
+      case '.mjs':
         return AstFormat.JS;
       case '.ts':
       case '.tsx':
