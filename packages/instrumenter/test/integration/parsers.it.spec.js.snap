@@ -8506,6 +8506,181 @@ export class AppComponent {
 }
 `;
 
+exports[`parsers integration should allow to parse a cjs file 1`] = `
+Object {
+  "format": "js",
+  "originFileName": "app.cjs",
+  "rawContent": "module.exports = class App {}",
+  "root": Node {
+    "comments": Array [],
+    "end": 29,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 29,
+        "line": 1,
+      },
+      "start": Position {
+        "column": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "end": 29,
+          "expression": Node {
+            "end": 29,
+            "left": Node {
+              "computed": false,
+              "end": 14,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 0,
+                  "line": 1,
+                },
+              },
+              "object": Node {
+                "end": 6,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 6,
+                    "line": 1,
+                  },
+                  "identifierName": "module",
+                  "start": Position {
+                    "column": 0,
+                    "line": 1,
+                  },
+                },
+                "name": "module",
+                "start": 0,
+                "type": "Identifier",
+              },
+              "property": Node {
+                "end": 14,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 14,
+                    "line": 1,
+                  },
+                  "identifierName": "exports",
+                  "start": Position {
+                    "column": 7,
+                    "line": 1,
+                  },
+                },
+                "name": "exports",
+                "start": 7,
+                "type": "Identifier",
+              },
+              "start": 0,
+              "type": "MemberExpression",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 29,
+                "line": 1,
+              },
+              "start": Position {
+                "column": 0,
+                "line": 1,
+              },
+            },
+            "operator": "=",
+            "right": Node {
+              "body": Node {
+                "body": Array [],
+                "end": 29,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "line": 1,
+                  },
+                  "start": Position {
+                    "column": 27,
+                    "line": 1,
+                  },
+                },
+                "start": 27,
+                "type": "ClassBody",
+              },
+              "end": 29,
+              "id": Node {
+                "end": 26,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 26,
+                    "line": 1,
+                  },
+                  "identifierName": "App",
+                  "start": Position {
+                    "column": 23,
+                    "line": 1,
+                  },
+                },
+                "name": "App",
+                "start": 23,
+                "type": "Identifier",
+              },
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 29,
+                  "line": 1,
+                },
+                "start": Position {
+                  "column": 17,
+                  "line": 1,
+                },
+              },
+              "start": 17,
+              "superClass": null,
+              "type": "ClassExpression",
+            },
+            "start": 0,
+            "type": "AssignmentExpression",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 29,
+              "line": 1,
+            },
+            "start": Position {
+              "column": 0,
+              "line": 1,
+            },
+          },
+          "start": 0,
+          "type": "ExpressionStatement",
+        },
+      ],
+      "directives": Array [],
+      "end": 29,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 29,
+          "line": 1,
+        },
+        "start": Position {
+          "column": 0,
+          "line": 1,
+        },
+      },
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse a mjs file 1`] = `
 Object {
   "format": "js",

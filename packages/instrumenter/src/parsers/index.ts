@@ -32,6 +32,7 @@ function getFormat(fileName: string, override: AstFormat | undefined): AstFormat
     switch (ext) {
       case '.js':
       case '.mjs':
+      case '.cjs':
         return AstFormat.JS;
       case '.ts':
       case '.tsx':
