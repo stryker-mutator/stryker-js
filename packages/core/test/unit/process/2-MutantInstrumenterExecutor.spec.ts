@@ -60,7 +60,7 @@ describe(MutantInstrumenterExecutor.name, () => {
 
   it('should instrument the given files', async () => {
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = { plugins: ['functionSent'] };
+    const expectedInstrumenterOptions: InstrumenterOptions = { plugins: null };
     expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile], expectedInstrumenterOptions);
   });
 
