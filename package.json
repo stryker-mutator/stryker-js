@@ -15,7 +15,7 @@
     "@types/sinon": "5.0.5",
     "@types/sinon-chai": "3.2.4",
     "@typescript-eslint/eslint-plugin": "3.8.0",
-    "@typescript-eslint/parser": "3.8.0",
+    "@typescript-eslint/parser": "3.9.1",
     "acorn": "^7.0.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
