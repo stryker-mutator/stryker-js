@@ -2,7 +2,6 @@ module.exports = {
   mutate: [
     'src/*.js'
   ],
-  testFramework: 'mocha',
   testRunner: 'mocha',
   coverageAnalysis: 'off',
   buildCommand: 'npm run build',

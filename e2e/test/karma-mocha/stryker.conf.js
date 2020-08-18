@@ -1,8 +1,6 @@
 module.exports = function (config) {
   config.set({
     mutate: ['src/*.js'],
-    mutator: 'javascript',
-    testFramework: 'mocha',
     testRunner: 'karma',
     reporters: ['clear-text', 'html', 'event-recorder'],
     karma: {
