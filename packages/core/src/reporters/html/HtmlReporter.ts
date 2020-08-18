@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';

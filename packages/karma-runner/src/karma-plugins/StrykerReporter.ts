@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 
 import { DryRunStatus, TestResult, TestStatus, MutantCoverage } from '@stryker-mutator/api/test_runner2';
-import * as karma from 'karma';
+import karma from 'karma';
 
 export interface KarmaSpec {
   description: string;

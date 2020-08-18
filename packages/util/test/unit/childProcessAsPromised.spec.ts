@@ -1,4 +1,4 @@
-import * as childProcess from 'child_process';
+import childProcess from 'child_process';
 import { promisify } from 'util';
 
 import { expect } from 'chai';

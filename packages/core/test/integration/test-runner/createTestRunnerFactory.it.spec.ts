@@ -1,6 +1,6 @@
 import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
+import log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory } from '@stryker-mutator/test-helpers';
 

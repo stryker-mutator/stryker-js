@@ -1,7 +1,7 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import * as sut from '../../../src/starters/angularStarter';
 import * as utils from '../../../src/utils';

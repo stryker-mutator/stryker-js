@@ -1,6 +1,6 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import Sinon, * as sinon from 'sinon';
+import sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
@@ -14,9 +14,9 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../../src/JestRunnerOpti
 import { configLoaderFactory } from '../../../src/configLoaders';
 
 describe(configLoaderFactory.name, () => {
-  let customConfigLoaderStub: Sinon.SinonStubbedInstance<CustomJestConfigLoader>;
-  let reactScriptsJestConfigLoaderStub: Sinon.SinonStubbedInstance<ReactScriptsJestConfigLoader>;
-  let reactScriptsTSJestConfigLoaderStub: Sinon.SinonStubbedInstance<ReactScriptsTSJestConfigLoader>;
+  let customConfigLoaderStub: sinon.SinonStubbedInstance<CustomJestConfigLoader>;
+  let reactScriptsJestConfigLoaderStub: sinon.SinonStubbedInstance<ReactScriptsJestConfigLoader>;
+  let reactScriptsTSJestConfigLoaderStub: sinon.SinonStubbedInstance<ReactScriptsTSJestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {

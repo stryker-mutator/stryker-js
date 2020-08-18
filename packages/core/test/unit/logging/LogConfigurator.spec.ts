@@ -1,7 +1,7 @@
 import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
-import * as log4js from 'log4js';
-import * as sinon from 'sinon';
+import log4js from 'log4js';
+import sinon from 'sinon';
 
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';

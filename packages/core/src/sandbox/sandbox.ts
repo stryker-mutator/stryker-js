@@ -5,7 +5,7 @@ import npmRunPath from 'npm-run-path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, I } from '@stryker-mutator/util';
-import * as mkdirp from 'mkdirp';
+import mkdirp from 'mkdirp';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as fs from 'fs';
+import fs from 'fs';
 import { expectMetricsResult, produceMetrics } from '../../../helpers';
 
 describe('Verify stryker has ran correctly', () => {

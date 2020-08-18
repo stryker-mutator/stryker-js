@@ -1,9 +1,9 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { PluginLoader } from '../../../src/di/PluginLoader';

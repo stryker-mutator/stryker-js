@@ -1,7 +1,7 @@
-import * as net from 'net';
+import net from 'net';
 
 import { parse } from 'flatted';
-import * as log4js from 'log4js';
+import log4js from 'log4js';
 import { Observable, Subscriber } from 'rxjs';
 
 export class LoggingServer {

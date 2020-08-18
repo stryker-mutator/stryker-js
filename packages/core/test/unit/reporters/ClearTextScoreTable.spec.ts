@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';

@@ -1,7 +1,7 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import * as karma from 'karma';
+import karma from 'karma';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 import {

@@ -1,5 +1,5 @@
 import { LogLevel } from '@stryker-mutator/api/core';
-import * as log4js from 'log4js';
+import log4js from 'log4js';
 
 /**
  * Determines the minimal log level (where trace < off)

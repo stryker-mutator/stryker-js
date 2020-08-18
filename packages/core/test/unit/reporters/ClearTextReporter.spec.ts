@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';

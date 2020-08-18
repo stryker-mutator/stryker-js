@@ -2,7 +2,7 @@ import path from 'path';
 
 import decamelize from 'decamelize';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import * as semver from 'semver';
+import semver from 'semver';
 
 import { NgConfigOptions, NgTestArguments } from '../../src-generated/karma-runner-options';
 import { requireModule } from '../utils';

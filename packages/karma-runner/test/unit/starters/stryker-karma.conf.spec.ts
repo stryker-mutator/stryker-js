@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';

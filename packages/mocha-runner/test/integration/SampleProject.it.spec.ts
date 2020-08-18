@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner2';

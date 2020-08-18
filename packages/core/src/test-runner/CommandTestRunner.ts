@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import * as os from 'os';
+import os from 'os';
 
 import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import {

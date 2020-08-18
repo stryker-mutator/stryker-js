@@ -1,5 +1,5 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 afterEach(() => {
   sinon.restore();

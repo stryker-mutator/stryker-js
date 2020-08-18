@@ -1,4 +1,4 @@
-import * as os from 'os';
+import os from 'os';
 
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 import { TestRunner2 } from '@stryker-mutator/api/test_runner2';

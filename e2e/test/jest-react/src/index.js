@@ -3,7 +3,7 @@ import BreadcrumbItem from './BreadcrumbItem';
 import Badge from './Badge';
 import Alert from './Alert';
 import Fade from './Fade';
-import * as Util from 'util';
+import Util from 'util';
 
 export {
   Alert,
