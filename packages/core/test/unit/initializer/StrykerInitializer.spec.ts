@@ -217,12 +217,9 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
-      expect(
-        childExecSync
-      ).calledWith(
-        'npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/typescript stryker-dimension-reporter @stryker-mutator/mars-reporter',
-        { stdio: [0, 1, 2] }
-      );
+      expect(childExecSync).calledWith('npm i --save-dev @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter', {
+        stdio: [0, 1, 2],
+      });
     });
 
     it('should configure testRunner, reporters, and packageManager', async () => {
@@ -240,7 +237,6 @@ describe(StrykerInitializer.name, () => {
       expect(normalizedContent).contains('"testRunner": "awesome"');
       expect(normalizedContent).contains('"packageManager": "npm"');
       expect(normalizedContent).contains('"coverageAnalysis": "perTest"');
-      expect(normalizedContent).contains('"mutator": "typescript"');
       expect(normalizedContent).contains('"dimension", "mars", "progress"');
     });
 

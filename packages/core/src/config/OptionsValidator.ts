@@ -62,7 +62,7 @@ export class OptionsValidator {
   }
 
   private filterSchema(error: Ajv.ErrorObject) {
-    if (error.dataPath === '.mutator') {
+    if (error.dataPath === '.mutator' && typeof error.data === 'string') {
       return false;
     }
     if (error.dataPath === '.transpiler') {
