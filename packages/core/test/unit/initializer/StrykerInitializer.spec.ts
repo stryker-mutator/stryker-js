@@ -306,27 +306,6 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).called;
     });
 
-    it('should log error and continue when fetching mutators', async () => {
-      stubTestRunners('stryker-awesome-runner');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').rejects();
-      stubReporters();
-      inquirerPrompt.resolves({
-        packageManager: 'npm',
-        reporters: ['clear-text'],
-        testRunner: 'awesome',
-        configType: 'JSON',
-      });
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-webpack': null });
-
-      await sut.initialize();
-
-      expect(testInjector.logger.error).calledWith(
-        'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/mutator-plugin). Please check your internet connection.'
-      );
-      expect(out).calledWith('Unable to select a mutator. You will need to configure it manually.');
-      expect(fs.promises.writeFile).called;
-    });
-
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubMutators('stryker-javascript');
