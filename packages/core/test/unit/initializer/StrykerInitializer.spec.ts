@@ -94,14 +94,14 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(8);
+      expect(inquirerPrompt).callCount(6);
       const [promptPreset, promptTestRunner, promptMutator, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
-        inquirerPrompt.getCall(6).args[0],
-        inquirerPrompt.getCall(7).args[0],
+        inquirerPrompt.getCall(4).args[0],
+        inquirerPrompt.getCall(5).args[0],
       ];
       const [promptReporters]: Array<inquirer.CheckboxQuestion<string>> = [inquirerPrompt.getCall(4).args[0], inquirerPrompt.getCall(5).args[0]];
       expect(promptPreset.type).to.eq('list');
