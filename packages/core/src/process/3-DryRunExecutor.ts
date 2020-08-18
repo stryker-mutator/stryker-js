@@ -70,7 +70,6 @@ export class DryRunExecutor {
     commonTokens.logger,
     commonTokens.options,
     coreTokens.timer,
-    coreTokens.mutants,
     coreTokens.concurrencyTokenProvider
   );
 
@@ -79,7 +78,6 @@ export class DryRunExecutor {
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
-    private readonly mutants: readonly Mutant[],
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
   ) {}
 
@@ -95,20 +93,14 @@ export class DryRunExecutor {
     this.validateResultCompleted(dryRunResult);
     const timing = this.calculateTiming(grossTimeMS, dryRunResult.tests);
     this.logInitialTestRunSucceeded(dryRunResult.tests, timing);
-    if (!dryRunResult.tests.length || !this.mutants.length) {
-      this.logTraceLogLevelHint();
+    if (!dryRunResult.tests.length) {
+      throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     }
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
       .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
-  }
-
-  private logTraceLogLevelHint() {
-    if (!this.log.isTraceEnabled()) {
-      this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
-    }
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
@@ -118,9 +110,6 @@ export class DryRunExecutor {
         if (failedTests.length) {
           this.logFailedTestsInInitialRun(failedTests);
           throw new ConfigError('There were failed tests in the initial test run.');
-        }
-        if (runResult.tests.length === 0) {
-          this.log.warn('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
         }
         return;
       case DryRunStatus.Error:

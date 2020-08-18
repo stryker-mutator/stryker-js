@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "reporters_comment": "Don't remove the html reporter here, we want to test that reports is not written",
+  "reporters": ["html"],
+  "plugins": [
+    "@stryker-mutator/mocha-runner"
+  ],
+  "fileLogLevel": "info"
+}
