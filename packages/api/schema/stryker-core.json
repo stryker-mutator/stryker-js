@@ -195,6 +195,43 @@
         }
       }
     },
+    "mutatorDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "javascript"
+        },
+        "plugins": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "excludedMutations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
     "warningOptions": {
       "title": "WarningOptions",
       "type": "object",
@@ -297,7 +334,15 @@
     },
     "mutator": {
       "description": "With mutator you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.",
-      "type": "string",
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "description": "[DEPRECATED please use \"mutator: string\" instead]",
+          "$ref": "#/definitions/mutatorDescriptor"
+        }
+      ],
       "default": "javascript",
       "errorMessage": "should be a \"string\" describing the mutator. See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
     },
@@ -349,6 +394,10 @@
       "type": "string",
       "default": ".stryker-tmp"
     },
+    "testFramework": {
+      "description": "[REMOVED, please remove this option] Configure which test framework you are using. This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use), However, it is required when coverageAnalysis is set to 'perTest', because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.",
+      "type": "string"
+    },
     "testRunner": {
       "description": "With 'testRunner' you specify the test runner that Stryker uses to run your tests. The default value is command. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the 'commandRunner: { command: 'npm run mocha' }'. It uses 'npm test' as the command by default.",
       "type": "string",
@@ -368,6 +417,14 @@
       "description": "Configure an absolute timeout deviation. Tweak this if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.",
       "type": "number",
       "default": 5000
+    },
+    "transpilers": {
+      "description": "[REMOVED, remove this option] Configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
     "tsconfigFile": {
       "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",
