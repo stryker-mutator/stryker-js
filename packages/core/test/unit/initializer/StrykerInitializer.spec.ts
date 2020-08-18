@@ -94,7 +94,7 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(5);
+      expect(inquirerPrompt).callCount(6);
       const [promptPreset, promptTestRunner, promptMutator, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
@@ -227,7 +227,7 @@ describe(StrykerInitializer.name, () => {
       expect(
         childExecSync
       ).calledWith(
-        'npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/awesome-framework @stryker-mutator/typescript @stryker-mutator/webpack stryker-dimension-reporter @stryker-mutator/mars-reporter',
+        'npm i --save-dev @stryker-mutator/awesome-runner @stryker-mutator/typescript stryker-dimension-reporter @stryker-mutator/mars-reporter',
         { stdio: [0, 1, 2] }
       );
     });
