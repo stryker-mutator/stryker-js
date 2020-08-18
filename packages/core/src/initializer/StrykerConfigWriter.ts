@@ -47,6 +47,7 @@ export default class StrykerConfigWriter {
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
+      coverageAnalysis: 'perTest',
     };
 
     Object.assign(configObject, ...additionalPiecesOfConfig);

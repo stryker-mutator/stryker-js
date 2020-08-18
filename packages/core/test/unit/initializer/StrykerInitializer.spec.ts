@@ -93,14 +93,16 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(inquirerPrompt).callCount(6);
-      const [promptPreset, promptTestRunner, promptMutator, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<string>> = [
+      const [promptPreset, promptTestRunner, promptMutator, promptReporters, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<
+        string
+      >> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
+        inquirerPrompt.getCall(4).args[0],
         inquirerPrompt.getCall(5).args[0],
       ];
-      const promptReporters: inquirer.CheckboxQuestion<string> = inquirerPrompt.getCall(4).args[0];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
       expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
@@ -239,16 +241,15 @@ describe(StrykerInitializer.name, () => {
         configType: 'JSON',
       });
       await sut.initialize();
-      const matchNormalized = (expected: string) =>
-        sinon.match((actual: string) => normalizeWhitespaces(actual).includes(normalizeWhitespaces(expected)));
-      expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
-        matchNormalized('"testRunner": "awesome"')
-          .and(matchNormalized('"packageManager": "npm"'))
-          .and(matchNormalized('"coverageAnalysis": "perTest"'))
-          .and(matchNormalized('"mutator": "typescript"'))
-          .and(matchNormalized('"dimension", "mars", "progress"'))
-      );
+      expect(fsWriteFile).calledOnce;
+      const [fileName, content] = fsWriteFile.getCall(0).args;
+      expect(fileName).eq('stryker.conf.json');
+      const normalizedContent = normalizeWhitespaces(content);
+      expect(normalizedContent).contains('"testRunner": "awesome"');
+      expect(normalizedContent).contains('"packageManager": "npm"');
+      expect(normalizedContent).contains('"coverageAnalysis": "perTest"');
+      expect(normalizedContent).contains('"mutator": "typescript"');
+      expect(normalizedContent).contains('"dimension", "mars", "progress"');
     });
 
     it('should configure the additional settings from the plugins', async () => {
