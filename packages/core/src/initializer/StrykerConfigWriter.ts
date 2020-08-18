@@ -36,14 +36,12 @@ export default class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: null | PromptOption,
-    selectedMutator: null | PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
-      mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',

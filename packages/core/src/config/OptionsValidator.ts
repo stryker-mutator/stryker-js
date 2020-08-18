@@ -33,9 +33,9 @@ export class OptionsValidator {
     if (options.thresholds.high < options.thresholds.low) {
       additionalErrors.push('Config option "thresholds.high" should be higher than "thresholds.low".');
     }
-    if (typeof options.mutator === 'object') {
-      this.log.warn('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
-      options.mutator = (options.mutator as any).name;
+    if (typeof options.mutator === 'string') {
+      this.log.warn('DEPRECATED. Use of "mutator" as a string is deprecated. Please use it as an object');
+      options.mutator = undefined;
     }
     if (options.transpilers) {
       this.log.warn('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
@@ -53,10 +53,26 @@ export class OptionsValidator {
 
   private schemaValidate(options: unknown): asserts options is StrykerOptions {
     if (!this.validateFn(options)) {
-      const errors = describeErrors(this.validateFn.errors!);
-      errors.forEach((error) => this.log.error(error));
-      this.throwErrorIfNeeded(errors);
+      const errors = this.validateFn.errors!.filter(this.filterSchema);
+
+      const describedErrors = describeErrors(errors);
+      describedErrors.forEach((error) => this.log.error(error));
+      this.throwErrorIfNeeded(describedErrors);
     }
+  }
+
+  private filterSchema(error: Ajv.ErrorObject) {
+    if (error.dataPath === '.mutator') {
+      return false;
+    }
+    if (error.dataPath === '.transpiler') {
+      return false;
+    }
+    if (error.dataPath === '.testFramework') {
+      return false;
+    }
+
+    return true;
   }
 
   private throwErrorIfNeeded(errors: string[]) {

@@ -94,14 +94,12 @@ export default class StrykerInitializer {
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedMutator = await this.selectMutator();
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
     const isJsonSelected = await this.selectJsonConfigType();
-    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner, selectedMutator].concat(selectedReporters));
+    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner].concat(selectedReporters));
     const configFileName = await configWriter.write(
       selectedTestRunner,
-      selectedMutator,
       selectedReporters,
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies),
@@ -147,17 +145,6 @@ export default class StrykerInitializer {
       }
     );
     return this.inquirer.promptReporters(reporterOptions);
-  }
-
-  private async selectMutator(): Promise<PromptOption | null> {
-    const mutatorOptions = await this.client.getMutatorOptions();
-    if (mutatorOptions.length) {
-      this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
-      return this.inquirer.promptMutator(mutatorOptions);
-    } else {
-      this.out('Unable to select a mutator. You will need to configure it manually.');
-      return null;
-    }
   }
 
   private async selectPackageManager(): Promise<PromptOption> {
