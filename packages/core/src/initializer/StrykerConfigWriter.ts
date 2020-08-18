@@ -36,9 +36,7 @@ export default class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: null | PromptOption,
-    selectedTestFramework: null | PromptOption,
     selectedMutator: null | PromptOption,
-    selectedTranspilers: null | PromptOption[],
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
@@ -49,10 +47,8 @@ export default class StrykerConfigWriter {
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map((t) => t.name) : [],
     };
 
-    this.configureTestFramework(configObject, selectedTestFramework);
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
   }
@@ -68,15 +64,6 @@ export default class StrykerConfigWriter {
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
-  }
-
-  private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
-    if (selectedTestFramework) {
-      configObject.testFramework = selectedTestFramework.name;
-      configObject.coverageAnalysis = 'perTest';
-    } else {
-      configObject.coverageAnalysis = 'all';
-    }
   }
 
   private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {

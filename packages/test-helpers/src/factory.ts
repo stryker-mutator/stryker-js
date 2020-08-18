@@ -1,14 +1,5 @@
 import Ajv = require('ajv');
-import {
-  File,
-  Location,
-  MutationScoreThresholds,
-  StrykerOptions,
-  MutatorDescriptor,
-  strykerCoreSchema,
-  WarningOptions,
-  Mutant,
-} from '@stryker-mutator/api/core';
+import { File, Location, MutationScoreThresholds, StrykerOptions, strykerCoreSchema, WarningOptions, Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
@@ -283,12 +274,6 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => {
 export const strykerWithPluginOptions = <T>(pluginOptions: T): T & StrykerOptions => {
   return { ...strykerOptions(), ...pluginOptions };
 };
-
-export const mutatorDescriptor = factoryMethod<MutatorDescriptor>(() => ({
-  excludedMutations: [],
-  name: 'fooMutator',
-  plugins: null,
-}));
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onSourceFileRead',

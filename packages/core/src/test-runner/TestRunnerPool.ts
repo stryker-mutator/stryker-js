@@ -53,10 +53,6 @@ export class TestRunnerPool implements Disposable {
 
   private determineConcurrency() {
     let numConcurrentRunners = os.cpus().length;
-    if (this.options.transpilers.length) {
-      // If transpilers are configured, one core is reserved for the compiler (for now)
-      numConcurrentRunners--;
-    }
     let numConcurrentRunnersSource = 'CPU count';
     if (this.options.concurrency && numConcurrentRunners > this.options.concurrency && this.options.concurrency > 0) {
       numConcurrentRunners = this.options.concurrency;

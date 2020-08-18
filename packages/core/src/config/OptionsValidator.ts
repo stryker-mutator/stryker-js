@@ -3,7 +3,7 @@ import os = require('os');
 import Ajv = require('ajv');
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, normalizeWhitespaces, propertyPath, deepFreeze } from '@stryker-mutator/util';
+import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
@@ -33,14 +33,17 @@ export class OptionsValidator {
     if (options.thresholds.high < options.thresholds.low) {
       additionalErrors.push('Config option "thresholds.high" should be higher than "thresholds.low".');
     }
-    if (options.transpilers.length > 1 && options.coverageAnalysis !== 'off') {
-      additionalErrors.push(
-        normalizeWhitespaces(
-          `Config option "coverageAnalysis" is invalid. Coverage analysis "${options.coverageAnalysis}" 
-          is not supported for multiple transpilers (configured transpilers: ${options.transpilers.map((t) => `"${t}"`).join(', ')}).
-          Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.`
-        )
-      );
+    if (typeof options.mutator === 'object') {
+      this.log.warn('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
+      if ((options.mutator as any).name) {
+        options.mutator = (options.mutator as any).name;
+      } else {
+        options.mutator = 'javascript';
+        this.log.warn('Couldn\'t find mutator name, using default - "javascript"');
+      }
+    }
+    if (options.transpilers) {
+      this.log.warn('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
     }
     if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
       this.log.warn('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');

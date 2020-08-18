@@ -1,6 +1,6 @@
 import sinon = require('sinon');
 import { expect } from 'chai';
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
@@ -26,7 +26,6 @@ describe(MutantInstrumenterExecutor.name, () => {
   let mutatedFile: File;
   let originalFile: File;
   let testFile: File;
-  let mutatorDescriptor: MutatorDescriptor;
 
   beforeEach(() => {
     mutatedFile = new File('foo.js', 'console.log(global.activeMutant === 1? "": "bar")');
@@ -47,8 +46,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
-    mutatorDescriptor = factory.mutatorDescriptor({ plugins: ['functionSent'] });
-    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles, mutatorDescriptor);
+    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);

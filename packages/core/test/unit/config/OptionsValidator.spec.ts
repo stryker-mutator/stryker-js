@@ -4,7 +4,6 @@ import sinon = require('sinon');
 import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/OptionsValidator';
 import { coreTokens } from '../../../src/di';
@@ -45,19 +44,6 @@ describe(OptionsValidator.name, () => {
     });
   });
 
-  it('should be invalid with coverageAnalysis when 2 transpilers are specified (for now)', () => {
-    testInjector.options.transpilers.push('a transpiler');
-    testInjector.options.transpilers.push('a second transpiler');
-    testInjector.options.coverageAnalysis = 'all';
-    actValidationErrors(
-      normalizeWhitespaces(`
-      Config option "coverageAnalysis" is invalid. Coverage analysis "all" is not supported for multiple transpilers
-      (configured transpilers: "a transpiler", "a second transpiler").
-      Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.
-    `)
-    );
-  });
-
   it('should be invalid with invalid logLevel', () => {
     testInjector.options.logLevel = 'thisTestPasses' as any;
     actValidationErrors(
@@ -93,58 +79,17 @@ describe(OptionsValidator.name, () => {
       actValidationErrors('Config option "mutator" has the wrong type. It should be a string or object, but was a number.');
     });
 
-    describe('as an object', () => {
-      it('should be valid with all options', () => {
-        testInjector.options.mutator = {
-          excludedMutations: ['BooleanSubstitution'],
-          name: 'javascript',
-          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]],
-        };
-        actAssertValid();
-      });
+    it('should report a deprecation warning', () => {
+      (testInjector.options.mutator as any) = { name: 'javascript' };
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
+    });
 
-      it('should be valid with minimal options', () => {
-        breakConfig('mutator', {
-          name: 'javascript',
-        });
-        actAssertValid();
-      });
-
-      it('should be invalid without name', () => {
-        breakConfig('mutator', {});
-        actValidationErrors('Config option "mutator" should have required property "name"');
-      });
-
-      it('should be invalid with non-string mutator name', () => {
-        breakConfig('mutator', {
-          name: 0,
-        });
-        actValidationErrors('Config option "mutator.name" has the wrong type. It should be a string, but was a number.');
-      });
-
-      it('should be invalid with non array plugins', () => {
-        breakConfig('mutator', {
-          name: 'javascript',
-          plugins: 'optionalChaining',
-        });
-        actValidationErrors('Config option "mutator.plugins" has the wrong type. It should be a array or null, but was a string.');
-      });
-
-      it('should be invalid with non-array excluded mutations', () => {
-        breakConfig('mutator', {
-          excludedMutations: 'BooleanSubstitution',
-          name: 'javascript',
-        });
-        actValidationErrors('Config option "mutator.excludedMutations" has the wrong type. It should be a array, but was a string.');
-      });
-
-      it('should be invalid with non-string excluded mutation array elements', () => {
-        breakConfig('mutator', {
-          excludedMutations: ['BooleanSubstitution', 0],
-          name: 'javascript',
-        });
-        actValidationErrors('Config option "mutator.excludedMutations[1]" has the wrong type. It should be a string, but was a number.');
-      });
+    it('should report a deprecation warning and try changing value if bad one provided', () => {
+      (testInjector.options.mutator as any) = {};
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
+      expect(testInjector.logger.warn).calledWith('Couldn\'t find mutator name, using default - "javascript"');
     });
   });
 
@@ -206,14 +151,10 @@ describe(OptionsValidator.name, () => {
   });
 
   describe('transpilers', () => {
-    it('should be invalid with non-array transpilers', () => {
-      breakConfig('transpilers', '@stryker-mutator/typescript');
-      actValidationErrors('Config option "transpilers" has the wrong type. It should be a array, but was a string.');
-    });
-
-    it('should be invalid with non-string array elements', () => {
-      breakConfig('transpilers', ['stryker-jest', 0]);
-      actValidationErrors('Config option "transpilers[1]" has the wrong type. It should be a string, but was a number.');
+    it('should report a deprecation warning', () => {
+      (testInjector.options.transpilers as any) = ['stryker-jest'];
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
     });
   });
 

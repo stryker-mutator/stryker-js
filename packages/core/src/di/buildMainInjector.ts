@@ -9,7 +9,7 @@ import BroadcastReporter from '../reporters/BroadcastReporter';
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
 import Timer from '../utils/Timer';
 
-import { mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
+import { pluginResolverFactory } from './factoryMethods';
 
 import { coreTokens, PluginCreator } from '.';
 
@@ -29,7 +29,6 @@ buildMainInjector.inject = tokens(commonTokens.injector);
 export function buildMainInjector(injector: CliOptionsProvider): Injector<MainContext> {
   const pluginResolverProvider = createPluginResolverProvider(injector);
   return pluginResolverProvider
-    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory)
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorChecker, PluginCreator.createFactory(PluginKind.Checker))
     .provideClass(coreTokens.reporter, BroadcastReporter)
