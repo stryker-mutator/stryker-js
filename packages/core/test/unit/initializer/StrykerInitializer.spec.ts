@@ -66,7 +66,6 @@ describe(StrykerInitializer.name, () => {
       stubMutators('@stryker-mutator/typescript', '@stryker-mutator/javascript-mutator');
       stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
       stubPackageClient({
-        '@stryker-mutator/awesome-framework': null,
         '@stryker-mutator/awesome-runner': null,
         '@stryker-mutator/javascript-mutator': null,
         '@stryker-mutator/mars-reporter': null,
@@ -74,7 +73,6 @@ describe(StrykerInitializer.name, () => {
         '@stryker-mutator/webpack': null,
         'stryker-dimension-reporter': null,
         'stryker-ghost-runner': null,
-        'stryker-hyper-framework': null,
         'stryker-hyper-runner': {
           files: [],
           someOtherSetting: 'enabled',
@@ -313,28 +311,6 @@ describe(StrykerInitializer.name, () => {
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.'
       );
       expect(out).calledWith('Unable to select a test runner. You will need to configure it manually.');
-      expect(fs.promises.writeFile).called;
-    });
-
-    it('should log error and continue when fetching test frameworks', async () => {
-      stubTestRunners('stryker-awesome-runner');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin').rejects();
-      inquirerPrompt.resolves({
-        packageManager: 'npm',
-        reporters: ['clear-text'],
-        testRunner: 'awesome',
-        configType: 'JSON',
-      });
-      stubMutators('stryker-javascript');
-      stubReporters();
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
-
-      await sut.initialize();
-
-      expect(testInjector.logger.error).calledWith(
-        'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-framework-plugin). Please check your internet connection.'
-      );
-      expect(out).calledWith('No stryker test framework plugin found that is compatible with awesome, downgrading coverageAnalysis to "all"');
       expect(fs.promises.writeFile).called;
     });
 
