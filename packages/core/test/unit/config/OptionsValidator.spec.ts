@@ -76,7 +76,7 @@ describe(OptionsValidator.name, () => {
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
       breakConfig('mutator', 0);
-      actValidationErrors('Config option "mutator" has the wrong type. It should be a string or object, but was a number.');
+      actValidationErrors('Config option "mutator" has the wrong type. It should be an object, but was a number.');
     });
 
     it('should report a deprecation warning', () => {

@@ -82,9 +82,8 @@ describe(StrykerInitializer.name, () => {
       presets.push(presetMock);
     });
 
-    it('should prompt for preset, test runner, mutator, reporters, package manager and config type', async () => {
+    it('should prompt for preset, test runner, reporters, package manager and config type', async () => {
       arrangeAnswers({
-        mutator: 'typescript',
         packageManager: 'yarn',
         reporters: ['dimension', 'mars'],
         testRunner: 'awesome',
@@ -92,16 +91,13 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(6);
-      const [promptPreset, promptTestRunner, promptMutator, promptReporters, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<
-        string
-      >> = [
+      expect(inquirerPrompt).callCount(5);
+      const [promptPreset, promptTestRunner, promptReporters, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<string>> = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(4).args[0],
-        inquirerPrompt.getCall(5).args[0],
       ];
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
@@ -109,8 +105,6 @@ describe(StrykerInitializer.name, () => {
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
       expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
-      expect(promptMutator.type).to.eq('list');
-      expect(promptMutator.choices).to.deep.eq(['typescript', 'javascript']);
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
@@ -216,7 +210,6 @@ describe(StrykerInitializer.name, () => {
 
     it('should install any additional dependencies', async () => {
       inquirerPrompt.resolves({
-        mutator: 'typescript',
         packageManager: 'npm',
         reporters: ['dimension', 'mars'],
         testRunner: 'awesome',
@@ -232,9 +225,8 @@ describe(StrykerInitializer.name, () => {
       );
     });
 
-    it('should configure testRunner, mutator, reporters, and packageManager', async () => {
+    it('should configure testRunner, reporters, and packageManager', async () => {
       inquirerPrompt.resolves({
-        mutator: 'typescript',
         packageManager: 'npm',
         reporters: ['dimension', 'mars', 'progress'],
         testRunner: 'awesome',
@@ -254,7 +246,6 @@ describe(StrykerInitializer.name, () => {
 
     it('should configure the additional settings from the plugins', async () => {
       inquirerPrompt.resolves({
-        mutator: 'javascript',
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
@@ -433,7 +424,6 @@ describe(StrykerInitializer.name, () => {
   interface StrykerInitAnswers {
     preset: string | null;
     testRunner: string;
-    mutator: string;
     reporters: string[];
     packageManager: string;
   }
@@ -441,7 +431,6 @@ describe(StrykerInitializer.name, () => {
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
     const answers: StrykerInitAnswers = Object.assign(
       {
-        mutator: 'typescript',
         packageManager: 'yarn',
         preset: null,
         reporters: ['dimension', 'mars'],

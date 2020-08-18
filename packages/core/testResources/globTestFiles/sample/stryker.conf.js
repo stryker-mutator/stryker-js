@@ -6,7 +6,6 @@ module.exports = function (config) {
       '!testResources/sampleProject/src/Error.js',
       '!testResources/sampleProject/src/InfiniteAdd.js',
       '!testResources/sampleProject/test/FailingAddSpec.js',],
-    testFramework: 'jasmine',
     testRunner: 'karma',
     coverageAnalysis: 'off',
     plugins: ['stryker-karma-runner']

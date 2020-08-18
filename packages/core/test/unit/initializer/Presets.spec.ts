@@ -23,11 +23,6 @@ describe('Presets', () => {
       expect(angularPreset.name).to.eq('angular-cli');
     });
 
-    it('should mutate typescript', async () => {
-      const config = await angularPreset.createConfig();
-      expect(config.config.mutator).to.eq('typescript');
-    });
-
     it('should use the angular-cli', async () => {
       const config = await angularPreset.createConfig();
       expect((config.config.karma as any).projectType).to.eq('angular-cli');
@@ -45,28 +40,12 @@ describe('Presets', () => {
       expect(reactPreset.name).to.eq('create-react-app');
     });
 
-    it('should mutate typescript when TSX is chosen', async () => {
-      inquirerPrompt.resolves({
-        choice: 'TSX',
-      });
-      const config = await reactPreset.createConfig();
-      expect(config.config.mutator).to.eq('typescript');
-    });
-
     it('should install @stryker-mutator/typescript when TSX is chosen', async () => {
       inquirerPrompt.resolves({
         choice: 'TSX',
       });
       const config = await reactPreset.createConfig();
       expect(config.dependencies).to.include('@stryker-mutator/typescript');
-    });
-
-    it('should mutate javascript when JSX is chosen', async () => {
-      inquirerPrompt.resolves({
-        choice: 'JSX',
-      });
-      const config = await reactPreset.createConfig();
-      expect(config.config.mutator).to.eq('javascript');
     });
 
     it('should install @stryker-mutator/javascript-mutator when JSX is chosen', async () => {
@@ -91,11 +70,6 @@ describe('Presets', () => {
 
     it('should have the name "vueJs"', () => {
       expect(vueJsPreset.name).to.eq('vueJs');
-    });
-
-    it('should use the vue mutator', async () => {
-      const config = await vueJsPreset.createConfig();
-      expect(config.config.mutator).to.contain('vue');
     });
 
     it('should install @stryker-mutator/karma-runner when karma is chosen', async () => {
