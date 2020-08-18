@@ -35,12 +35,7 @@ export class OptionsValidator {
     }
     if (typeof options.mutator === 'object') {
       this.log.warn('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
-      if ((options.mutator as any).name) {
-        options.mutator = (options.mutator as any).name;
-      } else {
-        options.mutator = 'javascript';
-        this.log.warn('Couldn\'t find mutator name, using default - "javascript"');
-      }
+      options.mutator = (options.mutator as any).name;
     }
     if (options.transpilers) {
       this.log.warn('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');

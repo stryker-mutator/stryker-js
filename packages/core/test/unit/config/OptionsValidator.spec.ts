@@ -76,20 +76,13 @@ describe(OptionsValidator.name, () => {
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
       breakConfig('mutator', 0);
-      actValidationErrors('Config option "mutator" has the wrong type. It should be a string, but was a number.');
+      actValidationErrors('Config option "mutator" has the wrong type. It should be a string or object, but was a number.');
     });
 
     it('should report a deprecation warning', () => {
       (testInjector.options.mutator as any) = { name: 'javascript' };
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
-    });
-
-    it('should report a deprecation warning and try changing value if bad one provided', () => {
-      (testInjector.options.mutator as any) = {};
-      sut.validate(testInjector.options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as an object is deprecated. Please use it as a string');
-      expect(testInjector.logger.warn).calledWith('Couldn\'t find mutator name, using default - "javascript"');
     });
   });
 
