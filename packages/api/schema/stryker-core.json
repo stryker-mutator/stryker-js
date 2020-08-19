@@ -223,10 +223,7 @@
           },
           "default": []
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
     },
     "warningOptions": {
       "title": "WarningOptions",
