@@ -39,7 +39,7 @@ export class OptionsValidator {
     } else if (typeof options.mutator === 'object' && (options.mutator as any).name) {
       this.log.warn('DEPRECATED. Use of "mutator.name" has been removed. You can remove "mutator.name" from your config as well');
     }
-    if (options.transpilers) {
+    if (Object.keys(options).includes('transpilers')) {
       this.log.warn('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
     }
     if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
@@ -48,7 +48,7 @@ export class OptionsValidator {
         options.concurrency = options.maxConcurrentTestRunners;
       }
     }
-    if (options.testFramework) {
+    if (Object.keys(options).includes('testFramework')) {
       this.log.warn('DEPRECATED. Use of "testFramework" has been deprecated. Use "options.buildCommand" instead');
     }
 
