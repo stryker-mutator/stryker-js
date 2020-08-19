@@ -36,6 +36,8 @@ export class OptionsValidator {
     if (typeof options.mutator === 'string') {
       this.log.warn('DEPRECATED. Use of "mutator" as a string is deprecated. Please use it as an object');
       options.mutator = undefined;
+    } else if (typeof options.mutator === 'object' && (options.mutator as any).name) {
+      this.log.warn('DEPRECATED. Use of "mutator.name" has been removed. You can remove "mutator.name" from your config as well');
     }
     if (options.transpilers) {
       this.log.warn('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
@@ -45,6 +47,9 @@ export class OptionsValidator {
       if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
+    }
+    if (options.testFramework) {
+      this.log.warn('DEPRECATED. Use of "testFramework" has been deprecated. Use "options.buildCommand" instead');
     }
 
     additionalErrors.forEach((error) => this.log.error(error));

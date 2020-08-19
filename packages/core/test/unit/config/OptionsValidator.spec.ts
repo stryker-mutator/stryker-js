@@ -79,10 +79,28 @@ describe(OptionsValidator.name, () => {
       actValidationErrors('Config option "mutator" has the wrong type. It should be a object, but was a number.');
     });
 
-    it('should report a deprecation warning', () => {
+    it('should report a deprecation warning for "mutator.name"', () => {
+      (testInjector.options.mutator as any) = {
+        name: 'javascript',
+      };
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "mutator.name" has been removed. You can remove "mutator.name" from your config as well'
+      );
+    });
+
+    it('should report a deprecation warning for mutator as a string', () => {
       (testInjector.options.mutator as any) = 'javascript';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as a string is deprecated. Please use it as an object');
+    });
+  });
+
+  describe('testFramework', () => {
+    it('should report a deprecation warning', () => {
+      (testInjector.options as any).testFramework = '';
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "testFramework" has been deprecated. Use "options.buildCommand" instead');
     });
   });
 
