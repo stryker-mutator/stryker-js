@@ -5,7 +5,9 @@
   "tempDirName": "stryker-tmp",
   "mutate": [
     "src/*.tsx",
-    "!src/*.spec.tsx"
+    "src/*.ts",
+    "!src/*.spec.tsx",
+    "!src/*.spec.ts"
   ],
   "concurrency": 2,
   "coverageAnalysis": "off",
