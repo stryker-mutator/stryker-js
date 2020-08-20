@@ -5,7 +5,7 @@ import { File } from '@stryker-mutator/api/core';
 
 import { FileHeaderPreprocessor } from '../../../src/sandbox/file-header-preprocessor';
 
-const EXPECTED_DEFAULT_HEADER = '/* eslint-disable */\n// @ts-nocheck\n';
+const EXPECTED_DEFAULT_HEADER = '// @ts-nocheck\n';
 
 describe(FileHeaderPreprocessor.name, () => {
   let sut: FileHeaderPreprocessor;
@@ -13,26 +13,20 @@ describe(FileHeaderPreprocessor.name, () => {
     sut = testInjector.injector.injectClass(FileHeaderPreprocessor);
   });
 
-  it('should add preprocess any js or friend file by default', async () => {
+  it('should update ts or tsx file by default', async () => {
     const inputContent = 'foo.bar()';
     const expectedOutputContent = `${EXPECTED_DEFAULT_HEADER}foo.bar()`;
     const input = [
-      new File('src/app.js', inputContent),
-      new File('test/app.spec.ts', inputContent),
-      new File('src/components/app.jsx', inputContent),
+      new File('src/app.ts', inputContent),
+      new File('test/app-test.ts', inputContent),
       new File('src/components/app.tsx', inputContent),
-      new File('src/components/app.cjs', inputContent),
-      new File('src/components/app.mjs', inputContent),
     ];
     const output = await sut.preprocess(input);
 
     assertions.expectTextFilesEqual(output, [
-      new File('src/app.js', expectedOutputContent),
-      new File('test/app.spec.ts', expectedOutputContent),
-      new File('src/components/app.jsx', expectedOutputContent),
+      new File('src/app.ts', expectedOutputContent),
+      new File('test/app-test.ts', expectedOutputContent),
       new File('src/components/app.tsx', expectedOutputContent),
-      new File('src/components/app.cjs', expectedOutputContent),
-      new File('src/components/app.mjs', expectedOutputContent),
     ]);
   });
 
