@@ -297,7 +297,7 @@ The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io,
 <a name="sandbox.fileHeaders"></a>
 ### `sandbox.fileHeaders` [`object`]
 
-Default: `{ "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
+Default: `"**/!(*.spec,*.test).{ts,tsx}": "// @ts-nocheck\n"`
 Command line: *none*
 Config file: `sandbox: { fileHeaders: {} }`
 
@@ -310,7 +310,7 @@ The key here is a [glob expression](https://globster.xyz/), where the value poin
 <a name="sandbox.stripComments"></a>
 ### `sandbox.stripComments` [`false` | `string`]
 
-Default: `"**/*+(.js|.ts|.cjs|.mjs)?(x)"`
+Default: `"default": "**/!(*.spec,*.test).{ts,tsx}"`
 Command line: *none*
 Config file: `sandbox: { stripComments: "" }`
 

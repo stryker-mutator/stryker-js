@@ -176,7 +176,7 @@
             "type": "string"
           },
           "default": {
-            "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
+            "**/!(*.spec,*.test).{ts,tsx}": "// @ts-nocheck\n"
           }
         },
         "stripComments": {
@@ -191,7 +191,7 @@
               "type": "string"
             }
           ],
-          "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+          "default": "**/!(*.spec,*.test).{ts,tsx}"
         }
       }
     },
