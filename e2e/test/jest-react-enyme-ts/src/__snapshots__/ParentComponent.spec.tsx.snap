@@ -6,5 +6,6 @@ exports[`Parent Component should render correctly 1`] = `
   <ChildComponent
     text="Some Text"
   />
+  <Component />
 </div>
 `;
