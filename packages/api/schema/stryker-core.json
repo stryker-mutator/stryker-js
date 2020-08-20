@@ -176,7 +176,7 @@
             "type": "string"
           },
           "default": {
-            "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
+            "**/!(.jest).{js|ts|jsx|tsx|cjs|mjs},!**/__test__/**": "/* eslint-disable */\n// @ts-nocheck\n"
           }
         },
         "stripComments": {
@@ -191,7 +191,7 @@
               "type": "string"
             }
           ],
-          "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+          "default": "**/!(.jest).{js|ts|jsx|tsx|cjs|mjs},!**/__test__/**"
         }
       }
     },
