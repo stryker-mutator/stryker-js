@@ -13,12 +13,12 @@ describe(FileHeaderPreprocessor.name, () => {
     sut = testInjector.injector.injectClass(FileHeaderPreprocessor);
   });
 
-  it('should add preprocess any js or friend file by default', async () => {
+  it('should preprocess any non-ignored js or friend files by default', async () => {
     const inputContent = 'foo.bar()';
     const expectedOutputContent = `${EXPECTED_DEFAULT_HEADER}foo.bar()`;
     const input = [
       new File('src/app.js', inputContent),
-      new File('test/app.spec.ts', inputContent),
+      new File('src/app.ts', inputContent),
       new File('src/components/app.jsx', inputContent),
       new File('src/components/app.tsx', inputContent),
       new File('src/components/app.cjs', inputContent),
@@ -28,11 +28,39 @@ describe(FileHeaderPreprocessor.name, () => {
 
     assertions.expectTextFilesEqual(output, [
       new File('src/app.js', expectedOutputContent),
-      new File('test/app.spec.ts', expectedOutputContent),
+      new File('src/app.ts', expectedOutputContent),
       new File('src/components/app.jsx', expectedOutputContent),
       new File('src/components/app.tsx', expectedOutputContent),
       new File('src/components/app.cjs', expectedOutputContent),
       new File('src/components/app.mjs', expectedOutputContent),
+    ]);
+  });
+
+  it('should not change any ignored test js or friend files by default', async () => {
+    const inputContent = 'expect(true)';
+
+    const input = [
+      new File('src/app.spec.js', inputContent),
+      new File('src/app.spec.ts', inputContent),
+      new File('src/components/app.spec.jsx', inputContent),
+      new File('src/components/app.spec.tsx', inputContent),
+      new File('src/components/app.spec.cjs', inputContent),
+      new File('src/components/app.spec.mjs', inputContent),
+      new File('src/components/appSpec.jsx', inputContent),
+      new File('src/__tests__/app.js', inputContent),
+    ];
+
+    const output = await sut.preprocess(input);
+
+    assertions.expectTextFilesEqual(output, [
+      new File('src/app.spec.js', inputContent),
+      new File('src/app.spec.ts', inputContent),
+      new File('src/components/app.spec.jsx', inputContent),
+      new File('src/components/app.spec.tsx', inputContent),
+      new File('src/components/app.spec.cjs', inputContent),
+      new File('src/components/app.spec.mjs', inputContent),
+      new File('src/components/appSpec.jsx', inputContent),
+      new File('src/__tests__/app.js', inputContent),
     ]);
   });
 

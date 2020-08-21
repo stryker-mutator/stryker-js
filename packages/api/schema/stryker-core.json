@@ -168,6 +168,18 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "ignorePatterns": {
+          "description": "Ignore these patterns when preprocessing the sandbox files",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/__tests__/**/*+(.js|.ts|.cjs|.mjs)?(x)",
+            "**/?(*.)+(spec|test)+(.js|.ts|.cjs|.mjs)?(x)",
+            "**/*+(Spec|Test)+(.js|.ts|.cjs|.mjs)?(x)"
+          ]
+        },
         "fileHeaders": {
           "type": "object",
           "title": "SandboxFileHeaders",

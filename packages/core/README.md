@@ -113,6 +113,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [mutator](#mutator)
 * [plugins](#plugins)
 * [reporters](#reporters)
+* [sandbox.ignore](#sandbox.ignore)
 * [sandbox.fileHeaders](#sandbox.fileHeaders)
 * [sandbox.stripComments](#sandbox.stripComments)
 * [symlinkNodeModules](#symlinkNodeModules)
@@ -293,6 +294,15 @@ The `clear-text` reporter supports three additional config options:
 * `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
 
 The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.*](#dashboard) configuration options. See [the Stryker handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/dashboard.md) for more info.
+
+<a name="sandbox.ignorePatterns"></a>
+### `sandbox.ignorePatterns` [`string[]`]
+
+Default: `['**/__tests__/**/*+(.js|.ts|.cjs|.mjs)?(x)', '**/?(*.)+(spec|test)+(.js|.ts|.cjs|.mjs)?(x)', '**/*+(Spec|Test)+(.js|.ts|.cjs|.mjs)?(x)']`
+Command line: *none*
+Config file: `sandbox.ignorePatterns: ['src/**/*.js', 'a.js']`
+
+Configure patterns to be ignored by the `sandbox` options below.
 
 <a name="sandbox.fileHeaders"></a>
 ### `sandbox.fileHeaders` [`object`]

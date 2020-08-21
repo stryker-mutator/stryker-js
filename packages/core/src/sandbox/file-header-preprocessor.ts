@@ -16,6 +16,7 @@ export class FileHeaderPreprocessor implements FilePreprocessor {
 
   public async preprocess(files: File[]): Promise<File[]> {
     return files.map((file) => {
+      if (this.options.sandbox.ignorePatterns.some((pattern) => minimatch(path.resolve(file.name), path.resolve(pattern)))) return file;
       Object.entries(this.options.sandbox.fileHeaders).forEach(([pattern, header]) => {
         if (minimatch(path.resolve(file.name), path.resolve(pattern))) {
           file = new File(file.name, `${header}${file.textContent}`);
