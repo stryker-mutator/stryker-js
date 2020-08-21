@@ -1,7 +1,7 @@
 import path = require('path');
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import stripComments = require('strip-comments');
+import removeComments = require('strip-comments');
 import minimatch = require('minimatch');
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
@@ -17,13 +17,13 @@ export class StripCommentsPreprocessor implements FilePreprocessor {
   constructor(private readonly options: StrykerOptions) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
-    if (this.options.sandbox.stripComments === false) {
+    if (this.options.sandbox.removeComments === false) {
       return files;
     } else {
-      const pattern = path.resolve(this.options.sandbox.stripComments);
+      const pattern = path.resolve(this.options.sandbox.removeComments);
       return files.map((file) => {
         if (minimatch(path.resolve(file.name), pattern)) {
-          return new File(file.name, stripComments(file.textContent));
+          return new File(file.name, removeComments(file.textContent));
         } else {
           return file;
         }

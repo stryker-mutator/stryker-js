@@ -191,7 +191,7 @@
             "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
           }
         },
-        "stripComments": {
+        "removeComments": {
           "description": "Configure files to be stripped of comments (either single line with `//` or multi line with `/**/`. These comments will be stripped after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to remove any lingering `// @ts-check` or `// @ts-expect-error` comments that interfere with typescript compilation. The default setting allows comments to be stripped from all JavaScript and friend files in your sandbox, you can specify a different glob expression or set it to `false` to completely disable this behavior.",
           "anyOf": [
             {

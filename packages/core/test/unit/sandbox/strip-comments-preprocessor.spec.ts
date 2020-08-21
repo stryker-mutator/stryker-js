@@ -26,13 +26,13 @@ describe(StripCommentsPreprocessor.name, () => {
     assertions.expectTextFilesEqual(output, [new File(path.resolve('src/app.ts'), 'foo.bar("// @ts-expect-error");')]);
   });
 
-  it('should only strip comments in that match the "sandbox.stripComments" glob expression', async () => {
+  it('should only strip comments in that match the "sandbox.removeComments" glob expression', async () => {
     const input = [
       new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar();'),
       new File(path.resolve('test/app.spec.ts'), '/* @ts-expect-error */\nfoo.bar();'),
       new File(path.resolve('testResources/project/app.ts'), '/* @ts-expect-error */\nfoo.bar();'),
     ];
-    testInjector.options.sandbox.stripComments = '+(src|test)/**/*.ts';
+    testInjector.options.sandbox.removeComments = '+(src|test)/**/*.ts';
     const output = await sut.preprocess(input);
     assertions.expectTextFilesEqual(output, [
       new File(path.resolve('src/app.ts'), '\nfoo.bar();'),
@@ -41,13 +41,13 @@ describe(StripCommentsPreprocessor.name, () => {
     ]);
   });
 
-  it('should not strip comments if "sandbox.stripComments" is set to `false`', async () => {
+  it('should not strip comments if "sandbox.removeComments" is set to `false`', async () => {
     const input = [
       new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar();'),
       new File(path.resolve('test/app.spec.ts'), '/* @ts-expect-error */\nfoo.bar();'),
       new File(path.resolve('testResources/project/app.ts'), '/* @ts-expect-error */\nfoo.bar();'),
     ];
-    testInjector.options.sandbox.stripComments = false;
+    testInjector.options.sandbox.removeComments = false;
     const output = await sut.preprocess(input);
     expect(output).eq(input);
   });
