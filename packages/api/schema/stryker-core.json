@@ -188,7 +188,7 @@
             "type": "string"
           },
           "default": {
-            "**/*.{ts,tsx}": "/* eslint-disable */\n// @ts-nocheck\n"
+            "**/*.{ts,tsx}": "// @ts-nocheck\n"
           }
         },
         "removeComments": {

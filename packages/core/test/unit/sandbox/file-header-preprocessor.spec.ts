@@ -5,7 +5,7 @@ import { File } from '@stryker-mutator/api/core';
 
 import { FileHeaderPreprocessor } from '../../../src/sandbox/file-header-preprocessor';
 
-const EXPECTED_DEFAULT_HEADER = '/* eslint-disable */\n// @ts-nocheck\n';
+const EXPECTED_DEFAULT_HEADER = '// @ts-nocheck\n';
 
 describe(FileHeaderPreprocessor.name, () => {
   let sut: FileHeaderPreprocessor;

@@ -307,7 +307,7 @@ Configure patterns to be ignored by the `sandbox` options below.
 <a name="sandbox.addHeaders"></a>
 ### `sandbox.addHeaders` [`object`]
 
-Default: `{ "**/*.{ts,tsx}": "/* eslint-disable */\n// @ts-nocheck\n" }`
+Default: `{ "**/*.{ts,tsx}": "// @ts-nocheck\n" }`
 Command line: *none*
 Config file: `sandbox: { addHeaders: {} }`
 
