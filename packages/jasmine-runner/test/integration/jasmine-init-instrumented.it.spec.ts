@@ -2,7 +2,7 @@ import path = require('path');
 
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { MutantRunStatus } from '@stryker-mutator/api/test_runner2';
 import { assertions } from '@stryker-mutator/test-helpers';
 
 import JasmineTestRunner, { createJasmineTestRunner } from '../../src/JasmineTestRunner';
@@ -59,7 +59,12 @@ describe('JasmineRunner integration with code instrumentation', () => {
     it('should be able to kill again after a mutant survived', async () => {
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 9 }) }));
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 2 }) }));
-      const expected: KilledMutantRunResult = { killedBy: 'spec1', status: MutantRunStatus.Killed, failureMessage: 'Expected true to be falsy.' };
+      const expected = factory.killedMutantRunResult({
+        killedBy: 'spec1',
+        status: MutantRunStatus.Killed,
+        failureMessage: 'Expected true to be falsy.',
+        nrOfTests: 2, // spec0 and spec1
+      });
       expect(result).deep.eq(expected);
     });
   });
