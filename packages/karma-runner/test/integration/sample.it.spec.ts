@@ -14,7 +14,7 @@ describe('Sample project', () => {
   });
 
   it('should be able to run karma with jasmine', async () => {
-    testInjector.options.karma = { configFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma.conf.js') };
+    testInjector.options.karma = { configFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma-jasmine.conf.js') };
     const runner = testInjector.injector.injectClass(KarmaTestRunner);
     await runner.init();
     const result = await runner.dryRun(factory.dryRunOptions());
@@ -22,48 +22,36 @@ describe('Sample project', () => {
     const expectedTestResults: TimelessTestResult[] = [
       {
         id: 'spec0',
-        name: 'Add should be able to add two numbers and add one',
-        status: TestStatus.Failed,
-        failureMessage: 'Error: Expected 7 to be 8.',
-      },
-      {
-        id: 'spec1',
-        name: 'Add should be to add able 1 to a number and actually add 2',
-        status: TestStatus.Failed,
-        failureMessage: 'Error: Expected 3 to be 4.',
-      },
-      {
-        id: 'spec2',
         name: 'Add should be able to add two numbers',
         status: TestStatus.Success,
       },
       {
-        id: 'spec3',
+        id: 'spec1',
         name: 'Add should be able 1 to a number',
         status: TestStatus.Success,
       },
       {
-        id: 'spec4',
+        id: 'spec2',
         name: 'Add should be able negate a number',
         status: TestStatus.Success,
       },
       {
-        id: 'spec5',
+        id: 'spec3',
         name: 'Add should be able to recognize a negative number',
         status: TestStatus.Success,
       },
       {
-        id: 'spec6',
+        id: 'spec4',
         name: 'Add should be able to recognize that 0 is not a negative number',
         status: TestStatus.Success,
       },
       {
-        id: 'spec7',
+        id: 'spec5',
         name: 'Circle should have a circumference of 2PI when the radius is 1',
         status: TestStatus.Success,
       },
       {
-        id: 'spec8',
+        id: 'spec6',
         name: 'Add this test should fail',
         status: TestStatus.Failed,
         failureMessage: 'Error: Expected 7 to be 0.',

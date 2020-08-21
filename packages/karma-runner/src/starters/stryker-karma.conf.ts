@@ -62,19 +62,21 @@ function setClientOptions(config: Config) {
   // Enabling clearContext (default true) will load "about:blank" in the iFrame after a test run.
   // As far as I can see clearing the context only has a visible effect (you don't see the result of the last test).
   // If this is true, disabling it is safe to do and solves the race condition issue.
-  config.set({ client: { clearContext: false } });
+  const clientOptions: Partial<ClientOptions> = { clearContext: false };
 
-  // Disable randomized tests with using jasmine.
-  // Stryker doesn't play nice with a random test order, since spec id's tent to move around
+  // Disable randomized tests with using jasmine. Stryker doesn't play nice with a random test order, since spec id's tent to move around
+  // Also set failFast, so that we're not waiting on more than 1 failed test
   if (config.frameworks?.includes('jasmine')) {
-    config.set({
-      client: {
-        jasmine: {
-          random: false,
-        },
-      } as Partial<ClientOptions>,
-    });
+    (clientOptions as any).jasmine = {
+      random: false,
+      failFast: true,
+    };
   }
+
+  if (config.frameworks?.includes('mocha')) {
+    (clientOptions as any).mocha = { bail: true };
+  }
+  config.set({ client: clientOptions });
 }
 
 function setUserKarmaConfig(config: Config) {
