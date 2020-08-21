@@ -263,6 +263,7 @@ describe(MochaTestRunner.name, () => {
         failureMessage: 'foo was baz',
         killedBy: 'foo should be bar',
         status: MutantRunStatus.Killed,
+        nrOfTests: 2,
       };
       expect(result).deep.eq(expectedResult);
     });

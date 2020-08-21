@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/babel-transpiler",
-  "version": "4.0.0-beta.2",
+  "version": "4.0.0-beta.3",
   "description": "A plugin for babel projects using Stryker",
   "main": "src/index.js",
   "scripts": {},

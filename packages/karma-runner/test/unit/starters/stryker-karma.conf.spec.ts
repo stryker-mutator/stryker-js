@@ -107,10 +107,10 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect(config).deep.include({ client: { clearContext: false } });
+    expect(config.client?.clearContext).false;
   });
 
-  it('should force random `false` when dealing with jasmine', () => {
+  it('should force non-random and failFast options when dealing with jasmine', () => {
     // Arrange
     sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
     requireModuleStub.returns((conf: Config) => conf.set({ client: { jasmine: { random: true } } as ClientOptions, frameworks: ['jasmine'] }));
@@ -119,7 +119,19 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect(config).deep.include({ client: { jasmine: { random: false } } });
+    expect((config.client as any).jasmine).deep.eq({ random: false, failFast: true });
+  });
+
+  it('should force bail options when dealing with mocha', () => {
+    // Arrange
+    sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
+    requireModuleStub.returns((conf: Config) => conf.set({ client: { mocha: { bail: false } } as ClientOptions, frameworks: ['mocha'] }));
+
+    // Act
+    sut(config);
+
+    // Assert
+    expect((config.client as any).mocha).deep.include({ bail: true });
   });
 
   it('should configure the tests hooks middleware', () => {

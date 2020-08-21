@@ -8,7 +8,8 @@ module.exports = function (config) {
     ],
     exclude: [
       __dirname + '/src/Error.js',
-      __dirname + '/src/InfiniteAdd.js'
+      __dirname + '/src/InfiniteAdd.js',
+      __dirname + '/test-jasmine/AddFailedSpec.js'
     ],
     singleRun: false,
     watch: true,

@@ -1,7 +1,16 @@
 import Ajv = require('ajv');
 import { File, Location, MutationScoreThresholds, StrykerOptions, strykerCoreSchema, WarningOptions, Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { MatchedMutant, MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import {
+  MatchedMutant,
+  MutantStatus,
+  mutationTestReportSchema,
+  Reporter,
+  KilledMutantResult,
+  InvalidMutantResult,
+  UndetectedMutantResult,
+  TimeoutMutantResult,
+} from '@stryker-mutator/api/report';
 import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
@@ -25,7 +34,7 @@ import {
   ErrorMutantRunResult,
   MutantCoverage,
 } from '@stryker-mutator/api/test_runner2';
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true });
 
@@ -67,7 +76,7 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
 }));
 
-export const mutantResult = factoryMethod<MutantResult>(() => ({
+export const killedMutantResult = factoryMethod<KilledMutantResult>(() => ({
   id: '256',
   location: location(),
   mutatedLines: '',
@@ -75,9 +84,50 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   originalLines: '',
   range: [0, 0],
   replacement: '',
-  sourceFilePath: 'file.js',
+  fileName: 'file.js',
   status: MutantStatus.Killed,
-  testsRan: [''],
+  killedBy: '',
+  nrOfTestsRan: 2,
+}));
+export const timeoutMutantResult = factoryMethod<TimeoutMutantResult>(() => ({
+  id: '256',
+  location: location(),
+  mutatedLines: '',
+  mutatorName: '',
+  originalLines: '',
+  range: [0, 0],
+  replacement: '',
+  fileName: 'file.js',
+  status: MutantStatus.TimedOut,
+  nrOfTestsRan: 0,
+}));
+
+export const invalidMutantResult = factoryMethod<InvalidMutantResult>(() => ({
+  id: '256',
+  location: location(),
+  mutatedLines: '',
+  mutatorName: '',
+  originalLines: '',
+  range: [0, 0],
+  replacement: '',
+  fileName: 'file.js',
+  status: MutantStatus.RuntimeError,
+  errorMessage: 'expected error',
+  nrOfTestsRan: 2,
+}));
+
+export const undetectedMutantResult = factoryMethod<UndetectedMutantResult>(() => ({
+  id: '256',
+  location: location(),
+  mutatedLines: '',
+  mutatorName: '',
+  originalLines: '',
+  range: [0, 0],
+  replacement: '',
+  fileName: 'file.js',
+  status: MutantStatus.NoCoverage,
+  testFilter: undefined,
+  nrOfTestsRan: 2,
 }));
 
 export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
@@ -180,6 +230,11 @@ export const checkResult = factoryMethod<CheckResult>(() => ({
   status: CheckStatus.Passed,
 }));
 
+export const failedCheckResult = factoryMethod<FailedCheckResult>(() => ({
+  status: CheckStatus.CompileError,
+  reason: 'Cannot call "foo" of undefined',
+}));
+
 export const testResult = factoryMethod<TestResult>(() => ({
   name: 'name',
   status: TestStatus.Success,
@@ -239,10 +294,12 @@ export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => 
   status: MutantRunStatus.Killed,
   killedBy: 'spec1',
   failureMessage: 'foo should be bar',
+  nrOfTests: 1,
 }));
 
 export const survivedMutantRunResult = factoryMethod<SurvivedMutantRunResult>(() => ({
   status: MutantRunStatus.Survived,
+  nrOfTests: 2,
 }));
 
 export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(() => ({

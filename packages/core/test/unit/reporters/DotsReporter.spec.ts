@@ -1,6 +1,6 @@
 import * as os from 'os';
 
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
+import { MutantStatus } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -22,7 +22,7 @@ describe('DotsReporter', () => {
   describe('onMutantTested()', () => {
     describe('when status is Killed', () => {
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.Killed));
+        sut.onMutantTested(factory.killedMutantResult());
       });
 
       it('should log "."', () => {
@@ -32,7 +32,7 @@ describe('DotsReporter', () => {
 
     describe('when status is TimedOut', () => {
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.TimedOut));
+        sut.onMutantTested(factory.timeoutMutantResult());
       });
 
       it('should log "T"', () => {
@@ -42,7 +42,7 @@ describe('DotsReporter', () => {
 
     describe('when status is Survived', () => {
       beforeEach(() => {
-        sut.onMutantTested(mutantResult(MutantStatus.Survived));
+        sut.onMutantTested(factory.undetectedMutantResult({ status: MutantStatus.Survived }));
       });
 
       it('should log "S"', () => {
@@ -61,18 +61,4 @@ describe('DotsReporter', () => {
   afterEach(() => {
     sandbox.restore();
   });
-
-  function mutantResult(status: MutantStatus): MutantResult {
-    return factory.mutantResult({
-      location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
-      mutatedLines: '',
-      mutatorName: '',
-      originalLines: '',
-      range: [0, 0],
-      replacement: '',
-      sourceFilePath: '',
-      status,
-      testsRan: [''],
-    });
-  }
 });

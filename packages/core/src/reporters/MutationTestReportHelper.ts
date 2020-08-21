@@ -1,13 +1,23 @@
 import * as path from 'path';
 
-import { Location, Position, StrykerOptions } from '@stryker-mutator/api/core';
+import { Location, Position, StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import {
+  MutantResult,
+  MutantStatus,
+  mutationTestReportSchema,
+  Reporter,
+  TimeoutMutantResult,
+  InvalidMutantResult,
+  BaseMutantResult,
+  UndetectedMutantResult,
+  KilledMutantResult,
+} from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
-
-import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
@@ -19,9 +29,9 @@ import { mutatedLines, originalLines } from '../utils/mutantUtils';
  * A helper class to convert and report mutants that survived or get killed
  */
 export class MutationTestReportHelper {
-  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
-  private readonly allTestNames: string[];
+  private readonly testNamesById: Map<string, string>;
 
+  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
@@ -29,13 +39,41 @@ export class MutationTestReportHelper {
     private readonly log: Logger,
     private readonly dryRunResult: CompleteDryRunResult
   ) {
-    this.allTestNames = this.dryRunResult.tests.map((t) => t.name);
+    this.testNamesById = new Map(this.dryRunResult.tests.map((test) => [test.id, test.name]));
   }
 
-  public reportOne(mutantWithTestCoverage: MutantTestCoverage, resultStatus: MutantStatus): MutantResult {
+  public reportCheckFailed(mutant: Mutant, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
+    return this.reportOne<InvalidMutantResult>(mutant, {
+      status: this.checkStatusToResultStatus(checkResult.status),
+      errorMessage: checkResult.reason,
+    });
+  }
+
+  public reportNoCoverage(mutant: Mutant) {
+    return this.reportOne<UndetectedMutantResult>(mutant, { status: MutantStatus.NoCoverage, testFilter: [] });
+  }
+
+  public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult) {
     const { mutant, testFilter } = mutantWithTestCoverage;
+    switch (result.status) {
+      case MutantRunStatus.Error:
+        return this.reportOne<InvalidMutantResult>(mutant, { status: MutantStatus.RuntimeError, errorMessage: result.errorMessage });
+      case MutantRunStatus.Killed:
+        return this.reportOne<KilledMutantResult>(mutant, { status: MutantStatus.Killed, killedBy: this.testNamesById.get(result.killedBy)! });
+      case MutantRunStatus.Timeout:
+        return this.reportOne<TimeoutMutantResult>(mutant, { status: MutantStatus.TimedOut });
+      case MutantRunStatus.Survived:
+        return this.reportOne<UndetectedMutantResult>(mutant, {
+          status: MutantStatus.Survived,
+          testFilter: testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : undefined,
+        });
+    }
+  }
+
+  private reportOne<T extends MutantResult>(mutant: Mutant, additionalFields: Omit<T, keyof BaseMutantResult>) {
     const originalFileTextContent = this.inputFiles.filesToMutate.find((fileToMutate) => fileToMutate.name === mutant.fileName)!.textContent;
-    const mutantResult: MutantResult = {
+
+    const mutantResult = {
       id: mutant.id.toString(),
       location: mutant.location,
       mutatedLines: mutatedLines(originalFileTextContent, mutant),
@@ -43,16 +81,22 @@ export class MutationTestReportHelper {
       originalLines: originalLines(originalFileTextContent, mutant),
       range: mutant.range,
       replacement: mutant.replacement,
-      sourceFilePath: mutant.fileName,
-      status: resultStatus,
-      testsRan: [],
-    };
-
-    if (resultStatus !== MutantStatus.NoCoverage) {
-      mutantResult.testsRan = testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : this.allTestNames;
-    }
+      fileName: mutant.fileName,
+      nrOfTestsRan: 0,
+      ...additionalFields,
+    } as MutantResult;
     this.reporter.onMutantTested(mutantResult);
+
     return mutantResult;
+  }
+
+  public reportMutantTimeout(mutantWithTestCoverage: MutantTestCoverage) {}
+
+  private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus.CompileError {
+    switch (status) {
+      case CheckStatus.CompileError:
+        return MutantStatus.CompileError;
+    }
   }
 
   public reportAll(results: MutantResult[]) {
@@ -92,20 +136,20 @@ export class MutationTestReportHelper {
   private toFileResults(results: readonly MutantResult[]): mutationTestReportSchema.FileResultDictionary {
     const resultDictionary: mutationTestReportSchema.FileResultDictionary = Object.create(null);
     results.forEach((mutantResult) => {
-      const fileResult = resultDictionary[mutantResult.sourceFilePath];
+      const fileResult = resultDictionary[mutantResult.fileName];
       if (fileResult) {
         fileResult.mutants.push(this.toMutantResult(mutantResult));
       } else {
-        const sourceFile = this.inputFiles.files.find((file) => file.name === mutantResult.sourceFilePath);
+        const sourceFile = this.inputFiles.files.find((file) => file.name === mutantResult.fileName);
         if (sourceFile) {
-          resultDictionary[mutantResult.sourceFilePath] = {
+          resultDictionary[mutantResult.fileName] = {
             language: this.determineLanguage(sourceFile.name),
             mutants: [this.toMutantResult(mutantResult)],
             source: sourceFile.textContent,
           };
         } else {
           this.log.warn(
-            normalizeWhitespaces(`File "${mutantResult.sourceFilePath}" not found
+            normalizeWhitespaces(`File "${mutantResult.fileName}" not found
           in input files, but did receive mutant result for it. This shouldn't happen`)
           );
         }
@@ -164,7 +208,7 @@ export class MutationTestReportHelper {
         return mutationTestReportSchema.MutantStatus.Survived;
       case MutantStatus.TimedOut:
         return mutationTestReportSchema.MutantStatus.Timeout;
-      case MutantStatus.TranspileError:
+      case MutantStatus.CompileError:
         return mutationTestReportSchema.MutantStatus.CompileError;
       default:
         this.logUnsupportedMutantStatus(status);

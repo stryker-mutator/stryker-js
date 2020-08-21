@@ -2,12 +2,12 @@ import { from, zip, partition, merge, Observable } from 'rxjs';
 import { flatMap, toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/report';
-import { MutantRunOptions, MutantRunStatus, TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { MutantResult } from '@stryker-mutator/api/report';
+import { MutantRunOptions, TestRunner2 } from '@stryker-mutator/api/test_runner2';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 
-import { CheckStatus, Checker } from '@stryker-mutator/api/check';
+import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
@@ -71,9 +71,7 @@ export class MutationTestExecutor {
   private executeNoCoverage(input$: Observable<MutantTestCoverage>) {
     const [coveredMutant$, noCoverageMatchedMutant$] = partition(input$.pipe(shareReplay()), (matchedMutant) => matchedMutant.coveredByTests);
     return {
-      noCoverageResult$: noCoverageMatchedMutant$.pipe(
-        map((noCoverage) => this.mutationTestReportHelper.reportOne(noCoverage, MutantStatus.NoCoverage))
-      ),
+      noCoverageResult$: noCoverageMatchedMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportNoCoverage(mutant))),
       coveredMutant$,
     };
   }
@@ -103,9 +101,9 @@ export class MutationTestExecutor {
     return {
       checkResult$: failedMutant$.pipe(
         map((failedMutant) =>
-          this.mutationTestReportHelper.reportOne(
-            failedMutant.matchedMutant,
-            this.checkStatusToResultStatus(failedMutant.checkResult.status as Exclude<CheckStatus, CheckStatus.Passed>)
+          this.mutationTestReportHelper.reportCheckFailed(
+            failedMutant.matchedMutant.mutant,
+            failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>
           )
         )
       ),
@@ -132,29 +130,9 @@ export class MutationTestExecutor {
         const mutantRunOptions = this.createMutantRunOptions(matchedMutant);
         const result = await testRunner.mutantRun(mutantRunOptions);
         this.testRunnerPool.recycle(testRunner);
-        return this.mutationTestReportHelper.reportOne(matchedMutant, this.mutantRunStatusToResultStatus(result.status));
+        return this.mutationTestReportHelper.reportMutantRunResult(matchedMutant, result);
       })
     );
-  }
-
-  private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus {
-    switch (status) {
-      case CheckStatus.CompileError:
-        return MutantStatus.TranspileError;
-    }
-  }
-
-  private mutantRunStatusToResultStatus(mutantRunStatus: MutantRunStatus): MutantStatus {
-    switch (mutantRunStatus) {
-      case MutantRunStatus.Error:
-        return MutantStatus.RuntimeError;
-      case MutantRunStatus.Killed:
-        return MutantStatus.Killed;
-      case MutantRunStatus.Survived:
-        return MutantStatus.Survived;
-      case MutantRunStatus.Timeout:
-        return MutantStatus.TimedOut;
-    }
   }
 
   private logDone() {

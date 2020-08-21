@@ -89,11 +89,11 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       StrykerReporter.instance.removeAllListeners();
     });
     describe('dryRun', () => {
-      it('should report failed tests', async () => {
+      it('should report the first failed test (bail)', async () => {
         const runResult = await sut.dryRun(factory.dryRunOptions());
         assertions.expectCompleted(runResult);
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
+        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.']);
         expect(runResult.status).to.be.eq(DryRunStatus.Complete);
       });
     });
