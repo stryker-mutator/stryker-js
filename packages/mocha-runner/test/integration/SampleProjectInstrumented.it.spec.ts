@@ -105,6 +105,12 @@ describe('Running an instrumented project', () => {
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 
+    it('should bail after the first failed test', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }) }));
+      assertions.expectKilled(result);
+      expect(result.nrOfTests).eq(1);
+    });
+
     it('should be able to kill a mutant with filtered test', async () => {
       const result = await sut.mutantRun(
         factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }), testFilter: ['MyMath should be able to add two numbers'] })
