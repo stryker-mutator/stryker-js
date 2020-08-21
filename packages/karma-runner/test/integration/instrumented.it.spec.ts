@@ -119,11 +119,12 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 2 }), testFilter: ['spec1'] }));
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
-        const expected: KilledMutantRunResult = {
+        const expected = factory.killedMutantRunResult({
           killedBy: 'spec1',
           status: MutantRunStatus.Killed,
           failureMessage: 'Error: Expected undefined to be 3.',
-        };
+          nrOfTests: 1,
+        });
         expect(result).deep.eq(expected);
       });
 
@@ -212,6 +213,12 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         expect(result.failureMessage.split('\n')[0]).eq('AssertionError: expected undefined to equal 7');
       });
 
+      it('should bail after first failing test', async () => {
+        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 0 }) }));
+        assertions.expectKilled(result);
+        expect(result.nrOfTests).eq(1);
+      });
+
       it('should survive if the filtered tests do not kill the mutant', async () => {
         const result = await sut.mutantRun(
           factory.mutantRunOptions({
@@ -224,6 +231,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           })
         );
         assertions.expectSurvived(result);
+        expect(result.nrOfTests).eq(2);
       });
 
       it('should be able to kill again after a mutant survived', async () => {
@@ -237,6 +245,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           killedBy: 'Add should be able 1 to a number',
           status: MutantRunStatus.Killed,
           failureMessage: 'AssertionError: expected undefined to equal 3',
+          nrOfTests: 1,
         };
         expect(result).deep.eq(expected);
       });
