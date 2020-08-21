@@ -16,7 +16,7 @@ describe('runResultHelpers', () => {
     });
 
     it('should report a failed test as "killed"', () => {
-      const expected: MutantRunResult = { status: MutantRunStatus.Killed, failureMessage: 'expected foo to be bar', killedBy: '42' };
+      const expected: MutantRunResult = { status: MutantRunStatus.Killed, failureMessage: 'expected foo to be bar', killedBy: '42', nrOfTests: 3 };
       expect(
         toMutantRunResult({
           status: DryRunStatus.Complete,
@@ -30,7 +30,7 @@ describe('runResultHelpers', () => {
     });
 
     it('should report only succeeded tests as "survived"', () => {
-      const expected: MutantRunResult = { status: MutantRunStatus.Survived };
+      const expected: MutantRunResult = { status: MutantRunStatus.Survived, nrOfTests: 3 };
       expect(
         toMutantRunResult({
           status: DryRunStatus.Complete,
@@ -44,13 +44,26 @@ describe('runResultHelpers', () => {
     });
 
     it('should report an empty suite as "survived"', () => {
-      const expected: MutantRunResult = { status: MutantRunStatus.Survived };
+      const expected: MutantRunResult = { status: MutantRunStatus.Survived, nrOfTests: 0 };
       expect(
         toMutantRunResult({
           status: DryRunStatus.Complete,
           tests: [],
         })
       ).deep.eq(expected);
+    });
+
+    it("should set nrOfTests with the amount of tests that weren't `skipped`", () => {
+      const expected: MutantRunResult = { nrOfTests: 2, failureMessage: '', killedBy: '1', status: MutantRunStatus.Killed };
+      const actual = toMutantRunResult({
+        status: DryRunStatus.Complete,
+        tests: [
+          { id: '1', name: '', status: TestStatus.Failed, timeSpentMs: 42, failureMessage: '' },
+          { id: '1', name: '', status: TestStatus.Skipped, timeSpentMs: 42 },
+          { id: '1', name: '', status: TestStatus.Success, timeSpentMs: 42 },
+        ],
+      });
+      expect(actual).deep.eq(expected);
     });
   });
 });

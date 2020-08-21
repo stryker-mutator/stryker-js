@@ -21,10 +21,18 @@ export interface KilledMutantRunResult {
    * The failure message that was reported by the test
    */
   failureMessage: string;
+  /**
+   * The number of total tests ran in this test run.
+   */
+  nrOfTests: number;
 }
 
 export interface SurvivedMutantRunResult {
   status: MutantRunStatus.Survived;
+  /**
+   * The number of total tests ran in this test run.
+   */
+  nrOfTests: number;
 }
 
 export interface ErrorMutantRunResult {

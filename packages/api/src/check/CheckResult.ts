@@ -1,6 +1,12 @@
 import { CheckStatus } from './CheckStatus';
 
-export interface CheckResult {
-  reason?: string;
-  status: CheckStatus;
+export interface FailedCheckResult {
+  reason: string;
+  status: CheckStatus.CompileError;
 }
+
+export interface PassedCheckResult {
+  status: CheckStatus.Passed;
+}
+
+export type CheckResult = PassedCheckResult | FailedCheckResult;

@@ -17,6 +17,7 @@ import {
   TestStatus,
 } from '@stryker-mutator/api/test_runner2';
 import { File } from '@stryker-mutator/api/core';
+import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
   assert.equal(result.status, MutantRunStatus.Killed);
@@ -28,6 +29,10 @@ export function expectFailed(result: TestResult): asserts result is FailedTestRe
 
 export function expectCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
   assert.equal(runResult.status, DryRunStatus.Complete);
+}
+
+export function expectCompileError(checkResult: CheckResult): asserts checkResult is FailedCheckResult {
+  assert.equal(checkResult.status, CheckStatus.CompileError);
 }
 
 export function expectErrored(runResult: MutantRunResult): asserts runResult is ErrorMutantRunResult;
