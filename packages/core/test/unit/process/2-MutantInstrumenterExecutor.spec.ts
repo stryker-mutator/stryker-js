@@ -2,7 +2,7 @@ import sinon = require('sinon');
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
 import { Checker } from '@stryker-mutator/api/check';
 
@@ -46,7 +46,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
-    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles);
+    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);

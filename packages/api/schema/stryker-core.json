@@ -200,6 +200,7 @@
       "additionalProperties": false,
       "properties": {
         "plugins": {
+          "description": "Override the default babel plugins Stryker uses to parse your JavaScript files. The default list of plugins is extensive and normally doesn't need overriding. Stryker also loads your babel plugins by default (if you have them). If Stryker's default babel plugins conflicts with your plugins, try to override this list with an empty array.",
           "anyOf": [
             {
               "type": "array",
@@ -326,9 +327,9 @@
       ]
     },
     "mutator": {
-      "description": "With mutator you configure which babel plugins you want to use, and optionally, which mutation types to exclude from the test run.",
+      "description": "Configure how Stryker mutates your code.",
       "$ref": "#/definitions/mutatorDescriptor",
-      "errorMessage": "should be an \"object\" describing the mutator. See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
+      "default": {}
     },
     "packageManager": {
       "enum": [
