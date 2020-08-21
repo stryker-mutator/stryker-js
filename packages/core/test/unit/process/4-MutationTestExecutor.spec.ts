@@ -1,7 +1,7 @@
 import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
-import { Reporter, MutantStatus } from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 import { TestRunner2, MutantRunStatus, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner2';
 import { Checker, CheckStatus, CheckResult } from '@stryker-mutator/api/check';
 import { Task } from '@stryker-mutator/util';
@@ -220,28 +220,29 @@ describe(MutationTestExecutor.name, () => {
   it('should report an uncovered mutant with `NoCoverage`', async () => {
     // Arrange
     arrangePools();
-    const mutant = createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), coveredByTests: false });
-    mutants.push(mutant);
+    const mutant = factory.mutant({ id: 1 });
+    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), coveredByTests: false }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportOne).calledWithExactly(mutant, MutantStatus.NoCoverage);
+    expect(mutationTestReportCalculatorMock.reportNoCoverage).calledWithExactly(mutant);
   });
 
-  it('should report an compile error mutants as `TranspileError`', async () => {
+  it('should report non-passed check results as "checkFailed"', async () => {
     // Arrange
     checkerPoolMock.worker$.next(checker1);
-    const mutant = createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }) });
-    checker1.check.resolves(factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError }));
-    mutants.push(mutant);
+    const mutant = factory.mutant({ id: 1 });
+    const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
+    checker1.check.resolves(failedCheckResult);
+    mutants.push(createMutantTestCoverage({ mutant }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportOne).calledWithExactly(mutant, MutantStatus.TranspileError);
+    expect(mutationTestReportCalculatorMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
   });
 
   it('should free checker resources after checking stage is complete', async () => {
@@ -264,26 +265,20 @@ describe(MutationTestExecutor.name, () => {
     await executePromise;
   });
 
-  [
-    [MutantStatus.Killed, MutantRunStatus.Killed] as const,
-    [MutantStatus.RuntimeError, MutantRunStatus.Error] as const,
-    [MutantStatus.Survived, MutantRunStatus.Survived] as const,
-    [MutantStatus.TimedOut, MutantRunStatus.Timeout] as const,
-  ].forEach(([expected, actual]) => {
-    it(`should report ${actual} as ${MutantStatus[expected]}`, async () => {
-      // Arrange
-      arrangeCheckers();
-      testRunnerPoolMock.worker$.next(testRunner1);
-      const mutant = createMutantTestCoverage();
-      mutants.push(mutant);
-      testRunner1.mutantRun.resolves({ status: actual });
+  it('should report mutant run results', async () => {
+    // Arrange
+    arrangeCheckers();
+    testRunnerPoolMock.worker$.next(testRunner1);
+    const mutant = createMutantTestCoverage();
+    const mutantRunResult = factory.killedMutantRunResult({ status: MutantRunStatus.Killed });
+    mutants.push(mutant);
+    testRunner1.mutantRun.resolves(mutantRunResult);
 
-      // Act
-      await sut.execute();
+    // Act
+    await sut.execute();
 
-      // Assert
-      expect(mutationTestReportCalculatorMock.reportOne).calledWithExactly(mutant, expected);
-    });
+    // Assert
+    expect(mutationTestReportCalculatorMock.reportMutantRunResult).calledWithExactly(mutant, mutantRunResult);
   });
 
   it('should log a done message when it is done', async () => {

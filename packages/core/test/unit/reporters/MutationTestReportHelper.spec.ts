@@ -1,10 +1,19 @@
 import sinon = require('sinon');
 import { File, Location, Range } from '@stryker-mutator/api/core';
-import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import {
+  MutantResult,
+  MutantStatus,
+  mutationTestReportSchema,
+  Reporter,
+  InvalidMutantResult,
+  UndetectedMutantResult,
+  KilledMutantResult,
+  TimeoutMutantResult,
+} from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { mutantResult } from '@stryker-mutator/test-helpers/src/factory';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../../../src/di';
 import InputFileCollection from '../../../src/input/InputFileCollection';
@@ -78,7 +87,7 @@ describe(MutationTestReportHelper.name, () => {
       files.push(new File('baz.vue', 'baz content'));
       files.push(new File('qux.ts', 'qux content'));
       files.push(new File('corge.tsx', 'corge content'));
-      const inputMutants = files.map((file) => factory.mutantResult({ sourceFilePath: file.name }));
+      const inputMutants = files.map((file) => factory.killedMutantResult({ fileName: file.name }));
 
       // Act
       const actualReport = actReportAll(inputMutants);
@@ -95,35 +104,35 @@ describe(MutationTestReportHelper.name, () => {
     it('should correctly map basic MutantResult properties', () => {
       // Arrange
       const inputMutants = [
-        factory.mutantResult({
+        factory.killedMutantResult({
           id: '1',
           mutatorName: 'Foo',
           replacement: 'foo replacement',
-          sourceFilePath: 'foo.js',
+          fileName: 'foo.js',
           status: MutantStatus.Killed,
         }),
-        factory.mutantResult({
-          sourceFilePath: 'bar.js',
+        factory.undetectedMutantResult({
+          fileName: 'bar.js',
           status: MutantStatus.NoCoverage,
         }),
-        factory.mutantResult({
-          sourceFilePath: 'baz.js',
+        factory.invalidMutantResult({
+          fileName: 'baz.js',
           status: MutantStatus.RuntimeError,
         }),
-        factory.mutantResult({
-          sourceFilePath: 'qux.js',
+        factory.undetectedMutantResult({
+          fileName: 'qux.js',
           status: MutantStatus.Survived,
         }),
-        factory.mutantResult({
-          sourceFilePath: '5.js',
+        factory.timeoutMutantResult({
+          fileName: '5.js',
           status: MutantStatus.TimedOut,
         }),
-        factory.mutantResult({
-          sourceFilePath: '6.js',
-          status: MutantStatus.TranspileError,
+        factory.invalidMutantResult({
+          fileName: '6.js',
+          status: MutantStatus.CompileError,
         }),
       ];
-      files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
+      files.push(...inputMutants.map((m) => new File(m.fileName, '')));
 
       // Act
       const actualReport = actReportAll(inputMutants);
@@ -144,8 +153,8 @@ describe(MutationTestReportHelper.name, () => {
     });
 
     it('should offset location correctly', () => {
-      const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
-      files.push(...inputMutants.map((m) => new File(m.sourceFilePath, '')));
+      const inputMutants = [factory.killedMutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
+      files.push(...inputMutants.map((m) => new File(m.fileName, '')));
       const actualReport = actReportAll(inputMutants);
       expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
     });
@@ -153,13 +162,13 @@ describe(MutationTestReportHelper.name, () => {
     it('should group mutants by file name', () => {
       // Arrange
       const inputMutants = [
-        factory.mutantResult({
+        factory.killedMutantResult({
           mutatorName: 'Foo',
-          sourceFilePath: 'foo.js',
+          fileName: 'foo.js',
         }),
-        factory.mutantResult({
+        factory.undetectedMutantResult({
           mutatorName: 'Bar',
-          sourceFilePath: 'foo.js',
+          fileName: 'foo.js',
         }),
       ];
       files.push(new File('foo.js', ''));
@@ -173,7 +182,7 @@ describe(MutationTestReportHelper.name, () => {
     });
 
     it('should log a warning if source file could not be found', () => {
-      const inputMutants = [factory.mutantResult({ sourceFilePath: 'not-found.js' })];
+      const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
       const actualReport = actReportAll(inputMutants);
       expect(Object.keys(actualReport.files)).lengthOf(0);
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
@@ -185,7 +194,7 @@ describe(MutationTestReportHelper.name, () => {
       });
 
       it('should not set exit code = 1 if `threshold.break` is not configured', () => {
-        actReportAll([mutantResult({ status: MutantStatus.Survived })]);
+        actReportAll([factory.undetectedMutantResult({ status: MutantStatus.Survived })]);
 
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.debug).calledWith(
@@ -195,14 +204,20 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should not set exit code = 1 if `threshold.break` === score', () => {
         testInjector.options.thresholds.break = 50;
-        actReportAll([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        actReportAll([
+          factory.undetectedMutantResult({ status: MutantStatus.Survived }),
+          factory.killedMutantResult({ status: MutantStatus.Killed }),
+        ]); // 50 %
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.info).calledWith('Final mutation score of 50.00 is greater than or equal to break threshold 50');
       });
 
       it('should set exit code = 1 if `threshold.break` > score', () => {
         testInjector.options.thresholds.break = 50.01;
-        actReportAll([mutantResult({ status: MutantStatus.Survived }), mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        actReportAll([
+          factory.undetectedMutantResult({ status: MutantStatus.Survived }),
+          factory.killedMutantResult({ status: MutantStatus.Killed }),
+        ]); // 50 %
         expect(setExitCodeStub).calledWith(1);
         expect(testInjector.logger.error).calledWith('Final mutation score 50.00 under breaking threshold 50.01, setting exit code to 1 (failure).');
         expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
@@ -214,7 +229,7 @@ describe(MutationTestReportHelper.name, () => {
     }
   });
 
-  describe(MutationTestReportHelper.prototype.reportOne.name, () => {
+  describe('reportOne', () => {
     beforeEach(() => {
       inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js']);
     });
@@ -226,18 +241,16 @@ describe(MutationTestReportHelper.name, () => {
       const range: Range = [21, 35];
 
       // Act
-      const actual = sut.reportOne(
-        createMutantTestCoverage({
-          mutant: factory.mutant({
-            id: 32,
-            fileName: 'add.js',
-            location,
-            replacement: '{}',
-            mutatorName: 'fooMutator',
-            range,
-          }),
+      const actual = sut.reportCheckFailed(
+        factory.mutant({
+          id: 32,
+          fileName: 'add.js',
+          location,
+          replacement: '{}',
+          mutatorName: 'fooMutator',
+          range,
         }),
-        MutantStatus.Killed
+        factory.failedCheckResult()
       );
 
       // Assert
@@ -246,32 +259,135 @@ describe(MutationTestReportHelper.name, () => {
         location,
         mutatorName: 'fooMutator',
         range,
-        status: MutantStatus.Killed,
-        sourceFilePath: 'add.js',
+        fileName: 'add.js',
         replacement: '{}',
       };
-      const partialActualResult = Object.keys(expected).reduce((obj, prop) => ({ ...obj, [prop]: actual[prop as keyof MutantResult] }), {});
-      expect(partialActualResult).deep.eq(expected);
+      expect(actual).include(expected);
     });
 
-    it('should report onMutantTested', () => {
+    it('should report failed message on reportCheckFailed', () => {
       // Arrange
       const sut = createSut();
 
       // Act
-      const actual = sut.reportOne(
-        createMutantTestCoverage({
-          mutant: factory.mutant({
-            fileName: 'add.js',
-          }),
-        }),
-        MutantStatus.Killed
+      const actual = sut.reportCheckFailed(
+        factory.mutant({ fileName: 'add.js' }),
+        factory.failedCheckResult({ status: CheckStatus.CompileError, reason: 'cannot call foo of undefined' })
       );
 
       // Assert
-      expect(reporterMock.onMutantTested).calledWithExactly(actual);
+      const expected: Partial<InvalidMutantResult> = {
+        status: MutantStatus.CompileError,
+        errorMessage: 'cannot call foo of undefined',
+      };
+      expect(actual).include(expected);
     });
 
-    // TODO: Report `killedBy` and `runTests` fields.
+    it('should report an empty test filter on reportNoCoverage', () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportNoCoverage(factory.mutant({ fileName: 'add.js' }));
+
+      // Assert
+      const expected: Partial<UndetectedMutantResult> = {
+        status: MutantStatus.NoCoverage,
+        testFilter: [],
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should report a killed mutant on reportMutantRunResult with a KilledMutantRunResult', () => {
+      // Arrange
+      dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantRunResult(
+        createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }) }),
+        factory.killedMutantRunResult({ killedBy: '1' })
+      );
+
+      // Assert
+      const expected: Partial<KilledMutantResult> = {
+        status: MutantStatus.Killed,
+        killedBy: 'foo should be bar',
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should report a runtime error mutant on reportMutantRunResult with a ErrorMutantRunResult', () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantRunResult(
+        createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }) }),
+        factory.errorMutantRunResult({ errorMessage: 'Cannot call foo of null' })
+      );
+
+      // Assert
+      const expected: Partial<InvalidMutantResult> = {
+        status: MutantStatus.RuntimeError,
+        errorMessage: 'Cannot call foo of null',
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should report a timeout mutant on reportMutantRunResult with a TimeoutMutantRunResult', () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantRunResult(
+        createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }) }),
+        factory.timeoutMutantRunResult()
+      );
+
+      // Assert
+      const expected: Partial<TimeoutMutantResult> = {
+        status: MutantStatus.TimedOut,
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should report a survived mutant on reportMutantRunResult with a SurvivedMutantRunResult', () => {
+      // Arrange
+      dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantRunResult(
+        createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }), testFilter: ['1'] }),
+        factory.survivedMutantRunResult()
+      );
+
+      // Assert
+      const expected: Partial<UndetectedMutantResult> = {
+        status: MutantStatus.Survived,
+        testFilter: ['foo should be bar'],
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should be able to report testFilter as `undefined` for a survived mutant', () => {
+      // Arrange
+      dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantRunResult(
+        createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }), testFilter: undefined }),
+        factory.survivedMutantRunResult()
+      );
+
+      // Assert
+      const expected: Partial<UndetectedMutantResult> = {
+        status: MutantStatus.Survived,
+        testFilter: undefined,
+      };
+      expect(actual).deep.include(expected);
+    });
   });
 });
