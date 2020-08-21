@@ -298,7 +298,7 @@ The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io,
 <a name="sandbox.ignorePatterns"></a>
 ### `sandbox.ignorePatterns` [`string[]`]
 
-Default: `['**/__tests__/**/*+(.js|.ts|.cjs|.mjs)?(x)', '**/?(*.)+(spec|test)+(.js|.ts|.cjs|.mjs)?(x)', '**/*+(Spec|Test)+(.js|.ts|.cjs|.mjs)?(x)']`
+Default: `['**/__tests__/**/*.{js,ts,cjs,mjs}?(x)', '**/*.{spec,test}.{js,ts,cjs,mjs}?(x)', '**/*{Spec,Test}.{js,ts,cjs,mjs}?(x)']`
 Command line: *none*
 Config file: `sandbox.ignorePatterns: ['src/**/*.js', 'a.js']`
 
@@ -307,7 +307,7 @@ Configure patterns to be ignored by the `sandbox` options below.
 <a name="sandbox.addHeaders"></a>
 ### `sandbox.addHeaders` [`object`]
 
-Default: `{ "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
+Default: `{ "**/*.{js,ts,cjs,mjs}?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
 Command line: *none*
 Config file: `sandbox: { addHeaders: {} }`
 
@@ -320,7 +320,7 @@ The key here is a [glob expression](https://globster.xyz/), where the value poin
 <a name="sandbox.stripComments"></a>
 ### `sandbox.stripComments` [`false` | `string`]
 
-Default: `"**/*+(.js|.ts|.cjs|.mjs)?(x)"`
+Default: `"**/*.{js,ts,cjs,mjs}?(x)"`
 Command line: *none*
 Config file: `sandbox: { stripComments: "" }`
 

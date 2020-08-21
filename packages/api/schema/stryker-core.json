@@ -175,9 +175,9 @@
             "type": "string"
           },
           "default": [
-            "**/__tests__/**/*+(.js|.ts|.cjs|.mjs)?(x)",
-            "**/?(*.)+(spec|test)+(.js|.ts|.cjs|.mjs)?(x)",
-            "**/*+(Spec|Test)+(.js|.ts|.cjs|.mjs)?(x)"
+            "**/__tests__/**/*.{js,ts,cjs,mjs}?(x)",
+            "**/*.{spec,test}.{js,ts,cjs,mjs}?(x)",
+            "**/*{Spec,Test}.{js,ts,cjs,mjs}?(x)"
           ]
         },
         "addHeaders": {
@@ -188,7 +188,7 @@
             "type": "string"
           },
           "default": {
-            "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
+            "**/*.{js,ts,cjs,mjs}?(x)": "/* eslint-disable */\n// @ts-nocheck\n"
           }
         },
         "removeComments": {
@@ -203,7 +203,7 @@
               "type": "string"
             }
           ],
-          "default": "**/*+(.js|.ts|.cjs|.mjs)?(x)"
+          "default": "**/*.{js,ts,cjs,mjs}?(x)"
         }
       }
     },
