@@ -114,7 +114,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [plugins](#plugins)
 * [reporters](#reporters)
 * [sandbox.ignore](#sandbox.ignore)
-* [sandbox.fileHeaders](#sandbox.fileHeaders)
+* [sandbox.addHeaders](#sandbox.addHeaders)
 * [sandbox.stripComments](#sandbox.stripComments)
 * [symlinkNodeModules](#symlinkNodeModules)
 * [tempDirName](#tempDirName)
@@ -304,12 +304,12 @@ Config file: `sandbox.ignorePatterns: ['src/**/*.js', 'a.js']`
 
 Configure patterns to be ignored by the `sandbox` options below.
 
-<a name="sandbox.fileHeaders"></a>
-### `sandbox.fileHeaders` [`object`]
+<a name="sandbox.addHeaders"></a>
+### `sandbox.addHeaders` [`object`]
 
 Default: `{ "**/*+(.js|.ts|.cjs|.mjs)?(x)": "/* eslint-disable */\n// @ts-nocheck\n" }`
 Command line: *none*
-Config file: `sandbox: { fileHeaders: {} }`
+Config file: `sandbox: { addHeaders: {} }`
 
 Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is be used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code. 
 

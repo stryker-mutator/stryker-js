@@ -180,7 +180,7 @@
             "**/*+(Spec|Test)+(.js|.ts|.cjs|.mjs)?(x)"
           ]
         },
-        "fileHeaders": {
+        "addHeaders": {
           "type": "object",
           "title": "SandboxFileHeaders",
           "description": "Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code with mutants. The default setting should work for most use cases.",

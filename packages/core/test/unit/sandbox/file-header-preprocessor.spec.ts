@@ -67,7 +67,7 @@ describe(FileHeaderPreprocessor.name, () => {
   it('should also match a full file name', async () => {
     // Arrange
     const input = [new File(path.resolve('src', 'app.ts'), 'foo.bar()')];
-    testInjector.options.sandbox.fileHeaders = {
+    testInjector.options.sandbox.addHeaders = {
       ['+(src|test)/**/*+(.js|.ts)?(x)']: '// @ts-nocheck\n',
     };
 
@@ -84,7 +84,7 @@ describe(FileHeaderPreprocessor.name, () => {
       new File(path.resolve('src', 'app.ts'), 'foo.bar()'),
       new File(path.resolve('testResources', 'app.ts'), '// test file example that should be ignored'),
     ];
-    testInjector.options.sandbox.fileHeaders = {
+    testInjector.options.sandbox.addHeaders = {
       ['+(src|test)/**/*+(.js|.ts)?(x)']: '// @ts-nocheck\n',
     };
 
@@ -101,7 +101,7 @@ describe(FileHeaderPreprocessor.name, () => {
   it('should allow multiple headers', async () => {
     // Arrange
     const input = [new File('src/app.ts', 'foo.bar()'), new File('src/components/app.component.js', 'baz.qux()')];
-    testInjector.options.sandbox.fileHeaders = {
+    testInjector.options.sandbox.addHeaders = {
       ['**/*.ts']: '// @ts-nocheck\n',
       ['**/*.js']: '/* eslint-disable */\n',
     };
