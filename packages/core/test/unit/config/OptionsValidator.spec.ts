@@ -85,14 +85,16 @@ describe(OptionsValidator.name, () => {
       };
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "mutator.name" has been removed. You can remove "mutator.name" from your config as well'
+        'Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
     });
 
     it('should report a deprecation warning for mutator as a string', () => {
       (testInjector.options.mutator as any) = 'javascript';
       sut.validate(testInjector.options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "mutator" as a string is deprecated. Please use it as an object');
+      expect(testInjector.logger.warn).calledWith(
+        'Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+      );
     });
   });
 
@@ -165,7 +167,9 @@ describe(OptionsValidator.name, () => {
     it('should report a deprecation warning', () => {
       (testInjector.options.transpilers as any) = ['stryker-jest'];
       sut.validate(testInjector.options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "transpilers" is deprecated. Please remove this option.');
+      expect(testInjector.logger.warn).calledWith(
+        'Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'
+      );
     });
   });
 
