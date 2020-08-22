@@ -44,11 +44,11 @@ export class OptionsValidator {
       // @ts-expect-error mutator.name
       delete rawOptions.mutator.name;
     }
-    if (rawOptions.framework) {
+    if (Object.keys(rawOptions).includes('testFramework')) {
       this.log.warn(
-        'DEPRECATED. Use of "framework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
       );
-      delete rawOptions.framework;
+      delete rawOptions.testFramework;
     }
     if (Array.isArray(rawOptions.transpilers)) {
       const example = rawOptions.transpilers.includes('babel')

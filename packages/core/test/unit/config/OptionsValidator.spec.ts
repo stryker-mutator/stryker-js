@@ -75,7 +75,7 @@ describe(OptionsValidator.name, () => {
 
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
-      breakConfig('mutator', 0);
+      (testInjector.options.mutator as any) = 1;
       actValidationErrors('Config option "mutator" has the wrong type. It should be a object, but was a number.');
     });
 
@@ -85,7 +85,7 @@ describe(OptionsValidator.name, () => {
       };
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
     });
 
@@ -93,7 +93,7 @@ describe(OptionsValidator.name, () => {
       (testInjector.options.mutator as any) = 'javascript';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
     });
   });
@@ -102,7 +102,9 @@ describe(OptionsValidator.name, () => {
     it('should report a deprecation warning', () => {
       (testInjector.options as any).testFramework = '';
       sut.validate(testInjector.options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED. Use of "testFramework" has been deprecated. Use "options.buildCommand" instead');
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
+      );
     });
   });
 
@@ -168,7 +170,7 @@ describe(OptionsValidator.name, () => {
       (testInjector.options.transpilers as any) = ['stryker-jest'];
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'
+        'DEPRECATED. Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'
       );
     });
   });
