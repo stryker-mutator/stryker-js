@@ -186,23 +186,6 @@
           ],
           "default": null
         },
-        "appendPlugins": {
-          "anyOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": [
-                  "string",
-                  "array"
-                ]
-              }
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        },
         "excludedMutations": {
           "type": "array",
           "items": {

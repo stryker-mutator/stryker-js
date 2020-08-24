@@ -81,7 +81,7 @@ export default class StrykerCli {
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option(
         '--appendPlugins <listOfPlugions>',
-        'A list of plugins you want stryker to load (`require`) without overwriting the plugins in the config file',
+        'A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.',
         list
       )
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
