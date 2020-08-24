@@ -90,7 +90,7 @@ export default class JestTestRunner implements TestRunner2 {
         },
       };
     }
-    this.mutantRunJestConfigCache.globals![INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT] = activeMutant.id;
+    process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = `${activeMutant.id}`;
     return this.mutantRunJestConfigCache;
   }
 
