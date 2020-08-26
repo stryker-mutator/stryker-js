@@ -44,10 +44,6 @@ export default class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').then(mapSearchResultToPromptOption);
-  }
-
   public getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
