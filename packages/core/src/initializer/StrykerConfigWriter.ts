@@ -5,6 +5,8 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
+import CommandTestRunner from '../test-runner/CommandTestRunner';
+
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
 
@@ -35,7 +37,7 @@ export default class StrykerConfigWriter {
    * @function
    */
   public write(
-    selectedTestRunner: null | PromptOption,
+    selectedTestRunner: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
@@ -44,8 +46,8 @@ export default class StrykerConfigWriter {
     const configObject: Partial<StrykerOptions> = {
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      coverageAnalysis: 'perTest',
+      testRunner: selectedTestRunner.name,
+      coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
 
     Object.assign(configObject, ...additionalPiecesOfConfig);

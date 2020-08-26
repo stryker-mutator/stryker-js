@@ -252,6 +252,17 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
+    it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'command',
+        configType: 'JSON',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"coverageAnalysis": "off"'));
+    });
+
     it('should reject with that error', () => {
       const expectedError = new Error('something');
       fsWriteFile.rejects(expectedError);
@@ -298,8 +309,7 @@ describe(StrykerInitializer.name, () => {
       expect(testInjector.logger.error).calledWith(
         'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.'
       );
-      expect(out).calledWith('Unable to select a test runner. You will need to configure it manually.');
-      expect(fs.promises.writeFile).called;
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"testRunner": "command"'));
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {

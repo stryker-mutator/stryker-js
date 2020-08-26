@@ -112,15 +112,10 @@ export default class StrykerInitializer {
     return configFileName;
   }
 
-  private async selectTestRunner(): Promise<PromptOption | null> {
+  private async selectTestRunner(): Promise<PromptOption> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
-    if (testRunnerOptions.length) {
-      this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
-      return this.inquirer.promptTestRunners(testRunnerOptions);
-    } else {
-      this.out('Unable to select a test runner. You will need to configure it manually.');
-      return null;
-    }
+    this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+    return this.inquirer.promptTestRunners(testRunnerOptions);
   }
 
   private async selectReporters(): Promise<PromptOption[]> {
