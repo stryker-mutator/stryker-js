@@ -8,7 +8,6 @@ module.exports = function (config) {
         files: ['sampleProject/**']
       }
     },
-    testFramework: 'jasmine',
     testRunner: 'karma',
     logLevel: 'info',
     concurrency: 2

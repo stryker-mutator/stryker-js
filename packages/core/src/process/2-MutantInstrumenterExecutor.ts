@@ -1,6 +1,6 @@
 import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
-import { File, MutatorDescriptor } from '@stryker-mutator/api/core';
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di';
 import InputFileCollection from '../input/InputFileCollection';
@@ -19,11 +19,11 @@ export interface MutantInstrumenterContext extends MainContext {
 }
 
 export class MutantInstrumenterExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.inputFiles, commonTokens.mutatorDescriptor);
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.inputFiles, commonTokens.options);
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly inputFiles: InputFileCollection,
-    private readonly mutatorDescriptor: MutatorDescriptor
+    private readonly options: StrykerOptions
   ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {
@@ -31,11 +31,11 @@ export class MutantInstrumenterExecutor {
     const instrumenter = this.injector.injectClass(Instrumenter);
 
     // Instrument files in-memory
-    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, { plugins: this.mutatorDescriptor.plugins });
+    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, { plugins: this.options.mutator.plugins });
 
     // Preprocess sandbox files
-    const tsconfigFileRewriter = this.injector.injectFunction(createPreprocessor);
-    const files = await tsconfigFileRewriter.preprocess(this.replaceInstrumentedFiles(instrumentResult));
+    const preprocess = this.injector.injectFunction(createPreprocessor);
+    const files = await preprocess.preprocess(this.replaceInstrumentedFiles(instrumentResult));
 
     // Initialize the checker pool
     const concurrencyTokenProviderProvider = this.injector.provideClass(coreTokens.concurrencyTokenProvider, ConcurrencyTokenProvider);

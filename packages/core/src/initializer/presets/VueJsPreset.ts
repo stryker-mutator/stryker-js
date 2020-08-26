@@ -17,7 +17,6 @@ export class VueJsPreset implements Preset {
   private readonly jestDependency = '@stryker-mutator/jest-runner';
   private readonly jestConf: Partial<StrykerOptions> = {
     mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
-    mutator: 'vue',
     testRunner: 'jest',
     jest: {
       // config: require('path/to/your/custom/jestConfig.js')
@@ -29,7 +28,6 @@ export class VueJsPreset implements Preset {
   private readonly karmaDependency = '@stryker-mutator/karma-runner';
   private readonly karmaConf: Partial<StrykerOptions> = {
     mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
-    mutator: 'vue',
     testRunner: 'karma',
     karma: {
       configFile: 'test/unit/karma.conf.js',

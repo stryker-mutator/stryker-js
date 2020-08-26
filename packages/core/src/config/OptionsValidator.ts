@@ -3,7 +3,7 @@ import os = require('os');
 import Ajv = require('ajv');
 import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, normalizeWhitespaces, propertyPath, deepFreeze } from '@stryker-mutator/util';
+import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
@@ -23,9 +23,48 @@ export class OptionsValidator {
     this.validateFn = ajv.compile(schema);
   }
 
-  public validate(options: unknown): asserts options is StrykerOptions {
+  public validate(options: Record<string, unknown>): asserts options is StrykerOptions {
+    this.removeDeprecatedOptions(options);
     this.schemaValidate(options);
     this.additionalValidation(options);
+  }
+
+  private removeDeprecatedOptions(rawOptions: Record<string, unknown>) {
+    if (typeof rawOptions.mutator === 'string') {
+      this.log.warn(
+        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+      );
+      delete rawOptions.mutator;
+    }
+    // @ts-expect-error mutator.name
+    if (typeof rawOptions.mutator === 'object' && rawOptions.mutator.name) {
+      this.log.warn(
+        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+      );
+      // @ts-expect-error mutator.name
+      delete rawOptions.mutator.name;
+    }
+    if (Object.keys(rawOptions).includes('testFramework')) {
+      this.log.warn(
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
+      );
+      delete rawOptions.testFramework;
+    }
+    if (Array.isArray(rawOptions.transpilers)) {
+      const example = rawOptions.transpilers.includes('babel')
+        ? 'babel src --out-dir lib'
+        : rawOptions.transpilers.includes('typescript')
+        ? 'tsc -b'
+        : rawOptions.transpilers.includes('webpack')
+        ? 'webpack --config webpack.config.js'
+        : 'npm run build';
+      this.log.warn(
+        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${propertyPath<StrykerOptions>(
+          'buildCommand'
+        )}". For example, ${example}.`
+      );
+      delete rawOptions.transpilers;
+    }
   }
 
   private additionalValidation(options: StrykerOptions) {
@@ -33,31 +72,21 @@ export class OptionsValidator {
     if (options.thresholds.high < options.thresholds.low) {
       additionalErrors.push('Config option "thresholds.high" should be higher than "thresholds.low".');
     }
-    if (options.transpilers.length > 1 && options.coverageAnalysis !== 'off') {
-      additionalErrors.push(
-        normalizeWhitespaces(
-          `Config option "coverageAnalysis" is invalid. Coverage analysis "${options.coverageAnalysis}" 
-          is not supported for multiple transpilers (configured transpilers: ${options.transpilers.map((t) => `"${t}"`).join(', ')}).
-          Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.`
-        )
-      );
-    }
     if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
       this.log.warn('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
       if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
     }
-
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
   }
 
   private schemaValidate(options: unknown): asserts options is StrykerOptions {
     if (!this.validateFn(options)) {
-      const errors = describeErrors(this.validateFn.errors!);
-      errors.forEach((error) => this.log.error(error));
-      this.throwErrorIfNeeded(errors);
+      const describedErrors = describeErrors(this.validateFn.errors!);
+      describedErrors.forEach((error) => this.log.error(error));
+      this.throwErrorIfNeeded(describedErrors);
     }
   }
 
@@ -71,14 +100,14 @@ export class OptionsValidator {
 }
 
 export function defaultOptions(): StrykerOptions {
-  const options: unknown = {};
+  const options: Record<string, unknown> = {};
   const validator: OptionsValidator = new OptionsValidator(strykerCoreSchema, noopLogger);
   validator.validate(options);
   return options;
 }
 
 validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
-export function validateOptions(options: unknown, optionsValidator: OptionsValidator): StrykerOptions {
+export function validateOptions(options: Record<string, unknown>, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
   return deepFreeze(options) as StrykerOptions;
 }
@@ -96,8 +125,7 @@ export function markUnknownOptions(options: StrykerOptions, schema: Record<strin
     });
     const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('unknownOptions')}`;
     if (unknownPropertyNames.length) {
-      log.warn(`
-   Possible causes:
+      log.warn(`Possible causes:
    * Is it a typo on your end?
    * Did you only write this property as a comment? If so, please postfix it with "_comment".
    * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}

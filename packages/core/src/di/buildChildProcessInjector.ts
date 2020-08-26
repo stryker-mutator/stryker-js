@@ -2,7 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import { createInjector } from 'typed-inject';
 
-import { mutatorDescriptorFactory, pluginResolverFactory } from './factoryMethods';
+import { pluginResolverFactory } from './factoryMethods';
 
 import { coreTokens, provideLogger } from '.';
 
@@ -10,8 +10,7 @@ export function buildChildProcessInjector(options: StrykerOptions): Injector<Plu
   return provideLogger(createInjector())
     .provideValue(commonTokens.options, options)
     .provideFactory(coreTokens.pluginDescriptors, pluginDescriptorsFactory)
-    .provideFactory(commonTokens.pluginResolver, pluginResolverFactory)
-    .provideFactory(commonTokens.mutatorDescriptor, mutatorDescriptorFactory);
+    .provideFactory(commonTokens.pluginResolver, pluginResolverFactory);
 }
 
 function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {

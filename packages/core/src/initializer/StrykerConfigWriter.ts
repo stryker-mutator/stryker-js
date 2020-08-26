@@ -5,6 +5,8 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
+import CommandTestRunner from '../test-runner/CommandTestRunner';
+
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
 
@@ -35,24 +37,19 @@ export default class StrykerConfigWriter {
    * @function
    */
   public write(
-    selectedTestRunner: null | PromptOption,
-    selectedTestFramework: null | PromptOption,
-    selectedMutator: null | PromptOption,
-    selectedTranspilers: null | PromptOption[],
+    selectedTestRunner: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
-      mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map((t) => t.name) : [],
+      testRunner: selectedTestRunner.name,
+      coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
 
-    this.configureTestFramework(configObject, selectedTestFramework);
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
   }
@@ -68,15 +65,6 @@ export default class StrykerConfigWriter {
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
-  }
-
-  private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
-    if (selectedTestFramework) {
-      configObject.testFramework = selectedTestFramework.name;
-      configObject.coverageAnalysis = 'perTest';
-    } else {
-      configObject.coverageAnalysis = 'all';
-    }
   }
 
   private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {

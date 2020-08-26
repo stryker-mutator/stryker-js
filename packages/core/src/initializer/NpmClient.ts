@@ -44,25 +44,6 @@ export default class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin')
-      .then((searchResult) => {
-        if (testRunnerFilter) {
-          searchResult.results = searchResult.results.filter((framework) => framework.package.keywords.includes(testRunnerFilter));
-        }
-        return searchResult;
-      })
-      .then(mapSearchResultToPromptOption);
-  }
-
-  public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').then(mapSearchResultToPromptOption);
-  }
-
-  public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin').then(mapSearchResultToPromptOption);
-  }
-
   public getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }

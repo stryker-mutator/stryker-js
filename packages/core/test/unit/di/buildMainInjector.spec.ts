@@ -3,7 +3,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { MutatorDescriptor, StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 
 import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
@@ -92,16 +92,6 @@ describe(buildMainInjector.name, () => {
       buildMainInjector(injector).resolve(commonTokens.options);
       expect(currentLogMock().warn).calledWithMatch('Unknown stryker config option "foo"');
     });
-  });
-
-  it('should supply mutatorDescriptor', () => {
-    const expected: MutatorDescriptor = {
-      name: 'javascript',
-      plugins: null,
-      excludedMutations: [],
-    };
-    const mutatorDescriptor = buildMainInjector(injector).resolve(commonTokens.mutatorDescriptor);
-    expect(mutatorDescriptor).deep.eq(expected);
   });
 
   it('should be able to supply the reporter', () => {

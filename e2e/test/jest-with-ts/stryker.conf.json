@@ -1,13 +1,11 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "mutator": "typescript",
   "mutate": [
     "src/data-access/mappers/TableStorageMapper.ts"
   ],
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
-  "transpilers": [],
   "concurrency": 2,
   "checkers": [
     "typescript"

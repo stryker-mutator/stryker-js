@@ -13,7 +13,6 @@ export class AngularPreset implements Preset {
   private readonly dependencies = ['@stryker-mutator/core', '@stryker-mutator/karma-runner', '@stryker-mutator/typescript'];
   private readonly config: Partial<StrykerOptions> = {
     mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
-    mutator: 'typescript',
     testRunner: 'karma',
     karma: {
       configFile: 'src/karma.conf.js',

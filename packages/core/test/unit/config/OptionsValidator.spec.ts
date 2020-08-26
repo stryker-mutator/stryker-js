@@ -4,7 +4,6 @@ import sinon = require('sinon');
 import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/OptionsValidator';
 import { coreTokens } from '../../../src/di';
@@ -45,19 +44,6 @@ describe(OptionsValidator.name, () => {
     });
   });
 
-  it('should be invalid with coverageAnalysis when 2 transpilers are specified (for now)', () => {
-    testInjector.options.transpilers.push('a transpiler');
-    testInjector.options.transpilers.push('a second transpiler');
-    testInjector.options.coverageAnalysis = 'all';
-    actValidationErrors(
-      normalizeWhitespaces(`
-      Config option "coverageAnalysis" is invalid. Coverage analysis "all" is not supported for multiple transpilers
-      (configured transpilers: "a transpiler", "a second transpiler").
-      Change it to "off". Please report this to the Stryker team if you whish this feature to be implemented.
-    `)
-    );
-  });
-
   it('should be invalid with invalid logLevel', () => {
     testInjector.options.logLevel = 'thisTestPasses' as any;
     actValidationErrors(
@@ -89,62 +75,36 @@ describe(OptionsValidator.name, () => {
 
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
-      breakConfig('mutator', 0);
-      actValidationErrors('Config option "mutator" has the wrong type. It should be a string or object, but was a number.');
+      (testInjector.options.mutator as any) = 1;
+      actValidationErrors('Config option "mutator" has the wrong type. It should be a object, but was a number.');
     });
 
-    describe('as an object', () => {
-      it('should be valid with all options', () => {
-        testInjector.options.mutator = {
-          excludedMutations: ['BooleanSubstitution'],
-          name: 'javascript',
-          plugins: ['objectRestSpread', ['decorators', { decoratorsBeforeExport: true }]],
-        };
-        actAssertValid();
-      });
+    it('should report a deprecation warning for "mutator.name"', () => {
+      (testInjector.options.mutator as any) = {
+        name: 'javascript',
+      };
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+      );
+    });
 
-      it('should be valid with minimal options', () => {
-        breakConfig('mutator', {
-          name: 'javascript',
-        });
-        actAssertValid();
-      });
+    it('should report a deprecation warning for mutator as a string', () => {
+      (testInjector.options.mutator as any) = 'javascript';
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+      );
+    });
+  });
 
-      it('should be invalid without name', () => {
-        breakConfig('mutator', {});
-        actValidationErrors('Config option "mutator" should have required property "name"');
-      });
-
-      it('should be invalid with non-string mutator name', () => {
-        breakConfig('mutator', {
-          name: 0,
-        });
-        actValidationErrors('Config option "mutator.name" has the wrong type. It should be a string, but was a number.');
-      });
-
-      it('should be invalid with non array plugins', () => {
-        breakConfig('mutator', {
-          name: 'javascript',
-          plugins: 'optionalChaining',
-        });
-        actValidationErrors('Config option "mutator.plugins" has the wrong type. It should be a array or null, but was a string.');
-      });
-
-      it('should be invalid with non-array excluded mutations', () => {
-        breakConfig('mutator', {
-          excludedMutations: 'BooleanSubstitution',
-          name: 'javascript',
-        });
-        actValidationErrors('Config option "mutator.excludedMutations" has the wrong type. It should be a array, but was a string.');
-      });
-
-      it('should be invalid with non-string excluded mutation array elements', () => {
-        breakConfig('mutator', {
-          excludedMutations: ['BooleanSubstitution', 0],
-          name: 'javascript',
-        });
-        actValidationErrors('Config option "mutator.excludedMutations[1]" has the wrong type. It should be a string, but was a number.');
-      });
+  describe('testFramework', () => {
+    it('should report a deprecation warning', () => {
+      (testInjector.options as any).testFramework = '';
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
+      );
     });
   });
 
@@ -206,14 +166,12 @@ describe(OptionsValidator.name, () => {
   });
 
   describe('transpilers', () => {
-    it('should be invalid with non-array transpilers', () => {
-      breakConfig('transpilers', '@stryker-mutator/typescript');
-      actValidationErrors('Config option "transpilers" has the wrong type. It should be a array, but was a string.');
-    });
-
-    it('should be invalid with non-string array elements', () => {
-      breakConfig('transpilers', ['stryker-jest', 0]);
-      actValidationErrors('Config option "transpilers[1]" has the wrong type. It should be a string, but was a number.');
+    it('should report a deprecation warning', () => {
+      (testInjector.options.transpilers as any) = ['stryker-jest'];
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'
+      );
     });
   });
 
