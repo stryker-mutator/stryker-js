@@ -39,16 +39,6 @@ export class StrykerInquirer {
     return options.filter((_) => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
   }
 
-  public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt<{ mutator: string }>({
-      choices: options.map((_) => _.name),
-      message: 'What kind of code do you want to mutate?',
-      name: 'mutator',
-      type: 'list',
-    });
-    return options.filter((_) => _.name === answers.mutator)[0];
-  }
-
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {
     const answers = await inquirer.prompt<{ reporters: string[] }>({
       choices: options.map((_) => _.name),

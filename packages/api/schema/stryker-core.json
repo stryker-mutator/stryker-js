@@ -247,7 +247,7 @@
     },
     "buildCommand": {
       "type": "string",
-      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
       "examples": [
         "tsc -b",
         "babel src --out-dir lib",
