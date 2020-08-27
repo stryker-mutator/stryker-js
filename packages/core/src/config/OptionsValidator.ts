@@ -116,16 +116,21 @@ export function validateOptions(options: Record<string, unknown>, optionsValidat
 markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
 export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger): StrykerOptions {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
+
   if (isWarningEnabled('unknownOptions', options.warnings)) {
+    const schemaKeys = Object.keys(schema.properties!);
     const unknownPropertyNames = Object.keys(options)
       .filter((key) => !key.endsWith('_comment'))
       .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
-      .filter((key) => !Object.keys((schema as any).properties).includes(key));
-    unknownPropertyNames.forEach((unknownPropertyName) => {
-      log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
-    });
-    const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('unknownOptions')}`;
+      .filter((key) => schemaKeys.includes(key));
+
     if (unknownPropertyNames.length) {
+      unknownPropertyNames.forEach((unknownPropertyName) => {
+        log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
+      });
+
+      const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('unknownOptions')}`;
+
       log.warn(`Possible causes:
    * Is it a typo on your end?
    * Did you only write this property as a comment? If so, please postfix it with "_comment".
@@ -134,5 +139,6 @@ export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7,
    (disable "${p}" to ignore this warning)`);
     }
   }
+
   return options;
 }
