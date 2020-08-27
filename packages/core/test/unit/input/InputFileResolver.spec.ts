@@ -4,7 +4,7 @@ import * as fs from 'fs';
 
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
 import { childProcessAsPromised, errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -31,8 +31,6 @@ describe(InputFileResolver.name, () => {
     globStub = sinon.stub(fileUtils, 'glob');
     readFileStub = sinon
       .stub(fs.promises, 'readFile')
-      .withArgs(sinon.match.string)
-      .resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match.string)
       .resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match('file1'))
@@ -132,6 +130,26 @@ describe(InputFileResolver.name, () => {
     readFileStub.withArgs('submoduleDir').rejects(fileIsDirError);
     const result = await sut.resolve();
     expect(result.files).lengthOf(0);
+  });
+
+  it('should decode encoded file names', async () => {
+    sut = createSut();
+    childProcessExecStub.resolves({
+      // \303\245 = å
+      // \360\237\220\261\342\200\215\360\237\221\223 = 🐱‍👓
+      // On linux, files are allowed to contain `\`, which is also escaped in git output
+      stdout: Buffer.from(`
+      "\\303\\245.js"
+      "src/\\360\\237\\220\\261\\342\\200\\215\\360\\237\\221\\223ninja.cat.js"
+      "a\\\\test\\\\file.js"
+    `),
+    });
+    const files = await sut.resolve();
+    assertions.expectTextFilesEqual(files.files, [
+      new File(path.resolve('å.js'), ''),
+      new File(path.resolve('src/🐱‍👓ninja.cat.js'), ''),
+      new File(path.resolve('a\\test\\file.js'), ''),
+    ]);
   });
 
   describe('with mutate file expressions', () => {

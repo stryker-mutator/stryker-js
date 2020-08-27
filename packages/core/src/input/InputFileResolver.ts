@@ -1,6 +1,8 @@
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
+import { StringDecoder } from 'string_decoder';
+
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -22,6 +24,29 @@ function toReportSourceFile(file: File): SourceFile {
 }
 
 const IGNORE_PATTERN_CHARACTER = '!';
+
+/**
+ *  When characters are represented as the octal values of its utf8 encoding
+ *  e.g. å becomes \303\245 in git.exe output
+ */
+function decodeGitLsOutput(line: string) {
+  if (line.startsWith('"') && line.endsWith('"')) {
+    return line
+      .substr(1, line.length - 2)
+      .replace(/\\\\/g, '\\')
+      .replace(/(?:\\\d+)*/g, (octalEscapeSequence) =>
+        new StringDecoder('utf-8').write(
+          Buffer.from(
+            octalEscapeSequence
+              .split('\\')
+              .filter(Boolean)
+              .map((octal) => parseInt(octal, 8))
+          )
+        )
+      );
+  }
+  return line;
+}
 
 export default class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
@@ -103,12 +128,14 @@ export default class InputFileResolver {
       const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
         maxBuffer: 10 * 1000 * 1024,
       });
-      const fileNames = stdout
+      const relativeFileNames = stdout
         .toString()
         .split('\n')
         .map((line) => line.trim())
-        .filter((line) => line) // remove empty lines
-        .map((relativeFileName) => path.resolve(relativeFileName));
+        .filter(Boolean) // remove empty lines
+        .map(decodeGitLsOutput);
+
+      const fileNames = relativeFileNames.map((relativeFileName) => path.resolve(relativeFileName));
       return fileNames;
     } catch (error) {
       throw new StrykerError(
@@ -135,21 +162,19 @@ export default class InputFileResolver {
     return files.filter(notEmpty);
   }
 
-  private readFile(fileName: string): Promise<File | null> {
-    return fs
-      .readFile(fileName)
-      .then((content: Buffer) => new File(fileName, content))
-      .then((file: File) => {
-        this.reportSourceFilesRead(file);
-        return file;
-      })
-      .catch((error) => {
-        if ((isErrnoException(error) && error.code === 'ENOENT') || error.code === 'EISDIR') {
-          return null; // file is deleted or a directory. This can be a valid result of the git command
-        } else {
-          // Rethrow
-          throw error;
-        }
-      });
+  private async readFile(fileName: string): Promise<File | null> {
+    try {
+      const content = await fs.readFile(fileName);
+      const file = new File(fileName, content);
+      this.reportSourceFilesRead(file);
+      return file;
+    } catch (error) {
+      if ((isErrnoException(error) && error.code === 'ENOENT') || error.code === 'EISDIR') {
+        return null; // file is deleted or a directory. This can be a valid result of the git command
+      } else {
+        // Rethrow
+        throw error;
+      }
+    }
   }
 }
