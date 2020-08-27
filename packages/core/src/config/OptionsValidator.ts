@@ -5,6 +5,7 @@ import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-muta
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
+import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
@@ -19,7 +20,7 @@ export class OptionsValidator {
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
-  constructor(schema: Record<string, unknown>, private readonly log: Logger) {
+  constructor(schema: JSONSchema7, private readonly log: Logger) {
     this.validateFn = ajv.compile(schema);
   }
 
@@ -113,7 +114,7 @@ export function validateOptions(options: Record<string, unknown>, optionsValidat
 }
 
 markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function markUnknownOptions(options: StrykerOptions, schema: Record<string, unknown>, log: Logger): StrykerOptions {
+export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger): StrykerOptions {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
   if (isWarningEnabled('unknownOptions', options.warnings)) {
     const unknownPropertyNames = Object.keys(options)
