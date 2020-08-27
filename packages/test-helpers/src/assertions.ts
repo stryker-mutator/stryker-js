@@ -49,7 +49,7 @@ export function expectTextFileEqual(actual: File, expected: File) {
   expect(fileToJson(actual)).deep.eq(fileToJson(expected));
 }
 
-export function expectTextFilesEqual(actual: File[], expected: File[]) {
+export function expectTextFilesEqual(actual: readonly File[], expected: readonly File[]) {
   expect(actual.map(fileToJson)).deep.eq(expected.map(fileToJson));
 }
 

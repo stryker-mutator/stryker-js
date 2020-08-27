@@ -7,6 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test": "stryker run",
+    "test:unit": "mocha",
     "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "author": "",
