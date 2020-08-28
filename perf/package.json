@@ -7,8 +7,7 @@
   },
   "scripts": {
     "merge-config": "ts-node -p tasks/merge-config.ts",
-    "preinstall": "npm run merge-config",
-    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies",
+    "postinstall": "npm run merge-config && node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies",
     "install-local-dependencies": "ts-node -p tasks/install-local-dependencies.ts",
     "test": "ts-node tasks/run-perf-tests.ts"
   }
