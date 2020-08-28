@@ -223,15 +223,10 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, undefined);
     });
 
-    it('should set the active mutant in globals', async () => {
+    it('should set the active mutant in environment variables', async () => {
       const sut = createSut();
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
-      expect(jestTestAdapterMock.run).calledWithMatch(
-        sinon.match({
-          globals: { [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT]: 25 },
-        }),
-        sinon.match.string
-      );
+      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
     });
 
     it('should allow for other globals', async () => {
@@ -245,7 +240,7 @@ describe(JestTestRunner.name, () => {
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
-          globals: { foo: 'bar', [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT]: 25 },
+          globals: { foo: 'bar' },
         }),
         sinon.match.string
       );

@@ -1,4 +1,4 @@
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, Mutant } from '@stryker-mutator/api/core';
+import { StrykerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -37,8 +37,6 @@ jestTestRunnerFactory.inject = tokens(commonTokens.injector);
 
 export default class JestTestRunner implements TestRunner2 {
   private readonly jestConfig: jest.Config.InitialOptions;
-  private mutantRunJestConfigCache: jest.Config.InitialOptions | undefined;
-
   private readonly enableFindRelatedTests: boolean;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, processEnvToken, jestTestAdapterToken, configLoaderToken);
@@ -73,31 +71,18 @@ export default class JestTestRunner implements TestRunner2 {
   }
 
   public dryRun(): Promise<DryRunResult> {
-    return this.run(this.jestConfig);
+    return this.run();
   }
   public async mutantRun({ activeMutant, sandboxFileName }: MutantRunOptions): Promise<MutantRunResult> {
     const fileUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
-    const dryRunResult = await this.run(this.getMutantRunOptions(activeMutant), fileUnderTest);
+    process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
+    const dryRunResult = await this.run(fileUnderTest);
     return toMutantRunResult(dryRunResult);
   }
 
-  private getMutantRunOptions(activeMutant: Mutant): jest.Config.InitialOptions {
-    if (!this.mutantRunJestConfigCache) {
-      this.mutantRunJestConfigCache = {
-        ...this.jestConfig,
-        globals: {
-          ...this.jestConfig.globals,
-        },
-      };
-    }
-    this.mutantRunJestConfigCache.globals![INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT] = activeMutant.id;
-    return this.mutantRunJestConfigCache;
-  }
-
-  private async run(config: jest.Config.InitialOptions, fileUnderTest: string | undefined = undefined): Promise<DryRunResult> {
+  private async run(fileUnderTest: string | undefined = undefined): Promise<DryRunResult> {
     this.setEnv();
-    const all = await this.jestTestAdapter.run(config, process.cwd(), fileUnderTest);
-
+    const all = await this.jestTestAdapter.run(this.jestConfig, process.cwd(), fileUnderTest);
     return this.collectRunResult(all.results);
   }
 

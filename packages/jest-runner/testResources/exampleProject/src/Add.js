@@ -1,30 +1,21 @@
 // @ts-nocheck
-var __global_69fa48 = function (g) {
-  g.__mutantCoverage__ = g.__mutantCoverage__ || {
-    static: {},
-    perTest: {}
-  };
-
+var __global_69fa48 = (function(g){
+  if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+  }
+  g.__mutantCoverage__ = g.__mutantCoverage__ || { static: {}, perTest: {} };
   g.__coverMutant__ = g.__coverMutant__ || function () {
     var c = g.__mutantCoverage__.static;
-
     if (g.__currentTestId__) {
-      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
+      c = g.__mutantCoverage__.perTest[g.__currentTestId__] =  g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
     }
-
     var a = arguments;
-
-    for (var i = 0; i < a.length; i++) {
+    for(var i=0; i < a.length; i++){
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
   };
-
-  if(g.process && g.process.env && g.process.env.__ACTIVE_MUTANT__) {
-    g.__activeMutant__ = Number(g.process.env.__ACTIVE_MUTANT__);
-  }
-
   return g;
-}(new Function("return this")());
+})(new Function("return this")())
 
 exports.add = function (num1, num2) {
   switch (__global_69fa48.__activeMutant__) {
