@@ -2,8 +2,6 @@ import * as path from 'path';
 import { promises as fs } from 'fs';
 import { StringDecoder } from 'string_decoder';
 
-import { StringDecoder } from 'string_decoder';
-
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
