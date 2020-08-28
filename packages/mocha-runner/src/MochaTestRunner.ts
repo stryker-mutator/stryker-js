@@ -13,7 +13,7 @@ import {
   DryRunStatus,
   toMutantRunResult,
   CompleteDryRunResult,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 

@@ -1,6 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { errorToString } from '@stryker-mutator/util';
-import { TestRunner2, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 import { factory } from '@stryker-mutator/test-helpers';

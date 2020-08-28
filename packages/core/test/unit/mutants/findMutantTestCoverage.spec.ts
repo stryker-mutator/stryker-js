@@ -1,7 +1,7 @@
 import sinon = require('sinon');
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Reporter, MatchedMutant } from '@stryker-mutator/api/report';
 

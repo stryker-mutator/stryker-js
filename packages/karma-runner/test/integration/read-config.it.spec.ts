@@ -1,7 +1,7 @@
 import path = require('path');
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestStatus } from '@stryker-mutator/api/test_runner2';
+import { TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';

@@ -1,4 +1,4 @@
-import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2 } from '@stryker-mutator/api/test_runner';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 

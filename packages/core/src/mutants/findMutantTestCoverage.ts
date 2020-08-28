@@ -1,4 +1,4 @@
-import { CompleteDryRunResult, TestResult, CoveragePerTestId } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, TestResult, CoveragePerTestId } from '@stryker-mutator/api/test_runner';
 import { Mutant } from '@stryker-mutator/api/core';
 import { tokens } from '@stryker-mutator/api/plugin';
 

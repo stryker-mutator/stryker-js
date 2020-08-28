@@ -16,7 +16,7 @@ import {
 } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
-import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';

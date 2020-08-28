@@ -1,5 +1,5 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';

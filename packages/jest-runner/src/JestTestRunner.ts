@@ -10,7 +10,7 @@ import {
   DryRunStatus,
   TestResult,
   TestStatus,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 import { notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';

@@ -11,7 +11,6 @@ import {
   UndetectedMutantResult,
   TimeoutMutantResult,
 } from '@stryker-mutator/api/report';
-import { RunResult, RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
 import { Injector } from 'typed-inject';
@@ -33,7 +32,9 @@ import {
   TimeoutMutantRunResult,
   ErrorMutantRunResult,
   MutantCoverage,
-} from '@stryker-mutator/api/test_runner2';
+  TestStatus,
+  TestResult,
+} from '@stryker-mutator/api/test_runner';
 import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true });
@@ -236,6 +237,7 @@ export const failedCheckResult = factoryMethod<FailedCheckResult>(() => ({
 }));
 
 export const testResult = factoryMethod<TestResult>(() => ({
+  id: 'spec1',
   name: 'name',
   status: TestStatus.Success,
   timeSpentMs: 10,
@@ -309,11 +311,6 @@ export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(() =
 export const errorMutantRunResult = factoryMethod<ErrorMutantRunResult>(() => ({
   status: MutantRunStatus.Error,
   errorMessage: 'Cannot find foo of undefined',
-}));
-
-export const runResult = factoryMethod<RunResult>(() => ({
-  status: RunStatus.Complete,
-  tests: [testResult()],
 }));
 
 export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(() => ({

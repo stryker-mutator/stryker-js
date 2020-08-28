@@ -13,7 +13,7 @@ import {
   ErrorDryRunResult,
   CompleteDryRunResult,
   toMutantRunResult,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 
 import { kill } from '../utils/objectUtils';

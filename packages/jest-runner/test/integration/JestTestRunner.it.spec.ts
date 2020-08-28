@@ -3,7 +3,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner';
 
 import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';

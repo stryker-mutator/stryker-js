@@ -2,7 +2,7 @@ import path = require('path');
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 
 import KarmaTestRunner from '../../src/KarmaTestRunner';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/KarmaRunnerOptionsWithStrykerOptions';

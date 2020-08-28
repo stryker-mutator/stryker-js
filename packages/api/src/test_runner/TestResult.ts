@@ -1,25 +1,34 @@
-import TestStatus from './TestStatus';
+import { TestStatus } from './TestStatus';
 
 /**
  * Indicates the result of a single test
  */
-interface TestResult {
+interface BaseTestResult {
+  /**
+   * The id of this test. Can be the name if the test runner doesn't have an 'id'
+   */
+  id: string;
   /**
    * The full human readable name of the test
    */
   name: string;
   /**
-   * The status of the test
-   */
-  status: TestStatus;
-  /**
    * The time it took to run the test
    */
   timeSpentMs: number;
-  /**
-   * Optional: messages in case of status: Failed
-   */
-  failureMessages?: string[];
 }
 
-export default TestResult;
+export interface FailedTestResult extends BaseTestResult {
+  status: TestStatus.Failed;
+  failureMessage: string;
+}
+
+export interface SkippedTestResult extends BaseTestResult {
+  status: TestStatus.Skipped;
+}
+
+export interface SuccessTestResult extends BaseTestResult {
+  status: TestStatus.Success;
+}
+
+export type TestResult = SuccessTestResult | FailedTestResult | SkippedTestResult;

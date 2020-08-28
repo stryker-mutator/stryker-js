@@ -12,7 +12,7 @@ import {
 } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../../../src/di';
