@@ -122,7 +122,7 @@ export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7,
     const unknownPropertyNames = Object.keys(options)
       .filter((key) => !key.endsWith('_comment'))
       .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
-      .filter((key) => schemaKeys.includes(key));
+      .filter((key) => !schemaKeys.includes(key));
 
     if (unknownPropertyNames.length) {
       unknownPropertyNames.forEach((unknownPropertyName) => {
