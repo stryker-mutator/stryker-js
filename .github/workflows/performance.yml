@@ -3,10 +3,10 @@ name: Performance
 on:
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: 'Log level'     
+      PERF_TEST_GLOB_PATTERN:
+        description: 'Glob pattern'     
         required: true
-        default: 'warning'
+        default: '*'
 
 jobs:
   performance_test:
@@ -14,13 +14,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
     - name: Install dependencies
       run: npm install
     - name: Build packages
       run: npm run build
     - name: Run performance tests
       run: npm run perf
+      env:
+        PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}

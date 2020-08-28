@@ -18,7 +18,7 @@ async function runPerfTests() {
   const globPattern = process.env.PERF_TEST_GLOB_PATTERN || '*';
   const testDirs = fs.readdirSync(testRootDir).filter(testDir => minimatch(testDir, globPattern));
   if (testDirs.length) {
-    console.log(`Running performance tests on ${testDirs.join(', ')}`)
+    console.log(`Running performance tests on ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`)
   } else {
     console.warn(`No test files match glob expression ${globPattern}`);
   }
