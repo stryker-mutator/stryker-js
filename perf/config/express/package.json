@@ -1,0 +1,10 @@
+{
+  "localDependencies": {
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
+    "@stryker-mutator/mocha-framework": "../../../packages/mocha-framework",
+    "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  }
+}
