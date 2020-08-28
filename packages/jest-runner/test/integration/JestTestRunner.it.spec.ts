@@ -29,7 +29,6 @@ describe(`${JestTestRunner.name} integration test`, () => {
     'Add should be able to add one to a number',
     'Add should be able negate a number',
     'Add should be able to recognize a negative number',
-    'Add should be able to recognize that 0 is not a negative number',
     'Circle should have a circumference of 2PI when the radius is 1',
   ];
 
@@ -125,6 +124,26 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       assertions.expectSurvived(runResult);
+    });
+
+    it('should be able to let a mutant survive after killing mutant 1', async () => {
+      // Arrange
+      const exampleProjectRoot = getProjectRoot('exampleProject');
+      process.chdir(getProjectRoot('exampleProject'));
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = 1;
+
+      // Act
+      const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      mutantRunOptions.activeMutant.id = 5;
+      const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
+
+      // Assert
+      assertions.expectKilled(firstResult);
+      assertions.expectSurvived(secondResult);
     });
   });
 });

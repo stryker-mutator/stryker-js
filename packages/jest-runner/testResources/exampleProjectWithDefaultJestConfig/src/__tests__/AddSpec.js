@@ -40,11 +40,4 @@ describe('Add', function() {
     expect(isNegative).toBe(true);
   });
 
-  it('should be able to recognize that 0 is not a negative number', function() {
-    var number = 0;
-
-    var isNegative = isNegativeNumber(number);
-
-    expect(isNegative).toBe(false);
-  });
 });
