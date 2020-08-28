@@ -1,0 +1,7 @@
+{
+  "$schema": "../../../packages/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "testFramework": "mocha",
+  "coverageAnalysis": "perTest",
+  "mutator": "javascript"
+}

@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { promises as fs } from 'fs';
+import { StringDecoder } from 'string_decoder';
 
 import { StringDecoder } from 'string_decoder';
 
