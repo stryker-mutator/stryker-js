@@ -60,14 +60,5 @@ describe('The Stryker meta schema', () => {
       },
       message: 'should be object',
     },
-    {
-      keyword: 'type',
-      dataPath: '.wct.configFile',
-      schemaPath: '#/properties/wct/properties/configFile/type',
-      params: {
-        type: 'string',
-      },
-      message: 'should be string',
-    },
   ];
 });
