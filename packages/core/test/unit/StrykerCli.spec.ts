@@ -28,16 +28,15 @@ describe(StrykerCli.name, () => {
   describe('flat options', () => {
     const testCases: Array<[string[], PartialStrykerOptions]> = [
       [['--files', 'foo.js,bar.js'], { files: ['foo.js', 'bar.js'] }],
+      [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
+      [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
-      [['--transpilers', 'foo,bar'], { transpilers: ['foo', 'bar'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],
-      [['--mutator', 'foo'], { mutator: 'foo' }],
       [['--timeoutMS', '42'], { timeoutMS: 42 }],
       [['--timeoutFactor', '42'], { timeoutFactor: 42 }],
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
-      [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--concurrency', '5'], { concurrency: 5 }],

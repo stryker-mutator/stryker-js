@@ -1,4 +1,4 @@
-import { DryRunStatus, TimeoutDryRunResult, TestRunner2, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TimeoutDryRunResult, TestRunner2, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 

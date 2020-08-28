@@ -3,7 +3,7 @@ import { flatMap, toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
-import { MutantRunOptions, TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { MutantRunOptions, TestRunner2 } from '@stryker-mutator/api/test_runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 

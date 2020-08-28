@@ -1,4 +1,4 @@
-import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 import { getLogger } from 'log4js';
 import { ExpirableTask } from '@stryker-mutator/util';
 

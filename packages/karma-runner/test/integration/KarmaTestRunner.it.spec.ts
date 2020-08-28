@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import * as http from 'http';
 
-import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test_runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';

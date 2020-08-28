@@ -1,4 +1,4 @@
-import { MutatorDescriptor, StrykerOptions } from '../../core';
+import { StrykerOptions } from '../../core';
 import { Logger, LoggerFactoryMethod } from '../../logging';
 
 import { PluginResolver } from './Plugins';
@@ -19,5 +19,4 @@ export interface BaseContext {
  */
 export interface PluginContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
-  [commonTokens.mutatorDescriptor]: MutatorDescriptor;
 }

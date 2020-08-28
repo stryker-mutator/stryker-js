@@ -3,7 +3,7 @@ import * as url from 'url';
 
 import { RequestHandler } from 'express';
 import { CoverageAnalysis } from '@stryker-mutator/api/core';
-import { MutantRunOptions } from '@stryker-mutator/api/test_runner2';
+import { MutantRunOptions } from '@stryker-mutator/api/test_runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
 export const TEST_HOOKS_FILE_NAME = __filename;

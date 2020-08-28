@@ -1,42 +1,22 @@
 {
   "name": "@stryker-mutator/wct-runner",
   "version": "4.0.0-beta.3",
-  "description": "A plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends",
+  "description": "This was a plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends. However support was dropped in Stryker v4",
   "main": "src/index.js",
   "scripts": {
-    "test": "cross-env LAUNCHPAD_BROWSERS=chrome nyc --reporter=html --report-dir=reports/coverage --lines 95 --functions 95 --branches 95 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 120000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stryker-mutator/stryker.git"
   },
   "keywords": [
-    "stryker",
-    "web-component-tester",
-    "wct",
-    "@stryker-mutator/test-runner-plugin"
   ],
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {
-    "@stryker-mutator/api": "4.0.0-beta.3",
-    "@stryker-mutator/util": "4.0.0-beta.3"
-  },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "4.0.0-beta.3",
-    "@types/node": "^14.0.1",
-    "@types/socket.io": "^2.1.0",
-    "chai": "~4.2.0",
-    "mocha": "~5.2.0",
-    "sinon": "^9.0.0",
-    "web-component-tester": "~6.9.2"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "4.0.0-beta.1",
-    "web-component-tester": "^6.9.0"
   },
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "Apache-2.0",

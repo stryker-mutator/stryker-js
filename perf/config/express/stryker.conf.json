@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../packages/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "coverageAnalysis": "perTest",
+  "sandbox": {
+    "stripComments": false
+  }
+}

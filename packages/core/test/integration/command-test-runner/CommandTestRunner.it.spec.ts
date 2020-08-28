@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test_runner2';
+import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';

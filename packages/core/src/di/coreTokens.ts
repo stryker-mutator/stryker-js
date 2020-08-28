@@ -17,7 +17,6 @@ export const timer = 'timer';
 export const timeOverheadMS = 'timeOverheadMS';
 export const loggingContext = 'loggingContext';
 export const mutationTestReportHelper = 'mutationTestReportHelper';
-export const transpiler = 'transpiler';
 export const sandbox = 'sandbox';
 export const sandboxWorkingDirectory = 'sandboxWorkingDirectory'; // TODO: Remove if unused post mutation switching
 export const concurrencyTokenProvider = 'concurrencyTokenProvider';

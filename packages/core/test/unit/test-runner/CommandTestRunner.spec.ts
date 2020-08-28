@@ -1,7 +1,7 @@
 import * as childProcess from 'child_process';
 import * as os from 'os';
 
-import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';

@@ -3,7 +3,7 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { TestRunner2, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 import Timer from '../../../src/utils/Timer';

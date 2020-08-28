@@ -14,7 +14,7 @@ import {
   TestResult,
   FailedTestResult,
   ErrorDryRunResult,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 import { first } from 'rxjs/operators';
 
 import { Checker } from '@stryker-mutator/api/check';

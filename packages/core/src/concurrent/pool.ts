@@ -3,7 +3,7 @@ import { flatMap, filter, shareReplay } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { tokens } from 'typed-inject';
 
-import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2 } from '@stryker-mutator/api/test_runner';
 
 import { Checker } from '@stryker-mutator/api/check';
 

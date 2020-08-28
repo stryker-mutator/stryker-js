@@ -51,7 +51,6 @@ The following is an example `stryker.conf.json` file. It specifies running mocha
     "src/**/*.js",
     "!src/index.js"
   ],
-  "testFramework": "mocha",
   "testRunner": "mocha",
   "reporters": ["progress", "clear-text", "html"],
   "coverageAnalysis": "perTest"
@@ -68,7 +67,6 @@ module.exports = {
     'src/**/*.js',
     '!src/index.js'
   ],
-  testFramework: 'mocha',
   testRunner: 'mocha',
   reporters: ['progress', 'clear-text', 'html'],
   coverageAnalysis: 'perTest'
@@ -103,6 +101,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 
 ### Available Options
 * [allowConsoleColors](#allowConsoleColors)
+* [buildCommand](#buildCommand)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
@@ -117,12 +116,10 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [sandbox.stripComments](#sandbox.stripComments)
 * [symlinkNodeModules](#symlinkNodeModules)
 * [tempDirName](#tempDirName)
-* [testFramework](#testFramework)
 * [testRunner](#testRunner)
 * [thresholds](#thresholds)
 * [timeoutFactor](#timeoutFactor)
 * [timeoutMS](#timeoutMS)
-* [transpilers](#transpilers)
 
 <a name="allowConsoleColors"></a>
 ### `allowConsoleColors` [`boolean`]
@@ -132,6 +129,16 @@ Command line: `--allowConsoleColors true`
 Config file: `allowConsoleColors: true`
 
 The `allowConsoleColors` value indicates whether Stryker should use colors in console.
+
+<a name="buildCommand"></a>
+### `buildCommand` [`string`]
+
+Default: `undefined`  
+Command line: `[-b|--buildCommand] "npm run build"`  
+Config file: `buildCommand: 'npm run build'`  
+
+Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.
+Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.
 
 <a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
@@ -147,6 +154,7 @@ particular mutation are tested for each mutant.
 This does *not* influence the resulting mutation testing score. It only improves performance.
 
 The possible values are:
+
 * **off**: Stryker will not determine the code covered by tests during the initial test run phase. All tests will be executed for each mutant
 during the mutation testing phase.
 
@@ -157,10 +165,8 @@ Currently, only the `stryker-mocha-runner` and the `stryker-karma-runner` do thi
 * **perTest**: Stryker will determine the code covered by your test per executed test during the initial test run phase. Only mutants actually covered by your
 test suite are tested during the mutation testing phase.
 Only the tests that cover a particular mutant are tested for each one. This requires your tests to be able to run independently of each other and in random order.
-In addition to requiring your test runner to be able to report the code coverage back to Stryker, your chosen `testFramework` also needs to support running code
  before and after each test, as well as test filtering.
- Currently, `stryker-mocha-runner` as well as `stryker-karma-runner` support this. However, `stryker-karma-runner` support is limited to using it with `Jasmine` as the test framework
- (`Mocha` is not yet supported).
+ Currently all test runner plugins, except for `@stryker-mutator/jest-runner`) support this feature.
 
 <a name="dashboard"></a>
 ### `dashboard` [`DashboardOptions`]
@@ -174,11 +180,11 @@ Settings for the `dashboard` [reporter](#reporters). See the [stryker handbook f
 <a name="fileLogLevel"></a>
 ### `fileLogLevel` [`string`]
 
- Default: `off`
- Command line: `--fileLogLevel info`
- Config file: `fileLogLevel: 'info'`
+Default: `off`
+Command line: `--fileLogLevel info`
+Config file: `fileLogLevel: 'info'`
 
-  Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
+Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
 <a name="files"></a>
 ### `files` [`string[]`]
@@ -241,22 +247,18 @@ Generally speaking, these should be your own source files.
 This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating).
 
 <a name="mutator"></a>
-### `mutator` [`object` | `string`]
-Default: `javascript`
-Command line: `--mutator javascript`
-Config file:  `mutator: 'javascript'` or `mutator: { name: 'javascript', plugins: ['classProperties', 'optionalChaining'], excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`
+### `mutator` [`MutatorDescriptor`]
 
-With `mutator` you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.
-The mutator plugin name defaults to `javascript` if not specified. Note: this requires you to have the `@stryker-mutator/javascript-mutator` plugin installed. The list of excluded mutation types defaults to an empty array, meaning all mutation types will be included in the test.
-The full list of mutation types varies slightly between mutators (for example, the `javascript` mutator will not use the same mutation types as the `typescript` mutator). Mutation type names are case-sensitive, and can be found either in the source code or in a generated Stryker report.
+Default: `{}`
+Command line: *none*
+Config file:  ``mutator: { plugins: ['classProperties', 'optionalChaining'], excludedMutations: ['BooleanSubstitution', 'StringLiteral'] }`
 
-When using the command line, only the mutator name as a string may be provided.
-When using the config file, you can provide either a string representing the mutator name, or a `MutatorDescriptor` object, like so:
+* `plugins`: allows you to override the default [babel plugins](https://babeljs.io/docs/en/plugins) to use for JavaScript files.
+By default, Stryker uses [a default list of babel plugins to parse your JS file](https://github.com/stryker-mutator/stryker/blob/master/packages/instrumenter/src/parsers/js-parser.ts#L8-L32). It also loads any plugins or presets you might have configured yourself with `.babelrc` or `babel.config.js` files.
+In the rare situation where the plugins Stryker loads conflict with your own local plugins (for example, when using the decorators and decorators-legacy plugins together), you can override the `plugins` here to `[]`.
+* `excludedMutations`: allow you to specify a [list of mutator names](https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md#supported-mutators) to be excluded (`ignored`) from the test run.
 
-* `MutatorDescriptor` object: `{ name: 'name', plugins: ['classProperties', 'optionalChaining'], excludedMutations: ['mutationType1', 'mutationType2', ...] }`:
-   * The `name` property is mandatory and contains the name of the mutator plugin to use.
-   * The `plugins` property is optional and allows you to specify syntax plugins. Please see the README of your mutator to see which plugins are supported.
-   * The `excludedMutations` property is mandatory and contains the types of mutations to exclude from the test run.
+_Note: prior to Stryker version 4, the mutator also needed a `name` (or be defined as `string`). This is removed in version 4. Stryker now supports mutating of JavaScript and friend files out of the box, without the need of a mutator plugin._
 
 <a name="plugins"></a>
 ### `plugins` [`string[]`]
@@ -352,17 +354,8 @@ It is advised to use a directory inside the directory that holds your repository
 not check-in your chosen temp directory in your `.gitignore` file.
 
 <a name="testFramework"></a>
-### `testFramework` [`string`]
 
-Default: *none*
-Command line: `--testFramework jasmine`
-Config file: `testFramework: 'jasmine'` 
-
-Configure which test framework you are using.
-This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use),
-However, it is required when `coverageAnalysis` is set to `'perTest'`, because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.
-
-Make sure the plugin is installed for your chosen test framework. E.g. install `stryker-mocha-framework` to use `'mocha'` as a test framework.
+_Note: Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration_
 
 <a name="testRunner"></a>
 ### `testRunner` [`string`]
@@ -427,9 +420,5 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 `timeoutMS` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
 <a name="transpilers"></a>
-###  `transpilers` [`string[]`]
 
-Default: `[]`
-
-With `transpilers` you configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the order of the array. This defaults to an empty array meaning no transpilation will be done.
-
+_Note: Support for "transpilers" plugins is removed since Stryker 4. You can now configure your own [buildCommand](#buildCommand)_

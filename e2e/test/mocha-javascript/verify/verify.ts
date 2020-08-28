@@ -10,16 +10,17 @@ describe('Verify stryker has ran correctly', () => {
 
   it('should report correct score', async () => {
     await expectMetricsResult({
+      
       metrics: produceMetrics({
-        killed: 16,
-        mutationScore: 64,
-        mutationScoreBasedOnCoveredCode: 64,
+        killed: 18,
+        mutationScore: 66.67,
+        mutationScoreBasedOnCoveredCode: 66.67,
         survived: 9,
-        totalCovered: 25,
-        totalDetected: 16,
-        totalMutants: 25,
+        totalCovered: 27,
+        totalDetected: 18,
+        totalMutants: 27,
         totalUndetected: 9,
-        totalValid: 25
+        totalValid: 27
       })
     });
   });

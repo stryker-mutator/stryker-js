@@ -14,7 +14,7 @@ import {
   DryRunResult,
   MutantRunResult,
   toMutantRunResult,
-} from '../../api/test_runner2';
+} from '../../api/test_runner';
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 

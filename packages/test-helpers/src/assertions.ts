@@ -15,7 +15,7 @@ import {
   TestResult,
   FailedTestResult,
   TestStatus,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 import { File } from '@stryker-mutator/api/core';
 import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
@@ -49,7 +49,7 @@ export function expectTextFileEqual(actual: File, expected: File) {
   expect(fileToJson(actual)).deep.eq(fileToJson(expected));
 }
 
-export function expectTextFilesEqual(actual: File[], expected: File[]) {
+export function expectTextFilesEqual(actual: readonly File[], expected: readonly File[]) {
   expect(actual.map(fileToJson)).deep.eq(expected.map(fileToJson));
 }
 

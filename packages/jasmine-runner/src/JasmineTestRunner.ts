@@ -13,7 +13,7 @@ import {
   ErrorDryRunResult,
   DryRunOptions,
   MutantCoverage,
-} from '@stryker-mutator/api/test_runner2';
+} from '@stryker-mutator/api/test_runner';
 import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';

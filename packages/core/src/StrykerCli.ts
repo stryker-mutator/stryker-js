@@ -59,24 +59,24 @@ export default class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        `A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile.
-      Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js`,
+        'A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js',
         list
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        `A comma separated list of globbing expression used for selecting the files that should be mutated.
-      Example: src/**/*.js,a.js`,
+        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js',
         list
+      )
+      .option(
+        '-b, --buildCommand <command>',
+        'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
+          " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
       .option(
         '--coverageAnalysis <perTest|all|off>',
         `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
-      .option('--testFramework <name>', 'The name of the test framework you want to use.')
       .option('--testRunner <name>', 'The name of the test runner you want to use')
-      .option('--mutator <name>', 'The name of the mutant generator you want to use')
-      .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', list)
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)

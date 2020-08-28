@@ -16,7 +16,6 @@ module.exports = function (grunt) {
           ]
         },
         options: {
-          testFramework: 'jasmine',
           testRunner: 'karma',
           logLevel: 'info',
           concurrency: 2,

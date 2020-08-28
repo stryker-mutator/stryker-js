@@ -26,14 +26,12 @@ export class ReactPreset implements Preset {
   private readonly tsxDependencies = ['@stryker-mutator/typescript', ...this.generalDependencies];
   private readonly tsxConf: Partial<StrykerOptions> = {
     mutate: ['src/**/*.ts?(x)', '!src/**/*@(.test|.spec|Spec).ts?(x)'],
-    mutator: 'typescript',
     ...this.sharedConfig,
   };
 
   private readonly jsxDependencies = ['@stryker-mutator/javascript-mutator', ...this.generalDependencies];
   private readonly jsxConf: Partial<StrykerOptions> = {
     mutate: ['src/**/*.js?(x)', '!src/**/*@(.test|.spec|Spec).js?(x)'],
-    mutator: 'javascript',
     ...this.sharedConfig,
   };
 

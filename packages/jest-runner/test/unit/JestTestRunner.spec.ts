@@ -1,7 +1,7 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test_runner';
 import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 

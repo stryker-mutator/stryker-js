@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 
-import { TestRunner2 } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2 } from '@stryker-mutator/api/test_runner';
 
 import { factory } from '@stryker-mutator/test-helpers';
 

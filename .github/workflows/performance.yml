@@ -1,22 +1,26 @@
 name: Performance
 
 on:
-  schedule:
-    - cron:  '0 12 * * *'
+  workflow_dispatch:
+    inputs:
+      PERF_TEST_GLOB_PATTERN:
+        description: 'Glob pattern'     
+        required: true
+        default: '*'
 
 jobs:
   performance_test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js 12.x
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
+    - uses: actions/checkout@v2
+      with: 
+        submodules: recursive
     - name: Install dependencies
       run: npm install
     - name: Build packages
       run: npm run build
     - name: Run performance tests
       run: npm run perf
+      env:
+        PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
