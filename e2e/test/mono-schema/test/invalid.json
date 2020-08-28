@@ -4,9 +4,6 @@
   "jest": {
     "config": ""
   },
-  "wct": {
-    "configFile": {}
-  },
   "jasmineConfigFile": false,
   "karma": {
     "ngConfig": {
