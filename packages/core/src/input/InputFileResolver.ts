@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { promises as fs } from 'fs';
+import { StringDecoder } from 'string_decoder';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -22,6 +23,29 @@ function toReportSourceFile(file: File): SourceFile {
 }
 
 const IGNORE_PATTERN_CHARACTER = '!';
+
+/**
+ *  When characters are represented as the octal values of its utf8 encoding
+ *  e.g. å becomes \303\245 in git.exe output
+ */
+function decodeGitLsOutput(line: string) {
+  if (line.startsWith('"') && line.endsWith('"')) {
+    return line
+      .substr(1, line.length - 2)
+      .replace(/\\\\/g, '\\')
+      .replace(/(?:\\\d+)*/g, (octalEscapeSequence) =>
+        new StringDecoder('utf-8').write(
+          Buffer.from(
+            octalEscapeSequence
+              .split('\\')
+              .filter(Boolean)
+              .map((octal) => parseInt(octal, 8))
+          )
+        )
+      );
+  }
+  return line;
+}
 
 export default class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
@@ -103,12 +127,14 @@ export default class InputFileResolver {
       const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
         maxBuffer: 10 * 1000 * 1024,
       });
-      const fileNames = stdout
+      const relativeFileNames = stdout
         .toString()
         .split('\n')
         .map((line) => line.trim())
-        .filter((line) => line) // remove empty lines
-        .map((relativeFileName) => path.resolve(relativeFileName));
+        .filter(Boolean) // remove empty lines
+        .map(decodeGitLsOutput);
+
+      const fileNames = relativeFileNames.map((relativeFileName) => path.resolve(relativeFileName));
       return fileNames;
     } catch (error) {
       throw new StrykerError(
