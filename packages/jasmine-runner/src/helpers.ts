@@ -1,5 +1,4 @@
-import { TestResult } from '@stryker-mutator/api/test_runner2';
-import { TestStatus } from '@stryker-mutator/api/test_runner';
+import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 
 import JasmineConstructor = require('jasmine');
 

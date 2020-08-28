@@ -15,7 +15,7 @@
     "report.ts",
     "test_framework.ts",
     "test_runner.ts",
-    "test_runner2.ts",
+    "test_runner.ts",
     "transpile.ts",
     "plugin.ts"
   ],

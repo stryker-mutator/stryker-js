@@ -2,7 +2,7 @@ import { isRegExp } from 'util';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner2, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
 class CoverageReportingTestRunner implements TestRunner2 {

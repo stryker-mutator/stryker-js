@@ -4,7 +4,7 @@ import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory } from '@stryker-mutator/test-helpers';
 
-import { TestRunner2, DryRunStatus } from '@stryker-mutator/api/test_runner2';
+import { TestRunner2, DryRunStatus } from '@stryker-mutator/api/test_runner';
 
 import { expectCompleted, expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 

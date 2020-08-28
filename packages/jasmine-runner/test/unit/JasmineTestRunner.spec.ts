@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner2';
+import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner';
 
 import Jasmine = require('jasmine');
 import { DirectoryRequireCache } from '@stryker-mutator/util';

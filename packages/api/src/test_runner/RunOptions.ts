@@ -1,19 +1,23 @@
-/**
- * Represents an options object for a single run of a TestRunner.
- */
-interface RunOptions {
+import { Mutant, CoverageAnalysis } from '../../core';
+
+export interface RunOptions {
   /**
    * The amount of time (in milliseconds) the TestRunner has to complete the test run before a timeout occurs.
    */
   timeout: number;
+}
 
+export interface DryRunOptions extends RunOptions {
   /**
-   * The hooks JavaScript code that has to be loaded in the testing environment.
-   * It should be loaded right after the test framework but right before any tests can run.
+   * Indicates whether or not mutant coverage should be collected.
    */
-  testHooks?: string;
+  coverageAnalysis: CoverageAnalysis;
+}
 
-  mutatedFileName?: string;
+export interface MutantRunOptions extends RunOptions {
+  testFilter?: string[];
+  activeMutant: Mutant;
+  sandboxFileName: string;
 }
 
 export default RunOptions;

@@ -3,7 +3,7 @@ import * as Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
 
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 

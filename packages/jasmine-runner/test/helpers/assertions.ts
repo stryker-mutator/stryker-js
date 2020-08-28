@@ -1,4 +1,4 @@
-import { TestResult, SuccessTestResult, FailedTestResult, SkippedTestResult } from '@stryker-mutator/api/test_runner2';
+import { TestResult, SuccessTestResult, FailedTestResult, SkippedTestResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 type TimelessTestResult = Omit<SuccessTestResult, 'timeSpentMs'> | Omit<FailedTestResult, 'timeSpentMs'> | Omit<SkippedTestResult, 'timeSpentMs'>;

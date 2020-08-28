@@ -1,4 +1,4 @@
-import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner2';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 
