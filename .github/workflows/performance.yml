@@ -1,8 +1,12 @@
 name: Performance
 
 on:
-  schedule:
-    - cron:  '0 12 * * *'
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
 
 jobs:
   performance_test:
