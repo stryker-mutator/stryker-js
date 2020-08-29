@@ -12,10 +12,6 @@ import { jasmineInitSuccessResults } from './helpers';
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
 
-  beforeEach(() => {
-    global.__testsInCurrentJasmineRun = [];
-  });
-
   afterEach(async () => {
     process.chdir(path.resolve(__dirname, '../../..'));
     await sut.dispose();

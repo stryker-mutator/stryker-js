@@ -12,7 +12,7 @@ afterEach(() => {
   delete global.__activeMutant__;
   delete global.__currentTestId__;
   delete global.__mutantCoverage__;
-  delete global.__testsInCurrentJasmineRun;
+  global.__testsInCurrentJasmineRun = [];
 
   sinon.restore();
   testInjector.reset();
