@@ -59,7 +59,7 @@ describe(TemporaryDirectory.name, () => {
   describe('dispose', () => {
     describe('when temp directory is initialized', () => {
       beforeEach(() => sut.initialize());
-      it('should call deleteDir fileApi', async () => {
+      it('should call deleteDir fileApi if cleanTempDir option is enabled', async () => {
         const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves();
 
@@ -70,7 +70,7 @@ describe(TemporaryDirectory.name, () => {
         expect(fileUtils.deleteDir).calledWith(expectedPath);
       });
 
-      it('should not call deleteDir fileApi if cleanTempDir is false', async () => {
+      it('should not call deleteDir fileApi by default', async () => {
         deleteDirStub.resolves();
 
         const temporaryDirectoryInstance = sut;
