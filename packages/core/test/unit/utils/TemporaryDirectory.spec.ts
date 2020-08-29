@@ -63,7 +63,8 @@ describe(TemporaryDirectory.name, () => {
         const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves();
 
-        const temporaryDirectoryInstance = sut;
+        const temporaryDirectoryInstance = createSut({ cleanTempDir: true });
+        temporaryDirectoryInstance.initialize();
         await temporaryDirectoryInstance.dispose();
 
         expect(fileUtils.deleteDir).calledWith(expectedPath);
@@ -72,8 +73,7 @@ describe(TemporaryDirectory.name, () => {
       it('should not call deleteDir fileApi if cleanTempDir is false', async () => {
         deleteDirStub.resolves();
 
-        const temporaryDirectoryInstance = createSut({ cleanTempDir: false });
-        temporaryDirectoryInstance.initialize();
+        const temporaryDirectoryInstance = sut;
         await temporaryDirectoryInstance.dispose();
 
         expect(fileUtils.deleteDir).callCount(0);
