@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.4](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2020-08-29)
+
+
+### Bug Fixes
+
+* **input files:** support emojis in file names ([#2430](https://github.com/stryker-mutator/stryker/issues/2430)) ([139f9f3](https://github.com/stryker-mutator/stryker/commit/139f9f3ea9aa2349198cb824ceb444f7c6b013b6))
+* **input files:** support emojis in file names ([#2433](https://github.com/stryker-mutator/stryker/issues/2433)) ([b5feae2](https://github.com/stryker-mutator/stryker/commit/b5feae2558ade9a1f2d947f7fd046033e4c9d996))
+
+
+### Features
+
+* **api:** rename test_runner2 -> test_runner ([#2442](https://github.com/stryker-mutator/stryker/issues/2442)) ([4d3ae97](https://github.com/stryker-mutator/stryker/commit/4d3ae9764dbd689c895b76e44f2eea76c82fabc8))
+* **jest-runner:** switch mutants using env ([#2416](https://github.com/stryker-mutator/stryker/issues/2416)) ([cad01ba](https://github.com/stryker-mutator/stryker/commit/cad01baf9f4fc3bab2ae5244627586133fb618be))
+* **karma-runner:** force bail = true in all cases ([ba928a1](https://github.com/stryker-mutator/stryker/commit/ba928a10d9e4c67ade9648927fb6b281ad2e3d55))
+* **options:** deprecate old stryker options ([#2395](https://github.com/stryker-mutator/stryker/issues/2395)) ([7c637c8](https://github.com/stryker-mutator/stryker/commit/7c637c8714169a03facd42a7521f7670b7606a32))
+* **reporter-api:** support mutation switching ([67f1ed5](https://github.com/stryker-mutator/stryker/commit/67f1ed52f4d17df4306362064180d267ed5445c7))
+* **test-runner:** add `nrOfTests` metric ([0eea448](https://github.com/stryker-mutator/stryker/commit/0eea44892e2383e8b0a34c6267e2f455d604f55a))
+* **wct-runner:** drop support for wct ([#2440](https://github.com/stryker-mutator/stryker/issues/2440)) ([7c55424](https://github.com/stryker-mutator/stryker/commit/7c55424a6deca5301af50206ea93905faaa0056b))
+
+
+### Performance Improvements
+
+* **express:** add benchmark express ([#2431](https://github.com/stryker-mutator/stryker/issues/2431)) ([7cfb8f1](https://github.com/stryker-mutator/stryker/commit/7cfb8f1568530439d8bbf40c87b9ce1ab1fa7e96))
+
+
+### BREAKING CHANGES
+
+* **api:** Plugin creators should now use `'test_runner'` instead of `'test_runner2'`.
+* **wct-runner:** The @stryker-mutator/wct-runner package is dropped in Stryker 4.0. Please see https://github.com/stryker-mutator/stryker/issues/2386 for more details. Feel free to keep using @stryker-mutator/wct-runner@3 or start a community fork.  Note that [support for the web-component-tester itself is minimal](https://github.com/Polymer/tools/issues/3398), you might want to consider switching to a different test runner. Stryker still supports Mocha, Jest, Jasmine and Karma.
+* **reporter-api:** The `onMutantTested` and `onAllMutantsTested` methods on the `Reporter` api have changed
+
+
+
+
+
 # [4.0.0-beta.3](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2020-08-19)
 
 

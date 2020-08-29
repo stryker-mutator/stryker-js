@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.4](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2020-08-29)
+
+
+### Features
+
+* **api:** rename test_runner2 -> test_runner ([#2442](https://github.io/stryker-mutator/stryker/issues/2442)) ([4d3ae97](https://github.io/stryker-mutator/stryker/commit/4d3ae9764dbd689c895b76e44f2eea76c82fabc8))
+* **karma-runner:** force bail = true in all cases ([ba928a1](https://github.io/stryker-mutator/stryker/commit/ba928a10d9e4c67ade9648927fb6b281ad2e3d55))
+
+
+### BREAKING CHANGES
+
+* **api:** Plugin creators should now use `'test_runner'` instead of `'test_runner2'`.
+
+
+
+
+
 # [4.0.0-beta.3](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2020-08-19)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner
