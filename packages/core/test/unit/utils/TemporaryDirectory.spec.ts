@@ -7,6 +7,8 @@ import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as sinon from 'sinon';
 
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 
@@ -27,10 +29,10 @@ describe(TemporaryDirectory.name, () => {
     randomStub.returns('rand');
   });
 
-  function createSut(): TemporaryDirectory {
+  function createSut(options?: Partial<StrykerOptions>): TemporaryDirectory {
     return testInjector.injector
       .provideValue(commonTokens.logger, factory.logger())
-      .provideValue(commonTokens.options, factory.strykerOptions())
+      .provideValue(commonTokens.options, factory.strykerOptions(options))
       .injectClass(TemporaryDirectory);
   }
 
@@ -65,6 +67,16 @@ describe(TemporaryDirectory.name, () => {
         await temporaryDirectoryInstance.dispose();
 
         expect(fileUtils.deleteDir).calledWith(expectedPath);
+      });
+
+      it('should not call deleteDir fileApi if cleanTempDir is false', async () => {
+        deleteDirStub.resolves();
+
+        const temporaryDirectoryInstance = createSut({ cleanTempDir: false });
+        temporaryDirectoryInstance.initialize();
+        await temporaryDirectoryInstance.dispose();
+
+        expect(fileUtils.deleteDir).callCount(0);
       });
     });
 

@@ -379,6 +379,11 @@
       "type": "string",
       "default": ".stryker-tmp"
     },
+    "cleanTempDir": {
+      "description": "With 'cleanTempDir' you specify if temporary dir will be removed after a run",
+      "type": "boolean",
+      "default": true
+    },
     "testRunner": {
       "description": "With 'testRunner' you specify the test runner that Stryker uses to run your tests. The default value is command. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the 'commandRunner: { command: 'npm run mocha' }'. It uses 'npm test' as the command by default.",
       "type": "string",
