@@ -17,7 +17,7 @@
     "cross-env": "~5.2.0",
     "grunt": "~1.0.4",
     "jasmine": "~3.6.1",
-    "jasmine-core": "~3.6.1",
+    "jasmine-core": "~3.6.0",
     "jest": "~26.4.2",
     "karma": "~5.1.1",
     "karma-chai": "~0.1.0",
