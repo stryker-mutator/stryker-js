@@ -45,8 +45,7 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
   for (const script of sortedScripts) {
     html += ast.rawContent.substring(currentIndex, script.root.start!);
     html += '\n';
-    html += '// @ts-nocheck\n';
-    html += removeTSDirectives(script.rawContent, script.root.comments);
+    html += prefixWithNoCheck(removeTSDirectives(script.rawContent, script.root.comments));
     html += '\n';
     currentIndex = script.root.end!;
   }
