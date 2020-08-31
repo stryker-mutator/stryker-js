@@ -52,28 +52,28 @@
   },
   "homepage": "https://github.com/reactstrap/reactstrap#readme",
   "dependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "~16.13.1",
+    "react-dom": "~16.13.1",
     "classnames": "~2.2.6",
     "prop-types": "~15.7.2",
     "react-transition-group": "~4.4.1"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "~16.13.1",
+    "react-dom": "~16.13.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
-    "@babel/plugin-proposal-export-default-from": "^7.2.0",
-    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.2.0",
-    "@babel/preset-env": "^7.2.3",
-    "@babel/preset-react": "^7.0.0",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.2",
-    "react-scripts": "3.4.1"
+    "@babel/cli": "~7.10.5",
+    "@babel/core": "~7.11.4",
+    "@babel/plugin-proposal-export-default-from": "~7.10.4",
+    "@babel/plugin-proposal-export-namespace-from": "~7.10.4",
+    "@babel/plugin-proposal-object-rest-spread": "~7.11.0",
+    "@babel/plugin-transform-runtime": "~7.11.0",
+    "@babel/preset-env": "~7.11.0",
+    "@babel/preset-react": "~7.10.4",
+    "enzyme": "~3.11.0",
+    "enzyme-adapter-react-16": "~1.15.2",
+    "react-scripts": "~3.4.1"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

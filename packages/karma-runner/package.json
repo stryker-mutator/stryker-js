@@ -38,18 +38,18 @@
     "@types/semver": "~7.3.1",
     "jasmine-core": "~3.6.0",
     "karma": "~5.1.0",
-    "karma-chai": "^0.1.0",
+    "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-jasmine": "~3.0.1",
-    "karma-mocha": "^2.0.0"
+    "karma-mocha": "~2.0.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "4.0.0-beta.1"
+    "@stryker-mutator/core": "4.0.0-beta.4"
   },
   "dependencies": {
     "@stryker-mutator/api": "4.0.0-beta.4",
     "@stryker-mutator/util": "4.0.0-beta.4",
-    "decamelize": "^4.0.0",
+    "decamelize": "~4.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.0.0"
   },

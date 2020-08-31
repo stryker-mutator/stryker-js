@@ -12,6 +12,6 @@
     "mutation-testing-report-schema": "~1.4.0"
   },
   "devDependencies": {
-    "@types/webpack-env": "^1.15.2"
+    "@types/webpack-env": "~1.15.2"
   }
 }
