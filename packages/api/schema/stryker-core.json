@@ -168,32 +168,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "fileHeaders": {
-          "type": "object",
-          "title": "SandboxFileHeaders",
-          "description": "Configure additional headers to be added to files inside your sandbox. These headers will be added after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to ignore typescript compile errors and eslint warnings that might have been added in the process of instrumenting your code with mutants. The default setting should work for most use cases.",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "default": {
-          }
-        },
-        "stripComments": {
-          "description": "Configure files to be stripped of comments (either single line with `//` or multi line with `/**/`. These comments will be stripped after Stryker has instrumented your code with mutants, but before a test runner or build command is executed. This is used to remove any lingering `// @ts-check` or `// @ts-expect-error` comments that interfere with typescript compilation. The default setting allows comments to be stripped from all JavaScript and friend files in your sandbox, you can specify a different glob expression or set it to `false` to completely disable this behavior.",
-          "anyOf": [
-            {
-              "enum": [
-                false
-              ]
-            },
-            {
-              "type": "string"
-            }
-          ],
-          "default": false
-        },
         "disableTypeChecking": {
-          "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code (by design). Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in your sandbox, you can specify a different glob expression or set it to `false` to completely disable this behavior.",
+          "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in your sandbox, you can specify a different glob expression or set it to `false` to completely disable this behavior.",
           "anyOf": [
             {
               "enum": [
@@ -204,7 +180,7 @@
               "type": "string"
             }
           ],
-          "default": "**/*+(.js|.ts)?(x)"
+          "default": "**/*.{js,ts,jsx,tsx,html,vue}"
         }
       }
     },
@@ -246,6 +222,11 @@
       "properties": {
         "unknownOptions": {
           "description": "decide whether or not to log warnings when additional stryker options are configured",
+          "type": "boolean",
+          "default": true
+        },
+        "preprocessorErrors": {
+          "description": "decide whether or not to log warnings when a preprocessor warning occurs. For example, when the disabling of type errors fails.",
           "type": "boolean",
           "default": true
         }
