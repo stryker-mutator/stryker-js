@@ -3,7 +3,7 @@ import fs = require('fs');
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { propertyPath } from '@stryker-mutator/util';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
@@ -81,10 +81,9 @@ export class MochaAdapter {
           globPatterns,
           null,
           2
-        )}). Please specify the files (glob patterns) containing your tests in ${propertyPath<MochaRunnerOptions>(
-          'mochaOptions',
-          'spec'
-        )} in your config file.`
+        )}). Please specify the files (glob patterns) containing your tests in ${PropertyPathBuilder.create<MochaRunnerOptions>()
+          .prop('mochaOptions')
+          .prop('spec')} in your config file.`
       );
     }
     return [...fileNames];
