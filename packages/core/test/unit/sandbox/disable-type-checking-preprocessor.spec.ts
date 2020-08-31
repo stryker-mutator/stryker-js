@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import { coreTokens } from '../../../src/di';
 import { DisableTypeCheckingPreprocessor } from '../../../src/sandbox/disable-type-checking-preprocessor';
 
-describe.only(DisableTypeCheckingPreprocessor.name, () => {
+describe(DisableTypeCheckingPreprocessor.name, () => {
   let sut: DisableTypeCheckingPreprocessor;
   let disableTypeCheckingStub: sinon.SinonStub;
 
