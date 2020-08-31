@@ -226,7 +226,7 @@
           "default": true
         },
         "preprocessorErrors": {
-          "description": "decide whether or not to log warnings when a preprocessor warning occurs. For example, when the disabling of type errors fails.",
+          "description": "decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.",
           "type": "boolean",
           "default": true
         }
