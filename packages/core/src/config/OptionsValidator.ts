@@ -1,9 +1,9 @@
 import os = require('os');
 
 import Ajv = require('ajv');
-import { StrykerOptions, strykerCoreSchema, WarningOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
+import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
@@ -129,7 +129,7 @@ export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7,
         log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
       });
 
-      const p = `${propertyPath<StrykerOptions>('warnings')}.${propertyPath<WarningOptions>('unknownOptions')}`;
+      const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unknownOptions').build();
 
       log.warn(`Possible causes:
    * Is it a typo on your end?

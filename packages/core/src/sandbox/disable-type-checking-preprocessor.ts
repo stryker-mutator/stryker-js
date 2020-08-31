@@ -3,8 +3,12 @@ import path = require('path');
 import minimatch = require('minimatch');
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import type { disableTypeChecking } from '@stryker-mutator/instrumenter';
+import { Logger } from '@stryker-mutator/api/logging';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
 
-import { disableTypeChecking } from '@stryker-mutator/instrumenter';
+import { coreTokens } from '../di';
+import { isWarningEnabled } from '../utils/objectUtils';
 
 import { FilePreprocessor } from './file-preprocessor';
 
@@ -13,23 +17,47 @@ import { FilePreprocessor } from './file-preprocessor';
  * @see https://github.com/stryker-mutator/stryker/issues/2438
  */
 export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
-  public static readonly inject = tokens(commonTokens.options);
-  constructor(private readonly options: StrykerOptions) {}
+  public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeCheckingHelper);
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecking) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
     if (this.options.sandbox.disableTypeChecking === false) {
       return files;
     } else {
       const pattern = path.resolve(this.options.sandbox.disableTypeChecking);
-      return Promise.all(
+      let warningLogged = false;
+      const outFiles = await Promise.all(
         files.map(async (file) => {
           if (minimatch(path.resolve(file.name), pattern)) {
-            return await disableTypeChecking(file, { plugins: this.options.mutator.plugins });
+            try {
+              return await this.impl(file, { plugins: this.options.mutator.plugins });
+            } catch (err) {
+              if (isWarningEnabled('preprocessorErrors', this.options.warnings)) {
+                warningLogged = true;
+                this.log.warn(
+                  `Unable to disable type checking for file "${
+                    file.name
+                  }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${PropertyPathBuilder.create<
+                    StrykerOptions
+                  >()
+                    .prop('sandbox')
+                    .prop('disableTypeChecking')}" settings (or turn it completely off with \`false\`)`,
+                  err
+                );
+              }
+              return file;
+            }
           } else {
             return file;
           }
         })
       );
+      if (warningLogged) {
+        this.log.warn(
+          `(disable "${PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('preprocessorErrors')}" to ignore this warning`
+        );
+      }
+      return outFiles;
     }
   }
 }

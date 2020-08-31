@@ -9,7 +9,6 @@ export const print: Printer<HtmlAst> = (ast, context) => {
   for (const script of sortedScripts) {
     html += ast.rawContent.substring(currentIndex, script.root.start!);
     html += '\n';
-    html += '// @ts-nocheck\n';
     html += context.print(script, context);
     html += '\n';
     currentIndex = script.root.end!;
