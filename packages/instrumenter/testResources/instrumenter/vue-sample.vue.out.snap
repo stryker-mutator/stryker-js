@@ -87,7 +87,6 @@ exports[`instrumenter integration should be able to instrument a vue sample 1`] 
 </template>
 
 <script>
-// @ts-nocheck
 var __global_69fa48 = function (g) {
   if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
@@ -138,7 +137,6 @@ export default __global_69fa48.__activeMutant__ === 0 ? {} : (__global_69fa48.__
 });
 </script>
 <script>
-// @ts-nocheck
 var __global_69fa48 = function (g) {
   if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);

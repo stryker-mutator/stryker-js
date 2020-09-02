@@ -25,7 +25,7 @@ describe('parse and print integration', () => {
     }
   });
   describe('html', () => {
-    it('should be able to print html files with multiple script tags and add // @ts-nocheck comments', async () => {
+    it('should be able to print html files with multiple script tags', async () => {
       await actArrangeAndAssert('hello-world');
     });
 

@@ -17,13 +17,13 @@ describe(createPreprocessor.name, () => {
     assertions.expectTextFilesEqual(output, [new File(path.resolve('tsconfig.json'), '{\n  "extends": "../../../tsconfig.settings.json"\n}')]);
   });
 
-  it('should add a header to .ts files', async () => {
-    const output = await sut.preprocess([new File(path.resolve('app.ts'), 'foo.bar()')]);
-    assertions.expectTextFilesEqual(output, [new File(path.resolve('app.ts'), '/* eslint-disable */\n// @ts-nocheck\nfoo.bar()')]);
+  it('should disable type checking for .ts files', async () => {
+    const output = await sut.preprocess([new File(path.resolve('src/app.ts'), 'foo.bar()')]);
+    assertions.expectTextFilesEqual(output, [new File(path.resolve('src/app.ts'), '// @ts-nocheck\nfoo.bar()')]);
   });
 
   it('should strip // @ts-expect-error (see https://github.com/stryker-mutator/stryker/issues/2364)', async () => {
-    const output = await sut.preprocess([new File(path.resolve('app.ts'), '// @ts-expect-error\nfoo.bar()')]);
-    assertions.expectTextFilesEqual(output, [new File(path.resolve('app.ts'), '/* eslint-disable */\n// @ts-nocheck\n\nfoo.bar()')]);
+    const output = await sut.preprocess([new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar()')]);
+    assertions.expectTextFilesEqual(output, [new File(path.resolve('src/app.ts'), '// @ts-nocheck\n// \nfoo.bar()')]);
   });
 });

@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { propertyPath } from '@stryker-mutator/util';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
@@ -76,7 +76,7 @@ export default class MochaOptionsLoader {
         } else {
           this.log.debug(
             'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            propertyPath<MochaRunnerOptions>('mochaOptions', 'opts')
+            PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
           );
           return {};
         }

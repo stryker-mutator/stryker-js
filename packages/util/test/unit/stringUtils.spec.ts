@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp } from '../../src';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, PropertyPathBuilder } from '../../src';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -17,15 +17,28 @@ describe('stringUtils', () => {
     });
   });
 
-  describe(propertyPath.name, () => {
+  describe(PropertyPathBuilder.name, () => {
     interface Foo {
       bar: {
         baz: string;
       };
+      qux: {
+        quux: string;
+      };
     }
 
     it('should be able to point to a path', () => {
-      expect(propertyPath<Foo>('bar', 'baz')).eq('bar.baz');
+      expect(PropertyPathBuilder.create<Foo>().prop('bar').prop('baz').build()).eq('bar.baz');
+    });
+  });
+
+  describe(propertyPath.name, () => {
+    interface Foo {
+      bar: string;
+    }
+
+    it('should be able to point to a path', () => {
+      expect(propertyPath<Foo>('bar')).eq('bar');
     });
   });
 
