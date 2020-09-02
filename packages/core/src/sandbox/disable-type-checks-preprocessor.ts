@@ -3,7 +3,7 @@ import path = require('path');
 import minimatch = require('minimatch');
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import type { disableTypeChecking } from '@stryker-mutator/instrumenter';
+import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
 import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
@@ -16,9 +16,9 @@ import { FilePreprocessor } from './file-preprocessor';
  * Disabled type checking by inserting `@ts-nocheck` atop TS/JS files and removing other @ts-xxx directives from comments:
  * @see https://github.com/stryker-mutator/stryker/issues/2438
  */
-export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
-  public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeCheckingHelper);
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecking) {}
+export class DisableTypeChecksPreprocessor implements FilePreprocessor {
+  public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeChecksHelper);
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecks) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
     if (this.options.disableTypeChecks === false) {

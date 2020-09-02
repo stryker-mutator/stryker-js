@@ -7,17 +7,15 @@ import sinon = require('sinon');
 import { expect } from 'chai';
 
 import { coreTokens } from '../../../src/di';
-import { DisableTypeCheckingPreprocessor } from '../../../src/sandbox/disable-type-checking-preprocessor';
+import { DisableTypeChecksPreprocessor } from '../../../src/sandbox/disable-type-checks-preprocessor';
 
-describe(DisableTypeCheckingPreprocessor.name, () => {
-  let sut: DisableTypeCheckingPreprocessor;
+describe(DisableTypeChecksPreprocessor.name, () => {
+  let sut: DisableTypeChecksPreprocessor;
   let disableTypeCheckingStub: sinon.SinonStub;
 
   beforeEach(() => {
     disableTypeCheckingStub = sinon.stub();
-    sut = testInjector.injector
-      .provideValue(coreTokens.disableTypeCheckingHelper, disableTypeCheckingStub)
-      .injectClass(DisableTypeCheckingPreprocessor);
+    sut = testInjector.injector.provideValue(coreTokens.disableTypeChecksHelper, disableTypeCheckingStub).injectClass(DisableTypeChecksPreprocessor);
   });
 
   ['.ts', '.tsx', '.js', '.jsx', '.html', '.vue'].forEach((extension) => {

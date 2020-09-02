@@ -9,7 +9,7 @@ import { AstFormat, HtmlAst, JSAst, TSAst } from './syntax';
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
 
-export async function disableTypeChecking(file: File, options: InstrumenterOptions) {
+export async function disableTypeChecks(file: File, options: InstrumenterOptions) {
   if (isJSFileWithoutTSDirectives(file)) {
     // Performance optimization. Only parse the file when it has a change of containing a `// @ts-` directive
     return new File(file.name, prefixWithNoCheck(file.textContent));

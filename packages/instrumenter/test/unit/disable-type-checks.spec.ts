@@ -4,32 +4,32 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 
 import * as parsers from '../../src/parsers';
-import { disableTypeChecking } from '../../src';
+import { disableTypeChecks } from '../../src';
 
-describe(disableTypeChecking.name, () => {
+describe(disableTypeChecks.name, () => {
   describe('with TS or JS AST format', () => {
     it('should prefix the file with `// @ts-nocheck`', async () => {
       const inputFile = new File('foo.js', 'foo.bar();');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\nfoo.bar();'));
     });
 
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {
       const createParserSpy = sinon.spy(parsers, 'createParser');
       const inputFile = new File('foo.js', 'foo.bar();');
-      await disableTypeChecking(inputFile, { plugins: null });
+      await disableTypeChecks(inputFile, { plugins: null });
       expect(createParserSpy).not.called;
     });
 
     it('should remove @ts directives from a JS file', async () => {
       const inputFile = new File('foo.js', '// @ts-check\nfoo.bar();');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\n// \nfoo.bar();'));
     });
 
     it('should remove @ts directives from a TS file', async () => {
       const inputFile = new File('foo.ts', '// @ts-check\nfoo.bar();');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.ts', '// @ts-nocheck\n// \nfoo.bar();'));
     });
 
@@ -89,7 +89,7 @@ describe(disableTypeChecking.name, () => {
 
     async function arrangeActAssert(input: string, expectedOutput = input) {
       const inputFile = new File('foo.tsx', input);
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.tsx', `// @ts-nocheck\n${expectedOutput}`));
     }
   });
@@ -97,13 +97,13 @@ describe(disableTypeChecking.name, () => {
   describe('with HTML ast format', () => {
     it('should prefix the script tags with `// @ts-nocheck`', async () => {
       const inputFile = new File('foo.vue', '<template></template><script>foo.bar();</script>');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.vue', '<template></template><script>\n// @ts-nocheck\nfoo.bar();\n</script>'));
     });
 
     it('should remove `// @ts` directives from script tags', async () => {
       const inputFile = new File('foo.html', '<template></template><script>// @ts-expect-error\nconst foo = "bar"-"baz";</script>');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(
         actual,
         new File('foo.html', '<template></template><script>\n// @ts-nocheck\n// \nconst foo = "bar"-"baz";\n</script>')
@@ -112,7 +112,7 @@ describe(disableTypeChecking.name, () => {
 
     it('should not remove `// @ts` from the html itself', async () => {
       const inputFile = new File('foo.vue', '<template>\n// @ts-expect-error\n</template>');
-      const actual = await disableTypeChecking(inputFile, { plugins: null });
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, new File('foo.vue', '<template>\n// @ts-expect-error\n</template>'));
     });
   });
