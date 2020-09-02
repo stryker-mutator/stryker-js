@@ -9,9 +9,6 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 export const mochaHooks = {
-  before() {
-    console.log('BEFORE ALL!');
-  },
   afterEach() {
     sinon.restore();
     testInjector.reset();

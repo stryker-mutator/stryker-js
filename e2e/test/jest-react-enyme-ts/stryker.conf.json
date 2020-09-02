@@ -3,10 +3,6 @@
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
-  "mutate": [
-    "src/*.tsx",
-    "!src/*.spec.tsx"
-  ],
   "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [

@@ -294,10 +294,9 @@
         "type": "string"
       },
       "default": [
-        "{src,lib}/**/*.js?(x)",
-        "!{src,lib}/**/__tests__/**/*.js?(x)",
-        "!{src,lib}/**/?(*.)+(spec|test).js?(x)",
-        "!{src,lib}/**/*+(Spec|Test).js?(x)"
+        "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+        "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+        "!{src,lib}/+(karma.conf.js|.mocharc.js|test.ts)"
       ]
     },
     "mutator": {
