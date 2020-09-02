@@ -21,10 +21,10 @@ export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecking) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
-    if (this.options.disableTypeChecking === false) {
+    if (this.options.disableTypeChecks === false) {
       return files;
     } else {
-      const pattern = path.resolve(this.options.disableTypeChecking);
+      const pattern = path.resolve(this.options.disableTypeChecks);
       let warningLogged = false;
       const outFiles = await Promise.all(
         files.map(async (file) => {
@@ -38,7 +38,7 @@ export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
                   `Unable to disable type checking for file "${
                     file.name
                   }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${propertyPath<StrykerOptions>(
-                    'disableTypeChecking'
+                    'disableTypeChecks'
                   )}" settings (or turn it completely off with \`false\`)`,
                   err
                 );
