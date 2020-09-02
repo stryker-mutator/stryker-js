@@ -33,8 +33,8 @@ describe(DisableTypeCheckingPreprocessor.name, () => {
     });
   });
 
-  it('should be able to override "sandbox.disableTypeChecking" glob pattern', async () => {
-    testInjector.options.sandbox.disableTypeChecking = 'src/**/*.ts';
+  it('should be able to override "disableTypeChecking" glob pattern', async () => {
+    testInjector.options.disableTypeChecking = 'src/**/*.ts';
     const expectedFile = new File(path.resolve('src/app.ts'), 'output');
     const input = [new File(path.resolve('src/app.ts'), 'input')];
     disableTypeCheckingStub.resolves(expectedFile);
@@ -42,21 +42,21 @@ describe(DisableTypeCheckingPreprocessor.name, () => {
     assertions.expectTextFilesEqual(output, [expectedFile]);
   });
 
-  it('should not disable type checking when the "sandbox.disableTypeChecking" glob pattern does not match', async () => {
-    testInjector.options.sandbox.disableTypeChecking = 'src/**/*.ts';
+  it('should not disable type checking when the "disableTypeChecking" glob pattern does not match', async () => {
+    testInjector.options.disableTypeChecking = 'src/**/*.ts';
     const expectedFiles = [new File(path.resolve('test/app.spec.ts'), 'input')];
     disableTypeCheckingStub.resolves(new File('', 'not expected'));
     const output = await sut.preprocess(expectedFiles);
     assertions.expectTextFilesEqual(output, expectedFiles);
   });
 
-  it('should not disable type checking if "sandbox.disableTypeChecking" is set to `false`', async () => {
+  it('should not disable type checking if "disableTypeChecking" is set to `false`', async () => {
     const input = [
       new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar();'),
       new File(path.resolve('test/app.spec.ts'), '/* @ts-expect-error */\nfoo.bar();'),
       new File(path.resolve('testResources/project/app.ts'), '/* @ts-expect-error */\nfoo.bar();'),
     ];
-    testInjector.options.sandbox.disableTypeChecking = false;
+    testInjector.options.disableTypeChecking = false;
     const output = await sut.preprocess(input);
     assertions.expectTextFilesEqual(output, input);
   });
@@ -67,7 +67,7 @@ describe(DisableTypeCheckingPreprocessor.name, () => {
     disableTypeCheckingStub.rejects(expectedError);
     const output = await sut.preprocess(input);
     expect(testInjector.logger.warn).calledWithExactly(
-      'Unable to disable type checking for file "src/app.ts". Shouldn\'t type checking be disabled for this file? Consider configuring a more restrictive "sandbox.disableTypeChecking" settings (or turn it completely off with `false`)',
+      'Unable to disable type checking for file "src/app.ts". Shouldn\'t type checking be disabled for this file? Consider configuring a more restrictive "disableTypeChecking" settings (or turn it completely off with `false`)',
       expectedError
     );
     expect(testInjector.logger.warn).calledWithExactly('(disable "warnings.preprocessorErrors" to ignore this warning');

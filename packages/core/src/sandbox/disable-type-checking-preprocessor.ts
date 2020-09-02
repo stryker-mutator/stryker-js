@@ -5,7 +5,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import type { disableTypeChecking } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
-import { PropertyPathBuilder } from '@stryker-mutator/util';
+import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import { isWarningEnabled } from '../utils/objectUtils';
@@ -21,10 +21,10 @@ export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecking) {}
 
   public async preprocess(files: File[]): Promise<File[]> {
-    if (this.options.sandbox.disableTypeChecking === false) {
+    if (this.options.disableTypeChecking === false) {
       return files;
     } else {
-      const pattern = path.resolve(this.options.sandbox.disableTypeChecking);
+      const pattern = path.resolve(this.options.disableTypeChecking);
       let warningLogged = false;
       const outFiles = await Promise.all(
         files.map(async (file) => {
@@ -37,11 +37,9 @@ export class DisableTypeCheckingPreprocessor implements FilePreprocessor {
                 this.log.warn(
                   `Unable to disable type checking for file "${
                     file.name
-                  }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${PropertyPathBuilder.create<
-                    StrykerOptions
-                  >()
-                    .prop('sandbox')
-                    .prop('disableTypeChecking')}" settings (or turn it completely off with \`false\`)`,
+                  }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${propertyPath<StrykerOptions>(
+                    'disableTypeChecking'
+                  )}" settings (or turn it completely off with \`false\`)`,
                   err
                 );
               }
