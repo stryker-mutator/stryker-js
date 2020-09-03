@@ -295,8 +295,7 @@
       },
       "default": [
         "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
-        "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
-        "!{src,lib}/+(karma.conf.js|.mocharc.js|test.ts)"
+        "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)"
       ]
     },
     "mutator": {

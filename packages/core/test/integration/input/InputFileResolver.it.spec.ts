@@ -29,7 +29,7 @@ describe(`${InputFileResolver.name} integration`, () => {
     process.chdir(originalCwd);
   });
 
-  it.only('should by default resolve reasonable project source files to be mutated', async () => {
+  it('should by default resolve reasonable project source files to be mutated', async () => {
     process.chdir(resolveTestResource());
     const inputFiles = await sut.resolve();
     expect(inputFiles.filesToMutate.map((file) => file.name)).deep.eq([
