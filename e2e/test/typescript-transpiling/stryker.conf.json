@@ -1,8 +1,5 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "mutate": [
-    "src/*.ts"
-  ],
   "packageManager": "npm",
   "testRunner": "mocha",
   "concurrency": 1,
