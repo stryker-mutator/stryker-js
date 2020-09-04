@@ -306,13 +306,14 @@ describe(MutationTestReportHelper.name, () => {
       // Act
       const actual = sut.reportMutantRunResult(
         createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }) }),
-        factory.killedMutantRunResult({ killedBy: '1' })
+        factory.killedMutantRunResult({ killedBy: '1', nrOfTests: 42 })
       );
 
       // Assert
       const expected: Partial<KilledMutantResult> = {
         status: MutantStatus.Killed,
         killedBy: 'foo should be bar',
+        nrOfTestsRan: 42,
       };
       expect(actual).deep.include(expected);
     });
@@ -360,13 +361,14 @@ describe(MutationTestReportHelper.name, () => {
       // Act
       const actual = sut.reportMutantRunResult(
         createMutantTestCoverage({ mutant: factory.mutant({ fileName: 'add.js' }), testFilter: ['1'] }),
-        factory.survivedMutantRunResult()
+        factory.survivedMutantRunResult({ nrOfTests: 4 })
       );
 
       // Assert
       const expected: Partial<UndetectedMutantResult> = {
         status: MutantStatus.Survived,
         testFilter: ['foo should be bar'],
+        nrOfTestsRan: 4,
       };
       expect(actual).deep.include(expected);
     });

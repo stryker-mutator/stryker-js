@@ -25,10 +25,4 @@ describe('Verify stryker has ran correctly', () => {
     });
   });
 
-  it('should report html files', () => {
-    expectExists('reports/mutation/html/index.html');
-    expectExists('reports/mutation/html/mutation-test-elements.js');
-    expectExists('reports/mutation/html/stryker-80x80.png');
-    expectExists('reports/mutation/html/bind-mutation-test-report.js');
-  });
 });

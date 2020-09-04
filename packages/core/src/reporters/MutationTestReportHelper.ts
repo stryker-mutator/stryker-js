@@ -59,18 +59,23 @@ export class MutationTestReportHelper {
       case MutantRunStatus.Error:
         return this.reportOne<InvalidMutantResult>(mutant, { status: MutantStatus.RuntimeError, errorMessage: result.errorMessage });
       case MutantRunStatus.Killed:
-        return this.reportOne<KilledMutantResult>(mutant, { status: MutantStatus.Killed, killedBy: this.testNamesById.get(result.killedBy)! });
+        return this.reportOne<KilledMutantResult>(mutant, {
+          status: MutantStatus.Killed,
+          nrOfTestsRan: result.nrOfTests,
+          killedBy: this.testNamesById.get(result.killedBy)!,
+        });
       case MutantRunStatus.Timeout:
         return this.reportOne<TimeoutMutantResult>(mutant, { status: MutantStatus.TimedOut });
       case MutantRunStatus.Survived:
         return this.reportOne<UndetectedMutantResult>(mutant, {
           status: MutantStatus.Survived,
+          nrOfTestsRan: result.nrOfTests,
           testFilter: testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : undefined,
         });
     }
   }
 
-  private reportOne<T extends MutantResult>(mutant: Mutant, additionalFields: Omit<T, keyof BaseMutantResult>) {
+  private reportOne<T extends MutantResult>(mutant: Mutant, additionalFields: Omit<T, keyof BaseMutantResult> & { nrOfTestsRan?: number }) {
     const originalFileTextContent = this.inputFiles.filesToMutate.find((fileToMutate) => fileToMutate.name === mutant.fileName)!.textContent;
 
     const mutantResult = {

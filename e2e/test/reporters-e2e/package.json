@@ -1,0 +1,15 @@
+{
+  "name": "reporters-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "mkdir -p reports && stryker run > reports/stdout.txt",
+    "test:unit": "mocha",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "author": "",
+  "license": "ISC"
+}
