@@ -27,11 +27,11 @@ describe('Verify stryker has ran correctly', () => {
     })
 
     it('should report NoCoverage mutants', () => {
-      expect(stdout).contains(noCoverageMutantSnippet);
+      expect(stdout).matches(createNoCoverageMutantRegex());
     });
 
     it('should report Survived mutants', () => {
-      expect(stdout).contains(survivedMutantSnippet);
+      expect(stdout).matches(createSurvivedMutantRegex());
     });
 
     it('should report average tests per mutant', () => {
@@ -45,26 +45,17 @@ describe('Verify stryker has ran correctly', () => {
 
     it('should finish up with the clear text report', () => {
       const clearTextTableRegex = createClearTextTableSummaryRowRegex();
-      const indexOfSurvivedMutant = stdout.indexOf(survivedMutantSnippet);
-      const match = clearTextTableRegex.exec(stdout);
-      expect(indexOfSurvivedMutant).not.eq(-1);
-      expect(match).is.not.null;
-      expect(indexOfSurvivedMutant).lessThan(match.index);
+      const survivedMutantRegex = createSurvivedMutantRegex();
+      const indexOfSurvivedMutant = survivedMutantRegex.exec(stdout).index;
+      const indexOfClearTextTable = clearTextTableRegex.exec(stdout).index;
+      expect(indexOfSurvivedMutant).lessThan(indexOfClearTextTable);
     });
   })
 
 });
 
-const noCoverageMutantSnippet = `#6. [NoCoverage] BlockStatement
-/home/nicojs/stryker/e2e/test/reporters-e2e/src/Add.js:13:45
--   module.exports.notCovered = function(number) {
--     return number > 10;
--   };
-+   module.exports.notCovered = function(number) {};`
+const createNoCoverageMutantRegex = () => /#6\.\s*\[NoCoverage\]/;
 
-const survivedMutantSnippet = `#20. [Survived] ArithmeticOperator
-/home/nicojs/stryker/e2e/test/reporters-e2e/src/Circle.js:2:9
--     return 2 * Math.PI * radius;
-+     return 2 * Math.PI / radius;`;
+const createSurvivedMutantRegex = () => /#20\.\s*\[Survived\]/;
 
 const createClearTextTableSummaryRowRegex = () => /All files\s*\|\s*64\.00\s*\|\s*16\s*\|\s*0\s*\|\s*1\s*\|\s*8\s*\|\s*0\s*\|/;
