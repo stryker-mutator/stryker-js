@@ -58,6 +58,7 @@
     "@stryker-mutator/util": "4.0.0-beta.4",
     "ajv": "~6.12.0",
     "chalk": "~4.1.0",
+    "chrome-remote-interface": "^0.28.2",
     "commander": "~6.0.0",
     "execa": "~4.0.2",
     "file-url": "~3.0.0",

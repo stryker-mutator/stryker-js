@@ -10,6 +10,10 @@ import { deserialize, serialize } from '../utils/objectUtils';
 
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './messageProtocol';
 
+// @ts-expect-error
+import * as cdp from 'chrome-remote-interface';
+import * as fs from 'fs';
+
 export default class ChildProcessProxyWorker {
   private log: Logger;
 
@@ -127,8 +131,70 @@ export default class ChildProcessProxyWorker {
   }
 }
 
+const events = [
+  'beforeExit',
+  'disconnect',
+  'exit',
+  'message',
+  'multipleResolves',
+  'rejectionHandled',
+  'uncaughtException',
+  'uncaughtExceptionMonitor',
+  'unhandledRejection',
+  'warning',
+  'SIGUSR1',
+  'SIGTERM',
+  'SIGPIPE',
+  'SIGHUP',
+  'SIGTERM',
+  'SIGINT',
+  'SIGBREAK',
+  'SIGWINCH',
+  'SIGKILL',
+  'SIGSTOP',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGSEGV',
+  'SIGILL',
+  '0',
+];
+events.forEach((eventName) => {
+    process.on(eventName, (...args) => {
+        console.log(`Child process (${process.pid}) event ` + eventName + ': ' + args.join(','));
+    });
+});
+
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
 if (process.argv.includes(autoStart)) {
+  console.log(`Child process pid: ${process.pid}`);
+
+  profileProcessWorker()
   new ChildProcessProxyWorker();
+}
+
+async function profileProcessWorker() {
+  const devTools = await cdp();
+  // console.log(devTools);
+
+  const Profiler = devTools.Profiler;
+  await Profiler.enable();
+  console.log('Profiler enabled');
+  await Profiler.start();
+  console.log('Profiler started');
+
+  // This should be done after the process is done doing its thing.
+  const profile = await Profiler.stop();
+  console.log('Profiler stopped');
+  saveProfile(profile);
+}
+
+function saveProfile(data:any) {
+  // data.profile described here: https://chromedevtools.github.io/devtools-protocol/tot/Profiler/#type-Profile
+  // Process the data however you wish… or,
+  // Use the JSON file, open Chrome DevTools, Menu, More Tools, JavaScript Profiler, `load`, view in the UI
+  const filename = `${Date.now()}-stryker-child-process-${process.pid}.cpuprofile`;
+  const string = JSON.stringify(data.profile);
+  fs.writeFileSync(filename, string);
+  console.log('Profile data saved to:', filename);
 }

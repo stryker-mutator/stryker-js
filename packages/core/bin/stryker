@@ -3,6 +3,7 @@
 'use strict';
 
 process.title = 'stryker';
+console.log(`CLI PID: ${process.pid}`);
 
 // Run the Stryker CLI
 const StrykerCli = require('../src/StrykerCli').default;

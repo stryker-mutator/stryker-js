@@ -27,6 +27,41 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
+console.log(`Main process PID: ${process.pid}`);
+const events = [
+  'beforeExit',
+  'disconnect',
+  'exit',
+  'message',
+  'multipleResolves',
+  'rejectionHandled',
+  'uncaughtException',
+  'uncaughtExceptionMonitor',
+  'unhandledRejection',
+  'warning',
+  'SIGUSR1',
+  'SIGTERM',
+  'SIGPIPE',
+  'SIGHUP',
+  'SIGTERM',
+  'SIGINT',
+  'SIGBREAK',
+  'SIGWINCH',
+  'SIGKILL',
+  'SIGSTOP',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGSEGV',
+  'SIGILL',
+  '0',
+];
+events.forEach((eventName) => {
+    process.on(eventName, (...args) => {
+        console.log(`Main process (${process.pid}) event ` + eventName + ': ' + args.join(','));
+    });
+});
+
+
 export default class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
@@ -48,7 +83,16 @@ export default class ChildProcessProxy<T> implements Disposable {
     additionalInjectableValues: unknown,
     workingDirectory: string
   ) {
-    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+    const shouldProfile = true;
+    const profile = shouldProfile ? 'profileMe' : '';
+
+    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart, profile], {
+      silent: true,
+      execArgv: [
+        `--inspect=9222`,
+      ],
+    });
+
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
