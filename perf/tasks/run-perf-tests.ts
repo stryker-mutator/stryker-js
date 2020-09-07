@@ -47,7 +47,8 @@ function npx(args: string[], testDir: string): Observable<string> {
     const testProcess = execa('npx', args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
     let stderr = '';
     testProcess.stderr?.on('data', chunk => stderr += chunk.toString());
-    testProcess.stdout?.on('data', chunk => observer.next(chunk.toString().trim()));
+    // testProcess.stdout?.on('data', chunk => observer.next(chunk.toString().trim()));
+    testProcess.stdout?.on('data', chunk => process.stdout.write(chunk.toString()));
     testProcess
       .then(() => observer.complete())
       .catch(error => observer.error(error));

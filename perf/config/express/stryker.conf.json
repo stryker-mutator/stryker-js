@@ -1,5 +1,9 @@
 {
   "$schema": "../../../packages/core/schema/stryker-schema.json",
   "testRunner": "mocha",
-  "coverageAnalysis": "perTest"
+  "coverageAnalysis": "perTest",
+  "reporters": [
+    "progress",
+    "html"
+  ]
 }
