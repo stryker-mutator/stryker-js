@@ -134,7 +134,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should force timeout off', async () => {
       await actDryRun();
-      expect(mochaAdapterMock.create).calledWithMatch({ timeout: 0 });
+      expect(mochaAdapterMock.create).calledWithMatch({ timeout: false });
     });
 
     it('should force bail', async () => {

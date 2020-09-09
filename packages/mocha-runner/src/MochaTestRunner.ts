@@ -88,7 +88,7 @@ export class MochaTestRunner implements TestRunner2 {
     const mocha = this.mochaAdapter.create({
       reporter: StrykerMochaReporter as any,
       bail: true,
-      timeout: 0,
+      timeout: false as any, // Mocha 5 doesn't support `0`
       rootHooks: this.rootHooks,
     } as Mocha.MochaOptions);
     this.configure(mocha);
