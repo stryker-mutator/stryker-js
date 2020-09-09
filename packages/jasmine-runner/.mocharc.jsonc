@@ -3,5 +3,6 @@
     "test/unit/**/*.js",
     "test/integration/**/*.js"
   ],
-  "file": "test/helpers/setupTests.js"
+  "file": "test/helpers/setupTests.js",
+  "timeout": 10000
 }
