@@ -15,7 +15,6 @@ describe('ts-parser', () => {
     expect(format).eq(expected.format);
     expect(rawContent).eq(expected.rawContent);
     expect(originFileName).eq(expected.originFileName);
-    // @ts-expect-error is not added to type definitions yet
     expectAst(root, (p) => p.isTSTypeAnnotation());
   });
 
