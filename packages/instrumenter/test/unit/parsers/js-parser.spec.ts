@@ -23,10 +23,8 @@ describe('js-parser', () => {
     describe('with features', () => {
       const itShouldSupportAst = createActArrangeAndAssertHelper((name) => `https://babeljs.io/docs/en/babel-plugin-syntax-${name}`);
       itShouldSupportAst('async-generators', 'async function* agf() { await 1;}', (t) => t.isFunctionDeclaration() && t.node.generator);
-      // @ts-expect-error isImport is not (yet) defined in the types
       itShouldSupportAst('dynamic-import', 'import("fs").then(console.log)', (t) => t.isImport());
       itShouldSupportAst('import-meta', 'console.log(import.meta);', (t) => t.isMetaProperty());
-      // @ts-expect-error is not (yet) defined in the types
       itShouldSupportAst('big-int', 'const theBiggestInt = 9007199254740991n', (t) => t.isBigIntLiteral());
       itShouldSupportAst('logical-assignment-operators', 'a &&= b;', (t) => t.isAssignmentExpression() && t.node.operator === '&&=');
     });
@@ -38,9 +36,7 @@ describe('js-parser', () => {
       itShouldSupportAst('do-expressions', 'let a = do { if(x > 10) { "big"; } else { "small"; } }', (t) => t.isDoExpression());
       itShouldSupportAst('object-rest-spread', 'let { x, y, ...z } = { x: 1, y: 2, a: 3, b: 4 };', (t) => t.isRestElement());
       itShouldSupportAst('class-properties', 'class Foo { bar = "baz" }', (t) => t.isClassProperty());
-      // @ts-expect-error not (yet) defined in the types
       itShouldSupportAst('class-properties (private properties)', 'class Foo { #bar = "baz" }', (t) => t.isClassPrivateProperty());
-      // @ts-expect-error not (yet) defined in the types
       itShouldSupportAst('class-properties (private methods)', 'class Foo { #bar(){ return "baz"; } }', (t) => t.isClassPrivateMethod());
 
       itShouldSupportAst('export-default-from', 'export v from "mod";', (t) => t.isExportNamedDeclaration());
@@ -51,7 +47,6 @@ describe('js-parser', () => {
       );
       itShouldSupportAst('numeric-separator', 'let budget = 1_000_000_000_000;', (t) => t.isNumericLiteral());
       itShouldSupportAst('optional-catch-binding', 'try{ throw 0; } catch { }', (t) => t.isCatchClause() && t.node.param === null);
-      // @ts-expect-error isOptionalMemberExpression is not (yet) defined in the types
       itShouldSupportAst('optional-chaining', 'const baz = obj?.foo?.bar?.baz;', (t) => t.isOptionalMemberExpression());
       itShouldSupportAst('pipeline-operator', 'let result = "hello"  |> doubleSay  |> capitalize  |> exclaim;', (t) => t.isBinaryExpression());
       itShouldSupportAst(

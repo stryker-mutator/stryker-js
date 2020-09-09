@@ -12,7 +12,7 @@ function nameAnonymousClassOrFunctionExpression(path: NodePath<types.Expression>
     } else if (
       path.parentPath.isObjectProperty() &&
       types.isIdentifier(path.parentPath.node.key) &&
-      path.getStatementParent().isVariableDeclaration()
+      path.getStatementParent()?.isVariableDeclaration()
     ) {
       path.node.id = path.parentPath.node.key;
     }

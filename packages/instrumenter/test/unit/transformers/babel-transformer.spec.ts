@@ -81,7 +81,6 @@ describe('babel-transformer', () => {
   it('should skip type annotations', () => {
     const ast = createTSAst({ rawContent: 'const foo: string;' });
     transformBabel(ast, mutantCollectorMock, context);
-    // @ts-expect-error
     expectMutateNotCalledWith((t) => t.isTSTypeAnnotation());
   });
 
