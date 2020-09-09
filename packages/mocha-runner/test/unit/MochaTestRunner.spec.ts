@@ -132,6 +132,16 @@ describe(MochaTestRunner.name, () => {
       expect(mocha.grep).calledWith('grepme');
     });
 
+    it('should force timeout off', async () => {
+      await actDryRun();
+      expect(mochaAdapterMock.create).calledWithMatch({ timeout: 0 });
+    });
+
+    it('should force bail', async () => {
+      await actDryRun();
+      expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
+    });
+
     it("should don't set asyncOnly if asyncOnly is false", async () => {
       sut.mochaOptions['async-only'] = false;
       await actDryRun();

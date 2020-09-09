@@ -110,11 +110,6 @@ describe(MochaOptionsLoader.name, () => {
       const actualOptions = sut.load(options);
       expect((actualOptions as any).parallel).undefined;
     });
-
-    it('should force timeout off (#2462)', () => {
-      const mochaOptions = sut.load(options);
-      expect(mochaOptions.timeout).eq(0);
-    });
   });
 
   describe('with mocha < 6', () => {
