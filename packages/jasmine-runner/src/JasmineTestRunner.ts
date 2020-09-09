@@ -26,7 +26,7 @@ export function createJasmineTestRunner(injector: Injector<PluginContext>) {
   return injector.provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache).injectClass(JasmineTestRunner);
 }
 
-export default class JasmineTestRunner implements TestRunner2 {
+export class JasmineTestRunner implements TestRunner2 {
   private readonly jasmineConfigFile: string | undefined;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 
@@ -43,6 +43,10 @@ export default class JasmineTestRunner implements TestRunner2 {
     global.__activeMutant__ = options.activeMutant.id;
     const runResult = await this.run(options.testFilter);
     return toMutantRunResult(runResult);
+  }
+
+  public async init(): Promise<void> {
+    this.requireCache.init({ rootModuleId: require.resolve('jasmine'), initFiles: [] });
   }
 
   public async dispose(): Promise<void> {
@@ -97,7 +101,7 @@ export default class JasmineTestRunner implements TestRunner2 {
   private createJasmineRunner(testFilter: undefined | string[]) {
     let specFilter: undefined | ((spec: jasmine.Spec) => boolean) = undefined;
     if (testFilter) {
-      specFilter = (spec: jasmine.Spec) => testFilter.includes(spec.id.toString());
+      specFilter = (spec) => testFilter.includes(spec.id.toString());
     }
     const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default

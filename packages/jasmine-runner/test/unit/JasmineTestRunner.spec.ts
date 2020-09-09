@@ -8,7 +8,7 @@ import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import * as helpers from '../../src/helpers';
 import * as pluginTokens from '../../src/pluginTokens';
-import JasmineTestRunner from '../../src/JasmineTestRunner';
+import { JasmineTestRunner } from '../../src';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
 
@@ -30,6 +30,13 @@ describe(JasmineTestRunner.name, () => {
     jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
     testInjector.options.jasmineConfigFile = 'jasmineConfFile';
     sut = testInjector.injector.provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock).injectClass(JasmineTestRunner);
+  });
+
+  describe('init', () => {
+    it('should initialize the require cache', async () => {
+      await sut.init();
+      expect(directoryRequireCacheMock.init).calledWithExactly({ initFiles: [], rootModuleId: require.resolve('jasmine') });
+    });
   });
 
   describe('mutantRun', () => {
