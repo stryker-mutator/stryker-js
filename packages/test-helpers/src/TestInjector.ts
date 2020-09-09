@@ -17,13 +17,10 @@ class TestInjector {
     this.logger = factory.logger();
     this.pluginResolver = factory.pluginResolver();
     this.injector = createInjector()
-      .provideValue(commonTokens.getLogger, provideLogger)
+      .provideValue(commonTokens.getLogger, () => this.logger)
       .provideValue(commonTokens.logger, this.logger)
       .provideValue(commonTokens.options, this.options)
       .provideValue(commonTokens.pluginResolver, this.pluginResolver);
-    function provideLogger(): Logger {
-      return this.logger;
-    }
   }
 }
 
