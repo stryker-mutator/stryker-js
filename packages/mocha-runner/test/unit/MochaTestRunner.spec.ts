@@ -83,7 +83,10 @@ describe(MochaTestRunner.name, () => {
 
       await sut.init();
 
-      expect(directoryRequireCacheMock.init).calledWithExactly(expectedTestFileNames);
+      expect(directoryRequireCacheMock.init).calledWithExactly({
+        initFiles: expectedTestFileNames,
+        rootModuleId: require.resolve('mocha/lib/mocha'),
+      });
     });
 
     it('should not handle requires when there are no `requires`', async () => {
