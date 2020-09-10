@@ -46,6 +46,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });
+  it('should be able to instrument TS type definitions (should not produce mutants)', async () => {
+    await arrangeAndActAssert('type-definitions.ts');
+  });
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource(fileName);
