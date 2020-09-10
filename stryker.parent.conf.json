@@ -1,0 +1,25 @@
+{
+  "coverageAnalysis": "perTest",
+  "testRunner": "mocha",
+  "reporters": [
+    "progress",
+    "html",
+    "dashboard"
+  ],  
+  "plugins": [
+    "../mocha-runner",
+    "../typescript-checker"
+  ],
+  "dashboard": {},
+  "buildCommand": "tsc -b",
+  "mochaOptions": {
+    "spec": ["test/helpers/**/*.js", "test/unit/**/*.js"]
+  },
+  "files": [
+    "{src,test,src-generated}/**/*.ts",
+    "!{src,test,src-generated}/**/*.d.ts",
+    "schema/**/*.json",
+    "*",
+    "typings/**/*.ts"
+  ]
+}
