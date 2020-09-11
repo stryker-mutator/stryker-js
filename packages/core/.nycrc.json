@@ -1,0 +1,11 @@
+{
+  "include": [
+    "src/**/*.js"
+  ],
+  "excludeAfterRemap": false,
+  "checkCoverage": true,
+  "lines": 80,
+  "functions": 80,
+  "branches": 80,
+  "statements": 80
+}

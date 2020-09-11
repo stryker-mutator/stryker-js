@@ -5,8 +5,10 @@
   "main": "src/Stryker.js",
   "scripts": {
     "start": "tsc -w",
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 60000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "test": "nyc npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'test/unit/**/*.js'",
+    "test:integration": "mocha --timeout 60000 'test/integration/**/*.js'",
     "stryker": "node bin/stryker run"
   },
   "repository": {

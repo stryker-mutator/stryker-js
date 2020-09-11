@@ -1,4 +1,5 @@
 {
+  "$schema": "./packages/core/schema/stryker-schema.json",
   "coverageAnalysis": "perTest",
   "testRunner": "mocha",
   "reporters": [
@@ -13,7 +14,7 @@
   "dashboard": {},
   "buildCommand": "tsc -b",
   "mochaOptions": {
-    "spec": ["test/helpers/**/*.js", "test/unit/**/*.js"]
+    "spec": ["test/unit/**/*.js"]
   },
   "files": [
     "{src,test,src-generated}/**/*.ts",

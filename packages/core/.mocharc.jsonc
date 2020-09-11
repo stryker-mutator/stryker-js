@@ -1,3 +1,3 @@
 {
-  "require": ["./test/helpers/setupMocha.js"]
+  "require": ["./test/setup.js"]
 }
