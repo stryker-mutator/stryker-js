@@ -15,12 +15,5 @@
   "buildCommand": "tsc -b",
   "mochaOptions": {
     "spec": ["test/unit/**/*.js"]
-  },
-  "files": [
-    "{src,test,src-generated}/**/*.ts",
-    "!{src,test,src-generated}/**/*.d.ts",
-    "schema/**/*.json",
-    "*",
-    "typings/**/*.ts"
-  ]
+  }
 }

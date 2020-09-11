@@ -1,0 +1,13 @@
+{
+  "lines": 95,
+  "statements": 95,
+  "functions": 95,
+  "branches": 90,
+  "excludeAfterRemap": false,
+  "checkCoverage": true,
+  "reporter": "html",
+  "reportDir": "reports/coverage",
+  "include": [
+    "src/**/*.js"
+  ]
+}
