@@ -1,4 +1,4 @@
-import { DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions } from '@stryker-mutator/api/test_runner';
+import { MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner';
 
 import TestRunnerDecorator from './TestRunnerDecorator';
 
@@ -7,17 +7,11 @@ import TestRunnerDecorator from './TestRunnerDecorator';
  */
 export default class RestartWorkerDecorator extends TestRunnerDecorator {
   private runs = 0;
-
-  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    const results = super.dryRun(options);
-
-    await this.recover();
-    return results;
-  }
+  private readonly restartAfter = 0;
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.runs++;
-    if (this.runs > 20) {
+    if (this.restartAfter > 0 && this.runs > this.restartAfter) {
       await this.recover();
     }
 
@@ -30,7 +24,7 @@ export default class RestartWorkerDecorator extends TestRunnerDecorator {
     return this.init();
   }
 
-  dispose(): Promise<any> {
+  public dispose(): Promise<any> {
     this.runs = 0;
     return super.dispose();
   }

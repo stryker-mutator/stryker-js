@@ -92,6 +92,11 @@ export default class StrykerCli {
         'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
         parseInt
       )
+      .options(
+        '--restartAfterRuns <n>',
+        'Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)',
+        parseInt
+      )
       .option(
         '--logLevel <level>',
         `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.logLevel}"`
