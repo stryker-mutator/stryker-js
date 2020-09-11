@@ -11,7 +11,7 @@ export default class RestartWorkerDecorator extends TestRunnerDecorator {
   private runs = 0;
   private readonly restartAfter;
 
-  constructor(testRunnerProducer: () => TestRunner2, options: StrykerOptions) {
+  constructor(testRunnerProducer: () => TestRunner2, options: Pick<StrykerOptions, 'restartAfterRuns'>) {
     super(testRunnerProducer);
 
     this.restartAfter = options.restartAfterRuns;
@@ -27,7 +27,6 @@ export default class RestartWorkerDecorator extends TestRunnerDecorator {
   }
 
   private async recover(): Promise<void> {
-    console.log('Recovering');
     await this.dispose();
     this.createInnerRunner();
     return this.init();
