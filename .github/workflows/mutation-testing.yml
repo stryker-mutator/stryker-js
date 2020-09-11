@@ -23,7 +23,7 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  core-dependencies:
+  core-dependencies-and-plugins:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util}" --concurrency 1 --stream stryker
+        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,typescript-checker,karma-runner,jest-runner}" --concurrency 1 --stream stryker
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 

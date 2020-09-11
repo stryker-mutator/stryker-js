@@ -4,10 +4,10 @@
   "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc npm run mocha",
-    "mocha": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\"",
-    "test:integration": "mocha --no-timeout \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "test": "nyc npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'test/unit/**/*.js'",
+    "test:integration": "mocha --no-timeout 'test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

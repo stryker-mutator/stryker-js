@@ -8,12 +8,14 @@ import * as sinon from 'sinon';
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
-afterEach(() => {
-  delete global.__activeMutant__;
-  delete global.__currentTestId__;
-  delete global.__mutantCoverage__;
-  global.__testsInCurrentJasmineRun = [];
+export const mochaHooks = {
+  afterEach() {
+    delete global.__activeMutant__;
+    delete global.__currentTestId__;
+    delete global.__mutantCoverage__;
+    global.__testsInCurrentJasmineRun = [];
 
-  sinon.restore();
-  testInjector.reset();
-});
+    sinon.restore();
+    testInjector.reset();
+  },
+};
