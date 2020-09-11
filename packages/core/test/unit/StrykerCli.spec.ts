@@ -43,6 +43,7 @@ describe(StrykerCli.name, () => {
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],
+      [['--restartAfterWorkers', '3'], { restartAfterWorkers: 3 }],
     ];
     testCases.forEach(([args, expected]) => {
       it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {

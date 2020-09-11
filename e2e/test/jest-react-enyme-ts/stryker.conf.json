@@ -3,7 +3,7 @@
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
-  "concurrency": 1,
+  "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder",

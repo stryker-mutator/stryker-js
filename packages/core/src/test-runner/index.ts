@@ -21,13 +21,17 @@ export function createTestRunnerFactory(
   if (CommandTestRunner.is(options.testRunner)) {
     return () =>
       new RestartWorkerDecorator(
-        () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)))
+        () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options))),
+        options
       );
   } else {
     return () =>
       new RestartWorkerDecorator(
         () =>
-          new RetryDecorator(() => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)))
+          new RetryDecorator(
+            () => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext))
+          ),
+        options
       );
   }
 }

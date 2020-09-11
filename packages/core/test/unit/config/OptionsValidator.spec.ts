@@ -177,6 +177,11 @@ describe(OptionsValidator.name, () => {
     });
   });
 
+  it('should be invalid with non-numeric restartAfterRuns', () => {
+    breakConfig('restartAfterRuns', 'break');
+    actValidationErrors('Config option "restartAfterRuns" has the wrong type. It should be a number, but was a string.');
+  });
+
   describe('transpilers', () => {
     it('should report a deprecation warning', () => {
       (testInjector.options.transpilers as any) = ['stryker-jest'];

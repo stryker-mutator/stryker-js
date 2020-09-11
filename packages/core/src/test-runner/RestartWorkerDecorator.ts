@@ -1,4 +1,6 @@
-import { MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { MutantRunOptions, MutantRunResult, TestRunner2 } from '@stryker-mutator/api/test_runner';
+
+import { StrykerOptions } from '../../../api/src-generated/stryker-core';
 
 import TestRunnerDecorator from './TestRunnerDecorator';
 
@@ -7,7 +9,13 @@ import TestRunnerDecorator from './TestRunnerDecorator';
  */
 export default class RestartWorkerDecorator extends TestRunnerDecorator {
   private runs = 0;
-  private readonly restartAfter = 0;
+  private readonly restartAfter;
+
+  constructor(testRunnerProducer: () => TestRunner2, options: StrykerOptions) {
+    super(testRunnerProducer);
+
+    this.restartAfter = options.restartAfterRuns;
+  }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.runs++;
@@ -19,6 +27,7 @@ export default class RestartWorkerDecorator extends TestRunnerDecorator {
   }
 
   private async recover(): Promise<void> {
+    console.log('Recovering');
     await this.dispose();
     this.createInnerRunner();
     return this.init();

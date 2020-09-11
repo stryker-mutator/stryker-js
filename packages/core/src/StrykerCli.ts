@@ -92,7 +92,7 @@ export default class StrykerCli {
         'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
         parseInt
       )
-      .options(
+      .option(
         '--restartAfterRuns <n>',
         'Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)',
         parseInt
