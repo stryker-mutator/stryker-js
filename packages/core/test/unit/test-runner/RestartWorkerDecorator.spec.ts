@@ -76,9 +76,10 @@ describe(RestartWorkerDecorator.name, () => {
         const expectedResult = factory.completeDryRunResult();
         testRunner[runMethod].resolves(expectedResult);
 
-        const result = await act(workerWithRestarts, options);
+        await act(workerWithoutRestarts, options);
+        const result = await act(workerWithoutRestarts, options);
 
-        expect(workerWithRestarts.dispose).to.have.been.callCount(0);
+        expect(workerWithoutRestarts.dispose).to.have.been.callCount(0);
         expect(result).to.eq(expectedResult);
       });
 
