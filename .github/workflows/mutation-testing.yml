@@ -12,65 +12,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
       - name: Install & Build
         run: |
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker
+        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- --concurrency 3
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  core-dependencies-and-plugins:
+  dependencies:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
       - name: Install & Build
         run: |
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,typescript-checker,jest-runner}" --concurrency 1 --stream stryker
+        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util}" --concurrency 1 --stream stryker -- --concurrency 3
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  # plugins-2:
-  #   runs-on: ubuntu-latest
+  plugins:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 12.x
-  #     - name: Install & Build
-  #       run: |
-  #         npm install
-  #         npm run build
-  #     - name: Run Stryker
-  #       run: npx lerna run --scope "@stryker-mutator/{jasmine-runner,jest-runner,karma-runner,mocha-framework,mocha-runner}" --concurrency 1 --stream stryker
-  #       env:
-  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-
-  # plugins-3:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - uses: actions/checkout@v1
-  #     - uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 12.x
-  #     - name: Install & Build
-  #       run: |
-  #         npm install
-  #         npm run build
-  #     - name: Run Stryker
-  #       run: npx lerna run --scope "@stryker-mutator/{typescript,vue-mutator,webpack-transpiler,wct-runner,util}" --concurrency 1 --stream stryker
-  #       env:
-  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build
+      - name: Run Stryker
+        run: npx lerna run --scope "@stryker-mutator/{typescript-checker,jest-runner}" --concurrency 1 --stream stryker -- --concurrency 3
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
