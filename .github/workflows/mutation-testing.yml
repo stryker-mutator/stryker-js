@@ -17,13 +17,12 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- --concurrency 3
+        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- -- --concurrency 3
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
-  dependencies:
+  dependencies_and_plugins:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
       - name: Install & Build
@@ -31,20 +30,6 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util}" --concurrency 1 --stream stryker -- --concurrency 3
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-
-  plugins:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v1
-      - name: Install & Build
-        run: |
-          npm install
-          npm run build
-      - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/{typescript-checker,jest-runner}" --concurrency 1 --stream stryker -- --concurrency 3
+        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,typescript-checker,jest-runner}" --concurrency 1 --stream stryker -- -- --concurrency 3
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
