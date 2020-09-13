@@ -26,6 +26,7 @@ if (require.main === module) {
 
 async function main() {
   process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'big-project'));
+  testInjector.options.mochaOptions = { 'no-config': true };
   const mochaRunner = testInjector.injector.injectFunction(createMochaTestRunner);
 
   await mochaRunner.init();

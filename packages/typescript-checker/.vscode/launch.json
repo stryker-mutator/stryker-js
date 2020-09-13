@@ -14,7 +14,9 @@
         "<node_internals>/**"
       ],
       "args": [
-        "--no-timeout"
+        "--no-timeout",
+        "dist/test/unit/**/*.js",
+        "dist/test/integration/**/*.js"    
       ]
     }
   ]

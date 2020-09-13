@@ -4,8 +4,11 @@
   "description": "A typescript type checker plugin to be used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc npm run test:all",
     "mocha": "mocha",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
+    "test:integration": "mocha --timeout 10000 'dist/test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

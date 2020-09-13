@@ -4,7 +4,7 @@
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc npm run mocha",
     "mocha": "mocha",
     "stryker": "node ../core/bin/stryker run"
   },

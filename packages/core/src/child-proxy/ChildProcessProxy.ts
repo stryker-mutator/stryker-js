@@ -177,7 +177,6 @@ export default class ChildProcessProxy<T> implements Disposable {
   private readonly handleUnexpectedExit = (code: number, signal: string) => {
     this.isDisposed = true;
     const output = StringBuilder.concat(this.stderrBuilder, this.stdoutBuilder);
-
     if (processOutOfMemory()) {
       this.currentError = new OutOfMemoryError(this.worker.pid, code);
       this.log.warn(`Child process [pid ${this.currentError.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
