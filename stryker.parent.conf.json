@@ -11,6 +11,7 @@
     "../mocha-runner",
     "../typescript-checker"
   ],
+  "checkers": ["typescript"],
   "dashboard": {},
   "buildCommand": "tsc -b",
   "mochaOptions": {
