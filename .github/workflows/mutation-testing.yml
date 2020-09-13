@@ -6,6 +6,7 @@ on:
     branches:
       - master
       - test/**
+      - epic/**
 
 jobs:
   core:
