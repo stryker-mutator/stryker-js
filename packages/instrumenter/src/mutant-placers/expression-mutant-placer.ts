@@ -50,7 +50,7 @@ function isValidParent(child: NodePath<types.Expression>) {
 /**
  * Places the mutants with a conditional expression: `global.activeMutant === 1? mutatedCode : regularCode`;
  */
-const conditionalExpressionMutantPlacer: MutantPlacer = (path: NodePath, mutants: Mutant[]): boolean => {
+const expressionMutantPlacer: MutantPlacer = (path: NodePath, mutants: Mutant[]): boolean => {
   if (path.isExpression() && isValidParent(path)) {
     // First calculated the mutated ast before we start to apply mutants.
     const appliedMutants = mutants.map((mutant) => ({
@@ -75,4 +75,4 @@ const conditionalExpressionMutantPlacer: MutantPlacer = (path: NodePath, mutants
 };
 
 // Export it after initializing so `fn.name` is properly set
-export { conditionalExpressionMutantPlacer };
+export { expressionMutantPlacer };

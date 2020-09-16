@@ -40,17 +40,11 @@ var __global_69fa48 = function (g) {
 }(new Function(\\"return this\\")());
 
 function add(a, b) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 0:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(0);
-      {
-        return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
-      }
-      break;
+  if (__global_69fa48.__activeMutant__ === 0) {
+    {}
+  } else {
+    __global_69fa48.__coverMutant__(0);
+    return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
   }
 }
 

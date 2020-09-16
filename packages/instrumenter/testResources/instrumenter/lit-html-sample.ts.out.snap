@@ -45,60 +45,39 @@ export class MutationTestReportTotalsComponent extends LitElement {
   private readonly directoryIcon = __global_69fa48.__activeMutant__ === 2 ? svg\`\` : (__global_69fa48.__coverMutant__(2), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
 
   public render() {
-    switch (__global_69fa48.__activeMutant__) {
-      case 3:
-        {}
-        break;
+    if (__global_69fa48.__activeMutant__ === 3) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(3);
 
-      default:
-        __global_69fa48.__coverMutant__(3);
-        {
-          if (__global_69fa48.__activeMutant__ === 5 ? false : __global_69fa48.__activeMutant__ === 4 ? true : (__global_69fa48.__coverMutant__(4, 5), this.model)) {
-            switch (__global_69fa48.__activeMutant__) {
-              case 6:
-                {}
-                break;
-
-              default:
-                __global_69fa48.__coverMutant__(6);
-                {
-                  return __global_69fa48.__activeMutant__ === 7 ? html\`\` : (__global_69fa48.__coverMutant__(7), html\`
+      if (__global_69fa48.__activeMutant__ === 5 ? false : __global_69fa48.__activeMutant__ === 4 ? true : (__global_69fa48.__coverMutant__(4, 5), this.model)) {
+        if (__global_69fa48.__activeMutant__ === 6) {
+          {}
+        } else {
+          __global_69fa48.__coverMutant__(6);
+          return __global_69fa48.__activeMutant__ === 7 ? html\`\` : (__global_69fa48.__coverMutant__(7), html\`
         <table class=\\"table table-sm table-hover table-bordered table-no-top\\">
           \${this.renderHead()} \${this.renderTableBody(this.model)}
         </table>
       \`);
-                }
-                break;
-            }
-          } else {
-            switch (__global_69fa48.__activeMutant__) {
-              case 8:
-                {}
-                break;
-
-              default:
-                __global_69fa48.__coverMutant__(8);
-                {
-                  return undefined;
-                }
-                break;
-            }
-          }
         }
-        break;
+      } else {
+        if (__global_69fa48.__activeMutant__ === 8) {
+          {}
+        } else {
+          __global_69fa48.__coverMutant__(8);
+          return undefined;
+        }
+      }
     }
   }
 
   private renderHead() {
-    switch (__global_69fa48.__activeMutant__) {
-      case 9:
-        {}
-        break;
-
-      default:
-        __global_69fa48.__coverMutant__(9);
-        {
-          return __global_69fa48.__activeMutant__ === 10 ? html\`\` : (__global_69fa48.__coverMutant__(10), html\`<thead>
+    if (__global_69fa48.__activeMutant__ === 9) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(9);
+      return __global_69fa48.__activeMutant__ === 10 ? html\`\` : (__global_69fa48.__coverMutant__(10), html\`<thead>
       <tr>
         <th colspan=\\"2\\" style=\\"width: 217px\\">
           <div><span>File / Directory</span></div>
@@ -138,119 +117,79 @@ export class MutationTestReportTotalsComponent extends LitElement {
         </th>
       </tr>
     </thead>\`);
-        }
-        break;
     }
   }
 
   private renderTableBody(model: MetricsResult) {
-    switch (__global_69fa48.__activeMutant__) {
-      case 11:
-        {}
-        break;
+    if (__global_69fa48.__activeMutant__ === 11) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(11);
 
-      default:
-        __global_69fa48.__coverMutant__(11);
-        {
-          const renderChildren = () => {
-            switch (__global_69fa48.__activeMutant__) {
-              case 12:
-                {}
-                break;
+      const renderChildren = () => {
+        if (__global_69fa48.__activeMutant__ === 12) {
+          {}
+        } else {
+          __global_69fa48.__coverMutant__(12);
 
-              default:
-                __global_69fa48.__coverMutant__(12);
-                {
-                  if (__global_69fa48.__activeMutant__ === 14 ? false : __global_69fa48.__activeMutant__ === 13 ? true : (__global_69fa48.__coverMutant__(13, 14), model.file)) {
-                    switch (__global_69fa48.__activeMutant__) {
-                      case 15:
-                        {}
-                        break;
+          if (__global_69fa48.__activeMutant__ === 14 ? false : __global_69fa48.__activeMutant__ === 13 ? true : (__global_69fa48.__coverMutant__(13, 14), model.file)) {
+            if (__global_69fa48.__activeMutant__ === 15) {
+              {}
+            } else {
+              __global_69fa48.__coverMutant__(15);
+              return undefined;
+            }
+          } else {
+            if (__global_69fa48.__activeMutant__ === 16) {
+              {}
+            } else {
+              __global_69fa48.__coverMutant__(16);
+              return model.childResults.map(childResult => {
+                if (__global_69fa48.__activeMutant__ === 17) {
+                  {}
+                } else {
+                  __global_69fa48.__coverMutant__(17);
+                  let fullName: string = childResult.name;
 
-                      default:
-                        __global_69fa48.__coverMutant__(15);
-                        {
-                          return undefined;
-                        }
-                        break;
-                    }
-                  } else {
-                    switch (__global_69fa48.__activeMutant__) {
-                      case 16:
-                        {}
-                        break;
-
-                      default:
-                        __global_69fa48.__coverMutant__(16);
-                        {
-                          return model.childResults.map(childResult => {
-                            switch (__global_69fa48.__activeMutant__) {
-                              case 17:
-                                {}
-                                break;
-
-                              default:
-                                __global_69fa48.__coverMutant__(17);
-                                {
-                                  let fullName: string = childResult.name;
-
-                                  while (__global_69fa48.__activeMutant__ === 19 ? !childResult.file || childResult.childResults.length === 1 : __global_69fa48.__activeMutant__ === 18 ? false : (__global_69fa48.__coverMutant__(18, 19), (__global_69fa48.__activeMutant__ === 20 ? childResult.file : (__global_69fa48.__coverMutant__(20), !childResult.file)) && (__global_69fa48.__activeMutant__ === 23 ? childResult.childResults.length !== 1 : __global_69fa48.__activeMutant__ === 22 ? false : __global_69fa48.__activeMutant__ === 21 ? true : (__global_69fa48.__coverMutant__(21, 22, 23), childResult.childResults.length === 1)))) {
-                                    switch (__global_69fa48.__activeMutant__) {
-                                      case 24:
-                                        {}
-                                        break;
-
-                                      default:
-                                        __global_69fa48.__coverMutant__(24);
-                                        {
-                                          childResult = childResult.childResults[0];
-                                          fullName = pathJoin(fullName, childResult.name);
-                                        }
-                                        break;
-                                    }
-                                  }
-
-                                  return this.renderRow(fullName, childResult, pathJoin(...this.currentPath, fullName));
-                                }
-                                break;
-                            }
-                          });
-                        }
-                        break;
+                  while (__global_69fa48.__activeMutant__ === 19 ? !childResult.file || childResult.childResults.length === 1 : __global_69fa48.__activeMutant__ === 18 ? false : (__global_69fa48.__coverMutant__(18, 19), (__global_69fa48.__activeMutant__ === 20 ? childResult.file : (__global_69fa48.__coverMutant__(20), !childResult.file)) && (__global_69fa48.__activeMutant__ === 23 ? childResult.childResults.length !== 1 : __global_69fa48.__activeMutant__ === 22 ? false : __global_69fa48.__activeMutant__ === 21 ? true : (__global_69fa48.__coverMutant__(21, 22, 23), childResult.childResults.length === 1)))) {
+                    if (__global_69fa48.__activeMutant__ === 24) {
+                      {}
+                    } else {
+                      __global_69fa48.__coverMutant__(24);
+                      childResult = childResult.childResults[0];
+                      fullName = pathJoin(fullName, childResult.name);
                     }
                   }
-                }
-                break;
-            }
-          };
 
-          return __global_69fa48.__activeMutant__ === 25 ? html\`\` : (__global_69fa48.__coverMutant__(25), html\`
+                  return this.renderRow(fullName, childResult, pathJoin(...this.currentPath, fullName));
+                }
+              });
+            }
+          }
+        }
+      };
+
+      return __global_69fa48.__activeMutant__ === 25 ? html\`\` : (__global_69fa48.__coverMutant__(25), html\`
       <tbody>
         \${this.renderRow(model.name, model, undefined)} \${renderChildren()}
       </tbody>
     \`);
-        }
-        break;
     }
   }
 
   private renderRow(name: string, row: MetricsResult, path: string | undefined) {
-    switch (__global_69fa48.__activeMutant__) {
-      case 26:
-        {}
-        break;
-
-      default:
-        __global_69fa48.__coverMutant__(26);
-        {
-          const {
-            mutationScore
-          } = row.metrics;
-          const scoreIsPresent = __global_69fa48.__activeMutant__ === 27 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(27), !isNaN(mutationScore));
-          const coloringClass = this.determineColoringClass(mutationScore);
-          const mutationScoreRounded = mutationScore.toFixed(2);
-          const progressBarStyle = __global_69fa48.__activeMutant__ === 28 ? \`\` : (__global_69fa48.__coverMutant__(28), \`width: \${mutationScore}%\`);
-          return __global_69fa48.__activeMutant__ === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\` <tr title=\\"\${row.name}\\">
+    if (__global_69fa48.__activeMutant__ === 26) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(26);
+      const {
+        mutationScore
+      } = row.metrics;
+      const scoreIsPresent = __global_69fa48.__activeMutant__ === 27 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(27), !isNaN(mutationScore));
+      const coloringClass = this.determineColoringClass(mutationScore);
+      const mutationScoreRounded = mutationScore.toFixed(2);
+      const progressBarStyle = __global_69fa48.__activeMutant__ === 28 ? \`\` : (__global_69fa48.__coverMutant__(28), \`width: \${mutationScore}%\`);
+      return __global_69fa48.__activeMutant__ === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\` <tr title=\\"\${row.name}\\">
       <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\"
         >\${row.file ? this.fileIcon : this.directoryIcon}</td
       >
@@ -285,88 +224,52 @@ export class MutationTestReportTotalsComponent extends LitElement {
       <th class=\\"text-center\\">\${row.metrics.totalUndetected}</th>
       <th class=\\"text-center\\">\${row.metrics.totalMutants}</th>
     </tr>\`);
-        }
-        break;
     }
   }
 
   private determineColoringClass(mutationScore: number) {
-    switch (__global_69fa48.__activeMutant__) {
-      case 38:
-        {}
-        break;
+    if (__global_69fa48.__activeMutant__ === 38) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(38);
 
-      default:
-        __global_69fa48.__coverMutant__(38);
-        {
-          if (__global_69fa48.__activeMutant__ === 41 ? !isNaN(mutationScore) || this.thresholds : __global_69fa48.__activeMutant__ === 40 ? false : __global_69fa48.__activeMutant__ === 39 ? true : (__global_69fa48.__coverMutant__(39, 40, 41), (__global_69fa48.__activeMutant__ === 42 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(42), !isNaN(mutationScore))) && this.thresholds)) {
-            switch (__global_69fa48.__activeMutant__) {
-              case 43:
-                {}
-                break;
+      if (__global_69fa48.__activeMutant__ === 41 ? !isNaN(mutationScore) || this.thresholds : __global_69fa48.__activeMutant__ === 40 ? false : __global_69fa48.__activeMutant__ === 39 ? true : (__global_69fa48.__coverMutant__(39, 40, 41), (__global_69fa48.__activeMutant__ === 42 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(42), !isNaN(mutationScore))) && this.thresholds)) {
+        if (__global_69fa48.__activeMutant__ === 43) {
+          {}
+        } else {
+          __global_69fa48.__coverMutant__(43);
 
-              default:
-                __global_69fa48.__coverMutant__(43);
-                {
-                  if (__global_69fa48.__activeMutant__ === 47 ? mutationScore >= this.thresholds.low : __global_69fa48.__activeMutant__ === 46 ? mutationScore <= this.thresholds.low : __global_69fa48.__activeMutant__ === 45 ? false : __global_69fa48.__activeMutant__ === 44 ? true : (__global_69fa48.__coverMutant__(44, 45, 46, 47), mutationScore < this.thresholds.low)) {
-                    switch (__global_69fa48.__activeMutant__) {
-                      case 48:
-                        {}
-                        break;
-
-                      default:
-                        __global_69fa48.__coverMutant__(48);
-                        {
-                          return __global_69fa48.__activeMutant__ === 49 ? \\"\\" : (__global_69fa48.__coverMutant__(49), 'danger');
-                        }
-                        break;
-                    }
-                  } else if (__global_69fa48.__activeMutant__ === 53 ? mutationScore >= this.thresholds.high : __global_69fa48.__activeMutant__ === 52 ? mutationScore <= this.thresholds.high : __global_69fa48.__activeMutant__ === 51 ? false : __global_69fa48.__activeMutant__ === 50 ? true : (__global_69fa48.__coverMutant__(50, 51, 52, 53), mutationScore < this.thresholds.high)) {
-                    switch (__global_69fa48.__activeMutant__) {
-                      case 54:
-                        {}
-                        break;
-
-                      default:
-                        __global_69fa48.__coverMutant__(54);
-                        {
-                          return __global_69fa48.__activeMutant__ === 55 ? \\"\\" : (__global_69fa48.__coverMutant__(55), 'warning');
-                        }
-                        break;
-                    }
-                  } else {
-                    switch (__global_69fa48.__activeMutant__) {
-                      case 56:
-                        {}
-                        break;
-
-                      default:
-                        __global_69fa48.__coverMutant__(56);
-                        {
-                          return __global_69fa48.__activeMutant__ === 57 ? \\"\\" : (__global_69fa48.__coverMutant__(57), 'success');
-                        }
-                        break;
-                    }
-                  }
-                }
-                break;
+          if (__global_69fa48.__activeMutant__ === 47 ? mutationScore >= this.thresholds.low : __global_69fa48.__activeMutant__ === 46 ? mutationScore <= this.thresholds.low : __global_69fa48.__activeMutant__ === 45 ? false : __global_69fa48.__activeMutant__ === 44 ? true : (__global_69fa48.__coverMutant__(44, 45, 46, 47), mutationScore < this.thresholds.low)) {
+            if (__global_69fa48.__activeMutant__ === 48) {
+              {}
+            } else {
+              __global_69fa48.__coverMutant__(48);
+              return __global_69fa48.__activeMutant__ === 49 ? \\"\\" : (__global_69fa48.__coverMutant__(49), 'danger');
+            }
+          } else if (__global_69fa48.__activeMutant__ === 53 ? mutationScore >= this.thresholds.high : __global_69fa48.__activeMutant__ === 52 ? mutationScore <= this.thresholds.high : __global_69fa48.__activeMutant__ === 51 ? false : __global_69fa48.__activeMutant__ === 50 ? true : (__global_69fa48.__coverMutant__(50, 51, 52, 53), mutationScore < this.thresholds.high)) {
+            if (__global_69fa48.__activeMutant__ === 54) {
+              {}
+            } else {
+              __global_69fa48.__coverMutant__(54);
+              return __global_69fa48.__activeMutant__ === 55 ? \\"\\" : (__global_69fa48.__coverMutant__(55), 'warning');
             }
           } else {
-            switch (__global_69fa48.__activeMutant__) {
-              case 58:
-                {}
-                break;
-
-              default:
-                __global_69fa48.__coverMutant__(58);
-                {
-                  return __global_69fa48.__activeMutant__ === 59 ? \\"\\" : (__global_69fa48.__coverMutant__(59), 'default');
-                }
-                break;
+            if (__global_69fa48.__activeMutant__ === 56) {
+              {}
+            } else {
+              __global_69fa48.__coverMutant__(56);
+              return __global_69fa48.__activeMutant__ === 57 ? \\"\\" : (__global_69fa48.__coverMutant__(57), 'success');
             }
           }
         }
-        break;
+      } else {
+        if (__global_69fa48.__activeMutant__ === 58) {
+          {}
+        } else {
+          __global_69fa48.__coverMutant__(58);
+          return __global_69fa48.__activeMutant__ === 59 ? \\"\\" : (__global_69fa48.__coverMutant__(59), 'default');
+        }
+      }
     }
   }
 
