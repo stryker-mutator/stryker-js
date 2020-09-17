@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.7",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "repository": {
     "type": "git",
@@ -8,8 +8,8 @@
   },
   "scripts": {
     "stryker": "node ../core/bin/stryker run",
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 85 --branches 80 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\""
+    "test": "nyc npm run test:unit",
+    "test:unit": "mocha \"test/unit/**/*.js\""
   },
   "keywords": [
     "mutation testing",

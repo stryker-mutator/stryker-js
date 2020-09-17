@@ -1,12 +1,14 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.7",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "src/Stryker.js",
   "scripts": {
     "start": "tsc -w",
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 60000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "test": "nyc npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'test/unit/**/*.js'",
+    "test:integration": "mocha --timeout 60000 'test/integration/**/*.js'",
     "stryker": "node bin/stryker run"
   },
   "repository": {
@@ -53,25 +55,25 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "4.0.0-beta.3",
-    "@stryker-mutator/instrumenter": "4.0.0-beta.3",
-    "@stryker-mutator/util": "4.0.0-beta.3",
-    "ajv": "^6.12.0",
+    "@stryker-mutator/api": "4.0.0-beta.7",
+    "@stryker-mutator/instrumenter": "4.0.0-beta.7",
+    "@stryker-mutator/util": "4.0.0-beta.7",
+    "ajv": "~6.12.0",
     "chalk": "~4.1.0",
-    "commander": "~6.0.0",
-    "execa": "^4.0.2",
+    "commander": "~6.1.0",
+    "execa": "~4.0.2",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~7.3.2",
-    "lodash.flatmap": "^4.5.0",
-    "lodash.groupby": "^4.6.0",
-    "log4js": "6.2.1",
-    "minimatch": "^3.0.4",
+    "lodash.flatmap": "~4.5.0",
+    "lodash.groupby": "~4.6.0",
+    "log4js": "~6.2.1",
+    "minimatch": "~3.0.4",
     "mkdirp": "~1.0.3",
     "mutation-testing-elements": "~1.4.0",
     "mutation-testing-metrics": "~1.4.0",
-    "npm-run-path": "^4.0.1",
+    "npm-run-path": "~4.0.1",
     "progress": "~2.0.0",
     "rimraf": "~3.0.0",
     "rxjs": "~6.6.0",
@@ -84,15 +86,15 @@
     "typed-rest-client": "~1.7.1"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "^0.24.1",
-    "@stryker-mutator/test-helpers": "4.0.0-beta.3",
+    "@stryker-mutator/api": "4.0.0-beta.4",
+    "@stryker-mutator/test-helpers": "4.0.0-beta.7",
     "@types/inquirer": "~6.0.2",
-    "@types/lodash.flatmap": "^4.5.6",
-    "@types/lodash.groupby": "^4.6.6",
-    "@types/minimatch": "^3.0.3",
+    "@types/lodash.flatmap": "~4.5.6",
+    "@types/lodash.groupby": "~4.6.6",
+    "@types/minimatch": "~3.0.3",
     "@types/node": "^14.0.1",
     "@types/progress": "~2.0.1",
-    "@types/strip-comments": "^2.0.0",
-    "flatted": "^3.0.2"
+    "@types/strip-comments": "~2.0.0",
+    "flatted": "~3.0.2"
   }
 }

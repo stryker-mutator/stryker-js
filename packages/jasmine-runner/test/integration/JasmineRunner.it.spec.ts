@@ -4,7 +4,7 @@ import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test_runner';
 
-import JasmineTestRunner, { createJasmineTestRunner } from '../../src/JasmineTestRunner';
+import { JasmineTestRunner, createJasmineTestRunner } from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
 import { jasmineInitSuccessResults } from './helpers';
@@ -12,20 +12,17 @@ import { jasmineInitSuccessResults } from './helpers';
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
 
-  beforeEach(() => {
-    global.__testsInCurrentJasmineRun = [];
-  });
-
   afterEach(async () => {
     process.chdir(path.resolve(__dirname, '../../..'));
     await sut.dispose();
   });
 
   describe('using the jasmine-init project', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
       sut = testInjector.injector.injectFunction(createJasmineTestRunner);
+      await sut.init();
     });
 
     it('should run the specs', async () => {
@@ -88,9 +85,10 @@ describe('JasmineRunner integration', () => {
   });
 
   describe('using a jasmine-project with errors', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/errors'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunner);
+      await sut.init();
     });
 
     it('should be able to tell the error', async () => {
@@ -103,9 +101,10 @@ describe('JasmineRunner integration', () => {
   });
 
   describe('when it includes failed tests', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunner);
+      await sut.init();
     });
 
     it('should complete with one test failure', async () => {

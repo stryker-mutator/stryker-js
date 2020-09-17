@@ -144,6 +144,7 @@ export function isTypeAnnotation(path: NodePath): boolean {
   return (
     path.isInterfaceDeclaration() ||
     path.isTypeAnnotation() ||
+    path.isTSAsExpression() ||
     types.isTSInterfaceDeclaration(path.node) ||
     types.isTSTypeAnnotation(path.node) ||
     types.isTSTypeAliasDeclaration(path.node) ||

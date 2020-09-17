@@ -11,6 +11,6 @@
     "spec": "test/**/*.ts"
   },
   "devDependencies": {
-    "@types/jasmine": "^3.5.11"
+    "@types/jasmine": "~3.5.11"
   }
 }

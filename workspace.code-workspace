@@ -90,7 +90,7 @@
     }
   ],
   "settings": {
-    "typescript.tsdk": "parent\\node_modules\\typescript\\lib",
+    "typescript.tsdk": "parent/node_modules/typescript/lib",
     "files.exclude": {
       ".git": true,
       ".tscache": true,

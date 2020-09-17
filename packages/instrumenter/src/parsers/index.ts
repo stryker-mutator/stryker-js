@@ -24,7 +24,7 @@ export function createParser(parserOptions: ParserOptions) {
   };
 }
 
-function getFormat(fileName: string, override: AstFormat | undefined): AstFormat {
+export function getFormat(fileName: string, override?: AstFormat): AstFormat {
   if (override) {
     return override;
   } else {

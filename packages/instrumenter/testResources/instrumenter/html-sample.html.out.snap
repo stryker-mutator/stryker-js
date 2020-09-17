@@ -12,7 +12,6 @@ exports[`instrumenter integration should be able to instrument html 1`] = `
 
 <body>
     <script>
-// @ts-nocheck
 var __global_69fa48 = function (g) {
   if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
@@ -41,17 +40,11 @@ var __global_69fa48 = function (g) {
 }(new Function(\\"return this\\")());
 
 function add(a, b) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 0:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(0);
-      {
-        return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
-      }
-      break;
+  if (__global_69fa48.__activeMutant__ === 0) {
+    {}
+  } else {
+    __global_69fa48.__coverMutant__(0);
+    return __global_69fa48.__activeMutant__ === 1 ? a - b : (__global_69fa48.__coverMutant__(1), a + b);
   }
 }
 

@@ -78,11 +78,19 @@ describe('babel-transformer', () => {
     expect(ast.root.program.body[0]).eq(declareGlobal);
   });
 
-  it('should skip type annotations', () => {
-    const ast = createTSAst({ rawContent: 'const foo: string;' });
-    transformBabel(ast, mutantCollectorMock, context);
-    // @ts-expect-error
-    expectMutateNotCalledWith((t) => t.isTSTypeAnnotation());
+  describe('types', () => {
+    it('should skip type annotations', () => {
+      const ast = createTSAst({ rawContent: 'const foo: string;' });
+      transformBabel(ast, mutantCollectorMock, context);
+      expectMutateNotCalledWith((t) => t.isTSTypeAnnotation());
+    });
+
+    it('should skip `as` expressions', () => {
+      const ast = createTSAst({ rawContent: 'let foo = "bar" as "bar"' });
+      transformBabel(ast, mutantCollectorMock, context);
+      expectMutateNotCalledWith((t) => t.isTSLiteralType());
+      expectMutateNotCalledWith((t) => t.isStringLiteral() && t.parentPath.isTSLiteralType());
+    });
   });
 
   it('should skip import declarations', () => {

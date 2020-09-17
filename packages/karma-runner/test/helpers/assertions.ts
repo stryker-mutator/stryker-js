@@ -11,12 +11,11 @@ export type TimelessTestResult =
  */
 export function expectTestResults(result: CompleteDryRunResult, expectedTestResults: TimelessTestResult[]) {
   const actualTestResults: TimelessTestResult[] = result.tests.map((test) => {
-    const clone = { ...test };
-    delete clone.timeSpentMs;
-    if (clone.status === TestStatus.Failed) {
-      clone.failureMessage = clone.failureMessage.split('\n')[0];
+    const { timeSpentMs, ...timeless } = test;
+    if (timeless.status === TestStatus.Failed) {
+      timeless.failureMessage = timeless.failureMessage.split('\n')[0];
     }
-    return clone;
+    return timeless;
   });
   expect(actualTestResults).to.have.length(expectedTestResults.length);
   expectedTestResults.forEach((expectedTestResult) => {

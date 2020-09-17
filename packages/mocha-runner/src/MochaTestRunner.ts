@@ -47,7 +47,7 @@ export class MochaTestRunner implements TestRunner2 {
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
-    this.requireCache.init(this.testFileNames);
+    this.requireCache.init({ initFiles: this.testFileNames, rootModuleId: require.resolve('mocha/lib/mocha') });
     if (this.mochaOptions.require) {
       this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }
@@ -88,6 +88,7 @@ export class MochaTestRunner implements TestRunner2 {
     const mocha = this.mochaAdapter.create({
       reporter: StrykerMochaReporter as any,
       bail: true,
+      timeout: false as any, // Mocha 5 doesn't support `0`
       rootHooks: this.rootHooks,
     } as Mocha.MochaOptions);
     this.configure(mocha);
@@ -145,7 +146,6 @@ export class MochaTestRunner implements TestRunner2 {
     }
 
     setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
-    setIfDefined(options.timeout, mocha.timeout);
     setIfDefined(options.ui, mocha.ui);
     setIfDefined(options.grep, mocha.grep);
   }

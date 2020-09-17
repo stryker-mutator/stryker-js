@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/jasmine-framework",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.7",
   "description": "A plugin to use the Jasmine test framework in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {},

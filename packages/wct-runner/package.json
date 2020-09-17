@@ -1,22 +1,16 @@
 {
   "name": "@stryker-mutator/wct-runner",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.7",
   "description": "This was a plugin to use web component tester as a test runner for Stryker, the mutation testing framework for JavaScript and friends. However support was dropped in Stryker v4",
   "main": "src/index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/stryker-mutator/stryker.git"
   },
-  "keywords": [
-  ],
+  "keywords": [],
   "publishConfig": {
     "access": "public"
-  },
-  "devDependencies": {
-  },
-  "peerDependencies": {
   },
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "Apache-2.0",

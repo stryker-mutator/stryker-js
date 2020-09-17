@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { propertyPath } from '@stryker-mutator/util';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
@@ -22,7 +22,6 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   ignore: [],
   opts: './test/mocha.opts',
   spec: ['test'],
-  timeout: 2000,
   ui: 'bdd',
   'no-package': false,
   'no-opts': false,
@@ -34,7 +33,7 @@ export default class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
+  public load(strykerOptions: MochaRunnerWithStrykerOptions) {
     const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
     return { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
@@ -76,7 +75,7 @@ export default class MochaOptionsLoader {
         } else {
           this.log.debug(
             'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            propertyPath<MochaRunnerOptions>('mochaOptions', 'opts')
+            PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
           );
           return {};
         }
@@ -111,10 +110,6 @@ export default class MochaOptionsLoader {
             }
             mochaRunnerOptions.require.push(...args);
             break;
-          case '--timeout':
-          case '-t':
-            mochaRunnerOptions.timeout = this.parseNextInt(args, DEFAULT_MOCHA_OPTIONS.timeout!);
-            break;
           case '--async-only':
           case '-A':
             mochaRunnerOptions['async-only'] = true;
@@ -138,14 +133,6 @@ export default class MochaOptionsLoader {
       }
     });
     return mochaRunnerOptions;
-  }
-
-  private parseNextInt(args: string[], otherwise: number): number {
-    if (args.length > 1) {
-      return parseInt(args[1], 10);
-    } else {
-      return otherwise;
-    }
   }
 
   private parseNextString(args: string[]): string | undefined {

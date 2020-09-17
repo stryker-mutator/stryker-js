@@ -1,11 +1,14 @@
 {
   "name": "@stryker-mutator/typescript-checker",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.7",
   "description": "A typescript type checker plugin to be used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
+    "test": "nyc npm run test:all",
     "mocha": "mocha",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
+    "test:integration": "mocha --timeout 10000 'dist/test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
@@ -30,16 +33,16 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@stryker-mutator/api": "4.0.0-beta.3",
-    "@stryker-mutator/util": "4.0.0-beta.3",
-    "semver": "^7.3.2"
+    "@stryker-mutator/api": "4.0.0-beta.7",
+    "@stryker-mutator/util": "4.0.0-beta.7",
+    "semver": "~7.3.2"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "4.0.0-beta.3",
-    "@types/semver": "^7.2.0"
+    "@stryker-mutator/test-helpers": "4.0.0-beta.7",
+    "@types/semver": "~7.3.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "4.0.0-beta.1",
+    "@stryker-mutator/core": "4.0.0-beta.4",
     "typescript": ">=3.6"
   }
 }

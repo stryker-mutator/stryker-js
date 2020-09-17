@@ -1,9 +1,5 @@
 {
-  "require": ["source-map-support/register"],
-  "file": [
-    // This file is included first
-    "dist/test/helpers/setupTests.js"
-  ],
+  "require": ["dist/test/setup.js"],
   "spec": [
     "dist/test/unit/**/*.js",
     "dist/test/integration/**/*.js"

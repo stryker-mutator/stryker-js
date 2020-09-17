@@ -28,7 +28,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       extension: ['js'],
-      timeout: 2000,
       ui: 'bdd',
     });
   });
@@ -42,7 +41,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       package: false, // mocha sets package: false after loading it...
       config: configFile,
       extension: ['json', 'js'],
-      timeout: 2000,
       ui: 'bdd',
     });
   });
@@ -56,7 +54,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       opts: './test/mocha.opts',
       package: false, // mocha sets package: false after loading it...
       extension: ['jsonc', 'js'],
-      timeout: 2000,
       ui: 'bdd',
     });
   });
@@ -75,7 +72,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       ignore: ['/path/to/some/excluded/file'],
       require: ['@babel/register'],
       spec: ['test/**/*.spec.js'],
-      timeout: false,
       ui: 'bdd',
     });
   });
@@ -86,7 +82,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.include({
       ['async-only']: true,
       extension: ['json'],
-      timeout: 20,
       ui: 'tdd',
     });
   });
@@ -97,7 +92,6 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
     expect(actualConfig).deep.include({
       ['async-only']: true,
       extension: ['js', 'json'],
-      timeout: 2000,
       ui: 'bdd',
     });
   });
@@ -109,12 +103,11 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
       'no-package': true,
       'no-opts': true,
     });
-    const expectedOptions = {
+    const expectedOptions: MochaOptions = {
       extension: ['js', 'cjs', 'mjs'],
       ['no-config']: true,
       ['no-opts']: true,
       ['no-package']: true,
-      timeout: 2000,
       ui: 'bdd',
     };
     expect(actualConfig).deep.include(expectedOptions);

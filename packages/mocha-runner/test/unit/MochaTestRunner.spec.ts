@@ -66,7 +66,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should collect the files', async () => {
       const expectedTestFileNames = ['foo.js', 'foo.spec.js'];
-      const mochaOptions = Object.freeze(createMochaOptions({ timeout: 23 }));
+      const mochaOptions = Object.freeze(createMochaOptions());
       mochaOptionsLoaderMock.load.returns(mochaOptions);
       mochaAdapterMock.collectFiles.returns(expectedTestFileNames);
 
@@ -83,7 +83,10 @@ describe(MochaTestRunner.name, () => {
 
       await sut.init();
 
-      expect(directoryRequireCacheMock.init).calledWithExactly(expectedTestFileNames);
+      expect(directoryRequireCacheMock.init).calledWithExactly({
+        initFiles: expectedTestFileNames,
+        rootModuleId: require.resolve('mocha/lib/mocha'),
+      });
     });
 
     it('should not handle requires when there are no `requires`', async () => {
@@ -121,7 +124,6 @@ describe(MochaTestRunner.name, () => {
       sut.mochaOptions.grep = 'grepme';
       sut.mochaOptions.opts = 'opts';
       sut.mochaOptions.require = [];
-      sut.mochaOptions.timeout = 2000;
       sut.mochaOptions.ui = 'exports';
 
       // Act
@@ -129,9 +131,18 @@ describe(MochaTestRunner.name, () => {
 
       // Assert
       expect(mocha.asyncOnly).called;
-      expect(mocha.timeout).calledWith(2000);
       expect(mocha.ui).calledWith('exports');
       expect(mocha.grep).calledWith('grepme');
+    });
+
+    it('should force timeout off', async () => {
+      await actDryRun();
+      expect(mochaAdapterMock.create).calledWithMatch({ timeout: false });
+    });
+
+    it('should force bail', async () => {
+      await actDryRun();
+      expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
     });
 
     it("should don't set asyncOnly if asyncOnly is false", async () => {

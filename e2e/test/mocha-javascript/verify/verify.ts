@@ -12,23 +12,18 @@ describe('Verify stryker has ran correctly', () => {
     await expectMetricsResult({
       
       metrics: produceMetrics({
-        killed: 18,
-        mutationScore: 66.67,
-        mutationScoreBasedOnCoveredCode: 66.67,
-        survived: 9,
+        killed: 26,
+        mutationScore: 74.29,
+        mutationScoreBasedOnCoveredCode: 96.3,
+        noCoverage: 8,
+        survived: 1,
         totalCovered: 27,
-        totalDetected: 18,
-        totalMutants: 27,
+        totalDetected: 26,
+        totalMutants: 35,
         totalUndetected: 9,
-        totalValid: 27
+        totalValid: 35
       })
     });
   });
 
-  it('should report html files', () => {
-    expectExists('reports/mutation/html/index.html');
-    expectExists('reports/mutation/html/mutation-test-elements.js');
-    expectExists('reports/mutation/html/stryker-80x80.png');
-    expectExists('reports/mutation/html/bind-mutation-test-report.js');
-  });
 });

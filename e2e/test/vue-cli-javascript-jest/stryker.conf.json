@@ -3,10 +3,6 @@
   "mutator": {
     "plugins": []	
   },
-  "mutate": [
-    "{src,lib}/**/*.+(js|vue)",
-    "!{src,lib}/**/*.spec.js"
-  ],
   "tempDirName": "stryker-tmp",
   "packageManager": "npm",
   "testRunner": "jest",
