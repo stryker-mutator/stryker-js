@@ -102,6 +102,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 ### Available Options
 * [allowConsoleColors](#allowConsoleColors)
 * [buildCommand](#buildCommand)
+* [cleanTempDir](#cleanTempDir)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
@@ -139,6 +140,16 @@ Config file: `buildCommand: 'npm run build'`
 
 Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.
 Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.
+
+<a name="cleanTempDir"></a>
+### `cleanTempDir` [`boolean`]
+
+Default: `true`  
+Command line: `--cleanTempDir false`  
+Config file: `cleanTempDir: false`  
+
+Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. 
+The temp dir will never be removed when the run failed for some reason (for debugging purposes).
 
 <a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
