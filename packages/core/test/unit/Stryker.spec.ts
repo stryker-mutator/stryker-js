@@ -12,6 +12,7 @@ import Stryker from '../../src/Stryker';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from '../../src/process';
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';
+import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
 
 describe(Stryker.name, () => {
   let sut: Stryker;
@@ -20,6 +21,7 @@ describe(Stryker.name, () => {
   let cliOptions: PartialStrykerOptions;
   let mutantResults: MutantResult[];
   let loggerMock: sinon.SinonStubbedInstance<Logger>;
+  let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let getLoggerStub: sinon.SinonStub;
 
   let prepareExecutorMock: sinon.SinonStubbedInstance<PrepareExecutor>;
@@ -32,6 +34,7 @@ describe(Stryker.name, () => {
     loggerMock = factory.logger();
     getLoggerStub = sinon.stub();
     mutantResults = [];
+    temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     prepareExecutorMock = sinon.createStubInstance(PrepareExecutor);
     mutantInstrumenterExecutorMock = sinon.createStubInstance(MutantInstrumenterExecutor);
     dryRunExecutorMock = sinon.createStubInstance(DryRunExecutor);
@@ -45,7 +48,11 @@ describe(Stryker.name, () => {
       .returns(dryRunExecutorMock)
       .withArgs(MutationTestExecutor)
       .returns(mutationTestExecutorMock);
-    injectorMock.resolve.withArgs(commonTokens.getLogger).returns(getLoggerStub);
+    injectorMock.resolve
+      .withArgs(commonTokens.getLogger)
+      .returns(getLoggerStub)
+      .withArgs(coreTokens.temporaryDirectory)
+      .returns(temporaryDirectoryMock);
     getLoggerStub.returns(loggerMock);
 
     prepareExecutorMock.execute.resolves(injectorMock);
@@ -124,6 +131,14 @@ describe(Stryker.name, () => {
       prepareExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
       expect(loggerMock.error).calledWith('an error occurred', expectedError);
+    });
+
+    it('should disable `removeDuringDisposal` on the temp dir when dry run rejects', async () => {
+      dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
+      await expect(sut.runMutationTest()).rejected;
+      expect(getLoggerStub).calledWith('Stryker');
+      expect(loggerMock.debug).calledWith('Not removing the temp dir because an error occurred');
+      expect(temporaryDirectoryMock.removeDuringDisposal).false;
     });
 
     it('should log the error when dry run rejects unexpectedly', async () => {

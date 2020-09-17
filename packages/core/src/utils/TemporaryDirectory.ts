@@ -12,7 +12,7 @@ import { deleteDir } from './fileUtils';
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
   private isInitialized = false;
-  private readonly removeDuringDisposal: boolean;
+  public removeDuringDisposal: boolean;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {

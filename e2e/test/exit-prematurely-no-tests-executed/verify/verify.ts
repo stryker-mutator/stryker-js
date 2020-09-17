@@ -16,4 +16,8 @@ describe('Verify stryker has ran correctly', () => {
   it('should not report the mutant run', () => {
     expect(fs.existsSync('reports'), 'Expected no reports to be written to disk, but they did').false;
   });
+
+  it('should not delete the temp dir', () => {
+    expect(fs.existsSync('.stryker-tmp'), 'Expected the `.stryker-tmp` dir to not be deleted.').true;
+  });
 });
