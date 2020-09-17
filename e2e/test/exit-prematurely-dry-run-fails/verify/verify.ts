@@ -1,6 +1,8 @@
 import { promises as fs } from 'fs';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import { it } from 'mocha';
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
 
 describe('Verify stryker has handled dry run failure correctly', () => {
 
@@ -24,5 +26,10 @@ describe('Verify stryker has handled dry run failure correctly', () => {
     // This line is added in package.json script if the process exited in an error.
     expect(strykerLog)
       .contains('Exited with an error exit code');
+  });
+
+  
+  it('should not delete the temp dir', async () => {
+    await expect(fs.stat('.stryker-tmp'), 'Expected the `.stryker-tmp` dir to not be deleted.').not.rejected;
   });
 });

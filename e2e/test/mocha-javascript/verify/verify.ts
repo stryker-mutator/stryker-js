@@ -1,12 +1,8 @@
-import { expect } from 'chai';
-import * as fs from 'fs';
 import { expectMetricsResult, produceMetrics } from '../../../helpers';
+import fs from 'fs';
+import { expect } from 'chai';
 
 describe('Verify stryker has ran correctly', () => {
-
-  function expectExists(fileName: string) {
-    expect(fs.existsSync(fileName), `Missing ${fileName}!`).true;
-  }
 
   it('should report correct score', async () => {
     await expectMetricsResult({
@@ -24,6 +20,10 @@ describe('Verify stryker has ran correctly', () => {
         totalValid: 35
       })
     });
+  });
+
+  it('should delete the ".stryker-tmp" dir after the successful run', () => {
+    expect(fs.existsSync('.stryker-tmp'), 'Expected the `.stryker-tmp` dir have been deleted.').false;
   });
 
 });

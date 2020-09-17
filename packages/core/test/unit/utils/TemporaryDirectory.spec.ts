@@ -7,6 +7,8 @@ import { expect } from 'chai';
 import * as mkdirp from 'mkdirp';
 import * as sinon from 'sinon';
 
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 import * as fileUtils from '../../../src/utils/fileUtils';
 import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
 
@@ -27,10 +29,10 @@ describe(TemporaryDirectory.name, () => {
     randomStub.returns('rand');
   });
 
-  function createSut(): TemporaryDirectory {
+  function createSut(options?: Partial<StrykerOptions>): TemporaryDirectory {
     return testInjector.injector
       .provideValue(commonTokens.logger, factory.logger())
-      .provideValue(commonTokens.options, factory.strykerOptions())
+      .provideValue(commonTokens.options, factory.strykerOptions(options))
       .injectClass(TemporaryDirectory);
   }
 
@@ -57,14 +59,34 @@ describe(TemporaryDirectory.name, () => {
   describe('dispose', () => {
     describe('when temp directory is initialized', () => {
       beforeEach(() => sut.initialize());
-      it('should call deleteDir fileApi', async () => {
+      it('should remove the dir if cleanTempDir option is enabled', async () => {
         const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves();
-
-        const temporaryDirectoryInstance = sut;
-        await temporaryDirectoryInstance.dispose();
-
+        const sut = createSut({ cleanTempDir: true });
+        sut.initialize();
+        await sut.dispose();
         expect(fileUtils.deleteDir).calledWith(expectedPath);
+      });
+
+      it('should not remove the dir if cleanTempDir option is enabled', async () => {
+        const sut = createSut({ cleanTempDir: false });
+        sut.initialize();
+        await sut.dispose();
+        expect(fileUtils.deleteDir).not.called;
+      });
+
+      it('should not remove the dir if `removeDuringDisposal` is set to false', async () => {
+        const sut = createSut({ cleanTempDir: true });
+        sut.initialize();
+        sut.removeDuringDisposal = false;
+        await sut.dispose();
+        expect(fileUtils.deleteDir).not.called;
+      });
+
+      it('should remove the dir by default', async () => {
+        deleteDirStub.resolves();
+        await sut.dispose();
+        expect(fileUtils.deleteDir).calledOnce;
       });
     });
 

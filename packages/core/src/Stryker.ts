@@ -30,19 +30,26 @@ export default class Stryker {
       const prepareExecutor = loggerProvider.provideValue(coreTokens.cliOptions, this.cliOptions).injectClass(PrepareExecutor);
       const mutantInstrumenterInjector = await prepareExecutor.execute();
 
-      // 2. Mutate and instrument the files and write to the sandbox.
-      const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
-      const dryRunExecutorInjector = await mutantInstrumenter.execute();
+      try {
+        // 2. Mutate and instrument the files and write to the sandbox.
+        const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
+        const dryRunExecutorInjector = await mutantInstrumenter.execute();
 
-      // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
-      const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
-      const mutationRunExecutorInjector = await dryRunExecutor.execute();
+        // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
+        const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
+        const mutationRunExecutorInjector = await dryRunExecutor.execute();
 
-      // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
-      const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);
-      const mutantResults = await mutationRunExecutor.execute();
+        // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
+        const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);
+        const mutantResults = await mutationRunExecutor.execute();
 
-      return mutantResults;
+        return mutantResults;
+      } catch (error) {
+        const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+        log.debug('Not removing the temp dir because an error occurred');
+        mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
+        throw error;
+      }
     } catch (error) {
       const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
       const cause = retrieveCause(error);

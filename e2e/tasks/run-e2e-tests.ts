@@ -1,8 +1,8 @@
 import fs = require('fs');
-import * as path from 'path';
+import path from 'path';
 import execa from 'execa';
-import * as semver from 'semver';
-import * as os from 'os';
+import semver from 'semver';
+import os from 'os';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
 
