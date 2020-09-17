@@ -224,5 +224,26 @@ describe(sut.name, () => {
       };
       expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
+
+    it('should allow for non-existing tests (#2485)', () => {
+      // Arrange
+      const mutant1 = factory.mutant({ id: 1 });
+      const mutant2 = factory.mutant({ id: 2 });
+      const mutants = [mutant1, mutant2];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 20 })], // test result for spec2 is missing
+        mutantCoverage: { static: {}, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
+      });
+
+      // Act
+      const actualMatches = act(dryRunResult, mutants);
+
+      // Assert
+      expect(actualMatches.find((mutant) => mutant.mutant.id === 1)?.testFilter).deep.eq(['spec1']);
+      expect(actualMatches.find((mutant) => mutant.mutant.id === 2)?.coveredByTests).deep.eq(false);
+      expect(testInjector.logger.debug).calledWith(
+        'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account'
+      );
+    });
   });
 });
