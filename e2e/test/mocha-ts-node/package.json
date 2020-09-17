@@ -3,6 +3,6 @@
   "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
   "scripts": {
     "test": "stryker run",
-    "posttest": "mocha --no-package --no-config --require \"ts-node/register\" verify/verify.ts"
+    "posttest": "mocha --no-package --no-config --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
   }
 }
