@@ -3,13 +3,14 @@ import { types } from '@babel/core';
 import generate from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { switchCaseMutantPlacer } from '../../../src/mutant-placers/switch-case-mutant-placer';
+import { statementMutantPlacer } from '../../../src/mutant-placers/statement-mutant-placer';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 import { Mutant } from '../../../src/mutant';
+import { createMutant } from '../../helpers/factories';
 
-describe(switchCaseMutantPlacer.name, () => {
+describe(statementMutantPlacer.name, () => {
   it('should have the correct name', () => {
-    expect(switchCaseMutantPlacer.name).eq('switchCaseMutantPlacer');
+    expect(statementMutantPlacer.name).eq('statementMutantPlacer');
   });
 
   it("shouldn't place mutants on anything but a statement", () => {
@@ -18,7 +19,7 @@ describe(switchCaseMutantPlacer.name, () => {
       findNodePath(parseJS('foo = bar'), (p) => p.isAssignmentExpression()),
       findNodePath(parseJS('foo.bar()'), (p) => p.isCallExpression()),
     ].forEach((node) => {
-      expect(switchCaseMutantPlacer(node, [])).false;
+      expect(statementMutantPlacer(node, [])).false;
     });
   });
 
@@ -41,33 +42,45 @@ describe(switchCaseMutantPlacer.name, () => {
     const { statement, mutant, ast } = arrangeSingleMutant();
 
     // Act
-    const actual = switchCaseMutantPlacer(statement, [mutant]);
+    const actual = statementMutantPlacer(statement, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains(
-      normalizeWhitespaces(`{
-      switch (__global_69fa48.__activeMutant__) {
-        case 1:
-          const foo = bar >>> baz;
-          break;
-          `)
-    );
+    expect(actualCode).contains(normalizeWhitespaces('if (__global_69fa48.__activeMutant__ === 1) { const foo = bar >>> baz; } else '));
   });
 
-  it('should place the original code as default case', () => {
-    const { ast, mutant, statement } = arrangeSingleMutant();
-    switchCaseMutantPlacer(statement, [mutant]);
+  it('should keep block statements in tact', () => {
+    // Arrange
+    const ast = parseJS('function add(a, b) { return a + b; }');
+    const statement = findNodePath(ast, (p) => p.isBlockStatement());
+    const originalNodePath = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+    const mutant = createMutant({
+      original: originalNodePath.node,
+      replacement: types.binaryExpression('>>>', types.identifier('a'), types.identifier('b')),
+    });
+
+    // Act
+    const actual = statementMutantPlacer(statement, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
-    expect(actualCode).matches(/default:.*const foo = a \+ b;\s*break;/);
+
+    // Assert
+    expect(actual).true;
+    expect(actualCode).matches(/function\s*add\s*\(a,\s*b\)\s*{.*}/);
+  });
+
+  it('should place the original code as alternative (inside `else`)', () => {
+    const { ast, mutant, statement } = arrangeSingleMutant();
+    statementMutantPlacer(statement, [mutant]);
+    const actualCode = normalizeWhitespaces(generate(ast).code);
+    expect(actualCode).matches(/else\s*{.*const foo = a \+ b;\s*\}/);
   });
 
   it('should add mutant coverage syntax', () => {
     const { ast, mutant, statement } = arrangeSingleMutant();
-    switchCaseMutantPlacer(statement, [mutant]);
+    statementMutantPlacer(statement, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
-    expect(actualCode).matches(/default:\s*__global_69fa48\.__coverMutant__\(1\)/);
+    expect(actualCode).matches(/else\s*{\s*__global_69fa48\.__coverMutant__\(1\)/);
   });
 
   it('should be able to place multiple mutants', () => {
@@ -82,19 +95,17 @@ describe(switchCaseMutantPlacer.name, () => {
     ];
 
     // Act
-    switchCaseMutantPlacer(statement, mutants);
+    statementMutantPlacer(statement, mutants);
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
     expect(actualCode).contains(
-      normalizeWhitespaces(`{
-        switch (__global_69fa48.__activeMutant__) {
-          case 52:
-            const foo = bar >>> baz;
-            break;
-          case 659:
-            const bar = a + b;
-            break;`)
+      normalizeWhitespaces(`if (__global_69fa48.__activeMutant__ === 659) {
+          const bar = a + b;
+        } else if (__global_69fa48.__activeMutant__ === 52) {
+          const foo = bar >>> baz;
+        } else {
+          __global_69fa48.__coverMutant__(52, 659)`)
     );
   });
 });

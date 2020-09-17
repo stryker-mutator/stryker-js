@@ -3,20 +3,20 @@ import { types, NodePath } from '@babel/core';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import generate from '@babel/generator';
 
-import { conditionalExpressionMutantPlacer } from '../../../src/mutant-placers/conditional-expression-mutant-placer';
+import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 import { Mutant } from '../../../src/mutant';
 import { createMutant } from '../../helpers/factories';
 
-describe(conditionalExpressionMutantPlacer.name, () => {
+describe(expressionMutantPlacer.name, () => {
   it('should have the correct name', () => {
-    expect(conditionalExpressionMutantPlacer.name).eq('conditionalExpressionMutantPlacer');
+    expect(expressionMutantPlacer.name).eq('expressionMutantPlacer');
   });
 
   it('should not place when the parent is tagged template expression', () => {
     // A templateLiteral is considered an expression, while it is not save to place a mutant there!
     const templateLiteral = findNodePath(parseJS('html`<p></p>`'), (p) => p.isTemplateLiteral());
-    expect(conditionalExpressionMutantPlacer(templateLiteral, [])).false;
+    expect(expressionMutantPlacer(templateLiteral, [])).false;
   });
 
   function arrangeSingleMutant() {
@@ -37,7 +37,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
     const { binaryExpression, mutant, ast } = arrangeSingleMutant();
 
     // Act
-    const actual = conditionalExpressionMutantPlacer(binaryExpression, [mutant]);
+    const actual = expressionMutantPlacer(binaryExpression, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
@@ -47,7 +47,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
 
   it('should place the original code as the alternative', () => {
     const { binaryExpression, mutant, ast } = arrangeSingleMutant();
-    conditionalExpressionMutantPlacer(binaryExpression, [mutant]);
+    expressionMutantPlacer(binaryExpression, [mutant]);
     const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
     const actualAlternativeCode = generate(actualAlternative).code;
     expect(actualAlternativeCode.endsWith('a + b'), `${actualAlternativeCode} did not end with "a + b"`).true;
@@ -55,7 +55,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
 
   it('should add mutant coverage syntax', () => {
     const { binaryExpression, mutant, ast } = arrangeSingleMutant();
-    conditionalExpressionMutantPlacer(binaryExpression, [mutant]);
+    expressionMutantPlacer(binaryExpression, [mutant]);
     const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
     const actualAlternativeCode = generate(actualAlternative).code;
     const expected = '__global_69fa48.__coverMutant__(1), ';
@@ -80,7 +80,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
     ];
 
     // Act
-    conditionalExpressionMutantPlacer(binaryExpression, mutants);
+    expressionMutantPlacer(binaryExpression, mutants);
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
@@ -91,13 +91,13 @@ describe(conditionalExpressionMutantPlacer.name, () => {
     it('should not place when the expression is a key', () => {
       // A stringLiteral is considered an expression, while it is not save to place a mutant there!
       const stringLiteral = findNodePath(parseJS("const foo = { 'foo': bar }"), (p) => p.isStringLiteral());
-      expect(conditionalExpressionMutantPlacer(stringLiteral, [])).false;
+      expect(expressionMutantPlacer(stringLiteral, [])).false;
     });
 
     it('should place when the expression is the value', () => {
       // A stringLiteral is considered an expression, while it is not save to place a mutant there!
       const stringLiteral = findNodePath(parseJS("const foo = { 'foo': bar }"), (p) => p.isIdentifier() && p.node.name === 'bar');
-      expect(conditionalExpressionMutantPlacer(stringLiteral, [])).true;
+      expect(expressionMutantPlacer(stringLiteral, [])).true;
     });
   });
 
@@ -116,7 +116,7 @@ describe(conditionalExpressionMutantPlacer.name, () => {
       ];
 
       // Act
-      conditionalExpressionMutantPlacer(expression, mutants);
+      expressionMutantPlacer(expression, mutants);
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert

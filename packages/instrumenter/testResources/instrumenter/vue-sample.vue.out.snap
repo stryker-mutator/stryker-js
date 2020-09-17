@@ -118,19 +118,13 @@ export default __global_69fa48.__activeMutant__ === 0 ? {} : (__global_69fa48.__
   name: __global_69fa48.__activeMutant__ === 1 ? \\"\\" : (__global_69fa48.__coverMutant__(1), 'HelloWorld'),
 
   data() {
-    switch (__global_69fa48.__activeMutant__) {
-      case 2:
-        {}
-        break;
-
-      default:
-        __global_69fa48.__coverMutant__(2);
-        {
-          return __global_69fa48.__activeMutant__ === 3 ? {} : (__global_69fa48.__coverMutant__(3), {
-            msg: __global_69fa48.__activeMutant__ === 4 ? \\"\\" : (__global_69fa48.__coverMutant__(4), 'Welcome to Your Vue.js App')
-          });
-        }
-        break;
+    if (__global_69fa48.__activeMutant__ === 2) {
+      {}
+    } else {
+      __global_69fa48.__coverMutant__(2);
+      return __global_69fa48.__activeMutant__ === 3 ? {} : (__global_69fa48.__coverMutant__(3), {
+        msg: __global_69fa48.__activeMutant__ === 4 ? \\"\\" : (__global_69fa48.__coverMutant__(4), 'Welcome to Your Vue.js App')
+      });
     }
   }
 
