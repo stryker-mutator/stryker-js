@@ -83,10 +83,10 @@ describe(TemporaryDirectory.name, () => {
         expect(fileUtils.deleteDir).not.called;
       });
 
-      it('should not call deleteDir fileApi by default', async () => {
+      it('should remove the dir by default', async () => {
         deleteDirStub.resolves();
         await sut.dispose();
-        expect(fileUtils.deleteDir).callCount(0);
+        expect(fileUtils.deleteDir).calledOnce;
       });
     });
 
