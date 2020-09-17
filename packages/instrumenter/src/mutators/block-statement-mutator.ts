@@ -18,7 +18,7 @@ export class BlockStatementMutator implements NodeMutator {
   }
 
   private isValid(path: NodePath<types.BlockStatement>) {
-    return !this.isEmpty(path) && !this.isConstructorBodyWithTSParameterPropertiesAndSuperCall(path);
+    return !this.isEmpty(path) && !this.isInvalidConstructorBody(path);
   }
 
   private isEmpty(path: NodePath<types.BlockStatement>) {
@@ -26,23 +26,50 @@ export class BlockStatementMutator implements NodeMutator {
   }
 
   /**
-   * Checks to see if a statement is the body of a constructor with TS parameter properties and a super call as it's first expression.
+   * Checks to see if a statement is an invalid constructor body
    * @example
+   * // Invalid!
    * class Foo extends Bar {
    *   constructor(public baz: string) {
    *     super(42);
    *   }
    * }
+   * @example
+   * // Invalid!
+   * class Foo extends Bar {
+   *   public baz = 'string';
+   *   constructor() {
+   *     super(42);
+   *   }
+   * }
    * @see https://github.com/stryker-mutator/stryker/issues/2314
+   * @see https://github.com/stryker-mutator/stryker/issues/2474
    */
-  private isConstructorBodyWithTSParameterPropertiesAndSuperCall(path: NodePath<types.BlockStatement>): boolean {
+  private isInvalidConstructorBody(blockStatement: NodePath<types.BlockStatement>): boolean {
     return !!(
-      path.parentPath.isClassMethod() &&
-      path.parentPath.node.kind === 'constructor' &&
-      path.parentPath.node.params.some((param) => types.isTSParameterProperty(param)) &&
-      types.isExpressionStatement(path.node.body[0]) &&
-      types.isCallExpression(path.node.body[0].expression) &&
-      types.isSuper(path.node.body[0].expression.callee)
+      blockStatement.parentPath.isClassMethod() &&
+      blockStatement.parentPath.node.kind === 'constructor' &&
+      (this.containsTSParameterProperties(blockStatement.parentPath) || this.containsInitializedClassProperties(blockStatement.parentPath)) &&
+      this.hasSuperExpressionOnFirstLine(blockStatement)
+    );
+  }
+
+  private containsTSParameterProperties(constructor: NodePath<types.ClassMethod>): boolean {
+    return constructor.node.params.some((param) => types.isTSParameterProperty(param));
+  }
+
+  private containsInitializedClassProperties(constructor: NodePath<types.ClassMethod>): boolean {
+    return (
+      constructor.parentPath.isClassBody() &&
+      constructor.parentPath.node.body.some((classMember) => types.isClassProperty(classMember) && classMember.value)
+    );
+  }
+
+  private hasSuperExpressionOnFirstLine(constructor: NodePath<types.BlockStatement>): boolean {
+    return (
+      types.isExpressionStatement(constructor.node.body[0]) &&
+      types.isCallExpression(constructor.node.body[0].expression) &&
+      types.isSuper(constructor.node.body[0].expression.callee)
     );
   }
 }
