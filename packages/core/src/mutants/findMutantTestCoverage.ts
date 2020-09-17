@@ -1,8 +1,10 @@
 import { CompleteDryRunResult, TestResult, CoveragePerTestId } from '@stryker-mutator/api/test_runner';
 import { Mutant } from '@stryker-mutator/api/core';
-import { tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { MatchedMutant } from '@stryker-mutator/api/report';
+
+import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
@@ -14,13 +16,14 @@ export interface MutantTestCoverage {
   mutant: Mutant;
 }
 
-findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants, coreTokens.reporter);
+findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants, coreTokens.reporter, commonTokens.logger);
 export function findMutantTestCoverage(
   dryRunResult: CompleteDryRunResult,
   mutants: readonly Mutant[],
-  reporter: StrictReporter
+  reporter: StrictReporter,
+  logger: Logger
 ): MutantTestCoverage[] {
-  const mutantTestCoverage = mapToMutantTestCoverage(dryRunResult, mutants);
+  const mutantTestCoverage = mapToMutantTestCoverage(dryRunResult, mutants, logger);
   reporter.onAllMutantsMatchedWithTests(mutantTestCoverage.map(toMatchedMutant));
   return mutantTestCoverage;
 }
@@ -37,8 +40,8 @@ function toMatchedMutant({ mutant, testFilter, coveredByTests, estimatedNetTime 
   };
 }
 
-function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[]) {
-  const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
+function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[], logger: Logger) {
+  const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests, logger);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
   const mutantCoverage = mutants.map((mutant) => {
@@ -71,17 +74,18 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
   return mutantCoverage;
 }
 
-function findTestsByMutant(coverageData: CoveragePerTestId | undefined, allTests: TestResult[]) {
+function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTests: TestResult[], logger: Logger) {
   const testsByMutantId = new Map<number, Set<TestResult>>();
-  coverageData &&
-    Object.entries(coverageData).forEach(([testId, coverageData]) => {
+  coveragePerTest &&
+    Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
       const test = allTests.find((test) => test.id === testId);
       if (!test) {
-        throw new Error(
-          `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. This shouldn't happen! Please report the issue at the issue tracker of your stryker test runner`
+        logger.debug(
+          `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account`
         );
+        return;
       }
-      Object.entries(coverageData).forEach(([mutantIdAsString, count]) => {
+      Object.entries(mutantCoverage).forEach(([mutantIdAsString, count]) => {
         if (count) {
           const mutantId = parseInt(mutantIdAsString, 10);
           let tests = testsByMutantId.get(mutantId);

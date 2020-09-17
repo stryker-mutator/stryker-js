@@ -10,4 +10,9 @@ describe('Circle', function() {
 
     expect(circumference).to.be.equal(expectedCircumference);
   });
+
+  it('should skip this test', function() {
+    getCircumference(2);
+    this.skip();
+  });
 });
