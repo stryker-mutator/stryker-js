@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 import { expect } from 'chai';
 
 describe('Verify stryker has ran correctly', () => {

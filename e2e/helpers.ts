@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { expect } from 'chai';
-import * as path from 'path';
+import path from 'path';
 import { calculateMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
 
 export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
