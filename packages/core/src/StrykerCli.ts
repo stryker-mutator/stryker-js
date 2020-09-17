@@ -125,6 +125,11 @@ export default class StrykerCli {
         '--tempDirName <name>',
         'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run'
       )
+      .option(
+        '--cleanTempDir <true/false>',
+        'Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).',
+        parseBoolean
+      )
       .parse(this.argv);
 
     // Earliest opportunity to configure the log level based on the logLevel argument

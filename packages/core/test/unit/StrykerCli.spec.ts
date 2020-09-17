@@ -40,6 +40,7 @@ describe(StrykerCli.name, () => {
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--concurrency', '5'], { concurrency: 5 }],
+      [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],
     ];
     testCases.forEach(([args, expected]) => {
