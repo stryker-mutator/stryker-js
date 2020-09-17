@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.7](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2020-09-17)
+
+
+### Bug Fixes
+
+* **core:** allow skipped tests when matching mutants ([#2487](https://github.com/stryker-mutator/stryker/issues/2487)) ([09eacee](https://github.com/stryker-mutator/stryker/commit/09eaceece587e4e583348fbec7682ba77715bd8c)), closes [#2485](https://github.com/stryker-mutator/stryker/issues/2485)
+
+
+
+
+
 # [4.0.0-beta.6](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2020-09-10)
 
 **Note:** Version bump only for package @stryker-mutator/core

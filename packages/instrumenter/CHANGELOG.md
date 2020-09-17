@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.7](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2020-09-17)
+
+
+### Bug Fixes
+
+* **instrumenter:** don't mutate constructor blocks with initialized class properties ([#2484](https://github.com/stryker-mutator/stryker/issues/2484)) ([ca464a3](https://github.com/stryker-mutator/stryker/commit/ca464a31e180aada677464591154c41295fbc50c)), closes [#2474](https://github.com/stryker-mutator/stryker/issues/2474)
+* **instrumenter:** place mutants in if statements  ([#2481](https://github.com/stryker-mutator/stryker/issues/2481)) ([4df4102](https://github.com/stryker-mutator/stryker/commit/4df410263be09468323d7f64d95a8a839432e52f)), closes [#2469](https://github.com/stryker-mutator/stryker/issues/2469)
+
+
+
+
+
 # [4.0.0-beta.6](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2020-09-10)
 
 
