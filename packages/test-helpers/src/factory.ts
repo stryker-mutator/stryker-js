@@ -19,7 +19,7 @@ import {
   MutantRunOptions,
   DryRunOptions,
   DryRunStatus,
-  TestRunner2,
+  TestRunner,
   SuccessTestResult,
   FailedTestResult,
   SkippedTestResult,
@@ -212,7 +212,7 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner2>> {
+export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
   return {
     init: sinon.stub(),
     dryRun: sinon.stub(),

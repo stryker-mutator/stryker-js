@@ -1,5 +1,5 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { TestRunner2, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
@@ -13,7 +13,7 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 /**
  * Runs the given test runner in a child process and forwards reports about test results
  */
-export default class ChildProcessTestRunnerDecorator implements TestRunner2 {
+export default class ChildProcessTestRunnerDecorator implements TestRunner {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
   constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {

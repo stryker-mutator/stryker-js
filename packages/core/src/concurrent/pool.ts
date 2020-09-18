@@ -2,9 +2,7 @@ import { Observable, Subject, merge } from 'rxjs';
 import { flatMap, filter, shareReplay } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { tokens } from 'typed-inject';
-
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
-
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
@@ -17,7 +15,7 @@ export interface Worker {
 }
 
 createTestRunnerPool.inject = tokens(coreTokens.testRunnerFactory, coreTokens.testRunnerConcurrencyTokens);
-export function createTestRunnerPool(factory: () => TestRunner2, concurrencyToken$: Observable<number>): Pool<TestRunner2> {
+export function createTestRunnerPool(factory: () => TestRunner, concurrencyToken$: Observable<number>): Pool<TestRunner> {
   return new Pool(factory, concurrencyToken$);
 }
 

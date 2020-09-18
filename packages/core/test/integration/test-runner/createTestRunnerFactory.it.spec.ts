@@ -4,7 +4,7 @@ import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory } from '@stryker-mutator/test-helpers';
 
-import { TestRunner2, DryRunStatus } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test_runner';
 
 import { expectCompleted, expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
@@ -14,8 +14,8 @@ import { sleep } from '../../helpers/testUtils';
 import { coreTokens } from '../../../src/di';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
-  let createSut: () => Required<TestRunner2>;
-  let sut: Required<TestRunner2>;
+  let createSut: () => Required<TestRunner>;
+  let sut: Required<TestRunner>;
   let loggingContext: LoggingClientContext;
 
   let loggingServer: LoggingServer;

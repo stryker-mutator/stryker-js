@@ -3,7 +3,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
@@ -51,12 +51,12 @@ export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMo
   };
 }
 
-export function createTestRunnerPoolMock(): PoolMock<TestRunner2> {
+export function createTestRunnerPoolMock(): PoolMock<TestRunner> {
   return {
     dispose: sinon.stub(),
     recycle: sinon.stub(),
     init: sinon.stub(),
-    worker$: new ReplaySubject<sinon.SinonStubbedInstance<TestRunner2>>(),
+    worker$: new ReplaySubject<sinon.SinonStubbedInstance<TestRunner>>(),
   };
 }
 

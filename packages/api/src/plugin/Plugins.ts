@@ -1,7 +1,7 @@
 import { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
 
 import { Reporter } from '../../report';
-import { TestRunner2 } from '../../test_runner';
+import { TestRunner } from '../../test_runner';
 import { Checker } from '../../check';
 
 import { PluginContext } from './Contexts';
@@ -80,7 +80,7 @@ export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens exte
  */
 export interface PluginInterfaces {
   [PluginKind.Reporter]: Reporter;
-  [PluginKind.TestRunner2]: TestRunner2;
+  [PluginKind.TestRunner]: TestRunner;
   [PluginKind.Checker]: Checker;
 }
 

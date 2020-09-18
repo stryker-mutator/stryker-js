@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
 import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 
 describe('TestRunnerDecorator', () => {
   let sut: TestRunnerDecorator;
-  let testRunner: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
 
   beforeEach(() => {
     testRunner = factory.testRunner();

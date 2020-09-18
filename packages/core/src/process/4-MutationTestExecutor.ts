@@ -3,7 +3,7 @@ import { flatMap, toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
-import { MutantRunOptions, TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test_runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 
@@ -22,7 +22,7 @@ import { Sandbox } from '../sandbox';
 import { DryRunContext } from './3-DryRunExecutor';
 
 export interface MutationTestContext extends DryRunContext {
-  [coreTokens.testRunnerPool]: I<Pool<TestRunner2>>;
+  [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;
   [coreTokens.timeOverheadMS]: number;
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
@@ -47,7 +47,7 @@ export class MutationTestExecutor {
     private readonly options: StrykerOptions,
     private readonly reporter: StrictReporter,
     private readonly checkerPool: I<Pool<Checker>>,
-    private readonly testRunnerPool: I<Pool<TestRunner2>>,
+    private readonly testRunnerPool: I<Pool<TestRunner>>,
     private readonly timeOverheadMS: number,
     private readonly matchedMutants: readonly MutantTestCoverage[],
     private readonly mutationTestReportHelper: I<MutationTestReportHelper>,

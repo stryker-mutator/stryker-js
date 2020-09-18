@@ -5,7 +5,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
 
 import {
-  TestRunner2,
+  TestRunner,
   DryRunResult,
   DryRunOptions,
   MutantRunOptions,
@@ -23,7 +23,7 @@ import * as pluginTokens from './plugin-tokens';
 import MochaOptionsLoader from './MochaOptionsLoader';
 import { MochaAdapter } from './MochaAdapter';
 
-export class MochaTestRunner implements TestRunner2 {
+export class MochaTestRunner implements TestRunner {
   public testFileNames: string[];
   public rootHooks: any;
   public mochaOptions!: MochaOptions;

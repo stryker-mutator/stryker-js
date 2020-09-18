@@ -3,7 +3,7 @@ import * as os from 'os';
 
 import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import {
-  TestRunner2,
+  TestRunner,
   TestStatus,
   DryRunOptions,
   MutantRunOptions,
@@ -25,7 +25,7 @@ import Timer from '../utils/Timer';
  * instead, it mimics a simple test result based on the exit code.
  * The command can be configured, but defaults to `npm test`.
  */
-export default class CommandTestRunner implements TestRunner2 {
+export default class CommandTestRunner implements TestRunner {
   /**
    * "command"
    */

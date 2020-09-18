@@ -1,4 +1,4 @@
-import { DryRunStatus, TimeoutDryRunResult, TestRunner2, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test_runner';
+import { DryRunStatus, TimeoutDryRunResult, TestRunner, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -10,9 +10,9 @@ describe('TimeoutDecorator', () => {
   let sut: TimeoutDecorator;
   let sandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
-  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
-  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
-  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner2>>>;
+  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner>>;
+  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner>>;
+  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner>>>;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();

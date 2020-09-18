@@ -1,6 +1,6 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { errorToString } from '@stryker-mutator/util';
-import { TestRunner2, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 import { factory } from '@stryker-mutator/test-helpers';
@@ -15,9 +15,9 @@ import currentLogMock from '../../helpers/logMock';
 
 describe(RetryDecorator.name, () => {
   let sut: RetryDecorator;
-  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
-  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
-  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner2>>>;
+  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner>>;
+  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner>>;
+  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner>>>;
   let logMock: sinon.SinonStubbedInstance<Logger>;
   const crashedError = new ChildProcessCrashedError(42, '');
 

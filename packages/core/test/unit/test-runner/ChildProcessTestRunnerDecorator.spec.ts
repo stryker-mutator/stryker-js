@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -18,7 +18,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
   let options: StrykerOptions;
   let childProcessProxyMock: {
-    proxy: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+    proxy: sinon.SinonStubbedInstance<Required<TestRunner>>;
     dispose: sinon.SinonStub;
   };
   let childProcessProxyCreateStub: sinon.SinonStub;
