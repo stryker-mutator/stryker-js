@@ -3,6 +3,6 @@
  */
 export enum PluginKind {
   Checker = 'Checker',
-  TestRunner2 = 'TestRunner2',
+  TestRunner = 'TestRunner',
   Reporter = 'Reporter',
 }

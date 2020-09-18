@@ -2,7 +2,7 @@ import { StrykerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/cor
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner2,
+  TestRunner,
   MutantRunOptions,
   DryRunResult,
   MutantRunResult,
@@ -35,7 +35,7 @@ export function jestTestRunnerFactory(injector: Injector<PluginContext>) {
 }
 jestTestRunnerFactory.inject = tokens(commonTokens.injector);
 
-export default class JestTestRunner implements TestRunner2 {
+export default class JestTestRunner implements TestRunner {
   private readonly jestConfig: jest.Config.InitialOptions;
   private readonly enableFindRelatedTests: boolean;
 

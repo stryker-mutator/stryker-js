@@ -7,7 +7,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import {
   DryRunResult,
-  TestRunner2,
+  TestRunner,
   DryRunStatus,
   CompleteDryRunResult,
   TestStatus,
@@ -121,7 +121,7 @@ export class DryRunExecutor {
     }
     throw new Error('Something went wrong in the initial test run');
   }
-  private async timeDryRun(testRunner: TestRunner2): Promise<{ dryRunResult: DryRunResult; grossTimeMS: number }> {
+  private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: DryRunResult; grossTimeMS: number }> {
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const dryRunResult = await testRunner.dryRun({ timeout: INITIAL_RUN_TIMEOUT, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);

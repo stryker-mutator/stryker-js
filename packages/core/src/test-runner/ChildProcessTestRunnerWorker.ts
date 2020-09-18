@@ -1,7 +1,7 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner2,
+  TestRunner,
   DryRunOptions,
   MutantRunOptions,
   MutantRunResult,
@@ -14,12 +14,12 @@ import { errorToString } from '@stryker-mutator/util';
 
 import { PluginCreator } from '../di';
 
-export class ChildProcessTestRunnerWorker implements TestRunner2 {
-  private readonly underlyingTestRunner: TestRunner2;
+export class ChildProcessTestRunnerWorker implements TestRunner {
+  private readonly underlyingTestRunner: TestRunner;
 
   public static inject = tokens(commonTokens.options, commonTokens.injector);
   constructor({ testRunner }: StrykerOptions, injector: Injector<PluginContext>) {
-    this.underlyingTestRunner = injector.injectFunction(PluginCreator.createFactory(PluginKind.TestRunner2)).create(testRunner);
+    this.underlyingTestRunner = injector.injectFunction(PluginCreator.createFactory(PluginKind.TestRunner)).create(testRunner);
   }
 
   public async init(): Promise<void> {

@@ -1,4 +1,4 @@
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
@@ -16,7 +16,7 @@ export function createTestRunnerFactory(
   options: StrykerOptions,
   sandbox: Pick<Sandbox, 'sandboxFileNames' | 'workingDirectory'>,
   loggingContext: LoggingClientContext
-): () => Required<TestRunner2> {
+): () => Required<TestRunner> {
   if (CommandTestRunner.is(options.testRunner)) {
     return () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
   } else {

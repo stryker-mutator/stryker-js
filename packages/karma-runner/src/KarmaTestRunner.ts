@@ -3,7 +3,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner2,
+  TestRunner,
   TestResult,
   MutantCoverage,
   DryRunStatus,
@@ -26,7 +26,7 @@ export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
 }
 
-export default class KarmaTestRunner implements TestRunner2 {
+export default class KarmaTestRunner implements TestRunner {
   private currentTestResults: TestResult[];
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;

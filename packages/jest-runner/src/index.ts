@@ -6,6 +6,6 @@ import { jestTestRunnerFactory } from './JestTestRunner';
 
 process.env.BABEL_ENV = 'test';
 
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner2, 'jest', jestTestRunnerFactory)];
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory)];
 
 export { strykerValidationSchema };

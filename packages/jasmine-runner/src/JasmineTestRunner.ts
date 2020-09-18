@@ -5,7 +5,7 @@ import { commonTokens, tokens, Injector, PluginContext } from '@stryker-mutator/
 import {
   DryRunStatus,
   TestResult,
-  TestRunner2,
+  TestRunner,
   MutantRunOptions,
   DryRunResult,
   MutantRunResult,
@@ -26,7 +26,7 @@ export function createJasmineTestRunner(injector: Injector<PluginContext>) {
   return injector.provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache).injectClass(JasmineTestRunner);
 }
 
-export class JasmineTestRunner implements TestRunner2 {
+export class JasmineTestRunner implements TestRunner {
   private readonly jasmineConfigFile: string | undefined;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
 

@@ -3,7 +3,7 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { TestRunner2, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
 import Timer from '../../../src/utils/Timer';
@@ -15,10 +15,10 @@ import { createTestRunnerPoolMock, PoolMock } from '../../helpers/producers';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector>;
-  let testRunnerPoolMock: PoolMock<TestRunner2>;
+  let testRunnerPoolMock: PoolMock<TestRunner>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
-  let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
 
   beforeEach(() => {

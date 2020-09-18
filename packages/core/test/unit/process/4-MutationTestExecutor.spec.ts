@@ -2,7 +2,7 @@ import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner2, MutantRunStatus, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, MutantRunStatus, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { Checker, CheckStatus, CheckResult } from '@stryker-mutator/api/check';
 import { Task } from '@stryker-mutator/util';
 
@@ -17,7 +17,7 @@ import { Sandbox } from '../../../src/sandbox';
 
 describe(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;
-  let testRunnerPoolMock: PoolMock<TestRunner2>;
+  let testRunnerPoolMock: PoolMock<TestRunner>;
   let checkerPoolMock: PoolMock<Checker>;
   let sut: MutationTestExecutor;
   let mutants: MutantTestCoverage[];
@@ -25,8 +25,8 @@ describe(MutationTestExecutor.name, () => {
   let checker2: sinon.SinonStubbedInstance<Checker>;
   let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
-  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner2>>;
-  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner>>;
+  let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
 

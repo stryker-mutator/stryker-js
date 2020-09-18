@@ -2,10 +2,10 @@ import { isRegExp } from 'util';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner2, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
-class CoverageReportingTestRunner implements TestRunner2 {
+class CoverageReportingTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'overridden';
     return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
@@ -15,7 +15,7 @@ class CoverageReportingTestRunner implements TestRunner2 {
   }
 }
 
-class TimeBombTestRunner implements TestRunner2 {
+class TimeBombTestRunner implements TestRunner {
   constructor() {
     // Setting a time bomb after 100 ms
     setTimeout(() => process.exit(), 500);
@@ -28,7 +28,7 @@ class TimeBombTestRunner implements TestRunner2 {
   }
 }
 
-class ProximityMineTestRunner implements TestRunner2 {
+class ProximityMineTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     process.exit(42);
   }
@@ -37,7 +37,7 @@ class ProximityMineTestRunner implements TestRunner2 {
   }
 }
 
-class DirectResolvedTestRunner implements TestRunner2 {
+class DirectResolvedTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'coverageObject';
     return factory.completeDryRunResult();
@@ -47,7 +47,7 @@ class DirectResolvedTestRunner implements TestRunner2 {
   }
 }
 
-class DiscoverRegexTestRunner implements TestRunner2 {
+class DiscoverRegexTestRunner implements TestRunner {
   public static inject = tokens(commonTokens.options);
   constructor(private readonly options: StrykerOptions) {}
 
@@ -63,7 +63,7 @@ class DiscoverRegexTestRunner implements TestRunner2 {
   }
 }
 
-class ErroredTestRunner implements TestRunner2 {
+class ErroredTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     let expectedError: any = null;
     try {
@@ -78,7 +78,7 @@ class ErroredTestRunner implements TestRunner2 {
   }
 }
 
-class RejectInitRunner implements TestRunner2 {
+class RejectInitRunner implements TestRunner {
   public init() {
     return Promise.reject(new Error('Init was rejected'));
   }
@@ -91,7 +91,7 @@ class RejectInitRunner implements TestRunner2 {
   }
 }
 
-class NeverResolvedTestRunner implements TestRunner2 {
+class NeverResolvedTestRunner implements TestRunner {
   public dryRun(): Promise<DryRunResult> {
     return new Promise<DryRunResult>(() => {});
   }
@@ -100,7 +100,7 @@ class NeverResolvedTestRunner implements TestRunner2 {
   }
 }
 
-class SlowInitAndDisposeTestRunner implements TestRunner2 {
+class SlowInitAndDisposeTestRunner implements TestRunner {
   public inInit: boolean;
 
   public init() {
@@ -128,7 +128,7 @@ class SlowInitAndDisposeTestRunner implements TestRunner2 {
     return this.init();
   }
 }
-class VerifyWorkingFolderTestRunner implements TestRunner2 {
+class VerifyWorkingFolderTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return factory.completeDryRunResult();
@@ -141,7 +141,7 @@ class VerifyWorkingFolderTestRunner implements TestRunner2 {
   }
 }
 
-class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner2 {
+class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
   public promise: Promise<void>;
 
   public async init() {
@@ -157,15 +157,15 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner2 {
 }
 
 export const strykerPlugins = [
-  declareClassPlugin(PluginKind.TestRunner2, 'verify-working-folder', VerifyWorkingFolderTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'never-resolved', NeverResolvedTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'errored', ErroredTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'discover-regex', DiscoverRegexTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'direct-resolved', DirectResolvedTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'coverage-reporting', CoverageReportingTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'time-bomb', TimeBombTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'proximity-mine', ProximityMineTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
-  declareClassPlugin(PluginKind.TestRunner2, 'reject-init', RejectInitRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'errored', ErroredTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'discover-regex', DiscoverRegexTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'direct-resolved', DirectResolvedTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
 ];
