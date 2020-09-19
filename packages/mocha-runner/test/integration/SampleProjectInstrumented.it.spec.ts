@@ -2,7 +2,7 @@ import path = require('path');
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { MutantCoverage } from '@stryker-mutator/api/test_runner';
+import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import { MochaTestRunner, createMochaTestRunner } from '../../src';
 import { createMochaOptions } from '../helpers/factories';
@@ -33,10 +33,12 @@ describe('Running an instrumented project', () => {
           'MyMath should be able 1 to a number': {
             '1': 1,
             '4': 1,
+            '5': 1,
           },
           'MyMath should be able negate a number': {
             '1': 1,
-            '5': 1,
+            '6': 1,
+            '7': 1,
           },
           'MyMath should be able to add two numbers': {
             '1': 1,
@@ -45,16 +47,23 @@ describe('Running an instrumented project', () => {
           },
           'MyMath should be able to recognize a negative number': {
             '1': 1,
-            '6': 1,
-            '7': 1,
             '8': 1,
             '9': 1,
+            '10': 1,
+            '11': 1,
+            '12': 1,
+            '13': 1,
+            '14': 1,
+            '15': 1,
           },
           'MyMath should be able to recognize that 0 is not a negative number': {
             '1': 1,
-            '6': 1,
-            '7': 1,
             '8': 1,
+            '9': 1,
+            '10': 1,
+            '11': 1,
+            '12': 1,
+            '13': 1,
           },
         },
         static: {
@@ -76,10 +85,16 @@ describe('Running an instrumented project', () => {
           '3': 1,
           '4': 1,
           '5': 1,
-          '6': 2,
-          '7': 2,
+          '6': 1,
+          '7': 1,
           '8': 2,
-          '9': 1,
+          '9': 2,
+          '10': 2,
+          '11': 2,
+          '12': 2,
+          '13': 2,
+          '14': 1,
+          '15': 1,
         },
       };
       expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);

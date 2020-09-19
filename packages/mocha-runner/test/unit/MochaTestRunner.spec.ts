@@ -7,6 +7,8 @@ import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/tes
 
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
+import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+
 import { MochaTestRunner } from '../../src/MochaTestRunner';
 import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
 import { MochaAdapter } from '../../src/MochaAdapter';
@@ -42,6 +44,7 @@ describe(MochaTestRunner.name, () => {
       .provideValue(pluginTokens.mochaAdapter, mochaAdapterMock)
       .provideValue(pluginTokens.loader, mochaOptionsLoaderMock)
       .provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock)
+      .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
       .injectClass(MochaTestRunner);
   }
 
@@ -172,7 +175,7 @@ describe(MochaTestRunner.name, () => {
       await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
       expect(mocha.suite.beforeEach).calledWithMatch('StrykerIntercept', sinon.match.func);
       mocha.suite.beforeEach.callArgOnWith(1, { currentTest: { fullTitle: () => 'foo should be bar' } });
-      expect(global.__currentTestId__).eq('foo should be bar');
+      expect(global.__stryker__?.currentTestId).eq('foo should be bar');
     });
 
     it('should not add a beforeEach hook if coverage analysis isn\'t "perTest"', async () => {
@@ -185,7 +188,7 @@ describe(MochaTestRunner.name, () => {
       testFileNames.push('');
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
-      global.__mutantCoverage__ = factory.mutantCoverage({ static: { 1: 2 } });
+      global.__stryker__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
       const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
       assertions.expectCompleted(result);
       expect(result.mutantCoverage).deep.eq(factory.mutantCoverage({ static: { 1: 2 } }));
@@ -195,7 +198,7 @@ describe(MochaTestRunner.name, () => {
       testFileNames.push('');
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
-      global.__mutantCoverage__ = factory.mutantCoverage({ static: { 1: 2 } });
+      global.__stryker__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
       const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
       assertions.expectCompleted(result);
       expect(result.mutantCoverage).undefined;
@@ -254,7 +257,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should active the given mutant', async () => {
       await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
-      expect(global.__activeMutant__).eq(42);
+      expect(global.__stryker__?.activeMutant).eq(42);
     });
 
     it('should use `grep` to when the test filter is specified', async () => {

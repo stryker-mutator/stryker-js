@@ -1,5 +1,6 @@
 import { commonTokens, declareFactoryPlugin, Injector, PluginKind, tokens, PluginContext } from '@stryker-mutator/api/plugin';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
+import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 
 import * as strykerValidationSchema from '../schema/mocha-runner-options.json';
 
@@ -14,6 +15,7 @@ export function createMochaTestRunner(injector: Injector<PluginContext>): MochaT
     .provideClass(pluginTokens.loader, MochaOptionsLoader)
     .provideClass(pluginTokens.mochaAdapter, MochaAdapter)
     .provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache)
+    .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
     .injectClass(MochaTestRunner);
 }
 

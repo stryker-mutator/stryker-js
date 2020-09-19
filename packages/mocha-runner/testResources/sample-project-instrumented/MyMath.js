@@ -1,17 +1,36 @@
-// @ts-nocheck
-'use strict';
+// This file is generated with tasks/instrument-test-resources.js
+ 'use strict';
 
-var __global_69fa48 = function (g) {
-  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+function stryNS_9fa48() {
+  var g = new Function("return this")();
+  var ns = g.__stryker__ || (g.__stryker__ = {});
+
+  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+  }
+
+  function retrieveNS() {
+    return ns;
+  }
+
+  stryNS_9fa48 = retrieveNS;
+  return retrieveNS();
+}
+
+stryNS_9fa48();
+
+function stryCov_9fa48() {
+  var ns = stryNS_9fa48();
+  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
     static: {},
     perTest: {}
-  };
+  });
 
-  g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutantCoverage__.static;
+  function cover() {
+    var c = cov.static;
 
-    if (g.__currentTestId__) {
-      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
+    if (ns.currentTestId) {
+      c = cov.perTest[ns.currentTestId] = cov.perTest[ns.currentTestId] || {};
     }
 
     var a = arguments;
@@ -19,101 +38,79 @@ var __global_69fa48 = function (g) {
     for (var i = 0; i < a.length; i++) {
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
-  };
+  }
 
-  return g;
-}(new Function("return this")());
+  stryCov_9fa48 = cover;
+  cover.apply(null, arguments);
+}
 
-const pi = __global_69fa48.__activeMutant__ === 0 ? 3 - .14 : (__global_69fa48.__coverMutant__(0), 3 + .14);
+function stryMutAct_9fa48(id) {
+  var ns = stryNS_9fa48();
+
+  function isActive(id) {
+    return ns.activeMutant === id;
+  }
+
+  stryMutAct_9fa48 = isActive;
+  return isActive(id);
+}
+
+const pi = stryMutAct_9fa48(0) ? 3 - .14 : (stryCov_9fa48(0), 3 + .14);
 
 function MyMath() {
-  switch (__global_69fa48.__activeMutant__) {
-    case 1:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(1);
-      {}
-      break;
+  if (stryMutAct_9fa48(1)) {
+    {}
+  } else {
+    stryCov_9fa48(1);
+    this.pi = pi;
   }
 }
 
 MyMath.prototype.add = function (num1, num2) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 2:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(2);
-      {
-        return __global_69fa48.__activeMutant__ === 3 ? num1 - num2 : (__global_69fa48.__coverMutant__(3), num1 + num2);
-      }
-      break;
+  if (stryMutAct_9fa48(2)) {
+    {}
+  } else {
+    stryCov_9fa48(2);
+    return stryMutAct_9fa48(3) ? num1 - num2 : (stryCov_9fa48(3), num1 + num2);
   }
 };
 
 MyMath.prototype.addOne = function (number) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 4:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(4);
-      {
-        number++;
-        return number;
-      }
-      break;
+  if (stryMutAct_9fa48(4)) {
+    {}
+  } else {
+    stryCov_9fa48(4);
+    stryMutAct_9fa48(5) ? number-- : (stryCov_9fa48(5), number++);
+    return number;
   }
 };
 
 MyMath.prototype.negate = function (number) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 5:
-      {}
-      break;
-
-    default:
-      __global_69fa48.__coverMutant__(5);
-      {
-        return -number;
-      }
-      break;
+  if (stryMutAct_9fa48(6)) {
+    {}
+  } else {
+    stryCov_9fa48(6);
+    return stryMutAct_9fa48(7) ? +number : (stryCov_9fa48(7), -number);
   }
 };
 
 MyMath.prototype.isNegativeNumber = function (number) {
-  switch (__global_69fa48.__activeMutant__) {
-    case 6:
-      {}
-      break;
+  if (stryMutAct_9fa48(8)) {
+    {}
+  } else {
+    stryCov_9fa48(8);
+    var isNegative = stryMutAct_9fa48(9) ? true : (stryCov_9fa48(9), false);
 
-    default:
-      __global_69fa48.__coverMutant__(6);
-      {
-        var isNegative = false;
-
-        if (__global_69fa48.__activeMutant__ === 8 ? false : __global_69fa48.__activeMutant__ === 7 ? true : (__global_69fa48.__coverMutant__(7, 8), number < 0)) {
-          switch (__global_69fa48.__activeMutant__) {
-            case 9:
-              {}
-              break;
-
-            default:
-              __global_69fa48.__coverMutant__(9);
-              {
-                isNegative = true;
-              }
-              break;
-          }
-        }
-
-        return isNegative;
+    if (stryMutAct_9fa48(13) ? number >= 0 : stryMutAct_9fa48(12) ? number <= 0 : stryMutAct_9fa48(11) ? false : stryMutAct_9fa48(10) ? true : (stryCov_9fa48(10, 11, 12, 13), number < 0)) {
+      if (stryMutAct_9fa48(14)) {
+        {}
+      } else {
+        stryCov_9fa48(14);
+        isNegative = stryMutAct_9fa48(15) ? false : (stryCov_9fa48(15), true);
       }
-      break;
+    }
+
+    return isNegative;
   }
 };
 

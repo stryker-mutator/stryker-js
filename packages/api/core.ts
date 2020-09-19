@@ -8,3 +8,4 @@ export * from './src/core/ReportTypes';
 export * from './src/core/StrykerOptionsSchema';
 export * from './src/core/PartialStrykerOptions';
 export * from './src/core/instrument';
+export * from './src/core/MutantCoverage';

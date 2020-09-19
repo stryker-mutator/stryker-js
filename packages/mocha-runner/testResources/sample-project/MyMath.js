@@ -1,7 +1,9 @@
 'use strict';
 
-function MyMath() {
+const pi = 3 + .14;
 
+function MyMath() {
+  this.pi = pi;
 }
 
 MyMath.prototype.add = function(num1, num2) {

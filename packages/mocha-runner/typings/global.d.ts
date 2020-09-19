@@ -1,7 +1,5 @@
 declare namespace NodeJS {
   interface Global {
-    __activeMutant__: number | undefined;
-    __currentTestId__: string | undefined;
-    __mutantCoverage__: import('@stryker-mutator/api/test_runner').MutantCoverage | undefined;
+    [strykerGlobal: string]: import('@stryker-mutator/api/core').InstrumenterContext | undefined;
   }
 }

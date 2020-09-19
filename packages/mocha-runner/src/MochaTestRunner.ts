@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { InstrumenterContext, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
@@ -27,22 +27,26 @@ export class MochaTestRunner implements TestRunner {
   public testFileNames: string[];
   public rootHooks: any;
   public mochaOptions!: MochaOptions;
+  private readonly instrumenterContext: InstrumenterContext;
 
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
     pluginTokens.loader,
     pluginTokens.mochaAdapter,
-    pluginTokens.directoryRequireCache
+    pluginTokens.directoryRequireCache,
+    pluginTokens.globalNamespace
   );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly loader: I<MochaOptionsLoader>,
     private readonly mochaAdapter: I<MochaAdapter>,
-    private readonly requireCache: I<DirectoryRequireCache>
+    private readonly requireCache: I<DirectoryRequireCache>,
+    globalNamespace: string
   ) {
     StrykerMochaReporter.log = log;
+    this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
   }
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
@@ -57,20 +61,21 @@ export class MochaTestRunner implements TestRunner {
     let interceptor: (mocha: Mocha) => void = () => {};
     if (options.coverageAnalysis === 'perTest') {
       interceptor = (mocha) => {
+        const self = this;
         mocha.suite.beforeEach('StrykerIntercept', function () {
-          global.__currentTestId__ = this.currentTest?.fullTitle();
+          self.instrumenterContext.currentTestId = this.currentTest?.fullTitle();
         });
       };
     }
     const runResult = await this.run(interceptor);
     if (runResult.status === DryRunStatus.Complete && options.coverageAnalysis !== 'off') {
-      runResult.mutantCoverage = global.__mutantCoverage__;
+      runResult.mutantCoverage = this.instrumenterContext.mutantCoverage;
     }
     return runResult;
   }
 
   public async mutantRun({ activeMutant, testFilter }: MutantRunOptions): Promise<MutantRunResult> {
-    global.__activeMutant__ = activeMutant.id;
+    this.instrumenterContext.activeMutant = activeMutant.id;
     let intercept: (mocha: Mocha) => void = () => {};
     if (testFilter) {
       const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');

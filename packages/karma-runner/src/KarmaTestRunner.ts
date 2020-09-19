@@ -1,11 +1,10 @@
 import * as karma from 'karma';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
   TestResult,
-  MutantCoverage,
   DryRunStatus,
   DryRunOptions,
   MutantRunOptions,

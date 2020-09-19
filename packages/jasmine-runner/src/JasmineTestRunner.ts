@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 
-import { StrykerOptions, CoverageAnalysis } from '@stryker-mutator/api/core';
+import { StrykerOptions, CoverageAnalysis, InstrumenterContext, MutantCoverage, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { commonTokens, tokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
 import {
   DryRunStatus,
@@ -12,7 +12,6 @@ import {
   toMutantRunResult,
   ErrorDryRunResult,
   DryRunOptions,
-  MutantCoverage,
 } from '@stryker-mutator/api/test_runner';
 import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
@@ -23,16 +22,21 @@ import * as pluginTokens from './pluginTokens';
 
 createJasmineTestRunner.inject = tokens(commonTokens.injector);
 export function createJasmineTestRunner(injector: Injector<PluginContext>) {
-  return injector.provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache).injectClass(JasmineTestRunner);
+  return injector
+    .provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache)
+    .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
+    .injectClass(JasmineTestRunner);
 }
 
 export class JasmineTestRunner implements TestRunner {
   private readonly jasmineConfigFile: string | undefined;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
+  private readonly instrumenterContext: InstrumenterContext;
 
-  public static inject = tokens(commonTokens.options, pluginTokens.directoryRequireCache);
-  constructor(options: StrykerOptions, private readonly requireCache: I<DirectoryRequireCache>) {
+  public static inject = tokens(commonTokens.options, pluginTokens.directoryRequireCache, pluginTokens.globalNamespace);
+  constructor(options: StrykerOptions, private readonly requireCache: I<DirectoryRequireCache>, globalNamespace: string) {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
+    this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -40,7 +44,7 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    global.__activeMutant__ = options.activeMutant.id;
+    this.instrumenterContext.activeMutant = options.activeMutant.id;
     const runResult = await this.run(options.testFilter);
     return toMutantRunResult(runResult);
   }
@@ -64,7 +68,7 @@ export class JasmineTestRunner implements TestRunner {
       const reporter: jasmine.CustomReporter = {
         specStarted(spec) {
           if (coverageAnalysis && coverageAnalysis === 'perTest') {
-            global.__currentTestId__ = spec.id;
+            self.instrumenterContext.currentTestId = spec.id;
           }
           startTimeCurrentSpec = new self.Date().getTime();
         },
@@ -75,7 +79,7 @@ export class JasmineTestRunner implements TestRunner {
           self.requireCache.record();
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
-            mutantCoverage = global.__mutantCoverage__;
+            mutantCoverage = self.instrumenterContext.mutantCoverage;
           }
           runTask.resolve({
             status: DryRunStatus.Complete,

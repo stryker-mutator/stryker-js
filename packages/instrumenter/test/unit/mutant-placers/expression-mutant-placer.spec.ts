@@ -42,7 +42,7 @@ describe(expressionMutantPlacer.name, () => {
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains('const foo = __global_69fa48.__activeMutant__ === 1 ? bar >>> baz');
+    expect(actualCode).contains('const foo = stryMutAct_9fa48(1) ? bar >>> baz');
   });
 
   it('should place the original code as the alternative', () => {
@@ -58,7 +58,7 @@ describe(expressionMutantPlacer.name, () => {
     expressionMutantPlacer(binaryExpression, [mutant]);
     const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
     const actualAlternativeCode = generate(actualAlternative).code;
-    const expected = '__global_69fa48.__coverMutant__(1), ';
+    const expected = 'stryCov_9fa48(1), a + b';
     expect(actualAlternativeCode.startsWith(expected), `${actualAlternativeCode} did not start with "${expected}"`).true;
   });
 
@@ -84,7 +84,7 @@ describe(expressionMutantPlacer.name, () => {
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
-    expect(actualCode).contains('const foo = __global_69fa48.__activeMutant__ === 659 ? bar : __global_69fa48.__activeMutant__ === 52 ? bar - baz');
+    expect(actualCode).contains('const foo = stryMutAct_9fa48(659) ? bar : stryMutAct_9fa48(52) ? bar - baz');
   });
 
   describe('object literals', () => {
