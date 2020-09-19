@@ -1,4 +1,4 @@
-type BinaryOperator =
+export type BinaryOperator =
   | '+'
   | '-'
   | '/'
