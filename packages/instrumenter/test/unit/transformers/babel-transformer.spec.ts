@@ -10,7 +10,7 @@ import * as mutantPlacers from '../../../src/mutant-placers';
 import { MutantCollector } from '../../../src/transformers/mutant-collector';
 import { transformBabel } from '../../../src/transformers/babel-transformer';
 import { createJSAst, createNamedNodeMutation, createMutant, createTSAst } from '../../helpers/factories';
-import { declareGlobal } from '../../../src/util/syntax-helpers';
+import { instrumentationBabelHeader } from '../../../src/util/syntax-helpers';
 
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
@@ -75,7 +75,9 @@ describe('babel-transformer', () => {
   it('should add the global stuff on top', () => {
     const ast = createJSAst({ rawContent: 'foo' });
     transformBabel(ast, mutantCollectorMock, context);
-    expect(ast.root.program.body[0]).eq(declareGlobal);
+    for (let i = 0; i < instrumentationBabelHeader.length; i++) {
+      expect(ast.root.program.body[i]).eq(instrumentationBabelHeader[i]);
+    }
   });
 
   describe('types', () => {

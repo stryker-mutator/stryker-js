@@ -39,13 +39,19 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           '1': 1,
           '2': 1,
           '3': 1,
-          '4': 2,
-          '5': 2,
+          '4': 1,
+          '5': 1,
           '6': 2,
-          '7': 1,
-          '8': 1,
-          '9': 1,
-          '10': 1,
+          '7': 2,
+          '8': 2,
+          '9': 2,
+          '10': 2,
+          '11': 2,
+          '12': 1,
+          '13': 1,
+          '14': 1,
+          '15': 1,
+          '16': 1,
         });
         expect(result.mutantCoverage!.perTest).deep.eq({});
       });
@@ -62,25 +68,34 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           },
           spec1: {
             '2': 1,
-          },
-          spec2: {
             '3': 1,
           },
-          spec3: {
+          spec2: {
             '4': 1,
             '5': 1,
+          },
+          spec3: {
             '6': 1,
             '7': 1,
-          },
-          spec4: {
-            '4': 1,
-            '5': 1,
-            '6': 1,
-          },
-          spec5: {
             '8': 1,
             '9': 1,
             '10': 1,
+            '11': 1,
+            '12': 1,
+            '13': 1,
+          },
+          spec4: {
+            '6': 1,
+            '7': 1,
+            '8': 1,
+            '9': 1,
+            '10': 1,
+            '11': 1,
+          },
+          spec5: {
+            '14': 1,
+            '15': 1,
+            '16': 1,
           },
         });
       });
@@ -158,13 +173,19 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           '1': 1,
           '2': 1,
           '3': 1,
-          '4': 2,
-          '5': 2,
+          '4': 1,
+          '5': 1,
           '6': 2,
-          '7': 1,
-          '8': 1,
-          '9': 1,
-          '10': 1,
+          '7': 2,
+          '8': 2,
+          '9': 2,
+          '10': 2,
+          '11': 2,
+          '12': 1,
+          '13': 1,
+          '14': 1,
+          '15': 1,
+          '16': 1,
         });
         expect(result.mutantCoverage!.perTest).deep.eq({});
       });
@@ -181,25 +202,34 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           },
           'Add should be able 1 to a number': {
             '2': 1,
-          },
-          'Add should be able negate a number': {
             '3': 1,
           },
-          'Add should be able to recognize a negative number': {
+          'Add should be able negate a number': {
             '4': 1,
             '5': 1,
+          },
+          'Add should be able to recognize a negative number': {
             '6': 1,
             '7': 1,
-          },
-          'Add should be able to recognize that 0 is not a negative number': {
-            '4': 1,
-            '5': 1,
-            '6': 1,
-          },
-          'Circle should have a circumference of 2PI when the radius is 1': {
             '8': 1,
             '9': 1,
             '10': 1,
+            '11': 1,
+            '12': 1,
+            '13': 1,
+          },
+          'Add should be able to recognize that 0 is not a negative number': {
+            '6': 1,
+            '7': 1,
+            '8': 1,
+            '9': 1,
+            '10': 1,
+            '11': 1,
+          },
+          'Circle should have a circumference of 2PI when the radius is 1': {
+            '14': 1,
+            '15': 1,
+            '16': 1,
           },
         });
       });

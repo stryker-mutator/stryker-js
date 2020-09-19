@@ -1,7 +1,7 @@
 import { DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import { TestResults } from 'karma';
-import { MutantCoverage } from '@stryker-mutator/api/test_runner';
+import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import StrykerReporter, { KarmaSpec } from '../../../src/karma-plugins/StrykerReporter';
 

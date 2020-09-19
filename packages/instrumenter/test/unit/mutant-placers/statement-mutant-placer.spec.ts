@@ -47,7 +47,7 @@ describe(statementMutantPlacer.name, () => {
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains(normalizeWhitespaces('if (__global_69fa48.__activeMutant__ === 1) { const foo = bar >>> baz; } else '));
+    expect(actualCode).contains(normalizeWhitespaces('if (stryMutAct_9fa48(1)) { const foo = bar >>> baz; } else '));
   });
 
   it('should keep block statements in tact', () => {
@@ -80,7 +80,7 @@ describe(statementMutantPlacer.name, () => {
     const { ast, mutant, statement } = arrangeSingleMutant();
     statementMutantPlacer(statement, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
-    expect(actualCode).matches(/else\s*{\s*__global_69fa48\.__coverMutant__\(1\)/);
+    expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\(1\)/);
   });
 
   it('should be able to place multiple mutants', () => {
@@ -100,12 +100,12 @@ describe(statementMutantPlacer.name, () => {
 
     // Assert
     expect(actualCode).contains(
-      normalizeWhitespaces(`if (__global_69fa48.__activeMutant__ === 659) {
+      normalizeWhitespaces(`if (stryMutAct_9fa48(659)) {
           const bar = a + b;
-        } else if (__global_69fa48.__activeMutant__ === 52) {
+        } else if (stryMutAct_9fa48(52)) {
           const foo = bar >>> baz;
         } else {
-          __global_69fa48.__coverMutant__(52, 659)`)
+          stryCov_9fa48(52, 659)`)
     );
   });
 });

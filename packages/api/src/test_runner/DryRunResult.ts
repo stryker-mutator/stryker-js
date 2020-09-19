@@ -1,4 +1,4 @@
-import { MutantCoverage } from './MutantCoverage';
+import { MutantCoverage } from '../core/MutantCoverage';
 import { DryRunStatus } from './DryRunStatus';
 import { TestResult } from './TestResult';
 

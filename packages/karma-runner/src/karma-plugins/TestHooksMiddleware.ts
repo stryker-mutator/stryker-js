@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as url from 'url';
 
 import { RequestHandler } from 'express';
-import { CoverageAnalysis } from '@stryker-mutator/api/core';
+import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { MutantRunOptions } from '@stryker-mutator/api/test_runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
@@ -20,6 +20,8 @@ function isSupportedFramework(framework: string): framework is SupportedFramewor
  * Keep in sync with StrykerMutantCoverageAdapter.ts
  */
 const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
+
+const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID } = INSTRUMENTER_CONSTANTS;
 
 export default class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
@@ -53,7 +55,8 @@ export default class TestHooksMiddleware {
 
   public configureActiveMutant({ activeMutant, testFilter }: MutantRunOptions) {
     this.configureCoverageAnalysis('off');
-    this.currentTestHooks += `window.__activeMutant__=${activeMutant.id};`;
+    this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};
+    window.${NAMESPACE}.${ACTIVE_MUTANT} = ${activeMutant.id};`;
     if (testFilter) {
       switch (this.testFramework) {
         case 'jasmine':
@@ -76,7 +79,7 @@ export default class TestHooksMiddleware {
       window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
       jasmine.getEnv().addReporter({
         specStarted: function (spec) {
-          window.__currentTestId__ = spec.id;
+          window.${NAMESPACE}.${CURRENT_TEST_ID} = spec.id;
         }
       });`;
         break;
@@ -84,7 +87,7 @@ export default class TestHooksMiddleware {
         this.currentTestHooks = `
         window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
         beforeEach(function() {
-          window.__currentTestId__ = this.currentTest && this.currentTest.fullTitle();
+          window.${NAMESPACE}.${CURRENT_TEST_ID} = this.currentTest && this.currentTest.fullTitle();
         });
       `;
         break;

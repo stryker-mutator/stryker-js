@@ -1,6 +1,7 @@
 import { types, NodePath } from '@babel/core';
 
 import { NodeMutation } from '../mutant';
+import { BinaryOperator } from '../util';
 
 import { NodeMutator } from './node-mutator';
 

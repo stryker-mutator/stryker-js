@@ -1,21 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`instrumenter integration should be able to instrument a lit-html file 1`] = `
-"var __global_69fa48 = function (g) {
-  if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+"function stryNS_9fa48() {
+  var g = new Function(\\"return this\\")();
+  var ns = g.__stryker__ || (g.__stryker__ = {});
+
+  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
   }
 
-  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+  function retrieveNS() {
+    return ns;
+  }
+
+  stryNS_9fa48 = retrieveNS;
+  return retrieveNS();
+}
+
+stryNS_9fa48();
+
+function stryCov_9fa48() {
+  var ns = stryNS_9fa48();
+  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
     static: {},
     perTest: {}
-  };
+  });
 
-  g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutantCoverage__.static;
+  function cover() {
+    var c = cov.static;
 
-    if (g.__currentTestId__) {
-      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
+    if (ns.currentTestId) {
+      c = cov.perTest[ns.currentTestId] = cov.perTest[ns.currentTestId] || {};
     }
 
     var a = arguments;
@@ -23,10 +38,22 @@ exports[`instrumenter integration should be able to instrument a lit-html file 1
     for (var i = 0; i < a.length; i++) {
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
-  };
+  }
 
-  return g;
-}(new Function(\\"return this\\")());
+  stryCov_9fa48 = cover;
+  cover.apply(null, arguments);
+}
+
+function stryMutAct_9fa48(id) {
+  var ns = stryNS_9fa48();
+
+  function isActive(id) {
+    return ns.activeMutant === id;
+  }
+
+  stryMutAct_9fa48 = isActive;
+  return isActive(id);
+}
 
 import { LitElement, html, property, customElement, svg } from 'lit-element';
 import { Thresholds } from 'mutation-testing-report-schema';
@@ -40,32 +67,32 @@ export class MutationTestReportTotalsComponent extends LitElement {
   @property()
   public thresholds: Thresholds | undefined;
   @property()
-  public currentPath: string[] = __global_69fa48.__activeMutant__ === 0 ? [\\"Stryker was here\\"] : (__global_69fa48.__coverMutant__(0), []);
-  private readonly fileIcon = __global_69fa48.__activeMutant__ === 1 ? svg\`\` : (__global_69fa48.__coverMutant__(1), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
-  private readonly directoryIcon = __global_69fa48.__activeMutant__ === 2 ? svg\`\` : (__global_69fa48.__coverMutant__(2), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
+  public currentPath: string[] = stryMutAct_9fa48(0) ? [\\"Stryker was here\\"] : (stryCov_9fa48(0), []);
+  private readonly fileIcon = stryMutAct_9fa48(1) ? svg\`\` : (stryCov_9fa48(1), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
+  private readonly directoryIcon = stryMutAct_9fa48(2) ? svg\`\` : (stryCov_9fa48(2), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
 
   public render() {
-    if (__global_69fa48.__activeMutant__ === 3) {
+    if (stryMutAct_9fa48(3)) {
       {}
     } else {
-      __global_69fa48.__coverMutant__(3);
+      stryCov_9fa48(3);
 
-      if (__global_69fa48.__activeMutant__ === 5 ? false : __global_69fa48.__activeMutant__ === 4 ? true : (__global_69fa48.__coverMutant__(4, 5), this.model)) {
-        if (__global_69fa48.__activeMutant__ === 6) {
+      if (stryMutAct_9fa48(5) ? false : stryMutAct_9fa48(4) ? true : (stryCov_9fa48(4, 5), this.model)) {
+        if (stryMutAct_9fa48(6)) {
           {}
         } else {
-          __global_69fa48.__coverMutant__(6);
-          return __global_69fa48.__activeMutant__ === 7 ? html\`\` : (__global_69fa48.__coverMutant__(7), html\`
+          stryCov_9fa48(6);
+          return stryMutAct_9fa48(7) ? html\`\` : (stryCov_9fa48(7), html\`
         <table class=\\"table table-sm table-hover table-bordered table-no-top\\">
           \${this.renderHead()} \${this.renderTableBody(this.model)}
         </table>
       \`);
         }
       } else {
-        if (__global_69fa48.__activeMutant__ === 8) {
+        if (stryMutAct_9fa48(8)) {
           {}
         } else {
-          __global_69fa48.__coverMutant__(8);
+          stryCov_9fa48(8);
           return undefined;
         }
       }
@@ -73,11 +100,11 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderHead() {
-    if (__global_69fa48.__activeMutant__ === 9) {
+    if (stryMutAct_9fa48(9)) {
       {}
     } else {
-      __global_69fa48.__coverMutant__(9);
-      return __global_69fa48.__activeMutant__ === 10 ? html\`\` : (__global_69fa48.__coverMutant__(10), html\`<thead>
+      stryCov_9fa48(9);
+      return stryMutAct_9fa48(10) ? html\`\` : (stryCov_9fa48(10), html\`<thead>
       <tr>
         <th colspan=\\"2\\" style=\\"width: 217px\\">
           <div><span>File / Directory</span></div>
@@ -121,41 +148,41 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderTableBody(model: MetricsResult) {
-    if (__global_69fa48.__activeMutant__ === 11) {
+    if (stryMutAct_9fa48(11)) {
       {}
     } else {
-      __global_69fa48.__coverMutant__(11);
+      stryCov_9fa48(11);
 
       const renderChildren = () => {
-        if (__global_69fa48.__activeMutant__ === 12) {
+        if (stryMutAct_9fa48(12)) {
           {}
         } else {
-          __global_69fa48.__coverMutant__(12);
+          stryCov_9fa48(12);
 
-          if (__global_69fa48.__activeMutant__ === 14 ? false : __global_69fa48.__activeMutant__ === 13 ? true : (__global_69fa48.__coverMutant__(13, 14), model.file)) {
-            if (__global_69fa48.__activeMutant__ === 15) {
+          if (stryMutAct_9fa48(14) ? false : stryMutAct_9fa48(13) ? true : (stryCov_9fa48(13, 14), model.file)) {
+            if (stryMutAct_9fa48(15)) {
               {}
             } else {
-              __global_69fa48.__coverMutant__(15);
+              stryCov_9fa48(15);
               return undefined;
             }
           } else {
-            if (__global_69fa48.__activeMutant__ === 16) {
+            if (stryMutAct_9fa48(16)) {
               {}
             } else {
-              __global_69fa48.__coverMutant__(16);
+              stryCov_9fa48(16);
               return model.childResults.map(childResult => {
-                if (__global_69fa48.__activeMutant__ === 17) {
+                if (stryMutAct_9fa48(17)) {
                   {}
                 } else {
-                  __global_69fa48.__coverMutant__(17);
+                  stryCov_9fa48(17);
                   let fullName: string = childResult.name;
 
-                  while (__global_69fa48.__activeMutant__ === 19 ? !childResult.file || childResult.childResults.length === 1 : __global_69fa48.__activeMutant__ === 18 ? false : (__global_69fa48.__coverMutant__(18, 19), (__global_69fa48.__activeMutant__ === 20 ? childResult.file : (__global_69fa48.__coverMutant__(20), !childResult.file)) && (__global_69fa48.__activeMutant__ === 23 ? childResult.childResults.length !== 1 : __global_69fa48.__activeMutant__ === 22 ? false : __global_69fa48.__activeMutant__ === 21 ? true : (__global_69fa48.__coverMutant__(21, 22, 23), childResult.childResults.length === 1)))) {
-                    if (__global_69fa48.__activeMutant__ === 24) {
+                  while (stryMutAct_9fa48(19) ? !childResult.file || childResult.childResults.length === 1 : stryMutAct_9fa48(18) ? false : (stryCov_9fa48(18, 19), (stryMutAct_9fa48(20) ? childResult.file : (stryCov_9fa48(20), !childResult.file)) && (stryMutAct_9fa48(23) ? childResult.childResults.length !== 1 : stryMutAct_9fa48(22) ? false : stryMutAct_9fa48(21) ? true : (stryCov_9fa48(21, 22, 23), childResult.childResults.length === 1)))) {
+                    if (stryMutAct_9fa48(24)) {
                       {}
                     } else {
-                      __global_69fa48.__coverMutant__(24);
+                      stryCov_9fa48(24);
                       childResult = childResult.childResults[0];
                       fullName = pathJoin(fullName, childResult.name);
                     }
@@ -169,7 +196,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
         }
       };
 
-      return __global_69fa48.__activeMutant__ === 25 ? html\`\` : (__global_69fa48.__coverMutant__(25), html\`
+      return stryMutAct_9fa48(25) ? html\`\` : (stryCov_9fa48(25), html\`
       <tbody>
         \${this.renderRow(model.name, model, undefined)} \${renderChildren()}
       </tbody>
@@ -178,26 +205,26 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private renderRow(name: string, row: MetricsResult, path: string | undefined) {
-    if (__global_69fa48.__activeMutant__ === 26) {
+    if (stryMutAct_9fa48(26)) {
       {}
     } else {
-      __global_69fa48.__coverMutant__(26);
+      stryCov_9fa48(26);
       const {
         mutationScore
       } = row.metrics;
-      const scoreIsPresent = __global_69fa48.__activeMutant__ === 27 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(27), !isNaN(mutationScore));
+      const scoreIsPresent = stryMutAct_9fa48(27) ? isNaN(mutationScore) : (stryCov_9fa48(27), !isNaN(mutationScore));
       const coloringClass = this.determineColoringClass(mutationScore);
       const mutationScoreRounded = mutationScore.toFixed(2);
-      const progressBarStyle = __global_69fa48.__activeMutant__ === 28 ? \`\` : (__global_69fa48.__coverMutant__(28), \`width: \${mutationScore}%\`);
-      return __global_69fa48.__activeMutant__ === 29 ? html\`\` : (__global_69fa48.__coverMutant__(29), html\` <tr title=\\"\${row.name}\\">
+      const progressBarStyle = stryMutAct_9fa48(28) ? \`\` : (stryCov_9fa48(28), \`width: \${mutationScore}%\`);
+      return stryMutAct_9fa48(29) ? html\`\` : (stryCov_9fa48(29), html\` <tr title=\\"\${row.name}\\">
       <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\"
         >\${row.file ? this.fileIcon : this.directoryIcon}</td
       >
       <td width=\\"\\" class=\\"no-border-left\\"
-        >\${(__global_69fa48.__activeMutant__ === 32 ? typeof path !== 'string' : __global_69fa48.__activeMutant__ === 31 ? false : __global_69fa48.__activeMutant__ === 30 ? true : (__global_69fa48.__coverMutant__(30, 31, 32), typeof path === (__global_69fa48.__activeMutant__ === 33 ? \\"\\" : (__global_69fa48.__coverMutant__(33), 'string')))) ? __global_69fa48.__activeMutant__ === 34 ? html\`\` : (__global_69fa48.__coverMutant__(34), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : __global_69fa48.__activeMutant__ === 35 ? html\`\` : (__global_69fa48.__coverMutant__(35), html\`<span>\${row.name}</span>\`)}</td
+        >\${(stryMutAct_9fa48(32) ? typeof path !== 'string' : stryMutAct_9fa48(31) ? false : stryMutAct_9fa48(30) ? true : (stryCov_9fa48(30, 31, 32), typeof path === (stryMutAct_9fa48(33) ? \\"\\" : (stryCov_9fa48(33), 'string')))) ? stryMutAct_9fa48(34) ? html\`\` : (stryCov_9fa48(34), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : stryMutAct_9fa48(35) ? html\`\` : (stryCov_9fa48(35), html\`<span>\${row.name}</span>\`)}</td
       >
       <td class=\\"no-border-right vertical-middle\\">
-        \${scoreIsPresent ? __global_69fa48.__activeMutant__ === 36 ? html\`\` : (__global_69fa48.__coverMutant__(36), html\` <div class=\\"progress\\">
+        \${scoreIsPresent ? stryMutAct_9fa48(36) ? html\`\` : (stryCov_9fa48(36), html\` <div class=\\"progress\\">
               <div
                 class=\\"progress-bar bg-\${coloringClass}\\"
                 role=\\"progressbar\\"
@@ -208,7 +235,7 @@ export class MutationTestReportTotalsComponent extends LitElement {
               >
                 \${mutationScoreRounded}%
               </div>
-            </div>\`) : __global_69fa48.__activeMutant__ === 37 ? html\`\` : (__global_69fa48.__coverMutant__(37), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
+            </div>\`) : stryMutAct_9fa48(37) ? html\`\` : (stryCov_9fa48(37), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
       </td>
       <td style=\\"width: 50px;\\" class=\\"no-border-left font-weight-bold text-center text-\${coloringClass}\\">
         \${scoreIsPresent ? mutationScoreRounded : undefined}
@@ -228,46 +255,46 @@ export class MutationTestReportTotalsComponent extends LitElement {
   }
 
   private determineColoringClass(mutationScore: number) {
-    if (__global_69fa48.__activeMutant__ === 38) {
+    if (stryMutAct_9fa48(38)) {
       {}
     } else {
-      __global_69fa48.__coverMutant__(38);
+      stryCov_9fa48(38);
 
-      if (__global_69fa48.__activeMutant__ === 41 ? !isNaN(mutationScore) || this.thresholds : __global_69fa48.__activeMutant__ === 40 ? false : __global_69fa48.__activeMutant__ === 39 ? true : (__global_69fa48.__coverMutant__(39, 40, 41), (__global_69fa48.__activeMutant__ === 42 ? isNaN(mutationScore) : (__global_69fa48.__coverMutant__(42), !isNaN(mutationScore))) && this.thresholds)) {
-        if (__global_69fa48.__activeMutant__ === 43) {
+      if (stryMutAct_9fa48(41) ? !isNaN(mutationScore) || this.thresholds : stryMutAct_9fa48(40) ? false : stryMutAct_9fa48(39) ? true : (stryCov_9fa48(39, 40, 41), (stryMutAct_9fa48(42) ? isNaN(mutationScore) : (stryCov_9fa48(42), !isNaN(mutationScore))) && this.thresholds)) {
+        if (stryMutAct_9fa48(43)) {
           {}
         } else {
-          __global_69fa48.__coverMutant__(43);
+          stryCov_9fa48(43);
 
-          if (__global_69fa48.__activeMutant__ === 47 ? mutationScore >= this.thresholds.low : __global_69fa48.__activeMutant__ === 46 ? mutationScore <= this.thresholds.low : __global_69fa48.__activeMutant__ === 45 ? false : __global_69fa48.__activeMutant__ === 44 ? true : (__global_69fa48.__coverMutant__(44, 45, 46, 47), mutationScore < this.thresholds.low)) {
-            if (__global_69fa48.__activeMutant__ === 48) {
+          if (stryMutAct_9fa48(47) ? mutationScore >= this.thresholds.low : stryMutAct_9fa48(46) ? mutationScore <= this.thresholds.low : stryMutAct_9fa48(45) ? false : stryMutAct_9fa48(44) ? true : (stryCov_9fa48(44, 45, 46, 47), mutationScore < this.thresholds.low)) {
+            if (stryMutAct_9fa48(48)) {
               {}
             } else {
-              __global_69fa48.__coverMutant__(48);
-              return __global_69fa48.__activeMutant__ === 49 ? \\"\\" : (__global_69fa48.__coverMutant__(49), 'danger');
+              stryCov_9fa48(48);
+              return stryMutAct_9fa48(49) ? \\"\\" : (stryCov_9fa48(49), 'danger');
             }
-          } else if (__global_69fa48.__activeMutant__ === 53 ? mutationScore >= this.thresholds.high : __global_69fa48.__activeMutant__ === 52 ? mutationScore <= this.thresholds.high : __global_69fa48.__activeMutant__ === 51 ? false : __global_69fa48.__activeMutant__ === 50 ? true : (__global_69fa48.__coverMutant__(50, 51, 52, 53), mutationScore < this.thresholds.high)) {
-            if (__global_69fa48.__activeMutant__ === 54) {
+          } else if (stryMutAct_9fa48(53) ? mutationScore >= this.thresholds.high : stryMutAct_9fa48(52) ? mutationScore <= this.thresholds.high : stryMutAct_9fa48(51) ? false : stryMutAct_9fa48(50) ? true : (stryCov_9fa48(50, 51, 52, 53), mutationScore < this.thresholds.high)) {
+            if (stryMutAct_9fa48(54)) {
               {}
             } else {
-              __global_69fa48.__coverMutant__(54);
-              return __global_69fa48.__activeMutant__ === 55 ? \\"\\" : (__global_69fa48.__coverMutant__(55), 'warning');
+              stryCov_9fa48(54);
+              return stryMutAct_9fa48(55) ? \\"\\" : (stryCov_9fa48(55), 'warning');
             }
           } else {
-            if (__global_69fa48.__activeMutant__ === 56) {
+            if (stryMutAct_9fa48(56)) {
               {}
             } else {
-              __global_69fa48.__coverMutant__(56);
-              return __global_69fa48.__activeMutant__ === 57 ? \\"\\" : (__global_69fa48.__coverMutant__(57), 'success');
+              stryCov_9fa48(56);
+              return stryMutAct_9fa48(57) ? \\"\\" : (stryCov_9fa48(57), 'success');
             }
           }
         }
       } else {
-        if (__global_69fa48.__activeMutant__ === 58) {
+        if (stryMutAct_9fa48(58)) {
           {}
         } else {
-          __global_69fa48.__coverMutant__(58);
-          return __global_69fa48.__activeMutant__ === 59 ? \\"\\" : (__global_69fa48.__coverMutant__(59), 'default');
+          stryCov_9fa48(58);
+          return stryMutAct_9fa48(59) ? \\"\\" : (stryCov_9fa48(59), 'default');
         }
       }
     }

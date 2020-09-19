@@ -1,21 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`instrumenter integration should be able to instrument an angular component 1`] = `
-"var __global_69fa48 = function (g) {
-  if (g.__activeMutant__ === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    g.__activeMutant__ = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+"function stryNS_9fa48() {
+  var g = new Function(\\"return this\\")();
+  var ns = g.__stryker__ || (g.__stryker__ = {});
+
+  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
   }
 
-  g.__mutantCoverage__ = g.__mutantCoverage__ || {
+  function retrieveNS() {
+    return ns;
+  }
+
+  stryNS_9fa48 = retrieveNS;
+  return retrieveNS();
+}
+
+stryNS_9fa48();
+
+function stryCov_9fa48() {
+  var ns = stryNS_9fa48();
+  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
     static: {},
     perTest: {}
-  };
+  });
 
-  g.__coverMutant__ = g.__coverMutant__ || function () {
-    var c = g.__mutantCoverage__.static;
+  function cover() {
+    var c = cov.static;
 
-    if (g.__currentTestId__) {
-      c = g.__mutantCoverage__.perTest[g.__currentTestId__] = g.__mutantCoverage__.perTest[g.__currentTestId__] || {};
+    if (ns.currentTestId) {
+      c = cov.perTest[ns.currentTestId] = cov.perTest[ns.currentTestId] || {};
     }
 
     var a = arguments;
@@ -23,10 +38,22 @@ exports[`instrumenter integration should be able to instrument an angular compon
     for (var i = 0; i < a.length; i++) {
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
-  };
+  }
 
-  return g;
-}(new Function(\\"return this\\")());
+  stryCov_9fa48 = cover;
+  cover.apply(null, arguments);
+}
+
+function stryMutAct_9fa48(id) {
+  var ns = stryNS_9fa48();
+
+  function isActive(id) {
+    return ns.activeMutant === id;
+  }
+
+  stryMutAct_9fa48 = isActive;
+  return isActive(id);
+}
 
 import { Component } from '@angular/core';
 @Component({
@@ -35,6 +62,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = __global_69fa48.__activeMutant__ === 0 ? \\"\\" : (__global_69fa48.__coverMutant__(0), 'angular-app');
+  title = stryMutAct_9fa48(0) ? \\"\\" : (stryCov_9fa48(0), 'angular-app');
 }"
 `;

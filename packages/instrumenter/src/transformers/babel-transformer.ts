@@ -5,7 +5,7 @@ import { File } from '@babel/core';
 
 import { placeMutant } from '../mutant-placers';
 import { mutate } from '../mutators';
-import { declareGlobal, isTypeAnnotation, isImportDeclaration } from '../util/syntax-helpers';
+import { instrumentationBabelHeader, isTypeAnnotation, isImportDeclaration } from '../util/syntax-helpers';
 import { AstFormat } from '../syntax';
 
 import { AstTransformer } from '.';
@@ -33,5 +33,5 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
       }
     },
   });
-  root.program.body.unshift(declareGlobal);
+  root.program.body.unshift(...instrumentationBabelHeader);
 };

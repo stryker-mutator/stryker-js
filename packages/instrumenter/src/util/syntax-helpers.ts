@@ -7,49 +7,58 @@ import { Mutant } from '../mutant';
 
 export { ID };
 
+const STRYKER_NAMESPACE_HELPER = 'stryNS_9fa48';
+const COVER_MUTANT_HELPER = 'stryCov_9fa48';
+const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
+
 /**
- * Returns syntax for the global header
+ * Returns syntax for the header if JS/TS files
  */
-export const declareGlobal = parse(`var ${ID.GLOBAL} = (function(g){
-  if (g.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
-    g.${ID.ACTIVE_MUTANT} = Number(g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE});
+export const instrumentationBabelHeader = parse(`function ${STRYKER_NAMESPACE_HELPER}(){
+  var g = new Function("return this")();
+  var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
+  if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
+    ns.${ID.ACTIVE_MUTANT} = Number(g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE});
   }
-  g.${ID.MUTATION_COVERAGE_OBJECT} = g.${ID.MUTATION_COVERAGE_OBJECT} || { static: {}, perTest: {} };
-  g.${ID.COVER_MUTANT_HELPER_METHOD} = g.${ID.COVER_MUTANT_HELPER_METHOD} || function () {
-    var c = g.${ID.MUTATION_COVERAGE_OBJECT}.static;
-    if (g.__currentTestId__) {
-      c = g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] =  g.${ID.MUTATION_COVERAGE_OBJECT}.perTest[g.__currentTestId__] || {};
+  function retrieveNS(){
+    return ns;
+  }
+  ${STRYKER_NAMESPACE_HELPER} = retrieveNS;
+  return retrieveNS();
+}
+${STRYKER_NAMESPACE_HELPER}();
+
+function ${COVER_MUTANT_HELPER}() {
+  var ns = ${STRYKER_NAMESPACE_HELPER}();
+  var cov = ns.${ID.MUTATION_COVERAGE_OBJECT} || (ns.${ID.MUTATION_COVERAGE_OBJECT} = { static: {}, perTest: {} });
+  function cover() {
+    var c = cov.static;
+    if (ns.${ID.CURRENT_TEST_ID}) {
+      c = cov.perTest[ns.${ID.CURRENT_TEST_ID}] = cov.perTest[ns.${ID.CURRENT_TEST_ID}] || {};
     }
     var a = arguments;
     for(var i=0; i < a.length; i++){
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
-  };
-  return g;
-})(new Function("return this")())`).program.body[0] as types.VariableDeclaration;
+  }
+  ${COVER_MUTANT_HELPER} = cover;
+  cover.apply(null, arguments);
+}
+function ${IS_MUTANT_ACTIVE_HELPER}(id) {
+  var ns = ${STRYKER_NAMESPACE_HELPER}();
+  function isActive(id) {
+    return ns.${ID.ACTIVE_MUTANT} === id;
+  }
+  ${IS_MUTANT_ACTIVE_HELPER} = isActive;
+  return isActive(id);
+}`).program.body;
 
 /**
  * returns syntax for `global.activeMutant === $mutantId`
  * @param mutantId The id of the mutant to switch
  */
-export function mutantTestExpression(mutantId: number): types.BinaryExpression {
-  return types.binaryExpression('===', memberExpressionChain(ID.GLOBAL, ID.ACTIVE_MUTANT), types.numericLiteral(mutantId));
-}
-
-/**
- * Creates a member expression chain: `memberExpressionChain('a', 'b', 'c', 4)` =>  `a.b.c[4]`
- */
-export function memberExpressionChain(...identifiers: Array<string | number>): types.Identifier | types.MemberExpression {
-  const currentIdentifier = identifiers[identifiers.length - 1];
-  if (identifiers.length === 1) {
-    return types.identifier(currentIdentifier.toString());
-  } else {
-    return types.memberExpression(
-      memberExpressionChain(...identifiers.slice(0, identifiers.length - 1)),
-      types.identifier(currentIdentifier.toString()),
-      /* computed */ typeof currentIdentifier === 'number'
-    );
-  }
+export function mutantTestExpression(mutantId: number): types.CallExpression {
+  return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [types.numericLiteral(mutantId)]);
 }
 
 interface Position {
@@ -130,7 +139,7 @@ export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>,
 export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpression?: types.Expression): types.Expression {
   const sequence: types.Expression[] = [
     types.callExpression(
-      memberExpressionChain(ID.GLOBAL, ID.COVER_MUTANT_HELPER_METHOD),
+      types.identifier(COVER_MUTANT_HELPER),
       mutants.map((mutant) => types.numericLiteral(mutant.id))
     ),
   ];

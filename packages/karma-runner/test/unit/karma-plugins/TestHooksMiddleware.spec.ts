@@ -36,7 +36,7 @@ describe(TestHooksMiddleware.name, () => {
         sut.configureCoverageAnalysis('perTest');
         expect(sut.currentTestHooks)
           .contains('window.__strykerShouldReportCoverage__ = true')
-          .contains('window.__currentTestId__ = spec.id')
+          .contains('window.__stryker__.currentTestId = spec.id')
           .and.contains('jasmine.getEnv().addReporter(')
           .and.not.contains('beforeEach(function() {');
       });
@@ -46,7 +46,7 @@ describe(TestHooksMiddleware.name, () => {
         sut.configureCoverageAnalysis('perTest');
         expect(sut.currentTestHooks)
           .contains('window.__strykerShouldReportCoverage__ = true')
-          .contains('window.__currentTestId__ = this.currentTest && this.currentTest.fullTitle()')
+          .contains('window.__stryker__.currentTestId = this.currentTest && this.currentTest.fullTitle()')
           .and.contains('beforeEach(function() {')
           .and.not.contains('jasmine.getEnv().addReporter(');
       });
@@ -58,9 +58,15 @@ describe(TestHooksMiddleware.name, () => {
       sut.configureActiveMutant(factory.mutantRunOptions());
       expect(sut.currentTestHooks).contains('window.__strykerShouldReportCoverage__ = false');
     });
-    it('should set the "__activeMutant__" id', () => {
+
+    it('should declare the __stryker__ namespace', () => {
       sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
-      expect(sut.currentTestHooks).contains('window.__activeMutant__=42');
+      expect(sut.currentTestHooks).contains('window.__stryker__ = window.__stryker__ || {}');
+    });
+
+    it('should set the "activeMutant" id', () => {
+      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = 42');
     });
 
     it("should ignore the test filter if the current test framework doesn't support it", () => {

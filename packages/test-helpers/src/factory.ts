@@ -1,5 +1,14 @@
 import Ajv = require('ajv');
-import { File, Location, MutationScoreThresholds, StrykerOptions, strykerCoreSchema, WarningOptions, Mutant } from '@stryker-mutator/api/core';
+import {
+  File,
+  Location,
+  MutationScoreThresholds,
+  StrykerOptions,
+  strykerCoreSchema,
+  WarningOptions,
+  Mutant,
+  MutantCoverage,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import {
   MatchedMutant,
@@ -31,7 +40,6 @@ import {
   MutantRunStatus,
   TimeoutMutantRunResult,
   ErrorMutantRunResult,
-  MutantCoverage,
   TestStatus,
   TestResult,
 } from '@stryker-mutator/api/test_runner';

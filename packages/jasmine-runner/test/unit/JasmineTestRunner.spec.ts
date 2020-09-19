@@ -6,6 +6,8 @@ import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator
 import Jasmine = require('jasmine');
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
+import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+
 import * as helpers from '../../src/helpers';
 import * as pluginTokens from '../../src/pluginTokens';
 import { JasmineTestRunner } from '../../src';
@@ -29,7 +31,10 @@ describe(JasmineTestRunner.name, () => {
     directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);
     jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
     testInjector.options.jasmineConfigFile = 'jasmineConfFile';
-    sut = testInjector.injector.provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock).injectClass(JasmineTestRunner);
+    sut = testInjector.injector
+      .provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock)
+      .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
+      .injectClass(JasmineTestRunner);
   });
 
   describe('init', () => {
@@ -73,9 +78,9 @@ describe(JasmineTestRunner.name, () => {
       expect(actualSpecFilter({ id: 2 })).false;
     });
 
-    it('should set the __activeMutant__ on global scope', async () => {
+    it('should set the activeMutant on global scope', async () => {
       actEmptyMutantRun(undefined, factory.mutant({ id: 23 }));
-      expect(global.__activeMutant__).eq(23);
+      expect(global[INSTRUMENTER_CONSTANTS.NAMESPACE]?.activeMutant).eq(23);
     });
 
     function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {
@@ -118,7 +123,7 @@ describe(JasmineTestRunner.name, () => {
           },
           static: {},
         };
-        global.__mutantCoverage__ = expectedMutationCoverage;
+        global.__stryker__!.mutantCoverage = expectedMutationCoverage;
         jasmineStub.execute.callsFake(() => {
           reporter.jasmineDone!(createRunDetails());
         });
@@ -142,7 +147,7 @@ describe(JasmineTestRunner.name, () => {
         perTest: {},
         static: {},
       };
-      global.__mutantCoverage__ = expectedMutationCoverage;
+      global.__stryker__!.mutantCoverage = expectedMutationCoverage;
       jasmineStub.execute.callsFake(() => {
         reporter.jasmineDone!(createRunDetails());
       });
@@ -167,10 +172,10 @@ describe(JasmineTestRunner.name, () => {
         const spec0 = createCustomReporterResult({ id: 'spec0' });
         const spec1 = createCustomReporterResult({ id: 'spec23' });
         reporter.specStarted!(spec0);
-        firstCurrentTestId = global.__currentTestId__;
+        firstCurrentTestId = global.__stryker__!.currentTestId;
         reporter.specDone!(spec0);
         reporter.specStarted!(spec1);
-        secondCurrentTestId = global.__currentTestId__;
+        secondCurrentTestId = global.__stryker__!.currentTestId;
         reporter.specDone!(spec1);
         reporter.jasmineDone!(createRunDetails());
       });
@@ -189,7 +194,7 @@ describe(JasmineTestRunner.name, () => {
       jasmineStub.execute.callsFake(() => {
         const spec0 = createCustomReporterResult({ id: 'spec0' });
         reporter.specStarted!(spec0);
-        firstCurrentTestId = global.__currentTestId__;
+        firstCurrentTestId = global.__stryker__!.currentTestId;
         reporter.specDone!(spec0);
         reporter.jasmineDone!(createRunDetails());
       });
