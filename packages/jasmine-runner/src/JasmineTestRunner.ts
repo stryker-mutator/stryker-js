@@ -34,7 +34,11 @@ export class JasmineTestRunner implements TestRunner {
   private readonly instrumenterContext: InstrumenterContext;
 
   public static inject = tokens(commonTokens.options, pluginTokens.directoryRequireCache, pluginTokens.globalNamespace);
-  constructor(options: StrykerOptions, private readonly requireCache: I<DirectoryRequireCache>, globalNamespace: string) {
+  constructor(
+    options: StrykerOptions,
+    private readonly requireCache: I<DirectoryRequireCache>,
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+  ) {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
     this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
   }

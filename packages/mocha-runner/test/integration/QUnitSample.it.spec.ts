@@ -4,11 +4,11 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunner } from '../../src';
+import { createMochaTestRunnerFactory } from '../../src';
 
 describe('QUnit sample', () => {
   function createSut() {
-    return testInjector.injector.injectFunction(createMochaTestRunner);
+    return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
   }
 
   it('should work when configured with "qunit" ui', async () => {

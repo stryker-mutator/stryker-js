@@ -4,7 +4,7 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import { MochaTestRunner, createMochaTestRunner } from '../../src';
+import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src';
 import { createMochaOptions } from '../helpers/factories';
 
 function resolve(fileName: string) {
@@ -20,7 +20,7 @@ describe('Running an instrumented project', () => {
       resolve('./testResources/sample-project-instrumented/MyMathSpec.js'),
     ];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
-    sut = testInjector.injector.injectFunction(createMochaTestRunner);
+    sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
     await sut.init();
   });
 

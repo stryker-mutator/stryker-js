@@ -1,7 +1,6 @@
-import { InstrumenterContext, StrykerOptions } from '@stryker-mutator/api/core';
+import { InstrumenterContext, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-
 import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
 
 import {
@@ -43,7 +42,7 @@ export class MochaTestRunner implements TestRunner {
     private readonly loader: I<MochaOptionsLoader>,
     private readonly mochaAdapter: I<MochaAdapter>,
     private readonly requireCache: I<DirectoryRequireCache>,
-    globalNamespace: string
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     StrykerMochaReporter.log = log;
     this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
