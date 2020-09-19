@@ -5,7 +5,7 @@ import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/a
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunner, MochaTestRunner } from '../../src';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 
@@ -21,7 +21,7 @@ describe('Running a sample project', () => {
   let spec: string[];
 
   function createSut() {
-    return testInjector.injector.injectFunction(createMochaTestRunner);
+    return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
   }
 
   describe('when tests pass', () => {
