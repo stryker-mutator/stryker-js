@@ -5,14 +5,14 @@ import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test_runner';
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import { JasmineTestRunner, createJasmineTestRunner } from '../../src';
+import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src';
 
 describe('JasmineRunner integration with code instrumentation', () => {
   let sut: JasmineTestRunner;
 
   beforeEach(() => {
     process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init-instrumented'));
-    sut = testInjector.injector.injectFunction(createJasmineTestRunner);
+    sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });
 
   afterEach(async () => {

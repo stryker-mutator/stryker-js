@@ -10,11 +10,13 @@ const instrumenter = new Instrumenter({
 
 async function main() {
   await instrument(['./packages/mocha-runner/testResources/sample-project/MyMath.js'],
-    './packages/mocha-runner/testResources/sample-project-instrumented', '__stryker2__');
+    './packages/mocha-runner/testResources/sample-project-instrumented',
+    '__stryker2__');
   await instrument([
     './packages/jasmine-runner/testResources/jasmine-init/lib/jasmine_examples/Player.js',
     './packages/jasmine-runner/testResources/jasmine-init/lib/jasmine_examples/Song.js'
-  ], './packages/jasmine-runner/testResources/jasmine-init-instrumented/lib/jasmine_examples');
+  ], './packages/jasmine-runner/testResources/jasmine-init-instrumented/lib/jasmine_examples',
+    '__stryker2__');
   await instrument([
     './packages/karma-runner/testResources/sampleProject/src/Add.js',
     './packages/karma-runner/testResources/sampleProject/src/Circle.js',
