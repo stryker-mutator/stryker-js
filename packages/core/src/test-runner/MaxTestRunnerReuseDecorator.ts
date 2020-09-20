@@ -14,7 +14,7 @@ export default class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
   constructor(testRunnerProducer: () => TestRunner2, options: Pick<StrykerOptions, 'maxTestRunnerReuse'>) {
     super(testRunnerProducer);
 
-    this.restartAfter = options.maxTestRunnerReuse = 0;
+    this.restartAfter = options.maxTestRunnerReuse || 0;
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
