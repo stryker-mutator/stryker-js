@@ -20,13 +20,20 @@ import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 import { Jasmine, toStrykerTestResult } from './helpers';
 import * as pluginTokens from './pluginTokens';
 
-createJasmineTestRunner.inject = tokens(commonTokens.injector);
-export function createJasmineTestRunner(injector: Injector<PluginContext>) {
-  return injector
-    .provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache)
-    .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
-    .injectClass(JasmineTestRunner);
+export function createJasmineTestRunnerFactory(
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+) {
+  createJasmineTestRunner.inject = tokens(commonTokens.injector);
+  function createJasmineTestRunner(injector: Injector<PluginContext>) {
+    return injector
+      .provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache)
+      .provideValue(pluginTokens.globalNamespace, namespace)
+      .injectClass(JasmineTestRunner);
+  }
+  return createJasmineTestRunner;
 }
+
+export const createJasmineTestRunner = createJasmineTestRunnerFactory();
 
 export class JasmineTestRunner implements TestRunner {
   private readonly jasmineConfigFile: string | undefined;

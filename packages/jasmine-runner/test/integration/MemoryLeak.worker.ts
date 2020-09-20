@@ -5,7 +5,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
 
-import { createJasmineTestRunner } from '../../src';
+import { createJasmineTestRunnerFactory } from '../../src';
 
 /**
  * This file will run the mocha runner a number of times in a test suite that is designed
@@ -26,7 +26,7 @@ if (require.main === module) {
 
 async function main() {
   process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'big-project'));
-  const jasmineRunner = testInjector.injector.injectFunction(createJasmineTestRunner);
+  const jasmineRunner = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   await jasmineRunner.init();
   await doDryRun();
 

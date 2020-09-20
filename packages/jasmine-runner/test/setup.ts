@@ -4,16 +4,15 @@ import * as chaiAsPromised from 'chai-as-promised';
 import * as sinonChai from 'sinon-chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import * as sinon from 'sinon';
-import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 export const mochaHooks = {
   afterEach() {
-    delete global[INSTRUMENTER_CONSTANTS.NAMESPACE]?.activeMutant;
-    delete global[INSTRUMENTER_CONSTANTS.NAMESPACE]?.currentTestId;
-    delete global[INSTRUMENTER_CONSTANTS.NAMESPACE]?.mutantCoverage;
+    delete global.__stryker2__?.activeMutant;
+    delete global.__stryker2__?.currentTestId;
+    delete global.__stryker2__?.mutantCoverage;
     global.__testsInCurrentJasmineRun = [];
 
     sinon.restore();
