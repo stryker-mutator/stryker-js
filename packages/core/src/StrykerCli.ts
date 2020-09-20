@@ -93,7 +93,7 @@ export default class StrykerCli {
         parseInt
       )
       .option(
-        '--restartAfterRuns <n>',
+        '--maxTestRunnerReuse <n>',
         'Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)',
         parseInt
       )

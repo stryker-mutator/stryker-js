@@ -177,9 +177,9 @@ describe(OptionsValidator.name, () => {
     });
   });
 
-  it('should be invalid with non-numeric restartAfterRuns', () => {
-    breakConfig('restartAfterRuns', 'break');
-    actValidationErrors('Config option "restartAfterRuns" has the wrong type. It should be a number, but was a string.');
+  it('should be invalid with non-numeric maxTestRunnerReuse', () => {
+    breakConfig('maxTestRunnerReuse', 'break');
+    actValidationErrors('Config option "maxTestRunnerReuse" has the wrong type. It should be a number, but was a string.');
   });
 
   describe('transpilers', () => {

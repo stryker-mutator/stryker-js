@@ -4,7 +4,7 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 1,
-  "restartAfterRuns": 1,
+  "maxTestRunnerReuse": 0,
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder",
