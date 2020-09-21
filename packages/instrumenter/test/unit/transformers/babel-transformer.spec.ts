@@ -15,13 +15,13 @@ import { instrumentationBabelHeader } from '../../../src/util/syntax-helpers';
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
   let mutateStub: sinon.SinonStubbedMember<typeof mutators.mutate>;
-  let mutantPlacerStub: sinon.SinonStubbedMember<typeof mutantPlacers.placeMutant>;
+  let mutantPlacerStub: sinon.SinonStubbedMember<typeof mutantPlacers.placeMutants>;
   let mutantCollectorMock: sinon.SinonStubbedInstance<MutantCollector>;
 
   beforeEach(() => {
     context = transformerContextStub();
     mutateStub = sinon.stub(mutators, 'mutate');
-    mutantPlacerStub = sinon.stub(mutantPlacers, 'placeMutant');
+    mutantPlacerStub = sinon.stub(mutantPlacers, 'placeMutants');
     mutantCollectorMock = sinon.createStubInstance(MutantCollector);
     mutateStub.returns([]);
   });

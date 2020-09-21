@@ -2,6 +2,9 @@ import { types, traverse, NodePath, parseSync } from '@babel/core';
 import { expect } from 'chai';
 import generate from '@babel/generator';
 
+// @ts-expect-error The babel types don't define "File" yet
+import { File } from '@babel/core';
+
 export type AstExpectation = (nodePath: NodePath) => boolean;
 
 /**
@@ -24,15 +27,27 @@ export function expectAst(actual: types.File, assertion: AstExpectation): void {
 }
 
 export function parseJS(code: string) {
-  return parseSync(code)! as types.File;
+  // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
+  // https://github.com/babel/babel/issues/11889
+  const { ast } = new File({ filename: 'foo.js' }, { code, ast: parseSync(code) });
+  return ast as types.File;
 }
 
 export function parseTS(code: string, fileName = 'example.ts') {
-  return parseSync(code, {
-    presets: [require.resolve('@babel/preset-typescript')],
-    filename: fileName,
-    plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
-  })! as types.File;
+  // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
+  // https://github.com/babel/babel/issues/11889
+  const { ast } = new File(
+    { filename: 'foo.js' },
+    {
+      code,
+      ast: parseSync(code, {
+        presets: [require.resolve('@babel/preset-typescript')],
+        filename: fileName,
+        plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
+      }),
+    }
+  );
+  return ast as types.File;
 }
 
 export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (nodePath: NodePath<types.Node>) => boolean): NodePath<T> {
