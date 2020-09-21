@@ -1,7 +1,7 @@
 import { Observable, Subject, merge } from 'rxjs';
 import { flatMap, filter, shareReplay } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
-import { tokens } from 'typed-inject';
+import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { Checker } from '@stryker-mutator/api/check';
 
@@ -32,7 +32,7 @@ export function createCheckerPool(factory: () => Checker, concurrencyToken$: Obs
  *
  * Please recycle! 🚮
  */
-export class Pool<T extends Worker> {
+export class Pool<T extends Worker> implements Disposable {
   private readonly recycleBin = new Subject<T>();
   private readonly allWorkers: T[] = [];
   public readonly worker$: Observable<T>;

@@ -46,8 +46,17 @@ describe('instrumenter integration', () => {
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });
-  it('should be able to instrument TS type definitions (should not produce mutants)', async () => {
-    await arrangeAndActAssert('type-definitions.ts');
+
+  describe('type declarations', () => {
+    it('should not produce mutants for TS type definitions', async () => {
+      await arrangeAndActAssert('type-definitions.ts');
+    });
+    it('should not produce mutants for flow-types', async () => {
+      await arrangeAndActAssert('flow-typed.js', { plugins: ['flow'] });
+    });
+    it('should not produce mutants for a TS declaration file', async () => {
+      await arrangeAndActAssert('ts-declarations.ts');
+    });
   });
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {

@@ -5,7 +5,7 @@ import { File } from '@babel/core';
 
 import { placeMutants } from '../mutant-placers';
 import { mutate } from '../mutators';
-import { instrumentationBabelHeader, isTypeAnnotation, isImportDeclaration } from '../util/syntax-helpers';
+import { instrumentationBabelHeader, isTypeNode, isImportDeclaration } from '../util/syntax-helpers';
 import { AstFormat } from '../syntax';
 
 import { AstTransformer } from '.';
@@ -16,7 +16,7 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
   const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
   traverse(file.ast, {
     enter(path) {
-      if (isTypeAnnotation(path) || isImportDeclaration(path) || path.isDecorator()) {
+      if (isTypeNode(path) || isImportDeclaration(path) || path.isDecorator()) {
         // Don't mutate type declarations or import statements
         path.skip();
       } else {

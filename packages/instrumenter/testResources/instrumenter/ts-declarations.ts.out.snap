@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration type declarations should not produce mutants for TS type definitions 1`] = `
+exports[`instrumenter integration type declarations should not produce mutants for a TS declaration file 1`] = `
 "function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
@@ -55,8 +55,7 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-/**
- * @see https://github.com/stryker-mutator/stryker/issues/2465
- */
-const flatten = (require('lodash/flatten') as typeof import('lodash/flatten'));"
+export declare const globalNamespace = \\"globalNamespace\\";
+declare function foo(): 'foo';
+declare module 'express' {}"
 `;
