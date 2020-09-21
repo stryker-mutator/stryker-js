@@ -149,18 +149,50 @@ export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpr
   return types.sequenceExpression(sequence);
 }
 
-export function isTypeAnnotation(path: NodePath): boolean {
+export function isTypeNode(path: NodePath): boolean {
   return (
-    path.isInterfaceDeclaration() ||
     path.isTypeAnnotation() ||
-    path.isTSAsExpression() ||
-    types.isTSInterfaceDeclaration(path.node) ||
-    types.isTSTypeAnnotation(path.node) ||
-    types.isTSTypeAliasDeclaration(path.node) ||
-    types.isTSModuleDeclaration(path.node) ||
-    types.isTSEnumDeclaration(path.node)
+    flowTypeAnnotationNodeTypes.includes(path.node.type) ||
+    tsTypeAnnotationNodeTypes.includes(path.node.type) ||
+    isDeclareVariableStatement(path)
   );
 }
+
+/**
+ * Determines whether or not it is a declare variable statement node.
+ * @example
+ * declare const foo: 'foo';
+ */
+function isDeclareVariableStatement(path: NodePath): boolean {
+  return path.isVariableDeclaration() && path.node.declare === true;
+}
+
+const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
+  'TSAsExpression',
+  'TSInterfaceDeclaration',
+  'TSTypeAnnotation',
+  'TSTypeAliasDeclaration',
+  'TSModuleDeclaration',
+  'TSEnumDeclaration',
+  'TSDeclareFunction',
+]);
+
+const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
+  'DeclareClass',
+  'DeclareFunction',
+  'DeclareInterface',
+  'DeclareModule',
+  'DeclareModuleExports',
+  'DeclareTypeAlias',
+  'DeclareOpaqueType',
+  'DeclareVariable',
+  'DeclareExportDeclaration',
+  'DeclareExportAllDeclaration',
+  'InterfaceDeclaration',
+  'OpaqueType',
+  'TypeAlias',
+  'InterfaceDeclaration',
+]);
 
 export function isImportDeclaration(path: NodePath): boolean {
   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();

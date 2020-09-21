@@ -57,6 +57,14 @@ describe('babel-transformer', () => {
     expect(mutantPlacerStub).calledWith(sinon.match.object, [mutant]);
   });
 
+  it('should place mutants in variable declarations', () => {
+    // Arrange
+    const ast = createJSAst({ rawContent: 'const foo = "bar" ' });
+    transformBabel(ast, mutantCollectorMock, context);
+    expectMutateCalledWith((t) => t.isVariableDeclaration());
+    expectMutateCalledWith((t) => t.isStringLiteral());
+  });
+
   it('should mark placed mutants as placed in the mutant collector', () => {
     // Arrange
     const ast = createJSAst({ rawContent: 'foo' });
@@ -93,6 +101,20 @@ describe('babel-transformer', () => {
       expectMutateNotCalledWith((t) => t.isTSLiteralType());
       expectMutateNotCalledWith((t) => t.isStringLiteral() && t.parentPath.isTSLiteralType());
     });
+
+    it('should skip TSDeclareFunction statements', () => {
+      const ast = createTSAst({ rawContent: 'declare function foo(): "foo";' });
+      transformBabel(ast, mutantCollectorMock, context);
+      expectMutateNotCalledWith((t) => t.isTSDeclareFunction());
+      expectMutateNotCalledWith((t) => t.isStringLiteral());
+    });
+
+    it('should skip `declare const foo: "foo"` statements', () => {
+      const ast = createTSAst({ rawContent: 'declare const foo: "foo";' });
+      transformBabel(ast, mutantCollectorMock, context);
+      expectMutateNotCalledWith((t) => t.isVariableDeclaration());
+      expectMutateNotCalledWith((t) => t.isStringLiteral());
+    });
   });
 
   it('should skip import declarations', () => {
@@ -115,5 +137,14 @@ describe('babel-transformer', () => {
         expect.fail(`Mutate called with node "${generate(nodePath.node).code}", but not expected`);
       }
     });
+  }
+  function expectMutateCalledWith(predicate: (nodePath: NodePath) => boolean) {
+    expect(
+      mutateStub.getCalls().some((call) => {
+        const nodePath: NodePath = call.args[0];
+        return predicate(nodePath);
+      }),
+      `Mutate not called with ${predicate.toString()}`
+    ).true;
   }
 });
