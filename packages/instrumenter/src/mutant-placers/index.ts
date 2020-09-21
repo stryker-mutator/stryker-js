@@ -1,3 +1,5 @@
+import path from 'path';
+
 export * from './mutant-placer';
 import { NodePath } from '@babel/core';
 
@@ -14,8 +16,10 @@ export const MUTANT_PLACERS = Object.freeze([expressionMutantPlacer, statementMu
  * @see https://github.com/stryker-mutator/stryker/issues/1514
  * @param node The ast node to try and replace with a mutated
  * @param mutants The mutants to place in the AST node
+ * @param fileName The name of the file where the mutants are placed
+ * @param mutantPlacers The mutant placers to use (for unit testing purposes)
  */
-export function placeMutant(node: NodePath, mutants: Mutant[], mutantPlacers: readonly MutantPlacer[] = MUTANT_PLACERS) {
+export function placeMutants(node: NodePath, mutants: Mutant[], fileName: string, mutantPlacers: readonly MutantPlacer[] = MUTANT_PLACERS) {
   if (mutants.length) {
     for (const placer of mutantPlacers) {
       try {
@@ -23,10 +27,12 @@ export function placeMutant(node: NodePath, mutants: Mutant[], mutantPlacers: re
           return true;
         }
       } catch (error) {
-        throw new Error(
-          `Error while placing mutants of type(s) "${mutants.map((mutant) => mutant.mutatorName).join(', ')}" on ${node.node.loc?.start.line}:${
-            node.node.loc?.start.column
-          } with ${placer.name}. ${error.stack}`
+        const location = `${path.relative(process.cwd(), fileName)}:${node.node.loc?.start.line}:${node.node.loc?.start.column}`;
+        const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}"`;
+        throw node.buildCodeFrameError(
+          `${location} ${message}. Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
+            message
+          )}.`
         );
       }
     }
