@@ -1,0 +1,8 @@
+{
+  "name": "coverage-analysis",
+  "description": "A e2e test for --coverageAnalysis",
+  "scripts": {
+    "test:unit": "jasmine",
+    "test": "mocha --no-package --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
+  }
+}
