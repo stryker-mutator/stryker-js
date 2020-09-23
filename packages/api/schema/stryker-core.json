@@ -321,7 +321,7 @@
       ]
     },
     "appendPlugins": {
-      "description": "With 'appendPlugins' you can add plugins to be resolved without overwriting plugins defined in the `plugins` config. This is primarily for when you want to have plugins appended by command line without overwriting plugins defined in a config file.",
+      "description": "A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.",
       "type": "array",
       "items": {
         "type": "string"
