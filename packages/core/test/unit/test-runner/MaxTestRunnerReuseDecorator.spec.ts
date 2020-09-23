@@ -65,4 +65,24 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
     expect(sut.dispose).to.have.been.callCount(1);
     expect(result).to.eq(expectedResult);
   });
+
+  it('should correctly reset runs after dispose', async () => {
+    const sut = getSut(2);
+
+    await sut.mutantRun(runOptions);
+    expect(sut.runs).to.equal(1);
+    await sut.dispose();
+    expect(sut.runs).to.equal(0);
+  });
+
+  it('should correctly reset runs after running more than maximum run', async () => {
+    const sut = getSut(2);
+
+    await sut.mutantRun(runOptions);
+    expect(sut.runs).to.equal(1);
+    await sut.mutantRun(runOptions);
+    expect(sut.runs).to.equal(2);
+    await sut.mutantRun(runOptions);
+    expect(sut.runs).to.equal(1);
+  });
 });
