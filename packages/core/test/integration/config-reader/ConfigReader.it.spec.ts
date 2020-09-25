@@ -149,5 +149,17 @@ describe(ConfigReader.name, () => {
         expect(() => sut.readConfig()).throws('Invalid config file. Inner error: SyntaxError: Unexpected identifier');
       });
     });
+
+    describe('deprecation informations', () => {
+      beforeEach(() => {
+        sut = createSut({ configFile: 'testResources/config-reader/json-and-js/stryker.conf.js' });
+      });
+
+      it('should report deprecation on module.export = function(config) {}', () => {
+        expect(testInjector.logger.warn).called.with(
+          'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {} or JSON file respectively'
+        );
+      });
+    });
   });
 });

@@ -30,6 +30,7 @@ export default class ConfigReader {
     const configModule = this.loadConfigModule();
     let options: StrykerOptions;
     if (typeof configModule === 'function') {
+      this.log.warn('Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {} or JSON file respectively');
       options = defaultOptions();
       configModule(createConfig(options));
     } else {
