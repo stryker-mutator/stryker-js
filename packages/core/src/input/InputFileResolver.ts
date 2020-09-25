@@ -171,8 +171,7 @@ export default class InputFileResolver {
 
   private async readFile(fileName: string): Promise<File | null> {
     try {
-      const p = fs.promises.readFile(fileName);
-      const content = await p;
+      const content = await fs.promises.readFile(fileName);
       const file = new File(fileName, content);
       this.reportSourceFilesRead(file);
       return file;
