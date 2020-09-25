@@ -24,7 +24,7 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
       const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
       jestConfiguration.testEnvironment = 'jsdom';
       this.log.warn(
-        'DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to "create-react-app"'
+        'DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app and update your Stryker config setting to "create-react-app" (see https://create-react-app.dev/docs/adding-typescript/)'
       );
       return jestConfiguration;
     } catch (e) {
