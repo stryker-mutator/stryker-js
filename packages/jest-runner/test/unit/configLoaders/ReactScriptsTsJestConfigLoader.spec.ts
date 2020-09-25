@@ -27,7 +27,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
 
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsTsPackagePath);
-    
+
     loggerStub = logger();
 
     sut = new ReactScriptsTSJestConfigLoader(loggerStub, (requireResolveStub as unknown) as RequireResolve, projectRoot);
@@ -42,7 +42,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
   it('should log a deprecation warning', () => {
     sut.loadConfig();
 
-    assert(loggerStub.warn.calledWith(`DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to 'create-react-app'`));
+    assert(loggerStub.warn.calledWith('DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to "create-react-app"'));
   });
 
   it('should generate a configuration', () => {

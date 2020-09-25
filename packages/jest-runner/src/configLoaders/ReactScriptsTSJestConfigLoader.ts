@@ -23,7 +23,7 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
       jestConfiguration.testEnvironment = 'jsdom';
-      this.log.warn(`DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to 'create-react-app'`);
+      this.log.warn('DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to "create-react-app"');
       return jestConfiguration;
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
