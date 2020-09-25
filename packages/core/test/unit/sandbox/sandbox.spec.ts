@@ -5,7 +5,6 @@ import npmRunPath = require('npm-run-path');
 import { expect } from 'chai';
 import sinon = require('sinon');
 import * as mkdirp from 'mkdirp';
-
 import { testInjector, tick } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
