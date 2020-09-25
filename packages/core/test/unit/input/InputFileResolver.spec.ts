@@ -147,9 +147,9 @@ describe(InputFileResolver.name, () => {
     });
     const files = await sut.resolve();
     assertions.expectTextFilesEqual(files.files, [
-      new File(path.resolve('å.js'), ''),
-      new File(path.resolve('src/🐱‍👓ninja.cat.js'), ''),
       new File(path.resolve('a\\test\\file.js'), ''),
+      new File(path.resolve('src/🐱‍👓ninja.cat.js'), ''),
+      new File(path.resolve('å.js'), ''),
     ]);
   });
 
@@ -199,10 +199,10 @@ describe(InputFileResolver.name, () => {
       expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js'), path.resolve('/mute2.js')]);
       expect(result.files.map((file) => file.name)).to.deep.equal([
         path.resolve('/file1.js'),
-        path.resolve('/mute1.js'),
         path.resolve('/file2.js'),
-        path.resolve('/mute2.js'),
         path.resolve('/file3.js'),
+        path.resolve('/mute1.js'),
+        path.resolve('/mute2.js'),
       ]);
     });
 
@@ -221,10 +221,10 @@ describe(InputFileResolver.name, () => {
       await sut.resolve();
       const expected: SourceFile[] = [
         { path: path.resolve('/file1.js'), content: 'file 1 content' },
-        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
         { path: path.resolve('/file2.js'), content: 'file 2 content' },
-        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
         { path: path.resolve('/file3.js'), content: 'file 3 content' },
+        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
+        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
       ];
       expect(reporterMock.onAllSourceFilesRead).calledWith(expected);
     });
@@ -236,10 +236,10 @@ describe(InputFileResolver.name, () => {
       await sut.resolve();
       const expected: SourceFile[] = [
         { path: path.resolve('/file1.js'), content: 'file 1 content' },
-        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
         { path: path.resolve('/file2.js'), content: 'file 2 content' },
-        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
         { path: path.resolve('/file3.js'), content: 'file 3 content' },
+        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
+        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
       ];
       expected.forEach((sourceFile) => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
     });
@@ -333,7 +333,7 @@ describe(InputFileResolver.name, () => {
     it('should order files by expression order', async () => {
       testInjector.options.files = ['file2', 'file*'];
       const result = await createSut().resolve();
-      assertFilesEqual(result.files, files(['/file2.js', 'file 2 content'], ['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
+      assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
     });
   });
 

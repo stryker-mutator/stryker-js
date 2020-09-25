@@ -3,7 +3,7 @@ import * as path from 'path';
 import fs = require('fs');
 
 import { from } from 'rxjs';
-import { filter, mergeMap, toArray } from 'rxjs/operators';
+import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -163,7 +163,9 @@ export default class InputFileResolver {
       .pipe(
         mergeMap((fileName) => this.readFile(fileName), MAX_CONCURRENT_FILE_IO),
         filter(notEmpty),
-        toArray()
+        toArray(),
+        // Filter the files here, so we force a deterministic instrumentation process
+        map((files) => files.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)))
       )
       .toPromise();
     return files;
