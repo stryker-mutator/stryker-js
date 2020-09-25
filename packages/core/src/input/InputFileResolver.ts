@@ -1,7 +1,9 @@
-import * as path from 'path';
-import { promises as fs } from 'fs';
 import { StringDecoder } from 'string_decoder';
+import * as path from 'path';
+import fs = require('fs');
 
+import { from } from 'rxjs';
+import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -10,7 +12,7 @@ import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, Stryker
 
 import { coreTokens } from '../di';
 import StrictReporter from '../reporters/StrictReporter';
-import { glob } from '../utils/fileUtils';
+import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/fileUtils';
 import { defaultOptions } from '../config/OptionsValidator';
 
 import InputFileCollection from './InputFileCollection';
@@ -157,13 +159,21 @@ export default class InputFileResolver {
   }
 
   private async readFiles(fileNames: string[]): Promise<File[]> {
-    const files = await Promise.all(fileNames.map((fileName) => this.readFile(fileName)));
-    return files.filter(notEmpty);
+    const files = from(fileNames)
+      .pipe(
+        mergeMap((fileName) => this.readFile(fileName), MAX_CONCURRENT_FILE_IO),
+        filter(notEmpty),
+        toArray(),
+        // Filter the files here, so we force a deterministic instrumentation process
+        map((files) => files.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)))
+      )
+      .toPromise();
+    return files;
   }
 
   private async readFile(fileName: string): Promise<File | null> {
     try {
-      const content = await fs.readFile(fileName);
+      const content = await fs.promises.readFile(fileName);
       const file = new File(fileName, content);
       this.reportSourceFilesRead(file);
       return file;

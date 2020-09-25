@@ -8,9 +8,11 @@ import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import * as mkdirp from 'mkdirp';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { mergeMap, toArray } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
-import { findNodeModules, symlinkJunction, writeFile } from '../utils/fileUtils';
+import { findNodeModules, MAX_CONCURRENT_FILE_IO, symlinkJunction, writeFile } from '../utils/fileUtils';
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
@@ -75,8 +77,12 @@ export class Sandbox {
   }
 
   private fillSandbox(): Promise<void[]> {
-    const copyPromises = this.files.map((file) => this.fillFile(file));
-    return Promise.all(copyPromises);
+    return from(this.files)
+      .pipe(
+        mergeMap((file) => this.fillFile(file), MAX_CONCURRENT_FILE_IO),
+        toArray()
+      )
+      .toPromise();
   }
 
   private async runBuildCommand() {
@@ -111,12 +117,12 @@ export class Sandbox {
     }
   }
 
-  private fillFile(file: File): Promise<void> {
+  private async fillFile(file: File): Promise<void> {
     const relativePath = path.relative(process.cwd(), file.name);
     const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
     mkdirp.sync(folderName);
     const targetFileName = path.join(folderName, path.basename(relativePath));
     this.fileMap.set(file.name, targetFileName);
-    return writeFile(targetFileName, file.content);
+    await writeFile(targetFileName, file.content);
   }
 }

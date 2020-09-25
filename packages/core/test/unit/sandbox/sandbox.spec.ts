@@ -5,11 +5,10 @@ import npmRunPath = require('npm-run-path');
 import { expect } from 'chai';
 import sinon = require('sinon');
 import * as mkdirp from 'mkdirp';
-
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector, tick } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
@@ -80,7 +79,31 @@ describe(Sandbox.name, () => {
     it('should be able to copy a local file', async () => {
       files.push(new File('localFile.txt', 'foobar'));
       await createSut();
-      expect(fileUtils.writeFile).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.txt'), Buffer.from('foobar'));
+      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.txt'), Buffer.from('foobar'));
+    });
+
+    it('should not open too many file handles', async () => {
+      const maxFileIO = 256;
+      const fileHandles: Array<{ fileName: string; task: Task }> = [];
+      for (let i = 0; i < maxFileIO + 1; i++) {
+        const fileName = `file_${i}.js`;
+        const task = new Task();
+        fileHandles.push({ fileName, task });
+        writeFileStub.withArgs(sinon.match(fileName)).returns(task.promise);
+        files.push(new File(fileName, ''));
+      }
+
+      // Act
+      const onGoingWork = createSut();
+      await tick();
+      expect(writeFileStub).callCount(maxFileIO);
+      fileHandles[0].task.resolve();
+      await tick();
+
+      // Assert
+      expect(writeFileStub).callCount(maxFileIO + 1);
+      fileHandles.forEach(({ task }) => task.resolve());
+      await onGoingWork;
     });
 
     it('should symlink node modules in sandbox directory if exists', async () => {
