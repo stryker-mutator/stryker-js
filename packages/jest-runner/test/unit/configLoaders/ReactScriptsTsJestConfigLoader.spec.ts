@@ -1,9 +1,11 @@
 import path from 'path';
 
+import { Logger } from '@stryker-mutator/api/logging';
+
+import { logger } from '@stryker-mutator/test-helpers/src/factory';
+
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { Logger } from '@stryker-mutator/api/logging';
-import { logger } from '@stryker-mutator/test-helpers/src/factory';
 
 import ReactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
 import * as helper from '../../../src/utils/createReactJestConfig';
@@ -42,7 +44,11 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
   it('should log a deprecation warning', () => {
     sut.loadConfig();
 
-    assert(loggerStub.warn.calledWith('DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to "create-react-app"'));
+    assert(
+      loggerStub.warn.calledWith(
+        'DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app-ts and update your Stryker config setting to "create-react-app"'
+      )
+    );
   });
 
   it('should generate a configuration', () => {
