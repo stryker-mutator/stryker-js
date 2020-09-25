@@ -9,8 +9,12 @@ import * as mkdirp from 'mkdirp';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
+import { from } from 'rxjs';
+
+import { mergeMap, toArray } from 'rxjs/operators';
+
 import { TemporaryDirectory } from '../utils/TemporaryDirectory';
-import { findNodeModules, symlinkJunction, writeFile } from '../utils/fileUtils';
+import { findNodeModules, MAX_CONCURRENT_FILE_IO, symlinkJunction, writeFile } from '../utils/fileUtils';
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
@@ -75,8 +79,12 @@ export class Sandbox {
   }
 
   private fillSandbox(): Promise<void[]> {
-    const copyPromises = this.files.map((file) => this.fillFile(file));
-    return Promise.all(copyPromises);
+    return from(this.files)
+      .pipe(
+        mergeMap((file) => this.fillFile(file), MAX_CONCURRENT_FILE_IO),
+        toArray()
+      )
+      .toPromise();
   }
 
   private async runBuildCommand() {

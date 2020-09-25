@@ -7,6 +7,8 @@ import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
 
+export const MAX_CONCURRENT_FILE_IO = 256;
+
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
     nodeGlob(expression, { nodir: true }, (error, matches) => {

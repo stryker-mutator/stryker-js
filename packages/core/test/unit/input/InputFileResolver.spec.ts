@@ -1,12 +1,12 @@
 import * as os from 'os';
 import * as path from 'path';
-import * as fs from 'fs';
+import fs = require('fs');
 
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
-import { childProcessAsPromised, errorToString } from '@stryker-mutator/util';
+import { childProcessAsPromised, errorToString, Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -29,8 +29,8 @@ describe(InputFileResolver.name, () => {
   beforeEach(() => {
     reporterMock = mock(BroadcastReporter);
     globStub = sinon.stub(fileUtils, 'glob');
-    readFileStub = sinon
-      .stub(fs.promises, 'readFile')
+    readFileStub = sinon.stub(fs.promises, 'readFile');
+    readFileStub
       .withArgs(sinon.match.string)
       .resolves(Buffer.from('')) // fallback
       .withArgs(sinon.match('file1'))
@@ -43,6 +43,7 @@ describe(InputFileResolver.name, () => {
       .resolves(Buffer.from('mutate 1 content'))
       .withArgs(sinon.match('mute2'))
       .resolves(Buffer.from('mutate 2 content'));
+
     globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
     globStub.withArgs('mute1').resolves(['/mute1.js']);
     globStub.withArgs('mute2').resolves(['/mute2.js']);
@@ -152,6 +153,43 @@ describe(InputFileResolver.name, () => {
     ]);
   });
 
+  it('should reject when a globbing expression results in a reject', () => {
+    testInjector.options.files = ['fileError', 'fileError'];
+    testInjector.options.mutate = ['file1'];
+    sut = createSut();
+    const expectedError = new Error('ERROR: something went wrong');
+    globStub.withArgs('fileError').rejects(expectedError);
+    return expect(sut.resolve()).rejectedWith(expectedError);
+  });
+
+  it('should not open too many file handles', async () => {
+    // Arrange
+    const maxFileIO = 256;
+    sut = createSut();
+    const fileHandles: Array<{ fileName: string; task: Task<Buffer> }> = [];
+    for (let i = 0; i < maxFileIO + 1; i++) {
+      const fileName = `file_${i}.js`;
+      const readFileTask = new Task<Buffer>();
+      fileHandles.push({ fileName, task: readFileTask });
+      readFileStub.withArgs(sinon.match(fileName)).returns(readFileTask.promise);
+    }
+    childProcessExecStub.resolves({
+      stdout: Buffer.from(fileHandles.map(({ fileName }) => fileName).join(os.EOL)),
+    });
+
+    // Act
+    const onGoingWork = sut.resolve();
+    await tick();
+    expect(readFileStub).callCount(maxFileIO);
+    fileHandles[0].task.resolve(Buffer.from('content'));
+    await tick();
+
+    // Assert
+    expect(readFileStub).callCount(maxFileIO + 1);
+    fileHandles.forEach(({ task }) => task.resolve(Buffer.from('content')));
+    await onGoingWork;
+  });
+
   describe('with mutate file expressions', () => {
     it('should result in the expected mutate files', async () => {
       testInjector.options.mutate = ['mute*'];
@@ -254,15 +292,6 @@ describe(InputFileResolver.name, () => {
       await sut.resolve();
       expect(testInjector.logger.warn).not.called;
     });
-  });
-
-  it('should reject when a globbing expression results in a reject', () => {
-    testInjector.options.files = ['fileError', 'fileError'];
-    testInjector.options.mutate = ['file1'];
-    sut = createSut();
-    const expectedError = new Error('ERROR: something went wrong');
-    globStub.withArgs('fileError').rejects(expectedError);
-    return expect(sut.resolve()).rejectedWith(expectedError);
   });
 
   describe('when excluding files with "!"', () => {
