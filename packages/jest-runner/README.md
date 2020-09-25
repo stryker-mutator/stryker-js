@@ -51,7 +51,7 @@ The @stryker-mutator/jest-runner also provides a couple of configurable options 
 |----|----|----|---|
 | projectType (optional) | The type of project you are working on. | `custom` | `custom` uses the `config` option (see below)|
 | | | | `create-react-app` when you are using [create-react-app](https://github.com/facebook/create-react-app) |
-| | | | `create-react-app-ts` when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) |
+| | | | `create-react-app-ts` **DEPRECATED** when you are using [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript) (deprecated, please [follow the migration guide](https://create-react-app.dev/docs/adding-typescript/) and move to `create-react-app`) |
 | configFile (optional) | The path to your Jest config file. | undefined | |
 | config (optional) | Custom Jest config. This will override file-based config. | undefined | |
 | enableFindRelatedTests (optional) | Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#findrelatedtests-spaceseparatedlistofsourcefiles))  | true | false |

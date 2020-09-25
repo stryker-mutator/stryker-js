@@ -1,6 +1,7 @@
 import * as path from 'path';
 
-import { tokens } from '@stryker-mutator/api/plugin';
+import { Logger } from '@stryker-mutator/api/logging';
+import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { Config } from '@jest/types';
 
@@ -10,9 +11,9 @@ import { projectRootToken, resolveToken } from '../pluginTokens';
 import JestConfigLoader from './JestConfigLoader';
 
 export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(resolveToken, projectRootToken);
+  public static inject = tokens(commonTokens.logger, resolveToken, projectRootToken);
 
-  constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
+  constructor(private readonly log: Logger, private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
 
   public loadConfig(): Config.InitialOptions {
     try {
@@ -22,6 +23,9 @@ export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader 
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig(reactScriptsTsLocation);
       jestConfiguration.testEnvironment = 'jsdom';
+      this.log.warn(
+        'DEPRECATED: The support for create-react-app-ts projects is deprecated and will be removed in the future. Please migrate your project to create-react-app and update your Stryker config setting to "create-react-app" (see https://create-react-app.dev/docs/adding-typescript/)'
+      );
       return jestConfiguration;
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
