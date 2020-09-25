@@ -82,10 +82,19 @@ describe('babel-transformer', () => {
 
   it('should add the global stuff on top', () => {
     const ast = createJSAst({ rawContent: 'foo' });
+    mutantCollectorMock.hasMutants.returns(true);
     transformBabel(ast, mutantCollectorMock, context);
     for (let i = 0; i < instrumentationBabelHeader.length; i++) {
       expect(ast.root.program.body[i]).eq(instrumentationBabelHeader[i]);
     }
+  });
+
+  it('should not add global js header if no mutants were placed in the code', () => {
+    const ast = createJSAst({ originFileName: 'foo.js', rawContent: 'foo' });
+    mutantCollectorMock.hasMutants.returns(false);
+    transformBabel(ast, mutantCollectorMock, context);
+    expect(mutantCollectorMock.hasMutants).calledWith('foo.js');
+    expect(ast.root.program.body).lengthOf(1);
   });
 
   describe('types', () => {

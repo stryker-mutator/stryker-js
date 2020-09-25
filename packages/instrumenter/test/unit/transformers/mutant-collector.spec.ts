@@ -91,4 +91,23 @@ describe(MutantCollector.name, () => {
       expect(actual).deep.eq([mutants[1]]);
     });
   });
+
+  describe(MutantCollector.prototype.hasMutants.name, () => {
+    it('should return true when a mutant is registered for the file', () => {
+      const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
+      input.map((mutant) => sut.add(mutant.fileName, mutant));
+      expect(sut.hasMutants('foo.js')).true;
+      expect(sut.hasMutants('bar.js')).true;
+    });
+
+    it('should return false when no mutants is registered for the file', () => {
+      const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
+      input.map((mutant) => sut.add(mutant.fileName, mutant));
+      expect(sut.hasMutants('baz.js')).false;
+    });
+
+    it('should return false when no mutants are registered at all', () => {
+      expect(sut.hasMutants('baz.js')).false;
+    });
+  });
 });

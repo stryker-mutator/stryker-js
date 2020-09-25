@@ -33,5 +33,7 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
       }
     },
   });
-  root.program.body.unshift(...instrumentationBabelHeader);
+  if (mutantCollector.hasMutants(originFileName)) {
+    root.program.body.unshift(...instrumentationBabelHeader);
+  }
 };

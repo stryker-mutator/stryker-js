@@ -33,4 +33,8 @@ export class MutantCollector {
   public markMutantsAsPlaced(mutants: Mutant[]): void {
     this.unplacedMutants = this.unplacedMutants.filter((unplaced) => !mutants.includes(unplaced));
   }
+
+  public hasMutants(fileName: string) {
+    return this.mutants.some((mutant) => mutant.fileName === fileName);
+  }
 }
