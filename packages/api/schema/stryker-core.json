@@ -320,6 +320,14 @@
         "@stryker-mutator/*"
       ]
     },
+    "appendPlugins": {
+      "description": "A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
     "reporters": {
       "description": "With reporters, you can set the reporters for stryker to use.",
       "type": "array",

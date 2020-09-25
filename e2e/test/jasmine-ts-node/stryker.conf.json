@@ -6,9 +6,14 @@
   "testRunner": "jasmine",
   "concurrency": 2,
   "coverageAnalysis": "perTest",
-  "reporters": ["event-recorder", "clear-text"],
+  "reporters": [
+    "event-recorder",
+    "clear-text"
+  ],
+  "appendPlugins": [
+    "@stryker-mutator/typescript-checker"
+  ],
   "plugins": [
-    "@stryker-mutator/typescript-checker",
     "@stryker-mutator/jasmine-runner"
   ]
 }

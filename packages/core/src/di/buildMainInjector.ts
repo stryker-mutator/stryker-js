@@ -53,6 +53,7 @@ export function createPluginResolverProvider(parent: CliOptionsProvider): Plugin
 
 function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {
   options.plugins.push(require.resolve('../reporters'));
+  options.plugins = options.plugins.concat(options.appendPlugins);
   return options.plugins;
 }
 pluginDescriptorsFactory.inject = tokens(commonTokens.options);
