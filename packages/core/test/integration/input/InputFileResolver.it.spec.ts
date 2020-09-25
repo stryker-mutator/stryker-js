@@ -29,10 +29,11 @@ describe(`${InputFileResolver.name} integration`, () => {
     process.chdir(originalCwd);
   });
 
-  it('should by default resolve reasonable project source files to be mutated', async () => {
+  it.only('should by default resolve reasonable project source files to be mutated', async () => {
     process.chdir(resolveTestResource());
     const inputFiles = await sut.resolve();
-    expect(inputFiles.filesToMutate.map((file) => file.name)).deep.eq([
+    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+    expect(inputFiles.filesToMutate.map((file) => file.name).sort()).deep.eq([
       resolveTestResource('lib', 'string-utils.js'),
       resolveTestResource('src', 'app.ts'),
       resolveTestResource('src', 'components', 'calculator', 'calculator.component.tsx'),
