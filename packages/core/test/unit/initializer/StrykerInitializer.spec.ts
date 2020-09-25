@@ -92,7 +92,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(inquirerPrompt).callCount(5);
-      const [promptPreset, promptTestRunner, promptReporters, promptPackageManagers, promptConfigTypes]: Array<inquirer.ListQuestion<string>> = [
+      const [promptPreset, promptTestRunner, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
@@ -194,7 +194,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
-      const [promptPreset, promptConfigType, promptPackageManager]: Array<inquirer.ListQuestion<string>> = [
+      const [promptPreset, promptConfigType, promptPackageManager]: inquirer.ListQuestion[] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
