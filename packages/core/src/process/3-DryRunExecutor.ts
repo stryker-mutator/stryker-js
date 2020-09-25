@@ -87,6 +87,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
+    this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info('Starting initial test run. This may take a while.');
     const testRunner = await testRunnerPool.worker$.pipe(first()).toPromise();
     const { dryRunResult, grossTimeMS } = await this.timeDryRun(testRunner);
@@ -122,7 +123,6 @@ export class DryRunExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: DryRunResult; grossTimeMS: number }> {
-    this.timer.mark(INITIAL_TEST_RUN_MARKER);
     const dryRunResult = await testRunner.dryRun({ timeout: INITIAL_RUN_TIMEOUT, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     return { dryRunResult, grossTimeMS };
