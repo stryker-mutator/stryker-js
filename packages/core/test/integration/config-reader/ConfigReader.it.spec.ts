@@ -155,7 +155,7 @@ describe(ConfigReader.name, () => {
         sut = createSut({ configFile: 'testResources/config-reader/deprecatedFunction.conf.js' });
         sut.readConfig();
 
-        expect(testInjector.logger.warn).called.with(
+        expect(testInjector.logger.warn).calledWithMatch(
           'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
         );
       });
