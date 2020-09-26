@@ -15,11 +15,8 @@ assignees: ''
 
 <!--- Please place your stryker config below. Feel free to change paths in the files and mutate arrays if you cannot share them. -->
 
-```js
-module.exports = function(config){
-  config.set({
-    ....
-  });
+```json
+{
 }
 ```
 
