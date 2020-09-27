@@ -39,9 +39,8 @@ export class StrykerInquirer {
         type: 'list',
       });
       return options.filter((_) => _.name === answers.testRunner)[0] ?? { name: CommandTestRunner.runnerName, pkg: null };
-    } else {
-      return { name: CommandTestRunner.runnerName, pkg: null };
     }
+    return { name: CommandTestRunner.runnerName, pkg: null };
   }
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {

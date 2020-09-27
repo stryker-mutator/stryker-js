@@ -69,9 +69,8 @@ const expressionMutantPlacer: MutantPlacer = (path: NodePath, mutants: Mutant[])
       path.replaceWith(types.conditionalExpression(mutantTestExpression(appliedMutant.mutant.id), appliedMutant.ast, path.node));
     }
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 // Export it after initializing so `fn.name` is properly set

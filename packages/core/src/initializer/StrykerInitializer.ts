@@ -77,10 +77,9 @@ export default class StrykerInitializer {
     if (presetOptions.length) {
       this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
       return this.inquirer.promptPresets(presetOptions);
-    } else {
-      this.log.debug('No presets have been configured, reverting to custom configuration');
-      return undefined;
     }
+    this.log.debug('No presets have been configured, reverting to custom configuration');
+    return undefined;
   }
 
   private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {

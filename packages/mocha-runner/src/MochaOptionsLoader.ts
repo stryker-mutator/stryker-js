@@ -42,11 +42,10 @@ export default class MochaOptionsLoader {
     if (LibWrapper.loadOptions) {
       this.log.debug("Mocha >= 6 detected. Using mocha's `%s` to load mocha options", LibWrapper.loadOptions.name);
       return this.loadMocha6Options(overrides);
-    } else {
-      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.');
-      this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
-      return this.loadLegacyMochaOptsFile(overrides);
     }
+    this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.');
+    this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
+    return this.loadLegacyMochaOptsFile(overrides);
   }
 
   private loadMocha6Options(overrides: MochaOptions) {
@@ -72,21 +71,20 @@ export default class MochaOptionsLoader {
         const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts!);
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
-        } else {
-          this.log.debug(
-            'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
-          );
-          return {};
         }
+        this.log.debug(
+          'No mocha opts file found, not loading additional mocha options (%s was not defined).',
+          PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
+        );
+        return {};
+
       case 'string':
         const optsFileName = path.resolve(options.opts);
         if (fs.existsSync(optsFileName)) {
           return this.readMochaOptsFile(optsFileName);
-        } else {
-          this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
-          return {};
         }
+        this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
+        return {};
     }
   }
 
@@ -138,8 +136,7 @@ export default class MochaOptionsLoader {
   private parseNextString(args: string[]): string | undefined {
     if (args.length > 1) {
       return args[1];
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 }

@@ -139,12 +139,11 @@ export class TypescriptChecker implements Checker {
       this.clearCheckState();
       this.fs.mutate(mutant);
       return this.currentTask.promise;
-    } else {
-      // We allow people to mutate files that are not included in this ts project
-      return {
-        status: CheckStatus.Passed,
-      };
     }
+    // We allow people to mutate files that are not included in this ts project
+    return {
+      status: CheckStatus.Passed,
+    };
   }
 
   /**
@@ -157,12 +156,11 @@ export class TypescriptChecker implements Checker {
     const parsedConfig = ts.parseConfigFileTextToJson(fileName, content);
     if (parsedConfig.error) {
       return content; // let the ts compiler deal with this error
-    } else {
-      for (const referencedProject of retrieveReferencedProjects(parsedConfig)) {
-        this.allTSConfigFiles.add(referencedProject);
-      }
-      return overrideOptions(parsedConfig, buildModeEnabled);
     }
+    for (const referencedProject of retrieveReferencedProjects(parsedConfig)) {
+      this.allTSConfigFiles.add(referencedProject);
+    }
+    return overrideOptions(parsedConfig, buildModeEnabled);
   }
 
   /**

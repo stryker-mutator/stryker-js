@@ -31,9 +31,8 @@ const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOp
 const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
   if (response.statusCode === 200 && response.result) {
     return response.result;
-  } else {
-    throw new Error(`Path ${from} resulted in http status code: ${response.statusCode}.`);
   }
+  throw new Error(`Path ${from} resulted in http status code: ${response.statusCode}.`);
 };
 
 export default class NpmClient {

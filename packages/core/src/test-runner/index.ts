@@ -19,8 +19,7 @@ export function createTestRunnerFactory(
 ): () => Required<TestRunner> {
   if (CommandTestRunner.is(options.testRunner)) {
     return () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
-  } else {
-    return () =>
-      new RetryDecorator(() => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)));
   }
+  return () =>
+    new RetryDecorator(() => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)));
 }

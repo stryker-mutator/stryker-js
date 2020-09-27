@@ -27,9 +27,8 @@ class CircleProvider implements CIProvider {
     const repoUrl = getEnvironmentVariableOrThrow('CIRCLE_REPOSITORY_URL');
     if (repoUrl.startsWith('git@')) {
       return repoUrl.substr(4).split(':')[0];
-    } else {
-      return repoUrl.split('//')[1].split('/')[0];
     }
+    return repoUrl.split('//')[1].split('/')[0];
   }
 }
 

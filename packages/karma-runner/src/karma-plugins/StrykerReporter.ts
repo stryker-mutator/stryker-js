@@ -102,10 +102,10 @@ export default class StrykerReporter extends EventEmitter implements karma.Repor
   private collectRunState(runResult: karma.TestResults): DryRunStatus {
     if (runResult.disconnected) {
       return DryRunStatus.Timeout;
-    } else if (runResult.error) {
-      return DryRunStatus.Error;
-    } else {
-      return DryRunStatus.Complete;
     }
+    if (runResult.error) {
+      return DryRunStatus.Error;
+    }
+    return DryRunStatus.Complete;
   }
 }

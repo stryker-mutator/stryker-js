@@ -42,14 +42,12 @@ export class PluginLoader implements PluginResolver {
       const plugin = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
       if (plugin) {
         return plugin as Plugins[T];
-      } else {
-        throw new Error(
-          `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
-        );
       }
-    } else {
-      throw new Error(`Cannot load ${kind} plugin "${name}". In fact, no ${kind} plugins were loaded. Did you forget to install it?`);
+      throw new Error(
+        `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
+      );
     }
+    throw new Error(`Cannot load ${kind} plugin "${name}". In fact, no ${kind} plugins were loaded. Did you forget to install it?`);
   }
 
   public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {

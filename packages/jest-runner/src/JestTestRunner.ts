@@ -96,12 +96,11 @@ export default class JestTestRunner implements TestRunner {
         status: DryRunStatus.Error,
         errorMessage,
       };
-    } else {
-      return {
-        status: DryRunStatus.Complete,
-        tests: this.processTestResults(results.testResults),
-      };
     }
+    return {
+      status: DryRunStatus.Complete,
+      tests: this.processTestResults(results.testResults),
+    };
   }
 
   private collectSerializableErrorText(error: SerializableError | undefined): string | undefined {

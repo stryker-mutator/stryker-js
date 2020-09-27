@@ -64,11 +64,11 @@ class MutationScoreColumn extends Column {
   protected color(metricsResult: MetricsResult) {
     if (metricsResult.metrics.mutationScore >= this.thresholds.high) {
       return chalk.green;
-    } else if (metricsResult.metrics.mutationScore >= this.thresholds.low) {
-      return chalk.yellow;
-    } else {
-      return chalk.red;
     }
+    if (metricsResult.metrics.mutationScore >= this.thresholds.low) {
+      return chalk.yellow;
+    }
+    return chalk.red;
   }
 }
 

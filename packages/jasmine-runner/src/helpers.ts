@@ -13,18 +13,18 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
       ...baseResult,
       status: TestStatus.Skipped,
     };
-  } else if (!specResult.failedExpectations || specResult.failedExpectations.length === 0) {
+  }
+  if (!specResult.failedExpectations || specResult.failedExpectations.length === 0) {
     return {
       ...baseResult,
       status: TestStatus.Success,
     };
-  } else {
-    return {
-      ...baseResult,
-      status: TestStatus.Failed,
-      failureMessage: specResult.failedExpectations.map((failedExpectation) => failedExpectation.message).join(','),
-    };
   }
+  return {
+    ...baseResult,
+    status: TestStatus.Failed,
+    failureMessage: specResult.failedExpectations.map((failedExpectation) => failedExpectation.message).join(','),
+  };
 }
 
 export const Jasmine = JasmineConstructor;

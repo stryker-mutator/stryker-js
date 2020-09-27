@@ -112,14 +112,13 @@ export class MochaTestRunner implements TestRunner {
           tests: reporter.tests,
         };
         return result;
-      } else {
-        const errorMessage = `Mocha didn't instantiate the ${StrykerMochaReporter.name} correctly. Test result cannot be reported.`;
-        this.log.error(errorMessage);
-        return {
-          status: DryRunStatus.Error,
-          errorMessage,
-        };
       }
+      const errorMessage = `Mocha didn't instantiate the ${StrykerMochaReporter.name} correctly. Test result cannot be reported.`;
+      this.log.error(errorMessage);
+      return {
+        status: DryRunStatus.Error,
+        errorMessage,
+      };
     } catch (errorMessage) {
       return {
         errorMessage,

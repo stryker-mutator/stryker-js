@@ -6,7 +6,6 @@ export class ConfigError extends StrykerError {}
 export function retrieveCause(error: Error) {
   if (error instanceof InjectionError) {
     return error.cause;
-  } else {
-    return error;
   }
+  return error;
 }

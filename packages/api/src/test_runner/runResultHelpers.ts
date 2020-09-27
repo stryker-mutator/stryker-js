@@ -17,12 +17,11 @@ export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
           killedBy: killedBy.id,
           nrOfTests,
         };
-      } else {
-        return {
-          status: MutantRunStatus.Survived,
-          nrOfTests,
-        };
       }
+      return {
+        status: MutantRunStatus.Survived,
+        nrOfTests,
+      };
     }
     case DryRunStatus.Error:
       return {

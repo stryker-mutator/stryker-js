@@ -15,8 +15,7 @@ export default class GithubActionsCIProvider implements CIProvider {
     const [, type, ...name] = rawRef.split('/');
     if (type === 'pull') {
       return `PR-${name[0]}`;
-    } else {
-      return name.join('/');
     }
+    return name.join('/');
   }
 }

@@ -86,9 +86,8 @@ export default class ChildProcessProxyWorker {
   private doCall(message: CallMessage): Record<string, unknown> | PromiseLike<Record<string, unknown>> | undefined {
     if (typeof this.realSubject[message.methodName] === 'function') {
       return this.realSubject[message.methodName](...message.args);
-    } else {
-      return this.realSubject[message.methodName];
     }
+    return this.realSubject[message.methodName];
   }
 
   /**

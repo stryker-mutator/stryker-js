@@ -45,9 +45,8 @@ export function importModule(moduleName: string): unknown {
 export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
   if (Buffer.isBuffer(data)) {
     return fs.writeFile(fileName, data);
-  } else {
-    return fs.writeFile(fileName, data, 'utf8');
   }
+  return fs.writeFile(fileName, data, 'utf8');
 }
 
 /**
@@ -74,8 +73,7 @@ export async function findNodeModules(basePath: string): Promise<string | null> 
     const parent = path.dirname(basePath);
     if (parent === basePath) {
       return null;
-    } else {
-      return findNodeModules(path.dirname(basePath));
     }
+    return findNodeModules(path.dirname(basePath));
   }
 }

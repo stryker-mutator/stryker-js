@@ -47,21 +47,20 @@ export default class DashboardReporterClient {
     if (isOK(result.message.statusCode || 0)) {
       const response: ReportResponseBody = JSON.parse(responseBody);
       return response.href;
-    } else if (result.message.statusCode === 401) {
+    }
+    if (result.message.statusCode === 401) {
       throw new StrykerError(
         `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "${STRYKER_DASHBOARD_API_KEY}" environment variable?`
       );
-    } else {
-      throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);
     }
+    throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);
   }
 
   private getPutUrl(repoSlug: string, version: string, moduleName: string | undefined) {
     const base = `${this.options.dashboard.baseUrl}/${repoSlug}/${encodeURIComponent(version)}`;
     if (moduleName) {
       return `${base}?module=${encodeURIComponent(moduleName)}`;
-    } else {
-      return base;
     }
+    return base;
   }
 }

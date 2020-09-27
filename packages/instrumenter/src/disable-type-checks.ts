@@ -67,9 +67,8 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
     }
     pruned += text.substr(currentIndex);
     return pruned;
-  } else {
-    return text;
   }
+  return text;
 }
 
 function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): Range | undefined {

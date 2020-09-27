@@ -70,9 +70,8 @@ export default class StrykerConfigWriter {
   private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {
     if (exportAsJson) {
       return this.writeJsonConfig(config);
-    } else {
-      return this.writeJsConfig(config);
     }
+    return this.writeJsConfig(config);
   }
 
   private async writeJsConfig(commentedConfig: Partial<StrykerOptions>) {

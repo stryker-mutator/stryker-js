@@ -58,9 +58,8 @@ export class MutantInstrumenterExecutor {
       const instrumentedFile = instrumentResult.files.find((instrumentedFile) => instrumentedFile.name === inputFile.name);
       if (instrumentedFile) {
         return instrumentedFile;
-      } else {
-        return inputFile;
       }
+      return inputFile;
     });
   }
 }

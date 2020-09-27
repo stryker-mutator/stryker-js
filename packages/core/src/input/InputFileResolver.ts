@@ -75,9 +75,8 @@ export default class InputFileResolver {
   private resolveInputFiles() {
     if (this.filePatterns) {
       return this.expand(this.filePatterns);
-    } else {
-      return this.resolveFilesUsingGit();
     }
+    return this.resolveFilesUsingGit();
   }
 
   private resolveMutateFiles() {
@@ -86,14 +85,13 @@ export default class InputFileResolver {
     function shallowEquals(arr1: readonly string[], arr2: readonly string[]): boolean {
       if (arr1.length !== arr2.length) {
         return false;
-      } else {
-        for (let i = 0; i < arr1.length; i++) {
-          if (arr1[i] !== arr2[i]) {
-            return false;
-          }
-        }
-        return true;
       }
+      for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+          return false;
+        }
+      }
+      return true;
     }
   }
 
@@ -180,10 +178,9 @@ export default class InputFileResolver {
     } catch (error) {
       if ((isErrnoException(error) && error.code === 'ENOENT') || error.code === 'EISDIR') {
         return null; // file is deleted or a directory. This can be a valid result of the git command
-      } else {
-        // Rethrow
-        throw error;
       }
+      // Rethrow
+      throw error;
     }
   }
 }

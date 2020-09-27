@@ -139,12 +139,11 @@ export default class KarmaTestRunner implements TestRunner {
         status: DryRunStatus.Error,
         errorMessage: this.currentErrorMessage,
       };
-    } else {
-      return {
-        status: DryRunStatus.Complete,
-        tests: this.currentTestResults,
-        mutantCoverage: this.currentCoverageReport,
-      };
     }
+    return {
+      status: DryRunStatus.Complete,
+      tests: this.currentTestResults,
+      mutantCoverage: this.currentCoverageReport,
+    };
   }
 }

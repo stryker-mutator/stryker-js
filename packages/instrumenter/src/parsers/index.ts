@@ -27,22 +27,21 @@ export function createParser(parserOptions: ParserOptions) {
 export function getFormat(fileName: string, override?: AstFormat): AstFormat {
   if (override) {
     return override;
-  } else {
-    const ext = path.extname(fileName).toLowerCase();
-    switch (ext) {
-      case '.js':
-      case '.mjs':
-      case '.cjs':
-        return AstFormat.JS;
-      case '.ts':
-      case '.tsx':
-        return AstFormat.TS;
-      case '.vue':
-      case '.html':
-      case '.htm':
-        return AstFormat.Html;
-      default:
-        throw new Error(`Unable to parse ${fileName}. No parser registered for ${ext}!`);
-    }
+  }
+  const ext = path.extname(fileName).toLowerCase();
+  switch (ext) {
+    case '.js':
+    case '.mjs':
+    case '.cjs':
+      return AstFormat.JS;
+    case '.ts':
+    case '.tsx':
+      return AstFormat.TS;
+    case '.vue':
+    case '.html':
+    case '.htm':
+      return AstFormat.Html;
+    default:
+      throw new Error(`Unable to parse ${fileName}. No parser registered for ${ext}!`);
   }
 }

@@ -10,9 +10,8 @@ class TravisProvider implements CIProvider {
     const slug = getEnvironmentVariable('TRAVIS_REPO_SLUG');
     if (slug) {
       return `github.com/${slug}`;
-    } else {
-      return undefined;
     }
+    return undefined;
   }
   public determineVersion(): string | undefined {
     return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') || getEnvironmentVariable('TRAVIS_BRANCH');

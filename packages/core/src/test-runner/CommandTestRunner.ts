@@ -124,20 +124,19 @@ export default class CommandTestRunner implements TestRunner {
               },
             ],
           };
-        } else {
-          return {
-            status: DryRunStatus.Complete,
-            tests: [
-              {
-                id: 'all',
-                failureMessage: output.map((buf) => buf.toString()).join(os.EOL),
-                name: 'All tests',
-                status: TestStatus.Failed,
-                timeSpentMs: duration,
-              },
-            ],
-          };
         }
+        return {
+          status: DryRunStatus.Complete,
+          tests: [
+            {
+              id: 'all',
+              failureMessage: output.map((buf) => buf.toString()).join(os.EOL),
+              name: 'All tests',
+              status: TestStatus.Failed,
+              timeSpentMs: duration,
+            },
+          ],
+        };
       }
     });
   }

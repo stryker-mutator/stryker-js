@@ -12,9 +12,8 @@ export class BlockStatementMutator implements NodeMutator {
       const replacement = types.cloneNode(path.node, false);
       replacement.body = [];
       return [{ original: path.node, replacement }];
-    } else {
-      return [];
     }
+    return [];
   }
 
   private isValid(path: NodePath<types.BlockStatement>) {

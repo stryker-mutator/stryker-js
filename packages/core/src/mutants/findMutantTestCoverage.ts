@@ -52,24 +52,22 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
         testFilter: undefined,
         coveredByTests: true,
       };
-    } else {
-      const tests = testsByMutantId.get(mutant.id);
-      if (tests && tests.size > 0) {
-        return {
-          mutant,
-          estimatedNetTime: calculateTotalTime(tests),
-          testFilter: toTestIds(tests),
-          coveredByTests: true,
-        };
-      } else {
-        return {
-          mutant,
-          estimatedNetTime: 0,
-          testFilter: undefined,
-          coveredByTests: false,
-        };
-      }
     }
+    const tests = testsByMutantId.get(mutant.id);
+    if (tests && tests.size > 0) {
+      return {
+        mutant,
+        estimatedNetTime: calculateTotalTime(tests),
+        testFilter: toTestIds(tests),
+        coveredByTests: true,
+      };
+    }
+    return {
+      mutant,
+      estimatedNetTime: 0,
+      testFilter: undefined,
+      coveredByTests: false,
+    };
   });
   return mutantCoverage;
 }

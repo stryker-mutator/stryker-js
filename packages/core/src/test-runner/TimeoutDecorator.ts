@@ -16,9 +16,8 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
       return {
         status: DryRunStatus.Timeout,
       };
-    } else {
-      return result;
     }
+    return result;
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -27,9 +26,8 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
       return {
         status: MutantRunStatus.Timeout,
       };
-    } else {
-      return result;
     }
+    return result;
   }
 
   private async run<TOptions extends { timeout: number }, TResult>(
@@ -41,9 +39,8 @@ export default class TimeoutDecorator extends TestRunnerDecorator {
     if (result === ExpirableTask.TimeoutExpired) {
       await this.handleTimeout();
       return result;
-    } else {
-      return result;
     }
+    return result;
   }
 
   private async handleTimeout(): Promise<void> {

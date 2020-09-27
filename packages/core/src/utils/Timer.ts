@@ -29,9 +29,8 @@ export default class Timer {
     const marker = sinceMarker && this.markers[sinceMarker];
     if (marker) {
       return this.now().getTime() - marker.getTime();
-    } else {
-      return this.now().getTime() - this.start.getTime();
     }
+    return this.now().getTime() - this.start.getTime();
   }
 
   public mark(name: string) {
@@ -47,9 +46,8 @@ export default class Timer {
     const elapsedMinutes = Math.floor(elapsedSeconds / 60);
     if (elapsedMinutes === 0) {
       return '';
-    } else {
-      return this.formatTime('minute', elapsedMinutes);
     }
+    return this.formatTime('minute', elapsedMinutes);
   }
 
   private static formatTime(word: 'minute' | 'second', elapsed: number) {

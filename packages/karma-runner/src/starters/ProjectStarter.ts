@@ -10,8 +10,7 @@ export default class ProjectStarter {
   public start() {
     if (this.setup.projectType === 'angular-cli') {
       return angularStarter.start(this.getLogger, this.setup.ngConfig);
-    } else {
-      return karmaStarter.start();
     }
+    return karmaStarter.start();
   }
 }

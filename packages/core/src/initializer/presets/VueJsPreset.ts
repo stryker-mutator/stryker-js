@@ -66,11 +66,11 @@ export class VueJsPreset implements Preset {
   private getConfig(testRunner: string) {
     if (testRunner === 'karma') {
       return this.karmaConf;
-    } else if (testRunner === 'jest') {
-      return this.jestConf;
-    } else {
-      throw new Error(`Invalid test runner chosen: ${testRunner}`);
     }
+    if (testRunner === 'jest') {
+      return this.jestConf;
+    }
+    throw new Error(`Invalid test runner chosen: ${testRunner}`);
   }
 
   private createDependencies(testRunner: string, script: string): string[] {
@@ -83,20 +83,20 @@ export class VueJsPreset implements Preset {
   private getScriptDependency(script: string): string {
     if (script === 'typescript') {
       return '@stryker-mutator/typescript';
-    } else if (script === 'javascript') {
-      return '@stryker-mutator/javascript-mutator';
-    } else {
-      throw new Error(`Invalid script chosen: ${script}`);
     }
+    if (script === 'javascript') {
+      return '@stryker-mutator/javascript-mutator';
+    }
+    throw new Error(`Invalid script chosen: ${script}`);
   }
 
   private getTestRunnerDependency(testRunner: string): string {
     if (testRunner === 'karma') {
       return this.karmaDependency;
-    } else if (testRunner === 'jest') {
-      return this.jestDependency;
-    } else {
-      throw new Error(`Invalid test runner chosen: ${testRunner}`);
     }
+    if (testRunner === 'jest') {
+      return this.jestDependency;
+    }
+    throw new Error(`Invalid test runner chosen: ${testRunner}`);
   }
 }

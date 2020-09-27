@@ -38,9 +38,8 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       });
       await this.rewriteTSConfigFile(tsconfigFile);
       return [...this.fs.values()];
-    } else {
-      return input;
     }
+    return input;
   }
 
   private async rewriteTSConfigFile(tsconfigFileName: string): Promise<void> {
@@ -67,9 +66,8 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       if (relativeToSandbox.startsWith('..')) {
         config.extends = this.join('..', '..', config.extends);
         return true;
-      } else {
-        await this.rewriteTSConfigFile(extendsFileName);
       }
+      await this.rewriteTSConfigFile(extendsFileName);
     }
     return false;
   }

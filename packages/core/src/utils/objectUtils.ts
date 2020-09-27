@@ -22,17 +22,15 @@ export function getEnvironmentVariableOrThrow(name: string): string {
   const value = getEnvironmentVariable(name);
   if (value === undefined) {
     throw new StrykerError(`Missing environment variable "${name}"`);
-  } else {
-    return value;
   }
+  return value;
 }
 
 export function isWarningEnabled(warningType: KnownKeys<WarningOptions>, warningOptions: WarningOptions | boolean): boolean {
   if (typeof warningOptions === 'boolean') {
     return warningOptions;
-  } else {
-    return !!warningOptions[warningType];
   }
+  return !!warningOptions[warningType];
 }
 
 /**

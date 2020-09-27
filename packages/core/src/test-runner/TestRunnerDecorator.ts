@@ -11,9 +11,8 @@ export default class TestRunnerDecorator implements Required<TestRunner>, Dispos
   public init(): Promise<void> {
     if (this.innerRunner.init) {
       return this.innerRunner.init();
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   }
   protected createInnerRunner() {
     this.innerRunner = this.testRunnerProducer();
@@ -29,8 +28,7 @@ export default class TestRunnerDecorator implements Required<TestRunner>, Dispos
   public dispose(): Promise<any> {
     if (this.innerRunner.dispose) {
       return this.innerRunner.dispose();
-    } else {
-      return Promise.resolve();
     }
+    return Promise.resolve();
   }
 }

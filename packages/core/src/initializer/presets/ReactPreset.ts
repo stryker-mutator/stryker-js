@@ -48,10 +48,10 @@ export class ReactPreset implements Preset {
   private load(choice: string): PresetConfiguration {
     if (choice === 'JSX') {
       return { config: this.jsxConf, handbookUrl, dependencies: this.jsxDependencies };
-    } else if (choice === 'TSX') {
-      return { config: this.tsxConf, handbookUrl, dependencies: this.tsxDependencies };
-    } else {
-      throw new Error(`Invalid project type ${choice}`);
     }
+    if (choice === 'TSX') {
+      return { config: this.tsxConf, handbookUrl, dependencies: this.tsxDependencies };
+    }
+    throw new Error(`Invalid project type ${choice}`);
   }
 }

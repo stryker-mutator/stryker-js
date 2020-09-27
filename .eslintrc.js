@@ -10,18 +10,20 @@ module.exports = {
   extends: ['prettier', 'eslint:recommended'],
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
-    'import/newline-after-import': 1,
+    'import/newline-after-import': 'error',
     'import/order': [
-      "error",
+      'error',
       {
-        "newlines-between": "always-and-inside-groups",
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+        'newlines-between': 'always-and-inside-groups',
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index']
       }
     ],
     'prettier/prettier': ['error'],
     'sort-imports': 'off',
     'no-case-declarations': 'off',
     'no-constant-condition': 'error',
+    'no-else-return': 'error',
+    'no-lonely-if': 'error',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': [
       'error',

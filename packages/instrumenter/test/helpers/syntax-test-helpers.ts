@@ -63,7 +63,6 @@ export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (node
   });
   if (theNode) {
     return theNode;
-  } else {
-    throw new Error(`Cannot find node ${searchQuery.toString()} in ${generate(ast)}`);
   }
+  throw new Error(`Cannot find node ${searchQuery.toString()} in ${generate(ast)}`);
 }

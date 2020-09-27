@@ -9,7 +9,6 @@ import * as log4js from 'log4js';
 export function minLevel(a: LogLevel, b: LogLevel) {
   if (log4js.levels.getLevel(b).isGreaterThanOrEqualTo(log4js.levels.getLevel(a))) {
     return a;
-  } else {
-    return b;
   }
+  return b;
 }

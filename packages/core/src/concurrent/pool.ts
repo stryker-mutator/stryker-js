@@ -43,12 +43,11 @@ export class Pool<T extends Worker> implements Disposable {
       flatMap(async () => {
         if (this.isDisposed) {
           return null;
-        } else {
-          const worker = factory();
-          this.allWorkers.push(worker);
-          await worker.init?.();
-          return worker;
         }
+        const worker = factory();
+        this.allWorkers.push(worker);
+        await worker.init?.();
+        return worker;
       }, MAX_CONCURRENT_INIT),
       filter(notEmpty),
       // We use share replay here. This way the dry run can use a test runner that is later reused during mutation testing

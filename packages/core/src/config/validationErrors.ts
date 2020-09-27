@@ -87,9 +87,8 @@ function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObj
   return singleErrors.filter((error) => {
     if (metaErrors.some((metaError) => error.dataPath.startsWith(metaError.dataPath))) {
       return !singleErrors.some((otherError) => otherError.dataPath.startsWith(error.dataPath) && otherError.dataPath.length > error.dataPath.length);
-    } else {
-      return true;
     }
+    return true;
   });
 }
 
@@ -163,7 +162,6 @@ function jsonSchemaType(value: unknown): string {
 function stringify(value: unknown): string {
   if (typeof value === 'number' && isNaN(value)) {
     return 'NaN';
-  } else {
-    return JSON.stringify(value);
   }
+  return JSON.stringify(value);
 }

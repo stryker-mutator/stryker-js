@@ -22,11 +22,11 @@ export class PluginCreator<TPluginKind extends PluginKind> {
     const plugin = this.pluginResolver.resolve(this.kind, name);
     if (this.isFactoryPlugin(plugin)) {
       return this.injector.injectFunction(plugin.factory);
-    } else if (this.isClassPlugin(plugin)) {
-      return this.injector.injectClass(plugin.injectableClass);
-    } else {
-      throw new Error(`Plugin "${this.kind}:${name}" could not be created, missing "factory" or "injectableClass" property.`);
     }
+    if (this.isClassPlugin(plugin)) {
+      return this.injector.injectClass(plugin.injectableClass);
+    }
+    throw new Error(`Plugin "${this.kind}:${name}" could not be created, missing "factory" or "injectableClass" property.`);
   }
 
   private isFactoryPlugin(plugin: Plugin<PluginKind>): plugin is FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>> {

@@ -94,9 +94,8 @@ export default class ChildProcessProxy<T> implements Disposable {
       get(_, propertyKey) {
         if (typeof propertyKey === 'string') {
           return self.forward(propertyKey);
-        } else {
-          return undefined;
         }
+        return undefined;
       },
     });
   }
@@ -105,19 +104,18 @@ export default class ChildProcessProxy<T> implements Disposable {
     return async (...args: any[]) => {
       if (this.currentError) {
         return Promise.reject(this.currentError);
-      } else {
-        const workerTask = new Task<void>();
-        const correlationId = this.workerTasks.push(workerTask) - 1;
-        this.initTask.promise.then(() => {
-          this.send({
-            args,
-            correlationId,
-            kind: WorkerMessageKind.Call,
-            methodName,
-          });
-        });
-        return workerTask.promise;
       }
+      const workerTask = new Task<void>();
+      const correlationId = this.workerTasks.push(workerTask) - 1;
+      this.initTask.promise.then(() => {
+        this.send({
+          args,
+          correlationId,
+          kind: WorkerMessageKind.Call,
+          methodName,
+        });
+      });
+      return workerTask.promise;
     };
   }
 
@@ -200,9 +198,8 @@ export default class ChildProcessProxy<T> implements Disposable {
     function stdoutAndStderr() {
       if (output.length) {
         return `Last part of stdout and stderr was:${os.EOL}${padLeft(output)}`;
-      } else {
-        return 'Stdout and stderr were empty.';
       }
+      return 'Stdout and stderr were empty.';
     }
   };
 

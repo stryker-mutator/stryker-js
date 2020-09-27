@@ -28,11 +28,9 @@ const statementMutantPlacer: MutantPlacer = (path, mutants) => {
     } else {
       path.replaceWith(instrumentedAst);
     }
-
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 // Export it after initializing so `fn.name` is properly set

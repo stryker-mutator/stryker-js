@@ -35,29 +35,27 @@ export class LoggingServer {
   public listen(): Promise<number> {
     if (this.alreadyListening) {
       throw new Error('Server already listening');
-    } else {
-      this.alreadyListening = true;
-      return new Promise((res) => {
-        this.server.on('listening', () => res((this.server.address() as net.AddressInfo).port));
-        this.server.listen();
-      });
     }
+    this.alreadyListening = true;
+    return new Promise((res) => {
+      this.server.on('listening', () => res((this.server.address() as net.AddressInfo).port));
+      this.server.listen();
+    });
   }
 
   public dispose(): Promise<void> {
     if (this.disposed) {
       return Promise.resolve();
-    } else {
-      this.disposed = true;
-      return new Promise((res, rej) => {
-        this.server.close((err?: Error | undefined) => {
-          if (err) {
-            rej(err);
-          } else {
-            res();
-          }
-        });
-      });
     }
+    this.disposed = true;
+    return new Promise((res, rej) => {
+      this.server.close((err?: Error | undefined) => {
+        if (err) {
+          rej(err);
+        } else {
+          res();
+        }
+      });
+    });
   }
 }

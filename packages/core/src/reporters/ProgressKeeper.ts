@@ -41,9 +41,8 @@ abstract class ProgressKeeper implements Reporter {
 
     if (isFinite(totalSecondsLeft) && totalSecondsLeft > 0) {
       return this.formatTime(totalSecondsLeft);
-    } else {
-      return 'n/a';
     }
+    return 'n/a';
   }
 
   private formatTime(timeInSeconds: number) {

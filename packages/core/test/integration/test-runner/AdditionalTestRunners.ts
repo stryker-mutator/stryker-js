@@ -54,9 +54,8 @@ class DiscoverRegexTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     if (isRegExp(this.options.someRegex)) {
       return factory.completeDryRunResult();
-    } else {
-      return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
     }
+    return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
   }
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
@@ -132,9 +131,8 @@ class VerifyWorkingFolderTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return factory.completeDryRunResult();
-    } else {
-      throw new Error(`Expected ${process.cwd()} to be ${__dirname}`);
     }
+    throw new Error(`Expected ${process.cwd()} to be ${__dirname}`);
   }
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');

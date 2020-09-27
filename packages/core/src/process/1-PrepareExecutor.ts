@@ -22,8 +22,7 @@ export class PrepareExecutor {
     if (inputFiles.files.length) {
       mainInjector.resolve(coreTokens.temporaryDirectory).initialize();
       return mainInjector.provideValue(coreTokens.inputFiles, inputFiles).provideValue(coreTokens.loggingContext, loggingContext);
-    } else {
-      throw new ConfigError('No input files found.');
     }
+    throw new ConfigError('No input files found.');
   }
 }

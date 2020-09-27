@@ -31,10 +31,9 @@ export class MochaAdapter {
     if (LibWrapper.collectFiles) {
       this.log.debug("Mocha >= 6 detected. Using mocha's `collectFiles` to load files");
       return this.mocha6DiscoverFiles(options);
-    } else {
-      this.log.debug('Mocha < 6 detected. Using custom logic to discover files');
-      return this.legacyDiscoverFiles(options);
     }
+    this.log.debug('Mocha < 6 detected. Using custom logic to discover files');
+    return this.legacyDiscoverFiles(options);
   }
 
   public async handleRequires(requires: string[]): Promise<any> {
@@ -48,9 +47,8 @@ export class MochaAdapter {
         const maybeSetupFileName = path.resolve(moduleName);
         if (fs.existsSync(maybeSetupFileName)) {
           return maybeSetupFileName;
-        } else {
-          return moduleName;
         }
+        return moduleName;
       });
       modulesToRequire.forEach(LibWrapper.require);
     }

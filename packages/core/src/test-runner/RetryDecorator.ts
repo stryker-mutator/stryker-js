@@ -21,9 +21,8 @@ export default class RetryDecorator extends TestRunnerDecorator {
         status: DryRunStatus.Error,
         errorMessage: result,
       };
-    } else {
-      return result;
     }
+    return result;
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -33,9 +32,8 @@ export default class RetryDecorator extends TestRunnerDecorator {
         status: MutantRunStatus.Error,
         errorMessage: result,
       };
-    } else {
-      return result;
     }
+    return result;
   }
 
   private async run<T extends DryRunResult | MutantRunResult>(actRun: () => Promise<T>, attemptsLeft = 2, lastError?: Error): Promise<T | string> {
@@ -52,10 +50,9 @@ export default class RetryDecorator extends TestRunnerDecorator {
         await this.recover();
         return this.run(actRun, attemptsLeft - 1, error);
       }
-    } else {
-      await this.recover();
-      return `${ERROR_MESSAGE}${errorToString(lastError)}`;
     }
+    await this.recover();
+    return `${ERROR_MESSAGE}${errorToString(lastError)}`;
   }
 
   private async recover(): Promise<void> {
