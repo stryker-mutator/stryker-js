@@ -35,7 +35,17 @@ function disableTypeCheckingInBabelAst(ast: JSAst | TSAst): string {
 }
 
 function prefixWithNoCheck(code: string): string {
-  return `// @ts-nocheck\n${code}`;
+  if (code.startsWith('#')) {
+    // first line has a shebang (#!/usr/bin/env node)
+    const newLineIndex = code.indexOf('\n');
+    if (newLineIndex > 0) {
+      return `${code.substr(0, newLineIndex)}\n// @ts-nocheck\n${code.substr(newLineIndex + 1)}`;
+    } else {
+      return `${code}\n// @ts-nocheck`;
+    }
+  } else {
+    return `// @ts-nocheck\n${code}`;
+  }
 }
 
 function disableTypeCheckingInHtml(ast: HtmlAst): string {

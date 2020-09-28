@@ -46,6 +46,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });
+  it('should be able to instrument js files with a shebang in them', async () => {
+    await arrangeAndActAssert('shebang.js');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

@@ -14,6 +14,19 @@ describe(disableTypeChecks.name, () => {
       assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\nfoo.bar();'));
     });
 
+    describe('with shebang (`#!/usr/bin/env node`)', () => {
+      it('should insert `// @ts-nocheck` after the new line', async () => {
+        const inputFile = new File('foo.js', '#!/usr/bin/env node\nfoo.bar();');
+        const actual = await disableTypeChecks(inputFile, { plugins: null });
+        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node\n// @ts-nocheck\nfoo.bar();'));
+      });
+      it('should insert `// @ts-nocheck` on a new line if it is the only line', async () => {
+        const inputFile = new File('foo.js', '#!/usr/bin/env node');
+        const actual = await disableTypeChecks(inputFile, { plugins: null });
+        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node\n// @ts-nocheck'));
+      });
+    });
+
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {
       const createParserSpy = sinon.spy(parsers, 'createParser');
       const inputFile = new File('foo.js', 'foo.bar();');

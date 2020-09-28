@@ -20,7 +20,7 @@ const resolveTestResource = path.resolve.bind(
 );
 
 describe(`${disableTypeChecks.name} integration`, () => {
-  it('should be able disable type checks of a type script file', async () => {
+  it('should be able disable type checks of a typescript file', async () => {
     await arrangeAndActAssert('app.component.ts');
   });
   it('should be able disable type checks of an html file', async () => {
