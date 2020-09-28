@@ -10,6 +10,7 @@ import RetryDecorator from './RetryDecorator';
 import TimeoutDecorator from './TimeoutDecorator';
 import ChildProcessTestRunnerDecorator from './ChildProcessTestRunnerDecorator';
 import CommandTestRunner from './CommandTestRunner';
+import MaxTestRunnerReuseDecorator from './MaxTestRunnerReuseDecorator';
 
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(
@@ -21,6 +22,12 @@ export function createTestRunnerFactory(
     return () => new RetryDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
   } else {
     return () =>
-      new RetryDecorator(() => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)));
+      new RetryDecorator(
+        () =>
+          new MaxTestRunnerReuseDecorator(
+            () => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)),
+            options
+          )
+      );
   }
 }
