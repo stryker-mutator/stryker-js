@@ -170,9 +170,9 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     expectCompleted(await actDryRun());
     expect(fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)).to.be.false;
 
-    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
     expectCompleted(await actDryRun());
-    expect(fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)).to.be.false;
+    expectCompleted(await actDryRun());
+    expectCompleted(await actDryRun());
 
     await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
     const results = await actDryRun();
