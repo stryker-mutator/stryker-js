@@ -40,21 +40,18 @@ class ProximityMineTestRunner implements TestRunner {
   }
 }
 
-// @ts-ignore
-export class SingleUseProximityMineTestRunner implements TestRunner {
-  public static PROXIMITY_FILE = `${os.tmpdir()}/single-use-mine`;
+export class CounterTestRunner implements TestRunner {
+  private count = 0;
+  public static COUNTER_FILE = `${os.tmpdir()}/counter-file`;
 
   public async dryRun(): Promise<DryRunResult> {
-    if (fs.existsSync(`${os.tmpdir()}/single-use-mine`)) {
-      fs.unlinkSync(`${os.tmpdir()}/single-use-mine`);
-      process.exit(42);
-    }
-
     return factory.completeDryRunResult();
   }
 
   public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
+    this.count++;
+    fs.writeFileSync(CounterTestRunner.COUNTER_FILE, `${this.count}`);
+    return factory.survivedMutantRunResult();
   }
 }
 
@@ -187,7 +184,7 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'single-use-proximity-mine', SingleUseProximityMineTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'counter', CounterTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
 ];

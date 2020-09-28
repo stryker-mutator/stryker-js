@@ -13,7 +13,7 @@ import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/testUtils';
 import { coreTokens } from '../../../src/di';
 
-import { SingleUseProximityMineTestRunner } from './AdditionalTestRunners';
+import { CounterTestRunner } from './AdditionalTestRunners';
 
 const fs = require('fs');
 
@@ -33,15 +33,15 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     testInjector.options.plugins = [require.resolve('./AdditionalTestRunners')];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
-    testInjector.options.maxConcurrentTestRunners = 0;
+    testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
       .provideValue(coreTokens.sandbox, { sandboxFileNames: ['foo.js'], workingDirectory: __dirname })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .injectFunction(createTestRunnerFactory);
 
-    if (fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)) {
-      await fs.promises.unlink(SingleUseProximityMineTestRunner.PROXIMITY_FILE);
+    if (fs.existsSync(CounterTestRunner.COUNTER_FILE)) {
+      await fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
     }
   });
 
@@ -50,6 +50,10 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       await sut.dispose();
     }
     await loggingServer.dispose();
+
+    if (fs.existsSync(CounterTestRunner.COUNTER_FILE)) {
+      await fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
+    }
   });
 
   async function arrangeSut(name: string): Promise<void> {
@@ -60,6 +64,10 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   function actDryRun(timeout = 4000) {
     return sut.dryRun({ timeout, coverageAnalysis: 'all' });
+  }
+
+  function actMutantRun() {
+    return sut.mutantRun(factory.mutantRunOptions());
   }
 
   it('should be able to receive a regex', async () => {
@@ -162,20 +170,20 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     ).ok;
   });
 
-  it('should still retry a failed test after worker is restarted', async () => {
-    testInjector.options.maxConcurrentTestRunners = 1;
+  it('should restart the worker after it has exceeded the maxTestRunnerReuse', async () => {
+    testInjector.options.maxTestRunnerReuse = 3;
+    await arrangeSut('counter');
 
-    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
-    await arrangeSut('single-use-proximity-mine');
-    expectCompleted(await actDryRun());
-    expect(fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)).to.be.false;
+    await actMutantRun();
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
 
-    expectCompleted(await actDryRun());
-    expectCompleted(await actDryRun());
-    expectCompleted(await actDryRun());
+    await actMutantRun();
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('2');
 
-    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
-    const results = await actDryRun();
-    expectCompleted(results);
+    await actMutantRun();
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('3');
+
+    await actMutantRun();
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
   });
 });
