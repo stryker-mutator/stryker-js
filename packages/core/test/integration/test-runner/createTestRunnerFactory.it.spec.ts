@@ -13,6 +13,10 @@ import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/testUtils';
 import { coreTokens } from '../../../src/di';
 
+import { SingleUseProximityMineTestRunner } from './AdditionalTestRunners';
+
+const fs = require('fs');
+
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => Required<TestRunner>;
   let sut: Required<TestRunner>;
@@ -29,11 +33,16 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     testInjector.options.plugins = [require.resolve('./AdditionalTestRunners')];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
+    testInjector.options.maxConcurrentTestRunners = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
       .provideValue(coreTokens.sandbox, { sandboxFileNames: ['foo.js'], workingDirectory: __dirname })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .injectFunction(createTestRunnerFactory);
+
+    if (fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)) {
+      await fs.promises.unlink(SingleUseProximityMineTestRunner.PROXIMITY_FILE);
+    }
   });
 
   afterEach(async () => {
@@ -151,5 +160,22 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
           logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection')
       )
     ).ok;
+  });
+
+  it('should still retry a failed test after worker is restarted', async () => {
+    testInjector.options.maxConcurrentTestRunners = 1;
+
+    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
+    await arrangeSut('single-use-proximity-mine');
+    expectCompleted(await actDryRun());
+    expect(fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)).to.be.false;
+
+    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
+    expectCompleted(await actDryRun());
+    expect(fs.existsSync(SingleUseProximityMineTestRunner.PROXIMITY_FILE)).to.be.false;
+
+    await fs.promises.writeFile(SingleUseProximityMineTestRunner.PROXIMITY_FILE, '');
+    const results = await actDryRun();
+    expectCompleted(results);
   });
 });

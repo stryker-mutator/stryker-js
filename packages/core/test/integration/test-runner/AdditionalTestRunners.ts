@@ -1,9 +1,12 @@
+import * as os from 'os';
 import { isRegExp } from 'util';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
+
+const fs = require('fs');
 
 class CoverageReportingTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
@@ -32,6 +35,24 @@ class ProximityMineTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     process.exit(42);
   }
+  public async mutantRun(): Promise<MutantRunResult> {
+    throw new Error('Method not implemented.');
+  }
+}
+
+// @ts-ignore
+export class SingleUseProximityMineTestRunner implements TestRunner {
+  public static PROXIMITY_FILE = `${os.tmpdir()}/single-use-mine`;
+
+  public async dryRun(): Promise<DryRunResult> {
+    if (fs.existsSync(`${os.tmpdir()}/single-use-mine`)) {
+      fs.unlinkSync(`${os.tmpdir()}/single-use-mine`);
+      process.exit(42);
+    }
+
+    return factory.completeDryRunResult();
+  }
+
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
   }
@@ -166,6 +187,7 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'single-use-proximity-mine', SingleUseProximityMineTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
 ];
