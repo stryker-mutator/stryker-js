@@ -106,7 +106,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
-* [files](#files)
+* [files](#files-string)
 * [logLevel](#logLevel)
 * [maxConcurrentTestRunners](#maxConcurrentTestRunners)
 * [mutate](#mutate)
@@ -197,7 +197,7 @@ Config file: `fileLogLevel: 'info'`
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
-<a name="files"></a>
+<a name="files-string"></a>
 ### `files` [`string[]`]
 
 Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`
