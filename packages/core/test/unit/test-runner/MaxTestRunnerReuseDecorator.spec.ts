@@ -1,4 +1,4 @@
-import { TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -7,7 +7,7 @@ import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
 import MaxTestRunnerReuseDecorator from '../../../src/test-runner/MaxTestRunnerReuseDecorator';
 
 describe(MaxTestRunnerReuseDecorator.name, () => {
-  let testRunner: sinon.SinonStubbedInstance<Required<TestRunner2>>;
+  let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   const runOptions = factory.mutantRunOptions({ timeout: 23 });
 
   beforeEach(() => {
