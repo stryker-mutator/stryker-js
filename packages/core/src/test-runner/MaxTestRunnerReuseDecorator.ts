@@ -1,4 +1,4 @@
-import { MutantRunOptions, MutantRunResult, TestRunner2 } from '@stryker-mutator/api/test_runner';
+import { MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/api/test_runner';
 
 import { StrykerOptions } from '../../../api/src-generated/stryker-core';
 
@@ -11,7 +11,7 @@ export default class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
   public runs = 0;
   private readonly restartAfter;
 
-  constructor(testRunnerProducer: () => TestRunner2, options: Pick<StrykerOptions, 'maxTestRunnerReuse'>) {
+  constructor(testRunnerProducer: () => TestRunner, options: Pick<StrykerOptions, 'maxTestRunnerReuse'>) {
     super(testRunnerProducer);
 
     this.restartAfter = options.maxTestRunnerReuse || 0;
