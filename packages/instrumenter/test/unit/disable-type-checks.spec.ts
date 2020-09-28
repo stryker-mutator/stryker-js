@@ -20,10 +20,10 @@ describe(disableTypeChecks.name, () => {
         const actual = await disableTypeChecks(inputFile, { plugins: null });
         assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node\n// @ts-nocheck\nfoo.bar();'));
       });
-      it('should insert `// @ts-nocheck` on a new line if it is the only line', async () => {
+      it('should not insert if there is no code', async () => {
         const inputFile = new File('foo.js', '#!/usr/bin/env node');
         const actual = await disableTypeChecks(inputFile, { plugins: null });
-        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node\n// @ts-nocheck'));
+        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node'));
       });
     });
 

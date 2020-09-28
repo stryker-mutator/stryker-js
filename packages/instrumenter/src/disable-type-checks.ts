@@ -41,7 +41,7 @@ function prefixWithNoCheck(code: string): string {
     if (newLineIndex > 0) {
       return `${code.substr(0, newLineIndex)}\n// @ts-nocheck\n${code.substr(newLineIndex + 1)}`;
     } else {
-      return `${code}\n// @ts-nocheck`;
+      return code;
     }
   } else {
     return `// @ts-nocheck\n${code}`;
