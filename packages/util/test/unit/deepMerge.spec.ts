@@ -37,14 +37,14 @@ describe(deepMerge.name, () => {
 
   it('should override arrays without merging them', () => {
     // Arrange
-    const foo: Foo = { qux: ['1'] };
-    const baz = { qux: ['2'] };
+    const foo: Foo = { qux: ['1', '2'] };
+    const baz = { qux: ['3'] };
 
     // Act
     deepMerge(foo, baz);
 
     // Assert
-    const expected: Foo = { qux: ['2'] };
+    const expected: Foo = { qux: ['3'] };
     expect(foo).deep.eq(expected);
   });
 
