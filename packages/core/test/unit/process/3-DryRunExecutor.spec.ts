@@ -92,15 +92,19 @@ describe(DryRunExecutor.name, () => {
       it('should have logged the amount of tests ran', async () => {
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
-        timerMock.humanReadableElapsed.returns('2 seconds');
-        timerMock.elapsedMs.returns(50);
+        timerMock.humanReadableElapsed.returns('30 seconds');
+        timerMock.humanReadableElapsed.withArgs('Initial test run').returns('2 seconds');
+        timerMock.elapsedMs.returns(30000);
+        timerMock.elapsedMs.withArgs('Initial test run').returns(2000);
+
         await sut.execute();
+
         expect(testInjector.logger.info).to.have.been.calledWith(
           'Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
           2,
           '2 seconds',
           20,
-          30
+          1980
         );
       });
 

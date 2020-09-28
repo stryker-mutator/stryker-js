@@ -15,13 +15,13 @@ export default class Timer {
     this.start = this.now();
   }
 
-  public humanReadableElapsed() {
-    const elapsedSeconds = this.elapsedSeconds();
+  public humanReadableElapsed(sinceMarker?: string) {
+    const elapsedSeconds = this.elapsedSeconds(sinceMarker);
     return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);
   }
 
-  public elapsedSeconds() {
-    const elapsedMs = this.elapsedMs();
+  public elapsedSeconds(sinceMarker?: string) {
+    const elapsedMs = this.elapsedMs(sinceMarker);
     return Math.floor(elapsedMs / 1000);
   }
 
