@@ -22,7 +22,7 @@ import { MutationTestReportHelper } from '../../../src/reporters/MutationTestRep
 import * as objectUtils from '../../../src/utils/objectUtils';
 import { createMutantTestCoverage } from '../../helpers/producers';
 
-describe.only(MutationTestReportHelper.name, () => {
+describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let inputFiles: InputFileCollection;
   let files: File[];
@@ -189,8 +189,6 @@ describe.only(MutationTestReportHelper.name, () => {
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
     });
 
-    []
-
     describe('determineExitCode', () => {
       beforeEach(() => {
         files.push(new File('file.js', ''));
@@ -226,6 +224,31 @@ describe.only(MutationTestReportHelper.name, () => {
         expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
       });
     });
+
+    describe('determine description', () => {
+      beforeEach(() => {
+        files.push(new File('file.js', ''));
+      });
+
+      it('should provide the error message as description', () => {
+        const mutantResult = factory.invalidMutantResult({ fileName: 'file.js', errorMessage: 'Cannot call "foo" of undefined' });
+        const actualReport = actReportAll([mutantResult]);
+        expect(actualReport.files['file.js'].mutants[0].description).eq('Error message: Cannot call "foo" of undefined');
+      });
+
+      it('should provide the "killedBy" as description', () => {
+        const mutantResult = factory.killedMutantResult({ fileName: 'file.js', killedBy: 'Foo should be bar' });
+        const actualReport = actReportAll([mutantResult]);
+        expect(actualReport.files['file.js'].mutants[0].description).eq('Killed by: Foo should be bar');
+      });
+
+      it('should provide the ignore reason as description', () => {
+        const mutantResult = factory.ignoredMutantResult({ fileName: 'file.js', ignoreReason: 'Ignored by "fooMutator" in excludedMutations' });
+        const actualReport = actReportAll([mutantResult]);
+        expect(actualReport.files['file.js'].mutants[0].description).eq('Ignore reason: Ignored by "fooMutator" in excludedMutations');
+      });
+    });
+
     function actReportAll(input: MutantResult[] = []): mutationTestReportSchema.MutationTestResult {
       sut.reportAll(input);
       return reporterMock.onMutationTestReportReady.firstCall.args[0];

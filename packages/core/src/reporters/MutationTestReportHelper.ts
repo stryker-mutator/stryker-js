@@ -232,9 +232,12 @@ export class MutationTestReportHelper {
   private describe(mutantResult: MutantResult): string | undefined {
     switch (mutantResult.status) {
       case MutantStatus.Ignored:
-        return mutantResult.ignoreReason;
+        return `Ignore reason: ${mutantResult.ignoreReason}`;
       case MutantStatus.Killed:
         return `Killed by: ${mutantResult.killedBy}`;
+      case MutantStatus.CompileError:
+      case MutantStatus.RuntimeError:
+        return `Error message: ${mutantResult.errorMessage}`;
       default:
         return undefined;
     }
