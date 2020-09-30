@@ -30,7 +30,7 @@ export class Instrumenter {
     const parse = createParser(options);
     for await (const file of files) {
       const ast = await parse(file.textContent, file.name);
-      transform(ast, mutantCollector);
+      transform(ast, mutantCollector, { options });
       const mutatedContent = print(ast);
       outFiles.push(new File(file.name, mutatedContent));
       if (this.logger.isDebugEnabled()) {

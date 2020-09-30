@@ -1,6 +1,6 @@
 /**
- * Represents a location in a file by range [fromInclusive, toExclusive]
+ * Represents a location in a file by range.
  */
-type Range = [number, number];
+type Range = [fromInclusive: number, toExclusive: number];
 
 export default Range;

@@ -45,7 +45,13 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
   const mutantCoverage = mutants.map((mutant) => {
-    if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
+    if (mutant.ignoreReason !== undefined) {
+      return {
+        mutant,
+        estimatedNetTime: 0,
+        coveredByTests: false,
+      };
+    } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
       return {
         mutant,
         estimatedNetTime: timeSpentAllTests,

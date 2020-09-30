@@ -4,6 +4,7 @@ import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
 import { Mutant, NamedNodeMutation } from '../../src/mutant';
 import { ParserOptions } from '../../src/parsers';
 import { InstrumenterOptions } from '../../src';
+import { TransformerOptions } from '../../src/transformers';
 
 import { parseTS, parseJS, findNodePath } from './syntax-test-helpers';
 
@@ -14,9 +15,17 @@ export function createParserOptions(overrides?: Partial<ParserOptions>): ParserO
   };
 }
 
+export function createTransformerOptions(overrides?: Partial<TransformerOptions>): TransformerOptions {
+  return {
+    excludedMutations: [],
+    ...overrides,
+  };
+}
+
 export function createInstrumenterOptions(overrides?: Partial<InstrumenterOptions>): InstrumenterOptions {
   return {
     ...createParserOptions(),
+    ...createTransformerOptions(),
     ...overrides,
   };
 }
@@ -57,13 +66,11 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createMutant(overrides?: Partial<Mutant>): Mutant {
-  return new Mutant(
-    overrides?.id ?? 1,
-    overrides?.original ?? types.identifier('foo'),
-    overrides?.replacement ?? types.identifier('bar'),
-    overrides?.fileName ?? 'example.js',
-    overrides?.mutatorName ?? 'fooMutator'
-  );
+  return new Mutant(overrides?.id ?? 1, overrides?.fileName ?? 'example.js', {
+    mutatorName: overrides?.mutatorName ?? 'fooMutator',
+    original: overrides?.original ?? types.identifier('foo'),
+    replacement: overrides?.replacement ?? types.identifier('bar'),
+  });
 }
 
 export function createNamedNodeMutation(overrides?: Partial<NamedNodeMutation>): NamedNodeMutation {

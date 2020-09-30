@@ -24,6 +24,11 @@ export interface InvalidMutantResult extends BaseMutantResult {
   errorMessage: string;
 }
 
+export interface IgnoredMutantResult extends BaseMutantResult {
+  status: MutantStatus.Ignored;
+  ignoreReason: string;
+}
+
 export interface UndetectedMutantResult extends BaseMutantResult {
   status: MutantStatus.NoCoverage | MutantStatus.Survived;
   testFilter: string[] | undefined;
@@ -33,4 +38,4 @@ export interface TimeoutMutantResult extends BaseMutantResult {
   status: MutantStatus.TimedOut;
 }
 
-export type MutantResult = TimeoutMutantResult | UndetectedMutantResult | InvalidMutantResult | KilledMutantResult;
+export type MutantResult = TimeoutMutantResult | UndetectedMutantResult | InvalidMutantResult | KilledMutantResult | IgnoredMutantResult;

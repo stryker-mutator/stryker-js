@@ -9,6 +9,7 @@ import {
   UndetectedMutantResult,
   KilledMutantResult,
   TimeoutMutantResult,
+  IgnoredMutantResult,
 } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -21,7 +22,7 @@ import { MutationTestReportHelper } from '../../../src/reporters/MutationTestRep
 import * as objectUtils from '../../../src/utils/objectUtils';
 import { createMutantTestCoverage } from '../../helpers/producers';
 
-describe(MutationTestReportHelper.name, () => {
+describe.only(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let inputFiles: InputFileCollection;
   let files: File[];
@@ -188,6 +189,8 @@ describe(MutationTestReportHelper.name, () => {
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
     });
 
+    []
+
     describe('determineExitCode', () => {
       beforeEach(() => {
         files.push(new File('file.js', ''));
@@ -349,6 +352,21 @@ describe(MutationTestReportHelper.name, () => {
       // Assert
       const expected: Partial<TimeoutMutantResult> = {
         status: MutantStatus.TimedOut,
+      };
+      expect(actual).deep.include(expected);
+    });
+
+    it('should report an ignored mutant on reportMutantRunResult with a IgnoredMutantResult', () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      const actual = sut.reportMutantIgnored(factory.mutant({ fileName: 'add.js', ignoreReason: 'foo is ignored' }));
+
+      // Assert
+      const expected: Partial<IgnoredMutantResult> = {
+        status: MutantStatus.Ignored,
+        ignoreReason: 'foo is ignored',
       };
       expect(actual).deep.include(expected);
     });

@@ -58,10 +58,11 @@ export class MutationTestExecutor {
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
-    const { passedMutant$, checkResult$ } = this.executeCheck(from(this.matchedMutants));
+    const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
+    const { passedMutant$, checkResult$ } = this.executeCheck(from(notIgnoredMutant$));
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
-    const results = await merge(testRunnerResult$, checkResult$, noCoverageResult$).pipe(toArray()).toPromise();
+    const results = await merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()).toPromise();
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
@@ -73,6 +74,14 @@ export class MutationTestExecutor {
     return {
       noCoverageResult$: noCoverageMatchedMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportNoCoverage(mutant))),
       coveredMutant$,
+    };
+  }
+
+  private executeIgnore(input$: Observable<MutantTestCoverage>) {
+    const [notIgnoredMutant$, ignoredMutant$] = partition(input$.pipe(shareReplay()), ({ mutant }) => mutant.ignoreReason === undefined);
+    return {
+      ignoredResult$: ignoredMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportMutantIgnored(mutant))),
+      notIgnoredMutant$,
     };
   }
 

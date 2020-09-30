@@ -23,6 +23,18 @@ describe(sut.name, () => {
       .injectFunction(sut);
   }
 
+  it('should not match ignored mutants to any tests', () => {
+    const mutant = factory.mutant({ id: 2, ignoreReason: 'foo should ignore' });
+    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
+
+    // Act
+    const result = act(dryRunResult, [mutant]);
+
+    // Assert
+    const expected: MutantTestCoverage[] = [{ mutant, estimatedNetTime: 0, coveredByTests: false }];
+    expect(result).deep.eq(expected);
+  });
+
   describe('without mutant coverage data', () => {
     it('should disable test filtering', () => {
       // Arrange

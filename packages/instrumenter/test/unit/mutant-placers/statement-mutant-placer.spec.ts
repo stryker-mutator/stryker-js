@@ -27,13 +27,11 @@ describe(statementMutantPlacer.name, () => {
     const ast = parseJS('const foo = a + b');
     const statement = findNodePath(ast, (p) => p.isVariableDeclaration());
     const nodeToMutate = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
-    const mutant = new Mutant(
-      1,
-      nodeToMutate.node,
-      types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
-      'file.js',
-      'fooMutator'
-    );
+    const mutant = new Mutant(1, 'file.js', {
+      original: nodeToMutate.node,
+      replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
+      mutatorName: 'fooMutator',
+    });
     return { statement, mutant, ast };
   }
 
@@ -90,8 +88,16 @@ describe(statementMutantPlacer.name, () => {
     const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
     const fooIdentifier = findNodePath<types.Identifier>(ast, (p) => p.isIdentifier());
     const mutants = [
-      new Mutant(52, binaryExpression.node, types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')), 'file.js', 'fooMutator'),
-      new Mutant(659, fooIdentifier.node, types.identifier('bar'), 'file.js', 'fooMutator'),
+      new Mutant(52, 'file.js', {
+        original: binaryExpression.node,
+        replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
+        mutatorName: 'fooMutator',
+      }),
+      new Mutant(659, 'file.js', {
+        original: fooIdentifier.node,
+        replacement: types.identifier('bar'),
+        mutatorName: 'fooMutator',
+      }),
     ];
 
     // Act

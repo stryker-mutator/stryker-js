@@ -8,12 +8,21 @@ export interface NodeMutation {
 }
 export interface NamedNodeMutation extends NodeMutation {
   mutatorName: string;
+  ignoreReason?: string;
 }
 
 export class Mutant {
   public readonly replacementCode: string;
+  public readonly original: types.Node;
+  public readonly replacement: types.Node;
+  public readonly mutatorName: string;
+  public readonly ignoreReason: string | undefined;
 
-  constructor(public id: number, public original: types.Node, public replacement: types.Node, public fileName: string, public mutatorName: string) {
+  constructor(public readonly id: number, public readonly fileName: string, specs: NamedNodeMutation) {
+    this.original = specs.original;
+    this.replacement = specs.replacement;
+    this.mutatorName = specs.mutatorName;
+    this.ignoreReason = specs.ignoreReason;
     this.replacementCode = generate(this.replacement).code;
   }
 
@@ -25,6 +34,7 @@ export class Mutant {
       mutatorName: this.mutatorName,
       range: [this.original.start!, this.original.end!],
       replacement: this.replacementCode,
+      ignoreReason: this.ignoreReason,
     };
   }
 }

@@ -2,14 +2,13 @@ import { types } from '@babel/core';
 import { File, Range } from '@stryker-mutator/api/core';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { InstrumenterOptions } from './instrumenter-options';
-import { createParser, getFormat } from './parsers';
+import { createParser, getFormat, ParserOptions } from './parsers';
 import { AstFormat, HtmlAst, JSAst, TSAst } from './syntax';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
 
-export async function disableTypeChecks(file: File, options: InstrumenterOptions) {
+export async function disableTypeChecks(file: File, options: ParserOptions) {
   if (isJSFileWithoutTSDirectives(file)) {
     // Performance optimization. Only parse the file when it has a change of containing a `// @ts-` directive
     return new File(file.name, prefixWithNoCheck(file.textContent));

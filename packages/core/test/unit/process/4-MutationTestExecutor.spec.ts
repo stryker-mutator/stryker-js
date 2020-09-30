@@ -95,6 +95,23 @@ describe(MutationTestExecutor.name, () => {
     expect(testRunner2.mutantRun).calledWithMatch({ activeMutant: mutant2 });
   });
 
+  it('should short circuit ignored mutants (not check them or run them)', async () => {
+    // Arrange
+    arrangePools();
+    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1, ignoreReason: '1 is ignored' }) }));
+    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 2, ignoreReason: '2 is ignored' }) }));
+
+    // Act
+    const actualResults = await sut.execute();
+
+    // Assert
+    expect(testRunner1.mutantRun).not.called;
+    expect(checker1.check).not.called;
+    expect(testRunner2.mutantRun).not.called;
+    expect(checker2.check).not.called;
+    expect(actualResults).lengthOf(2);
+  });
+
   it('should check the mutants before running them', async () => {
     // Arrange
     arrangePools();
@@ -215,6 +232,18 @@ describe(MutationTestExecutor.name, () => {
 
     // Assert
     expect(testRunner1.mutantRun).not.called;
+  });
+
+  it('should report an ignored mutant as `Ignored`', async () => {
+    // Arrange
+    const mutant = factory.mutant({ id: 1, ignoreReason: '1 is ignored' });
+    mutants.push(createMutantTestCoverage({ mutant, coveredByTests: false }));
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(mutationTestReportCalculatorMock.reportMutantIgnored).calledWithExactly(mutant);
   });
 
   it('should report an uncovered mutant with `NoCoverage`', async () => {

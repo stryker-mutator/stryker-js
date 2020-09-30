@@ -13,6 +13,7 @@ import {
   BaseMutantResult,
   UndetectedMutantResult,
   KilledMutantResult,
+  IgnoredMutantResult,
 } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
@@ -51,6 +52,10 @@ export class MutationTestReportHelper {
 
   public reportNoCoverage(mutant: Mutant) {
     return this.reportOne<UndetectedMutantResult>(mutant, { status: MutantStatus.NoCoverage, testFilter: [] });
+  }
+
+  public reportMutantIgnored(mutant: Mutant) {
+    return this.reportOne<IgnoredMutantResult>(mutant, { status: MutantStatus.Ignored, ignoreReason: mutant.ignoreReason! });
   }
 
   public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult) {
@@ -184,6 +189,7 @@ export class MutationTestReportHelper {
       mutatorName: mutantResult.mutatorName,
       replacement: mutantResult.replacement,
       status: this.toStatus(mutantResult.status),
+      description: this.describe(mutantResult),
     };
   }
 
@@ -215,9 +221,22 @@ export class MutationTestReportHelper {
         return mutationTestReportSchema.MutantStatus.Timeout;
       case MutantStatus.CompileError:
         return mutationTestReportSchema.MutantStatus.CompileError;
+      case MutantStatus.Ignored:
+        return mutationTestReportSchema.MutantStatus.Ignored;
       default:
         this.logUnsupportedMutantStatus(status);
         return mutationTestReportSchema.MutantStatus.RuntimeError;
+    }
+  }
+
+  private describe(mutantResult: MutantResult): string | undefined {
+    switch (mutantResult.status) {
+      case MutantStatus.Ignored:
+        return mutantResult.ignoreReason;
+      case MutantStatus.Killed:
+        return `Killed by: ${mutantResult.killedBy}`;
+      default:
+        return undefined;
     }
   }
 
