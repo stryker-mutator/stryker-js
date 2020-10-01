@@ -4,6 +4,16 @@ import { createMutatedAst, mutantTestExpression, mutationCoverageSequenceExpress
 
 import { MutantPlacer } from './mutant-placer';
 
+/**
+ * Places the mutants with consequent of a SwitchCase node. Uses an if-statement to do so.
+ * @example
+ *  case 'foo':
+ *    if (stryMutAct_9fa48(0)) {} else {
+ *      stryCov_9fa48(0);
+ *      console.log('bar');
+ *      break;
+ *   }
+ */
 const switchCaseMutantPlacer: MutantPlacer = (path, mutants): boolean => {
   if (path.isSwitchCase()) {
     // First transform the mutated ast before we start to apply mutants.
