@@ -103,6 +103,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 
 ### Available Options
 * [allowConsoleColors](#allowConsoleColors)
+* [commandRunner](#commandRunner)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
@@ -130,6 +131,15 @@ Command line: `--allowConsoleColors true`
 Config file: `allowConsoleColors: true`
 
 The `allowConsoleColors` value indicates whether Stryker should use colors in console.
+
+<a name="commandRunner"></a>
+### `commandRunner` [`object`]
+
+Default: `{ command: 'npm test' }`
+Command line: *none*
+Config file: `commandRunner: { command: 'npm run mocha' }`
+
+With `commandRunner`, you can specify the command to execute for running tests.
 
 <a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
