@@ -19,7 +19,6 @@ import {
 import * as di from '../../../src/di';
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
 
@@ -107,7 +106,7 @@ describe(ChildProcessProxyWorker.name, () => {
       processOnMessage(initMessage);
       const expectedWorkerResponse: ParentMessage = { kind: ParentMessageKind.Initialized };
       await tick(); // make sure promise is resolved
-      expect(processSendStub).calledWith(serialize(expectedWorkerResponse));
+      expect(processSendStub).calledWith(JSON.stringify(expectedWorkerResponse));
     });
 
     it('should remove any additional listeners', async () => {
@@ -124,7 +123,7 @@ describe(ChildProcessProxyWorker.name, () => {
     });
 
     it('should set global log level', () => {
-      processOnStub.callArgWith(1, serialize(initMessage));
+      processOnStub.callArgWith(1, JSON.stringify(initMessage));
       expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
     });
 
@@ -148,7 +147,7 @@ describe(ChildProcessProxyWorker.name, () => {
         processOnMessage(workerMessage);
         await tick();
         // Assert
-        expect(processSendStub).calledWith(serialize(expectedResult));
+        expect(processSendStub).calledWith(JSON.stringify(expectedResult));
       }
 
       async function actAndAssertRejection(workerMessage: CallMessage, expectedError: string) {
@@ -238,7 +237,7 @@ describe(ChildProcessProxyWorker.name, () => {
   });
 
   function processOnMessage(message: WorkerMessage) {
-    processOnStub.withArgs('message').callArgWith(1, [serialize(message)]);
+    processOnStub.withArgs('message').callArgWith(1, [JSON.stringify(message)]);
   }
 });
 

@@ -19,7 +19,6 @@ import {
   WorkerMessageKind,
 } from '../../../src/child-proxy/messageProtocol';
 import { LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/objectUtils';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
@@ -88,7 +87,7 @@ describe(ChildProcessProxy.name, () => {
       });
 
       // Assert
-      expect(childProcessMock.send).calledWith(serialize(expectedMessage));
+      expect(childProcessMock.send).calledWith(JSON.stringify(expectedMessage));
     });
 
     it('should listen to worker process', () => {
@@ -178,7 +177,7 @@ describe(ChildProcessProxy.name, () => {
 
       // Assert
       expect(result).eq('ack');
-      expect(childProcessMock.send).calledWith(serialize(expectedWorkerMessage));
+      expect(childProcessMock.send).calledWith(JSON.stringify(expectedWorkerMessage));
     });
   });
 
@@ -190,7 +189,7 @@ describe(ChildProcessProxy.name, () => {
     it('should send a dispose message', async () => {
       await actDispose();
       const expectedWorkerMessage: DisposeMessage = { kind: WorkerMessageKind.Dispose };
-      expect(childProcessMock.send).calledWith(serialize(expectedWorkerMessage));
+      expect(childProcessMock.send).calledWith(JSON.stringify(expectedWorkerMessage));
     });
 
     it('should kill the child process', async () => {
@@ -233,7 +232,7 @@ describe(ChildProcessProxy.name, () => {
   });
 
   function receiveMessage(workerResponse: ParentMessage) {
-    childProcessMock.emit('message', serialize(workerResponse));
+    childProcessMock.emit('message', JSON.stringify(workerResponse));
   }
 });
 
