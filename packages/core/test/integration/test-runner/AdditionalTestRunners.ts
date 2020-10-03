@@ -161,7 +161,6 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'errored', ErroredTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'discover-regex', DiscoverRegexTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'direct-resolved', DirectResolvedTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
