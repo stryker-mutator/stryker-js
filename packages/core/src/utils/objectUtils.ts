@@ -2,8 +2,6 @@ import treeKill = require('tree-kill');
 import { StrykerError, KnownKeys } from '@stryker-mutator/util';
 import { WarningOptions } from '@stryker-mutator/api/core';
 
-export { serialize, deserialize } from 'surrial';
-
 export function wrapInClosure(codeFragment: string) {
   return `
     (function (window) {

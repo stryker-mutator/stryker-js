@@ -1,14 +1,14 @@
 import { ChildProcess, fork } from 'child_process';
 import * as os from 'os';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
 import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
-import { kill, padLeft, serialize } from '../utils/objectUtils';
+import { kill, padLeft } from '../utils/objectUtils';
 import StringBuilder from '../utils/StringBuilder';
 
 import ChildProcessCrashedError from './ChildProcessCrashedError';
@@ -110,7 +110,7 @@ export default class ChildProcessProxy<T> implements Disposable {
         const correlationId = this.workerTasks.push(workerTask) - 1;
         this.initTask.promise.then(() => {
           this.send({
-            args: args.map((arg) => (arg instanceof File ? serialize(arg, [File]) : arg)),
+            args,
             correlationId,
             kind: WorkerMessageKind.Call,
             methodName,

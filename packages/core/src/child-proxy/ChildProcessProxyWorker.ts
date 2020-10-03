@@ -3,10 +3,6 @@ import * as path from 'path';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
 
-import { deserialize } from 'surrial';
-
-import { File } from '@stryker-mutator/api/core';
-
 import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
 
@@ -36,7 +32,6 @@ export default class ChildProcessProxyWorker {
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Call:
-        message.args = message.args.map((arg) => (typeof arg === 'string' && arg.startsWith('new File(') ? deserialize(arg, [File]) : arg));
         this.handleCall(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
