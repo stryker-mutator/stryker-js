@@ -1,14 +1,12 @@
 import * as path from 'path';
 
-import { File } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
 
 import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
-import { deserialize, serialize } from '../utils/objectUtils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './messageProtocol';
+import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessageKind, InitMessage } from './messageProtocol';
 
 export default class ChildProcessProxyWorker {
   private log: Logger;
@@ -23,12 +21,11 @@ export default class ChildProcessProxyWorker {
 
   private send(value: ParentMessage) {
     if (process.send) {
-      const str = serialize(value, [File]);
-      process.send(str);
+      process.send(JSON.stringify(value));
     }
   }
   private handleMessage(serializedMessage: string) {
-    const message = deserialize<WorkerMessage>(serializedMessage, [File]);
+    const message = JSON.parse(serializedMessage);
     switch (message.kind) {
       case WorkerMessageKind.Init:
         this.handleInit(message);
