@@ -1,8 +1,6 @@
 import * as os from 'os';
-import { isRegExp } from 'util';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import { declareClassPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test_runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -59,22 +57,6 @@ class DirectResolvedTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'coverageObject';
     return factory.completeDryRunResult();
-  }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
-}
-
-class DiscoverRegexTestRunner implements TestRunner {
-  public static inject = tokens(commonTokens.options);
-  constructor(private readonly options: StrykerOptions) {}
-
-  public async dryRun(): Promise<DryRunResult> {
-    if (isRegExp(this.options.someRegex)) {
-      return factory.completeDryRunResult();
-    } else {
-      return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
-    }
   }
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');

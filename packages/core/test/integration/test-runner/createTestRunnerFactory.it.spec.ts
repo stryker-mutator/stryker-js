@@ -31,7 +31,6 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
     testInjector.options.plugins = [require.resolve('./AdditionalTestRunners')];
-    testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
@@ -69,12 +68,6 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   function actMutantRun() {
     return sut.mutantRun(factory.mutantRunOptions());
   }
-
-  it('should be able to receive a regex', async () => {
-    await arrangeSut('discover-regex');
-    const result = await actDryRun();
-    expect(result.status).eq(DryRunStatus.Complete);
-  });
 
   it('should pass along the coverage result from the test runner behind', async () => {
     await arrangeSut('coverage-reporting');
