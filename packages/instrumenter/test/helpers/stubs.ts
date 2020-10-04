@@ -4,6 +4,8 @@ import { ParserContext } from '../../src/parsers/parser-context';
 import { PrinterContext } from '../../src/printers';
 import { TransformerContext } from '../../src/transformers';
 
+import { createTransformerOptions } from './factories';
+
 export function parserContextStub(): sinon.SinonStubbedInstance<ParserContext> {
   return {
     parse: sinon.stub(),
@@ -19,5 +21,6 @@ export function printerContextStub(): sinon.SinonStubbedInstance<PrinterContext>
 export function transformerContextStub(): sinon.SinonStubbedInstance<TransformerContext> {
   return {
     transform: sinon.stub(),
+    options: createTransformerOptions(),
   };
 }

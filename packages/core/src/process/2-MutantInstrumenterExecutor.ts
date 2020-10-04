@@ -31,7 +31,7 @@ export class MutantInstrumenterExecutor {
     const instrumenter = this.injector.injectClass(Instrumenter);
 
     // Instrument files in-memory
-    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, { plugins: this.options.mutator.plugins });
+    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, this.options.mutator);
 
     // Preprocess sandbox files
     const preprocess = this.injector.injectFunction(createPreprocessor);

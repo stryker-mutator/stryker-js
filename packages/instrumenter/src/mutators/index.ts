@@ -16,8 +16,11 @@ import { LogicalOperatorMutator } from './logical-operator-mutator';
 import { ObjectLiteralMutator } from './object-literal-mutator';
 import { UnaryOperatorMutator } from './unary-operator-mutator';
 import { UpdateOperatorMutator } from './update-operator-mutator';
+import { MutatorOptions } from './mutator-options';
 
 export * from './node-mutator';
+export * from './mutator-options';
+
 export const mutators: NodeMutator[] = [
   new ArithmeticOperatorMutator(),
   new ArrayDeclarationMutator(),
@@ -32,6 +35,16 @@ export const mutators: NodeMutator[] = [
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
 ];
-export const mutate = (node: NodePath): NamedNodeMutation[] => {
-  return flatMap(mutators, (mutator) => mutator.mutate(node).map((nodeMutation) => ({ ...nodeMutation, mutatorName: mutator.name })));
+export const mutate = (node: NodePath, { excludedMutations }: MutatorOptions): NamedNodeMutation[] => {
+  return flatMap(mutators, (mutator) =>
+    mutator.mutate(node).map((nodeMutation) => ({ ...nodeMutation, mutatorName: mutator.name, ignoreReason: formatIgnoreReason(mutator.name) }))
+  );
+
+  function formatIgnoreReason(mutatorName: string): string | undefined {
+    if (excludedMutations.includes(mutatorName)) {
+      return `Ignored because of excluded mutation "${mutatorName}"`;
+    } else {
+      return undefined;
+    }
+  }
 };

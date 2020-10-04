@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { types } from '@babel/core';
 
 import { MutantCollector } from '../../../src/transformers/mutant-collector';
-import { createMutant } from '../../helpers/factories';
+import { createMutant, createNamedNodeMutation } from '../../helpers/factories';
 
 describe(MutantCollector.name, () => {
   let sut: MutantCollector;
@@ -90,24 +90,56 @@ describe(MutantCollector.name, () => {
       expect(actual).lengthOf(1);
       expect(actual).deep.eq([mutants[1]]);
     });
+
+    it('should never return ignored mutants', () => {
+      // Arrange
+      const ignoredMutation = createNamedNodeMutation({ ignoreReason: 'foo should be ignored' });
+      const notIgnoredMutation = createNamedNodeMutation();
+      ignoredMutation.original.start = 5;
+      ignoredMutation.original.end = 6;
+      notIgnoredMutation.original.start = 4;
+      notIgnoredMutation.original.end = 7;
+      sut.add('foo.js', ignoredMutation);
+      const expected = sut.add('foo.js', notIgnoredMutation);
+
+      // Act
+      const actual = sut.findUnplacedMutantsInScope({ start: 1, end: 99 });
+
+      // Assert
+      expect(actual).deep.eq([expected]);
+    });
   });
 
-  describe(MutantCollector.prototype.hasMutants.name, () => {
-    it('should return true when a mutant is registered for the file', () => {
+  describe(MutantCollector.prototype.hasPlacedMutants.name, () => {
+    it('should return true when a mutant is placed for the file', () => {
       const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
-      input.map((mutant) => sut.add(mutant.fileName, mutant));
-      expect(sut.hasMutants('foo.js')).true;
-      expect(sut.hasMutants('bar.js')).true;
+      const mutants = input.map((mutant) => sut.add(mutant.fileName, mutant));
+      sut.markMutantsAsPlaced(mutants);
+      expect(sut.hasPlacedMutants('foo.js')).true;
+      expect(sut.hasPlacedMutants('bar.js')).true;
     });
 
     it('should return false when no mutants is registered for the file', () => {
       const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
       input.map((mutant) => sut.add(mutant.fileName, mutant));
-      expect(sut.hasMutants('baz.js')).false;
+      expect(sut.hasPlacedMutants('baz.js')).false;
+    });
+
+    it('should return false when no mutants is placed', () => {
+      const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
+      const [, barMutant] = input.map((mutant) => sut.add(mutant.fileName, mutant));
+      sut.markMutantsAsPlaced([barMutant]);
+      expect(sut.hasPlacedMutants('foo.js')).false;
+    });
+
+    it('should return false when there are ignored mutants only', () => {
+      const input = createMutant({ fileName: 'foo.js', ignoreReason: 'foo is ignored' });
+      sut.add(input.fileName, input);
+      expect(sut.hasPlacedMutants('foo.js')).false;
     });
 
     it('should return false when no mutants are registered at all', () => {
-      expect(sut.hasMutants('baz.js')).false;
+      expect(sut.hasPlacedMutants('baz.js')).false;
     });
   });
 });

@@ -1,0 +1,11 @@
+{
+  "name": "ignore-project",
+  "description": "e2e test for different ignored mutants",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test:unit": "mocha",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  }
+}

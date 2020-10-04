@@ -15,7 +15,7 @@ describe(Mutant.name, () => {
       // Arrange
       const original = types.binaryExpression('+', types.numericLiteral(40), types.numericLiteral(2));
       const replacement = types.binaryExpression('-', types.numericLiteral(40), types.numericLiteral(2));
-      const mutant = new Mutant(2, original, replacement, 'file.js', 'fooMutator');
+      const mutant = new Mutant(2, 'file.js', { original, replacement, mutatorName: 'fooMutator' });
 
       // Act
       replacement.operator = '%';
@@ -27,13 +27,19 @@ describe(Mutant.name, () => {
 
   describe(Mutant.prototype.toApiMutant.name, () => {
     it('should map all properties as expected', () => {
-      const mutant = new Mutant(2, types.stringLiteral(''), types.stringLiteral('Stryker was here!'), 'file.js', 'fooMutator');
+      const mutant = new Mutant(2, 'file.js', {
+        original: types.stringLiteral(''),
+        replacement: types.stringLiteral('Stryker was here!'),
+        mutatorName: 'fooMutator',
+        ignoreReason: 'ignore',
+      });
       mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: 2,
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
+        ignoreReason: 'ignore',
       };
       expect(mutant.toApiMutant()).deep.include(expected);
     });
@@ -42,7 +48,7 @@ describe(Mutant.name, () => {
       // Arrange
       const lt = findNodePath<types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
       const lte = types.binaryExpression('<=', lt.left, lt.right);
-      const mutant = new Mutant(1, lt, lte, 'bar.js', 'barMutator');
+      const mutant = new Mutant(1, 'bar.js', { original: lt, replacement: lte, mutatorName: 'barMutator' });
 
       // Act
       const actual = mutant.toApiMutant();

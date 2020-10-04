@@ -22,13 +22,11 @@ describe(expressionMutantPlacer.name, () => {
   function arrangeSingleMutant() {
     const ast = parseJS('const foo = a + b');
     const binaryExpression = findNodePath(ast, (p) => p.isBinaryExpression());
-    const mutant = new Mutant(
-      1,
-      binaryExpression.node,
-      types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
-      'file.js',
-      'fooMutator'
-    );
+    const mutant = new Mutant(1, 'file.js', {
+      original: binaryExpression.node,
+      replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
+      mutatorName: 'fooMutator',
+    });
     return { binaryExpression, mutant, ast };
   }
 

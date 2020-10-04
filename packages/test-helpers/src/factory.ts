@@ -19,6 +19,7 @@ import {
   InvalidMutantResult,
   UndetectedMutantResult,
   TimeoutMutantResult,
+  IgnoredMutantResult,
 } from '@stryker-mutator/api/report';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import * as sinon from 'sinon';
@@ -123,6 +124,20 @@ export const invalidMutantResult = factoryMethod<InvalidMutantResult>(() => ({
   fileName: 'file.js',
   status: MutantStatus.RuntimeError,
   errorMessage: 'expected error',
+  nrOfTestsRan: 2,
+}));
+
+export const ignoredMutantResult = factoryMethod<IgnoredMutantResult>(() => ({
+  id: '256',
+  location: location(),
+  mutatedLines: '',
+  mutatorName: '',
+  originalLines: '',
+  range: [0, 0],
+  replacement: '',
+  fileName: 'file.js',
+  status: MutantStatus.Ignored,
+  ignoreReason: 'Ignored by "fooMutator" in excludedMutations',
   nrOfTestsRan: 2,
 }));
 

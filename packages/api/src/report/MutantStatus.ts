@@ -36,6 +36,11 @@ enum MutantStatus {
    * ```
    */
   CompileError,
+
+  /**
+   * The status of a mutant that is ignored. For example, by user configuration.
+   */
+  Ignored,
 }
 
 export default MutantStatus;

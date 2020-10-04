@@ -49,6 +49,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument js files with a shebang in them', async () => {
     await arrangeAndActAssert('shebang.js');
   });
+  it('should not place ignored mutants', async () => {
+    await arrangeAndActAssert('ignore.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
+  });
   it('should be able to instrument switch case statements (using the switchCaseMutantPlacer)', async () => {
     await arrangeAndActAssert('switch-case.js');
   });
@@ -58,7 +61,7 @@ describe('instrumenter integration', () => {
       await arrangeAndActAssert('type-definitions.ts');
     });
     it('should not produce mutants for flow-types', async () => {
-      await arrangeAndActAssert('flow-typed.js', { plugins: ['flow'] });
+      await arrangeAndActAssert('flow-typed.js', createInstrumenterOptions({ plugins: ['flow'] }));
     });
     it('should not produce mutants for a TS declaration file', async () => {
       await arrangeAndActAssert('ts-declarations.ts');
