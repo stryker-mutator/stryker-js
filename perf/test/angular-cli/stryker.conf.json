@@ -1,0 +1,21 @@
+{
+  "$schema": "../../../packages/core/schema/stryker-schema.json",
+  "mutate": [
+    "src/app/catalogus/*.ts",
+    "src/app/shopping-cart/*.ts",
+    "src/app/services/*.ts",
+    "!src/**/*.spec.ts"
+  ],
+  "testRunner": "karma",
+  "karma": {
+    "configFile": "src/karma.conf.js",
+    "projectType": "angular-cli",
+    "config": {
+      "browsers": ["ChromeHeadless"]
+    }
+  },
+  "timeoutMS": 60000,
+  "reporters": ["progress", "clear-text", "html"],
+  "concurrency": 2,
+  "coverageAnalysis": "perTest"
+}

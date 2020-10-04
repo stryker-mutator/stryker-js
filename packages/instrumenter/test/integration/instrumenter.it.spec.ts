@@ -52,6 +52,9 @@ describe('instrumenter integration', () => {
   it('should not place ignored mutants', async () => {
     await arrangeAndActAssert('ignore.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
   });
+  it('should be able to instrument switch case statements (using the switchCaseMutantPlacer)', async () => {
+    await arrangeAndActAssert('switch-case.js');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {
