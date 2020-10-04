@@ -12,11 +12,8 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
  */
 export class VueJsPreset implements Preset {
   public readonly name = 'vueJs';
-  private readonly generalDependencies = ['@stryker-mutator/core', '@stryker-mutator/vue-mutator'];
 
-  private readonly jestDependency = '@stryker-mutator/jest-runner';
   private readonly jestConf: Partial<StrykerOptions> = {
-    mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
     testRunner: 'jest',
     jest: {
       // config: require('path/to/your/custom/jestConfig.js')
@@ -24,10 +21,7 @@ export class VueJsPreset implements Preset {
     reporters: ['progress', 'clear-text', 'html'],
     coverageAnalysis: 'off',
   };
-
-  private readonly karmaDependency = '@stryker-mutator/karma-runner';
   private readonly karmaConf: Partial<StrykerOptions> = {
-    mutate: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.vue'],
     testRunner: 'karma',
     karma: {
       configFile: 'test/unit/karma.conf.js',
@@ -36,7 +30,7 @@ export class VueJsPreset implements Preset {
       },
     },
     reporters: ['progress', 'clear-text', 'html'],
-    coverageAnalysis: 'off',
+    coverageAnalysis: 'perTest',
   };
 
   public async createConfig(): Promise<PresetConfiguration> {
@@ -47,18 +41,10 @@ export class VueJsPreset implements Preset {
       name: 'testRunner',
       type: 'list',
     });
-    const scriptChoices = ['typescript', 'javascript'];
-    const scriptAnswers = await inquirer.prompt<{ script: string }>({
-      choices: scriptChoices,
-      message: 'Which language does your project use?',
-      name: 'script',
-      type: 'list',
-    });
     const chosenTestRunner = testRunnerAnswers.testRunner;
-    const chosenScript = scriptAnswers.script;
     return {
       config: this.getConfig(chosenTestRunner),
-      dependencies: this.createDependencies(chosenTestRunner, chosenScript),
+      dependencies: this.createDependencies(chosenTestRunner),
       handbookUrl,
     };
   }
@@ -73,28 +59,17 @@ export class VueJsPreset implements Preset {
     }
   }
 
-  private createDependencies(testRunner: string, script: string): string[] {
-    const dependencies = this.generalDependencies;
+  private createDependencies(testRunner: string): string[] {
+    const dependencies = ['@stryker-mutator/core'];
     dependencies.push(this.getTestRunnerDependency(testRunner));
-    dependencies.push(this.getScriptDependency(script));
     return dependencies;
-  }
-
-  private getScriptDependency(script: string): string {
-    if (script === 'typescript') {
-      return '@stryker-mutator/typescript';
-    } else if (script === 'javascript') {
-      return '@stryker-mutator/javascript-mutator';
-    } else {
-      throw new Error(`Invalid script chosen: ${script}`);
-    }
   }
 
   private getTestRunnerDependency(testRunner: string): string {
     if (testRunner === 'karma') {
-      return this.karmaDependency;
+      return '@stryker-mutator/karma-runner';
     } else if (testRunner === 'jest') {
-      return this.jestDependency;
+      return '@stryker-mutator/jest-runner';
     } else {
       throw new Error(`Invalid test runner chosen: ${testRunner}`);
     }

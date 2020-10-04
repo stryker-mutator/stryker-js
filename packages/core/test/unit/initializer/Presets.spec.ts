@@ -39,22 +39,6 @@ describe('Presets', () => {
     it('should have the name "create-react-app"', () => {
       expect(reactPreset.name).to.eq('create-react-app');
     });
-
-    it('should install @stryker-mutator/typescript when TSX is chosen', async () => {
-      inquirerPrompt.resolves({
-        choice: 'TSX',
-      });
-      const config = await reactPreset.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/typescript');
-    });
-
-    it('should install @stryker-mutator/javascript-mutator when JSX is chosen', async () => {
-      inquirerPrompt.resolves({
-        choice: 'JSX',
-      });
-      const config = await reactPreset.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/javascript-mutator');
-    });
   });
 
   describe('VueJsPreset', () => {
@@ -88,24 +72,6 @@ describe('Presets', () => {
       });
       const config = await vueJsPreset.createConfig();
       expect(config.dependencies).to.include('@stryker-mutator/jest-runner');
-    });
-
-    it('should install @stryker-mutator/typescript when typescript is chosen', async () => {
-      inquirerPrompt.resolves({
-        script: 'typescript',
-        testRunner: 'karma',
-      });
-      const config = await vueJsPreset.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/typescript');
-    });
-
-    it('should install @stryker-mutator/javascript-mutator when javascript is chosen', async () => {
-      inquirerPrompt.resolves({
-        script: 'javascript',
-        testRunner: 'karma',
-      });
-      const config = await vueJsPreset.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/javascript-mutator');
     });
   });
 });
