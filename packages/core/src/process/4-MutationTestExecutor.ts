@@ -69,20 +69,16 @@ export class MutationTestExecutor {
     return results;
   }
 
-  private executeNoCoverage(input$: Observable<MutantTestCoverage>) {
-    const [coveredMutant$, noCoverageMatchedMutant$] = partition(input$.pipe(shareReplay()), (matchedMutant) => matchedMutant.coveredByTests);
-    return {
-      noCoverageResult$: noCoverageMatchedMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportNoCoverage(mutant))),
-      coveredMutant$,
-    };
-  }
-
   private executeIgnore(input$: Observable<MutantTestCoverage>) {
     const [notIgnoredMutant$, ignoredMutant$] = partition(input$.pipe(shareReplay()), ({ mutant }) => mutant.ignoreReason === undefined);
-    return {
-      ignoredResult$: ignoredMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportMutantIgnored(mutant))),
-      notIgnoredMutant$,
-    };
+    const ignoredResult$ = ignoredMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportMutantIgnored(mutant)));
+    return { ignoredResult$, notIgnoredMutant$ };
+  }
+
+  private executeNoCoverage(input$: Observable<MutantTestCoverage>) {
+    const [coveredMutant$, noCoverageMatchedMutant$] = partition(input$.pipe(shareReplay()), (matchedMutant) => matchedMutant.coveredByTests);
+    const noCoverageResult$ = noCoverageMatchedMutant$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportNoCoverage(mutant)));
+    return { noCoverageResult$, coveredMutant$ };
   }
 
   private executeCheck(input$: Observable<MutantTestCoverage>) {
@@ -104,33 +100,20 @@ export class MutationTestExecutor {
         },
       })
     );
-    const [passedMutant$, failedMutant$] = partition(checkTask$.pipe(shareReplay()), ({ checkResult }) => {
-      return checkResult.status === CheckStatus.Passed;
-    });
-    return {
-      checkResult$: failedMutant$.pipe(
-        map((failedMutant) =>
-          this.mutationTestReportHelper.reportCheckFailed(
-            failedMutant.matchedMutant.mutant,
-            failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>
-          )
+    const [passedCheckResult$, failedCheckResult$] = partition(
+      checkTask$.pipe(shareReplay()),
+      ({ checkResult }) => checkResult.status === CheckStatus.Passed
+    );
+    const checkResult$ = failedCheckResult$.pipe(
+      map((failedMutant) =>
+        this.mutationTestReportHelper.reportCheckFailed(
+          failedMutant.matchedMutant.mutant,
+          failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>
         )
-      ),
-      passedMutant$: passedMutant$.pipe(map(({ matchedMutant }) => matchedMutant)),
-    };
-  }
-
-  private createMutantRunOptions(mutant: MutantTestCoverage): MutantRunOptions {
-    return {
-      activeMutant: mutant.mutant,
-      timeout: this.calculateTimeout(mutant),
-      testFilter: mutant.testFilter,
-      sandboxFileName: this.sandbox.sandboxFileFor(mutant.mutant.fileName),
-    };
-  }
-
-  private calculateTimeout(mutant: MutantTestCoverage) {
-    return this.options.timeoutFactor * mutant.estimatedNetTime + this.options.timeoutMS + this.timeOverheadMS;
+      )
+    );
+    const passedMutant$ = passedCheckResult$.pipe(map(({ matchedMutant }) => matchedMutant));
+    return { checkResult$, passedMutant$ };
   }
 
   private executeRunInTestRunner(input$: Observable<MutantTestCoverage>): Observable<MutantResult> {
@@ -142,6 +125,16 @@ export class MutationTestExecutor {
         return this.mutationTestReportHelper.reportMutantRunResult(matchedMutant, result);
       })
     );
+  }
+
+  private createMutantRunOptions(mutant: MutantTestCoverage): MutantRunOptions {
+    const timeout = this.options.timeoutFactor * mutant.estimatedNetTime + this.options.timeoutMS + this.timeOverheadMS;
+    return {
+      activeMutant: mutant.mutant,
+      timeout: timeout,
+      testFilter: mutant.testFilter,
+      sandboxFileName: this.sandbox.sandboxFileFor(mutant.mutant.fileName),
+    };
   }
 
   private logDone() {
