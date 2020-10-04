@@ -6,7 +6,6 @@ import { MutantResult } from '@stryker-mutator/api/report';
 import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test_runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
-
 import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
@@ -14,9 +13,7 @@ import StrictReporter from '../reporters/StrictReporter';
 import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
 import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
 import Timer from '../utils/Timer';
-
 import { Pool, ConcurrencyTokenProvider } from '../concurrent';
-
 import { Sandbox } from '../sandbox';
 
 import { DryRunContext } from './3-DryRunExecutor';
