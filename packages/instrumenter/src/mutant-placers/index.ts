@@ -8,8 +8,9 @@ import { Mutant } from '../mutant';
 import { MutantPlacer } from './mutant-placer';
 import { statementMutantPlacer } from './statement-mutant-placer';
 import { expressionMutantPlacer } from './expression-mutant-placer';
+import { switchCaseMutantPlacer } from './switch-case-mutant-placer';
 
-export const MUTANT_PLACERS = Object.freeze([expressionMutantPlacer, statementMutantPlacer]);
+export const MUTANT_PLACERS = Object.freeze([expressionMutantPlacer, statementMutantPlacer, switchCaseMutantPlacer]);
 
 /**
  * Represents a mutant placer, tries to place a mutant in the AST with corresponding mutation switch and mutant covering expression
