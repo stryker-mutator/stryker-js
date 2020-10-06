@@ -128,10 +128,7 @@ describe(StrykerInitializer.name, () => {
 
     it('should correctly write and format the stryker js configuration file', async () => {
       const handbookUrl = 'https://awesome-preset.org';
-      const config = {
-        comment: `This config was generated using a preset. Please see the handbook for more information: ${handbookUrl}`,
-        awesomeConf: 'awesome',
-      };
+      const config = { awesomeConf: 'awesome' };
       childExec.resolves();
       resolvePresetConfig({
         config,
@@ -141,7 +138,7 @@ describe(StrykerInitializer.name, () => {
          * @type {import('@stryker-mutator/api/core').StrykerOptions}
          */  
         module.exports = {
-          "comment": "${config.comment}",
+          "_comment": "This config was generated using a preset. Please see the handbook for more information: https://awesome-preset.org",
           "awesomeConf": "${config.awesomeConf}"
         };`;
       inquirerPrompt.resolves({
@@ -436,10 +433,8 @@ describe(StrykerInitializer.name, () => {
   }
 
   function expectStrykerConfWritten(expectedRawConfig: string) {
-    expect(fsWriteFile).calledWithMatch(
-      sinon.match('stryker.conf.js'),
-      sinon.match((actualConf: string) => normalizeWhitespaces(expectedRawConfig) === normalizeWhitespaces(actualConf))
-    );
-    fsWriteFile.getCall(0);
+    const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
+    expect(fileName).eq('stryker.conf.js');
+    expect(normalizeWhitespaces(actualConfig)).deep.eq(normalizeWhitespaces(expectedRawConfig));
   }
 });
