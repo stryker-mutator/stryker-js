@@ -11,7 +11,7 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
  */
 export class ReactPreset implements Preset {
   public readonly name = 'create-react-app';
-  private readonly dependencies = ['@stryker-mutator/core', '@stryker-mutator/jest-runner'];
+  private readonly dependencies = ['@stryker-mutator/jest-runner'];
 
   private readonly config: Partial<StrykerOptions> = {
     testRunner: 'jest',

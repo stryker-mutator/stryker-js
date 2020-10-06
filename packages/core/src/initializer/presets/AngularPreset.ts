@@ -10,7 +10,7 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
 export class AngularPreset implements Preset {
   public readonly name = 'angular-cli';
   // Please keep config in sync with handbook
-  private readonly dependencies = ['@stryker-mutator/core', '@stryker-mutator/karma-runner'];
+  private readonly dependencies = ['@stryker-mutator/karma-runner'];
   private readonly config: Partial<StrykerOptions> = {
     mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
     testRunner: 'karma',
