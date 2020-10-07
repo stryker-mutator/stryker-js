@@ -17,18 +17,6 @@
       "path": "packages/api"
     },
     {
-      "name": "babel-transpiler",
-      "path": "packages/babel-transpiler"
-    },
-    {
-      "name": "jasmine-framework",
-      "path": "packages/jasmine-framework"
-    },
-    {
-      "name": "javascript-mutator",
-      "path": "packages/javascript-mutator"
-    },
-    {
       "name": "jasmine-runner",
       "path": "packages/jasmine-runner"
     },
@@ -41,32 +29,12 @@
       "path": "packages/karma-runner"
     },
     {
-      "name": "mocha-framework",
-      "path": "packages/mocha-framework"
-    },
-    {
       "name": "mocha-runner",
       "path": "packages/mocha-runner"
     },
     {
-      "name": "typescript",
-      "path": "packages/typescript"
-    },
-    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
-    },
-    {
-      "name": "vue-mutator",
-      "path": "packages/vue-mutator"
-    },
-    {
-      "name": "webpack-transpiler",
-      "path": "packages/webpack-transpiler"
-    },
-    {
-      "name": "wct-runner",
-      "path": "packages/wct-runner"
     },
     {
       "name": "util",
