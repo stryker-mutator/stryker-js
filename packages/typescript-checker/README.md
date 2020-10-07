@@ -1,6 +1,3 @@
-**NOTE:** This readme describes a checker plugin set to release in Stryker v4. It is not usable yet!
-Please see the [master branch](https://github.com/stryker-mutator/stryker/tree/master) for the current release of Stryker.
-
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster%3Fmodule%3Dtypescript)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master?module=typescript-checker)
 [![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/typescript-checker.svg)](https://www.npmjs.com/package/@stryker-mutator/typescript-checker)
