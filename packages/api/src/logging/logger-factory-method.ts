@@ -1,4 +1,4 @@
-import Logger from './Logger';
+import Logger from './logger';
 
 /**
  * Represents a factory to get loggers by category name.

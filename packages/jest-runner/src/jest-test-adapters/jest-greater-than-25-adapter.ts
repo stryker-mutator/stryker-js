@@ -3,10 +3,10 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { Config } from '@jest/types';
 
-import { jestWrapper } from '../utils/jestWrapper';
-import { JestRunResult } from '../JestRunResult';
+import { jestWrapper } from '../utils/jest-wrapper';
+import { JestRunResult } from '../jest-run-result';
 
-import JestTestAdapter from './JestTestAdapter';
+import JestTestAdapter from './jest-test-adapter';
 
 export default class JestGreaterThan25Adapter implements JestTestAdapter {
   public static inject = tokens(commonTokens.logger);

@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import HtmlReporter from '../../../../src/reporters/html/HtmlReporter';
+import HtmlReporter from '../../../../src/reporters/html/html-reporter';
 
-import { simpleReport } from './simpleReport';
+import { simpleReport } from './simple-report';
 
 describe('HtmlReporter with example math project', () => {
   let sut: HtmlReporter;

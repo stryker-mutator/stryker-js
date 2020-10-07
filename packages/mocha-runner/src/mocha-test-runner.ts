@@ -12,15 +12,15 @@ import {
   DryRunStatus,
   toMutantRunResult,
   CompleteDryRunResult,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
-import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { MochaRunnerWithStrykerOptions } from './MochaRunnerWithStrykerOptions';
+import { StrykerMochaReporter } from './stryker-mocha-reporter';
+import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
 import * as pluginTokens from './plugin-tokens';
-import MochaOptionsLoader from './MochaOptionsLoader';
-import { MochaAdapter } from './MochaAdapter';
+import MochaOptionsLoader from './mocha-options-loader';
+import { MochaAdapter } from './mocha-adapter';
 
 export class MochaTestRunner implements TestRunner {
   public testFileNames: string[];

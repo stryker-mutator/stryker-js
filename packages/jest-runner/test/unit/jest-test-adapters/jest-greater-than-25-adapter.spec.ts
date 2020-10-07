@@ -4,8 +4,8 @@ import sinon from 'sinon';
 
 import { Config } from '@jest/types';
 
-import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
-import { jestWrapper } from '../../../src/utils/jestWrapper';
+import JestGreaterThan25Adapter from '../../../src/jest-test-adapters/jest-greater-than-25-adapter';
+import { jestWrapper } from '../../../src/utils/jest-wrapper';
 
 describe(JestGreaterThan25Adapter.name, () => {
   let sut: JestGreaterThan25Adapter;

@@ -9,12 +9,12 @@ import sinon = require('sinon');
 import { PrepareExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import * as buildMainInjectorModule from '../../../src/di/buildMainInjector';
-import Timer from '../../../src/utils/Timer';
-import InputFileResolver from '../../../src/input/InputFileResolver';
-import InputFileCollection from '../../../src/input/InputFileCollection';
+import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
+import Timer from '../../../src/utils/timer';
+import InputFileResolver from '../../../src/input/input-file-resolver';
+import InputFileCollection from '../../../src/input/input-file-collection';
 
-import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import { ConfigError } from '../../../src/errors';
 
 describe(PrepareExecutor.name, () => {

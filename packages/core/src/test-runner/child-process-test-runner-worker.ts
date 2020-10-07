@@ -8,7 +8,7 @@ import {
   DryRunResult,
   DryRunStatus,
   MutantRunStatus,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 
 import { errorToString } from '@stryker-mutator/util';
 

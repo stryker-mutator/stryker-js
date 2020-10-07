@@ -2,7 +2,7 @@ import { EOL } from 'os';
 
 import { expect } from 'chai';
 
-import StringBuilder from '../../../src/utils/StringBuilder';
+import StringBuilder from '../../../src/utils/string-builder';
 
 describe(StringBuilder.name, () => {
   describe('toString', () => {

@@ -4,11 +4,11 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
 
-import { CIProvider } from '../ci/Provider';
+import { CIProvider } from '../ci/provider';
 
-import DashboardReporterClient from './DashboardReporterClient';
+import DashboardReporterClient from './dashboard-reporter-client';
 import { dashboardReporterTokens } from './tokens';
-import { Report } from './Report';
+import { Report } from './report';
 
 export default class DashboardReporter implements Reporter {
   public static readonly inject = tokens(

@@ -1,12 +1,12 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
-import ChildProcessCrashedError from '../child-proxy/ChildProcessCrashedError';
-import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
+import ChildProcessCrashedError from '../child-proxy/child-process-crashed-error';
+import ChildProcessProxy from '../child-proxy/child-process-proxy';
 import { LoggingClientContext } from '../logging';
 
-import { ChildProcessTestRunnerWorker } from './ChildProcessTestRunnerWorker';
+import { ChildProcessTestRunnerWorker } from './child-process-test-runner-worker';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 

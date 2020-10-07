@@ -8,7 +8,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
 import {
   autoStart,
   DisposeMessage,
@@ -17,14 +17,14 @@ import {
   ParentMessageKind,
   WorkerMessage,
   WorkerMessageKind,
-} from '../../../src/child-proxy/messageProtocol';
+} from '../../../src/child-proxy/message-protocol';
 import { LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/objectUtils';
-import * as objectUtils from '../../../src/utils/objectUtils';
-import currentLogMock from '../../helpers/logMock';
+import { serialize } from '../../../src/utils/object-utils';
+import * as objectUtils from '../../../src/utils/object-utils';
+import currentLogMock from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
-import { HelloClass } from './HelloClass';
+import { HelloClass } from './hello-class';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -64,7 +64,10 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/child-process-proxy-worker'), [autoStart], {
+        silent: true,
+        execArgv: [],
+      });
     });
 
     it('should send init message to child process', () => {

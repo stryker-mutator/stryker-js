@@ -5,7 +5,7 @@ import { assert, expect } from 'chai';
 import sinon from 'sinon';
 import { logger, strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 
-import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
+import CustomJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
 
 describe(CustomJestConfigLoader.name, () => {
   let defaultConfigLoader: CustomJestConfigLoader;

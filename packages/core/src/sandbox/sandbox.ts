@@ -11,8 +11,8 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { from } from 'rxjs';
 
-import { TemporaryDirectory } from '../utils/TemporaryDirectory';
-import { findNodeModules, MAX_CONCURRENT_FILE_IO, symlinkJunction, writeFile } from '../utils/fileUtils';
+import { TemporaryDirectory } from '../utils/temporary-directory';
+import { findNodeModules, MAX_CONCURRENT_FILE_IO, symlinkJunction, writeFile } from '../utils/file-utils';
 import { coreTokens } from '../di';
 
 interface SandboxFactory {

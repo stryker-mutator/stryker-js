@@ -1,10 +1,10 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { JestTestAdapter, jestTestAdapterFactory } from '../../../src/jestTestAdapters';
-import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
-import JestLessThan25Adapter from '../../../src/jestTestAdapters/JestLessThan25Adapter';
-import { jestVersionToken } from '../../../src/pluginTokens';
+import { JestTestAdapter, jestTestAdapterFactory } from '../../../src/jest-test-adapters';
+import JestGreaterThan25Adapter from '../../../src/jest-test-adapters/jest-greater-than-25-adapter';
+import JestLessThan25Adapter from '../../../src/jest-test-adapters/jest-less-than-25-adapter';
+import { jestVersionToken } from '../../../src/plugin-tokens';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;

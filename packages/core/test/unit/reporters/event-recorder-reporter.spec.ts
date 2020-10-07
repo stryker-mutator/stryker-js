@@ -6,9 +6,9 @@ import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import EventRecorderReporter from '../../../src/reporters/EventRecorderReporter';
-import StrictReporter from '../../../src/reporters/StrictReporter';
-import * as fileUtils from '../../../src/utils/fileUtils';
+import EventRecorderReporter from '../../../src/reporters/event-recorder-reporter';
+import StrictReporter from '../../../src/reporters/strict-reporter';
+import * as fileUtils from '../../../src/utils/file-utils';
 
 describe(EventRecorderReporter.name, () => {
   let sut: StrictReporter;

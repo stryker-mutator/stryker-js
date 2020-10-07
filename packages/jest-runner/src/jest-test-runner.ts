@@ -10,20 +10,20 @@ import {
   DryRunStatus,
   TestResult,
   TestStatus,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
 
 import { SerializableError } from '@jest/types/build/TestResult';
 
-import { jestTestAdapterFactory } from './jestTestAdapters';
-import JestTestAdapter from './jestTestAdapters/JestTestAdapter';
-import JestConfigLoader from './configLoaders/JestConfigLoader';
-import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './pluginTokens';
-import { configLoaderFactory } from './configLoaders';
-import { JestRunnerOptionsWithStrykerOptions } from './JestRunnerOptionsWithStrykerOptions';
-import JEST_OVERRIDE_OPTIONS from './jestOverrideOptions';
+import { jestTestAdapterFactory } from './jest-test-adapters';
+import JestTestAdapter from './jest-test-adapters/jest-test-adapter';
+import JestConfigLoader from './config-loaders/jest-config-loader';
+import { configLoaderToken, processEnvToken, jestTestAdapterToken, jestVersionToken } from './plugin-tokens';
+import { configLoaderFactory } from './config-loaders';
+import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
+import JEST_OVERRIDE_OPTIONS from './jest-override-options';
 
 export function jestTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector

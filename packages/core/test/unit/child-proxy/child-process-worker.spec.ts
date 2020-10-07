@@ -6,7 +6,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
+import ChildProcessProxyWorker from '../../../src/child-proxy/child-process-proxy-worker';
 import {
   CallMessage,
   InitMessage,
@@ -15,15 +15,15 @@ import {
   WorkerMessage,
   WorkerMessageKind,
   WorkResult,
-} from '../../../src/child-proxy/messageProtocol';
+} from '../../../src/child-proxy/message-protocol';
 import * as di from '../../../src/di';
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/objectUtils';
-import currentLogMock from '../../helpers/logMock';
+import { serialize } from '../../../src/utils/object-utils';
+import currentLogMock from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
-import { HelloClass } from './HelloClass';
+import { HelloClass } from './hello-class';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 

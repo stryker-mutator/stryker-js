@@ -9,9 +9,9 @@ import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
-import { isWarningEnabled } from '../utils/objectUtils';
+import { isWarningEnabled } from '../utils/object-utils';
 
-import { describeErrors } from './validationErrors';
+import { describeErrors } from './validation-errors';
 
 const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore', logger: false });
 

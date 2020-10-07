@@ -1,7 +1,7 @@
 import { assert, expect } from 'chai';
 import * as sinon from 'sinon';
 
-import { createReactJestConfig, createReactTsJestConfig } from '../../../src/utils/createReactJestConfig';
+import { createReactJestConfig, createReactTsJestConfig } from '../../../src/utils/create-react-jest-config';
 
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;

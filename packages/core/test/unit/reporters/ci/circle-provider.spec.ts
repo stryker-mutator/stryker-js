@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
-import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
+import CircleProvider from '../../../../src/reporters/ci/circle-provider';
+import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
 
 describe(CircleProvider.name, () => {
   let sut: CircleProvider;

@@ -1,8 +1,8 @@
 import inquirer = require('inquirer');
 import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import Preset from './Preset';
-import PresetConfiguration from './PresetConfiguration';
+import Preset from './preset';
+import PresetConfiguration from './preset-configuration';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs';
 

@@ -7,10 +7,10 @@ import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mu
 import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantInstrumenterExecutor } from '../../../src/process';
-import InputFileCollection from '../../../src/input/InputFileCollection';
+import InputFileCollection from '../../../src/input/input-file-collection';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, PoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
-import { createCheckerFactory } from '../../../src/checker/CheckerFacade';
+import { createCheckerFactory } from '../../../src/checker/checker-facade';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
 
 describe(MutantInstrumenterExecutor.name, () => {

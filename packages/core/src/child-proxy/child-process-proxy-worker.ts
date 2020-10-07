@@ -6,9 +6,9 @@ import { getLogger, Logger } from 'log4js';
 
 import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
-import { deserialize, serialize } from '../utils/objectUtils';
+import { deserialize, serialize } from '../utils/object-utils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './messageProtocol';
+import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 
 export default class ChildProcessProxyWorker {
   private log: Logger;

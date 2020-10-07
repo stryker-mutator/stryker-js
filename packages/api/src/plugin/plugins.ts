@@ -1,11 +1,11 @@
 import { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
 
 import { Reporter } from '../../report';
-import { TestRunner } from '../../test_runner';
+import { TestRunner } from '../../test-runner';
 import { Checker } from '../../check';
 
-import { PluginContext } from './Contexts';
-import { PluginKind } from './PluginKind';
+import { PluginContext } from './contexts';
+import { PluginKind } from './plugin-kind';
 
 /**
  * Represents a StrykerPlugin

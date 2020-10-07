@@ -5,13 +5,13 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import NpmClient from './NpmClient';
-import { PackageInfo } from './PackageInfo';
-import Preset from './presets/Preset';
-import PromptOption from './PromptOption';
-import StrykerConfigWriter from './StrykerConfigWriter';
-import { StrykerInquirer } from './StrykerInquirer';
-import GitignoreWriter from './GitignoreWriter';
+import NpmClient from './npm-client';
+import { PackageInfo } from './package-info';
+import Preset from './presets/preset';
+import PromptOption from './prompt-option';
+import StrykerConfigWriter from './stryker-config-writer';
+import { StrykerInquirer } from './stryker-inquirer';
+import GitignoreWriter from './gitignore-writer';
 
 import { initializerTokens } from '.';
 

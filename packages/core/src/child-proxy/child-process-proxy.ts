@@ -8,12 +8,12 @@ import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
-import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
-import StringBuilder from '../utils/StringBuilder';
+import { deserialize, kill, padLeft, serialize } from '../utils/object-utils';
+import StringBuilder from '../utils/string-builder';
 
-import ChildProcessCrashedError from './ChildProcessCrashedError';
-import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
-import OutOfMemoryError from './OutOfMemoryError';
+import ChildProcessCrashedError from './child-process-crashed-error';
+import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
+import OutOfMemoryError from './out-of-memory-error';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -48,7 +48,7 @@ export default class ChildProcessProxy<T> implements Disposable {
     additionalInjectableValues: unknown,
     workingDirectory: string
   ) {
-    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+    this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv: [] });
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({

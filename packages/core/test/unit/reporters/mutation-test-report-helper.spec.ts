@@ -13,13 +13,13 @@ import {
 } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../../../src/di';
-import InputFileCollection from '../../../src/input/InputFileCollection';
-import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
-import * as objectUtils from '../../../src/utils/objectUtils';
+import InputFileCollection from '../../../src/input/input-file-collection';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
+import * as objectUtils from '../../../src/utils/object-utils';
 import { createMutantTestCoverage } from '../../helpers/producers';
 
 describe(MutationTestReportHelper.name, () => {

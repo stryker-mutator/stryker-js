@@ -3,10 +3,10 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import Timer from '../../../src/utils/Timer';
+import Timer from '../../../src/utils/timer';
 import { DryRunExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';

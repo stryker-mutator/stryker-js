@@ -2,12 +2,12 @@ import { tokens, commonTokens, Injector, PluginContext } from '@stryker-mutator/
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
-import { loaderToken, resolveToken, projectRootToken } from '../pluginTokens';
+import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
+import { loaderToken, resolveToken, projectRootToken } from '../plugin-tokens';
 
-import CustomJestConfigLoader from './CustomJestConfigLoader';
-import ReactScriptsJestConfigLoader from './ReactScriptsJestConfigLoader';
-import ReactScriptsTSJestConfigLoader from './ReactScriptsTSJestConfigLoader';
+import CustomJestConfigLoader from './custom-jest-config-loader';
+import ReactScriptsJestConfigLoader from './react-scripts-jest-config-loader';
+import ReactScriptsTSJestConfigLoader from './react-scripts-ts-jest-config-loader';
 
 configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
 export function configLoaderFactory(options: StrykerOptions, injector: Injector<PluginContext>, log: Logger) {

@@ -1,4 +1,4 @@
-import { KnownKeys } from './KnownKeys';
+import { KnownKeys } from './known-keys';
 
 /**
  * Consolidates multiple consecutive white spaces into a single space.

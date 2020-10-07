@@ -3,8 +3,8 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
-import { MochaRunnerWithStrykerOptions } from '../../src/MochaRunnerWithStrykerOptions';
+import MochaOptionsLoader from '../../src/mocha-options-loader';
+import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
 import { createMochaTestRunnerFactory } from '../../src';
 
 describe('Mocha 6 file resolving integration', () => {

@@ -8,7 +8,7 @@ import * as sinon from 'sinon';
 
 import chalk = require('chalk');
 
-import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
+import ClearTextReporter from '../../../src/reporters/clear-text-reporter';
 
 describe(ClearTextReporter.name, () => {
   let sut: ClearTextReporter;

@@ -6,9 +6,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, SourceFile } from '@stryker-mutator/api/report';
 
-import { cleanFolder } from '../utils/fileUtils';
+import { cleanFolder } from '../utils/file-utils';
 
-import StrictReporter from './StrictReporter';
+import StrictReporter from './strict-reporter';
 
 export default class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);

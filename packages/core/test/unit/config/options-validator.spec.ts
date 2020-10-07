@@ -5,7 +5,7 @@ import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/OptionsValidator';
+import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/options-validator';
 import { coreTokens } from '../../../src/di';
 
 describe(OptionsValidator.name, () => {

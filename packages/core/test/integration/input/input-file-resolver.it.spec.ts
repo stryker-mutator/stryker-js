@@ -4,7 +4,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { coreTokens } from '../../../src/di';
-import InputFileResolver from '../../../src/input/InputFileResolver';
+import InputFileResolver from '../../../src/input/input-file-resolver';
 
 const resolveTestResource: typeof path.resolve = path.resolve.bind(
   path,

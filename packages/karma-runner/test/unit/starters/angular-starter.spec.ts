@@ -3,7 +3,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import * as sut from '../../../src/starters/angularStarter';
+import * as sut from '../../../src/starters/angular-starter';
 import * as utils from '../../../src/utils';
 
 describe('angularStarter', () => {

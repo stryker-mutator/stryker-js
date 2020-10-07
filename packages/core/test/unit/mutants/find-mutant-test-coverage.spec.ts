@@ -1,11 +1,11 @@
 import sinon = require('sinon');
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test_runner';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Reporter, MatchedMutant } from '@stryker-mutator/api/report';
 
-import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage';
+import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
 import { coreTokens } from '../../../src/di';
 
 describe(sut.name, () => {

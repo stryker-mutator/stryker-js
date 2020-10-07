@@ -5,10 +5,10 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
-import CommandTestRunner from '../test-runner/CommandTestRunner';
+import CommandTestRunner from '../test-runner/command-test-runner';
 
-import PresetConfiguration from './presets/PresetConfiguration';
-import PromptOption from './PromptOption';
+import PresetConfiguration from './presets/preset-configuration';
+import PromptOption from './prompt-option';
 
 import { initializerTokens } from '.';
 

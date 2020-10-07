@@ -9,8 +9,8 @@ import * as sinon from 'sinon';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import * as fileUtils from '../../../src/utils/fileUtils';
-import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
+import * as fileUtils from '../../../src/utils/file-utils';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 
 describe(TemporaryDirectory.name, () => {
   let randomStub: sinon.SinonStub;

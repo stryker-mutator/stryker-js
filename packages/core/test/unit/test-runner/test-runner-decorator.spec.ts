@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
-import { TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
+import TestRunnerDecorator from '../../../src/test-runner/test-runner-decorator';
 
 describe('TestRunnerDecorator', () => {
   let sut: TestRunnerDecorator;

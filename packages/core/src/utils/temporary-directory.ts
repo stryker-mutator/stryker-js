@@ -7,7 +7,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import * as mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
-import { deleteDir } from './fileUtils';
+import { deleteDir } from './file-utils';
 
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;

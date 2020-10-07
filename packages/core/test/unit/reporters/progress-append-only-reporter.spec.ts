@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
+import ProgressAppendOnlyReporter from '../../../src/reporters/progress-append-only-reporter';
 
 const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;

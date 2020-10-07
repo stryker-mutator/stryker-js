@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import * as fileUtils from '../../../src/utils/fileUtils';
+import * as fileUtils from '../../../src/utils/file-utils';
 
 describe('fileUtils', () => {
   let statStub: sinon.SinonStub;

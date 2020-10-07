@@ -4,13 +4,13 @@ import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, Disposable } from 'typed-inject';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import ChildProcessProxy from '../child-proxy/ChildProcessProxy';
+import ChildProcessProxy from '../child-proxy/child-process-proxy';
 import { LoggingClientContext } from '../logging';
 import { coreTokens } from '../di';
 
 import { Worker } from '../concurrent/pool';
 
-import { CheckerWorker } from './CheckerWorker';
+import { CheckerWorker } from './checker-worker';
 
 createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext);
 export function createCheckerFactory(options: StrykerOptions, loggingContext: LoggingClientContext): () => Checker {

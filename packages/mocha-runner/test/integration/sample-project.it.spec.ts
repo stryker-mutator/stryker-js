@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';

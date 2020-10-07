@@ -1,6 +1,6 @@
 import * as path from 'path';
 
-import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test_runner';
+import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -8,8 +8,8 @@ import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import CommandTestRunner from '../../../src/test-runner/CommandTestRunner';
-import * as objectUtils from '../../../src/utils/objectUtils';
+import CommandTestRunner from '../../../src/test-runner/command-test-runner';
+import * as objectUtils from '../../../src/utils/object-utils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
   const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');

@@ -5,8 +5,8 @@ import * as sinon from 'sinon';
 import ProgressBar = require('progress');
 import { factory } from '@stryker-mutator/test-helpers';
 
-import * as progressBarModule from '../../../src/reporters/ProgressBar';
-import ProgressReporter from '../../../src/reporters/ProgressReporter';
+import * as progressBarModule from '../../../src/reporters/progress-bar';
+import ProgressReporter from '../../../src/reporters/progress-reporter';
 import { Mock, mock } from '../../helpers/producers';
 
 const SECOND = 1000;

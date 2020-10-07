@@ -1,7 +1,7 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import Preset from './Preset';
-import PresetConfiguration from './PresetConfiguration';
+import Preset from './preset';
+import PresetConfiguration from './preset-configuration';
 
 const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react';
 

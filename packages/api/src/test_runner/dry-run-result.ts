@@ -1,7 +1,7 @@
-import { MutantCoverage } from '../core/MutantCoverage';
+import { MutantCoverage } from '../core/mutant-coverage';
 
-import { DryRunStatus } from './DryRunStatus';
-import { TestResult } from './TestResult';
+import { DryRunStatus } from './dry-run-status';
+import { TestResult } from './test-result';
 
 export type DryRunResult = CompleteDryRunResult | TimeoutDryRunResult | ErrorDryRunResult;
 

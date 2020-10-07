@@ -13,11 +13,11 @@ import {
   ErrorDryRunResult,
   CompleteDryRunResult,
   toMutantRunResult,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 
-import { kill } from '../utils/objectUtils';
-import Timer from '../utils/Timer';
+import { kill } from '../utils/object-utils';
+import Timer from '../utils/timer';
 
 /**
  * A test runner that uses a (bash or cmd) command to execute the tests.

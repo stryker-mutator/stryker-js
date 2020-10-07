@@ -5,9 +5,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Plugin, PluginKind, PluginResolver, Plugins } from '@stryker-mutator/api/plugin';
 import { tokens } from 'typed-inject';
 
-import { importModule } from '../utils/fileUtils';
+import { importModule } from '../utils/file-utils';
 
-import * as coreTokens from './coreTokens';
+import * as coreTokens from './core-tokens';
 
 const IGNORED_PACKAGES = ['core', 'api', 'util'];
 

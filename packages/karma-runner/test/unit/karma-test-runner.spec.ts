@@ -2,18 +2,18 @@ import { EventEmitter } from 'events';
 
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { DryRunStatus } from '@stryker-mutator/api/test_runner';
+import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as karma from 'karma';
 import * as sinon from 'sinon';
 
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
-import KarmaTestRunner from '../../src/KarmaTestRunner';
-import ProjectStarter, * as projectStarterModule from '../../src/starters/ProjectStarter';
+import KarmaTestRunner from '../../src/karma-test-runner';
+import ProjectStarter, * as projectStarterModule from '../../src/starters/project-starter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
-import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
-import TestHooksMiddleware from '../../src/karma-plugins/TestHooksMiddleware';
+import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import TestHooksMiddleware from '../../src/karma-plugins/test-hooks-middleware';
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;

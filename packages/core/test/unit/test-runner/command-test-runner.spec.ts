@@ -1,17 +1,17 @@
 import * as childProcess from 'child_process';
 import * as os from 'os';
 
-import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
+import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import CommandTestRunner from '../../../src/test-runner/CommandTestRunner';
-import * as objectUtils from '../../../src/utils/objectUtils';
-import Timer, * as timerModule from '../../../src/utils/Timer';
-import ChildProcessMock from '../../helpers/ChildProcessMock';
+import CommandTestRunner from '../../../src/test-runner/command-test-runner';
+import * as objectUtils from '../../../src/utils/object-utils';
+import Timer, * as timerModule from '../../../src/utils/timer';
+import ChildProcessMock from '../../helpers/child-process-mock';
 import { Mock, mock } from '../../helpers/producers';
 
 describe(CommandTestRunner.name, () => {

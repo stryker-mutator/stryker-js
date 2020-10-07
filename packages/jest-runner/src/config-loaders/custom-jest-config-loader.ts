@@ -6,11 +6,11 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 
-import { loaderToken, projectRootToken } from '../pluginTokens';
-import { JestRunnerOptionsWithStrykerOptions } from '../JestRunnerOptionsWithStrykerOptions';
+import { loaderToken, projectRootToken } from '../plugin-tokens';
+import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 
-import JestConfigLoader from './JestConfigLoader';
-import { NodeRequireFunction } from './NodeRequireFunction';
+import JestConfigLoader from './jest-config-loader';
+import { NodeRequireFunction } from './node-require-function';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root

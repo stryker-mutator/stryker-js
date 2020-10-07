@@ -6,13 +6,13 @@ import * as sinon from 'sinon';
 import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 
-import * as optionsValidatorModule from '../../../src/config/OptionsValidator';
-import * as pluginLoaderModule from '../../../src/di/PluginLoader';
-import ConfigReader, * as configReaderModule from '../../../src/config/ConfigReader';
+import * as optionsValidatorModule from '../../../src/config/options-validator';
+import * as pluginLoaderModule from '../../../src/di/plugin-loader';
+import ConfigReader, * as configReaderModule from '../../../src/config/config-reader';
 import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
-import { buildMainInjector, CliOptionsProvider } from '../../../src/di/buildMainInjector';
-import * as broadcastReporterModule from '../../../src/reporters/BroadcastReporter';
-import currentLogMock from '../../helpers/logMock';
+import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
+import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
+import currentLogMock from '../../helpers/log-mock';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;

@@ -2,8 +2,8 @@ import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 import { StrykerKarmaSetup } from '../../src-generated/karma-runner-options';
 
-import * as angularStarter from './angularStarter';
-import * as karmaStarter from './karmaStarter';
+import * as angularStarter from './angular-starter';
+import * as karmaStarter from './karma-starter';
 
 export default class ProjectStarter {
   constructor(private readonly getLogger: LoggerFactoryMethod, private readonly setup: StrykerKarmaSetup) {}

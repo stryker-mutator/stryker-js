@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import chalk = require('chalk');
 
-import DotsReporter from '../../../src/reporters/DotsReporter';
+import DotsReporter from '../../../src/reporters/dots-reporter';
 
 describe(DotsReporter.name, () => {
   let sut: DotsReporter;

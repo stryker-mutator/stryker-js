@@ -4,12 +4,12 @@ import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stry
 import { Reporter } from '@stryker-mutator/api/report';
 
 import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
-import ConfigReader from '../config/ConfigReader';
-import BroadcastReporter from '../reporters/BroadcastReporter';
-import { TemporaryDirectory } from '../utils/TemporaryDirectory';
-import Timer from '../utils/Timer';
+import ConfigReader from '../config/config-reader';
+import BroadcastReporter from '../reporters/broadcast-reporter';
+import { TemporaryDirectory } from '../utils/temporary-directory';
+import Timer from '../utils/timer';
 
-import { pluginResolverFactory } from './factoryMethods';
+import { pluginResolverFactory } from './factory-methods';
 
 import { coreTokens, PluginCreator } from '.';
 

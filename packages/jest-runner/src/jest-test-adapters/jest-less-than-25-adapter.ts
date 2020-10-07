@@ -2,9 +2,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import jest from 'jest';
 
-import { JestRunResult } from '../JestRunResult';
+import { JestRunResult } from '../jest-run-result';
 
-import JestTestAdapter from './JestTestAdapter';
+import JestTestAdapter from './jest-test-adapter';
 
 /**
  * The adapter used for 22 < Jest < 25.

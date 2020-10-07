@@ -9,14 +9,14 @@ import * as log4js from 'log4js';
 import { filter } from 'rxjs/operators';
 import { Task } from '@stryker-mutator/util';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
-import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import currentLogMock from '../../helpers/logMock';
+import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
+import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
+import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
+import currentLogMock from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
-import { sleep } from '../../helpers/testUtils';
+import { sleep } from '../../helpers/test-utils';
 
-import { Echo } from './Echo';
+import { Echo } from './echo';
 
 describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<Echo>;

@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import GitignoreWriter from '../../../src/initializer/GitignoreWriter';
+import GitignoreWriter from '../../../src/initializer/gitignore-writer';
 import { initializerTokens } from '../../../src/initializer';
 
 const GITIGNORE_FILE = '.gitignore';

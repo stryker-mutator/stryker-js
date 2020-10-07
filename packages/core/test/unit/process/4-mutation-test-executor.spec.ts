@@ -2,16 +2,16 @@ import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner, MutantRunStatus, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, MutantRunStatus, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test-runner';
 import { Checker, CheckStatus, CheckResult } from '@stryker-mutator/api/check';
 import { Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { createTestRunnerPoolMock, createMutantTestCoverage, PoolMock, createCheckerPoolMock } from '../../helpers/producers';
-import { MutantTestCoverage } from '../../../src/mutants/findMutantTestCoverage';
-import { MutationTestReportHelper } from '../../../src/reporters/MutationTestReportHelper';
-import Timer from '../../../src/utils/Timer';
+import { MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
+import Timer from '../../../src/utils/timer';
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { Sandbox } from '../../../src/sandbox';
 

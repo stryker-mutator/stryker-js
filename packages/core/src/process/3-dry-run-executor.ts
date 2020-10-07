@@ -14,23 +14,23 @@ import {
   TestResult,
   FailedTestResult,
   ErrorDryRunResult,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { first } from 'rxjs/operators';
 
 import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
-import Timer from '../utils/Timer';
+import Timer from '../utils/timer';
 import { createTestRunnerFactory } from '../test-runner';
-import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
 import { Pool, createTestRunnerPool } from '../concurrent/pool';
 import { ConcurrencyTokenProvider } from '../concurrent';
 
-import { MutationTestContext } from './4-MutationTestExecutor';
-import { MutantInstrumenterContext } from './2-MutantInstrumenterExecutor';
+import { MutationTestContext } from './4-mutation-test-executor';
+import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
 
 // The initial run might take a while.
 // For example: angular-bootstrap takes up to 45 seconds.

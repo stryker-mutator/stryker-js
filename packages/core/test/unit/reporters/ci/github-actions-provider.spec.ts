@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { StrykerError } from '@stryker-mutator/util';
 
-import GithubActionsCIProvider from '../../../../src/reporters/ci/GithubActionsProvider';
-import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
+import GithubActionsCIProvider from '../../../../src/reporters/ci/github-actions-provider';
+import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
 
 describe(GithubActionsCIProvider.name, () => {
   const env = new EnvironmentVariableStore();

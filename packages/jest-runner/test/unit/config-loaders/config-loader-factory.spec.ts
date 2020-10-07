@@ -4,11 +4,11 @@ import Sinon, * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
-import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
-import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
-import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../../src/configLoaders/ReactScriptsTSJestConfigLoader';
-import { JestRunnerOptionsWithStrykerOptions } from '../../../src/JestRunnerOptionsWithStrykerOptions';
-import { configLoaderFactory } from '../../../src/configLoaders';
+import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
+import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
+import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
+import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options';
+import { configLoaderFactory } from '../../../src/config-loaders';
 
 describe(configLoaderFactory.name, () => {
   let customConfigLoaderStub: Sinon.SinonStubbedInstance<CustomJestConfigLoader>;

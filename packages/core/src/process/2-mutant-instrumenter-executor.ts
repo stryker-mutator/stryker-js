@@ -3,15 +3,15 @@ import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di';
-import InputFileCollection from '../input/InputFileCollection';
+import InputFileCollection from '../input/input-file-collection';
 import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
-import { createCheckerFactory } from '../checker/CheckerFacade';
+import { createCheckerFactory } from '../checker/checker-facade';
 import { createPreprocessor } from '../sandbox';
 
-import { DryRunContext } from './3-DryRunExecutor';
+import { DryRunContext } from './3-dry-run-executor';
 
 export interface MutantInstrumenterContext extends MainContext {
   [coreTokens.inputFiles]: InputFileCollection;

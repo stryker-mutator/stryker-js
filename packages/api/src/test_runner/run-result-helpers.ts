@@ -1,9 +1,9 @@
-import { TestStatus } from './TestStatus';
-import { DryRunResult } from './DryRunResult';
-import { MutantRunResult } from './MutantRunResult';
-import { DryRunStatus } from './DryRunStatus';
-import { MutantRunStatus } from './MutantRunResult';
-import { FailedTestResult } from './TestResult';
+import { TestStatus } from './test-status';
+import { DryRunResult } from './dry-run-result';
+import { MutantRunResult } from './mutant-run-result';
+import { DryRunStatus } from './dry-run-status';
+import { MutantRunStatus } from './mutant-run-result';
+import { FailedTestResult } from './test-result';
 
 export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
   switch (dryRunResult.status) {

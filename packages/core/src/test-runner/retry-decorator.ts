@@ -1,10 +1,10 @@
-import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 
-import OutOfMemoryError from '../child-proxy/OutOfMemoryError';
+import OutOfMemoryError from '../child-proxy/out-of-memory-error';
 
-import TestRunnerDecorator from './TestRunnerDecorator';
+import TestRunnerDecorator from './test-runner-decorator';
 
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 

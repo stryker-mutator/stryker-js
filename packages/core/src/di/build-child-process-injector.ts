@@ -2,7 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import { createInjector } from 'typed-inject';
 
-import { pluginResolverFactory } from './factoryMethods';
+import { pluginResolverFactory } from './factory-methods';
 
 import { coreTokens, provideLogger } from '.';
 

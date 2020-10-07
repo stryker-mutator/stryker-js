@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import * as Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test_runner';
+import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { MochaTestRunner } from '../../src/MochaTestRunner';
-import { StrykerMochaReporter } from '../../src/StrykerMochaReporter';
-import { MochaAdapter } from '../../src/MochaAdapter';
+import { MochaTestRunner } from '../../src/mocha-test-runner';
+import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
+import { MochaAdapter } from '../../src/mocha-adapter';
 import * as pluginTokens from '../../src/plugin-tokens';
-import MochaOptionsLoader from '../../src/MochaOptionsLoader';
+import MochaOptionsLoader from '../../src/mocha-options-loader';
 import { createMochaOptions } from '../helpers/factories';
 
 describe(MochaTestRunner.name, () => {

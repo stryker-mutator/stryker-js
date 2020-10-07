@@ -4,15 +4,15 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 
-import { TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test-runner';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import ChildProcessProxy from '../../../src/child-proxy/ChildProcessProxy';
+import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
+import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
 import { LoggingClientContext } from '../../../src/logging';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/ChildProcessTestRunnerDecorator';
-import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/ChildProcessTestRunnerWorker';
+import ChildProcessTestRunnerDecorator from '../../../src/test-runner/child-process-test-runner-decorator';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
   let sut: ChildProcessTestRunnerDecorator;
@@ -42,7 +42,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
 
   it('should create the child process proxy', () => {
     expect(childProcessProxyCreateStub).calledWith(
-      require.resolve('../../../src/test-runner/ChildProcessTestRunnerWorker.js'),
+      require.resolve('../../../src/test-runner/child-process-test-runner-worker.js'),
       loggingContext,
       options,
       {},

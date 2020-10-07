@@ -11,11 +11,11 @@ import { SourceFile } from '@stryker-mutator/api/report';
 import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
-import StrictReporter from '../reporters/StrictReporter';
-import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/fileUtils';
-import { defaultOptions } from '../config/OptionsValidator';
+import StrictReporter from '../reporters/strict-reporter';
+import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
+import { defaultOptions } from '../config/options-validator';
 
-import InputFileCollection from './InputFileCollection';
+import InputFileCollection from './input-file-collection';
 
 function toReportSourceFile(file: File): SourceFile {
   return {

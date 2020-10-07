@@ -4,13 +4,13 @@ import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { deepMerge } from '@stryker-mutator/util/src/deepMerge';
+import { deepMerge } from '@stryker-mutator/util/src/deep-merge';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 
-import { defaultOptions, OptionsValidator } from './OptionsValidator';
-import { createConfig } from './createConfig';
+import { defaultOptions, OptionsValidator } from './options-validator';
+import { createConfig } from './create-config';
 
 export const CONFIG_SYNTAX_HELP = `
 /**

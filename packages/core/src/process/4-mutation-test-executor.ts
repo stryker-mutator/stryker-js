@@ -3,20 +3,20 @@ import { flatMap, toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
-import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test_runner';
+import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
-import StrictReporter from '../reporters/StrictReporter';
-import { MutantTestCoverage } from '../mutants/findMutantTestCoverage';
-import { MutationTestReportHelper } from '../reporters/MutationTestReportHelper';
-import Timer from '../utils/Timer';
+import StrictReporter from '../reporters/strict-reporter';
+import { MutantTestCoverage } from '../mutants/find-mutant-test-coverage';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
+import Timer from '../utils/timer';
 import { Pool, ConcurrencyTokenProvider } from '../concurrent';
 import { Sandbox } from '../sandbox';
 
-import { DryRunContext } from './3-DryRunExecutor';
+import { DryRunContext } from './3-dry-run-executor';
 
 export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;

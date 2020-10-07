@@ -8,7 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
-import { isWarningEnabled } from '../utils/objectUtils';
+import { isWarningEnabled } from '../utils/object-utils';
 
 import { FilePreprocessor } from './file-preprocessor';
 

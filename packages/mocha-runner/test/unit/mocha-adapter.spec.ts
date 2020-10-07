@@ -5,8 +5,8 @@ import sinon = require('sinon');
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { MochaAdapter } from '../../src/MochaAdapter';
-import LibWrapper from '../../src/LibWrapper';
+import { MochaAdapter } from '../../src/mocha-adapter';
+import LibWrapper from '../../src/lib-wrapper';
 
 describe(MochaAdapter.name, () => {
   let requireStub: sinon.SinonStub;

@@ -7,8 +7,8 @@ import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report'
 
 import fileUrl = require('file-url');
 
-import { bindMutationTestReport } from './templates/bindMutationTestReport';
-import * as HtmlReporterUtil from './HtmlReporterUtil';
+import { bindMutationTestReport } from './templates/bind-mutation-test-report';
+import * as HtmlReporterUtil from './html-reporter-util';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import sinon = require('sinon');
 
-import { noopLogger } from '../../src/noopLogger';
+import { noopLogger } from '../../src/noop-logger';
 
 describe('noopLogger', () => {
   it('should not enable any logging', () => {

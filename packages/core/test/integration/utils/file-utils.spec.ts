@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import * as fileUtils from '../../../src/utils/fileUtils';
+import * as fileUtils from '../../../src/utils/file-utils';
 
 describe('fileUtils', () => {
   describe('glob', () => {

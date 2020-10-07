@@ -11,15 +11,15 @@ import {
   DryRunResult,
   MutantRunResult,
   toMutantRunResult,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
-import ProjectStarter from './starters/ProjectStarter';
-import StrykerReporter from './karma-plugins/StrykerReporter';
-import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
-import TestHooksMiddleware from './karma-plugins/TestHooksMiddleware';
+import ProjectStarter from './starters/project-starter';
+import StrykerReporter from './karma-plugins/stryker-reporter';
+import { KarmaRunnerOptionsWithStrykerOptions } from './karma-runner-options-with-stryker-options';
+import TestHooksMiddleware from './karma-plugins/test-hooks-middleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;

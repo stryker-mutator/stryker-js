@@ -4,16 +4,16 @@ import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory } from '@stryker-mutator/test-helpers';
 
-import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test-runner';
 
 import { expectCompleted, expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
 import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
-import { sleep } from '../../helpers/testUtils';
+import { sleep } from '../../helpers/test-utils';
 import { coreTokens } from '../../../src/di';
 
-import { CounterTestRunner } from './AdditionalTestRunners';
+import { CounterTestRunner } from './additional-test-runners';
 
 const fs = require('fs');
 

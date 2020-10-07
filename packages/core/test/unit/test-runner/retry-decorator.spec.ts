@@ -1,17 +1,17 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { errorToString } from '@stryker-mutator/util';
-import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test_runner';
+import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
 import { expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/ChildProcessCrashedError';
-import OutOfMemoryError from '../../../src/child-proxy/OutOfMemoryError';
-import RetryDecorator from '../../../src/test-runner/RetryDecorator';
-import TestRunnerDecorator from '../../../src/test-runner/TestRunnerDecorator';
-import currentLogMock from '../../helpers/logMock';
+import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
+import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
+import RetryDecorator from '../../../src/test-runner/retry-decorator';
+import TestRunnerDecorator from '../../../src/test-runner/test-runner-decorator';
+import currentLogMock from '../../helpers/log-mock';
 
 describe(RetryDecorator.name, () => {
   let sut: RetryDecorator;

@@ -5,9 +5,9 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ConfigReader from '../../../src/config/ConfigReader';
+import ConfigReader from '../../../src/config/config-reader';
 import { coreTokens } from '../../../src/di';
-import { OptionsValidator } from '../../../src/config/OptionsValidator';
+import { OptionsValidator } from '../../../src/config/options-validator';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;

@@ -1,15 +1,15 @@
 import * as sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test_runner';
+import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test-runner';
 import Jasmine = require('jasmine');
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import * as helpers from '../../src/helpers';
-import * as pluginTokens from '../../src/pluginTokens';
+import * as pluginTokens from '../../src/plugin-tokens';
 import { JasmineTestRunner } from '../../src';
 import { expectTestResultsToEqual } from '../helpers/assertions';
-import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mockFactories';
+import { createEnvStub, createRunDetails, createCustomReporterResult } from '../helpers/mock-factories';
 
 describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;

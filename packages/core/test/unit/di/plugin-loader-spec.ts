@@ -6,8 +6,8 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
-import { PluginLoader } from '../../../src/di/PluginLoader';
-import * as fileUtils from '../../../src/utils/fileUtils';
+import { PluginLoader } from '../../../src/di/plugin-loader';
+import * as fileUtils from '../../../src/utils/file-utils';
 
 describe('PluginLoader', () => {
   let sut: PluginLoader;

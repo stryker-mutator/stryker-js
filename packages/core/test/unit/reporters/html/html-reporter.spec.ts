@@ -5,9 +5,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import HtmlReporter from '../../../../src/reporters/html/HtmlReporter';
-import * as HtmlReporterUtil from '../../../../src/reporters/html/HtmlReporterUtil';
-import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bindMutationTestReport';
+import HtmlReporter from '../../../../src/reporters/html/html-reporter';
+import * as HtmlReporterUtil from '../../../../src/reporters/html/html-reporter-util';
+import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bind-mutation-test-report';
 
 describe(HtmlReporter.name, () => {
   let copyFileStub: sinon.SinonStub;

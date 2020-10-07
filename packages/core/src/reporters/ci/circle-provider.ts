@@ -1,6 +1,6 @@
-import { getEnvironmentVariable, getEnvironmentVariableOrThrow } from '../../utils/objectUtils';
+import { getEnvironmentVariable, getEnvironmentVariableOrThrow } from '../../utils/object-utils';
 
-import { CIProvider } from './Provider';
+import { CIProvider } from './provider';
 
 /**
  * https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables

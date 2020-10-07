@@ -10,6 +10,7 @@
     "check.ts",
     "core.ts",
     "logging.ts",
+    "plugin.ts",
     "report.ts",
     "test-runner.ts"
   ],

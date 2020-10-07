@@ -1,11 +1,11 @@
 import * as inquirer from 'inquirer';
 
-import CommandTestRunner from '../test-runner/CommandTestRunner';
+import CommandTestRunner from '../test-runner/command-test-runner';
 
-import { ChoiceType } from './ChoiceType';
+import { ChoiceType } from './choice-type';
 
-import Preset from './presets/Preset';
-import PromptOption from './PromptOption';
+import Preset from './presets/preset';
+import PromptOption from './prompt-option';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];

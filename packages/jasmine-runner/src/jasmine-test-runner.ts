@@ -12,13 +12,13 @@ import {
   toMutantRunResult,
   ErrorDryRunResult,
   DryRunOptions,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 
 import { Jasmine, toStrykerTestResult } from './helpers';
-import * as pluginTokens from './pluginTokens';
+import * as pluginTokens from './plugin-tokens';
 
 export function createJasmineTestRunnerFactory(
   namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE

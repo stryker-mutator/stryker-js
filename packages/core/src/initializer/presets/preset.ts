@@ -1,4 +1,4 @@
-import PresetConfig from './PresetConfiguration';
+import PresetConfig from './preset-configuration';
 
 interface Preset {
   readonly name: string;

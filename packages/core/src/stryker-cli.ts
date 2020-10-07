@@ -5,8 +5,8 @@ import { MutantResult } from '@stryker-mutator/api/report';
 
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
-import Stryker from './Stryker';
-import { defaultOptions } from './config/OptionsValidator';
+import Stryker from './stryker';
+import { defaultOptions } from './config/options-validator';
 
 /**
  * Interpret a command line argument and add it to an object.

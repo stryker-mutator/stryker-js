@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import TravisProvider from '../../../../src/reporters/ci/TravisProvider';
-import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
+import TravisProvider from '../../../../src/reporters/ci/travis-provider';
+import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
 
 describe(TravisProvider.name, () => {
   const env = new EnvironmentVariableStore();

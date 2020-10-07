@@ -1,6 +1,6 @@
-import { getEnvironmentVariable } from '../../utils/objectUtils';
+import { getEnvironmentVariable } from '../../utils/object-utils';
 
-import { CIProvider } from './Provider';
+import { CIProvider } from './provider';
 
 /**
  * See https://docs.travis-ci.com/user/environment-variables/#default-environment-variables

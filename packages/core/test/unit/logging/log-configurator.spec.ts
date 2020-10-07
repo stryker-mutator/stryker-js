@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';
-import * as netUtils from '../../../src/utils/netUtils';
+import * as netUtils from '../../../src/utils/net-utils';
 
 describe('LogConfigurator', () => {
   const sut = LogConfigurator;

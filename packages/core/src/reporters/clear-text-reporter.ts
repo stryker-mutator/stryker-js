@@ -8,7 +8,7 @@ import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter, Undetec
 import { calculateMetrics } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import ClearTextScoreTable from './ClearTextScoreTable';
+import ClearTextScoreTable from './clear-text-score-table';
 
 export default class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
