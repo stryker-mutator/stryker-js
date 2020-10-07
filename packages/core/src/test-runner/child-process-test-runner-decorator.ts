@@ -18,7 +18,7 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
 
   constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
     this.worker = ChildProcessProxy.create(
-      require.resolve(`./${ChildProcessTestRunnerWorker.name}`),
+      require.resolve('./child-process-test-runner-worker'),
       loggingContext,
       options,
       {},
