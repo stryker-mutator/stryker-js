@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import Timer from '../../src/Timer';
+import Timer from '../../src/timer';
 
 describe('Timer', () => {
   let sut: Timer;
