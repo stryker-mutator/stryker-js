@@ -77,7 +77,7 @@ describe(ChildProcessProxyWorker.name, () => {
         loggingContext: LOGGING_CONTEXT,
         options,
         requireName: HelloClass.name,
-        requirePath: require.resolve('./HelloClass'),
+        requirePath: require.resolve('./hello-class'),
         workingDirectory: workingDir,
       };
     });

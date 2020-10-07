@@ -30,7 +30,7 @@ describe(ChildProcessProxy.name, () => {
     const port = await loggingServer.listen();
     const options = testInjector.injector.resolve(commonTokens.options);
     log = currentLogMock();
-    sut = ChildProcessProxy.create(require.resolve('./Echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo);
+    sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo);
   });
 
   afterEach(async () => {

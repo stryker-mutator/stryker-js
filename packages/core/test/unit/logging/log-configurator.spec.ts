@@ -123,7 +123,7 @@ describe('LogConfigurator', () => {
     const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
     return {
       appenders: {
-        all: { type: require.resolve('../../../src/logging/MultiAppender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },
+        all: { type: require.resolve('../../../src/logging/multi-appender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },
         console: { type: 'stdout', layout: consoleLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
         filteredConsoleCategory: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },

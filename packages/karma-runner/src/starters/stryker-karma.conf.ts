@@ -122,7 +122,7 @@ function configureTestHooksMiddleware(config: Config) {
 function configureStrykerMutantCoverageAdapter(config: Config) {
   config.files = config.files || [];
   config.files.unshift({
-    pattern: require.resolve('../karma-plugins/StrykerMutantCoverageAdapter'),
+    pattern: require.resolve('../karma-plugins/stryker-mutant-coverage-adapter'),
     included: true,
     watched: false,
     served: true,
