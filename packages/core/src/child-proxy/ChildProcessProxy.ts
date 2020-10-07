@@ -50,11 +50,11 @@ export default class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string
   ) {
     const execArgv = [];
-    // if (process.argv.includes('--inspect')) {
-    execArgv.push('--cpu-prof');
-    execArgv.push(`--cpu-prof-name=child-process-${n}.cpuprofile`);
-    n++;
-    // }
+    if (process.env.STRYKER_PROFILE) {
+      execArgv.push('--cpu-prof');
+      execArgv.push(`--cpu-prof-name=child-process-${n}.cpuprofile`);
+      n++;
+    }
 
     this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: execArgv });
     this.initTask = new Task();
