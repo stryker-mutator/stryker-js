@@ -27,6 +27,7 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
+let n = 0;
 export default class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
@@ -48,7 +49,14 @@ export default class ChildProcessProxy<T> implements Disposable {
     additionalInjectableValues: unknown,
     workingDirectory: string
   ) {
-    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: [] });
+    const execArgv = [];
+    // if (process.argv.includes('--inspect')) {
+    execArgv.push('--cpu-prof');
+    execArgv.push(`--cpu-prof-name=child-process-${n}.cpuprofile`);
+    n++;
+    // }
+
+    this.worker = fork(require.resolve('./ChildProcessProxyWorker'), [autoStart], { silent: true, execArgv: execArgv });
     this.initTask = new Task();
     this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
     this.send({
