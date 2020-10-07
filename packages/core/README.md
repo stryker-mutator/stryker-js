@@ -103,6 +103,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [allowConsoleColors](#allowConsoleColors)
 * [buildCommand](#buildCommand)
 * [cleanTempDir](#cleanTempDir)
+* [commandRunner](#commandRunner)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
 * [fileLogLevel](#fileLogLevel)
@@ -150,6 +151,15 @@ Config file: `cleanTempDir: false`
 
 Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. 
 The temp dir will never be removed when the run failed for some reason (for debugging purposes).
+
+<a name="commandRunner"></a>
+### `commandRunner` [`object`]
+
+Default: `{ command: 'npm test' }`
+Command line: *none*
+Config file: `commandRunner: { command: 'npm run mocha' }`
+
+With `commandRunner`, you can specify the command to execute for running tests.
 
 <a name="coverageAnalysis"></a>
 ### `coverageAnalysis` [`string`]
