@@ -108,7 +108,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should not allow to set parallel', () => {
       rawOptions['parallel'] = true;
       const actualOptions = sut.load(options);
-      expect(actualOptions.parallel).undefined;
+      expect((actualOptions as any).parallel).undefined;
     });
   });
 
