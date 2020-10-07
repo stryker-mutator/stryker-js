@@ -175,6 +175,7 @@ const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.free
   'TSModuleDeclaration',
   'TSEnumDeclaration',
   'TSDeclareFunction',
+  'TSTypeParameterInstantiation',
 ]);
 
 const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([

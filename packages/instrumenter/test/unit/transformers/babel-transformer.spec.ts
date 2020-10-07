@@ -124,6 +124,12 @@ describe('babel-transformer', () => {
       expectMutateNotCalledWith((t) => t.isVariableDeclaration());
       expectMutateNotCalledWith((t) => t.isStringLiteral());
     });
+
+    it('should skip generic parameters', () => {
+      const ast = createTSAst({ rawContent: 'React.useState<string | false>()' });
+      transformBabel(ast, mutantCollectorMock, context);
+      expectMutateNotCalledWith((t) => t.isTSTypeParameterInstantiation());
+    });
   });
 
   it('should skip import declarations', () => {
