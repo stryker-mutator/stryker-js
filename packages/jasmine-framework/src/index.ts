@@ -1,5 +1,1 @@
-import { declareClassPlugin, PluginKind } from '@stryker-mutator/api/plugin';
-
-import JasmineTestFramework from './JasmineTestFramework';
-
-export const strykerPlugins = [declareClassPlugin(PluginKind.TestFramework, 'jasmine', JasmineTestFramework)];
+console.warn('Framework plugins are no longer needed in Stryker 4.0. Please remove "@stryker-mutator/jasmine-framework" from your devDependencies.');

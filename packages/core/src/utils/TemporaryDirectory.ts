@@ -12,10 +12,12 @@ import { deleteDir } from './fileUtils';
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
   private isInitialized = false;
+  public removeDuringDisposal: boolean;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
     this.temporaryDirectory = path.resolve(options.tempDirName);
+    this.removeDuringDisposal = options.cleanTempDir;
   }
 
   public initialize() {
@@ -66,11 +68,13 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
-    try {
-      await deleteDir(this.temporaryDirectory);
-    } catch (e) {
-      return this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
+    if (this.removeDuringDisposal) {
+      this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
+      try {
+        await deleteDir(this.temporaryDirectory);
+      } catch (e) {
+        this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
+      }
     }
   }
 

@@ -66,9 +66,8 @@ describe(MochaOptionsLoader.name, () => {
       // Following are valid options
       rawOptions.extension = ['foo'];
       rawOptions.require = ['bar'];
-      rawOptions.timeout = 4200;
       rawOptions['async-only'] = true;
-      rawOptions.ui = 'quux';
+      rawOptions.ui = 'qunit';
       rawOptions.grep = 'quuz';
       rawOptions.ignore = ['garply'];
       rawOptions.file = ['grault'];
@@ -76,7 +75,7 @@ describe(MochaOptionsLoader.name, () => {
 
       rawOptions.garply = 'waldo'; // this should be filtered out
       const result = sut.load(options);
-      const expected: MochaOptions = createMochaOptions({
+      const expected = createMochaOptions({
         extension: ['foo'],
         file: ['grault'],
         grep: 'quuz',
@@ -84,11 +83,10 @@ describe(MochaOptionsLoader.name, () => {
         opts: './test/mocha.opts',
         require: ['bar'],
         spec: ['test/**/*.js'],
-        timeout: 4200,
         'async-only': true,
-        ui: 'quux',
+        ui: 'qunit',
       });
-      expect(result).deep.eq({ ...expected });
+      expect(result).deep.contains(expected);
     });
 
     it('should trace log the mocha call', () => {
@@ -104,7 +102,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it("should respect mocha's defaults", () => {
       const actualOptions = sut.load(options);
-      expect(actualOptions).deep.eq(createMochaOptions());
+      expect(actualOptions).deep.contains(createMochaOptions());
     });
 
     it('should not allow to set parallel', () => {
@@ -130,7 +128,9 @@ describe(MochaOptionsLoader.name, () => {
     it('should log deprecated mocha version warning', async () => {
       existsFileStub.returns(false);
       sut.load(options);
-      expect(testInjector.logger.warn).calledWith('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.'
+      );
     });
 
     it('should load a mocha.opts file if specified', () => {
@@ -175,7 +175,7 @@ describe(MochaOptionsLoader.name, () => {
     it('should not load default mocha.opts file if not found', () => {
       existsFileStub.returns(false);
       const mochaOptions = sut.load(options);
-      expect(mochaOptions).deep.eq(createMochaOptions());
+      expect(mochaOptions).deep.contains(createMochaOptions());
       expect(testInjector.logger.debug).calledWith(
         'No mocha opts file found, not loading additional mocha options (%s was not defined).',
         'mochaOptions.opts'
@@ -202,8 +202,6 @@ describe(MochaOptionsLoader.name, () => {
       });
     }
 
-    itShouldLoadProperty('--timeout', '2000', { timeout: 2000 });
-    itShouldLoadProperty('-t', '2000', { timeout: 2000 });
     itShouldLoadProperty('-A', '', { 'async-only': true });
     itShouldLoadProperty('--async-only', '', { 'async-only': true });
     itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
@@ -223,18 +221,16 @@ describe(MochaOptionsLoader.name, () => {
         'async-only': false,
         opts: 'path/to/opts/file',
         require: ['ts-node/register'],
-        timeout: 4000,
         ui: 'exports',
       };
       const mochaOptions = sut.load(options);
-      expect(mochaOptions).deep.equal(
+      expect(mochaOptions).deep.contains(
         createMochaOptions({
           'async-only': false,
           extension: ['js'],
           opts: 'path/to/opts/file',
           require: ['ts-node/register'],
           spec: ['test'],
-          timeout: 4000,
           ui: 'exports',
         })
       );
@@ -264,12 +260,11 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'some/mocha.opts/file',
       };
       const mochaOptions = sut.load(options);
-      expect(mochaOptions).deep.eq(
+      expect(mochaOptions).deep.contain(
         createMochaOptions({
           extension: ['js'],
           opts: 'some/mocha.opts/file',
           spec: ['test'],
-          timeout: 2000,
           ui: 'bdd',
         })
       );
@@ -288,7 +283,6 @@ describe(MochaOptionsLoader.name, () => {
       ignore: [],
       opts: './test/mocha.opts',
       spec: ['test'],
-      timeout: 2000,
       ui: 'bdd',
       ...overrides,
     };

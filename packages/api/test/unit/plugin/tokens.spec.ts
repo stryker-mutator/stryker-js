@@ -21,6 +21,5 @@ describe('commonTokens', () => {
   itShouldProvideToken('logger');
   itShouldProvideToken('pluginResolver');
   itShouldProvideToken('produceSourceMaps');
-  itShouldProvideToken('sandboxFileNames');
   itShouldProvideToken('getLogger');
 });

@@ -1,10 +1,9 @@
 import * as path from 'path';
 
 import { expect } from 'chai';
-import { RunOptions, RunStatus, TestStatus } from '@stryker-mutator/api/test_runner';
-import * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
+import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test_runner';
 
 import JestTestRunner, { jestTestRunnerFactory } from '../../src/JestTestRunner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/JestRunnerOptionsWithStrykerOptions';
@@ -22,10 +21,7 @@ const jestProjectRoot = process.cwd();
 process.env.BABEL_ENV = 'test';
 
 describe(`${JestTestRunner.name} integration test`, () => {
-  // Set timeout for integration tests to 10 seconds for travis
-  let processCwdStub: sinon.SinonStub;
-
-  const runOptions: RunOptions = { timeout: 0 };
+  const initialCwd = process.cwd();
 
   // Names of the tests in the example projects
   const testNames = [
@@ -33,12 +29,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
     'Add should be able to add one to a number',
     'Add should be able negate a number',
     'Add should be able to recognize a negative number',
-    'Add should be able to recognize that 0 is not a negative number',
     'Circle should have a circumference of 2PI when the radius is 1',
   ];
 
-  beforeEach(() => {
-    processCwdStub = sinon.stub(process, 'cwd');
+  afterEach(() => {
+    process.chdir(initialCwd);
   });
 
   function createSut(overrides?: Partial<JestOptions>) {
@@ -48,61 +43,108 @@ describe(`${JestTestRunner.name} integration test`, () => {
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
-  it('should run tests on the example React + TypeScript project', async () => {
-    processCwdStub.returns(getProjectRoot('reactTsProject'));
-    const jestTestRunner = createSut({ projectType: 'react-ts' });
+  const expectToHaveSuccessfulTests = (result: CompleteDryRunResult, n: number) => {
+    expect(result.tests.filter((t) => t.status === TestStatus.Success)).to.have.length(n);
+  };
 
-    const result = await jestTestRunner.run(runOptions);
+  describe('dryRun', () => {
+    it('should run tests on the example React + TypeScript project', async () => {
+      // TODO: Get a proper React TS project that works on Windows
+      process.chdir(getProjectRoot('reactTsProject'));
+      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
-    expect(result.status).to.equal(RunStatus.Complete);
-    expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').that.is.not.empty;
-    expect(result.tests[0].name).to.equal('renders without crashing');
-    expect(result.tests[0].status).to.equal(TestStatus.Success);
-    expect(result.tests[0].timeSpentMs).to.be.above(-1);
-    expect(result.tests[0].failureMessages).to.be.an('array').that.is.empty;
-    expect(result.status).to.equal(RunStatus.Complete);
+      const runResult = await jestTestRunner.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expectToHaveSuccessfulTests(runResult, 1);
+    });
+
+    it('should set the test name and timeSpentMs', async () => {
+      process.chdir(getProjectRoot('reactTsProject'));
+      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
+
+      const runResult = await jestTestRunner.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests[0].name).to.equal('renders without crashing');
+      expect(runResult.tests[0].timeSpentMs).to.be.above(-1);
+    });
+
+    it('should run tests on the example custom project using package.json', async () => {
+      process.chdir(getProjectRoot('exampleProject'));
+      const jestTestRunner = createSut();
+
+      const runResult = await jestTestRunner.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expectToHaveSuccessfulTests(runResult, testNames.length);
+    });
+
+    it('should run tests on the example custom project using jest.config.js', async () => {
+      process.chdir(getProjectRoot('exampleProjectWithExplicitJestConfig'));
+
+      const jestTestRunner = createSut();
+
+      const runResult = await jestTestRunner.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expectToHaveSuccessfulTests(runResult, testNames.length);
+    });
   });
 
-  it('should run tests on the example custom project using package.json', async () => {
-    processCwdStub.returns(getProjectRoot('exampleProject'));
-    const jestTestRunner = createSut();
+  describe('mutantRun', () => {
+    it('should kill mutant 1', async () => {
+      const exampleProjectRoot = getProjectRoot('exampleProject');
+      process.chdir(exampleProjectRoot);
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        activeMutant: factory.mutant({
+          id: 1,
+        }),
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = 1;
 
-    const result = await jestTestRunner.run(runOptions);
+      const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
-    expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
-    expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').with.length(testNames.length);
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).eq('Add should be able to add two numbers');
+      expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
+    });
 
-    for (const test of result.tests) {
-      expect(testNames).to.include(test.name);
-      expect(test.status).to.equal(TestStatus.Success);
-      expect(test.timeSpentMs).to.be.above(-1);
-      expect(test.failureMessages).to.be.an('array').that.is.empty;
-    }
+    it('should let mutant 11 survive', async () => {
+      const exampleProjectRoot = getProjectRoot('exampleProject');
+      process.chdir(getProjectRoot('exampleProject'));
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
+      });
+      mutantRunOptions.activeMutant.id = 11;
 
-    expect(result.status).to.equal(RunStatus.Complete);
-  });
+      const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
-  it('should run tests on the example custom project using jest.config.js', async () => {
-    processCwdStub.returns(getProjectRoot('exampleProjectWithExplicitJestConfig'));
+      assertions.expectSurvived(runResult);
+    });
 
-    const jestTestRunner = createSut();
+    it('should be able to let a mutant survive after killing mutant 1', async () => {
+      // Arrange
+      const exampleProjectRoot = getProjectRoot('exampleProject');
+      process.chdir(getProjectRoot('exampleProject'));
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = 1;
 
-    const result = await jestTestRunner.run(runOptions);
+      // Act
+      const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      mutantRunOptions.activeMutant.id = 5;
+      const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
-    expect(result.errorMessages, `Errors were: ${result.errorMessages}`).lengthOf(0);
-    expect(result).to.have.property('tests');
-    expect(result.tests).to.be.an('array').with.length(testNames.length);
-
-    for (const test of result.tests) {
-      expect(testNames).to.include(test.name);
-      expect(test.status).to.equal(TestStatus.Success);
-      expect(test.timeSpentMs).to.be.above(-1);
-      expect(test.failureMessages).to.be.an('array').that.is.empty;
-    }
-
-    expect(result.status).to.equal(RunStatus.Complete);
+      // Assert
+      assertions.expectKilled(firstResult);
+      assertions.expectSurvived(secondResult);
+    });
   });
 });
 

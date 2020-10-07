@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration type declarations should not produce mutants for a TS declaration file 1`] = `
+"export declare const globalNamespace = \\"globalNamespace\\";
+declare function foo(): 'foo';
+declare module 'express' {}
+React.useState<false>();"
+`;

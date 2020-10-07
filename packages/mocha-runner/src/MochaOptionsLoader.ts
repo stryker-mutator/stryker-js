@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { propertyPath } from '@stryker-mutator/util';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
@@ -22,7 +22,6 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   ignore: [],
   opts: './test/mocha.opts',
   spec: ['test'],
-  timeout: 2000,
   ui: 'bdd',
   'no-package': false,
   'no-opts': false,
@@ -34,7 +33,7 @@ export default class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
+  public load(strykerOptions: MochaRunnerWithStrykerOptions) {
     const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
     return { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
@@ -44,7 +43,7 @@ export default class MochaOptionsLoader {
       this.log.debug("Mocha >= 6 detected. Using mocha's `%s` to load mocha options", LibWrapper.loadOptions.name);
       return this.loadMocha6Options(overrides);
     } else {
-      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6.');
+      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.');
       this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
       return this.loadLegacyMochaOptsFile(overrides);
     }
@@ -52,10 +51,9 @@ export default class MochaOptionsLoader {
 
   private loadMocha6Options(overrides: MochaOptions) {
     const args = serializeMochaLoadOptionsArguments(overrides);
-    const loadOptions = LibWrapper.loadOptions || (() => ({}));
-    const rawConfig = loadOptions(args) || {};
+    const rawConfig = LibWrapper.loadOptions!(args) || {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     if (this.log.isDebugEnabled()) {
@@ -77,7 +75,7 @@ export default class MochaOptionsLoader {
         } else {
           this.log.debug(
             'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            propertyPath<MochaRunnerOptions>('mochaOptions', 'opts')
+            PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
           );
           return {};
         }
@@ -112,17 +110,13 @@ export default class MochaOptionsLoader {
             }
             mochaRunnerOptions.require.push(...args);
             break;
-          case '--timeout':
-          case '-t':
-            mochaRunnerOptions.timeout = this.parseNextInt(args, DEFAULT_MOCHA_OPTIONS.timeout!);
-            break;
           case '--async-only':
           case '-A':
             mochaRunnerOptions['async-only'] = true;
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = this.parseNextString(args) ?? DEFAULT_MOCHA_OPTIONS.ui!;
+            mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'tdd' | 'qunit' | 'exports') ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g':
@@ -139,14 +133,6 @@ export default class MochaOptionsLoader {
       }
     });
     return mochaRunnerOptions;
-  }
-
-  private parseNextInt(args: string[], otherwise: number): number {
-    if (args.length > 1) {
-      return parseInt(args[1], 10);
-    } else {
-      return otherwise;
-    }
   }
 
   private parseNextString(args: string[]): string | undefined {

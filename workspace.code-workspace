@@ -5,6 +5,10 @@
       "path": "packages/core"
     },
     {
+      "name": "instrumenter",
+      "path": "packages/instrumenter"
+    },
+    {
       "name": "grunt-stryker",
       "path": "packages/grunt-stryker"
     },
@@ -15,10 +19,6 @@
     {
       "name": "babel-transpiler",
       "path": "packages/babel-transpiler"
-    },
-    {
-      "name": "html-reporter",
-      "path": "packages/html-reporter"
     },
     {
       "name": "jasmine-framework",
@@ -49,12 +49,12 @@
       "path": "packages/mocha-runner"
     },
     {
-      "name": "mutator-specification",
-      "path": "packages/mutator-specification"
-    },
-    {
       "name": "typescript",
       "path": "packages/typescript"
+    },
+    {
+      "name": "typescript-checker",
+      "path": "packages/typescript-checker"
     },
     {
       "name": "vue-mutator",
@@ -90,7 +90,15 @@
     }
   ],
   "settings": {
-    "typescript.tsdk": "parent\\node_modules\\typescript\\lib",
+    "typescript.tsdk": "parent/node_modules/typescript/lib",
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/bower_components": true,
+      "**/*.code-search": true,
+      "**/*.tsbuildinfo": true,
+      "**/.stryker-tmp": true,
+      "**/CHANGELOG.md": true,
+    },
     "files.exclude": {
       ".git": true,
       ".tscache": true,
@@ -120,7 +128,10 @@
     },
     "cSpell.words": [
       "Surrializable",
+      "execa",
       "memfs",
+      "nocheck",
+      "preprocessors",
       "serializable",
       "surrialize"
     ]

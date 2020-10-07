@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath } from '../../src';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, PropertyPathBuilder } from '../../src';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -17,15 +17,56 @@ describe('stringUtils', () => {
     });
   });
 
-  describe(propertyPath.name, () => {
+  describe(PropertyPathBuilder.name, () => {
     interface Foo {
       bar: {
         baz: string;
       };
+      qux: {
+        quux: string;
+      };
     }
 
     it('should be able to point to a path', () => {
-      expect(propertyPath<Foo>('bar', 'baz')).eq('bar.baz');
+      expect(PropertyPathBuilder.create<Foo>().prop('bar').prop('baz').build()).eq('bar.baz');
     });
+  });
+
+  describe(propertyPath.name, () => {
+    interface Foo {
+      bar: string;
+    }
+
+    it('should be able to point to a path', () => {
+      expect(propertyPath<Foo>('bar')).eq('bar');
+    });
+  });
+
+  describe(escapeRegExpLiteral.name, () => {
+    it('should return input if no special chars are found', () => {
+      expect(escapeRegExpLiteral('something normal')).eq('something normal');
+    });
+
+    for (const letter of '.*+-?^${}()|[]\\/') {
+      it(`should escape "${letter}"`, () => {
+        expect(escapeRegExpLiteral(letter)).eq(`\\${letter}`);
+      });
+    }
+  });
+
+  describe(escapeRegExp.name, () => {
+    it('should return input if no special chars are found', () => {
+      expect(escapeRegExp('something normal')).eq('something normal');
+    });
+
+    it("should not escape `/` (that's only needed for regex literals)", () => {
+      expect(escapeRegExp('n/a')).eq('n/a');
+    });
+
+    for (const letter of '.*+-?^${}()|[]\\') {
+      it(`should escape "${letter}"`, () => {
+        expect(escapeRegExp(letter)).eq(`\\${letter}`);
+      });
+    }
   });
 });

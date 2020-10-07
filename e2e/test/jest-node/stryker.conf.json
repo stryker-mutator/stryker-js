@@ -1,11 +1,9 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "javascript",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
-  "transpilers": [],
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 1,
   "coverageAnalysis": "off",
   "reporters": [
     "clear-text",

@@ -1,13 +1,13 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "3.3.1",
+  "version": "4.0.0-beta.10",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "src/index.js",
   "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 80 --functions 80 --branches 75 npm run mocha",
-    "mocha": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 30000 --exit \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "test": "nyc npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 30000 --exit \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
@@ -32,26 +32,24 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/karma-runner#readme",
   "devDependencies": {
-    "@stryker-mutator/jasmine-framework": "^3.3.1",
-    "@stryker-mutator/mocha-framework": "^3.3.1",
-    "@stryker-mutator/test-helpers": "^3.3.1",
-    "@stryker-mutator/util": "^3.3.1",
+    "@stryker-mutator/test-helpers": "4.0.0-beta.10",
     "@types/express": "~4.17.0",
     "@types/node": "^14.0.1",
-    "@types/semver": "~7.2.0",
-    "jasmine-core": "~3.5.0",
-    "karma": "~5.0.1",
-    "karma-chai": "^0.1.0",
+    "@types/semver": "~7.3.1",
+    "jasmine-core": "~3.6.0",
+    "karma": "~5.1.0",
+    "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-jasmine": "~3.0.1",
-    "karma-mocha": "^2.0.0"
+    "karma-mocha": "~2.0.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0"
+    "@stryker-mutator/core": "~4.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "^3.3.1",
-    "decamelize": "^4.0.0",
+    "@stryker-mutator/api": "4.0.0-beta.10",
+    "@stryker-mutator/util": "4.0.0-beta.10",
+    "decamelize": "~4.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.0.0"
   },

@@ -1,14 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "vue",
-  "mutate": [
-    "{src,lib}/**/*.+(js|vue)",
-    "!{src,lib}/**/*.spec.js"
-  ],
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutator": {
+    "plugins": []	
+  },
   "tempDirName": "stryker-tmp",
   "packageManager": "npm",
   "testRunner": "jest",
-  "maxConcurrentTestRunners": 2,
+  "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder",

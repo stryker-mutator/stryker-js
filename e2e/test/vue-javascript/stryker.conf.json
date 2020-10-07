@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "karma",
+  "reporters": [
+    "clear-text",
+    "html",
+    "event-recorder",
+    "progress"
+  ],
+  "concurrency": 2,
+  "karma": {
+    "configFile": "test/karma.conf.js"
+  },
+  "coverageAnalysis": "perTest",
+  "plugins": [
+    "@stryker-mutator/karma-runner"
+  ]
+}

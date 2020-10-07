@@ -4,49 +4,41 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Karma with angular",
-      "program": "${workspaceFolder}/run-angular.js",
-      "cwd": "C:\\z\\github\\nicojs\\angular-stryker-example",
-      "outFiles": [
-        "${workspaceRoot}/src/**/*.js",
-        "${workspaceRoot}/run-angular.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceRoot}/test/helpers/**/*.js",
+        "--no-timeout",
         "${workspaceRoot}/test/unit/**/*.js"
       ],
+      "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
     },
     {
       "type": "node",
       "request": "launch",
       "name": "Integration tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
+      "cwd": "${workspaceFolder}",
       "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceRoot}/test/helpers/**/*.js",
+        "--no-timeout",
+        "--exit",
         "${workspaceRoot}/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
+      ],      
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
     }
   ],
   "compounds": []

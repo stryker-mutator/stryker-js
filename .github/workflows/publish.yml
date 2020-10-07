@@ -18,4 +18,4 @@ jobs:
     - name: Build
       run: npm run build
     - name: Release
-      run: npx lerna publish from-git --yes
+      run: npx lerna publish from-git --yes --pre-dist-tag next

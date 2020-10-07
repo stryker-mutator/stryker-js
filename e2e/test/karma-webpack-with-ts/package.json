@@ -3,14 +3,15 @@
   "description": "A test project for karma with the karma-webpack plugin and the ts-loader.",
   "scripts": {
     "test": "stryker run",
+    "test:unit": "karma start",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   },
   "dependencies": {
-    "lit-element": "^2.3.1",
+    "lit-element": "~2.3.1",
     "mutation-testing-metrics": "~1.4.0",
     "mutation-testing-report-schema": "~1.4.0"
   },
   "devDependencies": {
-    "@types/webpack-env": "^1.15.2"
+    "@types/webpack-env": "~1.15.2"
   }
 }

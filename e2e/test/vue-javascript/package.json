@@ -10,7 +10,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "unit": "cross-env BABEL_ENV=test karma start test/karma.conf.js --single-run",
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js --fileLogLevel trace --logLevel debug",
+    "test": "stryker run --fileLogLevel trace",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "dependencies": {
@@ -45,7 +45,7 @@
     "eslint-plugin-vue": "~6.0.0",
     "friendly-errors-webpack-plugin": "~1.7.0",
     "html-webpack-plugin": "~3.2.0",
-    "jasmine-core": "^3.5.0",
+    "jasmine-core": "~3.6.0",
     "karma": "~4.4.1",
     "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~3.1.0",
@@ -70,9 +70,8 @@
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
     "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/javascript-mutator": "../../../packages/javascript-mutator",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
     "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
-    "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
     "@stryker-mutator/util": "../../../packages/util"
   },
   "engines": {

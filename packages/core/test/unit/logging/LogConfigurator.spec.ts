@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import * as log4js from 'log4js';
 import * as sinon from 'sinon';
 
-import LogConfigurator from '../../../src/logging/LogConfigurator';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LogConfigurator } from '../../../src/logging';
+import { LoggingClientContext } from '../../../src/logging';
 import * as netUtils from '../../../src/utils/netUtils';
 
 describe('LogConfigurator', () => {

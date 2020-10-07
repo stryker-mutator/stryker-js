@@ -1,9 +1,20 @@
 import { exec } from 'child_process';
 import * as os from 'os';
 
-import { StrykerOptions, CommandRunnerOptions } from '@stryker-mutator/api/core';
-import { RunResult, RunStatus, TestRunner, TestStatus } from '@stryker-mutator/api/test_runner';
-import { errorToString } from '@stryker-mutator/util';
+import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+import {
+  TestRunner,
+  TestStatus,
+  DryRunOptions,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+  DryRunStatus,
+  ErrorDryRunResult,
+  CompleteDryRunResult,
+  toMutantRunResult,
+} from '@stryker-mutator/api/test_runner';
+import { errorToString, StrykerError } from '@stryker-mutator/util';
 
 import { kill } from '../utils/objectUtils';
 import Timer from '../utils/Timer';
@@ -24,7 +35,7 @@ export default class CommandTestRunner implements TestRunner {
    * Determines whether a given name is "command" (ignore case)
    * @param name Maybe "command", maybe not
    */
-  public static is(name: string): boolean {
+  public static is(name: string): name is 'command' {
     return this.runnerName === name.toLowerCase();
   }
 
@@ -36,11 +47,29 @@ export default class CommandTestRunner implements TestRunner {
     this.settings = options.commandRunner;
   }
 
-  public run(): Promise<RunResult> {
+  public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
+    if (coverageAnalysis !== 'off') {
+      throw new StrykerError(
+        `The "${CommandTestRunner.runnerName}" test runner does not support coverageAnalysis "${coverageAnalysis}". Please set "coverageAnalysis": "off".`
+      );
+    }
+    return this.run({});
+  }
+
+  public async mutantRun({ activeMutant }: Pick<MutantRunOptions, 'activeMutant'>): Promise<MutantRunResult> {
+    const result = await this.run({ activeMutantId: activeMutant.id });
+    return toMutantRunResult(result);
+  }
+
+  private run({ activeMutantId }: { activeMutantId?: number }): Promise<DryRunResult> {
     return new Promise((res, rej) => {
       const timer = new Timer();
       const output: Array<string | Buffer> = [];
-      const childProcess = exec(this.settings.command, { cwd: this.workingDir });
+      const env =
+        activeMutantId === undefined
+          ? process.env
+          : { ...process.env, [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutantId.toString() };
+      const childProcess = exec(this.settings.command, { cwd: this.workingDir, env });
       childProcess.on('error', (error) => {
         kill(childProcess.pid)
           .then(() => handleResolve(errorResult(error)))
@@ -58,11 +87,11 @@ export default class CommandTestRunner implements TestRunner {
       });
 
       this.timeoutHandler = async () => {
-        handleResolve({ status: RunStatus.Timeout, tests: [] });
+        handleResolve({ status: DryRunStatus.Timeout });
         await kill(childProcess.pid);
       };
 
-      const handleResolve = (runResult: RunResult) => {
+      const handleResolve = (runResult: DryRunResult) => {
         removeAllListeners();
         this.timeoutHandler = undefined;
         res(runResult);
@@ -74,21 +103,21 @@ export default class CommandTestRunner implements TestRunner {
         childProcess.removeAllListeners();
       }
 
-      function errorResult(error: Error): RunResult {
+      function errorResult(error: Error): ErrorDryRunResult {
         return {
-          errorMessages: [errorToString(error)],
-          status: RunStatus.Error,
-          tests: [],
+          errorMessage: errorToString(error),
+          status: DryRunStatus.Error,
         };
       }
 
-      function completeResult(exitCode: number | null, timer: Timer): RunResult {
+      function completeResult(exitCode: number | null, timer: Timer): CompleteDryRunResult {
         const duration = timer.elapsedMs();
         if (exitCode === 0) {
           return {
-            status: RunStatus.Complete,
+            status: DryRunStatus.Complete,
             tests: [
               {
+                id: 'all',
                 name: 'All tests',
                 status: TestStatus.Success,
                 timeSpentMs: duration,
@@ -97,10 +126,11 @@ export default class CommandTestRunner implements TestRunner {
           };
         } else {
           return {
-            status: RunStatus.Complete,
+            status: DryRunStatus.Complete,
             tests: [
               {
-                failureMessages: [output.map((buf) => buf.toString()).join(os.EOL)],
+                id: 'all',
+                failureMessage: output.map((buf) => buf.toString()).join(os.EOL),
                 name: 'All tests',
                 status: TestStatus.Failed,
                 timeSpentMs: duration,

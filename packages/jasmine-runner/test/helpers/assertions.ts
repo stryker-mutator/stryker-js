@@ -1,10 +1,9 @@
-import { TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
+import { TestResult, SuccessTestResult, FailedTestResult, SkippedTestResult } from '@stryker-mutator/api/test_runner';
 import { expect } from 'chai';
 
-export function expectTestResultsToEqual(
-  actualTestResults: TestResult[],
-  expectedResults: ReadonlyArray<{ name: string; status: TestStatus; failureMessages: string[] | undefined }>
-) {
+type TimelessTestResult = Omit<SuccessTestResult, 'timeSpentMs'> | Omit<FailedTestResult, 'timeSpentMs'> | Omit<SkippedTestResult, 'timeSpentMs'>;
+
+export function expectTestResultsToEqual(actualTestResults: TestResult[], expectedResults: readonly TimelessTestResult[]) {
   expect(actualTestResults).lengthOf(
     expectedResults.length,
     `Expected ${JSON.stringify(actualTestResults, null, 2)} to equal ${JSON.stringify(expectedResults, null, 2)}`
@@ -12,9 +11,8 @@ export function expectTestResultsToEqual(
   expectedResults.forEach((expectedResult) => {
     const actualTestResult = actualTestResults.find((testResult) => testResult.name === expectedResult.name);
     if (actualTestResult) {
-      expect({ name: actualTestResult.name, status: actualTestResult.status, failureMessages: actualTestResult.failureMessages }).deep.equal(
-        expectedResult
-      );
+      const { timeSpentMs, ...actualWithoutTiming } = actualTestResult;
+      expect(actualWithoutTiming).deep.equal(expectedResult);
     } else {
       expect.fail(
         undefined,

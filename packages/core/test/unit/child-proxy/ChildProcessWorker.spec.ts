@@ -2,10 +2,9 @@ import * as path from 'path';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-import { rootInjector } from 'typed-inject';
 
 import ChildProcessProxyWorker from '../../../src/child-proxy/ChildProcessProxyWorker';
 import {
@@ -18,8 +17,8 @@ import {
   WorkResult,
 } from '../../../src/child-proxy/messageProtocol';
 import * as di from '../../../src/di';
-import LogConfigurator from '../../../src/logging/LogConfigurator';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LogConfigurator } from '../../../src/logging';
+import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';
 import { Mock } from '../../helpers/producers';
@@ -53,7 +52,7 @@ describe(ChildProcessProxyWorker.name, () => {
     process.send = processSendStub;
     processChdirStub = sinon.stub(process, 'chdir');
     configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
-    sinon.stub(di, 'buildChildProcessInjector').returns(rootInjector);
+    sinon.stub(di, 'buildChildProcessInjector').returns(testInjector.injector);
   });
 
   afterEach(() => {

@@ -1,10 +1,9 @@
 import * as child from 'child_process';
+import { promises as fs } from 'fs';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
-
-import CommandTestRunner from '../test-runner/CommandTestRunner';
 
 import NpmClient from './NpmClient';
 import { PackageInfo } from './PackageInfo';
@@ -56,7 +55,7 @@ export default class StrykerInitializer {
       configFileName = await this.initiateCustom(this.configWriter);
     }
     await this.gitignoreWriter.addStrykerTempFolder();
-    this.out(`Done configuring stryker. Please review "${configFileName}", you might need to configure transpilers or your test runner correctly.`);
+    this.out(`Done configuring stryker. Please review "${configFileName}", you might need to configure your test runner correctly.`);
     this.out("Let's kill some mutants with this command: `stryker run`");
   }
 
@@ -89,6 +88,9 @@ export default class StrykerInitializer {
     const presetConfig = await selectedPreset.createConfig();
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
+    if (presetConfig.additionalConfigFiles) {
+      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fs.writeFile(name, content)));
+    }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
     return configFileName;
@@ -96,21 +98,12 @@ export default class StrykerInitializer {
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
     const selectedTestRunner = await this.selectTestRunner();
-    const selectedTestFramework =
-      selectedTestRunner && !CommandTestRunner.is(selectedTestRunner.name) ? await this.selectTestFramework(selectedTestRunner) : null;
-    const selectedMutator = await this.selectMutator();
-    const selectedTranspilers = await this.selectTranspilers();
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
     const isJsonSelected = await this.selectJsonConfigType();
-    const npmDependencies = this.getSelectedNpmDependencies(
-      [selectedTestRunner, selectedTestFramework, selectedMutator].concat(selectedTranspilers).concat(selectedReporters)
-    );
+    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner].concat(selectedReporters));
     const configFileName = await configWriter.write(
       selectedTestRunner,
-      selectedTestFramework,
-      selectedMutator,
-      selectedTranspilers,
       selectedReporters,
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies),
@@ -123,15 +116,10 @@ export default class StrykerInitializer {
     return configFileName;
   }
 
-  private async selectTestRunner(): Promise<PromptOption | null> {
+  private async selectTestRunner(): Promise<PromptOption> {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
-    if (testRunnerOptions.length) {
-      this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
-      return this.inquirer.promptTestRunners(testRunnerOptions);
-    } else {
-      this.out('Unable to select a test runner. You will need to configure it manually.');
-      return null;
-    }
+    this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
+    return this.inquirer.promptTestRunners(testRunnerOptions);
   }
 
   private async selectReporters(): Promise<PromptOption[]> {
@@ -156,49 +144,6 @@ export default class StrykerInitializer {
       }
     );
     return this.inquirer.promptReporters(reporterOptions);
-  }
-
-  private async selectTestFramework(testRunnerOption: PromptOption): Promise<null | PromptOption> {
-    let selectedTestFramework: PromptOption | null = null;
-    const testFrameworkOptions = await this.client.getTestFrameworkOptions(testRunnerOption.pkg ? testRunnerOption.pkg.name : null);
-    if (testFrameworkOptions.length) {
-      this.log.debug(`Found test frameworks for ${testRunnerOption.name}: ${JSON.stringify(testFrameworkOptions)}`);
-      const none: PromptOption = {
-        name: 'None/other',
-        pkg: null,
-      };
-      testFrameworkOptions.push(none);
-      selectedTestFramework = await this.inquirer.promptTestFrameworks(testFrameworkOptions);
-      if (selectedTestFramework === none) {
-        selectedTestFramework = null;
-        this.out('OK, downgrading coverageAnalysis to "all"');
-      }
-    } else {
-      this.out(`No stryker test framework plugin found that is compatible with ${testRunnerOption.name}, downgrading coverageAnalysis to "all"`);
-    }
-    return selectedTestFramework;
-  }
-
-  private async selectMutator(): Promise<PromptOption | null> {
-    const mutatorOptions = await this.client.getMutatorOptions();
-    if (mutatorOptions.length) {
-      this.log.debug(`Found mutators: ${JSON.stringify(mutatorOptions)}`);
-      return this.inquirer.promptMutator(mutatorOptions);
-    } else {
-      this.out('Unable to select a mutator. You will need to configure it manually.');
-      return null;
-    }
-  }
-
-  private async selectTranspilers(): Promise<PromptOption[] | null> {
-    const options = await this.client.getTranspilerOptions();
-    if (options.length) {
-      this.log.debug(`Found transpilers: ${JSON.stringify(options)}`);
-      return this.inquirer.promptTranspilers(options);
-    } else {
-      this.out('Unable to select transpilers. You will need to configure it manually, if you want to use any.');
-      return null;
-    }
   }
 
   private async selectPackageManager(): Promise<PromptOption> {
@@ -245,7 +190,7 @@ export default class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<object[]> {
+  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<Array<Record<string, unknown>>> {
     return (await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)))).filter(notEmpty);
   }
 }

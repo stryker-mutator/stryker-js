@@ -11,10 +11,17 @@ module.exports = {
   plugins: ['@typescript-eslint', 'prettier', 'import'],
   rules: {
     'import/newline-after-import': 1,
-    'import/order': ["error", { "newlines-between": "always", "groups": ["builtin", ["external", "internal"], "parent", "sibling", "index"] }],
+    'import/order': [
+      "error",
+      {
+        "newlines-between": "always-and-inside-groups",
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
+      }
+    ],
     'prettier/prettier': ['error'],
-    'sort-imports': 'off', // No auto-fix!
+    'sort-imports': 'off',
     'no-case-declarations': 'off',
+    'no-constant-condition': 'error',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': [
       'error',
@@ -23,13 +30,10 @@ module.exports = {
       }
     ],
     '@typescript-eslint/await-thenable': 'off',
-    '@typescript-eslint/ban-ts-ignore': 'error',
     '@typescript-eslint/ban-types': 'error',
     'brace-style': 'off',
     '@typescript-eslint/brace-style': 'error',
-    camelcase: 'off',
-    '@typescript-eslint/camelcase': 'error',
-    '@typescript-eslint/class-name-casing': 'error',
+    camelcase: 'error',
     '@typescript-eslint/consistent-type-assertions': 'error',
     '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -39,11 +43,10 @@ module.exports = {
     '@typescript-eslint/generic-type-naming': 'off',
     indent: 'off',
     '@typescript-eslint/indent': 'off',
-    '@typescript-eslint/interface-name-prefix': ['error', 'never'],
     '@typescript-eslint/member-delimiter-style': 'off',
-    '@typescript-eslint/member-naming': 'error',
     '@typescript-eslint/member-ordering': 'off',
-    'no-array-constructor': 'off',
+    'no-array-constructor': 'error',
+    'no-duplicate-case': 'error',
     '@typescript-eslint/no-array-constructor': 'error',
     'no-empty-function': 'off',
     '@typescript-eslint/no-empty-function': 'off',
@@ -56,6 +59,7 @@ module.exports = {
     '@typescript-eslint/no-for-in-array': 'error',
     '@typescript-eslint/no-inferrable-types': 'off',
     'no-magic-numbers': 'off',
+    'no-fallthrough': 'off',
     '@typescript-eslint/no-magic-numbers': 'off',
     '@typescript-eslint/no-misused-new': 'error',
     '@typescript-eslint/no-misused-promises': 'off',

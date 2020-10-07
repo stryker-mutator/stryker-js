@@ -10,42 +10,16 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Index",
-      "program": "${workspaceRoot}/index.js",
-      "args": [
       ],
-      "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "e2e command runner",
-      "program": "${workspaceRoot}/../../e2e/test/angular-project/node_modules/@stryker-mutator/core/bin/stryker",
-      "args": [
-        "run"
+      "skipFiles": [
+        "<node_internals>/**"
       ],
-      "cwd": "${workspaceFolder}/../../e2e/test/angular-project",
-      "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
-      ]
     },
     {
       "type": "node",
@@ -56,38 +30,15 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceRoot}/test/helpers/**/*.js",
         "${workspaceRoot}/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "name": "Run stryker example",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/stryker",
-      // "preLaunchTask": "build",
-      "stopOnEntry": false,
-      "args": [
-        "run"
       ],
-      "cwd": "${workspaceRoot}/../../sampleProject",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "console": "integratedTerminal",
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     },
     {
@@ -98,8 +49,7 @@
       // "preLaunchTask": "build",
       "stopOnEntry": false,
       "args": [
-        "run",
-        "stryker.conf.js"
+        "run"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
@@ -114,33 +64,9 @@
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "name": "Run stryker help",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/stryker",
-      // "preLaunchTask": "build",
-      "stopOnEntry": false,
-      "args": [
-        "--logLevel",
-        "debug",
-        "run"
       ],
-      "cwd": "${workspaceRoot}/.",
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "console": "internalConsole",
-      "sourceMaps": true,
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     }
   ]

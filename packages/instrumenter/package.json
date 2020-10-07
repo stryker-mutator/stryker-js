@@ -1,0 +1,52 @@
+{
+  "name": "@stryker-mutator/instrumenter",
+  "version": "4.0.0-beta.10",
+  "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "test": "nyc npm run mocha",
+    "mocha": "mocha",
+    "stryker": "node ../core/bin/stryker run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker",
+    "directory": "packages/instrumenter"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Nico Jansen <jansennico@gmail.com>",
+  "contributors": [
+    "Simon de Lang <simondelang@gmail.com>",
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker/issues"
+  },
+  "homepage": "https://stryker-mutator.io",
+  "dependencies": {
+    "@babel/core": "~7.11.4",
+    "@babel/generator": "~7.11.4",
+    "@babel/parser": "~7.11.4",
+    "@babel/plugin-proposal-decorators": "~7.10.5",
+    "@babel/preset-typescript": "~7.10.4",
+    "@stryker-mutator/api": "4.0.0-beta.10",
+    "@stryker-mutator/util": "4.0.0-beta.10",
+    "angular-html-parser": "~1.7.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "~7.10.4",
+    "@stryker-mutator/test-helpers": "4.0.0-beta.10",
+    "@types/babel__core": "~7.1.9",
+    "@types/babel__generator": "~7.6.1",
+    "@types/babel__parser": "~7.1.1",
+    "@types/chai-jest-snapshot": "~1.3.5",
+    "babel-plugin-transform-decorators-legacy": "~1.3.5",
+    "chai-jest-snapshot": "~2.0.0"
+  }
+}

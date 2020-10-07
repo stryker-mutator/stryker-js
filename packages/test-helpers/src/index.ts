@@ -1,5 +1,5 @@
-import * as factory from './factory';
-
+export * as factory from './factory';
+export * as assertions from './assertions';
 export * from './TestInjector';
-export { factory };
 export * from './LoggingServer';
+export * from './tick';

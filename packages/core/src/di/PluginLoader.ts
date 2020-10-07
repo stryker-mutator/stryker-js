@@ -12,16 +12,16 @@ import * as coreTokens from './coreTokens';
 const IGNORED_PACKAGES = ['core', 'api', 'util'];
 
 interface PluginModule {
-  strykerPlugins: Array<Plugin<any>>;
+  strykerPlugins: Array<Plugin<PluginKind>>;
 }
 
 interface SchemaValidationContribution {
-  strykerValidationSchema: object;
+  strykerValidationSchema: Record<string, unknown>;
 }
 
 export class PluginLoader implements PluginResolver {
-  private readonly pluginsByKind: Map<PluginKind, Array<Plugin<any>>> = new Map();
-  private readonly contributedValidationSchemas: object[] = [];
+  private readonly pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>> = new Map();
+  private readonly contributedValidationSchemas: Array<Record<string, unknown>> = [];
 
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
@@ -32,7 +32,7 @@ export class PluginLoader implements PluginResolver {
     });
   }
 
-  public resolveValidationSchemaContributions(): object[] {
+  public resolveValidationSchemaContributions(): Array<Record<string, unknown>> {
     return this.contributedValidationSchemas;
   }
 
@@ -41,7 +41,7 @@ export class PluginLoader implements PluginResolver {
     if (plugins) {
       const plugin = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
       if (plugin) {
-        return plugin as any;
+        return plugin as Plugins[T];
       } else {
         throw new Error(
           `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
@@ -53,8 +53,8 @@ export class PluginLoader implements PluginResolver {
   }
 
   public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
-    const plugins = this.pluginsByKind.get(kind);
-    return plugins || ([] as any);
+    const plugins = this.pluginsByKind.get(kind) || [];
+    return plugins as Array<Plugins[T]>;
   }
 
   private resolvePluginModules() {
@@ -110,7 +110,7 @@ export class PluginLoader implements PluginResolver {
     }
   }
 
-  private loadPlugin(plugin: Plugin<any>) {
+  private loadPlugin(plugin: Plugin<PluginKind>) {
     let plugins = this.pluginsByKind.get(plugin.kind);
     if (!plugins) {
       plugins = [];

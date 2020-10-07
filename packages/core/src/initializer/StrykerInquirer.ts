@@ -2,17 +2,19 @@ import * as inquirer from 'inquirer';
 
 import CommandTestRunner from '../test-runner/CommandTestRunner';
 
+import { ChoiceType } from './ChoiceType';
+
 import Preset from './presets/Preset';
 import PromptOption from './PromptOption';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
-  additionalConfig: object;
+  additionalConfig: Record<string, unknown>;
 }
 
 export class StrykerInquirer {
   public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
-    const choices: Array<inquirer.ChoiceType<string>> = options.map((_) => _.name);
+    const choices: ChoiceType[] = options.map((_) => _.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');
     const answers = await inquirer.prompt<{ preset: string }>({
@@ -25,48 +27,21 @@ export class StrykerInquirer {
   }
 
   public async promptTestRunners(options: PromptOption[]): Promise<PromptOption> {
-    const choices: Array<inquirer.ChoiceType<string>> = options.map((_) => _.name);
-    choices.push(new inquirer.Separator());
-    choices.push(CommandTestRunner.runnerName);
-    const answers = await inquirer.prompt<{ testRunner: string }>({
-      choices,
-      default: 'Mocha',
-      message:
-        'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
-      name: 'testRunner',
-      type: 'list',
-    });
-    return options.filter((_) => _.name === answers.testRunner)[0] || { name: CommandTestRunner.runnerName, pkg: null };
-  }
-
-  public async promptTestFrameworks(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt<{ testFramework: string }>({
-      choices: options.map((_) => _.name),
-      message: 'Which test framework do you want to use?',
-      name: 'testFramework',
-      type: 'list',
-    });
-    return options.filter((_) => _.name === answers.testFramework)[0];
-  }
-
-  public async promptMutator(options: PromptOption[]): Promise<PromptOption> {
-    const answers = await inquirer.prompt<{ mutator: string }>({
-      choices: options.map((_) => _.name),
-      message: 'What kind of code do you want to mutate?',
-      name: 'mutator',
-      type: 'list',
-    });
-    return options.filter((_) => _.name === answers.mutator)[0];
-  }
-
-  public async promptTranspilers(options: PromptOption[]): Promise<PromptOption[]> {
-    const answers = await inquirer.prompt<{ transpilers: string[] }>({
-      choices: options.map((_) => _.name),
-      message: '[optional] What kind transformations should be applied to your code?',
-      name: 'transpilers',
-      type: 'checkbox',
-    });
-    return options.filter((option) => answers.transpilers.some((transpilerName) => option.name === transpilerName));
+    if (options.length) {
+      const choices: ChoiceType[] = options.map((_) => _.name);
+      choices.push(new inquirer.Separator());
+      choices.push(CommandTestRunner.runnerName);
+      const answers = await inquirer.prompt<{ testRunner: string }>({
+        choices,
+        message:
+          'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
+        name: 'testRunner',
+        type: 'list',
+      });
+      return options.filter((_) => _.name === answers.testRunner)[0] ?? { name: CommandTestRunner.runnerName, pkg: null };
+    } else {
+      return { name: CommandTestRunner.runnerName, pkg: null };
+    }
   }
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {

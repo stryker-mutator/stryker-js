@@ -1,0 +1,14 @@
+{
+  "name": "exit-prematurely-dry-run-fails",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf reports .stryker-tmp stryker.log",
+    "test": "stryker run || node -p \"require('fs').appendFileSync('stryker.log', 'Exited with an error exit code')\"",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "author": "",
+  "license": "ISC"
+}

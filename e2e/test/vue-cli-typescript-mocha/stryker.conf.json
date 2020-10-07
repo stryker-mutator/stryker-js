@@ -1,19 +1,12 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/api/schema/stryker-core.json",
-  "mutator": "vue",
-  "mutate": [
-    "{src,lib}/**/*.+(ts|vue)",
-    "!{src,lib}/**/*.spec.ts"
-  ],
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "mocha",
-  "maxConcurrentTestRunners": 2,
-  "coverageAnalysis": "off",
-  "reporters": ["event-recorder"],
-  "transpilers": ["webpack"],
-  "webpack": {
-    "configFile": "webpack.test.config.js"
-  },
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "symlinkNodeModules": false,
+  "reporters": ["progress", "clear-text", "event-recorder"],
+  "buildCommand": "webpack --config webpack.test.config.js",
   "mochaOptions": {
     "package": "package.json",
     "require": [
@@ -21,5 +14,12 @@
     ],
     "spec": ["dist/js/chunk-vendors.js", "dist/js/tests.js"]
   },
-  "tsconfigFile": "tsconfig.json"
+  "tsconfigFile": "tsconfig.json",
+  "plugins": [
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/typescript-checker"
+  ],
+  "checkers": [
+    "typescript"
+  ]
 }

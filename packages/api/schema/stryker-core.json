@@ -37,6 +37,15 @@
         "Trace"
       ]
     },
+    "coverageAnalysis": {
+      "title": "CoverageAnalysis",
+      "type": "string",
+      "enum": [
+        "off",
+        "all",
+        "perTest"
+      ]
+    },
     "reportType": {
       "title": "ReportType",
       "type": "string",
@@ -159,11 +168,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "name": {
-          "type": "string",
-          "default": "javascript"
-        },
         "plugins": {
+          "description": "Override the default babel plugins Stryker uses to parse your JavaScript files. The default list of plugins is extensive and normally doesn't need overriding. Stryker also loads your babel plugins by default (if you have them). If Stryker's default babel plugins conflicts with your plugins, try to override this list with an empty array.",
           "anyOf": [
             {
               "type": "array",
@@ -187,10 +193,7 @@
           },
           "default": []
         }
-      },
-      "required": [
-        "name"
-      ]
+      }
     },
     "warningOptions": {
       "title": "WarningOptions",
@@ -199,6 +202,11 @@
       "properties": {
         "unknownOptions": {
           "description": "decide whether or not to log warnings when additional stryker options are configured",
+          "type": "boolean",
+          "default": true
+        },
+        "preprocessorErrors": {
+          "description": "decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.",
           "type": "boolean",
           "default": true
         }
@@ -211,19 +219,40 @@
       "type": "boolean",
       "default": true
     },
+    "buildCommand": {
+      "type": "string",
+      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+      "examples": [
+        "tsc -b",
+        "babel src --out-dir lib",
+        "npm run build"
+      ]
+    },
+    "checkers": {
+      "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "concurrency": {
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine. This is a sane default for most use cases.",
+      "type": "number"
+    },
+    "maxTestRunnerReuse": {
+      "description": "Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
+      "type": "number",
+      "default": 0
+    },
     "commandRunner": {
       "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
       "$ref": "#/definitions/commandRunnerOptions",
       "default": {}
     },
     "coverageAnalysis": {
+      "$ref": "#/definitions/coverageAnalysis",
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
-      "type": "string",
-      "enum": [
-        "off",
-        "all",
-        "perTest"
-      ],
       "default": "off"
     },
     "clearTextReporter": {
@@ -259,7 +288,7 @@
       "default": "info"
     },
     "maxConcurrentTestRunners": {
-      "description": "Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
+      "description": "[DEPRECATED please use \"concurrency\" instead]. Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
       "type": "number",
       "default": 9007199254740991
     },
@@ -270,27 +299,20 @@
         "type": "string"
       },
       "default": [
-        "{src,lib}/**/*.js?(x)",
-        "!{src,lib}/**/__tests__/**/*.js?(x)",
-        "!{src,lib}/**/?(*.)+(spec|test).js?(x)",
-        "!{src,lib}/**/*+(Spec|Test).js?(x)"
+        "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+        "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)"
       ]
     },
     "mutator": {
-      "description": "With mutator you configure which mutator plugin you want to use, and optionally, which mutation types to exclude from the test run.",
-      "oneOf": [
-        {
-          "type": "string"
-        },
-        {
-          "$ref": "#/definitions/mutatorDescriptor"
-        }
-      ],
-      "default": "javascript",
-      "errorMessage": "should be an \"object\" describing the mutator or a \"string\". See https://github.com/stryker-mutator/stryker/tree/master/packages/core#mutator."
+      "description": "Configure how Stryker mutates your code.",
+      "$ref": "#/definitions/mutatorDescriptor",
+      "default": {}
     },
     "packageManager": {
-      "enum": ["npm", "yarn"],
+      "enum": [
+        "npm",
+        "yarn"
+      ],
       "description": "The package manager Stryker can use to install missing dependencies."
     },
     "plugins": {
@@ -302,6 +324,14 @@
       "default": [
         "@stryker-mutator/*"
       ]
+    },
+    "appendPlugins": {
+      "description": "A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     },
     "reporters": {
       "description": "With reporters, you can set the reporters for stryker to use.",
@@ -319,6 +349,20 @@
       "description": "The options for the html reporter",
       "$ref": "#/definitions/htmlReporterOptions"
     },
+    "disableTypeChecks": {
+      "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.",
+      "anyOf": [
+        {
+          "enum": [
+            false
+          ]
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"
+    },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
       "type": "boolean",
@@ -329,9 +373,10 @@
       "type": "string",
       "default": ".stryker-tmp"
     },
-    "testFramework": {
-      "description": "Configure which test framework you are using. This option is not mandatory, as Stryker is test framework agnostic (it doesn't care what framework you use), However, it is required when coverageAnalysis is set to 'perTest', because Stryker needs to hook into the test framework in order to measure code coverage results per test and filter tests to run.",
-      "type": "string"
+    "cleanTempDir": {
+      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes)",
+      "type": "boolean",
+      "default": true
     },
     "testRunner": {
       "description": "With 'testRunner' you specify the test runner that Stryker uses to run your tests. The default value is command. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the 'commandRunner: { command: 'npm run mocha' }'. It uses 'npm test' as the command by default.",
@@ -353,13 +398,10 @@
       "type": "number",
       "default": 5000
     },
-    "transpilers": {
-      "description": "Configure which transpiler plugins should transpile the code before it's executed. This is an array where the transpilers are called in the other of the array. This defaults to an empty array meaning no transpilation will be done.",
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "default": []
+    "tsconfigFile": {
+      "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",
+      "type": "string",
+      "default": "tsconfig.json"
     },
     "warnings": {
       "default": true,

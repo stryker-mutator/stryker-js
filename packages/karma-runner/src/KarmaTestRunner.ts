@@ -1,16 +1,25 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import * as karma from 'karma';
+import { StrykerOptions, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { CoverageCollection, CoveragePerTestResult, RunResult, RunStatus, TestResult, TestRunner } from '@stryker-mutator/api/test_runner';
-import * as karma from 'karma';
+import {
+  TestRunner,
+  TestResult,
+  DryRunStatus,
+  DryRunOptions,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+  toMutantRunResult,
+} from '@stryker-mutator/api/test_runner';
 
-import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
+import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import ProjectStarter from './starters/ProjectStarter';
-import StrykerReporter from './StrykerReporter';
-import TestHooksMiddleware from './TestHooksMiddleware';
+import StrykerReporter from './karma-plugins/StrykerReporter';
 import { KarmaRunnerOptionsWithStrykerOptions } from './KarmaRunnerOptionsWithStrykerOptions';
+import TestHooksMiddleware from './karma-plugins/TestHooksMiddleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
@@ -18,10 +27,8 @@ export interface ConfigOptions extends karma.ConfigOptions {
 
 export default class KarmaTestRunner implements TestRunner {
   private currentTestResults: TestResult[];
-  private currentErrorMessages: string[];
-  private currentCoverageReport?: CoverageCollection | CoveragePerTestResult;
-  private currentRunStatus: RunStatus;
-  private readonly testHooksMiddleware = TestHooksMiddleware.instance;
+  private currentErrorMessage: string | undefined;
+  private currentCoverageReport?: MutantCoverage;
   private readonly starter: ProjectStarter;
   public port: undefined | number;
 
@@ -32,27 +39,31 @@ export default class KarmaTestRunner implements TestRunner {
     this.setGlobals(setup, getLogger);
     this.cleanRun();
     this.listenToServerStart();
-    this.listenToRunComplete();
     this.listenToSpecComplete();
     this.listenToCoverage();
     this.listenToError();
   }
 
-  public init(): Promise<void> {
+  public async init(): Promise<void> {
     return new Promise((res, rej) => {
-      StrykerReporter.instance.once('browsers_ready', res);
-      this.starter
-        .start()
-        .then(() => {
-          /*noop*/
-        })
-        .catch(rej);
+      StrykerReporter.instance.once('browsers_ready', () => res());
+      this.starter.start().catch(rej);
     });
   }
 
-  public async run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
-    this.testHooksMiddleware.currentTestHooks = testHooks || '';
-    if (this.currentRunStatus !== RunStatus.Error) {
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    TestHooksMiddleware.instance.configureCoverageAnalysis(options.coverageAnalysis);
+    return this.run();
+  }
+
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    TestHooksMiddleware.instance.configureActiveMutant(options);
+    const dryRunResult = await this.run();
+    return toMutantRunResult(dryRunResult);
+  }
+
+  private async run(): Promise<DryRunResult> {
+    if (!this.currentErrorMessage) {
       // Only run when there was no compile error
       // An compile error can happen in case of angular-cli
       await this.runServer();
@@ -79,9 +90,8 @@ export default class KarmaTestRunner implements TestRunner {
 
   private cleanRun() {
     this.currentTestResults = [];
-    this.currentErrorMessages = [];
+    this.currentErrorMessage = undefined;
     this.currentCoverageReport = undefined;
-    this.currentRunStatus = RunStatus.Complete;
   }
 
   // Don't use dispose() to stop karma (using karma.stopper.stop)
@@ -100,24 +110,17 @@ export default class KarmaTestRunner implements TestRunner {
   }
 
   private listenToCoverage() {
-    StrykerReporter.instance.on('coverage_report', (coverageReport: CoverageCollection | CoveragePerTestResult) => {
+    StrykerReporter.instance.on('coverage_report', (coverageReport: MutantCoverage) => {
       this.currentCoverageReport = coverageReport;
-    });
-  }
-
-  private listenToRunComplete() {
-    StrykerReporter.instance.on('run_complete', (runStatus: RunStatus) => {
-      this.currentRunStatus = runStatus;
     });
   }
 
   private listenToError() {
     StrykerReporter.instance.on('browser_error', (error: string) => {
-      this.currentErrorMessages.push(error);
+      this.currentErrorMessage = error;
     });
     StrykerReporter.instance.on('compile_error', (errors: string[]) => {
-      errors.forEach((error) => this.currentErrorMessages.push(error));
-      this.currentRunStatus = RunStatus.Error;
+      this.currentErrorMessage = errors.join(', ');
     });
   }
 
@@ -130,25 +133,18 @@ export default class KarmaTestRunner implements TestRunner {
     });
   }
 
-  private collectRunResult(): RunResult {
-    return {
-      coverage: this.currentCoverageReport,
-      errorMessages: this.currentErrorMessages,
-      status: this.determineRunState(),
-      tests: this.currentTestResults,
-    };
-  }
-
-  private determineRunState() {
-    // Karma will report an Error if no tests had executed.
-    // This is not an "error" in Stryker terms
-    if (this.currentRunStatus === RunStatus.Error && !this.currentErrorMessages.length && !this.currentTestResults.length) {
-      return RunStatus.Complete;
-    } else if (this.currentErrorMessages.length) {
-      // Karma will return Complete when there are runtime errors
-      return RunStatus.Error;
+  private collectRunResult(): DryRunResult {
+    if (this.currentErrorMessage) {
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: this.currentErrorMessage,
+      };
     } else {
-      return this.currentRunStatus;
+      return {
+        status: DryRunStatus.Complete,
+        tests: this.currentTestResults,
+        mutantCoverage: this.currentCoverageReport,
+      };
     }
   }
 }

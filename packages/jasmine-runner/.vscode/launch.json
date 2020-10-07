@@ -7,37 +7,20 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit tests",
+      "name": "Unit/integration tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
-        "--timeout",
-        "999999",
+        "--no-timeout",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/unit/**/*.js"
+        "${workspaceRoot}/test/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/test/**/*.js",
         "${workspaceRoot}/src/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Integration tests",
-      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
-      "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/integration/**/*.js"
       ],
-      "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+      "skipFiles": [
+        "<node_internals>/**"
       ]
     }
   ]

@@ -1,9 +1,11 @@
 import { existsSync, promises as fs } from 'fs';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
+
+import CommandTestRunner from '../test-runner/CommandTestRunner';
 
 import PresetConfiguration from './presets/PresetConfiguration';
 import PromptOption from './PromptOption';
@@ -35,24 +37,19 @@ export default class StrykerConfigWriter {
    * @function
    */
   public write(
-    selectedTestRunner: null | PromptOption,
-    selectedTestFramework: null | PromptOption,
-    selectedMutator: null | PromptOption,
-    selectedTranspilers: null | PromptOption[],
+    selectedTestRunner: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
-      mutator: selectedMutator ? selectedMutator.name : '',
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
-      testRunner: selectedTestRunner ? selectedTestRunner.name : '',
-      transpilers: selectedTranspilers ? selectedTranspilers.map((t) => t.name) : [],
+      testRunner: selectedTestRunner.name,
+      coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
 
-    this.configureTestFramework(configObject, selectedTestFramework);
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
   }
@@ -63,23 +60,14 @@ export default class StrykerConfigWriter {
    */
   public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
     const config = {
-      comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
+      _comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
       ...presetConfig.config,
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
   }
 
-  private configureTestFramework(configObject: Partial<StrykerOptions>, selectedTestFramework: null | PromptOption) {
-    if (selectedTestFramework) {
-      configObject.testFramework = selectedTestFramework.name;
-      configObject.coverageAnalysis = 'perTest';
-    } else {
-      configObject.coverageAnalysis = 'all';
-    }
-  }
-
-  private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {
+  private writeStrykerConfig(config: PartialStrykerOptions, exportAsJson: boolean) {
     if (exportAsJson) {
       return this.writeJsonConfig(config);
     } else {
@@ -87,7 +75,7 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private async writeJsConfig(commentedConfig: Partial<StrykerOptions>) {
+  private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
     this.out(`Writing & formatting ${STRYKER_JS_CONFIG_FILE}...`);
     const rawConfig = this.stringify(commentedConfig);
     const formattedConfig = `/**
@@ -105,7 +93,7 @@ export default class StrykerConfigWriter {
     return STRYKER_JS_CONFIG_FILE;
   }
 
-  private async writeJsonConfig(commentedConfig: Partial<StrykerOptions>) {
+  private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
     this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
     const typedConfig = {
       $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
@@ -117,7 +105,7 @@ export default class StrykerConfigWriter {
     return STRYKER_JSON_CONFIG_FILE;
   }
 
-  private stringify(input: object): string {
+  private stringify(input: Record<string, unknown>): string {
     return JSON.stringify(input, undefined, 2);
   }
 }

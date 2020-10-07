@@ -1,13 +1,12 @@
 import * as commander from 'commander';
-import { getLogger } from 'log4js';
 import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
+
+import { MutantResult } from '@stryker-mutator/api/report';
 
 import { initializerFactory } from './initializer';
-import LogConfigurator from './logging/LogConfigurator';
+import { LogConfigurator } from './logging';
 import Stryker from './Stryker';
 import { defaultOptions } from './config/OptionsValidator';
-import { retrieveCause, ConfigError } from './errors';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -31,14 +30,13 @@ function parseBoolean(val: string) {
 }
 
 export default class StrykerCli {
-  private command: string = '';
+  private command = '';
   private strykerConfig: string | null = null;
 
   constructor(
     private readonly argv: string[],
     private readonly program: commander.Command = new commander.Command(),
-    private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest(),
-    private readonly log: Logger = getLogger(StrykerCli.name)
+    private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 
   public run() {
@@ -61,29 +59,44 @@ export default class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        `A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile.
-      Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js`,
+        'A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js',
         list
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        `A comma separated list of globbing expression used for selecting the files that should be mutated.
-      Example: src/**/*.js,a.js`,
+        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js',
         list
+      )
+      .option(
+        '-b, --buildCommand <command>',
+        'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
+          " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
       .option(
         '--coverageAnalysis <perTest|all|off>',
         `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
-      .option('--testFramework <name>', 'The name of the test framework you want to use.')
       .option('--testRunner <name>', 'The name of the test runner you want to use')
-      .option('--mutator <name>', 'The name of the mutant generator you want to use')
-      .option('--transpilers <listOfTranspilers>', 'A comma separated list of transpilers to use.', list)
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
+      .option(
+        '--appendPlugins <listOfPlugions>',
+        'A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.',
+        list
+      )
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
+      .option(
+        '-c, --concurrency <n>',
+        'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
+        parseInt
+      )
+      .option(
+        '--maxTestRunnerReuse <n>',
+        'Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)',
+        parseInt
+      )
       .option(
         '--logLevel <level>',
         `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.logLevel}"`
@@ -122,6 +135,11 @@ export default class StrykerCli {
         '--tempDirName <name>',
         'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run'
       )
+      .option(
+        '--cleanTempDir <true/false>',
+        'Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).',
+        parseBoolean
+      )
       .parse(this.argv);
 
     // Earliest opportunity to configure the log level based on the logLevel argument
@@ -141,26 +159,18 @@ export default class StrykerCli {
       options.dashboard = dashboard;
     }
 
-    const commands: { [cmd: string]: () => Promise<any> } = {
+    const commands = {
       init: () => initializerFactory().initialize(),
       run: () => this.runMutationTest(options),
     };
 
     if (Object.keys(commands).includes(this.command)) {
-      commands[this.command]().catch((err) => {
-        const error = retrieveCause(err);
-        if (error instanceof ConfigError) {
-          this.log.error(error.message);
-        } else {
-          this.log.error('an error occurred', err);
-          if (!this.log.isTraceEnabled()) {
-            this.log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
-          }
-        }
+      const promise: Promise<void | MutantResult[]> = commands[this.command as keyof typeof commands]();
+      promise.catch((err) => {
         process.exitCode = 1;
       });
     } else {
-      this.log.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
+      console.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
   }
 }

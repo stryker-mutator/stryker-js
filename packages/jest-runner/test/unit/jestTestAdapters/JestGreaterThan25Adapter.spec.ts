@@ -2,6 +2,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+import { Config } from '@jest/types';
+
 import JestGreaterThan25Adapter from '../../../src/jestTestAdapters/JestGreaterThan25Adapter';
 import { jestWrapper } from '../../../src/utils/jestWrapper';
 
@@ -11,16 +13,14 @@ describe(JestGreaterThan25Adapter.name, () => {
 
   const projectRoot = '/path/to/project';
   const fileNameUnderTest = '/path/to/file';
-  const jestConfig: any = { rootDir: projectRoot };
+  const jestConfig: Config.InitialOptions = { rootDir: projectRoot };
 
   beforeEach(() => {
     runCLIStub = sinon.stub(jestWrapper, 'runCLI');
-    runCLIStub.callsFake((config: object) =>
-      Promise.resolve({
-        config,
-        result: 'testResult',
-      })
-    );
+    runCLIStub.resolves({
+      config: jestConfig,
+      result: 'testResult',
+    });
 
     sut = testInjector.injector.injectClass(JestGreaterThan25Adapter);
   });
@@ -67,14 +67,7 @@ describe(JestGreaterThan25Adapter.name, () => {
     const result = await sut.run(jestConfig, projectRoot);
 
     expect(result).to.deep.equal({
-      config: {
-        $0: 'stryker',
-        _: [],
-        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-        runInBand: true,
-        silent: true,
-        findRelatedTests: false,
-      },
+      config: jestConfig,
       result: 'testResult',
     });
   });
@@ -83,14 +76,7 @@ describe(JestGreaterThan25Adapter.name, () => {
     const result = await sut.run(jestConfig, projectRoot, fileNameUnderTest);
 
     expect(result).to.deep.equal({
-      config: {
-        $0: 'stryker',
-        _: [fileNameUnderTest],
-        config: JSON.stringify({ rootDir: projectRoot, reporters: [] }),
-        findRelatedTests: true,
-        runInBand: true,
-        silent: true,
-      },
+      config: jestConfig,
       result: 'testResult',
     });
   });

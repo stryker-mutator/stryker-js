@@ -21,4 +21,7 @@ Player.prototype.makeFavorite = function() {
   this.currentlyPlayingSong.persistFavoriteStatus(true);
 };
 
+// Add random string, resulting in a static mutant in the instrumented code.
+module.exports.foo = 'bar'; 
+
 module.exports = Player;

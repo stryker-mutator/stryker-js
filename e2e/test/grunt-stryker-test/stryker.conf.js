@@ -3,12 +3,13 @@ module.exports = function (config) {
     mutate: [
       'sampleProject/src/**'
     ],
-    karmaConfig: {
-      files: ['sampleProject/**']
+    karma: {
+      config: {
+        files: ['sampleProject/**']
+      }
     },
-    testFramework: 'jasmine',
     testRunner: 'karma',
     logLevel: 'info',
-    maxConcurrentTestRunners: 2
+    concurrency: 2
   });
 }

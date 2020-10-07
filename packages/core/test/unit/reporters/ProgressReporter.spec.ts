@@ -1,9 +1,9 @@
 import { MatchedMutant, MutantStatus } from '@stryker-mutator/api/report';
-import { matchedMutant, mutantResult } from '@stryker-mutator/test-helpers/src/factory';
+import { matchedMutant } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
-
 import ProgressBar = require('progress');
+import { factory } from '@stryker-mutator/test-helpers';
 
 import * as progressBarModule from '../../../src/reporters/ProgressBar';
 import ProgressReporter from '../../../src/reporters/ProgressReporter';
@@ -34,7 +34,7 @@ describe('ProgressReporter', () => {
   describe('onAllMutantsMatchedWithTests()', () => {
     describe('when there are 3 MatchedMutants that all contain Tests', () => {
       beforeEach(() => {
-        matchedMutants = [matchedMutant(1), matchedMutant(4), matchedMutant(2)];
+        matchedMutants = [matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true })];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
@@ -45,7 +45,11 @@ describe('ProgressReporter', () => {
     });
     describe("when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn't have tests", () => {
       beforeEach(() => {
-        matchedMutants = [matchedMutant(1), matchedMutant(0), matchedMutant(2)];
+        matchedMutants = [
+          matchedMutant({ testFilter: undefined }),
+          matchedMutant({ testFilter: ['spec1'] }),
+          matchedMutant({ testFilter: ['spec2'] }),
+        ];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
@@ -56,7 +60,7 @@ describe('ProgressReporter', () => {
     });
     describe('when mutants match to all tests', () => {
       beforeEach(() => {
-        matchedMutants = [matchedMutant(0, '0', true), matchedMutant(0, '1', true)];
+        matchedMutants = [matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true })];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
@@ -71,25 +75,30 @@ describe('ProgressReporter', () => {
     let progressBarTickTokens: any;
 
     beforeEach(() => {
-      matchedMutants = [matchedMutant(0), matchedMutant(1), matchedMutant(4), matchedMutant(2)];
+      matchedMutants = [
+        matchedMutant({ id: '0' }), // NoCoverage
+        matchedMutant({ id: '1', testFilter: [''] }),
+        matchedMutant({ id: '2', runAllTests: true }),
+        matchedMutant({ id: '3', testFilter: [''] }),
+      ];
       sut.onAllMutantsMatchedWithTests(matchedMutants);
     });
 
     it('should tick the ProgressBar with 1 tested mutant, 0 survived when status is not "Survived"', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult());
       progressBarTickTokens = { total: 3, tested: 1, survived: 0 };
       expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
     });
 
     it("should not tick the ProgressBar if the result was for a mutant that wasn't matched to any tests", () => {
       // mutant 0 isn't matched to any tests
-      sut.onMutantTested(mutantResult({ id: '0', status: MutantStatus.TranspileError }));
+      sut.onMutantTested(factory.invalidMutantResult({ id: '0', status: MutantStatus.CompileError }));
       progressBarTickTokens = { total: 3, tested: 0, survived: 0 };
       expect(progressBar.tick).to.not.have.been.called;
     });
 
     it('should tick the ProgressBar with 1 survived mutant when status is "Survived"', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Survived }));
+      sut.onMutantTested(factory.undetectedMutantResult({ status: MutantStatus.Survived }));
       progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
       expect(progressBar.tick).to.have.been.calledWithMatch(progressBarTickTokens);
     });
@@ -97,13 +106,17 @@ describe('ProgressReporter', () => {
 
   describe('ProgressBar estimated time for 3 mutants', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1), matchedMutant(1)]);
+      sut.onAllMutantsMatchedWithTests([
+        matchedMutant({ id: '1', runAllTests: true }),
+        matchedMutant({ id: '2', runAllTests: true }),
+        matchedMutant({ id: '3', runAllTests: true }),
+      ]);
     });
 
     it('should show correct time info after ten seconds and 1 mutants tested', () => {
       sinon.clock.tick(TEN_SECONDS);
 
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult({ id: '1' }));
 
       expect(progressBar.tick).to.have.been.calledWithMatch({ et: '<1m', etc: '<1m' });
     });
@@ -111,7 +124,7 @@ describe('ProgressReporter', () => {
     it('should show correct time info after a hundred seconds and 1 mutants tested', () => {
       sinon.clock.tick(HUNDRED_SECONDS);
 
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult({ id: '1' }));
 
       expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1m', etc: '~3m' });
     });
@@ -119,7 +132,7 @@ describe('ProgressReporter', () => {
     it('should show correct time info after ten thousand seconds and 1 mutants tested', () => {
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
 
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult({ id: '1' }));
 
       expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~2h 46m', etc: '~5h 33m' });
     });
@@ -127,7 +140,7 @@ describe('ProgressReporter', () => {
     it('should show correct time info after an hour and 1 mutants tested', () => {
       sinon.clock.tick(ONE_HOUR);
 
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult({ id: '1', status: MutantStatus.Killed }));
 
       expect(progressBar.tick).to.have.been.calledWithMatch({ et: '~1h 0m', etc: '~2h 0m' });
     });

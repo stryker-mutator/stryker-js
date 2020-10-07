@@ -1,187 +1,121 @@
 import * as path from 'path';
 
-import { RunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test_runner';
-import JasmineTestFramework from '@stryker-mutator/jasmine-framework/src/JasmineTestFramework';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import { TestStatus } from '@stryker-mutator/api/test_runner';
 
-import JasmineTestRunner from '../../src/JasmineTestRunner';
+import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/JasmineTestRunner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 
-function wrapInClosure(codeFragment: string) {
-  return `
-    (function (window) {
-      ${codeFragment}
-    })((Function('return this'))());`;
-}
+import { jasmineInitSuccessResults } from './helpers';
 
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
-  afterEach(() => {
+
+  afterEach(async () => {
     process.chdir(path.resolve(__dirname, '../../..'));
+    await sut.dispose();
   });
 
   describe('using the jasmine-init project', () => {
-    const expectedJasmineInitResults = Object.freeze([
-      Object.freeze({
-        failureMessages: undefined,
-        name: 'Player should be able to play a Song',
-        status: TestStatus.Success,
-      }),
-      Object.freeze({
-        failureMessages: undefined,
-        name: 'Player when song has been paused should indicate that the song is currently paused',
-        status: TestStatus.Success,
-      }),
-      Object.freeze({
-        failureMessages: undefined,
-        name: 'Player when song has been paused should be possible to resume',
-        status: TestStatus.Success,
-      }),
-      Object.freeze({
-        failureMessages: undefined,
-        name: 'Player tells the current song if the user has made it a favorite',
-        status: TestStatus.Success,
-      }),
-      Object.freeze({
-        failureMessages: undefined,
-        name: 'Player #resume should throw an exception if song is already playing',
-        status: TestStatus.Success,
-      }),
-    ]);
-
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
-      sut = new JasmineTestRunner(
-        [
-          path.resolve('lib', 'jasmine_examples', 'Player.js'),
-          path.resolve('lib', 'jasmine_examples', 'Song.js'),
-          path.resolve('spec', 'helpers', 'jasmine_examples', 'SpecHelper.js'),
-          path.resolve('spec', 'jasmine_examples', 'PlayerSpec.js'),
-        ],
-        factory.strykerOptions({ jasmineConfigFile: 'spec/support/jasmine.json' })
-      );
+      testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
+      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      await sut.init();
     });
+
     it('should run the specs', async () => {
-      const runResult = await sut.run({});
-      expect(runResult.status).eq(RunStatus.Complete);
-      expectTestResultsToEqual(runResult.tests, expectedJasmineInitResults);
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expectTestResultsToEqual(runResult.tests, jasmineInitSuccessResults);
     });
 
     it('should be able to run twice in short succession', async () => {
-      await sut.run({});
-      const secondRunResult = await sut.run({});
-      expect(secondRunResult.status).eq(RunStatus.Complete);
-      expectTestResultsToEqual(secondRunResult.tests, expectedJasmineInitResults);
+      await sut.dryRun(factory.dryRunOptions());
+      const secondRunResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(secondRunResult);
+      expectTestResultsToEqual(secondRunResult.tests, jasmineInitSuccessResults);
     });
 
     it('should be able to filter tests', async () => {
       // Arrange
-      const testFramework = new JasmineTestFramework();
-      const testHooks = wrapInClosure(
-        testFramework.filter([
-          {
-            id: 1,
-            name: expectedJasmineInitResults[1].name,
-          },
-          {
-            id: 3,
-            name: expectedJasmineInitResults[3].name,
-          },
-        ])
-      );
+      const jasmineInitResults = jasmineInitSuccessResults;
+      const testFilter = [jasmineInitResults[1].id, jasmineInitResults[3].id];
 
       // Act
-      const runResult = await sut.run({ testHooks });
+      const runResult = await sut.mutantRun(factory.mutantRunOptions({ testFilter }));
 
       // Assert
-      expect(runResult.status).eq(RunStatus.Complete);
-      expectTestsFiltered(runResult.tests, 1, 3);
+      assertions.expectSurvived(runResult);
+      expect(global.__testsInCurrentJasmineRun).deep.eq(['spec1', 'spec3']);
     });
 
     it('should be able to clear the filter after a filtered run', async () => {
       // Arrange
-      const testFramework = new JasmineTestFramework();
-      const filter1Test = wrapInClosure(testFramework.filter([{ id: 1, name: expectedJasmineInitResults[1].name }]));
-      const filterNoTests = wrapInClosure(testFramework.filter([]));
+      const jasmineInitResults = jasmineInitSuccessResults;
+      const filter1Test = [jasmineInitResults[1].id];
+      const filterNoTests = undefined;
 
-      await sut.run({ testHooks: filter1Test });
-      const actualResult = await sut.run({ testHooks: filterNoTests });
-      expectTestResultsToEqual(actualResult.tests, expectedJasmineInitResults);
+      // Act
+      await sut.mutantRun(factory.mutantRunOptions({ testFilter: filter1Test }));
+      global.__testsInCurrentJasmineRun = [];
+      await sut.mutantRun(factory.mutantRunOptions({ testFilter: filterNoTests }));
+
+      // Assert
+      expect(global.__testsInCurrentJasmineRun).deep.eq(['spec0', 'spec1', 'spec2', 'spec3', 'spec4']);
     });
 
     it('should be able to filter tests in quick succession', async () => {
       // Arrange
-      const testFramework = new JasmineTestFramework();
-      const testHooks1 = wrapInClosure(
-        testFramework.filter([
-          {
-            id: 1,
-            name: expectedJasmineInitResults[1].name,
-          },
-        ])
-      );
-      const testHooks2 = wrapInClosure(
-        testFramework.filter([
-          {
-            id: 2,
-            name: expectedJasmineInitResults[2].name,
-          },
-        ])
-      );
+      const testHooks1 = [jasmineInitSuccessResults[1].id];
+      const testHooks2 = [jasmineInitSuccessResults[2].id];
 
       // Act
-      const firstResult = await sut.run({ testHooks: testHooks1 });
-      const secondResult = await sut.run({ testHooks: testHooks2 });
+      await sut.mutantRun(factory.mutantRunOptions({ testFilter: testHooks1 }));
+      const testsRunFirstTime = global.__testsInCurrentJasmineRun;
+      global.__testsInCurrentJasmineRun = [];
+      await sut.mutantRun(factory.mutantRunOptions({ testFilter: testHooks2 }));
+      const testsRunSecondTime = global.__testsInCurrentJasmineRun;
 
       // Assert
-      expectTestsFiltered(firstResult.tests, 1);
-      expectTestsFiltered(secondResult.tests, 2);
+      expect(testsRunFirstTime).deep.eq(['spec1']);
+      expect(testsRunSecondTime).deep.eq(['spec2']);
     });
-
-    function expectTestsFiltered(actualTestResults: TestResult[], ...filteredTestIds: number[]) {
-      expectTestResultsToEqual(
-        actualTestResults,
-        expectedJasmineInitResults.map((testResult, id) => ({
-          failureMessages: testResult.failureMessages,
-          name: testResult.name,
-          status: filteredTestIds.includes(id) ? TestStatus.Success : TestStatus.Skipped,
-        }))
-      );
-    }
   });
 
   describe('using a jasmine-project with errors', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/errors'));
-      sut = new JasmineTestRunner([path.resolve('lib', 'error.js'), path.resolve('spec', 'errorSpec.js')], factory.strykerOptions());
+      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      await sut.init();
     });
 
     it('should be able to tell the error', async () => {
-      const result = await sut.run({});
-      expect(result.status).eq(RunStatus.Error);
-      expect(result.errorMessages).lengthOf(1);
-      const actualError: string = (result.errorMessages as string[])[0];
-      expect(actualError)
+      const result = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectErrored(result);
+      expect(result.errorMessage)
         .matches(/^An error occurred while loading your jasmine specs.*/)
         .matches(/.*SyntaxError: Unexpected identifier.*/);
     });
   });
 
   describe('when it includes failed tests', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
-      sut = new JasmineTestRunner([path.resolve('lib', 'foo.js'), path.resolve('spec', 'fooSpec.js')], factory.strykerOptions());
+      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      await sut.init();
     });
 
     it('should complete with one test failure', async () => {
-      const result = await sut.run({});
-      expect(result.status).eq(RunStatus.Complete);
+      const result = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
         {
-          failureMessages: ["Expected 'bar' to be 'baz'."],
-          name: 'foo should be baz',
+          id: 'spec0',
           status: TestStatus.Failed,
+          failureMessage: "Expected 'bar' to be 'baz'.",
+          name: 'foo should be baz',
         },
       ]);
     });

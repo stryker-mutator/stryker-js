@@ -1,8 +1,6 @@
 module.exports = function (config) {
   config.set({
     mutate: ['src/*.js'],
-    mutator: 'javascript',
-    testFramework: 'mocha',
     testRunner: 'karma',
     reporters: ['clear-text', 'html', 'event-recorder'],
     karma: {
@@ -12,7 +10,8 @@ module.exports = function (config) {
       }
     },
     timeoutMS: 60000,
-    maxConcurrentTestRunners: 2,
-    coverageAnalysis: 'perTest'
+    concurrency: 2,
+    coverageAnalysis: 'perTest',
+    plugins: ['@stryker-mutator/karma-runner']
   });
 };

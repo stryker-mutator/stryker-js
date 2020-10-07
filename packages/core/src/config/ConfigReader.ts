@@ -30,6 +30,9 @@ export default class ConfigReader {
     const configModule = this.loadConfigModule();
     let options: StrykerOptions;
     if (typeof configModule === 'function') {
+      this.log.warn(
+        'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
+      );
       options = defaultOptions();
       configModule(createConfig(options));
     } else {
@@ -44,8 +47,8 @@ export default class ConfigReader {
     return options;
   }
 
-  private loadConfigModule(): Function | PartialStrykerOptions {
-    let configModule: Function | PartialStrykerOptions = {};
+  private loadConfigModule(): ((options: StrykerOptions) => void) | PartialStrykerOptions {
+    let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
 
     if (!this.cliOptions.configFile) {
       try {

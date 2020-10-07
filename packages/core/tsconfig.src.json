@@ -2,15 +2,19 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "rootDir": ".",
+    "noImplicitThis": true,
     "resolveJsonModule": true,
     "types": [] // Exclude global mocha functions for the sources
   },
   "include": [
-    "src"
+    "src", "../util/src/Task.ts"
   ],
   "references": [
     {
       "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../instrumenter/src"
     },
     {
       "path": "../util/tsconfig.src.json"

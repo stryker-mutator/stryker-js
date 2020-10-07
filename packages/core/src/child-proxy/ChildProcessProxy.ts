@@ -2,15 +2,14 @@ import { ChildProcess, fork } from 'child_process';
 import * as os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { OptionsContext } from '@stryker-mutator/api/plugin';
-import { isErrnoException } from '@stryker-mutator/util';
+import { PluginContext } from '@stryker-mutator/api/plugin';
+import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
-import LoggingClientContext from '../logging/LoggingClientContext';
+import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/objectUtils';
 import StringBuilder from '../utils/StringBuilder';
-import { ExpirableTask, Task } from '../utils/Task';
 
 import ChildProcessCrashedError from './ChildProcessCrashedError';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './messageProtocol';
@@ -72,15 +71,15 @@ export default class ChildProcessProxy<T> implements Disposable {
   /**
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
-  public static create<TAdditionalContext, R, Tokens extends Array<InjectionToken<OptionsContext & TAdditionalContext>>>(
+  public static create<TAdditionalContext, R, Tokens extends Array<InjectionToken<PluginContext & TAdditionalContext>>>(
     requirePath: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    InjectableClass: InjectableClass<TAdditionalContext & OptionsContext, R, Tokens>
+    injectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, InjectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
+    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
   }
 
   private send(message: WorkerMessage) {
@@ -103,7 +102,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   }
 
   private forward(methodName: string) {
-    return (...args: any[]) => {
+    return async (...args: any[]) => {
       if (this.currentError) {
         return Promise.reject(this.currentError);
       } else {
@@ -178,7 +177,6 @@ export default class ChildProcessProxy<T> implements Disposable {
   private readonly handleUnexpectedExit = (code: number, signal: string) => {
     this.isDisposed = true;
     const output = StringBuilder.concat(this.stderrBuilder, this.stdoutBuilder);
-
     if (processOutOfMemory()) {
       this.currentError = new OutOfMemoryError(this.worker.pid, code);
       this.log.warn(`Child process [pid ${this.currentError.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);

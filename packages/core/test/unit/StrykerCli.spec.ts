@@ -1,21 +1,17 @@
 import { Command } from 'commander';
 import * as sinon from 'sinon';
-import { Logger } from '@stryker-mutator/api/logging';
-import { logger } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import LogConfigurator from '../../src/logging/LogConfigurator';
+import { LogConfigurator } from '../../src/logging';
 import StrykerCli from '../../src/StrykerCli';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
   let configureLoggerStub: sinon.SinonStub;
-  let logMock: sinon.SinonStubbedInstance<Logger>;
 
   beforeEach(() => {
     runMutationTestingStub = sinon.stub();
-    logMock = logger();
     configureLoggerStub = sinon.stub(LogConfigurator, 'configureMainProcess');
   });
 
@@ -32,21 +28,25 @@ describe(StrykerCli.name, () => {
   describe('flat options', () => {
     const testCases: Array<[string[], PartialStrykerOptions]> = [
       [['--files', 'foo.js,bar.js'], { files: ['foo.js', 'bar.js'] }],
+      [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
+      [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
-      [['--transpilers', 'foo,bar'], { transpilers: ['foo', 'bar'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],
-      [['--mutator', 'foo'], { mutator: 'foo' }],
+      [['--appendPlugins', 'foo,bar'], { appendPlugins: ['foo', 'bar'] }],
       [['--timeoutMS', '42'], { timeoutMS: 42 }],
       [['--timeoutFactor', '42'], { timeoutFactor: 42 }],
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
-      [['--testFramework', 'foo-framework'], { testFramework: 'foo-framework' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
+      [['--concurrency', '5'], { concurrency: 5 }],
+      [['--cleanTempDir', 'false'], { cleanTempDir: false }],
+      [['-c', '6'], { concurrency: 6 }],
+      [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
     ];
     testCases.forEach(([args, expected]) => {
-      it(`should expect option "${args.join(' ')}"`, () => {
+      it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {
         arrangeActAssertConfigOption(args, expected);
       });
     });
@@ -91,7 +91,7 @@ describe(StrykerCli.name, () => {
   });
 
   function actRun(args: string[]): void {
-    new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub, logMock).run();
+    new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub).run();
   }
 
   function arrangeActAssertConfigOption(args: string[], expectedOptions: PartialStrykerOptions): void {

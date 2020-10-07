@@ -1,19 +1,14 @@
 import * as os from 'os';
 
-import { MutantResult, MutantStatus, mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { mutantResult, mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
+import { mutationTestReportSchema, MutantStatus } from '@stryker-mutator/api/report';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
 import chalk = require('chalk');
 
 import ClearTextReporter from '../../../src/reporters/ClearTextReporter';
-import { createClearTextReporterOptions } from '../../helpers/producers';
-
-const colorizeFileAndPosition = (sourceFilePath: string, line: number, column: number) => {
-  return [chalk.cyan(sourceFilePath), chalk.yellow(`${line}`), chalk.yellow(`${column}`)].join(':');
-};
 
 describe(ClearTextReporter.name, () => {
   let sut: ClearTextReporter;
@@ -77,196 +72,145 @@ describe(ClearTextReporter.name, () => {
     });
   });
 
-  describe('when coverageAnalysis is "all"', () => {
-    beforeEach(() => {
+  describe('onAllMutantsTested', () => {
+    it('should report a killed mutant to debug', async () => {
+      sut.onAllMutantsTested([
+        factory.killedMutantResult({ id: '1', mutatorName: 'Math', killedBy: 'foo should be bar', originalLines: 'foo', mutatedLines: 'bar' }),
+      ]);
+      expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Killed] Math'));
+      expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
+      expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
+      expect(testInjector.logger.debug).calledWith('Killed by: foo should be bar');
+    });
+
+    it('should report a transpileError mutant to debug', async () => {
+      sut.onAllMutantsTested([
+        factory.invalidMutantResult({
+          id: '1',
+          mutatorName: 'Math',
+          errorMessage: 'could not call bar of undefined',
+          status: MutantStatus.CompileError,
+          originalLines: 'foo',
+          mutatedLines: 'bar',
+        }),
+      ]);
+      expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [CompileError] Math'));
+      expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
+      expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
+      expect(testInjector.logger.debug).calledWith('Error message: could not call bar of undefined');
+    });
+
+    it('should report a NoCoverage mutant to stdout', async () => {
+      sut.onAllMutantsTested([
+        factory.undetectedMutantResult({
+          id: '1',
+          mutatorName: 'Math',
+          status: MutantStatus.NoCoverage,
+          originalLines: 'foo',
+          mutatedLines: 'bar',
+        }),
+      ]);
+      expect(stdoutStub).calledWithMatch(sinon.match('1. [NoCoverage] Math'));
+      expect(stdoutStub).calledWith(`${chalk.red('-   foo')}${os.EOL}`);
+      expect(stdoutStub).calledWith(`${chalk.green('+   bar')}${os.EOL}`);
+    });
+
+    it('should report a Survived mutant to stdout', async () => {
+      sut.onAllMutantsTested([factory.undetectedMutantResult({ id: '42', mutatorName: 'Math', status: MutantStatus.Survived })]);
+      expect(stdoutStub).calledWithMatch(sinon.match('42. [Survived] Math'));
+    });
+
+    it('should report a Timeout mutant to stdout', async () => {
+      sut.onAllMutantsTested([factory.timeoutMutantResult({ id: '42', mutatorName: 'Math', status: MutantStatus.TimedOut })]);
+      expect(testInjector.logger.debug).calledWithMatch(sinon.match('42. [TimedOut] Math'));
+    });
+
+    it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {
+      testInjector.options.coverageAnalysis = 'perTest';
+      sut.onAllMutantsTested([
+        factory.undetectedMutantResult({
+          status: MutantStatus.Survived,
+          testFilter: ['foo should be bar', 'baz should be qux', 'quux should be corge'],
+        }),
+      ]);
+      expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
+      expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
+      expect(stdoutStub).calledWithExactly(`    baz should be qux${os.EOL}`);
+      expect(stdoutStub).calledWithExactly(`    quux should be corge${os.EOL}`);
+    });
+
+    it('should report the max tests to log and however many more tests', async () => {
+      testInjector.options.coverageAnalysis = 'perTest';
+      testInjector.options.clearTextReporter.maxTestsToLog = 2;
+      sut.onAllMutantsTested([
+        factory.undetectedMutantResult({
+          status: MutantStatus.Survived,
+          testFilter: ['foo should be bar', 'baz should be qux', 'quux should be corge'],
+        }),
+      ]);
+      expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
+      expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
+      expect(stdoutStub).calledWithExactly(`    baz should be qux${os.EOL}`);
+      expect(stdoutStub).not.calledWithMatch(sinon.match('quux should be corge'));
+      expect(stdoutStub).calledWithExactly(`  and 1 more test!${os.EOL}`);
+    });
+
+    it('should report that all tests have ran for a mutant when coverage analysis when testFilter is not defined', async () => {
+      testInjector.options.coverageAnalysis = 'perTest';
+      testInjector.options.clearTextReporter.maxTestsToLog = 2;
+      sut.onAllMutantsTested([
+        factory.undetectedMutantResult({
+          status: MutantStatus.Survived,
+          testFilter: undefined,
+        }),
+      ]);
+      expect(stdoutStub).calledWithExactly(`Ran all tests for this mutant.${os.EOL}`);
+    });
+
+    it('should not log individual ran tests when logTests is not true', () => {
+      testInjector.options.coverageAnalysis = 'perTest';
+      testInjector.options.clearTextReporter.logTests = false;
+      sut.onAllMutantsTested([factory.undetectedMutantResult({ status: MutantStatus.Survived, testFilter: ['foo should be bar'] })]);
+
+      expect(process.stdout.write).not.calledWithMatch(sinon.match('Tests ran: '));
+      expect(process.stdout.write).not.calledWithMatch(sinon.match('foo should be bar'));
+      expect(process.stdout.write).not.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
+    });
+
+    it('should report that all tests have ran for a mutant when coverage analysis = "all"', async () => {
       testInjector.options.coverageAnalysis = 'all';
-      testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true });
+      sut.onAllMutantsTested([factory.undetectedMutantResult({ status: MutantStatus.Survived, testFilter: [] })]);
+      expect(stdoutStub).calledWithExactly(`Ran all tests for this mutant.${os.EOL}`);
     });
 
-    describe('onAllMutantsTested() all mutants except error', () => {
-      beforeEach(() => {
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-      });
-      it('should not report the error', () => {
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match(/error/));
-      });
+    it('should correctly report tests run per mutant on avg', () => {
+      sut.onAllMutantsTested([
+        factory.undetectedMutantResult({ nrOfTestsRan: 4 }),
+        factory.killedMutantResult({ nrOfTestsRan: 5 }),
+        factory.undetectedMutantResult({ nrOfTestsRan: 1 }),
+      ]);
+      expect(stdoutStub).calledWithExactly(`Ran 3.33 tests per mutant on average.${os.EOL}`);
     });
 
-    describe('onAllMutantsTested() with mutants of all kinds', () => {
-      beforeEach(() => {
-        sut.onAllMutantsTested(
-          mutantResults(
-            MutantStatus.Killed,
-            MutantStatus.Survived,
-            MutantStatus.TimedOut,
-            MutantStatus.NoCoverage,
-            MutantStatus.RuntimeError,
-            MutantStatus.TranspileError
-          )
-        );
-      });
+    it('should log source file location', () => {
+      testInjector.options.coverageAnalysis = 'perTest';
 
-      it('should report on the survived mutant', () => {
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('1. [Survived] Math'));
-        expect(process.stdout.write).to.have.been.calledWith(`${chalk.red('-   original line')}${os.EOL}`);
-        expect(process.stdout.write).to.have.been.calledWith(`${chalk.green('+   mutated line')}${os.EOL}`);
-      });
+      sut.onAllMutantsTested([factory.undetectedMutantResult({ fileName: 'foo.js', location: factory.location({ start: { line: 4, column: 6 } }) })]);
 
-      it('should not log individual ran tests', () => {
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Tests ran:'));
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-      });
+      expect(stdoutStub).to.have.been.calledWithMatch(sinon.match(`${chalk.cyan('foo.js')}:${chalk.yellow('4')}:${chalk.yellow('6')}`));
+    });
+
+    it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
+      testInjector.options.coverageAnalysis = 'perTest';
+      testInjector.options.allowConsoleColors = false;
+      // Recreate, color setting is set in constructor
+      sut = testInjector.injector.injectClass(ClearTextReporter);
+
+      sut.onAllMutantsTested([
+        factory.killedMutantResult({ fileName: 'sourceFile.ts', location: factory.location({ start: { line: 1, column: 2 } }) }),
+      ]);
+
+      expect(testInjector.logger.debug).calledWithMatch(sinon.match('sourceFile.ts:1:2'));
     });
   });
-
-  describe('when coverageAnalysis: "perTest"', () => {
-    describe('onAllMutantsTested()', () => {
-      it('should log source file names with colored text when clearTextReporter is not false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match(colorizeFileAndPosition('sourceFile.ts', 1, 2)));
-      });
-
-      it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.allowConsoleColors = false;
-        // Recreate, color setting is set in constructor
-        sut = testInjector.injector.injectClass(ClearTextReporter);
-
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('sourceFile.ts:1:2'));
-      });
-
-      it('should not log source file names with colored text when clearTextReporter is false', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-        expect(process.stdout.write).to.have.been.calledWithMatch(colorizeFileAndPosition('sourceFile.ts', 1, 2));
-      });
-
-      it('should not log individual ran tests when logTests is not true', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.clearTextReporter.logTests = false;
-
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Tests ran: '));
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a test'));
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a second test'));
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a third test'));
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-      });
-
-      it('should log individual ran tests when logTests is true', () => {
-        testInjector.options.coverageAnalysis = 'perTest';
-        testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true });
-
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Tests ran: '));
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a test'));
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a second test'));
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a third test'));
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-      });
-
-      describe('with fewer tests that may be logged', () => {
-        it('should log fewer tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 1 });
-
-          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Tests ran:'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a test'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('  and 2 more tests!'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-        });
-      });
-
-      describe('with more tests that may be logged', () => {
-        it('should log all tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 10 });
-
-          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Tests ran:'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a test'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a second test'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a third test'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-        });
-      });
-
-      describe('with the default amount of tests that may be logged', () => {
-        it('should log all tests', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 3 });
-
-          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Tests ran:'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a test'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a second test'));
-          expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('    a third test'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-        });
-      });
-
-      describe('with no tests that may be logged', () => {
-        it('should not log a test', () => {
-          testInjector.options.coverageAnalysis = 'perTest';
-          testInjector.options.clearTextReporter = createClearTextReporterOptions({ logTests: true, maxTestsToLog: 0 });
-
-          sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Tests ran: \n'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a test\n'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a second test\n'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('    a third test\n'));
-          expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.\n'));
-        });
-      });
-    });
-  });
-
-  describe('when coverageAnalysis: "off"', () => {
-    beforeEach(() => (testInjector.options.coverageAnalysis = 'off'));
-
-    describe('onAllMutantsTested()', () => {
-      beforeEach(() => {
-        sut.onAllMutantsTested(mutantResults(MutantStatus.Killed, MutantStatus.Survived, MutantStatus.TimedOut, MutantStatus.NoCoverage));
-      });
-
-      it('should not log individual ran tests', () => {
-        expect(process.stdout.write).to.not.have.been.calledWithMatch(sinon.match('Tests ran:'));
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
-      });
-
-      it('should report the average amount of tests ran', () =>
-        expect(process.stdout.write).to.have.been.calledWithMatch(sinon.match('Ran 3.00 tests per mutant on average.')));
-    });
-  });
-
-  function mutantResults(...status: MutantStatus[]): MutantResult[] {
-    return status.map((status) => {
-      const result: MutantResult = mutantResult({
-        location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
-        mutatedLines: 'mutated line',
-        mutatorName: 'Math',
-        originalLines: 'original line',
-        range: [0, 0],
-        replacement: '',
-        sourceFilePath: 'sourceFile.ts',
-        status,
-        testsRan: ['a test', 'a second test', 'a third test'],
-      });
-      return result;
-    });
-  }
 });

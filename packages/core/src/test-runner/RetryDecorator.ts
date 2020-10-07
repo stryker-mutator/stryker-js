@@ -1,4 +1,4 @@
-import { RunOptions, RunResult, RunStatus } from '@stryker-mutator/api/test_runner';
+import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test_runner';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 
@@ -14,10 +14,34 @@ const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without an
 export default class RetryDecorator extends TestRunnerDecorator {
   private readonly log = getLogger(RetryDecorator.name);
 
-  public async run(options: RunOptions, attemptsLeft = 2, lastError?: Error): Promise<RunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    const result = await this.run(() => super.dryRun(options));
+    if (typeof result === 'string') {
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: result,
+      };
+    } else {
+      return result;
+    }
+  }
+
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    const result = await this.run(() => super.mutantRun(options));
+    if (typeof result === 'string') {
+      return {
+        status: MutantRunStatus.Error,
+        errorMessage: result,
+      };
+    } else {
+      return result;
+    }
+  }
+
+  private async run<T extends DryRunResult | MutantRunResult>(actRun: () => Promise<T>, attemptsLeft = 2, lastError?: Error): Promise<T | string> {
     if (attemptsLeft > 0) {
       try {
-        return await this.innerRunner.run(options);
+        return await actRun();
       } catch (error) {
         if (error instanceof OutOfMemoryError) {
           this.log.info(
@@ -26,11 +50,11 @@ export default class RetryDecorator extends TestRunnerDecorator {
           );
         }
         await this.recover();
-        return this.run(options, attemptsLeft - 1, error);
+        return this.run(actRun, attemptsLeft - 1, error);
       }
     } else {
       await this.recover();
-      return { status: RunStatus.Error, errorMessages: [`${ERROR_MESSAGE}${errorToString(lastError)}`], tests: [] };
+      return `${ERROR_MESSAGE}${errorToString(lastError)}`;
     }
   }
 

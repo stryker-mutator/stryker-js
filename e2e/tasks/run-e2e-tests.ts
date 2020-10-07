@@ -1,25 +1,22 @@
 import fs = require('fs');
-import * as path from 'path';
+import path from 'path';
 import execa from 'execa';
-import * as semver from 'semver';
-import * as os from 'os';
+import semver from 'semver';
+import os from 'os';
 import { from, defer } from 'rxjs';
-import { tap, mergeAll, map, filter } from 'rxjs/operators';
+import { tap, mergeAll, map } from 'rxjs/operators';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
 function runE2eTests() {
-  const testDirs = fs.readdirSync(testRootDir);
+  const testDirs = fs.readdirSync(testRootDir).filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory());
 
   // Create test$, an observable of test runs
-  const test$ = from(testDirs).pipe(
-    filter(dir => fs.statSync(path.join(testRootDir, dir)).isDirectory()),
-    map(testDir => defer(() => runTest(testDir)))
-  );
+  const test$ = from(testDirs).pipe(map(testDir => defer(() => runTest(testDir))));
 
   let testsRan = 0;
   return test$.pipe(
-    mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs
+    mergeAll(os.cpus().length && 2), // use mergeAll to limit concurrent test runs
     tap(testDir => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
   );
 }
@@ -39,13 +36,13 @@ function execNpm(command: string, testDir: string, stream: boolean) {
   const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
   let stderr = '';
   let stdout = '';
-  testProcess.stderr.on('data', chunk => {
+  testProcess.stderr!.on('data', chunk => {
     stderr += chunk.toString();
     if (stream) {
       console.error(chunk.toString());
     }
   });
-  testProcess.stdout.on('data', chunk => {
+  testProcess.stdout!.on('data', chunk => {
     stdout += chunk.toString()
     if (stream) {
       console.log(chunk.toString());

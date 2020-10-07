@@ -3,7 +3,7 @@ import * as log4js from 'log4js';
 
 import { getFreePort } from '../utils/netUtils';
 
-import LoggingClientContext from './LoggingClientContext';
+import { LoggingClientContext } from './LoggingClientContext';
 import { minLevel } from './logUtils';
 
 const enum AppenderName {
@@ -32,7 +32,7 @@ interface AppendersConfiguration {
 }
 
 const LOG_FILE_NAME = 'stryker.log';
-export default class LogConfigurator {
+export class LogConfigurator {
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
     const multiAppender = { type: require.resolve('./MultiAppender'), appenders: [AppenderName.FilteredConsoleLevel] };
@@ -82,7 +82,7 @@ export default class LogConfigurator {
   public static configureMainProcess(
     consoleLogLevel: LogLevel = LogLevel.Information,
     fileLogLevel: LogLevel = LogLevel.Off,
-    allowConsoleColors: boolean = true
+    allowConsoleColors = true
   ) {
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));

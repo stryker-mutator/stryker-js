@@ -1,7 +1,7 @@
 import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import MatchedMutant from './MatchedMutant';
-import MutantResult from './MutantResult';
+import { MutantResult } from './MutantResult';
 import SourceFile from './SourceFile';
 
 /**
@@ -51,7 +51,7 @@ interface Reporter {
    * Stryker will not close until the promise is either resolved or rejected.
    * @return a promise which will resolve when the reporter is done reporting
    */
-  wrapUp?(): void | Promise<void>;
+  wrapUp?(): void | Promise<void> | Promise<void[]>;
 }
 
 export default Reporter;

@@ -9,7 +9,7 @@ import CustomJestConfigLoader from '../../../src/configLoaders/CustomJestConfigL
 
 describe(CustomJestConfigLoader.name, () => {
   let defaultConfigLoader: CustomJestConfigLoader;
-  const projectRoot: string = '/path/to/project/root';
+  const projectRoot = '/path/to/project/root';
   let readFileSyncStub: sinon.SinonStub;
   let requireStub: sinon.SinonStub;
 

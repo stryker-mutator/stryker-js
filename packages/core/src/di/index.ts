@@ -5,4 +5,5 @@ export * from './buildChildProcessInjector';
 export * from './PluginCreator';
 export * from './PluginLoader';
 export * from './factoryMethods';
+export * from './provideLogger';
 export { coreTokens };

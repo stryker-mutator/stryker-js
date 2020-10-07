@@ -1,13 +1,9 @@
 {
   "name": "@stryker-mutator/typescript",
-  "version": "3.3.1",
+  "version": "4.0.0-beta.10",
   "description": "A plugin for TypeScript-based projects using Stryker",
   "main": "src/index.js",
-  "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 90 --functions 100 --branches 90 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
@@ -33,30 +29,5 @@
     "Nico Jansen <jansennico@gmail.com>"
   ],
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/typescript#readme",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@stryker-mutator/api": "^3.3.1",
-    "@stryker-mutator/util": "^3.3.1",
-    "lodash.flatmap": "~4.5.0",
-    "semver": "~6.3.0",
-    "tslib": "~2.0.0"
-  },
-  "devDependencies": {
-    "@stryker-mutator/mutator-specification": "^3.3.1",
-    "@stryker-mutator/test-helpers": "^3.3.1",
-    "@types/lodash.flatmap": "~4.5.3",
-    "@types/node": "^14.0.1",
-    "@types/semver": "~7.2.0",
-    "surrial": "~2.0.2"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
-    "typescript": "^3.0.3"
-  },
-  "initStrykerConfig": {
-    "tsconfigFile": "tsconfig.json",
-    "mutate": [
-      "src/**/*.ts"
-    ]
-  }
+  "license": "Apache-2.0"
 }

@@ -18,7 +18,7 @@ import {
   WorkerMessage,
   WorkerMessageKind,
 } from '../../../src/child-proxy/messageProtocol';
-import LoggingClientContext from '../../../src/logging/LoggingClientContext';
+import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/objectUtils';
 import * as objectUtils from '../../../src/utils/objectUtils';
 import currentLogMock from '../../helpers/logMock';

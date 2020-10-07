@@ -3,6 +3,121 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.10](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.9...v4.0.0-beta.10) (2020-10-05)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.0.0-beta.9](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.8...v4.0.0-beta.9) (2020-09-30)
+
+
+### Features
+
+* **jest-runner:** deprecate "create-react-app-ts" ([#2497](https://github.com/stryker-mutator/stryker/issues/2497)) ([0aacc7b](https://github.com/stryker-mutator/stryker/commit/0aacc7be5bb045887e96f0a8115b7e3e46e1a1ff))
+
+
+
+
+
+# [4.0.0-beta.8](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.7...v4.0.0-beta.8) (2020-09-22)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.0.0-beta.7](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2020-09-17)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.0.0-beta.6](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2020-09-10)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.0.0-beta.5](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.4...v4.0.0-beta.5) (2020-09-09)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.0.0-beta.4](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2020-08-29)
+
+
+### Features
+
+* **api:** rename test_runner2 -> test_runner ([#2442](https://github.com/stryker-mutator/stryker/issues/2442)) ([4d3ae97](https://github.com/stryker-mutator/stryker/commit/4d3ae9764dbd689c895b76e44f2eea76c82fabc8))
+* **jest-runner:** switch mutants using env ([#2416](https://github.com/stryker-mutator/stryker/issues/2416)) ([cad01ba](https://github.com/stryker-mutator/stryker/commit/cad01baf9f4fc3bab2ae5244627586133fb618be))
+
+
+### BREAKING CHANGES
+
+* **api:** Plugin creators should now use `'test_runner'` instead of `'test_runner2'`.
+
+
+
+
+
+# [4.0.0-beta.3](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2020-08-19)
+
+
+### Features
+
+* **jest-runner:** remove deprecated project types ([#2361](https://github.com/stryker-mutator/stryker/issues/2361)) ([d0aa5c3](https://github.com/stryker-mutator/stryker/commit/d0aa5c3c2f676176d3fbceb24ab2cd17011c9ecf))
+* **test runner api:** remove `sandboxFileNames` injectable values ([#2369](https://github.com/stryker-mutator/stryker/issues/2369)) ([92f3bf5](https://github.com/stryker-mutator/stryker/commit/92f3bf528d0b01be1f6c219b37a5f90da0431686)), closes [#2351](https://github.com/stryker-mutator/stryker/issues/2351)
+
+
+### BREAKING CHANGES
+
+* **jest-runner:** Project types `react` and `react-ts` has been removed. Please use `create-react-app` and `create-react-app-ts` respectively
+
+
+
+
+
+# [4.0.0-beta.2](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2020-08-07)
+
+
+### Features
+
+* **jest-runner:** support mutation switching ([#2350](https://github.com/stryker-mutator/stryker/issues/2350)) ([9e6e6e0](https://github.com/stryker-mutator/stryker/commit/9e6e6e077731344ed0588d64b5c8ba2f19c8492e))
+
+
+
+
+
+# [4.0.0-beta.1](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.0...v4.0.0-beta.1) (2020-07-17)
+
+
+### Bug Fixes
+
+* **Jest:** Notify users of lacking Jest support ([#2322](https://github.com/stryker-mutator/stryker/issues/2322)) ([0bbc0c1](https://github.com/stryker-mutator/stryker/commit/0bbc0c119ba5d661ba9751d241ba548293738aa8))
+
+
+
+
+
+# [4.0.0-beta.0](https://github.com/stryker-mutator/stryker/compare/v3.3.1...v4.0.0-beta.0) (2020-07-10)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
 ## [3.3.1](https://github.com/stryker-mutator/stryker/compare/v3.3.0...v3.3.1) (2020-07-04)
 
 **Note:** Version bump only for package @stryker-mutator/jest-runner

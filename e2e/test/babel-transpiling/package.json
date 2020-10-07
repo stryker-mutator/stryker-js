@@ -5,9 +5,13 @@
   "description": "A module to test stryker-babel with stryker-javascript-mutator",
   "main": "index.js",
   "scripts": {
+    "prebuild": "rimraf dist",
+    "tmp": "echo %cd%",
+    "build": "babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
     "pretest": "rimraf \"reports\"",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "test:unit": "mocha",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "keywords": [],
   "author": "",

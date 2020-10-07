@@ -2,6 +2,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import Sinon, * as sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { Config } from '@jest/types';
 
 import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/configLoaders/CustomJestConfigLoader';
 import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/configLoaders/ReactScriptsJestConfigLoader';
@@ -24,7 +25,7 @@ describe(configLoaderFactory.name, () => {
     sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
     sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
 
-    const defaultOptions: Partial<Jest.Configuration> = {
+    const defaultOptions: Partial<Config.InitialOptions> = {
       collectCoverage: true,
       verbose: true,
       bail: false,
@@ -48,9 +49,9 @@ describe(configLoaderFactory.name, () => {
     expect(sut).eq(customConfigLoaderStub);
   });
 
-  describe('with "projectType": "react"', () => {
+  describe('with "projectType": "create-react-app"', () => {
     beforeEach(() => {
-      options.jest.projectType = 'react';
+      options.jest.projectType = 'create-react-app';
     });
 
     it('should create a ReactScriptsJestConfigLoader', () => {
@@ -62,19 +63,11 @@ describe(configLoaderFactory.name, () => {
     it('should warn when a configFile is set', () => {
       testConfigFileWarning(options);
     });
-
-    it('should log a deprecation warning', () => {
-      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-      expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED: The projectType "react" is deprecated. Use projectType "create-react-app" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
-    });
   });
 
-  describe('with "projectType": "react-ts"', () => {
+  describe('with "projectType": "create-react-app-ts"', () => {
     beforeEach(() => {
-      options.jest.projectType = 'react-ts';
+      options.jest.projectType = 'create-react-app-ts';
     });
 
     it('should create a ReactScriptsTSJestConfigLoader', () => {
@@ -85,14 +78,6 @@ describe(configLoaderFactory.name, () => {
 
     it('should warn when a configFile is set', () => {
       testConfigFileWarning(options);
-    });
-
-    it('should log a deprecation warning', () => {
-      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-      expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED: The projectType "react-ts" is deprecated. Use projectType "create-react-app-ts" for react projects created by "create-react-app" or use "custom" for other react projects.'
-      );
     });
   });
 });

@@ -4,42 +4,42 @@ import { declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin/Pl
 import { PluginKind } from '../../../src/plugin/PluginKind';
 import { tokens, commonTokens } from '../../../src/plugin/tokens';
 import { Logger } from '../../../logging';
-import { Mutant } from '../../../mutant';
+import { MutantResult } from '../../../report';
 
 describe('plugins', () => {
   describe(declareClassPlugin.name, () => {
     it('should declare a class plugin', () => {
-      class MyMutator {
+      class MyReporter {
         constructor(private readonly log: Logger) {}
         public static inject = tokens(commonTokens.logger);
 
-        public mutate(): readonly Mutant[] {
-          this.log.info('');
-          return [];
+        public onMutantTested(result: MutantResult) {
+          this.log.info(JSON.stringify(result));
         }
       }
-      expect(declareClassPlugin(PluginKind.Mutator, 'mut', MyMutator)).deep.eq({
-        injectableClass: MyMutator,
-        kind: PluginKind.Mutator,
-        name: 'mut',
+      expect(declareClassPlugin(PluginKind.Reporter, 'rep', MyReporter)).deep.eq({
+        injectableClass: MyReporter,
+        kind: PluginKind.Reporter,
+        name: 'rep',
       });
     });
   });
 
   describe(declareFactoryPlugin.name, () => {
     it('should declare a factory plugin', () => {
-      function myMutator() {
+      function createReporter(log: Logger) {
         return {
-          mutate(): readonly Mutant[] {
-            return [];
+          onMutantTested(result: MutantResult) {
+            log.info(JSON.stringify(result));
           },
         };
       }
+      createReporter.inject = tokens(commonTokens.logger);
 
-      expect(declareFactoryPlugin(PluginKind.Mutator, 'mut', myMutator)).deep.eq({
-        factory: myMutator,
-        kind: PluginKind.Mutator,
-        name: 'mut',
+      expect(declareFactoryPlugin(PluginKind.Reporter, 'rep', createReporter)).deep.eq({
+        factory: createReporter,
+        kind: PluginKind.Reporter,
+        name: 'rep',
       });
     });
   });

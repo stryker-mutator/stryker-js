@@ -1,6 +1,6 @@
 import { LogLevel } from '@stryker-mutator/api/core';
 
-export default interface LoggingClientContext {
+export interface LoggingClientContext {
   /**
    * The port where the logging server listens for logging events on the localhost
    */

@@ -10,10 +10,9 @@ const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/ma
 export class AngularPreset implements Preset {
   public readonly name = 'angular-cli';
   // Please keep config in sync with handbook
-  private readonly dependencies = ['@stryker-mutator/core', '@stryker-mutator/karma-runner', '@stryker-mutator/typescript'];
+  private readonly dependencies = ['@stryker-mutator/karma-runner'];
   private readonly config: Partial<StrykerOptions> = {
     mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
-    mutator: 'typescript',
     testRunner: 'karma',
     karma: {
       configFile: 'src/karma.conf.js',
@@ -23,10 +22,10 @@ export class AngularPreset implements Preset {
       },
     },
     reporters: ['progress', 'clear-text', 'html'],
-    maxConcurrentTestRunners: Math.floor(os.cpus().length / 2),
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    maxConcurrentTestRunners_comment: 'Recommended to use about half of your available cores when running stryker with angular',
-    coverageAnalysis: 'off',
+    concurrency: Math.floor(os.cpus().length / 2),
+    // eslint-disable-next-line camelcase
+    concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',
+    coverageAnalysis: 'perTest',
   };
 
   public async createConfig(): Promise<PresetConfiguration> {

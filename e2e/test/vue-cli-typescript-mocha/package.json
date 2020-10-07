@@ -10,23 +10,23 @@
     "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/verify.ts"
   },
   "dependencies": {
-    "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "core-js": "~3.6.4",
+    "vue": "~2.6.11"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.11",
-    "@types/mocha": "^5.2.4",
-    "@types/sinon": "^9.0.0",
+    "@types/chai": "~4.2.11",
+    "@types/mocha": "~5.2.4",
+    "@types/sinon": "~9.0.0",
     "@vue/cli-plugin-babel": "~4.3.0",
     "@vue/cli-plugin-typescript": "~4.3.0",
     "@vue/cli-plugin-unit-mocha": "~4.3.0",
     "@vue/cli-service": "~4.3.0",
-    "@vue/test-utils": "1.0.0",
-    "chai": "^4.1.2",
-    "sinon": "^9.0.2",
+    "@vue/test-utils": "~1.0.0",
+    "chai": "~4.2.0",
+    "sinon": "~9.0.2",
     "typescript": "~3.8.3",
-    "vue-template-compiler": "^2.6.11",
-    "whatwg-fetch": "^3.0.0"
+    "vue-template-compiler": "~2.6.11",
+    "whatwg-fetch": "~3.4.0"
   },
   "mocha": {
     "spec": "src/**/*.ts"
@@ -39,10 +39,10 @@
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
     "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
     "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
-    "@stryker-mutator/webpack-transpiler": "../../../packages/webpack-transpiler",
     "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
-    "@stryker-mutator/typescript": "../../../packages/typescript",
+    "@stryker-mutator/typescript-checker": "../../../packages/typescript-checker",
     "@stryker-mutator/util": "../../../packages/util"
   }
 }

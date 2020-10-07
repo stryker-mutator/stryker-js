@@ -1,13 +1,9 @@
 {
   "name": "@stryker-mutator/webpack-transpiler",
-  "version": "3.3.1",
+  "version": "4.0.0-beta.10",
   "description": "A plugin for Webpack-based projects using Stryker",
   "main": "src/index.js",
-  "scripts": {
-    "test": "nyc --exclude-after-remap=false --check-coverage --reporter=html --report-dir=reports/coverage --lines 85 --functions 84 --branches 65 npm run mocha",
-    "mocha": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\" && mocha --timeout 20000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker"
@@ -18,8 +14,7 @@
   "keywords": [
     "stryker",
     "typescript",
-    "webpack",
-    "@stryker-mutator/transpiler-plugin"
+    "webpack"
   ],
   "publishConfig": {
     "access": "public"
@@ -33,27 +28,5 @@
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler#readme",
-  "devDependencies": {
-    "@stryker-mutator/test-helpers": "^3.3.1",
-    "@types/node": "^14.0.1",
-    "@types/webpack": "~4.41.0",
-    "raw-loader": "~4.0.0",
-    "webpack": "~4.43.0"
-  },
-  "peerDependencies": {
-    "@stryker-mutator/core": "^3.0.0",
-    "webpack": ">=2.0.0"
-  },
-  "dependencies": {
-    "@stryker-mutator/api": "^3.3.1",
-    "enhanced-resolve": "~4.1.0",
-    "memfs": "^3.1.2"
-  },
-  "initStrykerConfig": {
-    "webpack": {
-      "configFile": "webpack.config.js"
-    },
-    "coverageAnalysis": "off"
-  }
+  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/webpack-transpiler#readme"
 }

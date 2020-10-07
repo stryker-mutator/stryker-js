@@ -1,9 +1,9 @@
-import { declareClassPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
 import * as strykerValidationSchema from '../schema/jasmine-runner-options.json';
 
-import JasmineTestRunner from './JasmineTestRunner';
+import { JasmineTestRunner, createJasmineTestRunner, createJasmineTestRunnerFactory } from './JasmineTestRunner';
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.TestRunner, 'jasmine', JasmineTestRunner)];
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jasmine', createJasmineTestRunner)];
 
-export { strykerValidationSchema };
+export { strykerValidationSchema, JasmineTestRunner, createJasmineTestRunnerFactory };

@@ -1,149 +1,143 @@
-import * as path from 'path';
-
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { InstrumenterContext, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { RunResult, RunStatus, TestRunner } from '@stryker-mutator/api/test_runner';
-import { propertyPath } from '@stryker-mutator/util';
+import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
+import {
+  TestRunner,
+  DryRunResult,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  DryRunStatus,
+  toMutantRunResult,
+  CompleteDryRunResult,
+} from '@stryker-mutator/api/test_runner';
 
-import LibWrapper from './LibWrapper';
+import { MochaOptions } from '../src-generated/mocha-runner-options';
+
 import { StrykerMochaReporter } from './StrykerMochaReporter';
-import { evalGlobal } from './utils';
 import { MochaRunnerWithStrykerOptions } from './MochaRunnerWithStrykerOptions';
-
-const DEFAULT_TEST_PATTERN = 'test/**/*.js';
+import * as pluginTokens from './plugin-tokens';
+import MochaOptionsLoader from './MochaOptionsLoader';
+import { MochaAdapter } from './MochaAdapter';
 
 export class MochaTestRunner implements TestRunner {
-  private testFileNames: string[];
-  private readonly mochaOptions: MochaOptions;
-  private rootHooks: any;
+  public testFileNames: string[];
+  public rootHooks: any;
+  public mochaOptions!: MochaOptions;
+  private readonly instrumenterContext: InstrumenterContext;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.sandboxFileNames, commonTokens.options);
-  constructor(private readonly log: Logger, private readonly allFileNames: readonly string[], options: StrykerOptions) {
-    this.mochaOptions = (options as MochaRunnerWithStrykerOptions).mochaOptions;
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    pluginTokens.loader,
+    pluginTokens.mochaAdapter,
+    pluginTokens.directoryRequireCache,
+    pluginTokens.globalNamespace
+  );
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly loader: I<MochaOptionsLoader>,
+    private readonly mochaAdapter: I<MochaAdapter>,
+    private readonly requireCache: I<DirectoryRequireCache>,
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+  ) {
     StrykerMochaReporter.log = log;
+    this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
   }
-
   public async init(): Promise<void> {
-    if (LibWrapper.handleFiles) {
-      this.log.debug("Mocha >= 6 detected. Using mocha's `handleFiles` to load files");
-      this.testFileNames = this.mocha6DiscoverFiles(LibWrapper.handleFiles);
-    } else {
-      this.log.debug('Mocha < 6 detected. Using custom logic to discover files');
-      this.testFileNames = this.legacyDiscoverFiles();
+    this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
+    this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
+    this.requireCache.init({ initFiles: this.testFileNames, rootModuleId: require.resolve('mocha/lib/mocha') });
+    if (this.mochaOptions.require) {
+      this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }
-    await this.additionalRequires();
   }
 
-  private mocha6DiscoverFiles(handleFiles: (options: MochaOptions) => string[]): string[] {
-    const originalProcessExit = process.exit;
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    let interceptor: (mocha: Mocha) => void = () => {};
+    if (options.coverageAnalysis === 'perTest') {
+      interceptor = (mocha) => {
+        const self = this;
+        mocha.suite.beforeEach('StrykerIntercept', function () {
+          self.instrumenterContext.currentTestId = this.currentTest?.fullTitle();
+        });
+      };
+    }
+    const runResult = await this.run(interceptor);
+    if (runResult.status === DryRunStatus.Complete && options.coverageAnalysis !== 'off') {
+      runResult.mutantCoverage = this.instrumenterContext.mutantCoverage;
+    }
+    return runResult;
+  }
+
+  public async mutantRun({ activeMutant, testFilter }: MutantRunOptions): Promise<MutantRunResult> {
+    this.instrumenterContext.activeMutant = activeMutant.id;
+    let intercept: (mocha: Mocha) => void = () => {};
+    if (testFilter) {
+      const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+      const regex = new RegExp(metaRegExp);
+      intercept = (mocha) => {
+        mocha.grep(regex);
+      };
+    }
+    const dryRunResult = await this.run(intercept);
+    return toMutantRunResult(dryRunResult);
+  }
+
+  public async run(intercept: (mocha: Mocha) => void): Promise<DryRunResult> {
+    this.requireCache.clear();
+    const mocha = this.mochaAdapter.create({
+      reporter: StrykerMochaReporter as any,
+      bail: true,
+      timeout: false as any, // Mocha 5 doesn't support `0`
+      rootHooks: this.rootHooks,
+    } as Mocha.MochaOptions);
+    this.configure(mocha);
+    intercept(mocha);
+    this.addFiles(mocha);
     try {
-      // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
-      (process as any).exit = () => {};
-      const files = handleFiles(this.mochaOptions);
-      return files;
-    } finally {
-      process.exit = originalProcessExit;
-    }
-  }
-
-  private legacyDiscoverFiles(): string[] {
-    const globPatterns = this.mochaFileGlobPatterns();
-    const globPatternsAbsolute = globPatterns.map((glob) => path.resolve(glob));
-    const fileNames = LibWrapper.multimatch(this.allFileNames.slice(), globPatternsAbsolute);
-    if (fileNames.length) {
-      this.log.debug(`Using files: ${JSON.stringify(fileNames, null, 2)}`);
-    } else {
-      this.log.debug(`Tried ${JSON.stringify(globPatternsAbsolute, null, 2)} on files: ${JSON.stringify(this.allFileNames, null, 2)}.`);
-      throw new Error(
-        `[${MochaTestRunner.name}] No files discovered (tried pattern(s) ${JSON.stringify(
-          globPatterns,
-          null,
-          2
-        )}). Please specify the files (glob patterns) containing your tests in ${propertyPath<MochaRunnerOptions>(
-          'mochaOptions',
-          'spec'
-        )} in your config file.`
-      );
-    }
-    return fileNames;
-  }
-  private mochaFileGlobPatterns(): string[] {
-    // Use both `spec` as `files`
-    const globPatterns: string[] = [];
-    if (this.mochaOptions.spec) {
-      globPatterns.push(...this.mochaOptions.spec);
-    }
-
-    if (typeof this.mochaOptions.files === 'string') {
-      // `files` if for backward compat
-      globPatterns.push(this.mochaOptions.files);
-    } else if (this.mochaOptions.files) {
-      globPatterns.push(...this.mochaOptions.files);
-    }
-    if (!globPatterns.length) {
-      globPatterns.push(DEFAULT_TEST_PATTERN);
-    }
-    return globPatterns;
-  }
-
-  public run({ testHooks }: { testHooks?: string }): Promise<RunResult> {
-    return new Promise<RunResult>((resolve, reject) => {
-      try {
-        this.purgeFiles();
-        const mocha = new LibWrapper.Mocha({ reporter: StrykerMochaReporter as any, bail: true, rootHooks: this.rootHooks } as Mocha.MochaOptions);
-        this.configure(mocha);
-        this.addTestHooks(mocha, testHooks);
-        this.addFiles(mocha);
-        try {
-          mocha.run(() => {
-            const reporter = StrykerMochaReporter.currentInstance;
-            if (reporter) {
-              const result: RunResult = reporter.runResult;
-              resolve(result);
-            } else {
-              const errorMsg = 'The StrykerMochaReporter was not instantiated properly. Could not retrieve the RunResult.';
-              this.log.error(errorMsg);
-              resolve({
-                errorMessages: [errorMsg],
-                status: RunStatus.Error,
-                tests: [],
-              });
-            }
-          });
-        } catch (error) {
-          resolve({
-            errorMessages: [error],
-            status: RunStatus.Error,
-            tests: [],
-          });
-        }
-      } catch (error) {
-        this.log.error(error);
-        reject(error);
+      await this.runMocha(mocha);
+      if ((mocha as any).dispose) {
+        // Since mocha 7.2
+        (mocha as any).dispose();
       }
-    });
+      this.requireCache.record();
+      const reporter = StrykerMochaReporter.currentInstance;
+      if (reporter) {
+        const result: CompleteDryRunResult = {
+          status: DryRunStatus.Complete,
+          tests: reporter.tests,
+        };
+        return result;
+      } else {
+        const errorMessage = `Mocha didn't instantiate the ${StrykerMochaReporter.name} correctly. Test result cannot be reported.`;
+        this.log.error(errorMessage);
+        return {
+          status: DryRunStatus.Error,
+          errorMessage,
+        };
+      }
+    } catch (errorMessage) {
+      return {
+        errorMessage,
+        status: DryRunStatus.Error,
+      };
+    }
   }
 
-  private purgeFiles() {
-    this.allFileNames.forEach((fileName) => delete require.cache[fileName]);
+  private runMocha(mocha: Mocha): Promise<void> {
+    return new Promise<void>((res) => {
+      mocha.run(() => res());
+    });
   }
 
   private addFiles(mocha: Mocha) {
     this.testFileNames.forEach((fileName) => {
       mocha.addFile(fileName);
     });
-  }
-
-  private addTestHooks(mocha: Mocha, testHooks: string | undefined): void {
-    if (testHooks) {
-      const suite = (mocha as any).suite;
-      suite.emit('pre-require', global, '', mocha);
-      suite.emit('require', evalGlobal(testHooks), '', mocha);
-      suite.emit('post-require', global, '', mocha);
-    }
   }
 
   private configure(mocha: Mocha) {
@@ -155,25 +149,8 @@ export class MochaTestRunner implements TestRunner {
       }
     }
 
-    if (options) {
-      setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
-      setIfDefined(options.timeout, mocha.timeout);
-      setIfDefined(options.ui, mocha.ui);
-      setIfDefined(options.grep, mocha.grep);
-    }
-  }
-
-  private async additionalRequires() {
-    if (this.mochaOptions.require) {
-      if (LibWrapper.handleRequires) {
-        const rawRootHooks = await LibWrapper.handleRequires(this.mochaOptions.require);
-        if (rawRootHooks) {
-          this.rootHooks = await LibWrapper.loadRootHooks!(rawRootHooks);
-        }
-      } else {
-        const modulesToRequire = this.mochaOptions.require.map((moduleName) => (moduleName.startsWith('.') ? path.resolve(moduleName) : moduleName));
-        modulesToRequire.forEach(LibWrapper.require);
-      }
-    }
+    setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
+    setIfDefined(options.ui, mocha.ui);
+    setIfDefined(options.grep, mocha.grep);
   }
 }

@@ -79,9 +79,9 @@ describe('BroadcastReporter', () => {
     });
 
     describe('when "wrapUp" returns promises', () => {
-      let wrapUpResolveFn: Function;
-      let wrapUpResolveFn2: Function;
-      let wrapUpRejectFn: Function;
+      let wrapUpResolveFn: (value?: void | PromiseLike<void>) => void;
+      let wrapUpResolveFn2: (value?: void | PromiseLike<void>) => void;
+      let wrapUpRejectFn: (reason?: any) => void;
       let result: Promise<void>;
       let isResolved: boolean;
 
@@ -158,14 +158,14 @@ describe('BroadcastReporter', () => {
   }
 
   function captureTTY() {
-    isTTY = (process.stdout as any).isTTY;
+    isTTY = process.stdout.isTTY;
   }
 
   function restoreTTY() {
-    (process.stdout as any).isTTY = isTTY;
+    process.stdout.isTTY = isTTY;
   }
 
   function setTTY(val: boolean) {
-    (process.stdout as any).isTTY = val;
+    process.stdout.isTTY = val;
   }
 });

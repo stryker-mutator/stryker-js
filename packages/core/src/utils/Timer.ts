@@ -2,7 +2,7 @@ export default class Timer {
   private readonly now: () => Date;
   private start: Date;
   private markers: {
-    [name: string]: Date;
+    [name: string]: Date | undefined;
   };
 
   constructor(now = () => new Date()) {
@@ -15,19 +15,20 @@ export default class Timer {
     this.start = this.now();
   }
 
-  public humanReadableElapsed() {
-    const elapsedSeconds = this.elapsedSeconds();
+  public humanReadableElapsed(sinceMarker?: string) {
+    const elapsedSeconds = this.elapsedSeconds(sinceMarker);
     return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);
   }
 
-  public elapsedSeconds() {
-    const elapsedMs = this.elapsedMs();
+  public elapsedSeconds(sinceMarker?: string) {
+    const elapsedMs = this.elapsedMs(sinceMarker);
     return Math.floor(elapsedMs / 1000);
   }
 
   public elapsedMs(sinceMarker?: string) {
-    if (sinceMarker && this.markers[sinceMarker]) {
-      return this.now().getTime() - this.markers[sinceMarker].getTime();
+    const marker = sinceMarker && this.markers[sinceMarker];
+    if (marker) {
+      return this.now().getTime() - marker.getTime();
     } else {
       return this.now().getTime() - this.start.getTime();
     }
@@ -39,21 +40,21 @@ export default class Timer {
 
   private static humanReadableElapsedSeconds(elapsedSeconds: number) {
     const restSeconds = elapsedSeconds % 60;
-    if (restSeconds === 1) {
-      return `${restSeconds} second`;
-    } else {
-      return `${restSeconds} seconds`;
-    }
+    return this.formatTime('second', restSeconds);
   }
 
   private static humanReadableElapsedMinutes(elapsedSeconds: number) {
     const elapsedMinutes = Math.floor(elapsedSeconds / 60);
-    if (elapsedMinutes > 1) {
-      return `${elapsedMinutes} minutes `;
-    } else if (elapsedMinutes > 0) {
-      return `${elapsedMinutes} minute `;
-    } else {
+    if (elapsedMinutes === 0) {
       return '';
+    } else {
+      return this.formatTime('minute', elapsedMinutes);
     }
+  }
+
+  private static formatTime(word: 'minute' | 'second', elapsed: number) {
+    const s = elapsed === 1 ? '' : 's';
+    const blank = word === 'minute' ? ' ' : '';
+    return `${elapsed} ${word}${s}${blank}`;
   }
 }

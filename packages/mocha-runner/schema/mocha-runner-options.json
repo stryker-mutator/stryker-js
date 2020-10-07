@@ -56,17 +56,14 @@
           "type": "boolean",
           "description": "Explicit turn off [mocha config file](https://mochajs.org/#-config-path)"
         },
-        "timeout": {
-          "description": "Set mocha's [`timeout` option](https://mochajs.org/#-t---timeout-ms)",
-          "type": "number"
-        },
         "async-only": {
           "description": "Set mocha's [`async-only` option](https://mochajs.org/#-async-only-a)",
           "type": "boolean"
         },
         "ui": {
           "description": "Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)",
-          "type": "string"
+          "type": "string",
+          "enum": ["bdd", "tdd", "qunit", "exports"]
         },
         "files": {
           "description": "DEPRECATED, use `spec` instead.",

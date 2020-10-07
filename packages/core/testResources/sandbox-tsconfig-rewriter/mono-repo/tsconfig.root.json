@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "files": [],
+  "references": [
+    {
+      "path": "src"
+    },
+    {
+      "path": "test/tsconfig.test.json"
+    }
+  ]
+}

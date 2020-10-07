@@ -1,9 +1,10 @@
 import * as os from 'os';
 
-import { MutantStatus } from '@stryker-mutator/api/report';
-import { matchedMutant, mutantResult } from '@stryker-mutator/test-helpers/src/factory';
+import { matchedMutant } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
+
+import { factory } from '@stryker-mutator/test-helpers';
 
 import ProgressAppendOnlyReporter from '../../../src/reporters/ProgressAppendOnlyReporter';
 
@@ -13,7 +14,7 @@ const HUNDRED_SECONDS = SECOND * 100;
 const THOUSAND_SECONDS = SECOND * 1000;
 const TEN_THOUSAND_SECONDS = SECOND * 10000;
 
-describe('ProgressAppendOnlyReporter', () => {
+describe(ProgressAppendOnlyReporter.name, () => {
   let sut: ProgressAppendOnlyReporter;
 
   beforeEach(() => {
@@ -24,7 +25,11 @@ describe('ProgressAppendOnlyReporter', () => {
 
   describe('onAllMutantsMatchedWithTests() with 3 mutants to test', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([matchedMutant(1), matchedMutant(1), matchedMutant(1)]);
+      sut.onAllMutantsMatchedWithTests([
+        matchedMutant({ runAllTests: true }),
+        matchedMutant({ runAllTests: true }),
+        matchedMutant({ runAllTests: true }),
+      ]);
     });
 
     it('should not show show progress directly', () => {
@@ -39,7 +44,7 @@ describe('ProgressAppendOnlyReporter', () => {
     });
 
     it('should log correct info after ten seconds with 1 completed test', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult());
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
@@ -48,7 +53,7 @@ describe('ProgressAppendOnlyReporter', () => {
     });
 
     it('should log correct info after a hundred seconds with 1 completed test', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult());
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(HUNDRED_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
@@ -57,7 +62,7 @@ describe('ProgressAppendOnlyReporter', () => {
     });
 
     it('should log correct info after a thousand seconds with 1 completed test', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.killedMutantResult());
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(THOUSAND_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
@@ -66,7 +71,7 @@ describe('ProgressAppendOnlyReporter', () => {
     });
 
     it('should log correct info after ten thousand seconds with 1 completed test', () => {
-      sut.onMutantTested(mutantResult({ status: MutantStatus.TimedOut }));
+      sut.onMutantTested(factory.timeoutMutantResult());
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(

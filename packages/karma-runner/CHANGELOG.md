@@ -3,6 +3,106 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0-beta.10](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.9...v4.0.0-beta.10) (2020-10-05)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.9](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.8...v4.0.0-beta.9) (2020-09-30)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.8](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.7...v4.0.0-beta.8) (2020-09-22)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.7](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.6...v4.0.0-beta.7) (2020-09-17)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.6](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.5...v4.0.0-beta.6) (2020-09-10)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.5](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.4...v4.0.0-beta.5) (2020-09-09)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.4](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.3...v4.0.0-beta.4) (2020-08-29)
+
+
+### Features
+
+* **api:** rename test_runner2 -> test_runner ([#2442](https://github.io/stryker-mutator/stryker/issues/2442)) ([4d3ae97](https://github.io/stryker-mutator/stryker/commit/4d3ae9764dbd689c895b76e44f2eea76c82fabc8))
+* **karma-runner:** force bail = true in all cases ([ba928a1](https://github.io/stryker-mutator/stryker/commit/ba928a10d9e4c67ade9648927fb6b281ad2e3d55))
+
+
+### BREAKING CHANGES
+
+* **api:** Plugin creators should now use `'test_runner'` instead of `'test_runner2'`.
+
+
+
+
+
+# [4.0.0-beta.3](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.2...v4.0.0-beta.3) (2020-08-19)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.2](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.1...v4.0.0-beta.2) (2020-08-07)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.1](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.0...v4.0.0-beta.1) (2020-07-17)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.0.0-beta.0](https://github.io/stryker-mutator/stryker/compare/v3.3.1...v4.0.0-beta.0) (2020-07-10)
+
+
+### Bug Fixes
+
+* **karma-runner:** mocha filtering with `/` ([#2290](https://github.io/stryker-mutator/stryker/issues/2290)) ([3918633](https://github.io/stryker-mutator/stryker/commit/3918633b21ff37d2e950df2cc14b8557ee7eb6b3))
+
+
+
+
+
 ## [3.3.1](https://github.io/stryker-mutator/stryker/compare/v3.3.0...v3.3.1) (2020-07-04)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner

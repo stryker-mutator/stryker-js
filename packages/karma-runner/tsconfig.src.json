@@ -19,9 +19,6 @@
       "path": "../api/tsconfig.src.json"
     },
     {
-      "path": "../jasmine-framework/tsconfig.src.json"
-    },
-    {
       "path": "../util/tsconfig.src.json"
     }
   ]

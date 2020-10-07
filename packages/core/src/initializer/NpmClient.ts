@@ -15,7 +15,7 @@ interface NpmSearchResult {
 
 interface NpmPackage {
   name: string;
-  initStrykerConfig?: object;
+  initStrykerConfig?: Record<string, unknown>;
 }
 
 const getName = (packageName: string) => {
@@ -44,30 +44,11 @@ export default class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getTestFrameworkOptions(testRunnerFilter: string | null): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/test-framework-plugin')
-      .then((searchResult) => {
-        if (testRunnerFilter) {
-          searchResult.results = searchResult.results.filter((framework) => framework.package.keywords.includes(testRunnerFilter));
-        }
-        return searchResult;
-      })
-      .then(mapSearchResultToPromptOption);
-  }
-
-  public getMutatorOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').then(mapSearchResultToPromptOption);
-  }
-
-  public getTranspilerOptions(): Promise<PromptOption[]> {
-    return this.search('/v2/search?q=keywords:@stryker-mutator/transpiler-plugin').then(mapSearchResultToPromptOption);
-  }
-
   public getTestReporterOptions(): Promise<PromptOption[]> {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(pkg: PackageInfo): Promise<object> {
+  public getAdditionalConfig(pkg: PackageInfo): Promise<Record<string, unknown>> {
     const path = `/${pkg.name}@${pkg.version}/package.json`;
     return this.packageClient
       .get<NpmPackage>(path)

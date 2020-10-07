@@ -1,11 +1,11 @@
 import { expectMetrics } from '../../../helpers';
 
-describe('After running stryker on jest-react project', () => {
+describe('After running stryker on jest-react-ts project', () => {
   it('should report expected scores', async () => {
     await expectMetrics({
-      survived: 45,
-      killed: 46,
-      timeout: 5,
+      survived: 53,
+      killed: 53,
+      timeout: 6,
       noCoverage: 0
     });
   });

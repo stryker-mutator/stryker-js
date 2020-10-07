@@ -1,6 +1,15 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, Injector, OptionsContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { RunOptions, TestRunner } from '@stryker-mutator/api/test_runner';
+import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import {
+  TestRunner,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  DryRunResult,
+  DryRunStatus,
+  MutantRunStatus,
+} from '@stryker-mutator/api/test_runner';
+
 import { errorToString } from '@stryker-mutator/util';
 
 import { PluginCreator } from '../di';
@@ -8,12 +17,9 @@ import { PluginCreator } from '../di';
 export class ChildProcessTestRunnerWorker implements TestRunner {
   private readonly underlyingTestRunner: TestRunner;
 
-  public static inject = tokens(commonTokens.sandboxFileNames, commonTokens.options, commonTokens.injector);
-  constructor(sandboxFileNames: readonly string[], { testRunner }: StrykerOptions, injector: Injector<OptionsContext>) {
-    this.underlyingTestRunner = injector
-      .provideValue(commonTokens.sandboxFileNames, sandboxFileNames)
-      .injectFunction(PluginCreator.createFactory(PluginKind.TestRunner))
-      .create(testRunner);
+  public static inject = tokens(commonTokens.options, commonTokens.injector);
+  constructor({ testRunner }: StrykerOptions, injector: Injector<PluginContext>) {
+    this.underlyingTestRunner = injector.injectFunction(PluginCreator.createFactory(PluginKind.TestRunner)).create(testRunner);
   }
 
   public async init(): Promise<void> {
@@ -28,17 +34,21 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
     }
   }
 
-  public async run(options: RunOptions) {
-    const result = await this.underlyingTestRunner.run(options);
-    // If the test runner didn't report on coverage, let's try to do it ourselves.
-    if (!result.coverage) {
-      result.coverage = (global as any).__coverage__;
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    const dryRunResult = await this.underlyingTestRunner.dryRun(options);
+    if (dryRunResult.status === DryRunStatus.Complete && !dryRunResult.mutantCoverage && options.coverageAnalysis !== 'off') {
+      // @ts-expect-error
+      dryRunResult.mutantCoverage = global.__mutantCoverage__;
     }
-    if (result.errorMessages) {
-      // errorMessages should be a string[]
-      // Just in case the test runner implementer forgot to convert `Error`s to string, we will do it here
-      // https://github.com/stryker-mutator/stryker/issues/141
-      result.errorMessages = result.errorMessages.map(errorToString);
+    if (dryRunResult.status === DryRunStatus.Error) {
+      dryRunResult.errorMessage = errorToString(dryRunResult.errorMessage);
+    }
+    return dryRunResult;
+  }
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    const result = await this.underlyingTestRunner.mutantRun(options);
+    if (result.status === MutantRunStatus.Error) {
+      result.errorMessage = errorToString(result.errorMessage);
     }
     return result;
   }

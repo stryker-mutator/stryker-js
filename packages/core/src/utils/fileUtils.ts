@@ -1,9 +1,13 @@
 import * as path from 'path';
 import { promises as fs } from 'fs';
 
+import { promisify } from 'util';
+
 import * as nodeGlob from 'glob';
 import * as mkdirp from 'mkdirp';
 import * as rimraf from 'rimraf';
+
+export const MAX_CONCURRENT_FILE_IO = 256;
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -13,13 +17,7 @@ export function glob(expression: string): Promise<string[]> {
   });
 }
 
-export function deleteDir(dirToDelete: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    rimraf(dirToDelete, (error) => {
-      error ? reject(error) : resolve();
-    });
-  });
-}
+export const deleteDir = promisify(rimraf);
 
 export async function cleanFolder(folderName: string) {
   try {

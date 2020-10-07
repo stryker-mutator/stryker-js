@@ -1,9 +1,7 @@
-import { commonTokens } from '@stryker-mutator/api/plugin';
-import { getLogger } from 'log4js';
-import { rootInjector } from 'typed-inject';
+import { createInjector } from 'typed-inject';
 import { RestClient } from 'typed-rest-client';
 
-import { loggerFactory } from '../di/factoryMethods';
+import { provideLogger } from '../di';
 
 import * as initializerTokens from './initializerTokens';
 import NpmClient from './NpmClient';
@@ -17,9 +15,7 @@ const BASE_NPM_SEARCH = 'https://api.npms.io';
 const BASE_NPM_PACKAGE = 'https://www.unpkg.com';
 
 export function initializerFactory(): StrykerInitializer {
-  return rootInjector
-    .provideValue(commonTokens.getLogger, getLogger)
-    .provideFactory(commonTokens.logger, loggerFactory)
+  return provideLogger(createInjector())
     .provideValue(initializerTokens.out, console.log)
     .provideValue(initializerTokens.strykerPresets, strykerPresets)
     .provideValue(initializerTokens.restClientNpmSearch, new RestClient('npmSearch', BASE_NPM_SEARCH))

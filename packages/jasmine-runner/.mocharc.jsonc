@@ -1,0 +1,4 @@
+{
+  "require": ["test/setup.js"],
+  "timeout": 30000
+}
