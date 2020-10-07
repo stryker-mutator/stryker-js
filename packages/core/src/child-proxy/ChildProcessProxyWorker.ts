@@ -42,7 +42,11 @@ export default class ChildProcessProxyWorker {
         const sendCompleted = () => {
           this.send({ kind: ParentMessageKind.DisposeCompleted });
         };
-        LogConfigurator.shutdown().then(sendCompleted).catch(sendCompleted);
+        LogConfigurator.shutdown()
+          .then(sendCompleted)
+          .catch(sendCompleted)
+          // Exit gracefully so we can generate CPU profiles for these processes.
+          .finally(() => process.exit(0));
         break;
     }
   }
