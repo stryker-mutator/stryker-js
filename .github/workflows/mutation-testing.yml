@@ -6,8 +6,7 @@ on:
     branches:
       - master
       - test/**
-      - epic/**
-
+      
 jobs:
   core:
     runs-on: ubuntu-latest
