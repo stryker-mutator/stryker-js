@@ -6,8 +6,6 @@
 
 ![Stryker](stryker-80x80.png)
 
-__NOTE: You're currently looking at the `epic/mutation-switching` branch, where we're currently working on [implementing mutation switching](https://github.com/stryker-mutator/stryker/issues/1514). Please see the [master branch](https://github.com/stryker-mutator/stryker/tree/master) for the current production version. We have a feature freeze until mutation switching is implemented.__
-
 # Stryker
 
 *Professor X: For someone who hates mutants... you certainly keep some strange company.*
