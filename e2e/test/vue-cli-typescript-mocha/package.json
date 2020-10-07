@@ -41,7 +41,6 @@
     "@stryker-mutator/core": "../../../packages/core",
     "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
     "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
-    "@stryker-mutator/vue-mutator": "../../../packages/vue-mutator",
     "@stryker-mutator/typescript-checker": "../../../packages/typescript-checker",
     "@stryker-mutator/util": "../../../packages/util"
   }
