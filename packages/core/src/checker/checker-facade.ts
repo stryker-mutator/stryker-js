@@ -22,14 +22,7 @@ export class CheckerFacade implements Checker, Disposable, Worker {
 
   constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
     if (options.checkers.length) {
-      this.childProcess = ChildProcessProxy.create(
-        require.resolve(`./${CheckerWorker.name}`),
-        loggingContext,
-        options,
-        {},
-        process.cwd(),
-        CheckerWorker
-      );
+      this.childProcess = ChildProcessProxy.create(require.resolve('./checker-worker'), loggingContext, options, {}, process.cwd(), CheckerWorker);
     }
   }
 
