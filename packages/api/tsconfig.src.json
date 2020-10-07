@@ -14,8 +14,7 @@
     "mutant.ts",
     "report.ts",
     "test_framework.ts",
-    "test_runner.ts",
-    "test_runner.ts",
+    "test-runner.ts",
     "transpile.ts",
     "plugin.ts"
   ],

@@ -6,8 +6,8 @@ import { Config, ConfigOptions, ClientOptions } from 'karma';
 import * as sinon from 'sinon';
 
 import sut = require('../../../src/starters/stryker-karma.conf');
-import StrykerReporter from '../../../src/karma-plugins/StrykerReporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/TestHooksMiddleware';
+import StrykerReporter from '../../../src/karma-plugins/stryker-reporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
 import * as utils from '../../../src/utils';
 
 describe('stryker-karma.conf.js', () => {

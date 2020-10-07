@@ -8,11 +8,11 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../../src/logging';
-import Stryker from '../../src/Stryker';
+import Stryker from '../../src/stryker';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from '../../src/process';
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';
-import { TemporaryDirectory } from '../../src/utils/TemporaryDirectory';
+import { TemporaryDirectory } from '../../src/utils/temporary-directory';
 
 describe(Stryker.name, () => {
   let sut: Stryker;

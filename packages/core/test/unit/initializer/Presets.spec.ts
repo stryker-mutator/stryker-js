@@ -2,9 +2,9 @@ import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import * as sinon from 'sinon';
 
-import { AngularPreset } from '../../../src/initializer/presets/AngularPreset';
-import { ReactPreset } from '../../../src/initializer/presets/ReactPreset';
-import { VueJsPreset } from '../../../src/initializer/presets/VueJsPreset';
+import { AngularPreset } from '../../../src/initializer/presets/angular-preset';
+import { ReactPreset } from '../../../src/initializer/presets/react-preset';
+import { VueJsPreset } from '../../../src/initializer/presets/vue-js-preset';
 
 describe('Presets', () => {
   let inquirerPrompt: sinon.SinonStub;

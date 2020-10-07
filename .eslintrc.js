@@ -8,8 +8,14 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   extends: ['prettier', 'eslint:recommended'],
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
   rules: {
+    'unicorn/filename-case': [
+      'error',
+      {
+        'case': 'kebabCase'
+      }
+    ],
     'import/newline-after-import': 1,
     'import/order': [
       "error",

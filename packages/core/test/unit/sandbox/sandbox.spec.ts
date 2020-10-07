@@ -12,8 +12,8 @@ import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
-import { TemporaryDirectory } from '../../../src/utils/TemporaryDirectory';
-import * as fileUtils from '../../../src/utils/fileUtils';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
+import * as fileUtils from '../../../src/utils/file-utils';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;

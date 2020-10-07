@@ -1,4 +1,4 @@
-import { CompleteDryRunResult, TestStatus, SkippedTestResult, FailedTestResult, SuccessTestResult } from '@stryker-mutator/api/test_runner';
+import { CompleteDryRunResult, TestStatus, SkippedTestResult, FailedTestResult, SuccessTestResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 export type TimelessTestResult =

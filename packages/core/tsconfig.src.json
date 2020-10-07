@@ -7,7 +7,7 @@
     "types": [] // Exclude global mocha functions for the sources
   },
   "include": [
-    "src", "../util/src/Task.ts"
+    "src", "../util/src/task.ts"
   ],
   "references": [
     {

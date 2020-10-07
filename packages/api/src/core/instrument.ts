@@ -1,4 +1,4 @@
-import { MutantCoverage } from './MutantCoverage';
+import { MutantCoverage } from './mutant-coverage';
 
 /**
  * Identifiers used when instrumenting the code

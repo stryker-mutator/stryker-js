@@ -1,5 +1,5 @@
-import Range from './Range';
-import Location from './Location';
+import Range from './range';
+import Location from './location';
 
 /**
  * Represents a mutant

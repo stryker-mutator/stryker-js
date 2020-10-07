@@ -1,11 +1,11 @@
 import path = require('path');
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestStatus } from '@stryker-mutator/api/test_runner';
+import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import KarmaTestRunner from '../../src/KarmaTestRunner';
-import StrykerReporter from '../../src/karma-plugins/StrykerReporter';
+import KarmaTestRunner from '../../src/karma-test-runner';
+import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
 
 describe('read config integration', () => {
   afterEach(() => {

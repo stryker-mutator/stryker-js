@@ -3,10 +3,10 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
 import * as sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
-import { TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { MutantTestCoverage } from '../../src/mutants/findMutantTestCoverage';
+import { MutantTestCoverage } from '../../src/mutants/find-mutant-test-coverage';
 import { Worker, Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
 export type Mutable<T> = {

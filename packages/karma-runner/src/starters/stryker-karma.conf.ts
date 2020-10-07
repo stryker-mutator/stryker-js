@@ -4,8 +4,8 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
 import { noopLogger } from '@stryker-mutator/util';
 
-import StrykerReporter from '../karma-plugins/StrykerReporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../karma-plugins/TestHooksMiddleware';
+import StrykerReporter from '../karma-plugins/stryker-reporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../karma-plugins/test-hooks-middleware';
 import { requireModule } from '../utils';
 
 function setDefaultOptions(config: Config) {

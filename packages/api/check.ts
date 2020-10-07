@@ -1,3 +1,3 @@
-export * from './src/check/Checker';
-export * from './src/check/CheckResult';
-export * from './src/check/CheckStatus';
+export * from './src/check/checker';
+export * from './src/check/check-result';
+export * from './src/check/check-status';

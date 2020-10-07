@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin/Plugins';
-import { PluginKind } from '../../../src/plugin/PluginKind';
+import { declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin/plugins';
+import { PluginKind } from '../../../src/plugin/plugin-kind';
 import { tokens, commonTokens } from '../../../src/plugin/tokens';
 import { Logger } from '../../../logging';
 import { MutantResult } from '../../../report';

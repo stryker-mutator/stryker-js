@@ -15,7 +15,7 @@ import {
   TestResult,
   FailedTestResult,
   TestStatus,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { File } from '@stryker-mutator/api/core';
 import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
 

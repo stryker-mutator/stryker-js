@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 
-import { determineCIProvider } from '../../../../src/reporters/ci/Provider';
-import TravisProvider from '../../../../src/reporters/ci/TravisProvider';
-import CircleProvider from '../../../../src/reporters/ci/CircleProvider';
-import { EnvironmentVariableStore } from '../../../helpers/EnvironmentVariableStore';
-import GithubActionsProvider from '../../../../src/reporters/ci/GithubActionsProvider';
+import { determineCIProvider } from '../../../../src/reporters/ci/provider';
+import TravisProvider from '../../../../src/reporters/ci/travis-provider';
+import CircleProvider from '../../../../src/reporters/ci/circle-provider';
+import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
+import GithubActionsProvider from '../../../../src/reporters/ci/github-actions-provider';
 
 describe('determineCiProvider()', () => {
   const env = new EnvironmentVariableStore();
