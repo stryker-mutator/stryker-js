@@ -1,6 +1,6 @@
 import { existsSync, promises as fs } from 'fs';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
@@ -60,14 +60,14 @@ export default class StrykerConfigWriter {
    */
   public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
     const config = {
-      comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
+      _comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
       ...presetConfig.config,
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
   }
 
-  private writeStrykerConfig(config: Partial<StrykerOptions>, exportAsJson: boolean) {
+  private writeStrykerConfig(config: PartialStrykerOptions, exportAsJson: boolean) {
     if (exportAsJson) {
       return this.writeJsonConfig(config);
     } else {
@@ -75,7 +75,7 @@ export default class StrykerConfigWriter {
     }
   }
 
-  private async writeJsConfig(commentedConfig: Partial<StrykerOptions>) {
+  private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
     this.out(`Writing & formatting ${STRYKER_JS_CONFIG_FILE}...`);
     const rawConfig = this.stringify(commentedConfig);
     const formattedConfig = `/**
@@ -93,7 +93,7 @@ export default class StrykerConfigWriter {
     return STRYKER_JS_CONFIG_FILE;
   }
 
-  private async writeJsonConfig(commentedConfig: Partial<StrykerOptions>) {
+  private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
     this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
     const typedConfig = {
       $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',

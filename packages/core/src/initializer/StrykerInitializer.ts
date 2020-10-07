@@ -1,4 +1,5 @@
 import * as child from 'child_process';
+import { promises as fs } from 'fs';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -87,6 +88,9 @@ export default class StrykerInitializer {
     const presetConfig = await selectedPreset.createConfig();
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
+    if (presetConfig.additionalConfigFiles) {
+      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fs.writeFile(name, content)));
+    }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
     return configFileName;
