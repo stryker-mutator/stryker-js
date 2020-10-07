@@ -17,9 +17,6 @@
     },
     {
       "path": "../test-helpers/tsconfig.src.json"
-    },
-    {
-      "path": "../jasmine-framework/tsconfig.src.json",
     }
   ]
 }
