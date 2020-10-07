@@ -9,6 +9,7 @@ import fileUrl = require('file-url');
 
 import { bindMutationTestReport } from './templates/bindMutationTestReport';
 import * as HtmlReporterUtil from './HtmlReporterUtil';
+import { singleFileTemplate } from './single-file-template/single-file-template';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
@@ -31,12 +32,14 @@ export default class HtmlReporter implements Reporter {
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
     const indexFileName = path.resolve(this.baseDir, 'index.html');
+    const singleFile = singleFileTemplate(report);
     await this.cleanBaseFolder();
     await Promise.all([
       HtmlReporterUtil.copyFile(
         require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'),
         path.resolve(this.baseDir, 'mutation-test-elements.js')
       ),
+      HtmlReporterUtil.writeFile(path.resolve(this.baseDir, 'singleFile.html'), singleFile),
       HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'stryker-80x80.png'), path.resolve(this.baseDir, 'stryker-80x80.png')),
       HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'index.html'), path.resolve(this.baseDir, 'index.html')),
       HtmlReporterUtil.writeFile(path.resolve(this.baseDir, 'bind-mutation-test-report.js'), bindMutationTestReport(report)),
