@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
+
+
+### Bug Fixes
+
+* **instrumenter:** don't mutate generics ([#2530](https://github.com/stryker-mutator/stryker/issues/2530)) ([ed42e3c](https://github.com/stryker-mutator/stryker/commit/ed42e3c222a7bd0f98090a77cfee08db366679a1))
+
+
+
+
+
 # [4.0.0-beta.10](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.9...v4.0.0-beta.10) (2020-10-05)
 
 

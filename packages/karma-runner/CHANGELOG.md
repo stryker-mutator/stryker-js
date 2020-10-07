@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
 # [4.0.0-beta.10](https://github.io/stryker-mutator/stryker/compare/v4.0.0-beta.9...v4.0.0-beta.10) (2020-10-05)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner
