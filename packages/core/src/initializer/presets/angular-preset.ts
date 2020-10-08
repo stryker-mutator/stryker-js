@@ -15,7 +15,7 @@ export class AngularPreset implements Preset {
     mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
     testRunner: 'karma',
     karma: {
-      configFile: 'src/karma.conf.js',
+      configFile: 'karma.conf.js',
       projectType: 'angular-cli',
       config: {
         browsers: ['ChromeHeadless'],
