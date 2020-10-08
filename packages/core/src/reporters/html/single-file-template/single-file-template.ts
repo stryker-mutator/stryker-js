@@ -8,7 +8,7 @@ export function singleFileTemplate(report: mutationTestReportSchema.MutationTest
 <head>
   <meta charset="utf-8">
   <script>
-    ${readFileSync('mutation-testing-elements/dist/mutation-test-elements.js').toString('utf-8')}
+    ${readFileSync(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js')).toString('utf-8')}
   </script>
 </head>
 <body>
