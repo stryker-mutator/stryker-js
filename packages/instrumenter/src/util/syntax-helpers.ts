@@ -14,7 +14,7 @@ const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
 /**
  * Returns syntax for the header if JS/TS files
  */
-export const instrumentationBabelHeader = parse(`function ${STRYKER_NAMESPACE_HELPER}(){
+export const instrumentationBabelHeader = parse(`var ${STRYKER_NAMESPACE_HELPER} = function() {
   var g = new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
@@ -28,23 +28,22 @@ export const instrumentationBabelHeader = parse(`function ${STRYKER_NAMESPACE_HE
 }
 ${STRYKER_NAMESPACE_HELPER}();
 
-function ${COVER_MUTANT_HELPER}() {
+var ${COVER_MUTANT_HELPER} = function(...args) {
   var ns = ${STRYKER_NAMESPACE_HELPER}();
   var cov = ns.${ID.MUTATION_COVERAGE_OBJECT} || (ns.${ID.MUTATION_COVERAGE_OBJECT} = { static: {}, perTest: {} });
-  function cover() {
+  function cover(...a) {
     var c = cov.static;
     if (ns.${ID.CURRENT_TEST_ID}) {
       c = cov.perTest[ns.${ID.CURRENT_TEST_ID}] = cov.perTest[ns.${ID.CURRENT_TEST_ID}] || {};
     }
-    var a = arguments;
     for(var i=0; i < a.length; i++){
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
   }
   ${COVER_MUTANT_HELPER} = cover;
-  cover.apply(null, arguments);
+  cover.apply(null, args);
 }
-function ${IS_MUTANT_ACTIVE_HELPER}(id) {
+var ${IS_MUTANT_ACTIVE_HELPER} = function(id) {
   var ns = ${STRYKER_NAMESPACE_HELPER}();
   function isActive(id) {
     return ns.${ID.ACTIVE_MUTANT} === id;
