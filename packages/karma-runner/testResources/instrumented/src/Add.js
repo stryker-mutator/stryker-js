@@ -1,7 +1,7 @@
 // This file is generated with tasks/instrument-test-resources.js
  var stryNS_9fa48 = function() {
   var g = new Function("return this")();
-  var ns = g.__stryker2__ || (g.__stryker2__ = {});
+  var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
