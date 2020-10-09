@@ -43,7 +43,7 @@ import {
   ErrorMutantRunResult,
   TestStatus,
   TestResult,
-} from '@stryker-mutator/api/test_runner';
+} from '@stryker-mutator/api/test-runner';
 import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true });

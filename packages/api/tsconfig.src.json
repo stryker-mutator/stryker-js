@@ -8,16 +8,11 @@
     "src-generated",
     "schema/*.json",
     "check.ts",
-    "config.ts",
     "core.ts",
     "logging.ts",
-    "mutant.ts",
+    "plugin.ts",
     "report.ts",
-    "test_framework.ts",
-    "test_runner.ts",
-    "test_runner.ts",
-    "transpile.ts",
-    "plugin.ts"
+    "test-runner.ts"
   ],
   "references": []
 }

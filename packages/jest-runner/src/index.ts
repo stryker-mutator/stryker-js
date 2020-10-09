@@ -2,7 +2,7 @@ import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
 import * as strykerValidationSchema from '../schema/jest-runner-options.json';
 
-import { jestTestRunnerFactory } from './JestTestRunner';
+import { jestTestRunnerFactory } from './jest-test-runner';
 
 process.env.BABEL_ENV = 'test';
 

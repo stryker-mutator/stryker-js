@@ -2,7 +2,7 @@
   "name": "@stryker-mutator/core",
   "version": "4.0.0",
   "description": "The extendable JavaScript mutation testing framework",
-  "main": "src/Stryker.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "tsc -w",
     "test": "nyc npm run test:all",

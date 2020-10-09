@@ -2,7 +2,7 @@ import { Observable, Subject, merge } from 'rxjs';
 import { flatMap, filter, shareReplay } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { Disposable, tokens } from 'typed-inject';
-import { TestRunner } from '@stryker-mutator/api/test_runner';
+import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';

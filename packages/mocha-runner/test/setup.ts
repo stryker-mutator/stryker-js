@@ -5,7 +5,7 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { StrykerMochaReporter } from '../src/StrykerMochaReporter';
+import { StrykerMochaReporter } from '../src/stryker-mocha-reporter';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
