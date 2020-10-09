@@ -5,19 +5,11 @@
     { "path": "packages/util" },
     { "path": "packages/core" },
     { "path": "packages/instrumenter" },
-    { "path": "packages/babel-transpiler" },
-    { "path": "packages/jasmine-framework" },
     { "path": "packages/jasmine-runner" },
-    { "path": "packages/javascript-mutator" },
     { "path": "packages/jest-runner" },
     { "path": "packages/karma-runner" },
-    { "path": "packages/mocha-framework" },
     { "path": "packages/mocha-runner" },
-    { "path": "packages/typescript" },
     { "path": "packages/typescript-checker" },
-    { "path": "packages/vue-mutator" },
-    { "path": "packages/wct-runner" },
-    { "path": "packages/webpack-transpiler" },
     { "path": "packages/test-helpers" }
   ]
 }

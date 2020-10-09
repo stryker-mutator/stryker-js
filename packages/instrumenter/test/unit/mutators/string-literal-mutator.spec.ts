@@ -87,6 +87,12 @@ describe(StringLiteralMutator.name, () => {
     it('should still mutate inside object property values', () => {
       expectJSMutation(sut, 'const foo = { bar: "baz" };', 'const foo = { bar: "" };');
     });
+    it('should not mutate class property keys', () => {
+      expectJSMutation(sut, 'class Foo { "baz-bar" = 4; }');
+    });
+    it('should mutate class property values', () => {
+      expectJSMutation(sut, 'class Foo { bar = "4"; }', 'class Foo { bar = ""; }');
+    });
   });
 
   describe('jsx', () => {

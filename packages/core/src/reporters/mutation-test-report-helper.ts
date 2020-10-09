@@ -100,8 +100,6 @@ export class MutationTestReportHelper {
     return mutantResult;
   }
 
-  public reportMutantTimeout(mutantWithTestCoverage: MutantTestCoverage) {}
-
   private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus.CompileError {
     switch (status) {
       case CheckStatus.CompileError:
