@@ -443,3 +443,29 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 <a name="transpilers"></a>
 
 _Note: Support for "transpilers" plugins is removed since Stryker 4. You can now configure your own [buildCommand](#buildCommand)_
+
+## Programmatic use
+
+Stryker can also be used programmatically from nodejs. It exports 2 classes for you to use: `Stryker` and `StrykerCli`.
+
+```ts
+import { Stryker, StrykerCli } from '@stryker-mutator/core';
+```
+
+Both classes can be used to run Stryker. The main difference is that `Stryker` is a slightly more low-level approach, while `StrykerCli` is the strait up CLI api.
+
+In this example you can see how to use both. 
+
+```ts
+async function main() {
+  // Runs Stryker as if it was called directly from the cli. Not even returns a promise, it assumes to be allowed to call `process.exit`.
+  new StrykerCli(process.argv /* RAW argv array */ ).run(); 
+
+  // Runs Stryker, will not assume to be allowed to exit the process.
+  const stryker = new Stryker({ concurrency: 4 } /* Partial Stryker options object */ );
+  const mutantResults = await stryker.runMutationTest();
+  // mutantResults or rejected with an error.
+}
+```
+
+Stryker is written in TypeScript, so it is recommended to use Stryker as well to get the best developer experience.
