@@ -32,7 +32,8 @@ export default class HtmlReporter implements Reporter {
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
     const indexFileName = path.resolve(this.baseDir, 'index.html');
-    const singleFile = singleFileTemplate(report);
+    const singleFile = await singleFileTemplate(report);
+
     await this.cleanBaseFolder();
     await Promise.all([
       HtmlReporterUtil.copyFile(
