@@ -237,7 +237,7 @@
       "default": []
     },
     "concurrency": {
-      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine, unless CPU count is <= 4, in that case it uses the CPU count. This is a sane default for most use cases.",
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
       "type": "number"
     },
     "maxTestRunnerReuse": {

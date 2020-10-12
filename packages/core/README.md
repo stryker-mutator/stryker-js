@@ -156,11 +156,11 @@ The temp dir will never be removed when the run failed for some reason (for debu
 <a name="concurrency"></a>
 ### `concurrency` [`number`]
 
-Default: `cpuCount <= 4? cpuCount : cpuCount - 1`  
+Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`  
 Command line: `--concurrency 4`  
 Config file: `concurrency: 4`  
 
-Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to n-1 where n is the number of cpu's available on your machine, unless CPU count is <= 4, in that case it uses the CPU count. This is a sane default for most use cases.
+Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
 
 <a name="commandRunner"></a>
 ### `commandRunner` [`object`]
