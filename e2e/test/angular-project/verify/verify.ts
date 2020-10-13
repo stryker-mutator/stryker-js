@@ -1,17 +1,17 @@
 import { expectMetrics } from '../../../helpers';
 
 describe('After running stryker on angular project', () => {
-  it('should report 20% or 7% mutation score', async () => {
+  it('should report mutation score', async () => {
     await expectMetrics({
-      mutationScore: 33.33,
-      killed: 2,
-      survived: 4,
-      noCoverage: 0,
-      compileErrors: 1,
+      mutationScore: 42.86,
+      killed: 3,
+      survived: 0,
+      noCoverage: 4,
+      compileErrors: 0,
     })
     //  -------------------|---------|----------|-----------|------------|----------|---------|
     //  File               | % score | # killed | # timeout | # survived | # no cov | # error |
     //  -------------------|---------|----------|-----------|------------|----------|---------|
-    //  All files          |   20.00 |        1 |         0 |          4 |        0 |       0 |
+    //  All files          |   42.86 |        3 |         0 |          0 |        4 |       0 |
   });
 });
