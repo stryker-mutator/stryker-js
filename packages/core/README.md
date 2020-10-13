@@ -103,6 +103,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [allowConsoleColors](#allowConsoleColors)
 * [buildCommand](#buildCommand)
 * [cleanTempDir](#cleanTempDir)
+* [concurrency](#concurrency)
 * [commandRunner](#commandRunner)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
@@ -151,6 +152,15 @@ Config file: `cleanTempDir: false`
 
 Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. 
 The temp dir will never be removed when the run failed for some reason (for debugging purposes).
+
+<a name="concurrency"></a>
+### `concurrency` [`number`]
+
+Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`  
+Command line: `--concurrency 4`  
+Config file: `concurrency: 4`  
+
+Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
 
 <a name="commandRunner"></a>
 ### `commandRunner` [`object`]
@@ -240,21 +250,13 @@ Config file: `logLevel: 'info'`
  Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
 <a name="maxConcurrentTestRunners"></a>
-### `maxConcurrentTestRunners` [`number`]
+### DEPRECATED `maxConcurrentTestRunners` [`number`] 
 
-Default: `(number of CPU Cores)`
+Default: (see [concurrency](#concurrency))
 Command line: `--maxConcurrentTestRunners 3`
 Config file: `maxConcurrentTestRunners: 3`
 
-Specifies the maximum number of concurrent test runners to spawn.
-Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU, by spawning as many test runners as you have CPU cores.
-This setting allows you to override this default behavior.
-
-Reasons you might want to lower this setting:
-
-* Your test runner starts a browser (another CPU-intensive process)
-* You're running on a shared server and/or
-* Your hard disk cannot handle the I/O of all test runners
+DEPRECATED. Please use [concurrency](#concurrency) instead. 
 
 <a name="mutate"></a>
 ### `mutate` [`string[]`]
