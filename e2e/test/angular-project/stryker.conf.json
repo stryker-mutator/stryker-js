@@ -1,5 +1,6 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "This config was generated using a preset. Please see the handbook for more information: https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular",
   "mutate": [
     "src/**/*.ts",
     "!src/**/*.spec.ts",
@@ -7,11 +8,8 @@
     "!src/environments/*.ts"
   ],
   "testRunner": "karma",
-  "checkers": [
-    "typescript"
-  ],
   "karma": {
-    "configFile": "src/karma.conf.js",
+    "configFile": "karma.conf.js",
     "projectType": "angular-cli",
     "config": {
       "browsers": [
@@ -19,14 +17,14 @@
       ]
     }
   },
-  "tsconfigFile": "src/tsconfig.app.json",
   "reporters": [
     "progress",
     "clear-text",
     "html",
     "event-recorder"
   ],
-  "coverageAnalysis": "off",
-  "concurrency": 1,
+  "coverageAnalysis": "perTest",
+  "concurrency": 2,
+  "concurrency_comment": "Recommended to use about half of your available cores when running stryker with angular",
   "timeoutMS": 60000
 }
