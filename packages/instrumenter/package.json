@@ -32,7 +32,7 @@
   "dependencies": {
     "@babel/core": "~7.11.4",
     "@babel/generator": "~7.11.4",
-    "@babel/parser": "~7.11.4",
+    "@babel/parser": "~7.12.0",
     "@babel/plugin-proposal-decorators": "~7.10.5",
     "@babel/preset-typescript": "~7.10.4",
     "@stryker-mutator/api": "4.0.0",
