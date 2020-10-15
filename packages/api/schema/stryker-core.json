@@ -414,6 +414,11 @@
         }
       ],
       "description": "Enable or disable certain warnings"
+    },
+    "cpuProf": {
+      "description": "TODO: Describe",
+      "default": false,
+      "type": "boolean"
     }
   }
 }

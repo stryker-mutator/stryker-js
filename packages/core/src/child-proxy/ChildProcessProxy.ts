@@ -50,7 +50,7 @@ export default class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string
   ) {
     const execArgv = [];
-    if (process.env.STRYKER_PROFILE) {
+    if (options.cpuProf) {
       execArgv.push('--cpu-prof');
       execArgv.push(`--cpu-prof-name=child-process-${n}.cpuprofile`);
       n++;
