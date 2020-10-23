@@ -66,7 +66,7 @@ function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
 }
 
 export class DryRunExecutor {
-  private initialRunTimeout: number;
+  private readonly initialRunTimeout: number;
 
   public static readonly inject = tokens(
     commonTokens.injector,
