@@ -32,9 +32,9 @@ export default class JsonReporter implements Reporter {
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
     const jsonReportFile = path.resolve(this.baseDir, 'mutation.json');
     await this.cleanBaseFolder();
-    let indent = DEFAULT_INDENTION
+    let indent = DEFAULT_INDENTION;
     if (this.options.jsonReporter && this.options.jsonReporter.spacing) {
-      indent = this.options.jsonReporter.spacing
+      indent = this.options.jsonReporter.spacing;
     }
     await HtmlReporterUtil.writeFile(jsonReportFile, JSON.stringify(report, null, indent));
     this.log.info(`Your report can be found at: ${fileUrl(jsonReportFile)}`);
