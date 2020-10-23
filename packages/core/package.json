@@ -61,6 +61,7 @@
     "ajv": "~6.12.0",
     "chalk": "~4.1.0",
     "commander": "~6.1.0",
+    "cosmiconfig": "^7.0.0",
     "execa": "~4.0.2",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",

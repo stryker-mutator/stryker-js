@@ -38,7 +38,7 @@ $ npx stryker <command> [options] [configFile]
 
 The main `command` for Stryker is `run`, which kicks off mutation testing.
 
-Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. By default, Stryker will look for a `stryker.conf.js` or `stryker.conf.json` file in the current working directory (if it exists). This can be overridden by specifying a different file as the last parameter.
+Although Stryker can run without any configuration, it is recommended to configure it when you can, as it can greatly improve performance of the mutation testing process. Stryker uses [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) to search for a configuration file (search order: `stryker.conf.json`, `stryker.conf.js`). The search is started in the current working directory, and climbing up the file tree until a config file is (or isn’t) found. This behaviour can be overridden by specifying a specific file path as the last parameter.
 
 Before your first run, we recommend you try the `init` command, which helps you to set up this config file and install any missing packages needed for your specific configuration. We recommend you verify the contents of the configuration file after this initialization, to make sure everything is setup correctly. Of course, you can still make changes to it, before you run Stryker for the first time.
 

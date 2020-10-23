@@ -5,22 +5,14 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { deepMerge } from '@stryker-mutator/util/src/deep-merge';
+import { cosmiconfigSync } from 'cosmiconfig';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 
-import { defaultOptions, OptionsValidator } from './options-validator';
-import { createConfig } from './create-config';
+import { OptionsValidator } from './options-validator';
 
-export const CONFIG_SYNTAX_HELP = `
-/**
-  * @type {import('@stryker-mutator/api/core').StrykerOptions}
-  */
-module.exports = {
-  // You're options here!
-}`.trim();
-
-const DEFAULT_CONFIG_FILE = 'stryker.conf';
+const MODULE_NAME = 'stryker';
 
 export default class ConfigReader {
   public static inject = tokens(coreTokens.cliOptions, commonTokens.logger, coreTokens.optionsValidator);
@@ -28,17 +20,8 @@ export default class ConfigReader {
 
   public readConfig(): StrykerOptions {
     const configModule = this.loadConfigModule();
-    let options: StrykerOptions;
-    if (typeof configModule === 'function') {
-      this.log.warn(
-        'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
-      );
-      options = defaultOptions();
-      configModule(createConfig(options));
-    } else {
-      this.validator.validate(configModule);
-      options = configModule;
-    }
+    this.validator.validate(configModule);
+    let options = configModule;
     // merge the config from config file and cliOptions (precedence)
     deepMerge(options, this.cliOptions);
     if (this.log.isDebugEnabled()) {
@@ -47,37 +30,40 @@ export default class ConfigReader {
     return options;
   }
 
-  private loadConfigModule(): ((options: StrykerOptions) => void) | PartialStrykerOptions {
-    let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
+  private loadConfigModule(): PartialStrykerOptions {
+    const configExplorer = cosmiconfigSync(`${MODULE_NAME}`, {
+      searchPlaces: [
+        'package.json',
+        `${MODULE_NAME}.conf.js`,
+        `${MODULE_NAME}.conf.json`,
+      ],
+    });
+    let result: ReturnType<typeof configExplorer.search>;
 
-    if (!this.cliOptions.configFile) {
-      try {
-        const configFile = require.resolve(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
-        this.log.info(`Using ${path.basename(configFile)}`);
-        this.cliOptions.configFile = configFile;
-      } catch (e) {
-        this.log.info('No config file specified. Running with command line arguments.');
-        this.log.info('Use `stryker init` command to generate your config file.');
+    try {
+      if (!this.cliOptions.configFile) {   
+        this.log.debug('Searching for config file'); 
+        result = configExplorer.search();
+        if (result) {
+          this.log.info(`Using ${result.filepath}`);
+          this.cliOptions.configFile = result.filepath;
+        } else {
+          this.log.info('No config file specified. Running with command line arguments only.');
+          this.log.info('Use `stryker init` command to generate your config file.');
+        }
+      } else {
+        this.log.debug(`Loading config ${this.cliOptions.configFile}`);
+        const resolvedFilename = this.resolveConfigFile(String(this.cliOptions.configFile));
+        result = configExplorer.load(resolvedFilename);
       }
+    } catch (e) {
+      throw new ConfigError(e.message);
     }
 
-    if (typeof this.cliOptions.configFile === 'string') {
-      this.log.debug(`Loading config ${this.cliOptions.configFile}`);
-      const configFile = this.resolveConfigFile(this.cliOptions.configFile);
-      try {
-        configModule = require(configFile);
-      } catch (e) {
-        this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
-        this.log.info("Please execute `stryker init` in your project's root directory.");
-        throw new ConfigError('Invalid config file', e);
-      }
-      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
-        this.log.fatal('Config file must export an object!\n' + CONFIG_SYNTAX_HELP);
-        throw new ConfigError('Config file must export an object!');
-      }
+    if (result && result.config) {
+      return result.config;
     }
-
-    return configModule;
+    return {};
   }
 
   private resolveConfigFile(configFileName: string) {
