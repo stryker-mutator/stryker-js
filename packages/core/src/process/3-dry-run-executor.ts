@@ -32,10 +32,6 @@ import { ConcurrencyTokenProvider } from '../concurrent';
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
 
-// The initial run might take a while.
-// For example: angular-bootstrap takes up to 45 seconds.
-// Lets take 5 minutes just to be sure
-const INITIAL_RUN_TIMEOUT = 60 * 1000 * 5;
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
 export interface DryRunContext extends MutantInstrumenterContext {
@@ -70,6 +66,8 @@ function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
 }
 
 export class DryRunExecutor {
+  private initialRunTimeout: number;
+
   public static readonly inject = tokens(
     commonTokens.injector,
     commonTokens.logger,
@@ -84,7 +82,9 @@ export class DryRunExecutor {
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
-  ) {}
+  ) {
+    this.initialRunTimeout = this.options.initialTimeoutMIN * 1000 * 60;
+  }
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
@@ -127,7 +127,7 @@ export class DryRunExecutor {
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info('Starting initial test run. This may take a while.');
-    const dryRunResult = await testRunner.dryRun({ timeout: INITIAL_RUN_TIMEOUT, coverageAnalysis: this.options.coverageAnalysis });
+    const dryRunResult = await testRunner.dryRun({ timeout: this.initialRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
     this.validateResultCompleted(dryRunResult);

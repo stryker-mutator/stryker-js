@@ -398,6 +398,11 @@
       "type": "number",
       "default": 5000
     },
+    "initialTimeoutMIN": {
+      "description": "Configure an absolute timeout for the initial test run. (It can take a while.)",
+      "type": "number",
+      "default": 5
+    },
     "tsconfigFile": {
       "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",
       "type": "string",
