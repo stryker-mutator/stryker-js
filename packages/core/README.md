@@ -301,16 +301,18 @@ you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or
 ### `reporters` [`string[]`]
 
 Default: `['clear-text', 'progress', 'html']`
-Command line: `--reporters clear-text,progress,dots,dashboard,html`
-Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard', 'html']`
+Command line: `--reporters clear-text,progress,dots,dashboard,html,json`
+Config file: `reporters: ['clear-text', 'progress', 'dots', 'dashboard', 'html', 'json']`
 
 With `reporters`, you can set the reporters for stryker to use.
-These reporters can be used out of the box: `html`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
+These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured.
 You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
 for an up-to-date list of supported reporter plugins and a description on each reporter.
 
 The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
+
+The `json` reporter also allows specifying an output folder and additionally provides a parameter for the indention (called `spacing`) which is 0 spaces by default, meaning no indention at all. The config for your config file is: `jsonReporter: { baseDir: 'mypath/reports/stryker', spacing: 2 }`
 
 The `clear-text` reporter supports three additional config options:
 * `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
