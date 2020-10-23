@@ -32,17 +32,13 @@ export default class ConfigReader {
 
   private loadConfigModule(): PartialStrykerOptions {
     const configExplorer = cosmiconfigSync(`${MODULE_NAME}`, {
-      searchPlaces: [
-        'package.json',
-        `${MODULE_NAME}.conf.js`,
-        `${MODULE_NAME}.conf.json`,
-      ],
+      searchPlaces: ['package.json', `${MODULE_NAME}.conf.js`, `${MODULE_NAME}.conf.json`],
     });
     let result: ReturnType<typeof configExplorer.search>;
 
     try {
-      if (!this.cliOptions.configFile) {   
-        this.log.debug('Searching for config file'); 
+      if (!this.cliOptions.configFile) {
+        this.log.debug('Searching for config file');
         result = configExplorer.search();
         if (result) {
           this.log.info(`Using ${result.filepath}`);
