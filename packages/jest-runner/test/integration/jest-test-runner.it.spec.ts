@@ -64,7 +64,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
       expectToHaveSuccessfulTests(runResult, 1);
     });
 
-    it('should set the test name and timeSpentMs', async () => {
+    it('should set the test name and timeSpentMs', async function () {
+      if (platform() === 'win32') {
+        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
+        this.skip();
+      }
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
