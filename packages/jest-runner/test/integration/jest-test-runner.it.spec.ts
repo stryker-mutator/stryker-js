@@ -9,6 +9,7 @@ import JestTestRunner, { jestTestRunnerFactory } from '../../src/jest-test-runne
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
+import { platform } from 'os';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
@@ -48,7 +49,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    it('should run tests on the example React + TypeScript project', async () => {
+    it('should run tests on the example React + TypeScript project', async function () {
+      if (platform() === 'win32') {
+        console.log('[SKIP] Skipping this test on windows, react ts doesn\'t work there.');
+        this.skip();
+      }
       // TODO: Get a proper React TS project that works on Windows
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
