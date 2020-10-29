@@ -28,7 +28,7 @@
     "karma-webpack": "~4.0.2",
     "link-parent-bin": "^2.0.0",
     "load-grunt-tasks": "~5.1.0",
-    "mocha": "~8.1.3",
+    "mocha": "~8.2.0",
     "mutation-testing-metrics": "~1.4.0",
     "rxjs": "~6.5.3",
     "semver": "~6.3.0",

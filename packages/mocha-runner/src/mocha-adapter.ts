@@ -37,11 +37,16 @@ export class MochaAdapter {
     }
   }
 
-  public async handleRequires(requires: string[]): Promise<any> {
+  public async handleRequires(requires: string[]): Promise<unknown> {
     if (LibWrapper.handleRequires) {
       const rawRootHooks = await LibWrapper.handleRequires(requires);
       if (rawRootHooks) {
-        return await LibWrapper.loadRootHooks!(rawRootHooks);
+        if (LibWrapper.loadRootHooks) {
+          // `loadRootHooks` made a brief appearance in mocha 8, removed in mocha 8.2
+          return await LibWrapper.loadRootHooks(rawRootHooks);
+        } else {
+          return rawRootHooks.rootHooks;
+        }
       }
     } else {
       const modulesToRequire = requires.map((moduleName) => {
@@ -54,6 +59,7 @@ export class MochaAdapter {
       });
       modulesToRequire.forEach(LibWrapper.require);
     }
+    return undefined;
   }
 
   private mocha6DiscoverFiles(options: MochaOptions): string[] {

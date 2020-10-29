@@ -12,7 +12,6 @@ describe(MochaAdapter.name, () => {
   let requireStub: sinon.SinonStub;
   let collectFilesStub: sinon.SinonStub;
   let handleRequiresStub: sinon.SinonStub;
-  let loadRootHooks: sinon.SinonStub;
   let sut: MochaAdapter;
   let mochaConstructorStub: sinon.SinonStub;
   let existsSyncStub: sinon.SinonStub;
@@ -22,7 +21,6 @@ describe(MochaAdapter.name, () => {
     mochaConstructorStub = sinon.stub(LibWrapper, 'Mocha');
     collectFilesStub = sinon.stub(LibWrapper, 'collectFiles');
     handleRequiresStub = sinon.stub(LibWrapper, 'handleRequires');
-    loadRootHooks = sinon.stub(LibWrapper, 'loadRootHooks');
     existsSyncStub = sinon.stub(fs, 'existsSync');
     sut = testInjector.injector.injectClass(MochaAdapter);
   });
@@ -141,17 +139,38 @@ describe(MochaAdapter.name, () => {
       });
     });
 
-    describe('when mocha version >= 7.2', () => {
+    describe('when mocha version >= 7.2, < 8.2', () => {
+      const originalLoadRootHooks = LibWrapper.loadRootHooks;
+      afterEach(() => {
+        LibWrapper.loadRootHooks = originalLoadRootHooks;
+      });
+
       it("should use mocha's `handleRequires`", async () => {
         await sut.handleRequires(['ts-node']);
         expect(handleRequiresStub).calledWithExactly(['ts-node']);
       });
 
       it('should also load the root hooks', async () => {
+        const loadRootHooksStub = sinon.stub();
+        LibWrapper.loadRootHooks = loadRootHooksStub;
         handleRequiresStub.resolves('raw root hooks');
-        loadRootHooks.resolves('root hooks');
+        loadRootHooksStub.resolves('root hooks');
         const result = await sut.handleRequires(['./test/setup.js']);
-        expect(loadRootHooks).calledWith('raw root hooks');
+        expect(loadRootHooksStub).calledWith('raw root hooks');
+        expect(result).eq('root hooks');
+      });
+    });
+
+    describe('when mocha version >= 8.2', () => {
+      const originalLoadRootHooks = LibWrapper.loadRootHooks;
+      afterEach(() => {
+        LibWrapper.loadRootHooks = originalLoadRootHooks;
+      });
+
+      it('should also load the root hooks', async () => {
+        delete LibWrapper.loadRootHooks; // this does not exist anymore
+        handleRequiresStub.resolves({ rootHooks: 'root hooks' });
+        const result = await sut.handleRequires(['./test/setup.js']);
         expect(result).eq('root hooks');
       });
     });
