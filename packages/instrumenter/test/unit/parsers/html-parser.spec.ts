@@ -74,7 +74,8 @@ describe('html-parser', () => {
       const parsed = await parse(html, 'index.html', contextStub);
 
       // Assert
-      expect(parsed.root.scripts[0].root.loc).deep.eq({
+      const { start, end } = parsed.root.scripts[0].root.loc!;
+      expect({ start, end }).deep.eq({
         start: { line: 5, column: 12 },
         end: { line: 7, column: 4 },
       });
