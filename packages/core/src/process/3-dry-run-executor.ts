@@ -66,7 +66,7 @@ function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
 }
 
 export class DryRunExecutor {
-  private readonly initialRunTimeout: number;
+  private readonly dryRunTimeout: number;
 
   public static readonly inject = tokens(
     commonTokens.injector,
@@ -83,7 +83,7 @@ export class DryRunExecutor {
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
   ) {
-    this.initialRunTimeout = this.options.initialTimeoutMIN * 1000 * 60;
+    this.dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
   }
 
   public async execute(): Promise<Injector<MutationTestContext>> {
@@ -127,7 +127,7 @@ export class DryRunExecutor {
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info('Starting initial test run. This may take a while.');
-    const dryRunResult = await testRunner.dryRun({ timeout: this.initialRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
+    const dryRunResult = await testRunner.dryRun({ timeout: this.dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
     this.validateResultCompleted(dryRunResult);

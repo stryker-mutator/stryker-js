@@ -107,9 +107,9 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [commandRunner](#commandRunner)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
+* [dryRunTimeoutMinutes](#dryRunTimeoutMinutes)
 * [fileLogLevel](#fileLogLevel)
 * [files](#files-string)
-* [initialTimeoutMIN](#initialTimeoutMIN)
 * [logLevel](#logLevel)
 * [maxConcurrentTestRunners](#maxConcurrentTestRunners)
 * [mutate](#mutate)
@@ -237,12 +237,12 @@ When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
-<a name="initialTimeoutMIN"></a>
-### `initialTimeoutMIN` [`number`]
+<a name="dryRunTimeoutMinutes"></a>
+### `dryRunTimeoutMinutes` [`number`]
 
 Default: `5`
-Command line: `--initialTimeoutMIN 5`
-Config file: `initialTimeoutMIN: 5`
+Command line: `--dryRunTimeoutMinutes 5`
+Config file: `dryRunTimeoutMinutes: 5`
 
 Use this option to configure an absolute timeout for the initial test run. Since it can take a while we use minutes as time unit.
 
