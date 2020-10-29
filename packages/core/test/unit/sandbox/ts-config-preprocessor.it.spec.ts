@@ -62,7 +62,7 @@ describe(TSConfigPreprocessor.name, () => {
     expect(output).deep.eq([tsconfigFile('tsconfig.json', { references: [{ path: '../../../model/tsconfig.json' }] })]);
   });
 
-  it.only('should rewrite referenced tsconfig files that are also located in the sandbox', async () => {
+  it('should rewrite referenced tsconfig files that are also located in the sandbox', async () => {
     files.push(tsconfigFile('tsconfig.json', { extends: './tsconfig.settings.json', references: [{ path: './src' }] }));
     files.push(tsconfigFile('tsconfig.settings.json', { extends: '../../tsconfig.root-settings.json' }));
     files.push(tsconfigFile('src/tsconfig.json', { references: [{ path: '../../model' }] }));
