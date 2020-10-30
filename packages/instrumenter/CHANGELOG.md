@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0...v4.1.0) (2020-10-30)
+
+
+### Bug Fixes
+
+* **instrumenter:** add missing case for .jsx files in parser ([#2577](https://github.com/stryker-mutator/stryker/issues/2577)) ([cea94aa](https://github.com/stryker-mutator/stryker/commit/cea94aa90347ab1ff601205014116d41a6bef3f9))
+* **string-literal-mutator:** don't mutate class property keys ([#2544](https://github.com/stryker-mutator/stryker/issues/2544)) ([8c8b478](https://github.com/stryker-mutator/stryker/commit/8c8b47819a6f415c0da773888ed7692cf5d76776))
+
+
+### Features
+
+* **instrumenter:** update to babel 7.12 ([#2592](https://github.com/stryker-mutator/stryker/issues/2592)) ([300b73f](https://github.com/stryker-mutator/stryker/commit/300b73f60dde87b8780341d1ac6d2d6ab5aeb69e))
+
+
+
+
+
 # [4.0.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
 
 

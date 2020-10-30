@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.1.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0...v4.1.0) (2020-10-30)
+
+
+### Bug Fixes
+
+* **concurrency:** better default for low CPU count ([#2546](https://github.com/stryker-mutator/stryker/issues/2546)) ([eac9199](https://github.com/stryker-mutator/stryker/commit/eac9199428dd1b34df756f55b9a457046b536adf))
+
+
+### Features
+
+* **angular:** update Karma config path in Angular preset ([#2548](https://github.com/stryker-mutator/stryker/issues/2548)) ([986acba](https://github.com/stryker-mutator/stryker/commit/986acba1c3aa59130b876f90e29e4925898e70a6))
+* **html:** reposition stryker image ([#2593](https://github.com/stryker-mutator/stryker/issues/2593)) ([21d635a](https://github.com/stryker-mutator/stryker/commit/21d635aae0e6392cb7facd9a0974e7fc525f2fb7))
+* **HTML reporter:** Dark mode support 🌑 ([#2590](https://github.com/stryker-mutator/stryker/issues/2590)) ([ca9a513](https://github.com/stryker-mutator/stryker/commit/ca9a513c3e2a95337fbca74752408c8372fe5c5d))
+
+
+
+
+
 # [4.0.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
 
 
