@@ -101,7 +101,7 @@ export class JasmineTestRunner implements TestRunner {
       };
 
       jasmine.env.addReporter(reporter);
-      jasmine.execute();
+      await jasmine.execute();
       const result = await runTask.promise;
       return result;
     } catch (error) {
