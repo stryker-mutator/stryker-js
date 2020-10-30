@@ -7,6 +7,7 @@ import EventRecorderReporter from './event-recorder-reporter';
 import ProgressAppendOnlyReporter from './progress-append-only-reporter';
 import ProgressReporter from './progress-reporter';
 import HtmlReporter from './html/html-reporter';
+import JsonReporter from './json/json-reporter';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
@@ -15,5 +16,6 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'dots', DotsReporter),
   declareClassPlugin(PluginKind.Reporter, 'event-recorder', EventRecorderReporter),
   declareClassPlugin(PluginKind.Reporter, 'html', HtmlReporter),
+  declareClassPlugin(PluginKind.Reporter, 'json', JsonReporter),
   declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory),
 ];

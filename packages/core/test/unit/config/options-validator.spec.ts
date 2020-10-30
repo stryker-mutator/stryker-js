@@ -245,6 +245,13 @@ describe(markUnknownOptions.name, () => {
     expect(testInjector.logger.warn).not.called;
   });
 
+  it('should not warn when there are no unknown properties for jsonReporter', () => {
+    testInjector.options.jsonReporter = {
+      baseDir: 'test',
+    };
+    expect(testInjector.logger.warn).not.called;
+  });
+
   it('should return the options, no matter what', () => {
     testInjector.options['this key does not exist'] = 'foo';
     const output = markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
