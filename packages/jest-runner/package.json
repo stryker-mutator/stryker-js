@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jest-runner#readme",
   "devDependencies": {
-    "@jest/types": "~26.5.2",
+    "@jest/types": "~26.6.1",
     "@stryker-mutator/test-helpers": "4.1.0",
     "@types/node": "^14.0.1",
     "@types/semver": "~7.3.1",
