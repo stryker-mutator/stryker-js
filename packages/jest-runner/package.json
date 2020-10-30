@@ -46,7 +46,7 @@
     "@types/semver": "~7.3.1",
     "jest": "~26.6.1",
     "react": "~16.13.0",
-    "react-dom": "~16.14.0",
+    "react-dom": "~17.0.1",
     "react-scripts": "~3.4.0",
     "react-scripts-ts": "~3.1.0"
   },
