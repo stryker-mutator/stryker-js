@@ -82,9 +82,7 @@ export class DryRunExecutor {
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
-  ) {
-    this.dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
-  }
+  ) {}
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
@@ -125,9 +123,11 @@ export class DryRunExecutor {
   }
 
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
+    const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info('Starting initial test run. This may take a while.');
-    const dryRunResult = await testRunner.dryRun({ timeout: this.dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
+    this.log.debug(`Using timeout of ${this.dryRunTimeout} ms.`);
+    const dryRunResult = await testRunner.dryRun({ timeout: dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
     this.validateResultCompleted(dryRunResult);

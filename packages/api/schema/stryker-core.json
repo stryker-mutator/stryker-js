@@ -399,8 +399,9 @@
       "default": 5000
     },
     "dryRunTimeoutMinutes": {
-      "description": "Configure an absolute timeout for the initial test run. (It can take a while.)",
+      "description": "Configure an absolute timeout for the initial test run. (It can take a while, therefore we use minutes as time unit.)",
       "type": "number",
+      "minimum": 0,
       "default": 5
     },
     "tsconfigFile": {
