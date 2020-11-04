@@ -1,5 +1,3 @@
-const bar: number = 40 + 2;
-
 class Person {
   #name = 'unknown';
 

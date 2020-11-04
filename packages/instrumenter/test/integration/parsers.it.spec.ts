@@ -50,6 +50,11 @@ describe('parsers integration', () => {
     expect(actual).to.matchSnapshot();
   });
 
+  it('should be able to parse a ts file with more recent TS features', async () => {
+    const actual = await actAssertTS('new-ts-features.ts');
+    expect(actual).to.matchSnapshot();
+  });
+
   it('should allow a plugin that conflicts with the default plugins as long as plugins are emptied out', async () => {
     process.chdir(resolveTestResource('js-in-babel-project'));
     const actual = await actAssertJS('js-in-babel-project/src/app.js', createParserOptions({ plugins: [] }));
