@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 
 import HtmlReporter from '../../../../src/reporters/html/html-reporter';
-import * as HtmlReporterUtil from '../../../../src/reporters/html/html-reporter-util';
+import * as ReporterUtil from '../../../../src/reporters/reporter-util';
 import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bind-mutation-test-report';
 
 describe(HtmlReporter.name, () => {
@@ -17,10 +17,10 @@ describe(HtmlReporter.name, () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    copyFileStub = sinon.stub(HtmlReporterUtil, 'copyFile');
-    writeFileStub = sinon.stub(HtmlReporterUtil, 'writeFile');
-    deleteDirStub = sinon.stub(HtmlReporterUtil, 'deleteDir');
-    mkdirStub = sinon.stub(HtmlReporterUtil, 'mkdir');
+    copyFileStub = sinon.stub(ReporterUtil, 'copyFile');
+    writeFileStub = sinon.stub(ReporterUtil, 'writeFile');
+    deleteDirStub = sinon.stub(ReporterUtil, 'deleteDir');
+    mkdirStub = sinon.stub(ReporterUtil, 'mkdir');
     sut = testInjector.injector.injectClass(HtmlReporter);
   });
 

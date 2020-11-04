@@ -7,17 +7,18 @@ import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report'
 
 import fileUrl = require('file-url');
 
-import * as HtmlReporterUtil from './html/html-reporter-util';
+import * as ReporterUtil from './reporter-util';
 
-const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation');
-const DEFAULT_INDENTION = 0;
+const INDENTION_LEVEL = 0;
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class JsonReporter implements Reporter {
-  private _baseDir!: string;
+  private readonly _filePath: string;
   private mainPromise: Promise<void> | undefined;
 
-  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}
+  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
+    this._filePath = path.resolve(this.options.jsonReporter.baseDir, this.options.jsonReporter.filename);
+  }
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
@@ -30,33 +31,12 @@ export default class JsonReporter implements Reporter {
   }
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
-    const jsonReportFile = path.resolve(this.baseDir, 'mutation.json');
-    await this.cleanBaseFolder();
-    let indent = DEFAULT_INDENTION;
-    if (this.options.jsonReporter && this.options.jsonReporter.spacing) {
-      indent = this.options.jsonReporter.spacing;
-    }
-    await HtmlReporterUtil.writeFile(jsonReportFile, JSON.stringify(report, null, indent));
-    this.log.info(`Your report can be found at: ${fileUrl(jsonReportFile)}`);
+    await ReporterUtil.writeFile(this.filePath, JSON.stringify(report, null, INDENTION_LEVEL));
+    this.log.info(`Your report can be found at: ${fileUrl(this.filePath)}`);
   }
 
-  private get baseDir(): string {
-    if (!this._baseDir) {
-      if (this.options.jsonReporter && this.options.jsonReporter.baseDir) {
-        this._baseDir = this.options.jsonReporter.baseDir;
-        this.log.debug(`Using configured output folder ${this._baseDir}`);
-      } else {
-        this.log.debug(
-          `No base folder configuration found (using configuration: jsonReporter: { baseDir: 'output/folder' }), using default ${DEFAULT_BASE_FOLDER}`
-        );
-        this._baseDir = DEFAULT_BASE_FOLDER;
-      }
-    }
-    return this._baseDir;
-  }
-
-  private async cleanBaseFolder(): Promise<void> {
-    await HtmlReporterUtil.deleteDir(this.baseDir);
-    await HtmlReporterUtil.mkdir(this.baseDir);
+  private get filePath(): string {
+    this.log.debug(`Using path ${this._filePath}`);
+    return this._filePath;
   }
 }
