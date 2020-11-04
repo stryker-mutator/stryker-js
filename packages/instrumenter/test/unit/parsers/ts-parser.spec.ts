@@ -22,6 +22,10 @@ describe('ts-parser', () => {
     await arrangeAndAssert("@Component({ selector: 'auto-complete'}) class A {}", (t) => t.isDecorator());
   });
 
+  it('should allow for private fields', async () => {
+    await arrangeAndAssert('class A { #foo; get foo() { return this.#foo; }}', (t) => t.isPrivateName() && t.node.id.name === 'foo');
+  });
+
   it('should allow jsx if extension is tsx', async () => {
     await arrangeAndAssert(
       `class MyComponent extends React.Component<Props, {}> {
