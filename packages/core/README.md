@@ -240,9 +240,9 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 <a name="dryRunTimeoutMinutes"></a>
 ### `dryRunTimeoutMinutes` [`number`]
 
-Default: `5`
-Command line: `--dryRunTimeoutMinutes 5`
-Config file: `dryRunTimeoutMinutes: 5`
+Default: `5`  
+Command line: `--dryRunTimeoutMinutes 5`  
+Config file: `dryRunTimeoutMinutes: 5`  
 
 Use this option to configure an absolute timeout for the initial test run. Since it can take a while we use minutes as time unit.
 
