@@ -13,12 +13,9 @@ const INDENTION_LEVEL = 0;
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
 export default class JsonReporter implements Reporter {
-  private readonly _filePath: string;
   private mainPromise: Promise<void> | undefined;
 
-  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
-    this._filePath = path.resolve(this.options.jsonReporter.baseDir, this.options.jsonReporter.filename);
-  }
+  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
@@ -31,12 +28,9 @@ export default class JsonReporter implements Reporter {
   }
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
-    await ReporterUtil.writeFile(this.filePath, JSON.stringify(report, null, INDENTION_LEVEL));
-    this.log.info(`Your report can be found at: ${fileUrl(this.filePath)}`);
-  }
-
-  private get filePath(): string {
-    this.log.debug(`Using path ${this._filePath}`);
-    return this._filePath;
+    const filePath = path.join(this.options.jsonReporter.baseDir, this.options.jsonReporter.filename);
+    this.log.debug(`Using relative path ${filePath}`);
+    await ReporterUtil.writeFile(path.resolve(filePath), JSON.stringify(report, null, INDENTION_LEVEL));
+    this.log.info(`Your report can be found at: ${fileUrl(filePath)}`);
   }
 }

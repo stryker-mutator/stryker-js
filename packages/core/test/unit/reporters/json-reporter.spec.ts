@@ -10,12 +10,10 @@ import * as JsonReporterUtil from '../../../src/reporters/reporter-util';
 
 describe(JsonReporter.name, () => {
   let writeFileStub: sinon.SinonStub;
-  let mkdirStub: sinon.SinonStub;
   let sut: JsonReporter;
 
   beforeEach(() => {
     writeFileStub = sinon.stub(JsonReporterUtil, 'writeFile');
-    mkdirStub = sinon.stub(JsonReporterUtil, 'mkdir');
     sut = testInjector.injector.injectClass(JsonReporter);
   });
 
@@ -25,15 +23,17 @@ describe(JsonReporter.name, () => {
         baseDir: 'foo/bar',
         filename: 'myReport.json',
       };
+      const expectedPath = path.normalize('foo/bar/myReport.json');
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith('Using path foo/bar/myReport.json');
+      expect(testInjector.logger.debug).calledWith(`Using relative path ${expectedPath}`);
     });
 
     it('should use default base directory when no override is configured', async () => {
+      const expectedPath = path.normalize('reports/mutation/mutation.json');
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith('Using output folder reports/mutation/mutation.json');
+      expect(testInjector.logger.debug).calledWith(`Using relative path ${expectedPath}`);
     });
 
     it('should write the mutation report to disk', async () => {
