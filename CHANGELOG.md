@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.1.1](https://github.com/stryker-mutator/stryker/compare/v4.1.0...v4.1.1) (2020-11-05)
+
+
+### Bug Fixes
+
+* **disable-checking:** allow jest environment ([#2607](https://github.com/stryker-mutator/stryker/issues/2607)) ([26aca66](https://github.com/stryker-mutator/stryker/commit/26aca661dcf02efc7d0d57408d45a02d2a5a4b82))
+* **ts:** support es private fields ([#2605](https://github.com/stryker-mutator/stryker/issues/2605)) ([6bd2fbb](https://github.com/stryker-mutator/stryker/commit/6bd2fbbf0aaa5154930ce36f4d153ee91a3c5f1f))
+
+
+
+
+
 # [4.1.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0...v4.1.0) (2020-10-30)
 
 
