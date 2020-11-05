@@ -3,7 +3,7 @@
   "description": "A test project for using stryker with jest and jest-ts preprocessor. Inspired by the stryker-dashboard source code.",
   "scripts": {
     "test": "stryker run",
-    "test:original": "jest",
+    "test:unit": "jest",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   },
   "dependencies": {
