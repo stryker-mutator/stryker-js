@@ -312,7 +312,7 @@ for an up-to-date list of supported reporter plugins and a description on each r
 
 The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
 
-Analogously, the `json` reporter allows specifying an output folder but also the filename. The config for your config file is: `jsonReporter: { baseDir: 'mypath/reports/stryker', filename: 'mutation.json'}`
+The `json` reporter allows specifying an output filename (may also contain a path). The config for your config file is: `jsonReporter: { fileName: 'mypath/reports/mutation.json' }`
 
 The `clear-text` reporter supports three additional config options:
 * `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.

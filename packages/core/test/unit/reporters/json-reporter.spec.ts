@@ -19,11 +19,11 @@ describe(JsonReporter.name, () => {
 
   describe('onMutationTestReportReady', () => {
     it('should use configured file path', async () => {
+      const fileName = 'foo/bar/myReport.json';
+      const expectedPath = path.normalize(fileName);
       testInjector.options.jsonReporter = {
-        baseDir: 'foo/bar',
-        filename: 'myReport.json',
+        fileName,
       };
-      const expectedPath = path.normalize('foo/bar/myReport.json');
       actReportReady();
       await sut.wrapUp();
       expect(testInjector.logger.debug).calledWith(`Using relative path ${expectedPath}`);

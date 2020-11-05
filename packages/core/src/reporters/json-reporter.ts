@@ -28,7 +28,7 @@ export default class JsonReporter implements Reporter {
   }
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
-    const filePath = path.join(this.options.jsonReporter.baseDir, this.options.jsonReporter.filename);
+    const filePath = path.normalize(this.options.jsonReporter.fileName);
     this.log.debug(`Using relative path ${filePath}`);
     await ReporterUtil.writeFile(path.resolve(filePath), JSON.stringify(report, null, INDENTION_LEVEL));
     this.log.info(`Your report can be found at: ${fileUrl(filePath)}`);

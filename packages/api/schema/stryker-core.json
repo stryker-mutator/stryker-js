@@ -138,15 +138,10 @@
       "additionalProperties": false,
       "type": "object",
       "properties": {
-        "baseDir": {
-          "description": "The output folder for the json report.",
+        "fileName": {
+          "description": "The relative filename for the json report.",
           "type": "string",
-          "default": "reports/mutation"
-        },
-        "filename": {
-          "description": "The filename for the json report.",
-          "type": "string",
-          "default": "mutation.json"
+          "default": "reports/mutation/mutation.json"
         }
       }
     },
