@@ -27,6 +27,14 @@ describe(disableTypeChecks.name, () => {
       });
     });
 
+    describe('with jest directive (`@jest-environment`)', () => {
+      it('should insert `// @ts-nocheck` after the jest directive', async () => {
+        const inputFile = new File('foo.js', '/**\n* @jest-environment jsdom\n*/\nfoo.bar();');
+        const actual = await disableTypeChecks(inputFile, { plugins: null });
+        assertions.expectTextFileEqual(actual, new File('foo.js', '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();'));
+      });
+    });
+
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {
       const createParserSpy = sinon.spy(parsers, 'createParser');
       const inputFile = new File('foo.js', 'foo.bar();');
@@ -47,7 +55,7 @@ describe(disableTypeChecks.name, () => {
     });
 
     it('should remove @ts directive from single line', async () => {
-      await arrangeActAssert('// @ts-check\nfoo.bar();', '// \nfoo.bar();');
+      await arrangeActAssert('baz();// @ts-check\nfoo.bar();', 'baz();// \nfoo.bar();');
     });
 
     it('should not remove @ts comments which occur later on the comment line (since then they are not considered a directive)', async () => {
@@ -55,7 +63,7 @@ describe(disableTypeChecks.name, () => {
     });
 
     it('should remove @ts directive from multiline', async () => {
-      await arrangeActAssert('/* @ts-expect-error */\nfoo.bar();', '/*  */\nfoo.bar();');
+      await arrangeActAssert('baz();/* @ts-expect-error */\nfoo.bar();', 'baz();/*  */\nfoo.bar();');
     });
 
     describe('with string', () => {
