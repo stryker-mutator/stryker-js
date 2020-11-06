@@ -15,7 +15,6 @@ import ChildProcessTestRunnerDecorator from '../../../src/test-runner/child-proc
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
-  let sut: ChildProcessTestRunnerDecorator;
   let options: StrykerOptions;
   let childProcessProxyMock: {
     proxy: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -37,26 +36,34 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
       plugins: ['foo-plugin', 'bar-plugin'],
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };
-    sut = new ChildProcessTestRunnerDecorator(options, 'a working directory', loggingContext);
   });
 
+  function createSut(): ChildProcessTestRunnerDecorator {
+    return new ChildProcessTestRunnerDecorator(options, 'a working directory', loggingContext);
+  }
+
   it('should create the child process proxy', () => {
-    expect(childProcessProxyCreateStub).calledWith(
+    options.testRunnerNodeArgs = ['--inspect', '--no-warnings'];
+    createSut();
+    expect(childProcessProxyCreateStub).calledWithExactly(
       require.resolve('../../../src/test-runner/child-process-test-runner-worker.js'),
       loggingContext,
       options,
       {},
       'a working directory',
-      ChildProcessTestRunnerWorker
+      ChildProcessTestRunnerWorker,
+      ['--inspect', '--no-warnings']
     );
   });
 
   it('should forward `init` calls', () => {
+    const sut = createSut();
     childProcessProxyMock.proxy.init.resolves(42);
     return expect(sut.init()).eventually.eq(42);
   });
 
   it('should forward `dryRun` calls', async () => {
+    const sut = createSut();
     const expectedResult = factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage() });
     childProcessProxyMock.proxy.dryRun.resolves(expectedResult);
     const runOptions = factory.dryRunOptions({
@@ -68,6 +75,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
   });
 
   it('should forward `mutantRun` calls', async () => {
+    const sut = createSut();
     const expectedResult = factory.survivedMutantRunResult();
     childProcessProxyMock.proxy.mutantRun.resolves(expectedResult);
     const runOptions = factory.mutantRunOptions({
@@ -80,18 +88,21 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
 
   describe('dispose', () => {
     it('should dispose the test runner before disposing the child process itself on `dispose`', async () => {
+      const sut = createSut();
       childProcessProxyMock.proxy.dispose.resolves();
       await sut.dispose();
       expect(childProcessProxyMock.proxy.dispose).calledBefore(childProcessProxyMock.dispose);
     });
 
     it('should not reject when the child process is down', async () => {
+      const sut = createSut();
       childProcessProxyMock.proxy.dispose.rejects(new ChildProcessCrashedError(1, '1'));
       await sut.dispose();
       expect(childProcessProxyMock.dispose).called;
     });
 
     it('should only wait 2 seconds for the test runner to be disposed', async () => {
+      const sut = createSut();
       const testRunnerDisposeTask = new Task();
       childProcessProxyMock.proxy.dispose.returns(testRunnerDisposeTask.promise);
       const disposePromise = sut.dispose();

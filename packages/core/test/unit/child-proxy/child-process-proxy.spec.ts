@@ -103,6 +103,11 @@ describe(ChildProcessProxy.name, () => {
       createSut();
       expect(childProcessMock.listeners('close')).lengthOf(1);
     });
+
+    it('should set `execArgv`', () => {
+      createSut({ execArgv: ['--inspect-brk'] });
+      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match.array, sinon.match({ execArgv: ['--inspect-brk'] }));
+    });
   });
 
   describe('on close', () => {
@@ -247,6 +252,7 @@ function createSut(
     options?: Partial<StrykerOptions>;
     workingDir?: string;
     name?: string;
+    execArgv?: string[];
   } = {}
 ): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
@@ -255,6 +261,7 @@ function createSut(
     factory.strykerOptions(overrides.options),
     { name: overrides.name || 'someArg' },
     overrides.workingDir || 'workingDir',
-    HelloClass
+    HelloClass,
+    overrides.execArgv ?? []
   );
 }

@@ -77,6 +77,7 @@ export default class StrykerCli {
         `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
+      .option('--testRunnerNodeArgs <listOfNodeArgs>', 'A comma separated list of node args to be passed to test runner child processes.', list)
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option(
