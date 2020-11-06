@@ -133,6 +133,18 @@
         }
       }
     },
+    "jsonReporterOptions": {
+      "title": "JsonReporterOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "fileName": {
+          "description": "The relative filename for the json report.",
+          "type": "string",
+          "default": "reports/mutation/mutation.json"
+        }
+      }
+    },
     "mutationScoreThresholds": {
       "title": "MutationScoreThresholds",
       "additionalProperties": false,
@@ -348,6 +360,11 @@
     "htmlReporter": {
       "description": "The options for the html reporter",
       "$ref": "#/definitions/htmlReporterOptions"
+    },
+    "jsonReporter": {
+      "description": "The options for the json reporter",
+      "$ref": "#/definitions/jsonReporterOptions",
+      "default": {}
     },
     "disableTypeChecks": {
       "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.",
