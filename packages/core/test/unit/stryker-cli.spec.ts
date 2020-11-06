@@ -36,6 +36,7 @@ describe(StrykerCli.name, () => {
       [['--appendPlugins', 'foo,bar'], { appendPlugins: ['foo', 'bar'] }],
       [['--timeoutMS', '42'], { timeoutMS: 42 }],
       [['--timeoutFactor', '42'], { timeoutFactor: 42 }],
+      [['--dryRunTimeoutMinutes', '10'], { dryRunTimeoutMinutes: 10 }],
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],

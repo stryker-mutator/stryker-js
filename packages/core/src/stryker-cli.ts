@@ -86,6 +86,7 @@ export default class StrykerCli {
       )
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
+      .option('--dryRunTimeoutMinutes <number>', 'Configure an absolute timeout for the initial test run. (It can take a while.)', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
       .option(
         '-c, --concurrency <n>',

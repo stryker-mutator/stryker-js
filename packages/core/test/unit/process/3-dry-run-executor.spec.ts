@@ -38,6 +38,33 @@ describe(DryRunExecutor.name, () => {
     await expect(sut.execute()).rejectedWith(expectedError);
   });
 
+  describe('check timeout', () => {
+    let runResult: CompleteDryRunResult;
+
+    beforeEach(() => {
+      runResult = factory.completeDryRunResult();
+      testRunnerMock.dryRun.resolves(runResult);
+      runResult.tests.push(factory.successTestResult());
+    });
+
+    it('should use the configured timeout in ms if option provided', async () => {
+      testInjector.options.dryRunTimeoutMinutes = 7.5;
+      const timeoutMS = testInjector.options.dryRunTimeoutMinutes * 60 * 1000;
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        timeout: timeoutMS,
+      });
+    });
+
+    it('should use the default timeout value if option not provided', async () => {
+      const defaultTimeoutMS = 5 * 60 * 1000;
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        timeout: defaultTimeoutMS,
+      });
+    });
+  });
+
   describe('when the dryRun completes', () => {
     let runResult: CompleteDryRunResult;
 

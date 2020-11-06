@@ -107,6 +107,7 @@ You can *ignore* files by adding an exclamation mark (`!`) at the start of an ex
 * [commandRunner](#commandRunner)
 * [coverageAnalysis](#coverageAnalysis)
 * [dashboard.*](#dashboard)
+* [dryRunTimeoutMinutes](#dryRunTimeoutMinutes)
 * [fileLogLevel](#fileLogLevel)
 * [files](#files-string)
 * [logLevel](#logLevel)
@@ -235,6 +236,15 @@ When using the command line, the list can only contain a comma separated list of
 When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
+
+<a name="dryRunTimeoutMinutes"></a>
+### `dryRunTimeoutMinutes` [`number`]
+
+Default: `5`  
+Command line: `--dryRunTimeoutMinutes 5`  
+Config file: `dryRunTimeoutMinutes: 5`  
+
+Use this option to configure an absolute timeout for the initial test run. Since it can take a while we use minutes as time unit.
 
 <a name="logLevel"></a>
 ### `logLevel` [`string`]
