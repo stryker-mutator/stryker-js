@@ -18,7 +18,11 @@ export async function parse(text: string, fileName: string): Promise<TSAst> {
     configFile: false,
     babelrc: false,
     presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true }]],
-    plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
+    plugins: [
+      require.resolve('@babel/plugin-proposal-class-properties'),
+      require.resolve('@babel/plugin-proposal-private-methods'),
+      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+    ],
   });
   if (types.isProgram(ast)) {
     throw new Error(`Expected ${fileName} to contain a babel.types.file, but was a program`);

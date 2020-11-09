@@ -19,6 +19,10 @@ describe('Verify stryker has ran correctly', () => {
     expectExists('reports/stdout.txt');
   });
 
+  it('should have a json report', () => {
+    expectExists('reports/mutation/mutation.json');
+  });
+
   describe('clearText report', () => {
 
     let stdout: string;
@@ -52,6 +56,7 @@ describe('Verify stryker has ran correctly', () => {
     });
   })
 
+  
 });
 
 const createNoCoverageMutantRegex = () => /#6\.\s*\[NoCoverage\]/;

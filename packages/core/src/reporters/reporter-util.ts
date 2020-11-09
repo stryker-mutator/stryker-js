@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as ReporterUtil from 'path';
 import { promisify } from 'util';
 import { createReadStream, createWriteStream, promises as fs } from 'fs';
 
@@ -20,6 +20,6 @@ export const deleteDir = promisify(rimraf);
 export const mkdir = mkdirp;
 
 export async function writeFile(fileName: string, content: string) {
-  await mkdirp(path.dirname(fileName));
+  await mkdirp(ReporterUtil.dirname(fileName));
   await fs.writeFile(fileName, content, 'utf8');
 }

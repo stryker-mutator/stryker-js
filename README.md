@@ -22,7 +22,7 @@ For an introduction to mutation testing and Stryker's features, see [stryker-mut
 
 ## Getting started
 
-For the quickstart, see [quickstart](https://stryker-mutator.io/quickstart.html).
+For the quickstart, see [quickstart](https://stryker-mutator.io/docs/stryker/getting-started/).
 
 ## Usage
 
@@ -34,4 +34,4 @@ See the [stryker's package readme](https://github.com/stryker-mutator/stryker/bl
 
 ## Supported mutators
 
-See our website for the [list of currently supported mutators](https://stryker-mutator.io/mutators.html).
+See our website for the [list of currently supported mutators](https://stryker-mutator.io/docs/mutation-testing-elements/supported-mutators/).

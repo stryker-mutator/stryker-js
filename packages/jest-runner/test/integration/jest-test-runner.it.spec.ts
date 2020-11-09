@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { platform } from 'os';
 
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -48,7 +49,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    it('should run tests on the example React + TypeScript project', async () => {
+    it('should run tests on the example React + TypeScript project', async function () {
+      if (platform() === 'win32') {
+        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
+        this.skip();
+      }
       // TODO: Get a proper React TS project that works on Windows
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
@@ -59,7 +64,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
       expectToHaveSuccessfulTests(runResult, 1);
     });
 
-    it('should set the test name and timeSpentMs', async () => {
+    it('should set the test name and timeSpentMs', async function () {
+      if (platform() === 'win32') {
+        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
+        this.skip();
+      }
       process.chdir(getProjectRoot('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 

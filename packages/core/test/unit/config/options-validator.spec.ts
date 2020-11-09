@@ -61,6 +61,16 @@ describe(OptionsValidator.name, () => {
     actValidationErrors('Config option "timeoutFactor" has the wrong type. It should be a number, but was a string.');
   });
 
+  it('should be invalid with non-numeric dryRunTimeout', () => {
+    breakConfig('dryRunTimeoutMinutes', 'break');
+    actValidationErrors('Config option "dryRunTimeoutMinutes" has the wrong type. It should be a number, but was a string.');
+  });
+
+  it('should be invalid with negative numeric dryRunTimeout', () => {
+    breakConfig('dryRunTimeoutMinutes', -1);
+    actValidationErrors('Config option "dryRunTimeoutMinutes" should be >= 0, was -1.');
+  });
+
   describe('plugins', () => {
     it('should be invalid with non-array plugins', () => {
       breakConfig('plugins', '@stryker-mutator/typescript');
