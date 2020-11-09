@@ -4,7 +4,7 @@
   "scripts": {
     "test": "stryker run",
     "test:unit": "karma start",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts"
   },
   "dependencies": {
     "lit-element": "~2.3.1",

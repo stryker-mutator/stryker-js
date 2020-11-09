@@ -11,7 +11,7 @@
     "unit": "cross-env BABEL_ENV=test karma start test/karma.conf.js --single-run",
     "pretest": "rimraf \"reports\"",
     "test": "stryker run --fileLogLevel trace",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts"
   },
   "dependencies": {
     "@babel/polyfill": "~7.7.0",

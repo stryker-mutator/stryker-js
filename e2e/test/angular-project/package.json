@@ -8,7 +8,7 @@
     "build": "ng build",
     "pretest": "rimraf reports",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts"
   },
   "private": true,
   "dependencies": {

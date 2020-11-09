@@ -12,7 +12,7 @@
     "test:unit": "mocha",
     "pretest": "rimraf \"reports\" \"dist\"",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/*.ts"
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts"
   },
   "mocha": {
     "spec":  [

@@ -14,7 +14,7 @@
     "report-coverage": "coveralls < ./coverage/lcov.info",
     "test-original": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts",
     "cover": "npm test -- --coverage",
     "start": "cross-env BABEL_ENV=webpack webpack-dev-server --config ./webpack.dev.config.js --watch",
     "build-docs": "cross-env BABEL_ENV=webpack WEBPACK_BUILD=production webpack --config ./webpack.dev.config.js --progress --colors",

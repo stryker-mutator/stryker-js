@@ -4,7 +4,7 @@
   "scripts": {
     "test": "stryker run",
     "test:unit": "jest",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts"
   },
   "dependencies": {
     "azure-storage": "~2.10.3"
