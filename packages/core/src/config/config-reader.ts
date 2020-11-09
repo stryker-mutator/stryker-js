@@ -35,7 +35,8 @@ export default class ConfigReader {
         'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
       );
       options = defaultOptions();
-      (configModule as Function)(createConfig(options));
+      type configFunction = (opts: StrykerOptions) => void;
+      (configModule as configFunction)(createConfig(options));
     } else {
       this.validator.validate(configModule);
       options = configModule;
@@ -55,7 +56,7 @@ export default class ConfigReader {
     });
     let result: ReturnType<typeof configExplorer.search> = null;
 
-    if (!this.cliOptions.configFile) {     
+    if (!this.cliOptions.configFile) {
       this.log.debug('Searching for config file');
       try {
         result = configExplorer.search();

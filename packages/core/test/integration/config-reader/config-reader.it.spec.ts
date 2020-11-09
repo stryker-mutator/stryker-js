@@ -90,7 +90,7 @@ describe(ConfigReader.name, () => {
 
         sut = createSut({});
         const result = sut.readConfig();
-        
+
         expect(result).to.deep.equal(factory.strykerOptions());
         expect(testInjector.logger.warn).not.called;
       });
