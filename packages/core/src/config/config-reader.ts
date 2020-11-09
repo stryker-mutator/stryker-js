@@ -10,7 +10,16 @@ import { cosmiconfigSync } from 'cosmiconfig';
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 
-import { OptionsValidator } from './options-validator';
+import { defaultOptions, OptionsValidator } from './options-validator';
+import { createConfig } from './create-config';
+
+export const CONFIG_SYNTAX_HELP = `
+/**
+  * @type {import('@stryker-mutator/api/core').StrykerOptions}
+  */
+module.exports = {
+  // You're options here!
+}`.trim();
 
 const MODULE_NAME = 'stryker';
 
@@ -20,8 +29,18 @@ export default class ConfigReader {
 
   public readConfig(): StrykerOptions {
     const configModule = this.loadConfigModule();
-    this.validator.validate(configModule);
-    let options = configModule;
+    let options;
+    if (typeof configModule === 'function') {
+      this.log.warn(
+        'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
+      );
+      options = defaultOptions();
+      (configModule as Function)(createConfig(options));
+    } else {
+      this.validator.validate(configModule);
+      options = configModule;
+    }
+
     // merge the config from config file and cliOptions (precedence)
     deepMerge(options, this.cliOptions);
     if (this.log.isDebugEnabled()) {
@@ -34,29 +53,38 @@ export default class ConfigReader {
     const configExplorer = cosmiconfigSync(`${MODULE_NAME}`, {
       searchPlaces: ['package.json', `${MODULE_NAME}.conf.js`, `${MODULE_NAME}.conf.json`],
     });
-    let result: ReturnType<typeof configExplorer.search>;
+    let result: ReturnType<typeof configExplorer.search> = null;
 
-    try {
-      if (!this.cliOptions.configFile) {
-        this.log.debug('Searching for config file');
+    if (!this.cliOptions.configFile) {     
+      this.log.debug('Searching for config file');
+      try {
         result = configExplorer.search();
-        if (result) {
-          this.log.info(`Using ${result.filepath}`);
-          this.cliOptions.configFile = result.filepath;
-        } else {
-          this.log.info('No config file specified. Running with command line arguments only.');
-          this.log.info('Use `stryker init` command to generate your config file.');
-        }
-      } else {
-        this.log.debug(`Loading config ${this.cliOptions.configFile}`);
-        const resolvedFilename = this.resolveConfigFile(String(this.cliOptions.configFile));
-        result = configExplorer.load(resolvedFilename);
+      } catch (e) {
+        this.handleSyntaxError(e);
       }
-    } catch (e) {
-      throw new ConfigError(e.message);
+
+      if (result) {
+        this.log.info(`Using ${result.filepath}`);
+        this.cliOptions.configFile = result.filepath;
+      } else {
+        this.log.info('No config file specified. Running with command line arguments only.');
+        this.log.info('Use `stryker init` command to generate your config file.');
+      }
+    } else {
+      this.log.debug(`Loading config ${this.cliOptions.configFile}`);
+      const resolvedFilename = this.resolveConfigFile(String(this.cliOptions.configFile));
+      try {
+        result = configExplorer.load(resolvedFilename);
+      } catch (e) {
+        this.handleSyntaxError(e);
+      }
     }
 
     if (result && result.config) {
+      if (typeof result.config !== 'function' && typeof result.config !== 'object') {
+        this.log.fatal('Config file must export an object!\n' + CONFIG_SYNTAX_HELP);
+        throw new ConfigError('Config file must export an object!');
+      }
       return result.config;
     }
     return {};
@@ -69,5 +97,11 @@ export default class ConfigReader {
     } catch {
       throw new ConfigError(`File ${configFile} does not exist!`);
     }
+  }
+
+  private handleSyntaxError(e: Error) {
+    this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
+    this.log.info("Please execute `stryker init` in your project's root directory.");
+    throw new ConfigError(`Invalid config file. Inner error: SyntaxError: ${e.message}`);
   }
 }

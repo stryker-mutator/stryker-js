@@ -5,6 +5,8 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
+import * as cosmiconfig from 'cosmiconfig';
+
 import ConfigReader from '../../../src/config/config-reader';
 import { coreTokens } from '../../../src/di';
 import { OptionsValidator } from '../../../src/config/options-validator';
@@ -81,12 +83,50 @@ describe(ConfigReader.name, () => {
       });
 
       it('should use the default config if no stryker.conf file was found', () => {
-        process.chdir(resolveTestResource('no-config'));
+        sinon.stub(cosmiconfig, 'cosmiconfigSync').returns({
+          search: (searchFrom?: string) => null,
+          load: (filepath: string) => null,
+        });
+
+        sut = createSut({});
+        const result = sut.readConfig();
+        
+        expect(result).to.deep.equal(factory.strykerOptions());
+        expect(testInjector.logger.warn).not.called;
+      });
+
+      it('should use config from package.json', () => {
+        process.chdir(resolveTestResource('config-in-package-json'));
 
         sut = createSut({});
         const result = sut.readConfig();
 
-        expect(result).to.deep.equal(factory.strykerOptions());
+        expect(result.valid).to.be.eq('config');
+        expect(result.should).to.be.eq('be');
+        expect(result.read).to.be.eq(true);
+        expect(result.type).to.be.eq('package.json');
+        expect(testInjector.logger.warn).not.called;
+      });
+
+      it('should find a config file in parent folder', () => {
+        process.chdir(resolveTestResource('config-in-parent-folder/child-folder'));
+
+        sut = createSut({});
+        const result = sut.readConfig();
+
+        expect(result.valid).to.be.eq('config');
+        expect(result.should).to.be.eq('be');
+        expect(result.read).to.be.eq(true);
+        expect(testInjector.logger.warn).not.called;
+      });
+
+      it('should use the nearest config file if multiple configs are available in different folders', () => {
+        process.chdir(resolveTestResource('config-in-parent-and-child-folder/child-folder'));
+
+        sut = createSut({});
+        const result = sut.readConfig();
+
+        expect(result.type).to.be.eq('child');
         expect(testInjector.logger.warn).not.called;
       });
     });

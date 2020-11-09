@@ -1,0 +1,8 @@
+{
+  "stryker": {
+    "valid": "config",
+    "should": "be",
+    "read": true,
+    "type": "package.json"
+  }
+}
