@@ -51,7 +51,7 @@ export default class ChildProcessProxy<T> implements Disposable {
   ) {
     this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
     this.initTask = new Task();
-    this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
+    this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({
       additionalInjectableValues,
       kind: WorkerMessageKind.Init,

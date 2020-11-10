@@ -94,6 +94,17 @@ describe(ChildProcessProxy.name, () => {
       expect(childProcessMock.send).calledWith(serialize(expectedMessage));
     });
 
+    it('should log the exec arguments and require name', () => {
+      // Act
+      createSut({
+        loggingContext: LOGGING_CONTEXT,
+        execArgv: ['--cpu-prof', '--inspect'],
+      });
+
+      // Assert
+      expect(logMock.debug).calledWith('Started %s in child process %s%s', 'HelloClass', childProcessMock.pid, ' (using args --cpu-prof --inspect)');
+    });
+
     it('should listen to worker process', () => {
       createSut();
       expect(childProcessMock.listeners('message')).lengthOf(1);
