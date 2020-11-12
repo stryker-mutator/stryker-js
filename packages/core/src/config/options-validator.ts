@@ -11,6 +11,8 @@ import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 import { isWarningEnabled } from '../utils/object-utils';
 
+import CommandTestRunner from '../test-runner/command-test-runner';
+
 import { describeErrors } from './validation-errors';
 
 const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore', logger: false });
@@ -78,6 +80,11 @@ export class OptionsValidator {
       if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
+    }
+    if (CommandTestRunner.is(options.testRunner) && options.testRunnerNodeArgs.length) {
+      this.log.warn(
+        'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+      );
     }
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
