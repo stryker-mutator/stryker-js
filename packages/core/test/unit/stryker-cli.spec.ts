@@ -40,7 +40,7 @@ describe(StrykerCli.name, () => {
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
-      [['--testRunnerNodeArgs', '--inspect,--gc'], { testRunnerNodeArgs: ['--inspect', '--gc'] }],
+      [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],

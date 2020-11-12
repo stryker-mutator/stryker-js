@@ -411,10 +411,10 @@ See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-
 ### `testRunnerNodeArgs` [`string[]`]
 
 Default: `[]`  
-Command line: `--testRunnerNodeArgs --inspect-brk,--cpu-prof`  
+Command line: `--testRunnerNodeArgs "--inspect-brk --cpu-prof"`  
 Config file: `testRunnerNodeArgs: ['--inspect-brk', '--cpu-prof']`  
 
-Configure arguments to be passed as exec arguments to the test runner child process. For example, running Stryker with `--timeoutMS 9999999 --concurrency 1 --testRunnerNodeArgs --inspect-brk` will allow you to debug the test runner child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
+Configure arguments to be passed as exec arguments to the test runner child process. For example, running Stryker with `--timeoutMS 9999999 --concurrency 1 --testRunnerNodeArgs "--inspect-brk"` will allow you to debug the test runner child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
 
 <a name="thresholds"></a>
 ### `thresholds` [`object`]
