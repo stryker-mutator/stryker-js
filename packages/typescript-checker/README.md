@@ -46,7 +46,7 @@ Default: `'tsconfig.json'`
 
 The path to your [tsconfig](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html). Project references _are supported_, `--build` mode will be enabled automatically when references are found in your tsconfig.json file.
 
-_Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to ovoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker/issues/391#issue-259829320) for more information on this_
+_Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to avoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker/issues/391#issue-259829320) for more information on this_
 
 ```json
 {
