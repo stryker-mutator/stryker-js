@@ -15,7 +15,7 @@ This plugin enables type checking on mutants, so you won't have to waste time on
 
 ## Install
 
-First, install Stryker itself (you can follow the [quickstart on the website](https://stryker-mutator.io/quickstart.html))
+First, install Stryker itself (you can follow the [getting started](./getting-started.md))
 
 Next, install this package:
 

@@ -5,7 +5,7 @@ custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/kar
 
 ## Installation
 
-A plugin to use the karma test runner (or [@angular/cli](https://www.npmjs.com/package/@angular/cli)'s `ng test`) in [Stryker](https://stryker-mutator.io).
+A plugin to use the karma test runner (or [@angular/cli](https://www.npmjs.com/package/@angular/cli)'s `ng test`) in Stryker.
 
 ## Install
 

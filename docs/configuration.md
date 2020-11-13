@@ -192,8 +192,7 @@ Config file: `"plugins": ["@stryker-mutator/jasmine-framework", "@stryker-mutato
 With `plugins`, you can add additional Node modules for Stryker to load (or `require`).
 By default, all `node_modules` starting with `@stryker-mutator/*` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
-you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or
-[stryker-mutator.io](https://stryker-mutator.io).
+you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or use one of the officially supported plugins.
 
 ### `reporters` [`string[]`]
 
@@ -203,9 +202,8 @@ Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html
 
 With `reporters`, you can set the reporters for stryker to use.
 These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
-By default, `clear-text`, `progress`, `html` are active if no reporters are configured.
-You can load additional plugins to get more reporters. See [stryker-mutator.io](https://stryker-mutator.io)
-for an up-to-date list of supported reporter plugins and a description on each reporter.
+By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
+for a Fdescription on each reporter.
 
 The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
 
@@ -265,8 +263,7 @@ With `testRunner` you specify the test runner that Stryker uses to run your test
 The command test runner can be made to work in any use case, but comes with a performance
 penalty, as Stryker cannot do any optimizations and just runs all tests for all mutants.
 If possible, you should try to use one of the test runner plugins that hook into your test runner of choice.
-For example: install and use the `stryker-karma-runner` to use `karma` as a test runner.
-See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
+For example: install and use the `@stryker-mutator/karma-runner` to use `karma` as a test runner.
 
 ### `testRunnerNodeArgs` [`string[]`]
 
