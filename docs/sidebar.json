@@ -1,0 +1,20 @@
+[
+  "stryker/introduction",
+  "stryker/getting-started",
+  "stryker/usage",
+  "stryker/config-file",
+  "stryker/configuration",
+  "stryker/plugins",
+  "stryker/jasmine-runner",
+  "stryker/jest-runner",
+  "stryker/karma-runner",
+  "stryker/mocha-runner",
+  "stryker/typescript-checker",
+  {
+    "Guides": [
+      "stryker/guides/angular",
+      "stryker/guides/react",
+      "stryker/guides/vuejs"
+    ]
+  }
+]
