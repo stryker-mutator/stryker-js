@@ -42,7 +42,7 @@ Stryker already comes with the most useful reporters included:
 
 A checker plugin can _check_ a mutant before it is mutation tested. The check can _fail_ or _pass_; when a check fails, the mutant is not mutation tested.
 
-- **[TypeScript](./configuration/typescript-checker) (@stryker-mutator/typescript-checker)**: This checker will check each mutant for typescript compile errors.
+- **[TypeScript](./typescript-checker) (@stryker-mutator/typescript-checker)**: This checker will check each mutant for typescript compile errors.
 
 ## &lt;Your plugin here&gt;
 
