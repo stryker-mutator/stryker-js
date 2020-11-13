@@ -35,6 +35,10 @@ export class Echo {
     return new File('foobar.txt', 'hello foobar');
   }
 
+  public warning() {
+    process.emitWarning('Foo warning');
+  }
+
   public cwd() {
     return process.cwd();
   }

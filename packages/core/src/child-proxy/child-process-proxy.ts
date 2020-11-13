@@ -46,11 +46,12 @@ export default class ChildProcessProxy<T> implements Disposable {
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
     additionalInjectableValues: unknown,
-    workingDirectory: string
+    workingDirectory: string,
+    execArgv: string[]
   ) {
-    this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv: [] });
+    this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
     this.initTask = new Task();
-    this.log.debug('Starting %s in child process %s', requirePath, this.worker.pid);
+    this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({
       additionalInjectableValues,
       kind: WorkerMessageKind.Init,
@@ -77,9 +78,10 @@ export default class ChildProcessProxy<T> implements Disposable {
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    injectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>
+    injectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>,
+    execArgv: string[]
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory);
+    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory, execArgv);
   }
 
   private send(message: WorkerMessage) {
@@ -168,6 +170,10 @@ export default class ChildProcessProxy<T> implements Disposable {
 
   public get stdout() {
     return this.stdoutBuilder.toString();
+  }
+
+  public get stderr() {
+    return this.stderrBuilder.toString();
   }
 
   private reportError(error: Error) {

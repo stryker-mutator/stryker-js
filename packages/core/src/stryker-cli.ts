@@ -20,8 +20,10 @@ function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T) {
   };
 }
 
-function list(val: string) {
-  return val.split(',');
+const list = createSplitter(',');
+
+function createSplitter(sep: string) {
+  return (val: string) => val.split(sep);
 }
 
 function parseBoolean(val: string) {
@@ -77,6 +79,11 @@ export default class StrykerCli {
         `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
+      .option(
+        '--testRunnerNodeArgs <listOfNodeArgs>',
+        'A comma separated list of node args to be passed to test runner child processes.',
+        createSplitter(' ')
+      )
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option(

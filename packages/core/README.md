@@ -395,9 +395,9 @@ _Note: Use of "testFramework" is no longer needed. You can remove it from your c
 <a name="testRunner"></a>
 ### `testRunner` [`string`]
 
-Default: `'command'`
-Command line: `--testRunner karma`
-Config file: `testRunner: 'karma'`
+Default: `'command'`  
+Command line: `--testRunner karma`  
+Config file: `testRunner: 'karma'`  
 
 With `testRunner` you specify the test runner that Stryker uses to run your tests. The default value is `command`. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the `commandRunner: { command: 'npm run mocha' }`. It uses `npm test` as the command by default.
 
@@ -406,6 +406,15 @@ penalty, as Stryker cannot do any optimizations and just runs all tests for all 
 If possible, you should try to use one of the test runner plugins that hook into your test runner of choice.
 For example: install and use the `stryker-karma-runner` to use `karma` as a test runner.
 See the [list of plugins](https://stryker-mutator.io/plugins.html) for an up-to-date list of supported test runners and plugins.
+
+<a name="testRunnerNodeArgs"></a>
+### `testRunnerNodeArgs` [`string[]`]
+
+Default: `[]`  
+Command line: `--testRunnerNodeArgs "--inspect-brk --cpu-prof"`  
+Config file: `testRunnerNodeArgs: ['--inspect-brk', '--cpu-prof']`  
+
+Configure arguments to be passed as exec arguments to the test runner child process. For example, running Stryker with `--timeoutMS 9999999 --concurrency 1 --testRunnerNodeArgs "--inspect-brk"` will allow you to debug the test runner child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
 
 <a name="thresholds"></a>
 ### `thresholds` [`object`]
