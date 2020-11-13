@@ -28,7 +28,7 @@ We provide the `@stryker-mutator/api` dependency on the types and basic helper f
 Next, you need to create a class that _is the actual plugin_. For example:
 
 ```ts
-import { Transpiler } from '@stryker-mutator/api/transpile';
+import { Checker } from '@stryker-mutator/api/check';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
 class FooTranspiler implements Transpiler {

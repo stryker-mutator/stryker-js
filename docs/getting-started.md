@@ -1,6 +1,6 @@
 ---
 title: Getting started
-custom_edit_url: https://github.com/stryker-mutator/stryker4s/edit/master/docs/getting-started.md
+custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/introduction/getting-started.md
 ---
 
 Install Stryker using [npm](https://nodejs.org).
@@ -12,7 +12,7 @@ Install Stryker using [npm](https://nodejs.org).
 Make sure you have npm and nodejs installed. Open a terminal / command prompt and cd to the root of your project you want to mutation test.
 
 ```bash
-$ cd my-project
+cd my-project
 ```
 
 ---
@@ -23,13 +23,13 @@ The easiest way to get started with Stryker is by installing the stryker-cli glo
 It is a small package which forwards commands to your local stryker instance.
 
 ```bash
-$ npm install -g stryker-cli
+npm install -g stryker-cli
 ```
 
 Optionally, you could also install stryker directly yourself.
 
 ```bash
-$ npm install --save-dev @stryker-mutator/core
+npm install --save-dev @stryker-mutator/core
 ```
 
 If you choose to not install the stryker-cli, use `npx stryker` (after installing `@stryker-mutator/core` locally) instead of `stryker` for the rest of the quickstart.
@@ -41,7 +41,7 @@ If you choose to not install the stryker-cli, use `npx stryker` (after installin
 Run this command the configure stryker.
 
 ```bash
-$ stryker init
+stryker init
 ```
 
 If you're asked to install stryker, choose **Yes**. Follow the questionnaire.
@@ -59,14 +59,16 @@ For more information on what these options mean, take a look at the [Stryker rea
 Run stryker to mutation test your project
 
 ```bash
-$ stryker run
+stryker run
 ```
 
----
+Have troubles running Stryker? Try running with trace logging.
 
-## 5 What's next?
+```bash
+stryker run --logLevel trace
+```
 
-Are you having troubles? Try enabling debug logging by adding `logLevel: 'debug'` to your stryker.conf.js.
-To also see the output of your test runner, use `logLevel: 'trace'`.
 You can also have a look at the [readme file of stryker](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme) for more information about the configuration.
+
 Please [report any issues](http://github.com/stryker-mutator/stryker/issues) you have or let us know [via Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
+

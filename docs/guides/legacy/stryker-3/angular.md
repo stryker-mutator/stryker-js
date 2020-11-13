@@ -1,6 +1,6 @@
 ---
 title: Angular
-custom_edit_url: https://github.com/stryker-mutator/stryker4s/edit/master/docs/guides/legacy/stryker-3/angular.md
+custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/legacy/stryker-3/angular.md
 ---
 
 Stryker supports Angular projects using the Angular CLI between @angular/cli 6.1.0 and 8.3.29. Are you using an older version? Then there are some tips later in this document.
