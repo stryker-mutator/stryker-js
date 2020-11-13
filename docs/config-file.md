@@ -7,7 +7,7 @@ Although a config file is not mandatory, it is recommended. You can define your 
 
 ## Configuration options
 
-See [configuration](./configuration/core.md) for a list of available options.
+See [configuration](./configuration.md) for a list of available options.
 
 ## Setup
 
@@ -65,5 +65,3 @@ The following is an example `stryker.conf.json` file. It specifies running mocha
   "coverageAnalysis": "perTest"
 }
 ```
-
-
