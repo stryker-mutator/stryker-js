@@ -3,7 +3,7 @@ title: Configuration
 custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/configuration.md
 ---
 
-This page describes the available configuration options in Stryker's core package. Please keep in mind that your plugins might also need configuration, see yout plugins configuration page for that.
+This page describes the available configuration options in Stryker's core package. Please keep in mind that your plugins might also need configuration, see your plugin's configuration page for that.
 
 All configuration options can either be set via the command line or via a config file.
 
@@ -200,10 +200,10 @@ Default: `['clear-text', 'progress', 'html']`<br />
 Command line: `--reporters clear-text,progress,dots,dashboard,html,json`<br />
 Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html", "json"]`
 
-With `reporters`, you can set the reporters for stryker to use.
+With `reporters`, you can set the reporters for Stryker to use.
 These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
-for a Fdescription on each reporter.
+for a fuller description of each reporter.
 
 The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
 
