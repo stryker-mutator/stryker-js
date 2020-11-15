@@ -203,7 +203,7 @@ Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html
 With `reporters`, you can set the reporters for Stryker to use.
 These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
-for a fuller description of each reporter.
+for a full description of each reporter.
 
 The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
 
