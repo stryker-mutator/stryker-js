@@ -24,3 +24,7 @@ jobs:
       run: npm run perf
       env:
         PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
+    - uses: actions/upload-artifact@v2
+      with:
+        name: my-artifact
+        path: perf/test/*/reports/mutation
