@@ -27,12 +27,11 @@ async function installAll() {
 }
 
 async function install(testDir: string) {
-  const testDirFullName = path.resolve(testRootDir, testDir);
-  const strykerConfig = require(path.resolve(testDirFullName, 'stryker.conf'));
+  const strykerConfig = require(`../test/${testDir}/stryker.conf`);
   const packageManager: string | undefined = strykerConfig.packageManager;
   if(packageManager === 'yarn') {
-    await execa('yarn', ['install', '--frozenLockFile'], { cwd: testDirFullName });
+    await execa('yarn', ['install', '--frozenLockFile'], { cwd: path.resolve(testRootDir, testDir) });
   }else {
-    await execa('npm', ['ci'], { cwd: testDirFullName });
+    await execa('npm', ['ci'], { cwd: path.resolve(testRootDir, testDir) });
   }
 }
