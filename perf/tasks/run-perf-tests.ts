@@ -40,11 +40,12 @@ async function runTest(testDir: string) {
 }
 
 function execStryker(args: string[], testDir: string): Observable<string> {
+  const strykerBin = require.resolve('../../packages/core/bin/stryker');
   const currentTestDir = path.resolve(testRootDir, testDir);
-  console.log(`(${testDir}) exec "${require.resolve('../../packages/core/bin/stryker')} ${args.join(' ')}"`);
+  console.log(`(${testDir}) exec "${strykerBin} ${args.join(' ')}"`);
 
   return new Observable(observer => {
-    const testProcess = execa('npx', args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
+    const testProcess = execa(strykerBin, args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
     let stderr = '';
     testProcess.stderr?.on('data', chunk => stderr += chunk.toString());
     testProcess.stdout?.on('data', chunk => observer.next(chunk.toString().trim()));
