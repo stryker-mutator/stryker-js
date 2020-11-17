@@ -32,16 +32,16 @@ async function runPerfTests() {
 
 async function runTest(testDir: string) {
   console.time(testDir);
-  await npx(['stryker', 'run'], testDir).pipe(
+  await execStryker(['run'], testDir).pipe(
     throttleTime(60000),
     tap(logMessage => console.timeLog(testDir, 'last log message: ', logMessage))
   ).toPromise();
   console.timeEnd(testDir);
 }
 
-function npx(args: string[], testDir: string): Observable<string> {
+function execStryker(args: string[], testDir: string): Observable<string> {
   const currentTestDir = path.resolve(testRootDir, testDir);
-  console.log(`Exec ${testDir} npx ${args.join(' ')}`);
+  console.log(`(${testDir}) exec "${require.resolve('../../packages/core/bin/stryker')} ${args.join(' ')}"`);
 
   return new Observable(observer => {
     const testProcess = execa('npx', args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });

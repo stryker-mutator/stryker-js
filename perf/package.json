@@ -6,8 +6,8 @@
     "ts-node": "~8.10.2"
   },
   "scripts": {
-    "merge-config": "ts-node -p tasks/merge-config.ts",
     "postinstall": "npm run merge-config && npm run bootstrap",
+    "merge-config": "ts-node -p tasks/merge-config.ts",
     "bootstrap": "npm run bootstrap:deps && npm run bootstrap:local",
     "bootstrap:deps": "ts-node -p tasks/install.ts",
     "bootstrap:local": "ts-node -p tasks/install-local-dependencies.ts",
