@@ -22,6 +22,6 @@
   "testRunner": "jest",
   "coverageAnalysis": "off",
   "plugins": [
-    "/home/runner/work/stryker/stryker/packages/mocha-runner"
+    "/home/runner/work/stryker/stryker/packages/jest-runner"
   ]
 }
