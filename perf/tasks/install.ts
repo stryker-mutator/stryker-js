@@ -29,9 +29,16 @@ async function installAll() {
 async function install(testDir: string) {
   const strykerConfig = require(`../test/${testDir}/stryker.conf`);
   const packageManager: string | undefined = strykerConfig.packageManager;
+  let command = 'npm';
+  let args: string[] = [];
   if (packageManager === 'yarn') {
-    await execa('yarn', ['install', '--frozen-lockfile'], { cwd: path.resolve(testRootDir, testDir) });
+    command = 'yarn';
+    args.push('install', '--frozen-lockfile');
+  } else if(fs.existsSync(path.resolve(testRootDir, testDir, 'package-lock.json'))) {
+    args.push('ci');
   } else {
-    await execa('npm', ['ci'], { cwd: path.resolve(testRootDir, testDir) });
+    args.push('install');
   }
+  console.log(`[${testDir}] ${command} ${args.join(' ')}`);
+  await execa(command, args, { cwd: path.resolve(testRootDir, testDir) });
 }
