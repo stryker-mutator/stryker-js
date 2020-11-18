@@ -4,8 +4,9 @@ import decamelize = require('decamelize');
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import * as semver from 'semver';
 
+import { requireResolve } from '@stryker-mutator/util';
+
 import { NgConfigOptions, NgTestArguments } from '../../src-generated/karma-runner-options';
-import { requireModule } from '../utils';
 
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 
@@ -14,7 +15,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
   verifyAngularCliVersion();
 
   // Make sure require angular cli from inside this function, that way it won't break if angular isn't installed and this file is required.
-  let cli = requireModule('@angular/cli');
+  let cli: any = requireResolve('@angular/cli');
   if ('default' in cli) {
     cli = cli.default;
   }
@@ -47,7 +48,8 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
 }
 
 function verifyAngularCliVersion() {
-  const version = semver.coerce(requireModule('@angular/cli/package').version);
+  const pkg = requireResolve('@angular/cli/package') as { version: string };
+  const version = semver.coerce(pkg.version);
   if (!version || semver.lt(version, MIN_ANGULAR_CLI_VERSION)) {
     throw new Error(`Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`);
   }
