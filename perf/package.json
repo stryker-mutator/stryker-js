@@ -8,9 +8,7 @@
   "scripts": {
     "postinstall": "npm run merge-config && npm run bootstrap",
     "merge-config": "ts-node -p tasks/merge-config.ts",
-    "bootstrap": "npm run bootstrap:deps && npm run bootstrap:local",
-    "bootstrap:deps": "ts-node -p tasks/install.ts",
-    "bootstrap:local": "ts-node -p tasks/install-local-dependencies.ts",
+    "bootstrap": "ts-node -p tasks/install.ts",
     "test": "ts-node tasks/run-perf-tests.ts"
   }
 }
