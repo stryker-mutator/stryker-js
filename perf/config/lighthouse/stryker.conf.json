@@ -20,8 +20,5 @@
     "lighthouse-core/audits/**/*.js"
   ],
   "testRunner": "jest",
-  "coverageAnalysis": "off",
-  "plugins": [
-    "/home/runner/work/stryker/stryker/packages/jest-runner"
-  ]
+  "coverageAnalysis": "off"
 }
