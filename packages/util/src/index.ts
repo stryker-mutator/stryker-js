@@ -10,3 +10,4 @@ export * from './flat-map';
 export * from './i';
 export * from './task';
 export * from './directory-require-cache';
+export * from './require-resolve';

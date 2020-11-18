@@ -1,10 +1,10 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import * as utils from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
 import * as sut from '../../../src/starters/angular-starter';
-import * as utils from '../../../src/utils';
 
 describe('angularStarter', () => {
   let requireModuleStub: sinon.SinonStub;
@@ -13,7 +13,7 @@ describe('angularStarter', () => {
 
   beforeEach(() => {
     cliStub = sinon.stub();
-    requireModuleStub = sinon.stub(utils, 'requireModule');
+    requireModuleStub = sinon.stub(utils, 'requireResolve');
     requireModuleStub.withArgs('@angular/cli').returns(cliStub);
     getLogger = () => testInjector.logger;
   });

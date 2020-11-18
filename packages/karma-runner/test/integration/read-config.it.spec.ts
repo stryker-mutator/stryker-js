@@ -46,4 +46,8 @@ describe('read config integration', () => {
     expect(test2.status).eq(TestStatus.Success);
     expect(test3.status).eq(TestStatus.Success);
   });
+
+  it('should be able to require a local dependency', () => {
+    
+  });
 });
