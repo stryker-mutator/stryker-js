@@ -4,11 +4,11 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Config, ConfigOptions, ClientOptions } from 'karma';
 import * as sinon from 'sinon';
+import * as utils from '@stryker-mutator/util';
 
 import sut = require('../../../src/starters/stryker-karma.conf');
 import StrykerReporter from '../../../src/karma-plugins/stryker-reporter';
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
-import * as utils from '../../../src/utils';
 
 describe('stryker-karma.conf.js', () => {
   let getLogger: sinon.SinonStub;
@@ -19,7 +19,7 @@ describe('stryker-karma.conf.js', () => {
     config = new KarmaConfigMock();
     getLogger = sinon.stub();
     getLogger.returns(testInjector.logger);
-    requireModuleStub = sinon.stub(utils, 'requireModule');
+    requireModuleStub = sinon.stub(utils, 'requireResolve');
     sut.setGlobals({
       getLogger,
     });
