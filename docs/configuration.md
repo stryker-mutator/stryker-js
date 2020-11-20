@@ -235,7 +235,6 @@ node_modules directory this would not be possible.
 Stryker will look for the node_modules directory to use in the current basePath (or current working directory) and
 its parent directories.
 
-<a name="tempDirName"></a>
 ### `tempDirName` [`string`]
 
 Default: `'.stryker-tmp'`<br />
