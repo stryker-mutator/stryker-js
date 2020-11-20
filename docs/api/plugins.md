@@ -1,17 +1,14 @@
 ---
 title: Plugins
-custom_edit_url: https://github.com/stryker-mutator/stryker4s/edit/master/docs/api/plugins.md
+custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/api/plugins.md
 ---
 
 You can extend Stryker with 6 plugin kinds:
 
 ```ts
 export enum PluginKind {
-  ConfigEditor = 'ConfigEditor',
+  Checker = 'Checker',
   TestRunner = 'TestRunner',
-  TestFramework = 'TestFramework',
-  Transpiler = 'Transpiler',
-  Mutator = 'Mutator',
   Reporter = 'Reporter',
 }
 ```
@@ -28,17 +25,28 @@ We provide the `@stryker-mutator/api` dependency on the types and basic helper f
 Next, you need to create a class that _is the actual plugin_. For example:
 
 ```ts
-import { Checker } from '@stryker-mutator/api/check';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test-runner';
 
-class FooTranspiler implements Transpiler {
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
-    // TODO: implement
+class FooTestRunner implements TestRunner {
+  public init(): Promise<void> {
+    // TODO: Implement or remove
+  }
+  
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+   // TODO: Implement
+  }
+  
+  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    // TODO: Implement
+  }
+  
+  public dispose(): Promise<void> {
+   // TODO: Implement or remove
   }
 }
 ```
 
-In this example, a Transpiler plugin is constructed. Each plugin kind has it's own interface, so it's easy to create.
+In this example, a `TestRunner` plugin is constructed. Each plugin kind has it's own interface, so it's easy to create.
 
 After that, you're ready to declare your plugin.
 
@@ -49,19 +57,35 @@ You can either declare it as a factory method or a class.
 A class example:
 
 ```ts
-import HtmlReporter from './HtmlReporter';
+import FooTestRunner from './foo-test-runner';
 import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'html', HtmlReporter)];
+export const strykerPlugins = [declareClassPlugin(PluginKind.TestRunner, 'foo', FooTestRunner)];
 ```
 
-A factory method example:
+A factory method example (useful when you want to inject additional values/classes into the DI system):
 
 ```ts
+import FooTestRunner from './foo-test-runner';
+import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader';
+import { configLoaderToken, processEnvToken, fooTestRunnerVersionToken } from './plugin-tokens';
 import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
-import { babelTranspilerFactory } from './BabelTranspiler';
 
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'babel', babelTranspilerFactory)];
+const createFooTestRunner = createFooTestRunnerFactory();
+
+export function createFooTestRunnerFactory() {
+  createFooTestRunner.inject = tokens(commonTokens.injector);
+  function createFooTestRunner(injector: Injector<PluginContext>): FooTestRunner {
+    return injector
+      .provideValue(processEnvToken, process.env)
+      .provideValue(fooTestRunnerVersionToken, require('fooTestRunner/package.json').version as string)
+      .provideClass(configLoaderToken, FooTestRunnerConfigFileLoader)
+      .injectClass(FooTestRunner);
+  }
+  return createFooTestRunner;
+}
+
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'foo', createFooTestRunner)];
 ```
 
 ## Dependency injection
@@ -69,20 +93,48 @@ export const strykerPlugins = [declareFactoryPlugin(PluginKind.Transpiler, 'babe
 Stryker uses [typed-inject](https://github.com/nicojs/typed-inject#readme) as a [dependency injection framework](https://medium.com/@jansennico/advanced-typescript-type-safe-dependency-injection-873426e2cc96).
 You can use it as well in your plugin.
 
-See this example below. Here, a `Logger`, `StrykerOptions` and the `produceSourceMaps` boolean is injected.
+See this example below. Here, a `Logger`, `StrykerOptions` and the custom _(factory method plugin declaration required)_ `processEnvToken`, `fooTestRunnerVersionToken` and `configLoaderToken` tokens are injected.
 
 ```ts
-import { Transpiler } from '@stryker-mutator/api/transpile';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import { I } from '@stryker-mutator/util';
+import { configLoaderToken, processEnvToken, fooTestRunnerVersionToken } from './plugin-tokens';
+import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader';
 
-class PassThroughTranspiler implements Transpiler {
-  public static inject = tokens(commonTokens.options, commonTokens.produceSourceMaps);
-  public constructor(private log: Logger, options: StrykerOptions, produceSourceMaps: boolean) {
+class FooTestRunner implements TestRunner {
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    configLoaderToken,
+    processEnvToken,
+    fooTestRunnerVersionToken
+  );
+  
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly configLoader: I<FooTestRunnerConfigFileLoader>,
+    private readonly processEnvRef: NodeJS.ProcessEnv,
+    private readonly fooTestRunnerVersion: string
+  ) { }
 
-  public transpile(files: ReadonlyArray<File>): Promise<ReadonlyArray<File>> {
-    this.log.info('called with %s', files);
-    return files;
+  public init(): Promise<void> {
+    // TODO: Implement or remove
+  }
+  
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+   // TODO: Implement
+  }
+  
+  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    // TODO: Implement
+  }
+  
+  public dispose(): Promise<void> {
+   // TODO: Implement or remove
   }
 }
 ```
