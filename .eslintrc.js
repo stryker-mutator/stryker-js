@@ -6,6 +6,7 @@ module.exports = {
     sourceType: 'module',
     project: [require.resolve('./tsconfig.lint.json')]
   },
+  root: true,
   parser: '@typescript-eslint/parser',
   extends: ['prettier', 'eslint:recommended'],
   plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
