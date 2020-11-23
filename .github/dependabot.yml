@@ -1,0 +1,136 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "03:00"
+  open-pull-requests-limit: 10
+  target-branch: master
+  ignore:
+  - dependency-name: bootstrap
+    versions:
+    - "> 4.1.3"
+  - dependency-name: escodegen
+    versions:
+    - "< 2"
+    - "> 1.8.0"
+  - dependency-name: esprima
+    versions:
+    - "< 4"
+    - ">= 3.a"
+  - dependency-name: esprima
+    versions:
+    - "< 5"
+    - ">= 4.a"
+  - dependency-name: execa
+    versions:
+    - ">= 4.a"
+    - "< 5"
+  - dependency-name: file-url
+    versions:
+    - ">= 3.a"
+    - "< 4"
+  - dependency-name: get-port
+    versions:
+    - ">= 5.a"
+    - "< 6"
+  - dependency-name: istanbul-lib-instrument
+    versions:
+    - ">= 4.a"
+    - "< 5"
+  - dependency-name: jasmine
+    versions:
+    - "< 3.2"
+    - "> 3.1.0"
+  - dependency-name: jsdom
+    versions:
+    - "< 13"
+    - ">= 12.a"
+  - dependency-name: lerna
+    versions:
+    - "< 3.1"
+    - ">= 3.0.a"
+  - dependency-name: lerna
+    versions:
+    - "< 3.2"
+    - ">= 3.1.a"
+  - dependency-name: lerna
+    versions:
+    - "< 4"
+    - ">= 3.a"
+  - dependency-name: log4js
+    versions:
+    - "< 4"
+    - ">= 3.a"
+  - dependency-name: mocha
+    versions:
+    - "> 6.1.2"
+    - "< 7"
+  - dependency-name: mocha
+    versions:
+    - ">= 7.a"
+    - "< 8"
+  - dependency-name: protractor
+    versions:
+    - "> 5.1.2"
+  - dependency-name: semver
+    versions:
+    - ">= 7.a"
+    - "< 8"
+  - dependency-name: source-map
+    versions:
+    - "< 1"
+    - "> 0.6.1"
+  - dependency-name: "@types/esprima"
+    versions:
+    - "< 5"
+    - ">= 4.0.a"
+  - dependency-name: "@types/estree"
+    versions:
+    - "< 1"
+    - "> 0.0.38"
+  - dependency-name: "@types/file-url"
+    versions:
+    - ">= 3.a"
+    - "< 4"
+  - dependency-name: "@types/mocha"
+    versions:
+    - "< 6"
+    - ">= 5.a"
+  - dependency-name: "@types/node"
+    versions:
+    - "< 10.1"
+    - ">= 10.0.0.a"
+  - dependency-name: "@types/node"
+    versions:
+    - "< 10"
+    - ">= 9.a"
+  - dependency-name: "@types/node"
+    versions:
+    - ">= 11.a"
+    - "< 12"
+  - dependency-name: "@types/node"
+    versions:
+    - ">= 12.a"
+    - "< 13"
+  - dependency-name: "@types/node"
+    versions:
+    - "< 8"
+    - ">= 7.a"
+  - dependency-name: "@types/node"
+    versions:
+    - "< 9"
+    - "> 8.10.14"
+  - dependency-name: "@types/node"
+    versions:
+    - "< 9"
+    - ">= 8.a"
+  - dependency-name: "@types/sinon"
+    versions:
+    - ">= 7.a"
+    - "< 8"
+  - dependency-name: "@types/sinon"
+    versions:
+    - ">= 9.a"
+    - "< 10"
