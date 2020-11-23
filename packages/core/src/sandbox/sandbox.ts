@@ -16,9 +16,13 @@ import { findNodeModules, MAX_CONCURRENT_FILE_IO, symlinkJunction, writeFile } f
 import { coreTokens } from '../di';
 
 interface SandboxFactory {
-  (options: StrykerOptions, getLogger: LoggerFactoryMethod, files: readonly File[], tempDir: I<TemporaryDirectory>, exec: typeof execa): Promise<
-    Sandbox
-  >;
+  (
+    options: StrykerOptions,
+    getLogger: LoggerFactoryMethod,
+    files: readonly File[],
+    tempDir: I<TemporaryDirectory>,
+    exec: typeof execa
+  ): Promise<Sandbox>;
   inject: [
     typeof commonTokens.options,
     typeof commonTokens.getLogger,
