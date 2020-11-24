@@ -42,6 +42,7 @@ module.exports = {
     '@typescript-eslint/brace-style': 'error',
     camelcase: 'error',
     '@typescript-eslint/consistent-type-assertions': 'error',
+    'no-redeclare': 'off',
     '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
