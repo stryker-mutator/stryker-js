@@ -51,12 +51,5 @@
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "typescript": "~3.7.5"
-  },
-  "localDependencies": {
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
-    "@stryker-mutator/util": "../../../packages/util"
   }
 }

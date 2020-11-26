@@ -1,3 +1,6 @@
 [submodule "perf/test/express"]
 	path = perf/test/express
 	url = https://github.com/expressjs/express.git
+[submodule "perf/test/lighthouse"]
+	path = perf/test/lighthouse
+	url = https://github.com/GoogleChrome/lighthouse.git
