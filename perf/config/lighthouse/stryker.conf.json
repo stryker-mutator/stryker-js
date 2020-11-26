@@ -20,5 +20,5 @@
     "lighthouse-core/audits/**/*.js"
   ],
   "testRunner": "jest",
-  "coverageAnalysis": "off"
+  "coverageAnalysis": "perTest"
 }
