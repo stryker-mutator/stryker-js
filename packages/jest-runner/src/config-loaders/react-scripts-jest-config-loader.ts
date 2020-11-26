@@ -3,13 +3,13 @@ import path from 'path';
 import { tokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
-import { createReactJestConfig } from '../utils/create-react-jest-config';
-import { projectRootToken, resolveToken } from '../plugin-tokens';
+import { createReactJestConfig } from '../utils';
+import { projectRoot, resolve } from '../plugin-tokens';
 
 import JestConfigLoader from './jest-config-loader';
 
 export default class ReactScriptsJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(resolveToken, projectRootToken);
+  public static inject = tokens(resolve, projectRoot);
 
   constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
 

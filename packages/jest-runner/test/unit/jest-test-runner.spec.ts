@@ -8,7 +8,7 @@ import { Config } from '@jest/types';
 import { JestTestAdapter } from '../../src/jest-test-adapters';
 import JestTestRunner from '../../src/jest-test-runner';
 import * as producers from '../helpers/producers';
-import { processEnvToken, jestTestAdapterToken, configLoaderToken } from '../../src/plugin-tokens';
+import * as pluginTokens from '../../src/plugin-tokens';
 import JestConfigLoader from '../../src/config-loaders/jest-config-loader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 
@@ -49,7 +49,7 @@ describe(JestTestRunner.name, () => {
     });
 
     it('should call the run function with the provided config and the projectRoot', async () => {
-      await sut.dryRun();
+      await sut.dryRun({ coverageAnalysis: 'off' });
 
       expect(jestTestAdapterMock.run).called;
     });
@@ -57,7 +57,7 @@ describe(JestTestRunner.name, () => {
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
       jestTestAdapterMock.run.resolves({ results: producers.createSuccessResult() });
 
-      const result = await sut.dryRun();
+      const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -76,7 +76,7 @@ describe(JestTestRunner.name, () => {
     it('should call the jestTestRunner run method and return a skipped runResult', async () => {
       jestTestAdapterMock.run.resolves({ results: producers.createPendingResult() });
 
-      const result = await sut.dryRun();
+      const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -96,7 +96,7 @@ describe(JestTestRunner.name, () => {
     it('should call the jestTestRunner run method and return a todo runResult', async () => {
       jestTestAdapterMock.run.resolves({ results: producers.createTodoResult() });
 
-      const result = await sut.dryRun();
+      const result = await sut.dryRun({ coverageAnalysis: 'off' });
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
         tests: [
@@ -120,7 +120,7 @@ describe(JestTestRunner.name, () => {
     it('should call the jestTestRunner run method and return a negative runResult', async () => {
       jestTestAdapterMock.run.resolves({ results: producers.createFailResult() });
 
-      const result = await sut.dryRun();
+      const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -167,7 +167,7 @@ describe(JestTestRunner.name, () => {
       });
       jestTestAdapterMock.run.resolves({ results: jestResult });
 
-      const result = await sut.dryRun();
+      const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
       const expectedRunResult: ErrorDryRunResult = {
         status: DryRunStatus.Error,
@@ -178,7 +178,7 @@ describe(JestTestRunner.name, () => {
     });
 
     it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {
-      await sut.dryRun();
+      await sut.dryRun({ coverageAnalysis: 'off' });
 
       expect(processEnvMock.NODE_ENV).to.equal('test');
     });
@@ -186,13 +186,13 @@ describe(JestTestRunner.name, () => {
     it('should keep the value set in process.env.NODE_ENV if not null', async () => {
       processEnvMock.NODE_ENV = 'stryker';
 
-      await sut.dryRun();
+      await sut.dryRun({ coverageAnalysis: 'off' });
 
       expect(processEnvMock.NODE_ENV).to.equal('stryker');
     });
 
     it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', async () => {
-      await sut.dryRun();
+      await sut.dryRun({ coverageAnalysis: 'off' });
 
       expect(
         jestTestAdapterMock.run.calledWith({
@@ -249,9 +249,10 @@ describe(JestTestRunner.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(processEnvToken, processEnvMock)
-      .provideValue(jestTestAdapterToken, (jestTestAdapterMock as unknown) as JestTestAdapter)
-      .provideValue(configLoaderToken, jestConfigLoaderMock)
+      .provideValue(pluginTokens.processEnv, processEnvMock)
+      .provideValue(pluginTokens.jestTestAdapter, (jestTestAdapterMock as unknown) as JestTestAdapter)
+      .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
+      .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
       .injectClass(JestTestRunner);
   }
 });

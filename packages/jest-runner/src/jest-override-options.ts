@@ -1,4 +1,6 @@
-const JEST_OVERRIDE_OPTIONS = Object.freeze({
+import type { Config } from '@jest/types';
+
+const JEST_OVERRIDE_OPTIONS: Readonly<Config.InitialOptions> = Object.freeze({
   // Prevent the user from using his or her own testResultProcessor because this might
   // Mess with the way Stryker gets the results
   testResultsProcessor: undefined,

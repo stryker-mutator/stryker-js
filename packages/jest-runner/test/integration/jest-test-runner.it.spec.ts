@@ -10,32 +10,24 @@ import JestTestRunner, { jestTestRunnerFactory } from '../../src/jest-test-runne
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
 paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
 
-// Get the actual project root, since we will stub process.cwd later on
-const jestProjectRoot = process.cwd();
-
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
 
 describe(`${JestTestRunner.name} integration test`, () => {
-  const initialCwd = process.cwd();
-
   // Names of the tests in the example projects
-  const testNames = [
+  const testNames = Object.freeze([
     'Add should be able to add two numbers',
     'Add should be able to add one to a number',
     'Add should be able negate a number',
     'Add should be able to recognize a negative number',
     'Circle should have a circumference of 2PI when the radius is 1',
-  ];
-
-  afterEach(() => {
-    process.chdir(initialCwd);
-  });
+  ]);
 
   function createSut(overrides?: Partial<JestOptions>) {
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
@@ -55,10 +47,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
         this.skip();
       }
       // TODO: Get a proper React TS project that works on Windows
-      process.chdir(getProjectRoot('reactTsProject'));
+      process.chdir(resolveTestResource('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
-      const runResult = await jestTestRunner.dryRun();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, 1);
@@ -69,10 +61,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
         console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
         this.skip();
       }
-      process.chdir(getProjectRoot('reactTsProject'));
+      process.chdir(resolveTestResource('reactTsProject'));
       const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
 
-      const runResult = await jestTestRunner.dryRun();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests[0].name).to.equal('renders without crashing');
@@ -80,21 +72,21 @@ describe(`${JestTestRunner.name} integration test`, () => {
     });
 
     it('should run tests on the example custom project using package.json', async () => {
-      process.chdir(getProjectRoot('exampleProject'));
+      process.chdir(resolveTestResource('jasmine2-node'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
     });
 
     it('should run tests on the example custom project using jest.config.js', async () => {
-      process.chdir(getProjectRoot('exampleProjectWithExplicitJestConfig'));
+      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
 
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -103,7 +95,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
   describe('mutantRun', () => {
     it('should kill mutant 1', async () => {
-      const exampleProjectRoot = getProjectRoot('exampleProject');
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
@@ -122,8 +114,8 @@ describe(`${JestTestRunner.name} integration test`, () => {
     });
 
     it('should let mutant 11 survive', async () => {
-      const exampleProjectRoot = getProjectRoot('exampleProject');
-      process.chdir(getProjectRoot('exampleProject'));
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
+      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
@@ -137,8 +129,8 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
-      const exampleProjectRoot = getProjectRoot('exampleProject');
-      process.chdir(getProjectRoot('exampleProject'));
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
+      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
@@ -147,7 +139,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Act
       const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
-      mutantRunOptions.activeMutant.id = 5;
+      mutantRunOptions.activeMutant.id = 10;
       const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       // Assert
@@ -156,7 +148,3 @@ describe(`${JestTestRunner.name} integration test`, () => {
     });
   });
 });
-
-function getProjectRoot(testResource: string) {
-  return path.join(jestProjectRoot, 'testResources', testResource);
-}

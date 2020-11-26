@@ -6,7 +6,7 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 
-import { loaderToken, projectRootToken } from '../plugin-tokens';
+import { loader, projectRoot } from '../plugin-tokens';
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 
 import JestConfigLoader from './jest-config-loader';
@@ -16,7 +16,7 @@ import { NodeRequireFunction } from './node-require-function';
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export default class CustomJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, loaderToken, projectRootToken);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, loader, projectRoot);
 
   constructor(
     private readonly log: Logger,

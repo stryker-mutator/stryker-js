@@ -4,13 +4,13 @@ import { expect } from 'chai';
 import { JestTestAdapter, jestTestAdapterFactory } from '../../../src/jest-test-adapters';
 import JestGreaterThan25Adapter from '../../../src/jest-test-adapters/jest-greater-than-25-adapter';
 import JestLessThan25Adapter from '../../../src/jest-test-adapters/jest-less-than-25-adapter';
-import { jestVersionToken } from '../../../src/plugin-tokens';
+import * as pluginTokens from '../../../src/plugin-tokens';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestVersion: string;
 
   function act(): JestTestAdapter {
-    return testInjector.injector.provideValue(jestVersionToken, jestVersion).injectFunction(jestTestAdapterFactory);
+    return testInjector.injector.provideValue(pluginTokens.jestVersion, jestVersion).injectFunction(jestTestAdapterFactory);
   }
 
   it('should return a JestGreaterThan25Adapter when the Jest version is higher or equal to 25.0.0', () => {

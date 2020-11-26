@@ -26,13 +26,13 @@ describe(JestGreaterThan25Adapter.name, () => {
   });
 
   it('should set reporters to an empty array', async () => {
-    await sut.run(jestConfig, projectRoot);
+    await sut.run({ jestConfig, projectRoot });
 
     expect(jestConfig.reporters).to.be.an('array').that.is.empty;
   });
 
   it('should call the runCLI method with the correct projectRoot', async () => {
-    await sut.run(jestConfig, projectRoot);
+    await sut.run({ jestConfig, projectRoot });
 
     expect(runCLIStub).calledWith(
       {
@@ -48,7 +48,7 @@ describe(JestGreaterThan25Adapter.name, () => {
   });
 
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
-    await sut.run(jestConfig, projectRoot, fileNameUnderTest);
+    await sut.run({ jestConfig, projectRoot, fileNameUnderTest });
 
     expect(runCLIStub).calledWith(
       {
@@ -64,7 +64,7 @@ describe(JestGreaterThan25Adapter.name, () => {
   });
 
   it('should call the runCLI method and return the test result', async () => {
-    const result = await sut.run(jestConfig, projectRoot);
+    const result = await sut.run({ jestConfig, projectRoot });
 
     expect(result).to.deep.equal({
       config: jestConfig,
@@ -73,7 +73,7 @@ describe(JestGreaterThan25Adapter.name, () => {
   });
 
   it('should call the runCLI method and return the test result when run with --findRelatedTests flag', async () => {
-    const result = await sut.run(jestConfig, projectRoot, fileNameUnderTest);
+    const result = await sut.run({ jestConfig, projectRoot, fileNameUnderTest });
 
     expect(result).to.deep.equal({
       config: jestConfig,
@@ -82,7 +82,7 @@ describe(JestGreaterThan25Adapter.name, () => {
   });
 
   it('should trace log a message when jest is invoked', async () => {
-    await sut.run(jestConfig, projectRoot);
+    await sut.run({ jestConfig, projectRoot });
 
     const expectedResult: any = JSON.parse(JSON.stringify(jestConfig));
     expectedResult.reporters = [];
