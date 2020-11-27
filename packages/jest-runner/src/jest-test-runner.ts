@@ -1,4 +1,4 @@
-import { StrykerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -26,7 +26,7 @@ import { configLoaderFactory } from './config-loaders';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
 import JEST_OVERRIDE_OPTIONS from './jest-override-options';
 import { mergeMutantCoverage, guardAllTestFilesHaveCoverage } from './utils';
-import { SingleFileMutantCoverage, state } from './messaging';
+import { state } from './messaging';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE) {
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
@@ -89,17 +89,23 @@ export default class JestTestRunner implements TestRunner {
   }
 
   public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
-    let mutantCoverageReports: SingleFileMutantCoverage[] = [];
-    state.setMutantCoverageHandler(mutantCoverageReports.push.bind(mutantCoverageReports));
     state.coverageAnalysis = coverageAnalysis;
+    let mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
+    let fileNamesWithMutantCoverage: string[] = [];
+    if (coverageAnalysis !== 'off') {
+      state.setMutantCoverageHandler((fileName, report) => {
+        mergeMutantCoverage(mutantCoverage, report);
+        fileNamesWithMutantCoverage.push(fileName);
+      });
+    }
     try {
       const { dryRunResult, jestResult } = await this.run({
         jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
         projectRoot: process.cwd(),
       });
-      if (dryRunResult.status === DryRunStatus.Complete) {
-        guardAllTestFilesHaveCoverage(coverageAnalysis, jestResult, mutantCoverageReports);
-        dryRunResult.mutantCoverage = mergeMutantCoverage(mutantCoverageReports);
+      if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
+        guardAllTestFilesHaveCoverage(jestResult, fileNamesWithMutantCoverage);
+        dryRunResult.mutantCoverage = mutantCoverage;
       }
       return dryRunResult;
     } finally {

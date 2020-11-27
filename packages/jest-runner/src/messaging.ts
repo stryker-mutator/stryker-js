@@ -1,17 +1,12 @@
 import { CoverageAnalysis, MutantCoverage } from '@stryker-mutator/api/core';
 
-export interface SingleFileMutantCoverage extends MutantCoverage {
-  fileName: string;
-}
-
-type MutantCoverageHandler = (coverage: SingleFileMutantCoverage) => void;
+type MutantCoverageHandler = (fileName: string, coverage: MutantCoverage | undefined) => void;
 
 class State {
   constructor() {
     this.resetMutantCoverageHandler();
   }
 
-  public testFilter: string[] | undefined = undefined;
   public coverageAnalysis: CoverageAnalysis = 'off';
   private mutantCoverageHandler: MutantCoverageHandler;
 
@@ -19,10 +14,8 @@ class State {
     this.mutantCoverageHandler = handler;
   }
 
-  public handleMutantCoverage(coverage: SingleFileMutantCoverage | undefined) {
-    if (coverage) {
-      this.mutantCoverageHandler(coverage);
-    }
+  public handleMutantCoverage(fileName: string, coverage: MutantCoverage | undefined) {
+    this.mutantCoverageHandler(fileName, coverage);
   }
 
   public resetMutantCoverageHandler() {

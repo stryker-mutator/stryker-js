@@ -11,24 +11,15 @@ function mergeCoverageData(target: CoverageData, source: CoverageData) {
   });
 }
 
-export function mergeMutantCoverage(mutantCoverageReports: MutantCoverage[]): MutantCoverage | undefined {
-  if (mutantCoverageReports.length) {
-    const merged: MutantCoverage = {
-      perTest: {},
-      static: {},
-    };
-    mutantCoverageReports.forEach((report) => {
-      mergeCoverageData(merged.static, report.static);
+export function mergeMutantCoverage(target: MutantCoverage, source: MutantCoverage | undefined): void {
+  if (source) {
+    mergeCoverageData(target.static, source.static);
 
-      Object.keys(report.perTest).forEach((testId) => {
-        if (!merged.perTest[testId]) {
-          merged.perTest[testId] = {};
-        }
-        mergeCoverageData(merged.perTest[testId], report.perTest[testId]);
-      });
+    Object.keys(source.perTest).forEach((testId) => {
+      if (!target.perTest[testId]) {
+        target.perTest[testId] = {};
+      }
+      mergeCoverageData(target.perTest[testId], source.perTest[testId]);
     });
-    return merged;
-  } else {
-    return undefined;
   }
 }

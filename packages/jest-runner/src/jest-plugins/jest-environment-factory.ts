@@ -26,11 +26,6 @@ export function jestEnvironmentFactory<T extends typeof JestEnvironment>(JestEnv
       this.fileName = context!.testPath!;
     }
 
-    public async setup() {
-      await super.setup();
-      this.global.__strykerTestFilter__ = state.testFilter;
-    }
-
     public async handleTestEvent(event: Circus.Event, eventState: Circus.State): Promise<void> {
       await super.handleTestEvent?.(event, eventState);
       if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
@@ -41,12 +36,7 @@ export function jestEnvironmentFactory<T extends typeof JestEnvironment>(JestEnv
 
     public async teardown() {
       const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
-      state.handleMutantCoverage(
-        mutantCoverage && {
-          fileName: this.fileName,
-          ...mutantCoverage,
-        }
-      );
+      state.handleMutantCoverage(this.fileName, mutantCoverage);
       await super.teardown();
     }
   }
