@@ -59,7 +59,8 @@
   "dependencies": {
     "@stryker-mutator/api": "4.1.2",
     "@stryker-mutator/util": "4.1.2",
-    "semver": "~6.3.0"
+    "semver": "~6.3.0",
+    "tslib": "^2.0.3"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "off"
