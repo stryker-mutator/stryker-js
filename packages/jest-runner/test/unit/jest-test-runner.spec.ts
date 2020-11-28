@@ -38,6 +38,12 @@ describe(JestTestRunner.name, () => {
     };
   });
 
+  it("should override `process.exit`, so jest won't exit unexpectedly", async () => {
+    const processExitStub = sinon.stub(process, 'exit');
+    createSut();
+    expect(process.exit).not.eq(processExitStub);
+  });
+
   describe('dryRun', () => {
     let sut: JestTestRunner;
     beforeEach(() => {
@@ -65,12 +71,12 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = false', async () => {
+    it('should set bail = true', async () => {
       await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({
-            bail: false,
+            bail: true,
           }),
         })
       );

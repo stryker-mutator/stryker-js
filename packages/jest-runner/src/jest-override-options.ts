@@ -11,8 +11,8 @@ const JEST_OVERRIDE_OPTIONS: Readonly<Config.InitialOptions> = Object.freeze({
   // Disable verbose logging, this will only slow down Stryker test runs
   verbose: false,
 
-  // Disable bail so the jest process does not quit with a non-zero exit code
-  bail: false,
+  // Enable bail, so jests exits as soon as there is 1 failing test
+  bail: true,
 
   // Disable notifications for test results, this will otherwise show a notification about
   // the results each time Stryker runs the tests

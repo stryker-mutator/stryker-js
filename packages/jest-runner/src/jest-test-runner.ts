@@ -86,6 +86,11 @@ export default class JestTestRunner implements TestRunner {
     // https://github.com/stryker-mutator/stryker/issues/650
     this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
     this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
+
+    // @ts-expect-error process.exit returns `never` 🤷‍♂️
+    process.exit = (code) => {
+      this.log.trace('Jest cli tried to exit with code %s', code);
+    };
   }
 
   public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {

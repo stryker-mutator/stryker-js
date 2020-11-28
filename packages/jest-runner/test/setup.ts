@@ -8,11 +8,13 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 const initialCwd = process.cwd();
+export const originalProcessExit = process.exit;
 
 export const mochaHooks = {
   afterEach() {
     sinon.restore();
     testInjector.reset();
     process.chdir(initialCwd);
+    process.exit = originalProcessExit;
   },
 };
