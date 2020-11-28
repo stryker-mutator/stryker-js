@@ -54,6 +54,34 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).called;
     });
 
+    it('should set reporters to an empty array', async () => {
+      await sut.dryRun({ coverageAnalysis: 'off' });
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          jestConfig: sinon.match({
+            reporters: [],
+          }),
+        })
+      );
+    });
+
+    it('should set bail = false', async () => {
+      await sut.dryRun({ coverageAnalysis: 'off' });
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          jestConfig: sinon.match({
+            bail: false,
+          }),
+        })
+      );
+    });
+
+    it('should trace log a message when jest is invoked', async () => {
+      testInjector.logger.isTraceEnabled.returns(true);
+      await sut.dryRun({ coverageAnalysis: 'off' });
+      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*"projectRoot".*/));
+    });
+
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
       jestTestAdapterMock.run.resolves({ results: producers.createSuccessResult() });
 
@@ -213,20 +241,53 @@ describe(JestTestRunner.name, () => {
       await sut.mutantRun(
         factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' })
       );
-      expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, '.stryker-tmp/sandbox2/foo.js');
+      expect(jestTestAdapterMock.run).calledWithExactly(
+        sinon.match({
+          jestConfig: sinon.match.object,
+          projectRoot: sinon.match.string,
+          testNamePattern: undefined,
+          fileNameUnderTest: sinon.match.string,
+        })
+      );
     });
 
     it('should not set fileUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = createSut();
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant() }));
-      expect(jestTestAdapterMock.run).calledWithExactly(sinon.match.object, sinon.match.string, undefined);
+      expect(jestTestAdapterMock.run).calledWithExactly(
+        sinon.match({
+          jestConfig: sinon.match.object,
+          projectRoot: sinon.match.string,
+          testNamePattern: undefined,
+          fileNameUnderTest: undefined,
+        })
+      );
     });
 
-    it('should set the active mutant in environment variables', async () => {
+    it('should set the active mutant in environment variable', async () => {
+      const sut = createSut();
+      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
+      await onGoingWork;
+    });
+
+    it('should reset the active mutant in environment variable', async () => {
       const sut = createSut();
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
-      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
+      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
+    });
+
+    it('should set the __strykerGlobalNamespace__ in globals', async () => {
+      const sut = createSut();
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          jestConfig: {
+            globals: { __strykerGlobalNamespace__: '__stryker2__' },
+          },
+        })
+      );
     });
 
     it('should allow for other globals', async () => {
@@ -240,9 +301,10 @@ describe(JestTestRunner.name, () => {
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
-          globals: { foo: 'bar' },
-        }),
-        sinon.match.string
+          jestConfig: {
+            globals: { foo: 'bar' },
+          },
+        })
       );
     });
   });
@@ -252,7 +314,7 @@ describe(JestTestRunner.name, () => {
       .provideValue(pluginTokens.processEnv, processEnvMock)
       .provideValue(pluginTokens.jestTestAdapter, (jestTestAdapterMock as unknown) as JestTestAdapter)
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
-      .provideValue(pluginTokens.globalNamespace, INSTRUMENTER_CONSTANTS.NAMESPACE)
+      .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JestTestRunner);
   }
 });

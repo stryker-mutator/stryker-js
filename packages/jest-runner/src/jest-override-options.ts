@@ -17,6 +17,11 @@ const JEST_OVERRIDE_OPTIONS: Readonly<Config.InitialOptions> = Object.freeze({
   // Disable notifications for test results, this will otherwise show a notification about
   // the results each time Stryker runs the tests
   notify: false,
-} as const);
+
+  /**
+   * Disable reporters, they only way us down.
+   */
+  reporters: [],
+});
 
 export default JEST_OVERRIDE_OPTIONS;

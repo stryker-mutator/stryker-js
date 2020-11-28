@@ -68,7 +68,7 @@ export default class JestTestRunner implements TestRunner {
     const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as any) || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as jest.Config.InitialOptions) || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests ?? true;
@@ -134,12 +134,8 @@ export default class JestTestRunner implements TestRunner {
     if (this.log.isTraceEnabled()) {
       this.log.trace('Invoking Jest with config %s', JSON.stringify(settings));
     }
-    try {
-      const { results } = await this.jestTestAdapter.run(settings);
-      return { dryRunResult: this.collectRunResult(results), jestResult: results };
-    } finally {
-      state.resetMutantCoverageHandler();
-    }
+    const { results } = await this.jestTestAdapter.run(settings);
+    return { dryRunResult: this.collectRunResult(results), jestResult: results };
   }
 
   private collectRunResult(results: jestTestResult.AggregatedResult): DryRunResult {
