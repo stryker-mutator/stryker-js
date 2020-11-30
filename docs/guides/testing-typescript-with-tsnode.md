@@ -13,7 +13,11 @@ If you manage the compilation of your code through a `tsconfig.json` file, this 
 
 ### Configuration
 
-The following _additional_ items may be required to add to your `stryker.conf.js` file. This guide assumes that you have already generated a Stryker configuration file, so the following properties will need either adding or changing within the existing configuration.
+Projects which use Jest as a test runner and projects which use mocha as a test runner may differ slightly as jest does not require the use of `ts-node` to transpile TypeScript files.
+
+#### Configuration for Mocha projects
+
+If you are using mocha as a test runner for your project, the following _additional_ items may be required to add to your `stryker.conf.js` file. This guide assumes that you have already generated a Stryker configuration file, so the following properties will need either adding or changing within the existing configuration.
 
 ```js
 /**
@@ -22,18 +26,34 @@ The following _additional_ items may be required to add to your `stryker.conf.js
 module.exports = {
   buildCommand: 'tsc --build path/to/your/tsconfig.json',
   commandRunner: {
-    command: 'npm run test:ts',
+    command: 'npm test',
   },
+  coverageAnalysis: 'perTest',
   files: [
     'glob/for/your/typescript/source/files',
     'glob/for/your/typescript/test/files',
     'path/to/your/tsconfig.json/file',
+    'path/to/your/.mocharc.js/file',
   ],
+  mochaOptions: {
+    config: 'path/to/your/.mocharc.js/file',
+  },
+  testRunner: 'mocha',
 };
 ```
 
+> The above is just an example. If you have a different method of configuring mocha, or a different script that is used for testing typescript specifically, those options will differ.
+
+#### Running the test suite
+
 In addition, you may be required to create a script in your `package.json` file to run this configuration with the following:
 
-```bash
-TS_NODE_PROJECT=path/to/your/tsconfig.json stryker run path/to/your/stryker.conf.js
+```json
+{
+  "scripts": {
+    "test:mutation": "cross-env TS_NODE_PROJECT=path/to/your/tsconfig.json stryker run path/to/your/stryker.conf.js"
+  }
+}
 ```
+
+> `cross-env` is recommended for Windows systems that have issues when setting inline variables.
