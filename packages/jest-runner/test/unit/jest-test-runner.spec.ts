@@ -38,12 +38,6 @@ describe(JestTestRunner.name, () => {
     };
   });
 
-  it("should override `process.exit`, so jest won't exit unexpectedly", async () => {
-    const processExitStub = sinon.stub(process, 'exit');
-    createSut();
-    expect(process.exit).not.eq(processExitStub);
-  });
-
   describe('dryRun', () => {
     let sut: JestTestRunner;
     beforeEach(() => {

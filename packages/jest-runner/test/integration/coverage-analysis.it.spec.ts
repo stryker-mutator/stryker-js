@@ -13,7 +13,7 @@ const jestTestRunnerFactory = createJestTestRunnerFactory('__stryker2__');
 interface TestCase {
   name: string;
   jestConfig?: Partial<JestOptions>;
-  only?: boolean;
+  focus?: boolean;
 }
 
 describe('JestTestRunner coverage analysis integration', () => {
@@ -30,7 +30,7 @@ describe('JestTestRunner coverage analysis integration', () => {
   ];
 
   nodeTestCases.forEach((testCase) => {
-    (testCase.only ? describe.only : describe)(`${testCase.name} project`, () => {
+    (testCase.focus ? describe.only : describe)(`${testCase.name} project`, () => {
       const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-node-instrumented');
       let sut: JestTestRunner;
 
@@ -125,7 +125,7 @@ describe('JestTestRunner coverage analysis integration', () => {
   const jsdomTestCases: TestCase[] = [{ name: 'jasmine2' }, { name: 'jest-circus', jestConfig: { config: { testRunner: 'jest-circus/runner' } } }];
 
   jsdomTestCases.forEach((testCase) => {
-    (testCase.only ? describe.only : describe)(`${testCase.name}-jsdom-sixteen project`, () => {
+    (testCase.focus ? describe.only : describe)(`${testCase.name}-jsdom-sixteen project`, () => {
       const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-dom-sixteen-instrumented');
       let sut: JestTestRunner;
       beforeEach(() => {
