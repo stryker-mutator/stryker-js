@@ -6,12 +6,12 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
 import { createReactTsJestConfig } from '../utils';
-import { projectRoot, resolve } from '../plugin-tokens';
+import * as pluginTokens from '../plugin-tokens';
 
 import JestConfigLoader from './jest-config-loader';
 
 export default class ReactScriptsTSJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(commonTokens.logger, resolve, projectRoot);
+  public static inject = tokens(commonTokens.logger, pluginTokens.resolve, pluginTokens.projectRoot);
 
   constructor(private readonly log: Logger, private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
 

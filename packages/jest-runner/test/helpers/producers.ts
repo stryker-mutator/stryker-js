@@ -1,4 +1,5 @@
 import { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
+import { Config } from '@jest/types';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
 
@@ -136,6 +137,13 @@ export const createFailResult = (): AggregatedResult =>
       }),
     ],
   });
+
+export const createGlobalConfig = (): Config.GlobalConfig =>
+  ({
+    bail: 1,
+    changedFilesWithAncestor: true,
+    collectCoverage: false,
+  } as Config.GlobalConfig);
 
 export const createSuccessResult = (): AggregatedResult =>
   createJestAggregatedResult({

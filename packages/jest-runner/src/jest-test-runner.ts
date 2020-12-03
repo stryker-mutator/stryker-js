@@ -74,7 +74,7 @@ export default class JestTestRunner implements TestRunner {
     this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as jest.Config.InitialOptions) || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests ?? true;
+    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
 
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
