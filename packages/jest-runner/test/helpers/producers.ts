@@ -1,5 +1,6 @@
-import { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
-import { Config } from '@jest/types';
+import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
+import type { EnvironmentContext } from '@jest/environment';
+import { Circus, Config } from '@jest/types';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
 
@@ -89,7 +90,7 @@ export function createJestTestResult(overrides?: Partial<TestResult>): TestResul
     testFilePath: '',
     testResults: [],
     ...overrides,
-  };
+  } as TestResult; // Do this cast to prevent breaking builds when unused options are added
 }
 
 export function createSerializableError(overrides?: Partial<SerializableError>): SerializableError {
@@ -143,7 +144,44 @@ export const createGlobalConfig = (): Config.GlobalConfig =>
     bail: 1,
     changedFilesWithAncestor: true,
     collectCoverage: false,
-  } as Config.GlobalConfig);
+  } as Config.GlobalConfig); // Do this cast to prevent breaking builds when unused options are added
+
+export const createEnvironmentContext = (overrides?: Partial<EnvironmentContext>): EnvironmentContext =>
+  ({
+    testPath: 'foo.js',
+    ...overrides,
+  } as EnvironmentContext); // Do this cast to prevent breaking builds when unused options are added
+
+export const createProjectConfig = (): Config.ProjectConfig =>
+  ({
+    detectLeaks: true,
+  } as Config.ProjectConfig); // Do this cast to prevent breaking builds when unused options are added
+
+export const createCircusDescribeBlock = (overrides?: Partial<Circus.DescribeBlock>): Circus.DescribeBlock =>
+  ({
+    name: 'ROOT_SUITE',
+    ...overrides,
+  } as Circus.DescribeBlock); // Do this cast to prevent breaking builds when unused options are added
+
+export const createCircusTestEntry = (overrides?: Partial<Circus.TestEntry>): Circus.TestEntry =>
+  ({
+    name: 'should be bar',
+    parent: createCircusDescribeBlock({ name: 'foo', parent: createCircusDescribeBlock() }),
+    ...overrides,
+  } as Circus.TestEntry); // Do this casts to prevent breaking builds when unused options are added
+
+export const createCircusTestStartEvent = (test = createCircusTestEntry()): Circus.Event => ({
+  name: 'test_start',
+  test,
+});
+export const createCircusRunStartEvent = (): Circus.Event => ({
+  name: 'run_start',
+});
+
+export const createCircusState = (): Circus.State =>
+  ({
+    hasFocusedTests: false,
+  } as Circus.State); // Do this casts to prevent breaking builds when unused options are added
 
 export const createSuccessResult = (): AggregatedResult =>
   createJestAggregatedResult({

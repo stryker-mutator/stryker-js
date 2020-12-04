@@ -5,6 +5,8 @@ import sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
+import { state } from '../src/messaging';
+
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 const initialCwd = process.cwd();
@@ -16,5 +18,8 @@ export const mochaHooks = {
     testInjector.reset();
     process.chdir(initialCwd);
     process.exit = originalProcessExit;
+    delete global.__stryker2__;
+    state.coverageAnalysis = 'off';
+    state.resetMutantCoverageHandler();
   },
 };

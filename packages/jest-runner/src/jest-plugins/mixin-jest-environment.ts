@@ -16,7 +16,7 @@ function fullName(test: Circus.TestEntry): string {
   return `${fullNameDescribeBlock(test.parent)} ${test.name}`;
 }
 
-export function jestEnvironmentFactory<T extends typeof JestEnvironment>(JestEnvironmentClass: T): T {
+export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T): T {
   // @ts-expect-error wrong assumption about a mixin class: https://github.com/microsoft/TypeScript/issues/37142
   class StrykerJestEnvironment extends JestEnvironmentClass {
     private readonly fileName: string;
