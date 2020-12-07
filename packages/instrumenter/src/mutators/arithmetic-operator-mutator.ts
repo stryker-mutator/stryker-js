@@ -33,7 +33,9 @@ export class ArithmeticOperatorMutator implements NodeMutator {
       return false;
     }
 
-    if (node.left.type === 'StringLiteral' || node.right.type === 'StringLiteral') {
+    const stringTypes = ['StringLiteral', 'TemplateLiteral'];
+
+    if (stringTypes.includes(node.right.type) || stringTypes.includes(node.left.type)) {
       return false;
     }
 

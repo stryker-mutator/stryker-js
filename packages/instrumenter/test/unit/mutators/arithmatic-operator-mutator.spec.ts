@@ -28,5 +28,9 @@ describe(ArithmeticOperatorMutator.name, () => {
     expectJSMutation(sut, '"a" + "b"');
     expectJSMutation(sut, 'const a = 1; "a" + a');
     expectJSMutation(sut, '3 + "a"');
+
+    expectJSMutation(sut, '`a` + `b`');
+    expectJSMutation(sut, 'const a = 1; `a` + a');
+    expectJSMutation(sut, '3 + `a`');
   });
 });
