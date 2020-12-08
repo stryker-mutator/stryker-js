@@ -34,8 +34,9 @@ export class ArithmeticOperatorMutator implements NodeMutator {
     }
 
     const stringTypes = ['StringLiteral', 'TemplateLiteral'];
+    const leftType = node.left.type === 'BinaryExpression' ? node.left.right.type : node.left.type;
 
-    if (stringTypes.includes(node.right.type) || stringTypes.includes(node.left.type)) {
+    if (stringTypes.includes(node.right.type) || stringTypes.includes(leftType)) {
       return false;
     }
 
