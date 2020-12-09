@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
+
+
+### Features
+
+* **jest-runner:** resolve local jest version ([#2623](https://github.com/stryker-mutator/stryker/issues/2623)) ([1466f9a](https://github.com/stryker-mutator/stryker/commit/1466f9a988d11a4c43cd7c97f195b0eacb75c96f))
+
+
+
+
+
 ## [4.1.2](https://github.com/stryker-mutator/stryker/compare/v4.1.1...v4.1.2) (2020-11-06)
 
 

@@ -23,4 +23,16 @@ describe(ArithmeticOperatorMutator.name, () => {
     expectJSMutation(sut, 'a / b', 'a * b');
     expectJSMutation(sut, 'a % b', 'a * b');
   });
+
+  it('should not mutate string literal concatenation', () => {
+    expectJSMutation(sut, '"a" + "b"');
+    expectJSMutation(sut, 'const a = 1; "a" + a');
+    expectJSMutation(sut, '3 + "a"');
+
+    expectJSMutation(sut, '`a` + `b`');
+    expectJSMutation(sut, 'const a = 1; `a` + a');
+    expectJSMutation(sut, '3 + `a`');
+
+    expectJSMutation(sut, '"a" + b + "c" + d + "e"');
+  });
 });
