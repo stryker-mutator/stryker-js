@@ -20,6 +20,8 @@ import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
 import { SerializableError } from '@jest/types/build/TestResult';
 
+import { JestOptions } from '../src-generated/jest-runner-options';
+
 import { jestTestAdapterFactory } from './jest-test-adapters';
 import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
 import JestConfigLoader from './config-loaders/jest-config-loader';
@@ -71,7 +73,7 @@ export default class JestTestRunner implements TestRunner {
     const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, (jestOptions.jest.config as jest.Config.InitialOptions) || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, jestOptions.jest || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
@@ -216,12 +218,14 @@ export default class JestTestRunner implements TestRunner {
     return testResults;
   }
 
-  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, config: jest.Config.InitialOptions): jest.Config.InitialOptions {
-    const stringify = (obj: jest.Config.InitialOptions) => JSON.stringify(obj, null, 2);
+  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestOptions): jest.Config.InitialOptions {
+    const config = (options.config || {}) as jest.Config.InitialOptions;
+    config.bail = options.enableBail;
+    const stringify = (obj: unknown) => JSON.stringify(obj, null, 2);
     this.log.debug(
       `Merging file-based config ${stringify(configFromFile)} 
       with custom config ${stringify(config)}
-      and default (internal) stryker config ${JEST_OVERRIDE_OPTIONS}`
+      and default (internal) stryker config ${stringify(JEST_OVERRIDE_OPTIONS)}`
     );
     const mergedConfig: jest.Config.InitialOptions = {
       ...configFromFile,

@@ -27,7 +27,7 @@ Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` t
 ```json
 {
   "testRunner": "jest",
-  "coverageAnalysis": "off"
+  "coverageAnalysis": "perTest"
 }
 ```
 
@@ -41,7 +41,8 @@ The @stryker-mutator/jest-runner also provides a couple of configurable options 
     "config": {
       "testEnvironment": "jest-environment-jsdom-sixteen"
     },
-    "enableFindRelatedTests": true,
+    "enableBail": true,
+    "enableFindRelatedTests": true
   }
 }
 ```
@@ -67,6 +68,12 @@ The path to your Jest config file.
 Default: `undefined`
 
 Custom Jest config. This will override file-based config.
+
+### `jest.enableBail` [`boolean`]
+
+Default: `true`
+
+Whether to run jest with the `--bail` flag. When `true`, Jest stop testing after the first failing test, which boosts performance. (See [_--bail_](https://jestjs.io/docs/en/cli#--bail).
 
 ### `jest.enableFindRelatedTests` [`boolean`]
 

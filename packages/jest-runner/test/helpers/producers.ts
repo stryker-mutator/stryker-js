@@ -6,6 +6,7 @@ import { JestOptions } from '../../src-generated/jest-runner-options';
 
 export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
   return {
+    enableBail: true,
     enableFindRelatedTests: true,
     projectType: 'custom',
     ...overrides,
