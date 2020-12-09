@@ -1,0 +1,4 @@
+{
+  "testEnvironment": "node",
+  "testRegex": "jest-spec/*.spec.js"
+}
