@@ -1,4 +1,4 @@
 {
   "testEnvironment": "node",
-  "testRegex": "jest-spec/*.spec.js"
+  "testMatch": ["**/jest-spec/*.spec.js"]
 }

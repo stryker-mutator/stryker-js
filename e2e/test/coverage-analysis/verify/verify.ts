@@ -37,7 +37,7 @@ describe('Coverage analysis', () => {
         concurrency: 2,
         plugins: ['@stryker-mutator/jest-runner', require.resolve('./coverage-analysis-reporter')],
         jest: {
-          configFile: 'jest-spec/jasmine.config.json'
+          configFile: 'jest-spec/jest.config.json'
         }
       };
     });
