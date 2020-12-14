@@ -16,6 +16,7 @@ describe('Coverage analysis', () => {
         coverageAnalysis: 'off',
         testRunner: 'jasmine',
         reporters: ['coverageAnalysis'],
+        concurrency: 2,
         plugins: ['@stryker-mutator/jasmine-runner', require.resolve('./coverage-analysis-reporter')],
         jasmineConfigFile: 'jasmine-spec/support/jasmine.json'
       };
@@ -33,6 +34,7 @@ describe('Coverage analysis', () => {
     beforeEach(() => {
       strykerOptions = {
         testRunner: 'jest',
+        tempDirName: 'stryker-tmp',
         reporters: ['coverageAnalysis'],
         concurrency: 2,
         plugins: ['@stryker-mutator/jest-runner', require.resolve('./coverage-analysis-reporter')],
