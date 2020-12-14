@@ -43,9 +43,9 @@ describe('Coverage analysis', () => {
     });
 
     describeTests({
-      off: 28,
-      all: 20,
-      perTest: 12
+      off: 14,
+      all: 10,
+      perTest: 6
     });
 
   });
