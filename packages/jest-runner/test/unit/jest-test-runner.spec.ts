@@ -234,7 +234,7 @@ describe(JestTestRunner.name, () => {
           }),
         ],
       });
-      jestTestAdapterMock.run.resolves({ results: jestResult });
+      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: jestResult }));
 
       const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
@@ -370,6 +370,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: sinon.match({ setupFilesAfterEnv: ['setup.js'] }),
         });
       });
+
       it('should reject if coverageAnalysis = perTest and test runner is not recognized', async () => {
         options.jest.config = { testRunner: 'foo/runner' };
         const sut = createSut();
@@ -377,6 +378,33 @@ describe(JestTestRunner.name, () => {
         await expect(onGoingRun).rejectedWith(
           'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker/issues'
         );
+      });
+
+      it('should reject if coverage analysis is enabled but coverage is not reported for all files', async () => {
+        // Arrange
+        const runTask = new Task<JestRunResult>();
+        const sut = createSut();
+        jestTestAdapterMock.run.returns(runTask.promise);
+
+        // Act
+        const onGoingRun = sut.dryRun({ coverageAnalysis: 'perTest' });
+        state.handleMutantCoverage(path.resolve('foo.js'), { perTest: {}, static: {} });
+        // mutant coverage for bar.js is missing
+        runTask.resolve(
+          producers.createJestRunResult({
+            results: producers.createJestAggregatedResult({
+              testResults: [
+                producers.createJestTestResult({ testFilePath: path.resolve('foo.js') }),
+                producers.createJestTestResult({ testFilePath: path.resolve('bar.js') }),
+              ],
+            }),
+          })
+        );
+        const result = await onGoingRun;
+
+        // Assert
+        assertions.expectErrored(result);
+        expect(result.errorMessage).matches(/Missing coverage results for.*bar\.js/s); // exact error messages are tested in separate unit tests
       });
     });
   });

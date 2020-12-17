@@ -30,7 +30,7 @@ import * as pluginTokens from './plugin-tokens';
 import { configLoaderFactory } from './config-loaders';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
 import JEST_OVERRIDE_OPTIONS from './jest-override-options';
-import { mergeMutantCoverage, guardAllTestFilesHaveCoverage } from './utils';
+import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE) {
@@ -109,8 +109,15 @@ export default class JestTestRunner implements TestRunner {
         projectRoot: process.cwd(),
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
-        guardAllTestFilesHaveCoverage(jestResult, fileNamesWithMutantCoverage);
-        dryRunResult.mutantCoverage = mutantCoverage;
+        const errorMessage = verifyAllTestFilesHaveCoverage(jestResult, fileNamesWithMutantCoverage);
+        if (errorMessage) {
+          return {
+            status: DryRunStatus.Error,
+            errorMessage,
+          };
+        } else {
+          dryRunResult.mutantCoverage = mutantCoverage;
+        }
       }
       return dryRunResult;
     } finally {

@@ -3,6 +3,7 @@ import type { EnvironmentContext } from '@jest/environment';
 import { Circus, Config } from '@jest/types';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
+import { JestRunResult } from '../../src/jest-run-result';
 
 export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
   return {
@@ -23,6 +24,14 @@ export function createAssertionResult(overrides?: Partial<AssertionResult>): Ass
     title: 'should be bar',
     duration: 25,
     failureDetails: [],
+    ...overrides,
+  };
+}
+
+export function createJestRunResult(overrides?: Partial<JestRunResult>): JestRunResult {
+  return {
+    globalConfig: createGlobalConfig(),
+    results: createJestAggregatedResult(),
     ...overrides,
   };
 }
