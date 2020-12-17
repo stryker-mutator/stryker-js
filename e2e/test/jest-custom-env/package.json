@@ -1,0 +1,12 @@
+{
+  "name": "jest-custom-env",
+  "description": "Tests for jest coverage analysis with custom test env",
+  "scripts": {
+    "test:unit": "jest",
+    "test": "stryker run",
+    "posttest": "mocha --require \"../../tasks/ts-node-register.js\" verify/*.ts"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
