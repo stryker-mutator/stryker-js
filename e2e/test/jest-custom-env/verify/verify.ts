@@ -7,7 +7,7 @@ describe('After running stryker with test runner jest on test environment "node"
       killed: 24,
       mutationScore: 75,
       noCoverage: 3,
-      survived: 1,
+      survived: 5,
     });
   });
 });
