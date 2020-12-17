@@ -22,7 +22,7 @@ describe('js-parser', () => {
   describe('default plugins', () => {
     describe('with features', () => {
       const itShouldSupportAst = createActArrangeAndAssertHelper((name) => `https://babeljs.io/docs/en/babel-plugin-syntax-${name}`);
-      itShouldSupportAst('async-generators', 'async function* agf() { await 1;}', (t) => t.isFunctionDeclaration() && t.node.generator);
+      itShouldSupportAst('async-generators', 'async function* agf() { await 1;}', (t) => t.isFunctionDeclaration() && (t.node.generator ?? false));
       itShouldSupportAst('dynamic-import', 'import("fs").then(console.log)', (t) => t.isImport());
       itShouldSupportAst('import-meta', 'console.log(import.meta);', (t) => t.isMetaProperty());
       itShouldSupportAst('big-int', 'const theBiggestInt = 9007199254740991n', (t) => t.isBigIntLiteral());
