@@ -3,5 +3,6 @@
   "spec": [
     "dist/test/unit/**/*.js",
     "dist/test/integration/**/*.js"
-  ]
+  ],
+  "timeout": 10000
 }

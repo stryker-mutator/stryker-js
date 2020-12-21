@@ -7,14 +7,15 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit tests",
+      "name": "Tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "--timeout",
         "999999",
         "--colors",
         "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/unit/**/*.js"
+        "${workspaceFolder}/test/unit/**/*.js",
+        "${workspaceFolder}/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [

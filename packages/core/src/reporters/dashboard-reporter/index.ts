@@ -1,10 +1,10 @@
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 
-import { determineCIProvider } from '../ci/Provider';
+import { determineCIProvider } from '../ci/provider';
 
-import DashboardReporter from './DashboardReporter';
-import DashboardReporterClient from './DashboardReporterClient';
+import DashboardReporter from './dashboard-reporter';
+import DashboardReporterClient from './dashboard-reporter-client';
 import { dashboardReporterTokens } from './tokens';
 
 export function dashboardReporterFactory(injector: Injector<PluginContext>): DashboardReporter {

@@ -28,11 +28,18 @@ describe(ConcurrencyTokenProvider.name, () => {
   });
 
   describe('testRunnerToken$', () => {
-    it('should use cpuCount - 1 if concurrency is not set', async () => {
-      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+    it('should use cpuCount if concurrency is not set and CPU count <= 4', async () => {
+      sinon.stub(os, 'cpus').returns([0, 1, 2, 3]);
       const sut = createSut();
       const actualTokens = await actAllTestRunnerTokens(sut);
-      expect(actualTokens).deep.eq([0, 1]);
+      expect(actualTokens).deep.eq([0, 1, 2, 3]);
+    });
+
+    it('should use cpuCount - 1 if concurrency is not set and CPU count > 4', async () => {
+      sinon.stub(os, 'cpus').returns([0, 1, 2, 3, 4]);
+      const sut = createSut();
+      const actualTokens = await actAllTestRunnerTokens(sut);
+      expect(actualTokens).deep.eq([0, 1, 2, 3]);
     });
 
     it('should allow half of the concurrency when there are checkers configured', async () => {

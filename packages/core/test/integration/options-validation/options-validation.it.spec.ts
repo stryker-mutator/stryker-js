@@ -6,7 +6,7 @@ import sinon = require('sinon');
 
 import { createPluginResolverProvider, coreTokens } from '../../../src/di';
 
-import { resolveFromRoot } from '../../helpers/testUtils';
+import { resolveFromRoot } from '../../helpers/test-utils';
 
 describe('Options validation integration', () => {
   it('should log about unknown properties in log file', () => {

@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
+
+
+### Bug Fixes
+
+* **CLI help:** remove non-existant logLevel 'all' ([#2626](https://github.com/stryker-mutator/stryker/issues/2626)) ([718a7f2](https://github.com/stryker-mutator/stryker/commit/718a7f2a6947f24f85dd0611e85d27a282ef3eb5))
+
+
+### Features
+
+* **debugging:** allow passing node args to the test runner ([#2609](https://github.com/stryker-mutator/stryker/issues/2609)) ([fdd95c0](https://github.com/stryker-mutator/stryker/commit/fdd95c0c6abe02201fd4ec914fc97d2cf0adf7d1))
+* **resporter:** add json reporter ([#2582](https://github.com/stryker-mutator/stryker/issues/2582)) ([d18c4aa](https://github.com/stryker-mutator/stryker/commit/d18c4aaa3494931aa4b92eb277254e796d865e51))
+* **timeout:** add `--dryRunTimeoutMinutes` option ([494e821](https://github.com/stryker-mutator/stryker/commit/494e8212bdc9bdebde262cf24f4cc5ca53f0fc79))
+
+
+
+
+
+## [4.1.2](https://github.com/stryker-mutator/stryker/compare/v4.1.1...v4.1.2) (2020-11-06)
+
+**Note:** Version bump only for package @stryker-mutator/core
+
+
+
+
+
+## [4.1.1](https://github.com/stryker-mutator/stryker/compare/v4.1.0...v4.1.1) (2020-11-05)
+
+
+### Bug Fixes
+
+* **ts:** support es private fields ([#2605](https://github.com/stryker-mutator/stryker/issues/2605)) ([6bd2fbb](https://github.com/stryker-mutator/stryker/commit/6bd2fbbf0aaa5154930ce36f4d153ee91a3c5f1f))
+
+
+
+
+
+# [4.1.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0...v4.1.0) (2020-10-30)
+
+
+### Bug Fixes
+
+* **concurrency:** better default for low CPU count ([#2546](https://github.com/stryker-mutator/stryker/issues/2546)) ([eac9199](https://github.com/stryker-mutator/stryker/commit/eac9199428dd1b34df756f55b9a457046b536adf))
+
+
+### Features
+
+* **angular:** update Karma config path in Angular preset ([#2548](https://github.com/stryker-mutator/stryker/issues/2548)) ([986acba](https://github.com/stryker-mutator/stryker/commit/986acba1c3aa59130b876f90e29e4925898e70a6))
+* **html:** reposition stryker image ([#2593](https://github.com/stryker-mutator/stryker/issues/2593)) ([21d635a](https://github.com/stryker-mutator/stryker/commit/21d635aae0e6392cb7facd9a0974e7fc525f2fb7))
+* **HTML reporter:** Dark mode support 🌑 ([#2590](https://github.com/stryker-mutator/stryker/issues/2590)) ([ca9a513](https://github.com/stryker-mutator/stryker/commit/ca9a513c3e2a95337fbca74752408c8372fe5c5d))
+
+
+
+
+
 # [4.0.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
 
 

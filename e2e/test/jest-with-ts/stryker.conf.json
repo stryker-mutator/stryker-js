@@ -1,7 +1,8 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "mutate": [
-    "src/data-access/mappers/TableStorageMapper.ts"
+    "src/data-access/mappers/TableStorageMapper.ts",
+    "src/components/hello-component.ts"
   ],
   "packageManager": "npm",
   "testRunner": "jest",

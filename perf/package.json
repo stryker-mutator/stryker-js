@@ -6,9 +6,9 @@
     "ts-node": "~8.10.2"
   },
   "scripts": {
+    "postinstall": "npm run merge-config && npm run bootstrap",
     "merge-config": "ts-node -p tasks/merge-config.ts",
-    "postinstall": "npm run merge-config && node ../node_modules/lerna/cli.js bootstrap --no-ci && npm run install-local-dependencies",
-    "install-local-dependencies": "ts-node -p tasks/install-local-dependencies.ts",
+    "bootstrap": "ts-node -p tasks/install.ts",
     "test": "ts-node tasks/run-perf-tests.ts"
   }
 }

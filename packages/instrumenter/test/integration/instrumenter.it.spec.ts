@@ -55,6 +55,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument switch case statements (using the switchCaseMutantPlacer)', async () => {
     await arrangeAndActAssert('switch-case.js');
   });
+  it('should be able to instrument string literals in different places', async () => {
+    await arrangeAndActAssert('string-mutations.ts');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

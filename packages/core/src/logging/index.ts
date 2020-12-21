@@ -1,2 +1,2 @@
-export * from './LogConfigurator';
-export * from './LoggingClientContext';
+export * from './log-configurator';
+export * from './logging-client-context';

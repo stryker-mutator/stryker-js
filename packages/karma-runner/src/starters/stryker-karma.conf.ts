@@ -2,11 +2,10 @@ import * as path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
-import { noopLogger } from '@stryker-mutator/util';
+import { noopLogger, requireResolve } from '@stryker-mutator/util';
 
-import StrykerReporter from '../karma-plugins/StrykerReporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../karma-plugins/TestHooksMiddleware';
-import { requireModule } from '../utils';
+import StrykerReporter from '../karma-plugins/stryker-reporter';
+import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../karma-plugins/test-hooks-middleware';
 
 function setDefaultOptions(config: Config) {
   config.set({
@@ -20,7 +19,10 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
     try {
-      const userConfig = requireModule(configFileName);
+      const userConfig = requireResolve(configFileName);
+      if (typeof userConfig !== 'function') {
+        throw new TypeError(`Karma config file "${configFileName}" should export a function! Found: ${typeof userConfig}`);
+      }
       userConfig(config);
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
     } catch (error) {
@@ -122,7 +124,7 @@ function configureTestHooksMiddleware(config: Config) {
 function configureStrykerMutantCoverageAdapter(config: Config) {
   config.files = config.files || [];
   config.files.unshift({
-    pattern: require.resolve('../karma-plugins/StrykerMutantCoverageAdapter'),
+    pattern: require.resolve('../karma-plugins/stryker-mutant-coverage-adapter'),
     included: true,
     watched: false,
     served: true,

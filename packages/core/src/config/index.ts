@@ -1,3 +1,3 @@
-export * from './readConfig';
-export * from './OptionsValidator';
-export * from './buildSchemaWithPluginContributions';
+export * from './read-config';
+export * from './options-validator';
+export * from './build-schema-with-plugin-contributions';

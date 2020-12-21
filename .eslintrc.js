@@ -6,10 +6,17 @@ module.exports = {
     sourceType: 'module',
     project: [require.resolve('./tsconfig.lint.json')]
   },
+  root: true,
   parser: '@typescript-eslint/parser',
   extends: ['prettier', 'eslint:recommended'],
-  plugins: ['@typescript-eslint', 'prettier', 'import'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
   rules: {
+    'unicorn/filename-case': [
+      'error',
+      {
+        'case': 'kebabCase'
+      }
+    ],
     'import/newline-after-import': 1,
     'import/order': [
       "error",
@@ -35,6 +42,7 @@ module.exports = {
     '@typescript-eslint/brace-style': 'error',
     camelcase: 'error',
     '@typescript-eslint/consistent-type-assertions': 'error',
+    'no-redeclare': 'off',
     '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',

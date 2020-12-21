@@ -1,1 +1,1 @@
-export * from './findMutantTestCoverage';
+export * from './find-mutant-test-coverage';
