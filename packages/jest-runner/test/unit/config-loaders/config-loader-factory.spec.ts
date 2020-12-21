@@ -37,6 +37,7 @@ describe(configLoaderFactory.name, () => {
 
     options = factory.strykerWithPluginOptions({
       jest: {
+        enableBail: true,
         enableFindRelatedTests: true,
         projectType: 'custom',
       },

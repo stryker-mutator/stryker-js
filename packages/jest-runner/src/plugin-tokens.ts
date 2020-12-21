@@ -1,7 +1,8 @@
-export const projectRootToken = 'projectRoot';
-export const loaderToken = 'loader';
-export const resolveToken = 'resolve';
-export const configLoaderToken = 'configLoader';
-export const processEnvToken = 'PROCESS_ENV_TOKEN';
-export const jestTestAdapterToken = 'jestTestAdapter';
-export const jestVersionToken = 'jestVersion';
+export const projectRoot = 'projectRoot';
+export const loader = 'loader';
+export const resolve = 'resolve';
+export const configLoader = 'configLoader';
+export const processEnv = 'processEnv';
+export const jestTestAdapter = 'jestTestAdapter';
+export const jestVersion = 'jestVersion';
+export const globalNamespace = 'globalNamespace';
