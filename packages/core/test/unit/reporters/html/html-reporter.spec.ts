@@ -8,7 +8,7 @@ import * as sinon from 'sinon';
 import HtmlReporter from '../../../../src/reporters/html/html-reporter';
 import * as ReporterUtil from '../../../../src/reporters/reporter-util';
 
-describe.only(HtmlReporter.name, () => {
+describe(HtmlReporter.name, () => {
   let writeFileStub: sinon.SinonStub;
   let mkdirStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
