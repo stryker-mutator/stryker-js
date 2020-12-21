@@ -1,6 +1,7 @@
 **/*
 !*.d.ts
 !bin/**
+!jest-env/**
 !src/**
 src/**/*.map
 src/**/*.ts

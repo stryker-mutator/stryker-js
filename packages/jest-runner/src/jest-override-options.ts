@@ -1,4 +1,6 @@
-const JEST_OVERRIDE_OPTIONS = Object.freeze({
+import type { Config } from '@jest/types';
+
+const JEST_OVERRIDE_OPTIONS: Readonly<Config.InitialOptions> = Object.freeze({
   // Prevent the user from using his or her own testResultProcessor because this might
   // Mess with the way Stryker gets the results
   testResultsProcessor: undefined,
@@ -9,12 +11,14 @@ const JEST_OVERRIDE_OPTIONS = Object.freeze({
   // Disable verbose logging, this will only slow down Stryker test runs
   verbose: false,
 
-  // Disable bail so the jest process does not quit with a non-zero exit code
-  bail: false,
-
   // Disable notifications for test results, this will otherwise show a notification about
   // the results each time Stryker runs the tests
   notify: false,
-} as const);
+
+  /**
+   * Disable reporters, they only way us down.
+   */
+  reporters: [],
+});
 
 export default JEST_OVERRIDE_OPTIONS;
