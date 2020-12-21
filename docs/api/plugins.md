@@ -3,7 +3,7 @@ title: Plugins
 custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/api/plugins.md
 ---
 
-You can extend Stryker with 6 plugin kinds:
+You can extend Stryker with 3 plugin kinds:
 
 ```ts
 export enum PluginKind {
