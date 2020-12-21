@@ -7,17 +7,14 @@ import * as sinon from 'sinon';
 
 import HtmlReporter from '../../../../src/reporters/html/html-reporter';
 import * as ReporterUtil from '../../../../src/reporters/reporter-util';
-import { bindMutationTestReport } from '../../../../src/reporters/html/templates/bind-mutation-test-report';
 
-describe(HtmlReporter.name, () => {
-  let copyFileStub: sinon.SinonStub;
+describe.only(HtmlReporter.name, () => {
   let writeFileStub: sinon.SinonStub;
   let mkdirStub: sinon.SinonStub;
   let deleteDirStub: sinon.SinonStub;
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    copyFileStub = sinon.stub(ReporterUtil, 'copyFile');
     writeFileStub = sinon.stub(ReporterUtil, 'writeFile');
     deleteDirStub = sinon.stub(ReporterUtil, 'deleteDir');
     mkdirStub = sinon.stub(ReporterUtil, 'mkdir');
@@ -51,22 +48,15 @@ describe(HtmlReporter.name, () => {
       expect(deleteDirStub).calledBefore(mkdirStub);
     });
 
-    it('should copy the template files', async () => {
-      actReportReady();
-      await sut.wrapUp();
-      expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'stryker-80x80.png'),
-        path.resolve('reports', 'mutation', 'html', 'stryker-80x80.png')
-      );
-      expect(copyFileStub).calledWith(
-        path.resolve(__dirname, '..', '..', '..', '..', 'src', 'reporters', 'html', 'templates', 'index.html'),
-        path.resolve('reports', 'mutation', 'html', 'index.html')
-      );
-    });
-
-    it('should write the mutation report to disk', async () => {
+    it('should write the mutation report in the index file', async () => {
       const report: mutationTestReportSchema.MutationTestResult = {
-        files: {},
+        files: {
+          'foo.js': {
+            language: 'js',
+            mutants: [],
+            source: 'console.log("hello world")',
+          },
+        },
         schemaVersion: '1.0',
         thresholds: {
           high: 80,
@@ -75,7 +65,30 @@ describe(HtmlReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'html', 'bind-mutation-test-report.js'), bindMutationTestReport(report));
+      expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'html', 'index.html'), sinon.match(JSON.stringify(report)));
+    });
+
+    it('should escape HTML tags in the mutation testing report.', async () => {
+      const report: mutationTestReportSchema.MutationTestResult = {
+        files: {
+          'index.html': {
+            language: 'html',
+            mutants: [],
+            source: '<script></script>',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: {
+          high: 80,
+          low: 60,
+        },
+      };
+      sut.onMutationTestReportReady(report);
+      await sut.wrapUp();
+      expect(writeFileStub).calledWith(
+        path.resolve('reports', 'mutation', 'html', 'index.html'),
+        sinon.match('"source":"<" + "script><" + "/script>"')
+      );
     });
   });
 
@@ -102,13 +115,6 @@ describe(HtmlReporter.name, () => {
     it('should reject when "writeFile" rejects', () => {
       const expectedError = new Error('writeFile');
       writeFileStub.rejects(expectedError);
-      actReportReady();
-      return expect(sut.wrapUp()).rejectedWith(expectedError);
-    });
-
-    it('should reject when "copyFile" rejects', () => {
-      const expectedError = new Error('copyFile');
-      copyFileStub.rejects(expectedError);
       actReportReady();
       return expect(sut.wrapUp()).rejectedWith(expectedError);
     });
