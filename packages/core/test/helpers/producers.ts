@@ -82,7 +82,7 @@ export const logger = (): Mock<Logger> => {
   return {
     _log: sinon.stub(),
     addContext: sinon.stub(),
-    category: 'category',
+    category: 'out',
     clearContext: sinon.stub(),
     debug: sinon.stub(),
     error: sinon.stub(),
