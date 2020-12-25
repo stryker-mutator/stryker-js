@@ -1,4 +1,4 @@
-import * as mutationTestReportSchema from 'mutation-testing-report-schema/dist/src/api';
+import * as mutationTestReportSchema from 'mutation-testing-report-schema';
 
 export { default as Reporter } from './src/report/reporter';
 export * from './src/report/mutant-result';
