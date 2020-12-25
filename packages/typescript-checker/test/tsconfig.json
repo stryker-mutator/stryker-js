@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.settings.json",
+  "extends": "../../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "./dist/test",
     "rootDir": ".",
@@ -11,10 +11,10 @@
   },
   "references": [
     {
-      "path": "./tsconfig.src.json"
+      "path": "../src"
     },
     {
-      "path": "../test-helpers/tsconfig.src.json"
+      "path": "../../test-helpers/tsconfig.src.json"
     }
   ]
 }
