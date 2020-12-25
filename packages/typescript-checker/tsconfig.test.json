@@ -1,7 +1,7 @@
 {
-  "extends": "../../../tsconfig.settings.json",
+  "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "../dist/test",
+    "outDir": "./dist/test",
     "rootDir": ".",
     "esModuleInterop": true,
     "types": [
@@ -11,10 +11,10 @@
   },
   "references": [
     {
-      "path": "../src"
+      "path": "./tsconfig.src.json"
     },
     {
-      "path": "../../test-helpers/tsconfig.src.json"
+      "path": "../test-helpers/tsconfig.src.json"
     }
   ]
 }

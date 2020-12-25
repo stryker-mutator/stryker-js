@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "noImplicitThis": true,
+    "types": [
+      "node"
+    ],
+  },
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ],
+  "include": ["src/**/*.ts", "src-generated/**/*.ts", "schema/typescript-checker-options.json"]
+}
