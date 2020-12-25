@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/stryker-mutator/stryker/compare/v4.2.0...v4.3.0) (2020-12-25)
+
+
+### Features
+
+* **jest-runner:** support coverage analysis ([#2634](https://github.com/stryker-mutator/stryker/issues/2634)) ([5662e58](https://github.com/stryker-mutator/stryker/commit/5662e581e03ed955d1c851c9d818f0ad4e0d18a8))
+
+
+
+
+
 # [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
 
 

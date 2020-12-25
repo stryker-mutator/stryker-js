@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/stryker-mutator/stryker/compare/v4.2.0...v4.3.0) (2020-12-25)
+
+
+### Features
+
+* single file HTML report ([#2540](https://github.com/stryker-mutator/stryker/issues/2540)) ([057f9fd](https://github.com/stryker-mutator/stryker/commit/057f9fdf2b5468e8ea76e8be57475fd58a28b7c4))
+
+
+
+
+
 # [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
 
 
