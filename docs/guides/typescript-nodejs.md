@@ -91,19 +91,50 @@ Example:
     "projectType": "custom",
     "configFile": "path/to/your/custom/jestConfig.js"
    },
+  "tempDirName": "stryker-tmp",
   "testRunner": "jest"
 }
 ```
 
 Jest has two ways to provide TypeScript compilation, either [using babel](https://jestjs.io/docs/en/getting-started#using-typescript) (default) or using [ts-jest](https://www.npmjs.com/package/ts-jest). For both, you _don't need to configure the `buildCommand`_. 
 
-### Run
+## Run
 
 Run Stryker as per usual, either using a custom script in package.json or using `npx`.
 
 ```shell
 npx stryker run
-# OR
+# OR, if your script is called "test:mutation"
 npm run test:mutation 
-# if your script is called "test:mutation"
 ```
+
+## Troubleshooting FAQ
+
+### Build command fails
+
+If you're running into issues with your `buildCommand`, try to execute it by hand to make sure it works. For example, if your `buildCommand` is `"tsc -b path/to/tsconfig.json"`, try to run `npx tsc  -b path/to/tsconfig.json` yourself, did it have the desired effect?
+
+If that works, the next step would be to try the command yourself _inside the Stryker sandbox directory_. Please `cd` into the `.stryker-tmp/sandbox-xxxxx` directory and try the command there. For example:
+
+```shell
+cd .stryker-tmp/sandbox-12345678
+node ../../node_modules/typescript/bin/tsc -b path/to/tsconfig.json
+```
+
+> Note: since the sandbox dir doesn't have you node_modules, you will need to specify the full path to the TypeScript compiler.
+
+### Initial test run fails 
+
+You might run into issues like this:
+
+> One or more tests resulted in an error
+> [...] Cannot assign to 'stryNS_9fa48' because it is not a variable [...]
+
+The initial test run might fail when you're using ts-jest or ts-node. The reason for this is that Stryker will mutate your code and, by doing so, introduce type errors into your code. Stryker tries to ignore these errors by adding [`// @ts-nocheck`](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#ts-nocheck-in-typescript-files) in your source files. However, this is only done for TypeScript-like files inside your `lib`, `src`, and `test` directories by default. If you have your code somewhere else, you will need to override [disableTypeChecks](../configuration.md#disabletypechecks-false--string) yourself:
+
+```json
+{
+  "disableTypeChecks": "app/**/*.{js,ts,jsx,tsx,html,vue}"
+}
+```
+
