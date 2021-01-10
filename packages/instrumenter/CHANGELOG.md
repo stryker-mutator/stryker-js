@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
+
+**Note:** Version bump only for package @stryker-mutator/instrumenter
+
+
+
+
+
+# [4.3.0](https://github.com/stryker-mutator/stryker/compare/v4.2.0...v4.3.0) (2020-12-25)
+
+**Note:** Version bump only for package @stryker-mutator/instrumenter
+
+
+
+
+
+# [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
+
+
+### Bug Fixes
+
+* **arithmatic-mutator:** Don't mutate obvious string concat ([#2648](https://github.com/stryker-mutator/stryker/issues/2648)) ([71f8f9a](https://github.com/stryker-mutator/stryker/commit/71f8f9a6f4f663942c83d64667058d1de3d958a6))
+
+
+
+
+
 ## [4.1.2](https://github.com/stryker-mutator/stryker/compare/v4.1.1...v4.1.2) (2020-11-06)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

@@ -15,7 +15,8 @@
       "stryker/guides/angular",
       "stryker/guides/react",
       "stryker/guides/vuejs",
-      "stryker/guides/testing-typescript-with-tsnode"
+      "stryker/guides/typescript-tsnode",
+      "stryker/guides/create-a-plugin"
     ]
   }
 ]

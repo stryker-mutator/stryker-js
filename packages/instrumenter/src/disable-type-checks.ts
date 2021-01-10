@@ -65,7 +65,7 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
   return html;
 }
 
-function removeTSDirectives(text: string, comments: Array<types.CommentBlock | types.CommentLine> | null): string {
+function removeTSDirectives(text: string, comments: Array<types.CommentBlock | types.CommentLine> | null | undefined): string {
   const directiveRanges = comments
     ?.map(tryParseTSDirective)
     .filter(notEmpty)

@@ -74,3 +74,59 @@ Default: `true`
 
 Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#--findrelatedtests-spaceseparatedlistofsourcefiles)).
 
+
+## Coverage analysis
+
+The `@stryker-mutator/jest-runner` plugin supports coverage analysis and test filtering, meaning you can run with `--coverageAnalysis perTest` for optimal performance.
+
+### Coverage reporting
+
+When using `"all"` or `"perTest"` coverage analysis, this plugin reports mutant coverage by hooking into the [jest's test environment](https://jestjs.io/docs/en/configuration.html#testenvironment-string). The test environment setting is overridden based on the `"testEnvironment"` configuration option in your jest config:
+
+Jest test environment|Jest runner's override|
+---|---
+node|@stryker-mutator/jest-runner/jest-env/node
+jsdom|@stryker-mutator/jest-runner/jest-env/jsom
+jest-environment-jsdom-sixteen|@stryker-mutator/jest-runner/jest-env/jsom-sixteen
+
+As long as you're using one of these test environments, you won't have to do anything.
+
+However, if you choose to override the jest-environment on a file-by-file basis using [jest's `@jest-environment` docblock](https://jestjs.io/docs/en/configuration.html#testenvironment-string), you will have to do the work. 
+
+This:
+
+```js
+/**
+ * @jest-environment jsdom
+ */
+```
+
+Becomes:
+
+```js
+/**
+ * @jest-environment @stryker-mutator/jest-runner/jest-env/jsom 
+ */
+```
+
+Don't worry; using Stryker's alternative is harmless during regular unit testing.
+
+If you're using a custom test environment, you'll need to mixin the Stryker functionality yourself:
+
+```js
+// my-custom-jest-environment.js
+const { mixinJestEnvironment} = require('@stryker-mutator/jest-runner');
+const NodeEnvironment = require('jest-environment-node');
+
+class MyCustomTestEnvironment extends NodeEnvironment {
+  // custom magic here ✨
+}
+
+module.exports = mixinJestEnvironment(MyCustomTestEnvironment);
+```
+
+### Test filtering
+
+When using `"perTest"` coverage analysis, the `@stryker-mutator/jest-runner` will hook into the [jest test runner](https://jestjs.io/docs/en/configuration.html#testrunner-string). Both the default `"jasmine2"` as well as [jest-circus](https://www.npmjs.com/package/jest-circus) are supported here. 
+
+If you're using a different test runner, you're out of luck. Please downgrade to using `"all"` coverage analysis. If you think we should support your test runner, please let us know by opening an [issue](https://github.com/stryker-mutator/stryker/issues/new?assignees=&labels=%F0%9F%9A%80+Feature+request&template=feature_request.md&title=), or by joining our [slack channel](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).

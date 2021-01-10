@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.io/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.3.0](https://github.io/stryker-mutator/stryker/compare/v4.2.0...v4.3.0) (2020-12-25)
+
+**Note:** Version bump only for package @stryker-mutator/karma-runner
+
+
+
+
+
+# [4.2.0](https://github.io/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
+
+
+### Features
+
+* **karma-runner:** resolve local karma and ng version ([#2622](https://github.io/stryker-mutator/stryker/issues/2622)) ([5b92130](https://github.io/stryker-mutator/stryker/commit/5b921302787a526377be02a37eb43a487c8f283d))
+
+
+
+
+
 ## [4.1.2](https://github.io/stryker-mutator/stryker/compare/v4.1.1...v4.1.2) (2020-11-06)
 
 
