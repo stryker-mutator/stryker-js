@@ -1,19 +1,20 @@
 ---
-title: TypeScript NodeJS
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/typescript-nodejs.md
+title: NodeJS
+custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/nodejs.md
 ---
 
-Stryker supports all NodeJS projects. Either by using one of the test runner plugins or with the command test runner.
+Stryker can run Mutation Testing on all NodeJS projects. Either by using one of the test runner plugins or with the command test runner. It also supports a custom `buildCommand`. This command is useful to compile TypeScript or babel code or to bundle your code.
 
-## About TypeScript compilation
+## About transpiling
 
-There are multiple ways of compiling TypeScript code. 
+There are multiple scenarios of transpiling code when running your tests. 
 
-* Using `tsc` or `babel` to compile your code before testing; 
-* Using [`ts-node`](https://www.npmjs.com/package/ts-node) or [`@babel/register`](https://babeljs.io/docs/en/babel-register/) as a just-in-time compiler (the test runner compiles your code just in time);
-* Using webpack or some other bundler to create a bundle before running tests. 
+* **Ahead-of-time**  
+  Use `tsc` or [`@babel/cli`](https://babeljs.io/docs/en/babel-cli) to compile your code before testing or use [webpack](https://webpack.js.org/api/cli/) or another bundler to create a bundle before running tests. 
+* **Just-in-time**  
+  Use [`ts-node`](https://www.npmjs.com/package/ts-node) or [`@babel/register`](https://babeljs.io/docs/en/babel-register/) as a just-in-time compiler to compile your code on the fly.
 
-All of these scenarios are supported, however using a just-in-time compiler during mutation testing is not recommended because it means running the compiler a large number of times. Since [Stryker uses mutation switching](https://stryker-mutator.io/blog/announcing-stryker-4-mutation-switching), compiling only once is preferred. Don't worry; this guide will help you configuring Stryker correctly.
+Both scenarios are supported, however using just-in-time transpiling during mutation testing is not recommended because it means running the compiler a large number of times. Since [Stryker uses mutation switching](https://stryker-mutator.io/blog/announcing-stryker-4-mutation-switching), compiling only once is preferred. Don't worry; this guide will help you configuring Stryker correctly.
 
 If you manage your code's compilation through a `tsconfig.json` file, this guide ensures that your TypeScript code uses that configuration.
 
@@ -35,7 +36,7 @@ Example:
 
 > You generally don't have to configure a `buildCommand` if you're using the Jest test runner.
 
-Use the `buildCommand` to configure a command that Stryker can run in its sandbox, just after it mutated your code. If you're using a bundler, you might need to change this command by a command that creates a bundle, like `"webpack --config webpack.test.config.js"`. You can also use a script you've defined in package.json, for example `"npm run build"`. 
+Use the `buildCommand` to configure a command that Stryker can run in its sandbox, just after your code is mutated. If you're using a bundler, you will need to change this command by a command that creates a bundle, like `"webpack --config webpack.test.config.js"`. You can also use a script you've defined in package.json, for example `"npm run build"`. 
 
 Don't worry about your [PATH environment variable](https://en.wikipedia.org/wiki/PATH_(variable)); Stryker will make sure your local dependencies are available there before executing the build command inside the sandbox. 
 
@@ -45,9 +46,11 @@ If you're using `ts-node` or `@babel/register` to just-in-time compile during un
 * For @babel/register: `babel src --out-dir lib`
 (using the [@babel/cli](https://babeljs.io/docs/en/babel-cli))
 
+Be sure to test them out yourself first.
+
 ### Test runner
 
-Next, configure the test runner you're using. Here are 2 examples, one for jest and one for Mocha. If you're using [jasmine](../jasmine-runner.md) or [karma](../karma-runner.md), please see their respective pages. If you're using a different test runner, you can still use the default [command test runner](../configuration.md#testrunner-string)
+Next, configure the test runner you're using. If you're using a different test runner than described here, you can still use the default [command test runner](../configuration.md#testrunner-string)
 
 #### Mocha
 
@@ -66,7 +69,7 @@ Example:
 
 Use the `mochaOptions` to configure the mocha test runner. If your project uses a [mocha config file](https://mochajs.org/#-config-path), you can specify it in `mochaOptions.config`; use other settings to override settings in the config file. 
 
-If you're using a `buildCommand`, be sure to configure the _js output files in the `mochaOptions.spec` instead of the ts input files_, otherwise Mocha won't be able to find your test files.
+If you're using a `buildCommand`, be sure to configure the _js output files in the `mochaOptions.spec` instead of the ts input files_, otherwise mocha won't be able to find your test files.
 
 If you choose to keep using your just-in-time compiler and accept the performance penalty, you can use [mochaOptions.require](../mocha-runner.md#mochaoptionsrequire-string) to configure your `ts-node` or `@babel/register` transpiler. Also, you may want to override the ts-node configuration options via environment variables. You can do so using environment variables, for example:
 
@@ -108,6 +111,18 @@ npx stryker run
 npm run test:mutation 
 ```
 
+#### Jasmine
+
+Example:
+
+```json
+{
+  "coverageAnalysis": "perTest",
+  "jasmineConfigFile": "spec/support/jasmine.json",
+  "testRunner": "jasmine"
+}
+```
+
 ## Troubleshooting FAQ
 
 ### Build command fails
@@ -138,3 +153,18 @@ The initial test run might fail when you're using ts-jest or ts-node. The reason
 }
 ```
 
+### No tests executed - jest runner
+You might run into issues like this when using the `@stryker-mutator/jest-runner`:
+
+> No tests found, exiting with code 1
+> Run with `--passWithNoTests` to exit with code 0
+
+You will need to override the `tempDirName` to a directory without a `.` in front of it.
+
+```json
+{
+   "tempDirName": "stryker-tmp"
+}
+```
+
+See [#1691](https://github.com/stryker-mutator/stryker/issues/1691) for more info.

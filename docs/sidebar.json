@@ -15,7 +15,7 @@
       "stryker/guides/angular",
       "stryker/guides/react",
       "stryker/guides/vuejs",
-      "stryker/guides/typescript-tsnode",
+      "stryker/guides/nodejs",
       "stryker/guides/create-a-plugin"
     ]
   }
