@@ -22,12 +22,11 @@ For the minimum supported versions, see the peerDependencies section in the [pac
 
 ## Configuration
 
-Make sure you set the `testRunner` option to "jest" and set `coverageAnalysis` to "off" in your Stryker configuration.
+Make sure you set the `testRunner` option to "jest".
 
 ```json
 {
-  "testRunner": "jest",
-  "coverageAnalysis": "off"
+  "testRunner": "jest"
 }
 ```
 
