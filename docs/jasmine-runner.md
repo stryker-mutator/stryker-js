@@ -29,7 +29,6 @@ You can configure the jasmine test runner in the `stryker.conf.js` (or `stryker.
 ```json
 {
   "coverageAnalysis": "perTest",
-  "testFramework": "jasmine",
   "testRunner": "jasmine",
   "jasmineConfigFile": "spec/support/jasmine.json"
 }
