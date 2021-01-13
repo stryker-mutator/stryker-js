@@ -30,7 +30,7 @@
     "link-parent-bin": "^2.0.0",
     "load-grunt-tasks": "~5.1.0",
     "mocha": "~8.2.0",
-    "mutation-testing-metrics": "~1.4.3",
+    "mutation-testing-metrics": "~1.5.2",
     "rxjs": "~6.5.3",
     "semver": "~6.3.0",
     "ts-jest": "~26.3.0",
