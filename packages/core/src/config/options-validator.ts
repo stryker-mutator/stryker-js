@@ -1,6 +1,6 @@
 import os = require('os');
 
-import Ajv = require('ajv');
+import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
@@ -15,10 +15,10 @@ import CommandTestRunner from '../test-runner/command-test-runner';
 
 import { describeErrors } from './validation-errors';
 
-const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore', logger: false });
+const ajv = new Ajv({ useDefaults: true, allErrors: true, jsPropertySyntax: true, verbose: true, logger: false, strict: false });
 
 export class OptionsValidator {
-  private readonly validateFn: Ajv.ValidateFunction;
+  private readonly validateFn: ValidateFunction;
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 

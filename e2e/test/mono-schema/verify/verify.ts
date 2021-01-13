@@ -7,7 +7,7 @@ import Axios from 'axios';
 import { beforeEach } from 'mocha';
 
 const ajv = new Ajv({
-  async: true,
+  strict: false,
   allErrors: true,
   loadSchema: async (url) => {
     const content = await Axios.get(url);
@@ -35,7 +35,7 @@ describe('The Stryker meta schema', () => {
   const expectedErrors = [
     {
       keyword: 'type',
-      dataPath: '.jasmineConfigFile',
+      dataPath: '/jasmineConfigFile',
       schemaPath: '#/properties/jasmineConfigFile/type',
       params: {
         type: 'string',
@@ -44,7 +44,7 @@ describe('The Stryker meta schema', () => {
     },
     {
       keyword: 'type',
-      dataPath: '.jest.config',
+      dataPath: '/jest/config',
       schemaPath: '#/properties/jest/properties/config/type',
       params: {
         type: 'object',
@@ -53,7 +53,7 @@ describe('The Stryker meta schema', () => {
     },
     {
       keyword: 'type',
-      dataPath: '.karma.ngConfig.testArguments',
+      dataPath: '/karma/ngConfig/testArguments',
       schemaPath: '#/definitions/karmaNgConfigOptions/properties/testArguments/type',
       params: {
         type: 'object',
