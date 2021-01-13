@@ -8,8 +8,8 @@ import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 import { createJasmineTestRunnerFactory } from '../../src';
 
 /**
- * This file will run the mocha runner a number of times in a test suite that is designed
- * to result in an OutOfMemory error when the mocha test runner does not clean it's memory
+ * This file will run the jasmine runner a number of times in a test suite that is designed
+ * to result in an OutOfMemory error when the test runner does not clean its memory
  * Start this process with `--max-old-space-size=32 --max-semi-space-size=1` to get a fast OutOfMemory error (if there is a memory leak)
  *
  * @see https://github.com/stryker-mutator/stryker/issues/2461
@@ -30,7 +30,7 @@ async function main() {
   await jasmineRunner.init();
   await doDryRun();
 
-  async function doDryRun(n = 20) {
+  async function doDryRun(n = 40) {
     if (n > 0) {
       console.log(`Iterator count ${n}`);
       const result = await jasmineRunner.dryRun({ coverageAnalysis: 'off', timeout: 3000 });
