@@ -11,11 +11,10 @@ import path = require('path');
 export class DirectoryRequireCache {
   private cache: Set<string>;
   private initFiles?: readonly string[];
-  private rootModuleId: string;
+  private parents: Set<string>;
 
-  public init({ initFiles, rootModuleId }: { initFiles: readonly string[]; rootModuleId: string }) {
+  public init({ initFiles }: { initFiles: readonly string[] }) {
     this.initFiles = initFiles;
-    this.rootModuleId = rootModuleId;
   }
 
   /**
@@ -26,22 +25,31 @@ export class DirectoryRequireCache {
     if (!this.cache) {
       const cwd = process.cwd();
       this.cache = new Set(this.initFiles);
-      Object.keys(require.cache)
-        .filter((fileName) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
-        .forEach((file) => this.cache.add(file));
+      this.parents = new Set();
+      Object.entries(require.cache)
+        .filter(([fileName]) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
+        .forEach(([file, module]) => {
+          this.cache.add(file);
+          // TODO parent is deprecated
+          // See https://nodejs.org/api/modules.html#modules_module_parent
+          const parentFile = module?.parent?.filename;
+          if (parentFile) {
+            this.parents.add(parentFile);
+          }
+        });
     }
   }
 
   public clear() {
-    if (this.cache) {
-      if (this.rootModuleId) {
-        const rootModule = require.cache[this.rootModuleId];
-        if (rootModule) {
-          rootModule.children = rootModule.children.filter((childModule) => !this.cache.has(childModule.id));
+    if (this.cache && this.parents) {
+      this.parents.forEach((parent) => {
+        const parentModule = require.cache[parent];
+        if (parentModule) {
+          parentModule.children = parentModule.children.filter((childModule) => !this.cache.has(childModule.id));
         } else {
-          throw new Error(`Could not find "${this.rootModuleId}" in require cache.`);
+          throw new Error(`Could not find "${parent}" in require cache.`);
         }
-      }
+      });
       this.cache.forEach((fileName) => delete require.cache[fileName]);
     }
   }

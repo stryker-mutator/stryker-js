@@ -50,7 +50,7 @@ export class MochaTestRunner implements TestRunner {
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
-    this.requireCache.init({ initFiles: this.testFileNames, rootModuleId: require.resolve('mocha/lib/mocha') });
+    this.requireCache.init({ initFiles: this.testFileNames });
     if (this.mochaOptions.require) {
       this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }

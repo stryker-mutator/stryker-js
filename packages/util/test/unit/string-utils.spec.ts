@@ -28,7 +28,9 @@ describe('stringUtils', () => {
     }
 
     it('should be able to point to a path', () => {
-      expect(PropertyPathBuilder.create<Foo>().prop('bar').prop('baz').build()).eq('bar.baz');
+      const path = PropertyPathBuilder.create<Foo>().prop('bar').prop('baz');
+      expect(path.build()).eq('bar.baz');
+      expect(path.toString()).eq('bar.baz');
     });
   });
 

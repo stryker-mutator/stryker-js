@@ -61,7 +61,7 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    this.requireCache.init({ rootModuleId: require.resolve('jasmine'), initFiles: [] });
+    this.requireCache.init({ initFiles: [] });
   }
 
   public async dispose(): Promise<void> {
