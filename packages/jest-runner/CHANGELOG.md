@@ -3,6 +3,63 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.3.1](https://github.com/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.3.0](https://github.com/stryker-mutator/stryker/compare/v4.2.0...v4.3.0) (2020-12-25)
+
+
+### Features
+
+* **jest-runner:** support coverage analysis ([#2634](https://github.com/stryker-mutator/stryker/issues/2634)) ([5662e58](https://github.com/stryker-mutator/stryker/commit/5662e581e03ed955d1c851c9d818f0ad4e0d18a8))
+
+
+
+
+
+# [4.2.0](https://github.com/stryker-mutator/stryker/compare/v4.1.2...v4.2.0) (2020-12-09)
+
+
+### Features
+
+* **jest-runner:** resolve local jest version ([#2623](https://github.com/stryker-mutator/stryker/issues/2623)) ([1466f9a](https://github.com/stryker-mutator/stryker/commit/1466f9a988d11a4c43cd7c97f195b0eacb75c96f))
+
+
+
+
+
+## [4.1.2](https://github.com/stryker-mutator/stryker/compare/v4.1.1...v4.1.2) (2020-11-06)
+
+
+### Bug Fixes
+
+* **peerDeps:** update core in peerDependencies ([045dbc3](https://github.com/stryker-mutator/stryker/commit/045dbc3742c123658f4cf9ab2786b20ffd89a8cf))
+
+
+
+
+
+## [4.1.1](https://github.com/stryker-mutator/stryker/compare/v4.1.0...v4.1.1) (2020-11-05)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [4.1.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0...v4.1.0) (2020-10-30)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
 # [4.0.0](https://github.com/stryker-mutator/stryker/compare/v4.0.0-beta.10...v4.0.0) (2020-10-07)
 
 **Note:** Version bump only for package @stryker-mutator/jest-runner

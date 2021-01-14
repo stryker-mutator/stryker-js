@@ -1,8 +1,7 @@
 import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
-
-import { logger } from '@stryker-mutator/test-helpers/src/factory';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
@@ -30,7 +29,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsTsPackagePath);
 
-    loggerStub = logger();
+    loggerStub = factory.logger();
 
     sut = new ReactScriptsTSJestConfigLoader(loggerStub, (requireResolveStub as unknown) as RequireResolve, projectRoot);
   });

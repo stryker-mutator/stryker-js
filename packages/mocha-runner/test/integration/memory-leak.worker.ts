@@ -32,7 +32,7 @@ async function main() {
   await mochaRunner.init();
   await doDryRun();
 
-  async function doDryRun(n = 20) {
+  async function doDryRun(n = 40) {
     if (n > 0) {
       console.log(`Iterator count ${n}`);
       const result = await mochaRunner.dryRun({ coverageAnalysis: 'off', timeout: 3000 });

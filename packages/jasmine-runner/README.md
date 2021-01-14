@@ -8,43 +8,4 @@
 
 A plugin to use Jasmine **as a test runner for node** in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
-## Install
-
-Install @stryker-mutator/jasmine-runner locally within your project folder, like so:
-
-```bash
-npm i --save-dev @stryker-mutator/jasmine-runner
-```
-
-## Peer dependencies
-
-The `@stryker-mutator/jasmine-runner` is a plugin for `stryker` to enable `jasmine` as a test runner.
-As such, you should make sure you have the correct versions of its dependencies installed:
-
-* `jasmine`
-* `@stryker-mutator/core`
-
-## Configuring
-
-You can configure the jasmine test runner in the `stryker.conf.js` (or `stryker.conf.json`) file.
-
-```javascript
-// stryker.conf.js
-module.exports = {
-    // ...
-    // not required, but boosts performance
-    coverageAnalysis: 'perTest',
-    // not required, but will allow you to use coverageAnalysis "perTest". Note: This requires `stryker-jasmine` to also be installed.
-    testFramework: 'jasmine',
-    testRunner: 'jasmine',
-    jasmineConfigFile: 'spec/support/jasmine.json'
-    // ...
-}
-```
-
-### `jasmineConfigFile` [`string`]
-
-Default: `undefined`
-
-Specify your [jasmine configuration file](https://jasmine.github.io/setup/nodejs.html#configuration) to be loaded.
-Leaving this blank will result in the jasmine defaults, which are undocumented (see [source code here](https://github.com/jasmine/jasmine-npm/blob/master/lib/jasmine.js#L10-L38)).
+[See the Jasmine Runner's documentation on stryker-mutator.io](https://stryker-mutator.io/docs/stryker/jasmine-runner).

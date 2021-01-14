@@ -23,7 +23,8 @@ export default class ChildProcessTestRunnerDecorator implements TestRunner {
       options,
       {},
       sandboxWorkingDirectory,
-      ChildProcessTestRunnerWorker
+      ChildProcessTestRunnerWorker,
+      options.testRunnerNodeArgs
     );
   }
 

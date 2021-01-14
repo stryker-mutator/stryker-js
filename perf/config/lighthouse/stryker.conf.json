@@ -1,0 +1,24 @@
+{
+  "$schema": "../../../packages/core/schema/stryker-schema.json",
+  "packageManager": "yarn",
+  "reporters": [
+    "html",
+    "clear-text",
+    "progress",
+    "json"
+  ],
+  "jest": {
+    "config": {
+      "testMatch": ["**/lighthouse-core/test/audits/**/*-test.js"],
+      "setupFilesAfterEnv": ["./lighthouse-core/test/test-utils.js"],
+      "testEnvironment": "node",
+      "transform": {},
+      "collectCoverage": false
+    }
+  },
+  "mutate": [
+    "lighthouse-core/audits/**/*.js"
+  ],
+  "testRunner": "jest",
+  "coverageAnalysis": "perTest"
+}

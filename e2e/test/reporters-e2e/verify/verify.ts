@@ -8,15 +8,16 @@ describe('Verify stryker has ran correctly', () => {
     expect(fs.existsSync(fileName), `Missing ${fileName}!`).true;
   }
 
-  it('should report html files', () => {
+  it('should report the html file', () => {
     expectExists('reports/mutation/html/index.html');
-    expectExists('reports/mutation/html/mutation-test-elements.js');
-    expectExists('reports/mutation/html/stryker-80x80.png');
-    expectExists('reports/mutation/html/bind-mutation-test-report.js');
   });
 
   it('should have a clear text report', () => {
     expectExists('reports/stdout.txt');
+  });
+
+  it('should have a json report', () => {
+    expectExists('reports/mutation/mutation.json');
   });
 
   describe('clearText report', () => {
@@ -52,6 +53,7 @@ describe('Verify stryker has ran correctly', () => {
     });
   })
 
+  
 });
 
 const createNoCoverageMutantRegex = () => /#6\.\s*\[NoCoverage\]/;

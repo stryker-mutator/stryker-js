@@ -1,7 +1,7 @@
 import os = require('os');
 
 import sinon = require('sinon');
-import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
+import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -21,6 +21,66 @@ describe(OptionsValidator.name, () => {
     expect(testInjector.logger.warn).not.called;
   });
 
+  it('should fill default values', () => {
+    const options: Record<string, unknown> = {};
+    sut.validate(options);
+    const expectedOptions: StrykerOptions = {
+      allowConsoleColors: true,
+      appendPlugins: [],
+      checkers: [],
+      cleanTempDir: true,
+      clearTextReporter: {
+        allowColor: true,
+        logTests: true,
+        maxTestsToLog: 3,
+      },
+      commandRunner: {
+        command: 'npm test',
+      },
+      coverageAnalysis: 'off',
+      dashboard: {
+        baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+        reportType: ReportType.Full,
+      },
+      disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+      dryRunTimeoutMinutes: 5,
+      eventReporter: {
+        baseDir: 'reports/mutation/events',
+      },
+      fileLogLevel: LogLevel.Off,
+      jsonReporter: {
+        fileName: 'reports/mutation/mutation.json',
+      },
+      logLevel: LogLevel.Information,
+      maxConcurrentTestRunners: 9007199254740991,
+      maxTestRunnerReuse: 0,
+      mutate: [
+        '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+        '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+      ],
+      mutator: {
+        excludedMutations: [],
+        plugins: null,
+      },
+      plugins: ['@stryker-mutator/*'],
+      reporters: ['clear-text', 'progress', 'html'],
+      symlinkNodeModules: true,
+      tempDirName: '.stryker-tmp',
+      testRunner: 'command',
+      testRunnerNodeArgs: [],
+      thresholds: {
+        break: null,
+        high: 80,
+        low: 60,
+      },
+      timeoutFactor: 1.5,
+      timeoutMS: 5000,
+      tsconfigFile: 'tsconfig.json',
+      warnings: true,
+    };
+    expect(options).deep.eq(expectedOptions);
+  });
+
   it('should validate the default options', () => {
     actAssertValid();
   });
@@ -33,7 +93,8 @@ describe(OptionsValidator.name, () => {
     });
 
     it('should be invalid with thresholds.high null', () => {
-      (testInjector.options.thresholds.high as any) = null;
+      // @ts-expect-error invalid setting
+      testInjector.options.thresholds.high = null;
       actValidationErrors('Config option "thresholds.high" has the wrong type. It should be a number, but was a null.');
     });
 
@@ -45,7 +106,8 @@ describe(OptionsValidator.name, () => {
   });
 
   it('should be invalid with invalid logLevel', () => {
-    testInjector.options.logLevel = 'thisTestPasses' as any;
+    // @ts-expect-error invalid setting
+    testInjector.options.logLevel = 'thisTestPasses';
     actValidationErrors(
       'Config option "logLevel" should be one of the allowed values ("off", "fatal", "error", "warn", "info", "debug", "trace"), but was "thisTestPasses".'
     );
@@ -59,6 +121,16 @@ describe(OptionsValidator.name, () => {
   it('should be invalid with non-numeric timeoutFactor', () => {
     breakConfig('timeoutFactor', 'break');
     actValidationErrors('Config option "timeoutFactor" has the wrong type. It should be a number, but was a string.');
+  });
+
+  it('should be invalid with non-numeric dryRunTimeout', () => {
+    breakConfig('dryRunTimeoutMinutes', 'break');
+    actValidationErrors('Config option "dryRunTimeoutMinutes" has the wrong type. It should be a number, but was a string.');
+  });
+
+  it('should be invalid with negative numeric dryRunTimeout', () => {
+    breakConfig('dryRunTimeoutMinutes', -1);
+    actValidationErrors('Config option "dryRunTimeoutMinutes" should be >= 0, was -1.');
   });
 
   describe('plugins', () => {
@@ -87,12 +159,14 @@ describe(OptionsValidator.name, () => {
 
   describe('mutator', () => {
     it('should be invalid with non-string mutator', () => {
-      (testInjector.options.mutator as any) = 1;
+      // @ts-expect-error invalid setting
+      testInjector.options.mutator = 1;
       actValidationErrors('Config option "mutator" has the wrong type. It should be a object, but was a number.');
     });
 
     it('should report a deprecation warning for "mutator.name"', () => {
-      (testInjector.options.mutator as any) = {
+      testInjector.options.mutator = {
+        // @ts-expect-error invalid setting
         name: 'javascript',
       };
       sut.validate(testInjector.options);
@@ -102,7 +176,8 @@ describe(OptionsValidator.name, () => {
     });
 
     it('should report a deprecation warning for mutator as a string', () => {
-      (testInjector.options.mutator as any) = 'javascript';
+      // @ts-expect-error invalid setting
+      testInjector.options.mutator = 'javascript';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
@@ -112,7 +187,7 @@ describe(OptionsValidator.name, () => {
 
   describe('testFramework', () => {
     it('should report a deprecation warning', () => {
-      (testInjector.options as any).testFramework = '';
+      testInjector.options.testFramework = '';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
@@ -182,9 +257,18 @@ describe(OptionsValidator.name, () => {
     actValidationErrors('Config option "maxTestRunnerReuse" has the wrong type. It should be a number, but was a string.');
   });
 
+  it('should warn when testRunnerNodeArgs are combined with the "command" test runner', () => {
+    testInjector.options.testRunnerNodeArgs = ['--inspect-brk'];
+    testInjector.options.testRunner = 'command';
+    sut.validate(testInjector.options);
+    expect(testInjector.logger.warn).calledWith(
+      'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+    );
+  });
+
   describe('transpilers', () => {
     it('should report a deprecation warning', () => {
-      (testInjector.options.transpilers as any) = ['stryker-jest'];
+      testInjector.options.transpilers = ['stryker-jest'];
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'

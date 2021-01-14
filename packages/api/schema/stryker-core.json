@@ -133,6 +133,18 @@
         }
       }
     },
+    "jsonReporterOptions": {
+      "title": "JsonReporterOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "fileName": {
+          "description": "The relative filename for the json report.",
+          "type": "string",
+          "default": "reports/mutation/mutation.json"
+        }
+      }
+    },
     "mutationScoreThresholds": {
       "title": "MutationScoreThresholds",
       "additionalProperties": false,
@@ -349,9 +361,14 @@
       "description": "The options for the html reporter",
       "$ref": "#/definitions/htmlReporterOptions"
     },
+    "jsonReporter": {
+      "description": "The options for the json reporter",
+      "$ref": "#/definitions/jsonReporterOptions",
+      "default": {}
+    },
     "disableTypeChecks": {
       "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.",
-      "anyOf": [
+      "oneOf": [
         {
           "enum": [
             false
@@ -383,6 +400,14 @@
       "type": "string",
       "default": "command"
     },
+    "testRunnerNodeArgs": {
+      "description": "Configure arguments to be passed as exec arguments to the test runner child process. For example, running Stryker with `--timeoutMS 9999999 --concurrency 1 --testRunnerNodeArgs --inspect-brk` will allow you to debug the test runner child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "thresholds": {
       "description": "Specify the thresholds for mutation score.",
       "$ref": "#/definitions/mutationScoreThresholds",
@@ -397,6 +422,12 @@
       "description": "Configure an absolute timeout deviation. Tweak this if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.",
       "type": "number",
       "default": 5000
+    },
+    "dryRunTimeoutMinutes": {
+      "description": "Configure an absolute timeout for the initial test run. (It can take a while, therefore we use minutes as time unit.)",
+      "type": "number",
+      "minimum": 0,
+      "default": 5
     },
     "tsconfigFile": {
       "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",

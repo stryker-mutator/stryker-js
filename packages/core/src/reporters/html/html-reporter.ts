@@ -1,14 +1,14 @@
 import * as path from 'path';
 
+import fileUrl = require('file-url');
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 
-import fileUrl = require('file-url');
+import * as ReporterUtil from '../reporter-util';
 
-import { bindMutationTestReport } from './templates/bind-mutation-test-report';
-import * as HtmlReporterUtil from './html-reporter-util';
+import { reportTemplate as reportTemplate } from './report-template';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
@@ -31,16 +31,9 @@ export default class HtmlReporter implements Reporter {
 
   private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
     const indexFileName = path.resolve(this.baseDir, 'index.html');
+    const singleFile = await reportTemplate(report);
     await this.cleanBaseFolder();
-    await Promise.all([
-      HtmlReporterUtil.copyFile(
-        require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'),
-        path.resolve(this.baseDir, 'mutation-test-elements.js')
-      ),
-      HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'stryker-80x80.png'), path.resolve(this.baseDir, 'stryker-80x80.png')),
-      HtmlReporterUtil.copyFile(path.resolve(__dirname, 'templates', 'index.html'), path.resolve(this.baseDir, 'index.html')),
-      HtmlReporterUtil.writeFile(path.resolve(this.baseDir, 'bind-mutation-test-report.js'), bindMutationTestReport(report)),
-    ]);
+    await ReporterUtil.writeFile(path.resolve(this.baseDir, 'index.html'), singleFile);
     this.log.info(`Your report can be found at: ${fileUrl(indexFileName)}`);
   }
 
@@ -60,7 +53,7 @@ export default class HtmlReporter implements Reporter {
   }
 
   private async cleanBaseFolder(): Promise<void> {
-    await HtmlReporterUtil.deleteDir(this.baseDir);
-    await HtmlReporterUtil.mkdir(this.baseDir);
+    await ReporterUtil.deleteDir(this.baseDir);
+    await ReporterUtil.mkdir(this.baseDir);
   }
 }

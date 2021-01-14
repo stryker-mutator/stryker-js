@@ -7,6 +7,7 @@ import { AstFormat, HtmlAst, JSAst, TSAst } from './syntax';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
+const startingCommentRegex = /(^\s*\/\*.*?\*\/)/gs;
 
 export async function disableTypeChecks(file: File, options: ParserOptions) {
   if (isJSFileWithoutTSDirectives(file)) {
@@ -43,7 +44,9 @@ function prefixWithNoCheck(code: string): string {
       return code;
     }
   } else {
-    return `// @ts-nocheck\n${code}`;
+    // We should leave comments, like `/** @jest-env jsdom */ at the top of the file, see #2569
+    const commentMatch = startingCommentRegex.exec(code);
+    return `${commentMatch?.[1].concat('\n') ?? ''}// @ts-nocheck\n${code.substr(commentMatch?.[1].length ?? 0)}`;
   }
 }
 
@@ -62,7 +65,7 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
   return html;
 }
 
-function removeTSDirectives(text: string, comments: Array<types.CommentBlock | types.CommentLine> | null): string {
+function removeTSDirectives(text: string, comments: Array<types.CommentBlock | types.CommentLine> | null | undefined): string {
   const directiveRanges = comments
     ?.map(tryParseTSDirective)
     .filter(notEmpty)

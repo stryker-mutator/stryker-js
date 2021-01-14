@@ -20,8 +20,10 @@ function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T) {
   };
 }
 
-function list(val: string) {
-  return val.split(',');
+const list = createSplitter(',');
+
+function createSplitter(sep: string) {
+  return (val: string) => val.split(sep);
 }
 
 function parseBoolean(val: string) {
@@ -77,6 +79,11 @@ export default class StrykerCli {
         `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
+      .option(
+        '--testRunnerNodeArgs <listOfNodeArgs>',
+        'A comma separated list of node args to be passed to test runner child processes.',
+        createSplitter(' ')
+      )
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option(
@@ -86,6 +93,7 @@ export default class StrykerCli {
       )
       .option('--timeoutMS <number>', 'Tweak the absolute timeout used to wait for a test runner to complete', parseInt)
       .option('--timeoutFactor <number>', 'Tweak the standard deviation relative to the normal test run of a mutated test', parseFloat)
+      .option('--dryRunTimeoutMinutes <number>', 'Configure an absolute timeout for the initial test run. (It can take a while.)', parseFloat)
       .option('--maxConcurrentTestRunners <n>', 'Set the number of max concurrent test runner to spawn (default: cpuCount)', parseInt)
       .option(
         '-c, --concurrency <n>',
@@ -99,11 +107,11 @@ export default class StrykerCli {
       )
       .option(
         '--logLevel <level>',
-        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.logLevel}"`
+        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.logLevel}"`
       )
       .option(
         '--fileLogLevel <level>',
-        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace, all and off. Default is "${defaultValues.fileLogLevel}"`
+        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.fileLogLevel}"`
       )
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(

@@ -30,7 +30,9 @@ describe(ChildProcessProxy.name, () => {
     const port = await loggingServer.listen();
     const options = testInjector.injector.resolve(commonTokens.options);
     log = currentLogMock();
-    sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo);
+    sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo, [
+      '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
+    ]);
   });
 
   afterEach(async () => {
@@ -66,6 +68,11 @@ describe(ChildProcessProxy.name, () => {
     const actual: File = await sut.proxy.readFile();
     expect(actual.textContent).eq('hello foobar');
     expect(actual.name).eq('foobar.txt');
+  });
+
+  it('should use `execArgv` to start the child process', async () => {
+    await sut.proxy.warning();
+    expect(sut.stderr).not.includes('Foo warning');
   });
 
   it('should be able to receive a promise rejection', async () => {

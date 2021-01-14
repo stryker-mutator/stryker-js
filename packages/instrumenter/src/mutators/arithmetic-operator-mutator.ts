@@ -18,7 +18,7 @@ export class ArithmeticOperatorMutator implements NodeMutator {
   public name = 'ArithmeticOperator';
 
   public mutate(path: NodePath): NodeMutation[] {
-    if (path.isBinaryExpression() && this.isSupported(path.node.operator)) {
+    if (path.isBinaryExpression() && this.isSupported(path.node.operator, path.node)) {
       const mutatedOperator = this.operators[path.node.operator];
       const replacement = types.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
@@ -28,7 +28,18 @@ export class ArithmeticOperatorMutator implements NodeMutator {
     return [];
   }
 
-  private isSupported(operator: string): operator is keyof typeof ArithmeticOperators {
-    return Object.keys(this.operators).includes(operator);
+  private isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof ArithmeticOperators {
+    if (!Object.keys(this.operators).includes(operator)) {
+      return false;
+    }
+
+    const stringTypes = ['StringLiteral', 'TemplateLiteral'];
+    const leftType = node.left.type === 'BinaryExpression' ? node.left.right.type : node.left.type;
+
+    if (stringTypes.includes(node.right.type) || stringTypes.includes(leftType)) {
+      return false;
+    }
+
+    return true;
   }
 }

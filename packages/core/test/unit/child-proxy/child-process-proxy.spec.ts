@@ -94,6 +94,17 @@ describe(ChildProcessProxy.name, () => {
       expect(childProcessMock.send).calledWith(serialize(expectedMessage));
     });
 
+    it('should log the exec arguments and require name', () => {
+      // Act
+      createSut({
+        loggingContext: LOGGING_CONTEXT,
+        execArgv: ['--cpu-prof', '--inspect'],
+      });
+
+      // Assert
+      expect(logMock.debug).calledWith('Started %s in child process %s%s', 'HelloClass', childProcessMock.pid, ' (using args --cpu-prof --inspect)');
+    });
+
     it('should listen to worker process', () => {
       createSut();
       expect(childProcessMock.listeners('message')).lengthOf(1);
@@ -102,6 +113,11 @@ describe(ChildProcessProxy.name, () => {
     it('should listen for close calls', () => {
       createSut();
       expect(childProcessMock.listeners('close')).lengthOf(1);
+    });
+
+    it('should set `execArgv`', () => {
+      createSut({ execArgv: ['--inspect-brk'] });
+      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match.array, sinon.match({ execArgv: ['--inspect-brk'] }));
     });
   });
 
@@ -247,6 +263,7 @@ function createSut(
     options?: Partial<StrykerOptions>;
     workingDir?: string;
     name?: string;
+    execArgv?: string[];
   } = {}
 ): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
@@ -255,6 +272,7 @@ function createSut(
     factory.strykerOptions(overrides.options),
     { name: overrides.name || 'someArg' },
     overrides.workingDir || 'workingDir',
-    HelloClass
+    HelloClass,
+    overrides.execArgv ?? []
   );
 }

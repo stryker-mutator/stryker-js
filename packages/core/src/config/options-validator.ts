@@ -1,6 +1,6 @@
 import os = require('os');
 
-import Ajv = require('ajv');
+import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
@@ -11,12 +11,14 @@ import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 import { isWarningEnabled } from '../utils/object-utils';
 
+import CommandTestRunner from '../test-runner/command-test-runner';
+
 import { describeErrors } from './validation-errors';
 
-const ajv = new Ajv({ useDefaults: true, allErrors: true, jsonPointers: false, verbose: true, missingRefs: 'ignore', logger: false });
+const ajv = new Ajv({ useDefaults: true, allErrors: true, jsPropertySyntax: true, verbose: true, logger: false, strict: false });
 
 export class OptionsValidator {
-  private readonly validateFn: Ajv.ValidateFunction;
+  private readonly validateFn: ValidateFunction;
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
@@ -78,6 +80,11 @@ export class OptionsValidator {
       if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
+    }
+    if (CommandTestRunner.is(options.testRunner) && options.testRunnerNodeArgs.length) {
+      this.log.warn(
+        'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+      );
     }
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
