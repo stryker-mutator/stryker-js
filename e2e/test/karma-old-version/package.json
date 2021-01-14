@@ -1,0 +1,26 @@
+{
+  "name": "karma-old-version",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "devDependencies": {
+    "karma": "4.4.1",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-mocha": "2.0.1",
+    "karma-chai": "0.1.0"
+  },
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "license": "ISC"
+}
