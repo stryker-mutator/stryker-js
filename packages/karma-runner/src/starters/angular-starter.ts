@@ -26,7 +26,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
     const ngTestArguments = Object.keys(testArguments);
     verifyNgTestArguments(ngTestArguments);
     ngTestArguments.forEach((key) => {
-      const decamelizedKey = decamelize(key, '-');
+      const decamelizedKey = decamelize(key, { separator: '-' });
       if ('progress' !== key && 'karma-config' !== decamelizedKey) {
         cliArgs.push(`--${decamelizedKey}=${testArguments[key]}`);
       }
