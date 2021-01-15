@@ -9,9 +9,10 @@ import { Checker } from '@stryker-mutator/api/check';
 import { MutantInstrumenterExecutor } from '../../../src/process';
 import InputFileCollection from '../../../src/input/input-file-collection';
 import { coreTokens } from '../../../src/di';
-import { createConcurrencyTokenProviderMock, createCheckerPoolMock, PoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
+import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/checker-facade';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
+import { Pool } from '../../../src/concurrent';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
@@ -21,7 +22,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerPoolMock: PoolMock<Checker>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<Pool<Checker>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let mutatedFile: File;
   let originalFile: File;

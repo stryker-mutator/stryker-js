@@ -1,5 +1,5 @@
-import { Observable, Subject, merge } from 'rxjs';
-import { flatMap, filter, shareReplay } from 'rxjs/operators';
+import { Observable, Subject, merge, zip } from 'rxjs';
+import { mergeMap, filter, shareReplay, tap } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
@@ -25,27 +25,23 @@ export function createCheckerPool(factory: () => Checker, concurrencyToken$: Obs
 }
 
 /**
- * Represents a pool of workers.
- * Creates as many workers as the concurrency tokens allow.
+ * Represents a pool of workers. Use `schedule` to schedule work to be executed on the workers.
+ * The pool will automatically recycle the workers, but will make sure only one task is executed
+ * on one worker at any one time. Creates as many workers as the concurrency tokens allow.
  * Also takes care of the initialing of the workers (with `init()`)
- * Re-emit a worker via `recycle`.
- *
- * Please recycle! 🚮
  */
-export class Pool<T extends Worker> implements Disposable {
-  private readonly recycleBin = new Subject<T>();
-  private readonly allWorkers: T[] = [];
-  public readonly worker$: Observable<T>;
-  private readonly createdWorker$: Observable<T>;
+export class Pool<TWorker extends Worker> implements Disposable {
+  private readonly createdWorkers: TWorker[] = [];
+  private readonly worker$: Observable<TWorker>;
 
-  constructor(factory: () => T, concurrencyToken$: Observable<number>) {
-    this.createdWorker$ = concurrencyToken$.pipe(
-      flatMap(async () => {
+  constructor(factory: () => TWorker, concurrencyToken$: Observable<number>) {
+    this.worker$ = concurrencyToken$.pipe(
+      mergeMap(async () => {
         if (this.isDisposed) {
           return null;
         } else {
           const worker = factory();
-          this.allWorkers.push(worker);
+          this.createdWorkers.push(worker);
           await worker.init?.();
           return worker;
         }
@@ -55,7 +51,6 @@ export class Pool<T extends Worker> implements Disposable {
       // https://www.learnrxjs.io/learn-rxjs/operators/multicasting/sharereplay
       shareReplay()
     );
-    this.worker$ = merge(this.recycleBin, this.createdWorker$);
   }
 
   /**
@@ -63,15 +58,27 @@ export class Pool<T extends Worker> implements Disposable {
    * This is optional, workers will get initialized either way.
    */
   public async init(): Promise<void> {
-    await this.createdWorker$.toPromise();
+    await this.worker$.toPromise();
   }
 
   /**
-   * Recycles a worker so its re-emitted from the `worker$` observable.
-   * @param worker The worker to recycle
+   * Schedules a task to be executed on workers in the pool. Each input is paired with a worker, which allows async work to be done.
+   * @param input$ The inputs to pair up with a worker.
+   * @param task The task to execute on each worker
    */
-  public recycle(worker: T) {
-    this.recycleBin.next(worker);
+  public schedule<TIn, TOut>(input$: Observable<TIn>, task: (worker: TWorker, input: TIn) => Promise<TOut> | TOut): Observable<TOut> {
+    const recycleBin = new Subject<TWorker>();
+    const worker$ = merge(recycleBin, this.worker$);
+
+    return zip(worker$, input$).pipe(
+      mergeMap(async ([worker, input]) => {
+        const output = await task(worker, input);
+        //  Recycles a worker so its re-emitted from the `worker$` observable.
+        recycleBin.next(worker);
+        return output;
+      }),
+      tap({ complete: () => recycleBin.complete() })
+    );
   }
 
   private isDisposed = false;
@@ -81,7 +88,6 @@ export class Pool<T extends Worker> implements Disposable {
    */
   public async dispose(): Promise<void> {
     this.isDisposed = true;
-    this.recycleBin.complete();
-    await Promise.all(this.allWorkers.map((worker) => worker.dispose?.()));
+    await Promise.all(this.createdWorkers.map((worker) => worker.dispose?.()));
   }
 }
