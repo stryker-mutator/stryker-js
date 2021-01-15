@@ -34,13 +34,6 @@ describe(JasmineTestRunner.name, () => {
       .injectClass(JasmineTestRunner);
   });
 
-  describe('init', () => {
-    it('should initialize the require cache', async () => {
-      await sut.init();
-      expect(directoryRequireCacheMock.init).calledWithExactly({ initFiles: [], rootModuleId: require.resolve('jasmine') });
-    });
-  });
-
   describe('mutantRun', () => {
     it('should configure jasmine on run', async () => {
       await actEmptyMutantRun();

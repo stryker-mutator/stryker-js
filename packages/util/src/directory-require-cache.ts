@@ -1,5 +1,7 @@
 import path = require('path');
 
+import { notEmpty } from './not-empty';
+
 /**
  * A helper class that can be used by test runners.
  * The first time you call `record`, it will fill the internal registry with the files required in the current working directory (excluding node_modules)
@@ -10,13 +12,7 @@ import path = require('path');
  */
 export class DirectoryRequireCache {
   private cache: Set<string>;
-  private initFiles?: readonly string[];
-  private rootModuleId: string;
-
-  public init({ initFiles, rootModuleId }: { initFiles: readonly string[]; rootModuleId: string }) {
-    this.initFiles = initFiles;
-    this.rootModuleId = rootModuleId;
-  }
+  private parents: Set<string>;
 
   /**
    * Records the files required in the current working directory (excluding node_modules)
@@ -25,23 +21,31 @@ export class DirectoryRequireCache {
   public record() {
     if (!this.cache) {
       const cwd = process.cwd();
-      this.cache = new Set(this.initFiles);
+      this.cache = new Set();
       Object.keys(require.cache)
         .filter((fileName) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
         .forEach((file) => this.cache.add(file));
+
+      this.parents = new Set(
+        Array.from(this.cache)
+          // `module.parent` is deprecated, but seems to work fine, might never be removed.
+          // See https://nodejs.org/api/modules.html#modules_module_parent
+          .map((fileName) => require.cache[fileName]?.parent?.filename)
+          .filter(notEmpty)
+          // Filter out any parents that are in the current cache, since they will be removed anyway
+          .filter((parentFileName) => !this.cache.has(parentFileName))
+      );
     }
   }
 
   public clear() {
-    if (this.cache) {
-      if (this.rootModuleId) {
-        const rootModule = require.cache[this.rootModuleId];
-        if (rootModule) {
-          rootModule.children = rootModule.children.filter((childModule) => !this.cache.has(childModule.id));
-        } else {
-          throw new Error(`Could not find "${this.rootModuleId}" in require cache.`);
+    if (this.cache && this.parents) {
+      this.parents.forEach((parent) => {
+        const parentModule = require.cache[parent];
+        if (parentModule) {
+          parentModule.children = parentModule.children.filter((childModule) => !this.cache.has(childModule.id));
         }
-      }
+      });
       this.cache.forEach((fileName) => delete require.cache[fileName]);
     }
   }

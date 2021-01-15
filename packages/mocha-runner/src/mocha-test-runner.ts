@@ -50,7 +50,6 @@ export class MochaTestRunner implements TestRunner {
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
-    this.requireCache.init({ initFiles: this.testFileNames, rootModuleId: require.resolve('mocha/lib/mocha') });
     if (this.mochaOptions.require) {
       this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }
@@ -100,11 +99,13 @@ export class MochaTestRunner implements TestRunner {
     this.addFiles(mocha);
     try {
       await this.runMocha(mocha);
+      // Call `requireCache.record` before `mocha.dispose`.
+      // `Mocha.dispose` already deletes test files from require cache, but its important that they are recorded before that.
+      this.requireCache.record();
       if ((mocha as any).dispose) {
         // Since mocha 7.2
         (mocha as any).dispose();
       }
-      this.requireCache.record();
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
         const result: CompleteDryRunResult = {
