@@ -18,11 +18,10 @@ describe('JasmineRunner integration', () => {
   });
 
   describe('using the jasmine-init project', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-      await sut.init();
     });
 
     it('should run the specs', async () => {
@@ -88,7 +87,6 @@ describe('JasmineRunner integration', () => {
     beforeEach(async () => {
       process.chdir(path.resolve(__dirname, '../../testResources/errors'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-      await sut.init();
     });
 
     it('should be able to tell the error', async () => {
@@ -101,10 +99,9 @@ describe('JasmineRunner integration', () => {
   });
 
   describe('when it includes failed tests', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-      await sut.init();
     });
 
     it('should complete with one test failure', async () => {

@@ -60,10 +60,6 @@ export class JasmineTestRunner implements TestRunner {
     return toMutantRunResult(runResult);
   }
 
-  public async init(): Promise<void> {
-    this.requireCache.init({ initFiles: [] });
-  }
-
   public async dispose(): Promise<void> {
     this.requireCache.clear();
   }

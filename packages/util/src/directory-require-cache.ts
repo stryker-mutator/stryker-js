@@ -1,5 +1,7 @@
 import path = require('path');
 
+import { notEmpty } from './not-empty';
+
 /**
  * A helper class that can be used by test runners.
  * The first time you call `record`, it will fill the internal registry with the files required in the current working directory (excluding node_modules)
@@ -10,12 +12,7 @@ import path = require('path');
  */
 export class DirectoryRequireCache {
   private cache: Set<string>;
-  private initFiles?: readonly string[];
   private parents: Set<string>;
-
-  public init({ initFiles }: { initFiles: readonly string[] }) {
-    this.initFiles = initFiles;
-  }
 
   /**
    * Records the files required in the current working directory (excluding node_modules)
@@ -24,19 +21,20 @@ export class DirectoryRequireCache {
   public record() {
     if (!this.cache) {
       const cwd = process.cwd();
-      this.cache = new Set(this.initFiles);
-      this.parents = new Set();
-      Object.entries(require.cache)
-        .filter(([fileName]) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
-        .forEach(([file, module]) => {
-          this.cache.add(file);
-          // TODO parent is deprecated
+      this.cache = new Set();
+      Object.keys(require.cache)
+        .filter((fileName) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
+        .forEach((file) => this.cache.add(file));
+
+      this.parents = new Set(
+        Array.from(this.cache)
+          // `module.parent` is deprecated, but seems to work fine, might never be removed.
           // See https://nodejs.org/api/modules.html#modules_module_parent
-          const parentFile = module?.parent?.filename;
-          if (parentFile) {
-            this.parents.add(parentFile);
-          }
-        });
+          .map((fileName) => require.cache[fileName]?.parent?.filename)
+          .filter(notEmpty)
+          // Filter out any parents that are in the current cache, since they will be removed anyway
+          .filter((parentFileName) => !this.cache.has(parentFileName))
+      );
     }
   }
 
@@ -46,8 +44,6 @@ export class DirectoryRequireCache {
         const parentModule = require.cache[parent];
         if (parentModule) {
           parentModule.children = parentModule.children.filter((childModule) => !this.cache.has(childModule.id));
-        } else {
-          throw new Error(`Could not find "${parent}" in require cache.`);
         }
       });
       this.cache.forEach((fileName) => delete require.cache[fileName]);

@@ -27,7 +27,6 @@ if (require.main === module) {
 async function main() {
   process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'big-project'));
   const jasmineRunner = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-  await jasmineRunner.init();
   await doDryRun();
 
   async function doDryRun(n = 40) {

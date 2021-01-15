@@ -37,27 +37,6 @@ describe(DirectoryRequireCache.name, () => {
     return child;
   }
 
-  it('should clear the init files', () => {
-    // Arrange
-    const dir2 = path.join('stub', 'working', 'dir2');
-    const fooFileName = path.join(dir2, 'foo.js');
-    const barFileName = path.join(dir2, 'bar.js');
-    const bazFileName = path.join(dir2, 'baz.js');
-    fakeRequireFile(fooFileName, 'foo');
-    fakeRequireFile(barFileName, 'foo');
-    fakeRequireFile(bazFileName, 'baz');
-    sut.init({ initFiles: [fooFileName, barFileName] });
-    sut.record();
-
-    // Act
-    sut.clear();
-
-    // Assert
-    expect(require.cache[fooFileName]).undefined;
-    expect(require.cache[barFileName]).undefined;
-    expect(require.cache[bazFileName]?.exports).eq('baz');
-  });
-
   it('should clear recorded files', () => {
     // Arrange
     const dir2 = path.join('stub', 'working', 'dir2');
@@ -106,7 +85,6 @@ describe(DirectoryRequireCache.name, () => {
     fakeRequireFile(barFileName, 'foo');
     fakeRequireFile(bazFileName, 'baz');
     expect(rootModule.children).lengthOf(3);
-    sut.init({ initFiles: [] });
     sut.record();
 
     // Act
@@ -127,7 +105,6 @@ describe(DirectoryRequireCache.name, () => {
     fakeRequireFile(barFileName, 'bar', barParent);
     expect(fooParent.children).lengthOf(1);
     expect(barParent.children).lengthOf(1);
-    sut.init({ initFiles: [] });
     sut.record();
 
     // Act
@@ -138,15 +115,55 @@ describe(DirectoryRequireCache.name, () => {
     expect(barParent.children).lengthOf(0);
   });
 
-  it("should throw when the parent module wasn't loaded", () => {
+  it('should not break when clearing a graph', () => {
     // Arrange
-    sut.init({ initFiles: [] });
+    const grandParentFileName = 'grandparent.js';
+    const parentFileName = path.join(workingDirectory, 'child.spec.js');
+    const childFileName = path.join(workingDirectory, 'child.js');
+    const grandparentModule = fakeRequireFile(grandParentFileName);
+    const parentModule = fakeRequireFile(parentFileName, 'parent', grandparentModule);
+    fakeRequireFile(childFileName, 'foo', parentModule);
+    expect(grandparentModule.children).lengthOf(1);
+    expect(parentModule.children).lengthOf(1);
+    sut.record();
+
+    // Act
+    sut.clear();
+
+    // Assert
+    expect(grandparentModule.children).lengthOf(0);
+    expect(require.cache[childFileName]).undefined;
+    expect(require.cache[parentFileName]).undefined;
+    expect(require.cache[grandParentFileName]).eq(grandparentModule);
+  });
+
+  it('should not throw when the parent module was unloaded', () => {
+    // Arrange
     fakeRequireFile(path.join(workingDirectory, 'foo.js'));
     sut.record();
     delete require.cache[rootModule.filename];
 
     // Act & assert
-    expect(() => sut.clear()).throws('Could not find "root" in require cache.');
+    sut.clear();
+  });
+
+  it('should not throw when the parent module is one of the modules to being cleared', () => {
+    // Arrange
+    const fooSpec = path.join(workingDirectory, 'foo.spec.js');
+    const foo = path.join(workingDirectory, 'foo.js');
+    const app = path.join(workingDirectory, 'app.js');
+    const fooSpecModule = fakeRequireFile(fooSpec);
+    const fooModule = fakeRequireFile(foo, 'foo', fooSpecModule);
+    fakeRequireFile(app, 'app', fooModule);
+
+    // Act
+    sut.record();
+    sut.clear();
+
+    // Assert
+    expect(require.cache[fooSpec]).undefined;
+    expect(require.cache[app]).undefined;
+    expect(require.cache[foo]).undefined;
   });
 
   it('should not clear files from node_modules', () => {
