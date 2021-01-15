@@ -26,7 +26,7 @@
     "karma-jasmine": "~4.0.1",
     "karma-mocha": "~2.0.1",
     "karma-sourcemap-loader": "~0.3.8",
-    "karma-webpack": "~4.0.2",
+    "karma-webpack": "5.0.0-alpha.5",
     "link-parent-bin": "^2.0.0",
     "load-grunt-tasks": "~5.1.0",
     "mocha": "~8.2.0",
