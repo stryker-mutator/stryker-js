@@ -860,7 +860,7 @@ declare module 'jasmine' {
     addSpecFile(filePath: string): void;
     addSpecFiles(files: string[]): void;
     configureDefaultReporter(options: any, ...args: any[]): void;
-    execute(files?: string[], filterString?: string): any;
+    execute(files?: string[], filterString?: string): Promise<void> | undefined;
     exitCodeCompletion(passed: any): void;
     loadConfig(config: any): void;
     loadConfigFile(configFilePath: any): void;
