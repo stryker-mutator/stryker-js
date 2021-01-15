@@ -75,19 +75,6 @@ describe(MochaTestRunner.name, () => {
       expect(sut.testFileNames).eq(expectedTestFileNames);
     });
 
-    it('should init the directory require cache', async () => {
-      const expectedTestFileNames = ['foo.js', 'foo.spec.js'];
-      mochaAdapterMock.collectFiles.returns(expectedTestFileNames);
-      mochaOptionsLoaderMock.load.returns({});
-
-      await sut.init();
-
-      expect(directoryRequireCacheMock.init).calledWithExactly({
-        initFiles: expectedTestFileNames,
-        rootModuleId: require.resolve('mocha/lib/mocha'),
-      });
-    });
-
     it('should not handle requires when there are no `requires`', async () => {
       mochaOptionsLoaderMock.load.returns({});
       await sut.init();

@@ -1,4 +1,4 @@
-import { ErrorObject, TypeParams, EnumParams } from 'ajv';
+import { ErrorObject } from 'ajv';
 
 import groupby = require('lodash.groupby');
 
@@ -109,8 +109,8 @@ function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
   return Object.values(typeErrorsByPath).map(mergeTypeErrors);
 
   function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
-    const params: TypeParams = {
-      type: typeErrors.map((error) => (error.params as TypeParams).type).join(','),
+    const params = {
+      type: typeErrors.map((error) => error.params.type).join(','),
     };
     return {
       ...typeErrors[0],
@@ -128,12 +128,12 @@ function describeError(error: ErrorObject): string {
 
   switch (error.keyword) {
     case 'type':
-      const expectedTypeDescription = (error.params as TypeParams).type.split(',').join(' or ');
+      const expectedTypeDescription = error.params.type.split(',').join(' or ');
       return `${errorPrefix} has the wrong type. It should be a ${expectedTypeDescription}, but was a ${jsonSchemaType(error.data)}.`;
     case 'enum':
-      return `${errorPrefix} should be one of the allowed values (${(error.params as EnumParams).allowedValues
-        .map(stringify)
-        .join(', ')}), but was ${stringify(error.data)}.`;
+      return `${errorPrefix} should be one of the allowed values (${error.params.allowedValues.map(stringify).join(', ')}), but was ${stringify(
+        error.data
+      )}.`;
     case 'minimum':
     case 'maximum':
       return `${errorPrefix} ${error.message}, was ${error.data}.`;

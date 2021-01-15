@@ -7,7 +7,7 @@
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 30000 --exit \"test/integration/**/*.js\"",
+    "test:integration": "mocha --timeout 60000 --exit \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

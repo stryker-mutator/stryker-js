@@ -1,7 +1,7 @@
 import os = require('os');
 
 import sinon = require('sinon');
-import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
+import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -19,6 +19,66 @@ describe(OptionsValidator.name, () => {
     expect(testInjector.logger.fatal).not.called;
     expect(testInjector.logger.error).not.called;
     expect(testInjector.logger.warn).not.called;
+  });
+
+  it('should fill default values', () => {
+    const options: Record<string, unknown> = {};
+    sut.validate(options);
+    const expectedOptions: StrykerOptions = {
+      allowConsoleColors: true,
+      appendPlugins: [],
+      checkers: [],
+      cleanTempDir: true,
+      clearTextReporter: {
+        allowColor: true,
+        logTests: true,
+        maxTestsToLog: 3,
+      },
+      commandRunner: {
+        command: 'npm test',
+      },
+      coverageAnalysis: 'off',
+      dashboard: {
+        baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+        reportType: ReportType.Full,
+      },
+      disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+      dryRunTimeoutMinutes: 5,
+      eventReporter: {
+        baseDir: 'reports/mutation/events',
+      },
+      fileLogLevel: LogLevel.Off,
+      jsonReporter: {
+        fileName: 'reports/mutation/mutation.json',
+      },
+      logLevel: LogLevel.Information,
+      maxConcurrentTestRunners: 9007199254740991,
+      maxTestRunnerReuse: 0,
+      mutate: [
+        '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+        '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+      ],
+      mutator: {
+        excludedMutations: [],
+        plugins: null,
+      },
+      plugins: ['@stryker-mutator/*'],
+      reporters: ['clear-text', 'progress', 'html'],
+      symlinkNodeModules: true,
+      tempDirName: '.stryker-tmp',
+      testRunner: 'command',
+      testRunnerNodeArgs: [],
+      thresholds: {
+        break: null,
+        high: 80,
+        low: 60,
+      },
+      timeoutFactor: 1.5,
+      timeoutMS: 5000,
+      tsconfigFile: 'tsconfig.json',
+      warnings: true,
+    };
+    expect(options).deep.eq(expectedOptions);
   });
 
   it('should validate the default options', () => {

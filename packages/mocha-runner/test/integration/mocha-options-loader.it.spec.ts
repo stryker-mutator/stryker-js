@@ -9,14 +9,9 @@ import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryk
 
 describe(`${MochaOptionsLoader.name} integration`, () => {
   let sut: MochaOptionsLoader;
-  const cwd = process.cwd();
 
   beforeEach(() => {
     sut = createSut();
-  });
-
-  afterEach(() => {
-    process.chdir(cwd);
   });
 
   it('should support loading from ".mocharc.js"', () => {
