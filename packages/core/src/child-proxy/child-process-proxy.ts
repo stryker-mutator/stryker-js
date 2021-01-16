@@ -200,7 +200,7 @@ export default class ChildProcessProxy<T> implements Disposable {
     this.reportError(this.currentError);
 
     function processOutOfMemory() {
-      return output.includes('JavaScript heap out of memory') || output.includes('allocation failure');
+      return output.includes('JavaScript heap out of memory') || output.includes('FatalProcessOutOfMemory');
     }
 
     function stdoutAndStderr() {
