@@ -213,14 +213,9 @@ describe(Pool.name, () => {
       const expectedError = new Error('expected error');
       worker2.init.rejects(expectedError);
       sut = createSut();
-      const actualWorkers = sut
-        .schedule(range(0, 2), (worker) => worker)
-        .pipe(toArray())
-        .toPromise();
 
       // Act & Assert
       await expect(sut.init()).rejectedWith(expectedError);
-      await expect(actualWorkers).rejectedWith(expectedError);
       concurrencyToken$.complete();
     });
   });

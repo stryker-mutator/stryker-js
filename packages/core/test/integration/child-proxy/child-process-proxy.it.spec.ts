@@ -32,8 +32,6 @@ describe(ChildProcessProxy.name, () => {
     log = currentLogMock();
     sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo, [
       '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
-      '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
-      '--max-semi-space-size=1',
     ]);
   });
 
@@ -128,7 +126,7 @@ describe(ChildProcessProxy.name, () => {
     await expect(sut.proxy.say('something')).rejectedWith(ChildProcessCrashedError);
   });
 
-  it('should throw an OutOfMemoryError if the process went out-of-memory', async () => {
+  it.only('should throw an OutOfMemoryError if the process went out-of-memory', async () => {
     await expect(sut.proxy.memoryLeak()).rejectedWith(OutOfMemoryError);
   });
 });
