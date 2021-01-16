@@ -1,6 +1,6 @@
 import type { JSONSchema7 } from 'json-schema';
 import { expect } from 'chai';
-import { deepFreeze } from '@stryker-mutator/util';
+import { deepFreeze, I } from '@stryker-mutator/util';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
 
@@ -21,7 +21,7 @@ describe(buildSchemaWithPluginContributions.name, () => {
     const additionalSchema: JSONSchema7 = deepFreeze({ properties: { bar: { type: 'string' } } });
     const additionalSchema2: JSONSchema7 = deepFreeze({ properties: { baz: { type: 'number' } } });
     pluginContributions.push(additionalSchema, additionalSchema2);
-    const actual = buildSchemaWithPluginContributions(input, pluginResolverStub, testInjector.logger);
+    const actual = buildSchemaWithPluginContributions(input, pluginResolverStub as I<PluginResolver>, testInjector.logger);
     expect(actual).deep.eq({ definitions: {}, properties: { ...input.properties, ...additionalSchema.properties, ...additionalSchema2.properties } });
   });
 
@@ -30,7 +30,7 @@ describe(buildSchemaWithPluginContributions.name, () => {
     const additionalSchema: JSONSchema7 = deepFreeze({ definitions: { bar: { type: 'string' } } });
     const additionalSchema2: JSONSchema7 = deepFreeze({ definitions: { baz: { type: 'number' } } });
     pluginContributions.push(additionalSchema, additionalSchema2);
-    const actual = buildSchemaWithPluginContributions(input, pluginResolverStub, testInjector.logger);
+    const actual = buildSchemaWithPluginContributions(input, pluginResolverStub as I<PluginResolver>, testInjector.logger);
     expect(actual).deep.eq({
       properties: {},
       definitions: { ...input.definitions, ...additionalSchema.definitions, ...additionalSchema2.definitions },

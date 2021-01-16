@@ -1,3 +1,5 @@
+import { CpuInfo } from 'os';
+
 import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
@@ -104,3 +106,18 @@ export const logger = (): Mock<Logger> => {
     warn: sinon.stub(),
   };
 };
+
+export function createCpuInfo(overrides?: Partial<CpuInfo>): CpuInfo {
+  return {
+    model: 'x86',
+    speed: 20000,
+    times: {
+      user: 0,
+      nice: 0,
+      sys: 0,
+      idle: 0,
+      irq: 0,
+    },
+    ...overrides,
+  };
+}

@@ -29,7 +29,7 @@ describe(JestTestRunner.name, () => {
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestTestAdapterMock = { run: sinon.stub() };
-    jestTestAdapterMock.run.resolves({ results: { testResults: [] } });
+    jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) }));
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
 
@@ -120,7 +120,7 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
       const sut = createSut();
-      jestTestAdapterMock.run.resolves({ results: producers.createSuccessResult() });
+      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createSuccessResult() }));
 
       const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
@@ -140,7 +140,7 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a skipped runResult', async () => {
       const sut = createSut();
-      jestTestAdapterMock.run.resolves({ results: producers.createPendingResult() });
+      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createPendingResult() }));
 
       const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
@@ -161,7 +161,7 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a todo runResult', async () => {
       const sut = createSut();
-      jestTestAdapterMock.run.resolves({ results: producers.createTodoResult() });
+      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createTodoResult() }));
 
       const result = await sut.dryRun({ coverageAnalysis: 'off' });
       const expectedRunResult: CompleteDryRunResult = {
@@ -186,7 +186,7 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a negative runResult', async () => {
       const sut = createSut();
-      jestTestAdapterMock.run.resolves({ results: producers.createFailResult() });
+      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createFailResult() }));
 
       const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
@@ -266,15 +266,15 @@ describe(JestTestRunner.name, () => {
       const sut = createSut();
       await sut.dryRun({ coverageAnalysis: 'off' });
 
-      expect(
-        jestTestAdapterMock.run.calledWith({
-          bail: false,
+      expect(jestTestAdapterMock.run).calledWithMatch({
+        jestConfig: sinon.match({
+          bail: true,
           collectCoverage: false,
           notify: false,
           testResultsProcessor: undefined,
           verbose: false,
-        })
-      );
+        }),
+      });
     });
 
     describe('coverage analysis', () => {

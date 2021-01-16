@@ -21,7 +21,7 @@ describe(CommandTestRunner.name, () => {
 
   beforeEach(() => {
     childProcessMock = new ChildProcessMock(42);
-    sinon.stub(childProcess, 'exec').returns(childProcessMock);
+    sinon.stub(childProcess, 'exec').returns(childProcessMock as childProcess.ChildProcess);
     killStub = sinon.stub(objectUtils, 'kill');
     timerMock = mock(Timer);
     sinon.stub(timerModule, 'default').returns(timerMock);

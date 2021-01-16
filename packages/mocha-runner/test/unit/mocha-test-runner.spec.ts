@@ -27,7 +27,7 @@ describe(MochaTestRunner.name, () => {
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
     mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
-    mochaAdapterMock.create.returns(mocha);
+    mochaAdapterMock.create.returns((mocha as unknown) as Mocha);
   });
 
   afterEach(() => {
@@ -85,7 +85,7 @@ describe(MochaTestRunner.name, () => {
       const requires = ['test/setup.js'];
       const expectedRootHooks = { beforeEach() {} };
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
-      mochaAdapterMock.handleRequires.returns(expectedRootHooks);
+      mochaAdapterMock.handleRequires.resolves(expectedRootHooks);
 
       await sut.init();
 
@@ -218,7 +218,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should dispose of mocha when it supports it', async () => {
-      mocha.dispose = sinon.stub();
+      sinon.stub(mocha, 'dispose');
       await actDryRun();
       expect(mocha.dispose).called;
     });

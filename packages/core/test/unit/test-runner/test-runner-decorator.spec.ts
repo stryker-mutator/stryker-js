@@ -17,7 +17,7 @@ describe('TestRunnerDecorator', () => {
   function actArrangeAssert(methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
-        testRunner[methodName].resolves('some value');
+        testRunner[methodName].resolves('some value' as any);
         return expect((sut[methodName] as any)()).to.eventually.eq('some value');
       });
 

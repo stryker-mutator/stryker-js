@@ -63,9 +63,9 @@ describe(JasmineTestRunner.name, () => {
       expect(jasmineEnvStub.configure).calledWithMatch({
         specFilter: sinon.match.func,
       });
-      const actualSpecFilter: (spec: Pick<jasmine.Spec, 'id'>) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter;
-      expect(actualSpecFilter({ id: 1 })).true;
-      expect(actualSpecFilter({ id: 2 })).false;
+      const actualSpecFilter: (spec: jasmine.Spec) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter!;
+      expect(actualSpecFilter({ id: '1' } as jasmine.Spec)).true;
+      expect(actualSpecFilter({ id: '2' } as jasmine.Spec)).false;
     });
 
     it('should set the activeMutant on global scope', async () => {
@@ -79,7 +79,7 @@ describe(JasmineTestRunner.name, () => {
         reporter = rep;
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
-      jasmineStub.execute.callsFake(() => reporter.jasmineDone!(createRunDetails()));
+      jasmineStub.execute.callsFake(async () => reporter.jasmineDone!(createRunDetails()));
       return sut.mutantRun({ activeMutant, testFilter, timeout: 2000, sandboxFileName });
     }
   });
@@ -94,6 +94,7 @@ describe(JasmineTestRunner.name, () => {
         clock.tick(10);
         reporter.specDone!(spec);
         reporter.jasmineDone!(createRunDetails());
+        return undefined;
       });
 
       // Act
@@ -116,6 +117,7 @@ describe(JasmineTestRunner.name, () => {
         global.__stryker2__!.mutantCoverage = expectedMutationCoverage;
         jasmineStub.execute.callsFake(() => {
           reporter.jasmineDone!(createRunDetails());
+          return undefined;
         });
 
         // Act
@@ -140,6 +142,7 @@ describe(JasmineTestRunner.name, () => {
       global.__stryker2__!.mutantCoverage = expectedMutationCoverage;
       jasmineStub.execute.callsFake(() => {
         reporter.jasmineDone!(createRunDetails());
+        return undefined;
       });
 
       // Act
@@ -168,6 +171,7 @@ describe(JasmineTestRunner.name, () => {
         secondCurrentTestId = global.__stryker2__!.currentTestId;
         reporter.specDone!(spec1);
         reporter.jasmineDone!(createRunDetails());
+        return undefined;
       });
 
       // Act
@@ -187,6 +191,7 @@ describe(JasmineTestRunner.name, () => {
         firstCurrentTestId = global.__stryker2__!.currentTestId;
         reporter.specDone!(spec0);
         reporter.jasmineDone!(createRunDetails());
+        return undefined;
       });
 
       // Act
@@ -211,6 +216,7 @@ describe(JasmineTestRunner.name, () => {
         reporter.specDone!({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' });
         reporter.specDone!({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' });
         reporter.jasmineDone!(createRunDetails());
+        return undefined;
       });
 
       // Act

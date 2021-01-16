@@ -2,6 +2,7 @@ import execa = require('execa');
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
+import { I } from '@stryker-mutator/util';
 
 import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
 import ConfigReader from '../config/config-reader';
@@ -17,8 +18,8 @@ export interface MainContext extends PluginContext {
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.pluginCreatorReporter]: PluginCreator<PluginKind.Reporter>;
   [coreTokens.pluginCreatorChecker]: PluginCreator<PluginKind.Checker>;
-  [coreTokens.timer]: Timer;
-  [coreTokens.temporaryDirectory]: TemporaryDirectory;
+  [coreTokens.timer]: I<Timer>;
+  [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
   [coreTokens.execa]: typeof execa;
 }
 

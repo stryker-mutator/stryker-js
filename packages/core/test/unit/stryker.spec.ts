@@ -9,7 +9,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../../src/logging';
 import Stryker from '../../src/stryker';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from '../../src/process';
+import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process';
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';
 import { TemporaryDirectory } from '../../src/utils/temporary-directory';
@@ -17,7 +17,7 @@ import { TemporaryDirectory } from '../../src/utils/temporary-directory';
 describe(Stryker.name, () => {
   let sut: Stryker;
   let shutdownLoggingStub: sinon.SinonStub;
-  let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector>;
+  let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext>>;
   let cliOptions: PartialStrykerOptions;
   let mutantResults: MutantResult[];
   let loggerMock: sinon.SinonStubbedInstance<Logger>;
@@ -55,9 +55,9 @@ describe(Stryker.name, () => {
       .returns(temporaryDirectoryMock);
     getLoggerStub.returns(loggerMock);
 
-    prepareExecutorMock.execute.resolves(injectorMock);
-    mutantInstrumenterExecutorMock.execute.resolves(injectorMock);
-    dryRunExecutorMock.execute.resolves(injectorMock);
+    prepareExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
+    mutantInstrumenterExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
+    dryRunExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
     mutationTestExecutorMock.execute.resolves(mutantResults);
 
     cliOptions = {};
@@ -66,7 +66,7 @@ describe(Stryker.name, () => {
 
   describe('runMutationTest()', () => {
     beforeEach(() => {
-      sut = new Stryker(cliOptions, () => injectorMock);
+      sut = new Stryker(cliOptions, () => injectorMock as typedInject.Injector<MutationTestContext>);
     });
 
     it('should execute the preparations', async () => {
