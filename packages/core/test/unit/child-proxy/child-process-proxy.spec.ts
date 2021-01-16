@@ -21,6 +21,7 @@ import {
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
 import * as objectUtils from '../../../src/utils/object-utils';
+import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
 import currentLogMock from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
@@ -121,7 +122,7 @@ describe(ChildProcessProxy.name, () => {
     });
   });
 
-  describe('on close', () => {
+  describe('on unexpected close', () => {
     beforeEach(() => {
       sut = createSut();
     });
@@ -162,6 +163,35 @@ describe(ChildProcessProxy.name, () => {
     it('should reject any new calls immediately', () => {
       actClose(646);
       return expect(sut.proxy.say('')).rejected;
+    });
+
+    it('should handle "JavaScript heap out of memory" as an OOM error', () => {
+      // Arrange
+      childProcessMock.stderr.emit('data', 'some other output');
+      childProcessMock.stderr.emit('data', ' JavaScript ');
+      childProcessMock.stderr.emit('data', 'heap out of memory');
+      childProcessMock.stderr.emit('data', ' some more data"');
+
+      // Act
+      actClose(123);
+
+      // Assert
+      expect(sut.proxy.say('')).rejectedWith(OutOfMemoryError);
+    });
+
+    it('should handle "allocation failure" as an OOM error', () => {
+      // Arrange
+      childProcessMock.stderr.emit(
+        'data',
+        ` <--- Last few GCs --->
+      - t of marking 54 ms) (average mu = 0.846, current mu = 0.025) allocation failure[9832:0x49912a0]    14916 ms: Mark-sweep 196.8 (198.3) -> 196.9 (198.3) MB, 55.2 / 0.0 ms  (+ 4.5 ms in 17 steps since start of marking, biggest step 3.8 ms, walltime since start of marking 65 ms) (average mu = 0.728, current mu = 0.084) allocation failur[9832:0x49912a0]    14980 ms: Mark-sweep 196.9 (198.3) -> 196.9 (199.3) MB, 63.9 / 0.0 ms  (average mu = 0.559, current mu = 0.002) allocation failure scavenge might not succeed`
+      );
+
+      // Act
+      actClose(123);
+
+      // Assert
+      expect(sut.proxy.say('')).rejectedWith(OutOfMemoryError);
     });
 
     function actClose(code = 1, signal = 'SIGINT') {

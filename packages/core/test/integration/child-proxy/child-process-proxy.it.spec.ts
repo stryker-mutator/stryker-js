@@ -32,6 +32,7 @@ describe(ChildProcessProxy.name, () => {
     log = currentLogMock();
     sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo, [
       '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
+      '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
     ]);
   });
 
