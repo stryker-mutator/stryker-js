@@ -7,7 +7,7 @@
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 30000 --exit \"test/integration/**/*.js\"",
+    "test:integration": "mocha --timeout 60000 --exit \"test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {
@@ -49,7 +49,7 @@
   "dependencies": {
     "@stryker-mutator/api": "4.3.1",
     "@stryker-mutator/util": "4.3.1",
-    "decamelize": "~4.0.0",
+    "decamelize": "~5.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.1.0"
   },

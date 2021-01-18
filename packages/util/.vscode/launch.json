@@ -19,8 +19,8 @@
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceFolder}/test/**/*.js",
+        "${workspaceFolder}/src/**/*.js"
       ]
     },
     {
@@ -37,8 +37,8 @@
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceFolder}/test/**/*.js",
+        "${workspaceFolder}/src/**/*.js"
       ]
     }
   ]

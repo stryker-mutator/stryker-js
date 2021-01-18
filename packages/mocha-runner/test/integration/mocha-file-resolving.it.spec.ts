@@ -8,16 +8,11 @@ import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryk
 import { createMochaTestRunnerFactory } from '../../src';
 
 describe('Mocha 6 file resolving integration', () => {
-  const cwd = process.cwd();
   let options: MochaRunnerWithStrykerOptions;
 
   beforeEach(() => {
     options = testInjector.options as MochaRunnerWithStrykerOptions;
     options.mochaOptions = {};
-  });
-
-  afterEach(() => {
-    process.chdir(cwd);
   });
 
   it('should resolve test files while respecting "files", "spec", "extension" and "exclude" properties', () => {

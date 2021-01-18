@@ -21,6 +21,7 @@ import {
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
 import * as objectUtils from '../../../src/utils/object-utils';
+import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
 import currentLogMock from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
@@ -121,7 +122,7 @@ describe(ChildProcessProxy.name, () => {
     });
   });
 
-  describe('on close', () => {
+  describe('on unexpected close', () => {
     beforeEach(() => {
       sut = createSut();
     });
@@ -162,6 +163,34 @@ describe(ChildProcessProxy.name, () => {
     it('should reject any new calls immediately', () => {
       actClose(646);
       return expect(sut.proxy.say('')).rejected;
+    });
+
+    it('should handle "JavaScript heap out of memory" as an OOM error', async () => {
+      // Arrange
+      childProcessMock.stderr.emit('data', 'some other output');
+      childProcessMock.stderr.emit('data', ' JavaScript ');
+      childProcessMock.stderr.emit('data', 'heap out of memory');
+      childProcessMock.stderr.emit('data', ' some more data"');
+
+      // Act
+      actClose(123);
+
+      // Assert
+      await expect(sut.proxy.say('')).rejectedWith(OutOfMemoryError);
+    });
+
+    it('should handle "FatalProcessOutOfMemory" as an OOM error', async () => {
+      // Arrange
+      childProcessMock.stderr.emit(
+        'data',
+        '3: 0xb797be v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 4: 0xb79b37 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 5: 0xd343c5  [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 6: 0xd34f4f  [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 7: 0xd42fdb v8::internal::Heap::CollectGarbage(v8::internal::AllocationSpace, v8::internal::GarbageCollectionReason, v8::GCCallbackFlags) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 8: 0xd457ae v8::internal::Heap::CollectAllAvailableGarbage(v8::internal::GarbageCollectionReason) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t 9: 0xd46beb v8::internal::Heap::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t10: 0xd0c4a2 v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t11: 0xd086f2 v8::internal::FactoryBase<v8::internal::Factory>::AllocateRawArray(int, v8::internal::AllocationType) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t12: 0xd087a4 v8::internal::FactoryBase<v8::internal::Factory>::NewFixedArrayWithFiller(v8::internal::Handle<v8::internal::Map>, int, v8::internal::Handle<v8::internal::Oddball>, v8::internal::AllocationType) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t13: 0xe9568e  [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t14: 0xe957da  [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t15: 0x1032b83 v8::internal::Runtime_GrowArrayElements(int, unsigned long*, v8::internal::Isolate*) [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t16: 0x14011f9  [/opt/hostedtoolcache/node/14.15.4/x64/bin/node]\n\t'
+      );
+
+      // Act
+      actClose(123);
+
+      // Assert
+      await expect(sut.proxy.say('')).rejectedWith(OutOfMemoryError);
     });
 
     function actClose(code = 1, signal = 'SIGINT') {
