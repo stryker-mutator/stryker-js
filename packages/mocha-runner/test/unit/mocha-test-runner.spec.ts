@@ -218,7 +218,6 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should dispose of mocha when it supports it', async () => {
-      sinon.stub(mocha, 'dispose');
       await actDryRun();
       expect(mocha.dispose).called;
     });
