@@ -7,7 +7,7 @@ import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Mutant } from '@stryker-mutator/api/core';
-import { Task } from '@stryker-mutator/util';
+import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
@@ -41,25 +41,26 @@ describe(MutationTestExecutor.name, () => {
     checker = factory.checker();
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     sandboxMock = sinon.createStubInstance(Sandbox);
-    checkerPoolMock.schedule.callsFake((item$: Observable<Mutant>, task: (testRunner: Checker, arg: Mutant) => Promise<CheckResult>) =>
-      item$.pipe(mergeMap((item) => task(checker, item)))
-    );
-    testRunnerPoolMock.schedule.callsFake(
-      (item$: Observable<MutantTestCoverage>, task: (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>) =>
-        item$.pipe(mergeMap((item) => task(testRunner, item)))
-    );
+    (checkerPoolMock.schedule as sinon.SinonStub<
+      [Observable<Mutant>, (testRunner: Checker, arg: Mutant) => Promise<CheckResult>],
+      Observable<CheckResult>
+    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
+    (testRunnerPoolMock.schedule as sinon.SinonStub<
+      [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
+      Observable<MutantRunResult>
+    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
 
     mutants = [];
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
-      .provideValue(coreTokens.checkerPool, checkerPoolMock)
+      .provideValue(coreTokens.checkerPool, checkerPoolMock as I<Pool<Checker>>)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
       .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.timer, timerMock)
-      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
       .injectClass(MutationTestExecutor);
   });
