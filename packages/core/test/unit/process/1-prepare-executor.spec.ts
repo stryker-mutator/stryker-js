@@ -21,7 +21,7 @@ describe(PrepareExecutor.name, () => {
   let cliOptions: PartialStrykerOptions;
   let configureMainProcessStub: sinon.SinonStub;
   let configureLoggingServerStub: sinon.SinonStub;
-  let injectorMock: sinon.SinonStubbedInstance<Injector>;
+  let injectorMock: sinon.SinonStubbedInstance<Injector<buildMainInjectorModule.MainContext>>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let inputFileResolverMock: sinon.SinonStubbedInstance<InputFileResolver>;
   let inputFiles: InputFileCollection;
@@ -37,7 +37,7 @@ describe(PrepareExecutor.name, () => {
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     injectorMock = factory.injector();
-    sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock);
+    sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock as Injector<buildMainInjectorModule.MainContext>);
     injectorMock.resolve
       .withArgs(commonTokens.options)
       .returns(testInjector.options)
@@ -46,8 +46,8 @@ describe(PrepareExecutor.name, () => {
       .withArgs(coreTokens.temporaryDirectory)
       .returns(temporaryDirectoryMock);
     injectorMock.injectClass.withArgs(InputFileResolver).returns(inputFileResolverMock);
-    inputFileResolverMock.resolve.returns(inputFiles);
-    sut = new PrepareExecutor(cliOptions, injectorMock);
+    inputFileResolverMock.resolve.resolves(inputFiles);
+    sut = new PrepareExecutor(cliOptions, injectorMock as Injector<buildMainInjectorModule.MainContext>);
   });
 
   it('should configure logging for the main process', async () => {

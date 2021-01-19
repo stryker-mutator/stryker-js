@@ -1,4 +1,12 @@
-import { DryRunStatus, TimeoutDryRunResult, TestRunner, MutantRunStatus, TimeoutMutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  DryRunStatus,
+  TimeoutDryRunResult,
+  TestRunner,
+  MutantRunStatus,
+  TimeoutMutantRunResult,
+  DryRunResult,
+  MutantRunResult,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -27,14 +35,14 @@ describe('TimeoutDecorator', () => {
 
   function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {
     it('should proxy the request', () => {
-      testRunner1[methodName].resolves('str');
+      testRunner1[methodName].resolves('str' as any);
       const promise = action();
       expect(testRunner1[methodName]).to.have.been.called;
       expect(promise && promise.then, `timeoutDecorator.${methodName} did not provide a promise`).ok;
     });
 
     it('should resolve when inner promise resolves', () => {
-      testRunner1[methodName].resolves('str');
+      testRunner1[methodName].resolves('str' as any);
       const promise = action();
       return expect(promise).to.eventually.eq('str');
     });
@@ -62,17 +70,18 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.dryRun({ coverageAnalysis: 'all', timeout: 20 }), 'dryRun');
 
     it('should not handle timeouts premature', () => {
-      let resolve: (result: string) => void = () => {};
-      testRunner1.dryRun.returns(new Promise<string>((res) => (resolve = res)));
+      let resolve: (result: DryRunResult) => void = () => {};
+      const expectedResult = factory.completeDryRunResult();
+      testRunner1.dryRun.returns(new Promise<DryRunResult>((res) => (resolve = res)));
       const runPromise = sut.dryRun(factory.dryRunOptions({ timeout: 20 }));
       clock.tick(19);
-      resolve('expectedResult');
-      return expect(runPromise).to.eventually.be.eq('expectedResult');
+      resolve(expectedResult);
+      return expect(runPromise).to.eventually.be.eq(expectedResult);
     });
 
     it('should handle timeouts', async () => {
       testRunner1.dryRun.returns(
-        new Promise<string>(() => {})
+        new Promise<DryRunResult>(() => {})
       );
       const runPromise = sut.dryRun(factory.dryRunOptions({ timeout: 20 }));
       clock.tick(20);
@@ -89,17 +98,18 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.mutantRun(factory.mutantRunOptions({ timeout: 20 })), 'mutantRun');
 
     it('should not handle timeouts premature', () => {
-      let resolve: (result: string) => void = () => {};
-      testRunner1.mutantRun.returns(new Promise<string>((res) => (resolve = res)));
+      let resolve: (result: MutantRunResult) => void = () => {};
+      const expectedResult = factory.killedMutantRunResult();
+      testRunner1.mutantRun.returns(new Promise<MutantRunResult>((res) => (resolve = res)));
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ timeout: 20 }));
       clock.tick(19);
-      resolve('expectedResult');
-      return expect(runPromise).to.eventually.be.eq('expectedResult');
+      resolve(expectedResult);
+      return expect(runPromise).to.eventually.be.eq(expectedResult);
     });
 
     it('should handle timeouts', async () => {
       testRunner1.mutantRun.returns(
-        new Promise<string>(() => {})
+        new Promise<MutantRunResult>(() => {})
       );
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ timeout: 20 }));
       clock.tick(20);

@@ -6,7 +6,9 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { MutantInstrumenterExecutor } from '../../../src/process';
+import { I } from '@stryker-mutator/util';
+
+import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
 import InputFileCollection from '../../../src/input/input-file-collection';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
@@ -17,7 +19,7 @@ import { Pool } from '../../../src/concurrent';
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
   let inputFiles: InputFileCollection;
-  let injectorMock: sinon.SinonStubbedInstance<Injector>;
+  let injectorMock: sinon.SinonStubbedInstance<Injector<DryRunContext>>;
   let instrumenterMock: sinon.SinonStubbedInstance<Instrumenter>;
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
@@ -47,7 +49,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
     injectorMock = factory.injector();
-    sut = new MutantInstrumenterExecutor(injectorMock, inputFiles, testInjector.options);
+    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);
@@ -55,7 +57,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       .withArgs(coreTokens.concurrencyTokenProvider)
       .returns(concurrencyTokenProviderMock)
       .withArgs(coreTokens.checkerPool)
-      .returns(checkerPoolMock);
+      .returns(checkerPoolMock as I<Pool<Checker>>);
     instrumenterMock.instrument.resolves(instrumentResult);
   });
 
@@ -81,7 +83,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   it('should provide the mutated files to the sandbox', async () => {
     await sut.execute();
     expect(injectorMock.provideValue).calledWithExactly(coreTokens.files, [mutatedFile, testFile]);
-    expect(injectorMock.provideValue.withArgs(coreTokens.files)).calledBefore(injectorMock.injectFunction);
+    expect(injectorMock.provideValue.withArgs(coreTokens.files, sinon.match.any)).calledBefore(injectorMock.injectFunction);
   });
 
   it('should provide checkerToken$ to the checker pool', async () => {

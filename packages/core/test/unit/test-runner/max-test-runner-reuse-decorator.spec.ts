@@ -35,7 +35,7 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
   it('should pass through resolved values', async () => {
     const sut = getSut(0);
     const options = factory.mutantRunOptions({ timeout: 23 });
-    const expectedResult = factory.completeDryRunResult();
+    const expectedResult = factory.killedMutantRunResult();
     testRunner.mutantRun.resolves(expectedResult);
     const result = await sut.mutantRun(options);
     expect(testRunner.mutantRun).to.have.been.calledWith(options);
@@ -44,7 +44,7 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
 
   it('should not dispose worker if restartAfterRuns is set to 0', async () => {
     const sut = getSut(0);
-    const expectedResult = factory.completeDryRunResult();
+    const expectedResult = factory.killedMutantRunResult();
     testRunner.mutantRun.resolves(expectedResult);
 
     await sut.mutantRun(runOptions);
@@ -56,7 +56,7 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
 
   it('should dispose worker on second run if restartAfterRuns is set to 1', async () => {
     const sut = getSut(1);
-    const expectedResult = factory.completeDryRunResult();
+    const expectedResult = factory.killedMutantRunResult();
     testRunner.mutantRun.resolves(expectedResult);
 
     await sut.mutantRun(runOptions);

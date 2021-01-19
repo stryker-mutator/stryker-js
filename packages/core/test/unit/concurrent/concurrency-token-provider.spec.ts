@@ -6,6 +6,7 @@ import { toArray } from 'rxjs/operators';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
+import { createCpuInfo } from '../../helpers/producers';
 
 describe(ConcurrencyTokenProvider.name, () => {
   function createSut() {
@@ -29,14 +30,14 @@ describe(ConcurrencyTokenProvider.name, () => {
 
   describe('testRunnerToken$', () => {
     it('should use cpuCount if concurrency is not set and CPU count <= 4', async () => {
-      sinon.stub(os, 'cpus').returns([0, 1, 2, 3]);
+      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo()]);
       const sut = createSut();
       const actualTokens = await actAllTestRunnerTokens(sut);
       expect(actualTokens).deep.eq([0, 1, 2, 3]);
     });
 
     it('should use cpuCount - 1 if concurrency is not set and CPU count > 4', async () => {
-      sinon.stub(os, 'cpus').returns([0, 1, 2, 3, 4]);
+      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo()]);
       const sut = createSut();
       const actualTokens = await actAllTestRunnerTokens(sut);
       expect(actualTokens).deep.eq([0, 1, 2, 3]);

@@ -7,6 +7,7 @@ import { expect } from 'chai';
 
 import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/options-validator';
 import { coreTokens } from '../../../src/di';
+import { createCpuInfo } from '../../helpers/producers';
 
 describe(OptionsValidator.name, () => {
   let sut: OptionsValidator;
@@ -239,14 +240,14 @@ describe(OptionsValidator.name, () => {
 
     it('should not configure "concurrency" if "maxConcurrentTestRunners" is >= cpus-1', () => {
       testInjector.options.maxConcurrentTestRunners = 2;
-      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo()]);
       sut.validate(testInjector.options);
       expect(testInjector.options.concurrency).undefined;
     });
 
     it('should configure "concurrency" if "maxConcurrentTestRunners" is set with a lower value', () => {
       testInjector.options.maxConcurrentTestRunners = 1;
-      sinon.stub(os, 'cpus').returns([0, 1, 2]);
+      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo()]);
       sut.validate(testInjector.options);
       expect(testInjector.options.concurrency).eq(1);
     });
