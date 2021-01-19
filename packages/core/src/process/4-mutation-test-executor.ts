@@ -1,5 +1,5 @@
-import { from, zip, partition, merge, Observable } from 'rxjs';
-import { flatMap, toArray, map, tap, shareReplay } from 'rxjs/operators';
+import { from, partition, merge, Observable } from 'rxjs';
+import { toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
@@ -79,49 +79,44 @@ export class MutationTestExecutor {
   }
 
   private executeCheck(input$: Observable<MutantTestCoverage>) {
-    const checkTask$ = zip(input$, this.checkerPool.worker$).pipe(
-      flatMap(async ([matchedMutant, checker]) => {
-        const checkResult = await checker.check(matchedMutant.mutant);
-        this.checkerPool.recycle(checker);
+    const checkTask$ = this.checkerPool
+      .schedule(input$, async (checker, mutant) => {
+        const checkResult = await checker.check(mutant.mutant);
         return {
           checkResult,
-          matchedMutant,
+          mutant,
         };
-      }),
-      // Dispose when all checks are completed.
-      // This will allow resources to be freed up and more test runners to be spined up.
-      tap({
-        complete: () => {
-          this.checkerPool.dispose();
-          this.concurrencyTokenProvider.freeCheckers();
-        },
       })
-    );
-    const [passedCheckResult$, failedCheckResult$] = partition(
-      checkTask$.pipe(shareReplay()),
-      ({ checkResult }) => checkResult.status === CheckStatus.Passed
-    );
+      .pipe(
+        // Dispose when all checks are completed.
+        // This will allow resources to be freed up and more test runners to be spined up.
+        tap({
+          complete: () => {
+            this.checkerPool.dispose();
+            this.concurrencyTokenProvider.freeCheckers();
+          },
+        }),
+        shareReplay()
+      );
+    const [passedCheckResult$, failedCheckResult$] = partition(checkTask$, ({ checkResult }) => checkResult.status === CheckStatus.Passed);
     const checkResult$ = failedCheckResult$.pipe(
       map((failedMutant) =>
         this.mutationTestReportHelper.reportCheckFailed(
-          failedMutant.matchedMutant.mutant,
+          failedMutant.mutant.mutant,
           failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>
         )
       )
     );
-    const passedMutant$ = passedCheckResult$.pipe(map(({ matchedMutant }) => matchedMutant));
+    const passedMutant$ = passedCheckResult$.pipe(map(({ mutant }) => mutant));
     return { checkResult$, passedMutant$ };
   }
 
   private executeRunInTestRunner(input$: Observable<MutantTestCoverage>): Observable<MutantResult> {
-    return zip(this.testRunnerPool.worker$, input$).pipe(
-      flatMap(async ([testRunner, matchedMutant]) => {
-        const mutantRunOptions = this.createMutantRunOptions(matchedMutant);
-        const result = await testRunner.mutantRun(mutantRunOptions);
-        this.testRunnerPool.recycle(testRunner);
-        return this.mutationTestReportHelper.reportMutantRunResult(matchedMutant, result);
-      })
-    );
+    return this.testRunnerPool.schedule(input$, async (testRunner, mutant) => {
+      const mutantRunOptions = this.createMutantRunOptions(mutant);
+      const result = await testRunner.mutantRun(mutantRunOptions);
+      return this.mutationTestReportHelper.reportMutantRunResult(mutant, result);
+    });
   }
 
   private createMutantRunOptions(mutant: MutantTestCoverage): MutantRunOptions {
