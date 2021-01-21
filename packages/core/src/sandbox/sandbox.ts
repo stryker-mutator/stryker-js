@@ -14,7 +14,7 @@ import { from } from 'rxjs';
 import { TemporaryDirectory } from '../utils/temporary-directory';
 import { findNodeModules, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, writeFile, mkdirp } from '../utils/file-utils';
 import { coreTokens } from '../di';
-import { UnexpectedExitRegister } from '../stryker-registry';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();
@@ -36,13 +36,13 @@ export class Sandbox implements Disposable {
     temporaryDirectory: I<TemporaryDirectory>,
     private readonly files: readonly File[],
     private readonly exec: typeof execa,
-    unexpectedExitRegistry: UnexpectedExitRegister
+    unexpectedExitRegistry: I<UnexpectedExitHandler>
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
       this.backupDirectory = temporaryDirectory.createRandomDirectory('backup');
       this.log.info('InPlace is enabled, Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
-      unexpectedExitRegistry.registerUnexpectedExitHandler(this.dispose.bind(this, true));
+      unexpectedExitRegistry.registerHandler(this.dispose.bind(this, true));
     } else {
       this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
       this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);

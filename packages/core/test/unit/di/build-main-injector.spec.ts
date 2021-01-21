@@ -13,7 +13,7 @@ import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../..
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
 import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
 import currentLogMock from '../../helpers/log-mock';
-import { StrykerRegistry } from '../../../src/stryker-registry';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
@@ -112,6 +112,6 @@ describe(buildMainInjector.name, () => {
 
   it('should be able to supply a UnexpectedExitRegister', () => {
     const actualInjector = buildMainInjector(injector);
-    expect(actualInjector.resolve(coreTokens.unexpectedExitRegistry)).instanceOf(StrykerRegistry);
+    expect(actualInjector.resolve(coreTokens.unexpectedExitRegistry)).instanceOf(UnexpectedExitHandler);
   });
 });

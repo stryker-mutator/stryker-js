@@ -9,7 +9,7 @@ import ConfigReader from '../config/config-reader';
 import BroadcastReporter from '../reporters/broadcast-reporter';
 import { TemporaryDirectory } from '../utils/temporary-directory';
 import Timer from '../utils/timer';
-import { StrykerRegistry } from '../stryker-registry';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
 import { pluginResolverFactory } from './factory-methods';
 
@@ -22,7 +22,8 @@ export interface MainContext extends PluginContext {
   [coreTokens.timer]: I<Timer>;
   [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
   [coreTokens.execa]: typeof execa;
-  [coreTokens.unexpectedExitRegistry]: StrykerRegistry;
+  [coreTokens.process]: NodeJS.Process;
+  [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
 }
 
 type PluginResolverProvider = Injector<PluginContext>;
@@ -38,7 +39,8 @@ export function buildMainInjector(injector: CliOptionsProvider): Injector<MainCo
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
     .provideClass(coreTokens.timer, Timer)
     .provideValue(coreTokens.execa, execa)
-    .provideClass(coreTokens.unexpectedExitRegistry, StrykerRegistry);
+    .provideValue(coreTokens.process, process)
+    .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler);
 }
 
 export function createPluginResolverProvider(parent: CliOptionsProvider): PluginResolverProvider {

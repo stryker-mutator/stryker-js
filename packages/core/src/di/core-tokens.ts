@@ -10,6 +10,7 @@ export const dryRunResult = 'dryRunResult';
 export const files = 'files';
 export const mutants = 'mutants';
 export const mutantsWithTestCoverage = 'mutantsWithTestCoverage';
+export const process = 'process';
 export const temporaryDirectory = 'temporaryDirectory';
 export const unexpectedExitRegistry = 'unexpectedExitRegistry';
 export const timer = 'timer';

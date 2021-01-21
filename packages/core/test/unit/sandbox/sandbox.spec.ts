@@ -13,7 +13,7 @@ import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import * as fileUtils from '../../../src/utils/file-utils';
-import { UnexpectedExitRegister } from '../../../src/stryker-registry';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
@@ -23,7 +23,7 @@ describe(Sandbox.name, () => {
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesStub: sinon.SinonStub;
   let execaMock: sinon.SinonStubbedInstance<typeof execa>;
-  let unexpectedExitRegisterMock: sinon.SinonStubbedInstance<UnexpectedExitRegister>;
+  let unexpectedExitRegisterMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
   const SANDBOX_WORKING_DIR = 'sandbox-123';
 
   beforeEach(() => {
@@ -40,7 +40,8 @@ describe(Sandbox.name, () => {
       sync: sinon.stub(),
     };
     unexpectedExitRegisterMock = {
-      registerUnexpectedExitHandler: sinon.stub(),
+      registerHandler: sinon.stub(),
+      dispose: sinon.stub(),
     };
     symlinkJunctionStub.resolves();
     findNodeModulesStub.resolves('node_modules');
