@@ -55,7 +55,7 @@ describe(UnexpectedExitHandler.name, () => {
   signals.forEach((signal) => {
     it(`should call process.exit on "${signal}" signal`, () => {
       createSut();
-      processMock.emit(signal, [signal, 4]);
+      processMock.emit(signal, signal, 4);
       expect(processMock.exit).calledWith(132);
     });
   });

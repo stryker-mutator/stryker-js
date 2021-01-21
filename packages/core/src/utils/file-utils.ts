@@ -39,20 +39,6 @@ export function importModule(moduleName: string): unknown {
 }
 
 /**
- * Writes data to a specified file.
- * @param fileName The path to the file.
- * @param data The content of the file.
- * @returns A promise to eventually save the file.
- */
-export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
-  if (Buffer.isBuffer(data)) {
-    return fs.promises.writeFile(fileName, data);
-  } else {
-    return fs.promises.writeFile(fileName, data, 'utf8');
-  }
-}
-
-/**
  * Recursively walks the from directory and copy the content to the target directory synchronously
  * @param from The source directory to move from
  * @param to The target directory to move to

@@ -12,7 +12,7 @@ import { mergeMap, toArray } from 'rxjs/operators';
 import { from } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/temporary-directory';
-import { findNodeModules, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, writeFile, mkdirp } from '../utils/file-utils';
+import { findNodeModules, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
 import { coreTokens } from '../di';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
@@ -36,13 +36,13 @@ export class Sandbox implements Disposable {
     temporaryDirectory: I<TemporaryDirectory>,
     private readonly files: readonly File[],
     private readonly exec: typeof execa,
-    unexpectedExitRegistry: I<UnexpectedExitHandler>
+    unexpectedExitHandler: I<UnexpectedExitHandler>
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
       this.backupDirectory = temporaryDirectory.createRandomDirectory('backup');
-      this.log.info('InPlace is enabled, Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
-      unexpectedExitRegistry.registerHandler(this.dispose.bind(this, true));
+      this.log.info('In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
+      unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
     } else {
       this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
       this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
@@ -110,19 +110,19 @@ export class Sandbox implements Disposable {
       this.fileMap.set(file.name, file.name);
       const originalContent = await fsPromises.readFile(file.name);
       if (originalContent.compare(file.content) !== 0) {
-        // difference
+        // File is changed (either mutated or by a preprocessor), make a backup and replace in-place
         const backupFileName = path.join(this.backupDirectory, relativePath);
         await mkdirp(path.dirname(backupFileName));
         await fsPromises.writeFile(backupFileName, originalContent);
-        this.log.debug(`Stored backup file at ${backupFileName}`);
-        await writeFile(file.name, file.content);
+        this.log.debug('Stored backup file at %s', backupFileName);
+        await fsPromises.writeFile(file.name, file.content);
       }
     } else {
       const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
       await mkdirp(folderName);
       const targetFileName = path.join(folderName, path.basename(relativePath));
       this.fileMap.set(file.name, targetFileName);
-      await writeFile(targetFileName, file.content);
+      await fsPromises.writeFile(targetFileName, file.content);
     }
   }
 
