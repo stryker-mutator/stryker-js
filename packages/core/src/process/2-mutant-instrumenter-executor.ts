@@ -11,14 +11,11 @@ import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
 import { createCheckerFactory } from '../checker/checker-facade';
 import { createPreprocessor } from '../sandbox';
 
-import { StrykerRegistry } from '../stryker-registry';
-
 import { DryRunContext } from './3-dry-run-executor';
 
 export interface MutantInstrumenterContext extends MainContext {
   [coreTokens.inputFiles]: InputFileCollection;
   [coreTokens.loggingContext]: LoggingClientContext;
-  [coreTokens.unexpectedExitRegistry]: StrykerRegistry;
 }
 
 export class MutantInstrumenterExecutor {
