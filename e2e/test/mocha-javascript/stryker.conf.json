@@ -5,7 +5,6 @@
   "coverageAnalysis": "perTest",
   "reporters": ["clear-text", "html", "event-recorder"],
   "plugins": [
-    "/home/nicojs/github/stryker/packages/mocha-runner"
-  ],
-  "inPlace": true
+    "@stryker-mutator/mocha-runner"
+  ]
 }
