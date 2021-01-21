@@ -1,6 +1,5 @@
 import path = require('path');
 import { promises as fsPromises } from 'fs';
-import os = require('os');
 
 import execa = require('execa');
 import npmRunPath = require('npm-run-path');
@@ -15,7 +14,6 @@ import { from } from 'rxjs';
 import { TemporaryDirectory } from '../utils/temporary-directory';
 import { findNodeModules, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, writeFile, mkdirp } from '../utils/file-utils';
 import { coreTokens } from '../di';
-import { random } from '../utils/object-utils';
 import { UnexpectedExitRegister } from '../stryker-registry';
 
 export class Sandbox implements Disposable {
@@ -42,8 +40,8 @@ export class Sandbox implements Disposable {
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
-      this.backupDirectory = path.join(os.tmpdir(), `stryker-backup-${random()}`);
-      this.log.info('In place mode detected. Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
+      this.backupDirectory = temporaryDirectory.createRandomDirectory('backup');
+      this.log.info('InPlace is enabled, Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
       unexpectedExitRegistry.registerUnexpectedExitHandler(this.dispose.bind(this, true));
     } else {
       this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');

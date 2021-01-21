@@ -1,9 +1,3 @@
-// @ts-nocheck
-// 
-// 
-// 
-// 
-// 
 const { existsSync } = require('fs');
 const path = require('path');
 

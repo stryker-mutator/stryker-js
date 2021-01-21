@@ -1,11 +1,3 @@
-// @ts-nocheck
-// 
-// 
-// 
-// 
-// 
-// 
-// 
 var addModule = require('../../src/Add');
 var add = addModule.add;
 var addOne = addModule.addOne;
