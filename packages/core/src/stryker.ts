@@ -8,6 +8,7 @@ import { LogConfigurator } from './logging';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process';
 import { coreTokens, provideLogger } from './di';
 import { retrieveCause, ConfigError } from './errors';
+import { StrykerRegistry } from './stryker-registry';
 
 /**
  * The main Stryker class.
@@ -23,9 +24,13 @@ export default class Stryker {
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogger(rootInjector);
+    const strykerRegistry = rootInjector.injectClass(StrykerRegistry);
+    const loggerProvider = provideLogger(rootInjector).provideValue(coreTokens.unexpectedExitRegistry, strykerRegistry);
 
     try {
+      // Register a global exit handler, this will allow the Sandbox class to use `strykerRegistry.registerUnexpectedExitHandler` to cleanup on unexpected exit
+      strykerRegistry.startHandleExit();
+
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
       const prepareExecutor = loggerProvider.provideValue(coreTokens.cliOptions, this.cliOptions).injectClass(PrepareExecutor);
       const mutantInstrumenterInjector = await prepareExecutor.execute();
@@ -65,6 +70,9 @@ export default class Stryker {
     } finally {
       await rootInjector.dispose();
       await LogConfigurator.shutdown();
+
+      // Remove our grip on the exit handlers
+      strykerRegistry.stopHandleExit();
     }
   }
 }

@@ -30,6 +30,7 @@ describe(OptionsValidator.name, () => {
       appendPlugins: [],
       checkers: [],
       cleanTempDir: true,
+      inPlace: false,
       clearTextReporter: {
         allowColor: true,
         logTests: true,

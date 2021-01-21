@@ -1,0 +1,15 @@
+{
+  "name": "in-place",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts",
+    "test:unit": "mocha",
+    "test:mutation": "stryker run"
+  },
+  "author": "",
+  "license": "ISC"
+}

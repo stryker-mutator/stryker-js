@@ -3,9 +3,13 @@
   "testRunner": "mocha",
   "concurrency": 2,
   "coverageAnalysis": "perTest",
-  "reporters": ["clear-text", "html", "event-recorder"],
+  "reporters": [
+    "clear-text",
+    "html",
+    "event-recorder"
+  ],
   "plugins": [
-    "/home/nicojs/github/stryker/packages/mocha-runner"
+    "@stryker-mutator/mocha-runner"
   ],
   "inPlace": true
 }

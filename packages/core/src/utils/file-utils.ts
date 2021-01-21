@@ -1,13 +1,15 @@
 import * as path from 'path';
-import { promises as fs } from 'fs';
+import fs = require('fs');
 
 import { promisify } from 'util';
 
 import * as nodeGlob from 'glob';
-import * as mkdirp from 'mkdirp';
+import mkdirpModule = require('mkdirp');
 import * as rimraf from 'rimraf';
 
 export const MAX_CONCURRENT_FILE_IO = 256;
+
+export const mkdirp = mkdirpModule;
 
 export function glob(expression: string): Promise<string[]> {
   return new Promise<string[]>((resolve, reject) => {
@@ -21,11 +23,11 @@ export const deleteDir = promisify(rimraf);
 
 export async function cleanFolder(folderName: string) {
   try {
-    await fs.lstat(folderName);
+    await fs.promises.lstat(folderName);
     await deleteDir(folderName);
-    return mkdirp.sync(folderName);
+    return mkdirp(folderName);
   } catch (e) {
-    return mkdirp.sync(folderName);
+    return mkdirp(folderName);
   }
 }
 
@@ -44,10 +46,36 @@ export function importModule(moduleName: string): unknown {
  */
 export function writeFile(fileName: string, data: string | Buffer): Promise<void> {
   if (Buffer.isBuffer(data)) {
-    return fs.writeFile(fileName, data);
+    return fs.promises.writeFile(fileName, data);
   } else {
-    return fs.writeFile(fileName, data, 'utf8');
+    return fs.promises.writeFile(fileName, data, 'utf8');
   }
+}
+
+/**
+ * Recursively walks the from directory and copy the content to the target directory synchronously
+ * @param from The source directory to move from
+ * @param to The target directory to move to
+ */
+export function moveDirectoryRecursiveSync(from: string, to: string) {
+  if (!fs.existsSync(from)) {
+    return;
+  }
+  if (!fs.existsSync(to)) {
+    fs.mkdirSync(to);
+  }
+  const files = fs.readdirSync(from);
+  for (const file of files) {
+    const fromFileName = path.join(from, file);
+    const toFileName = path.join(to, file);
+    const stats = fs.lstatSync(fromFileName);
+    if (stats.isFile()) {
+      fs.renameSync(fromFileName, toFileName);
+    } else {
+      moveDirectoryRecursiveSync(fromFileName, toFileName);
+    }
+  }
+  fs.rmdirSync(from);
 }
 
 /**
@@ -56,7 +84,7 @@ export function writeFile(fileName: string, data: string | Buffer): Promise<void
  * @param from The thing you want to point from
  */
 export function symlinkJunction(to: string, from: string) {
-  return fs.symlink(to, from, 'junction');
+  return fs.promises.symlink(to, from, 'junction');
 }
 
 /**
@@ -68,7 +96,7 @@ export async function findNodeModules(basePath: string): Promise<string | null> 
   basePath = path.resolve(basePath);
   const nodeModules = path.resolve(basePath, 'node_modules');
   try {
-    await fs.stat(nodeModules);
+    await fs.promises.stat(nodeModules);
     return nodeModules;
   } catch (e) {
     const parent = path.dirname(basePath);

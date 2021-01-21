@@ -11,11 +11,14 @@ import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
 import { createCheckerFactory } from '../checker/checker-facade';
 import { createPreprocessor } from '../sandbox';
 
+import { StrykerRegistry } from '../stryker-registry';
+
 import { DryRunContext } from './3-dry-run-executor';
 
 export interface MutantInstrumenterContext extends MainContext {
   [coreTokens.inputFiles]: InputFileCollection;
   [coreTokens.loggingContext]: LoggingClientContext;
+  [coreTokens.unexpectedExitRegistry]: StrykerRegistry;
 }
 
 export class MutantInstrumenterExecutor {
@@ -49,8 +52,13 @@ export class MutantInstrumenterExecutor {
     await checkerPool.init();
 
     // Feed the sandbox
-    const sandbox = await this.injector.provideValue(coreTokens.files, files).injectFunction(Sandbox.create);
-    return checkerPoolProvider.provideValue(coreTokens.sandbox, sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
+    const dryRunProvider = checkerPoolProvider
+      .provideValue(coreTokens.files, files)
+      .provideClass(coreTokens.sandbox, Sandbox)
+      .provideValue(coreTokens.mutants, instrumentResult.mutants);
+    const sandbox = dryRunProvider.resolve(coreTokens.sandbox);
+    await sandbox.init();
+    return dryRunProvider;
   }
 
   private replaceInstrumentedFiles(instrumentResult: InstrumentResult): File[] {

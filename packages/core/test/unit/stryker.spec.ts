@@ -13,6 +13,7 @@ import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTe
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';
 import { TemporaryDirectory } from '../../src/utils/temporary-directory';
+import { StrykerRegistry } from '../../src/stryker-registry';
 
 describe(Stryker.name, () => {
   let sut: Stryker;
@@ -23,6 +24,7 @@ describe(Stryker.name, () => {
   let loggerMock: sinon.SinonStubbedInstance<Logger>;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let getLoggerStub: sinon.SinonStub;
+  let strykerRegistryMock: sinon.SinonStubbedInstance<StrykerRegistry>;
 
   let prepareExecutorMock: sinon.SinonStubbedInstance<PrepareExecutor>;
   let mutantInstrumenterExecutorMock: sinon.SinonStubbedInstance<MutantInstrumenterExecutor>;
@@ -39,7 +41,10 @@ describe(Stryker.name, () => {
     mutantInstrumenterExecutorMock = sinon.createStubInstance(MutantInstrumenterExecutor);
     dryRunExecutorMock = sinon.createStubInstance(DryRunExecutor);
     mutationTestExecutorMock = sinon.createStubInstance(MutationTestExecutor);
+    strykerRegistryMock = sinon.createStubInstance(StrykerRegistry);
     injectorMock.injectClass
+      .withArgs(StrykerRegistry)
+      .returns(strykerRegistryMock)
       .withArgs(PrepareExecutor)
       .returns(prepareExecutorMock)
       .withArgs(MutantInstrumenterExecutor)

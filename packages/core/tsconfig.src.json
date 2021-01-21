@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "noImplicitThis": true,
+    "strictBindCallApply": true,
     "resolveJsonModule": true,
     "types": [] // Exclude global mocha functions for the sources
   },

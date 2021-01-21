@@ -10,6 +10,7 @@ import * as sinon from 'sinon';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as fileUtils from '../../../src/utils/file-utils';
+import * as objectUtils from '../../../src/utils/object-utils';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 
 describe(TemporaryDirectory.name, () => {
@@ -25,7 +26,7 @@ describe(TemporaryDirectory.name, () => {
 
     sut = createSut();
 
-    randomStub = sinon.stub(sut, 'random');
+    randomStub = sinon.stub(objectUtils, 'random');
     randomStub.returns('rand');
   });
 

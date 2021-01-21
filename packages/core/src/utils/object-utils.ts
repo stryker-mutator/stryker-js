@@ -70,3 +70,11 @@ export function padLeft(input: string): string {
     .map((str) => '\t' + str)
     .join('\n');
 }
+
+/**
+ * Creates a random integer number.
+ * @returns A random integer.
+ */
+export function random(): number {
+  return Math.ceil(Math.random() * 10000000);
+}
