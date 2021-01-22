@@ -145,6 +145,19 @@ When using the config file you can provide an array with `string`s
 
 You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
+### `inPlace` [`boolean`]
+
+Default: `false`<br />
+Command line: `--inPlace`<br />
+Config file: `"inPlace": true`<br />
+
+Determines whether or not Stryker should mutate your files in place. 
+Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like "app-root-path" for example).
+
+When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.
+
+When `false` (default) Stryker will work in the copy of your code inside the temp directory.
+
 ### `logLevel` [`string`]
 
 Default: `info`<br />

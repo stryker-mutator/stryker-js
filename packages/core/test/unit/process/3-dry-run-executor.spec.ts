@@ -3,19 +3,23 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
-import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult } from '@stryker-mutator/api/test-runner';
+import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
+import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+
+import { I } from '@stryker-mutator/util';
 
 import Timer from '../../../src/utils/timer';
-import { DryRunExecutor } from '../../../src/process';
+import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';
-import { ConcurrencyTokenProvider } from '../../../src/concurrent';
-import { createTestRunnerPoolMock, PoolMock } from '../../helpers/producers';
+import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
+import { createTestRunnerPoolMock } from '../../helpers/producers';
 
 describe(DryRunExecutor.name, () => {
-  let injectorMock: sinon.SinonStubbedInstance<Injector>;
-  let testRunnerPoolMock: PoolMock<TestRunner>;
+  let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
+  let testRunnerPoolMock: sinon.SinonStubbedInstance<Pool<TestRunner>>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -25,11 +29,20 @@ describe(DryRunExecutor.name, () => {
     timerMock = sinon.createStubInstance(Timer);
     testRunnerMock = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
-    testRunnerPoolMock.worker$.next(testRunnerMock);
+    (testRunnerPoolMock.schedule as sinon.SinonStub<
+      [Observable<unknown>, (testRunner: TestRunner, arg: unknown) => Promise<DryRunResult>],
+      Observable<DryRunResult>
+    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     injectorMock = factory.injector();
-    injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock);
-    sut = new DryRunExecutor(injectorMock, testInjector.logger, testInjector.options, timerMock, concurrencyTokenProviderMock);
+    injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
+    sut = new DryRunExecutor(
+      injectorMock as Injector<DryRunContext>,
+      testInjector.logger,
+      testInjector.options,
+      timerMock,
+      concurrencyTokenProviderMock
+    );
   });
 
   it('should pass through any rejections', async () => {

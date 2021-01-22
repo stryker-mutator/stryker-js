@@ -6,7 +6,7 @@ import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/u
 import { expect } from 'chai';
 import * as inquirer from 'inquirer';
 import * as sinon from 'sinon';
-import { RestClient } from 'typed-rest-client/RestClient';
+import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';
 import NpmClient from '../../../src/initializer/npm-client';
@@ -360,30 +360,30 @@ describe(StrykerInitializer.name, () => {
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves(({
       result: {
         results: testRunners.map((testRunner) => ({ package: { name: testRunner, version: '1.1.1' } })),
       },
       statusCode: 200,
-    });
+    } as unknown) as IRestResponse<PackageInfo[]>);
   };
 
   const stubMutators = (...mutators: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves(({
       result: {
         results: mutators.map((mutator) => ({ package: { name: mutator, version: '1.1.1' } })),
       },
       statusCode: 200,
-    });
+    } as unknown) as IRestResponse<PackageInfo[]>);
   };
 
   const stubReporters = (...reporters: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves(({
       result: {
         results: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1' } })),
       },
       statusCode: 200,
-    });
+    } as unknown) as IRestResponse<PackageInfo[]>);
   };
   const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: Record<string, unknown> | null }) => {
     Object.keys(packageConfigPerPackage).forEach((packageName) => {
@@ -396,10 +396,10 @@ describe(StrykerInitializer.name, () => {
       if (cfg) {
         pkgConfig.initStrykerConfig = cfg;
       }
-      restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves({
+      restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves(({
         result: pkgConfig,
         statusCode: 200,
-      });
+      } as unknown) as IRestResponse<PackageInfo[]>);
     });
   };
 

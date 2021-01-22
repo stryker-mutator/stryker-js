@@ -140,6 +140,10 @@ export default class StrykerCli {
         deepOption(dashboard, 'reportType')
       )
       .option(
+        '--inPlace',
+        'Enable Stryker to mutate your files in place and put back the originals after its done. Note: mutating your files in place is generally not needed for mutation testing.'
+      )
+      .option(
         '--tempDirName <name>',
         'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run'
       )

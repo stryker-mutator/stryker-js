@@ -1,7 +1,8 @@
+import path = require('path');
+
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Request, NextFunction, Response } from 'express';
-
 import sinon = require('sinon');
 
 import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
@@ -127,7 +128,7 @@ describe(TestHooksMiddleware.name, () => {
 
     it('should pass serve "currentTestHooks" when called with the correct url', () => {
       sut.currentTestHooks = 'foo test hooks';
-      request.url = `/absolute${TEST_HOOKS_FILE_NAME}?foo=bar`;
+      request.url = `/absolute${path.basename(TEST_HOOKS_FILE_NAME)}?foo=bar`;
       sut.handler(request, response, next);
       expect(next).not.called;
       expect(response.writeHead).calledWith(200, {

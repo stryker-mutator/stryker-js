@@ -6,7 +6,8 @@ import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/c
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
-export const TEST_HOOKS_FILE_NAME = __filename;
+export const TEST_HOOKS_FILE_NAME = require.resolve('./test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0');
+const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);
 
 const SUPPORTED_FRAMEWORKS = Object.freeze(['mocha', 'jasmine'] as const);
 
@@ -102,7 +103,7 @@ export default class TestHooksMiddleware {
 
   public handler: RequestHandler = (request, response, next) => {
     const pathName = url.parse(request.url).pathname;
-    if (pathName && path.normalize(pathName).endsWith(TEST_HOOKS_FILE_NAME)) {
+    if (pathName?.endsWith(TEST_HOOKS_FILE_BASE_NAME)) {
       response.writeHead(200, {
         'Cache-Control': 'no-cache',
         'Content-Type': 'application/javascript',

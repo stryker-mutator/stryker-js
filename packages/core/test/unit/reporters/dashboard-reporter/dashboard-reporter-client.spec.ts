@@ -4,6 +4,8 @@ import * as sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
 
+import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
+
 import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
 import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
@@ -118,11 +120,11 @@ describe(DashboardReporterClient.name, () => {
   });
 
   function respondWith(statusCode = 200, body = '{ "href": "href" }') {
-    httpClient.put.resolves({
+    httpClient.put.resolves(({
       message: {
         statusCode,
       },
       readBody: sinon.stub().resolves(body),
-    });
+    } as unknown) as IHttpClientResponse);
   }
 });

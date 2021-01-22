@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
+import { I } from '@stryker-mutator/util';
 
 import { Instrumenter } from '../../src';
 import * as parsers from '../../src/parsers';
@@ -42,7 +43,7 @@ describe(Instrumenter.name, () => {
   });
 
   it('should log about the result', async () => {
-    helper.transformerStub.callsFake((_, collector: transformers.MutantCollector) => {
+    helper.transformerStub.callsFake((_, collector: I<transformers.MutantCollector>) => {
       collector.add('foo.js', createNamedNodeMutation());
     });
     await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());

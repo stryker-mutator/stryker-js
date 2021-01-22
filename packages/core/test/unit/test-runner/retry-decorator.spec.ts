@@ -63,19 +63,19 @@ describe(RetryDecorator.name, () => {
     runMethod: T,
     act: (sut: RetryDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
     optionsFactory: () => RunOptionsByMethod[T],
-    resultFactory: () => RunResultByMethod[T]
+    resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never
   ) {
     describe(runMethod, () => {
       let options: RunOptionsByMethod[T];
-      let expectedRunResult: RunResultByMethod[T];
+      let expectedResult: ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never;
 
       beforeEach(() => {
         options = optionsFactory();
-        expectedRunResult = resultFactory();
+        expectedResult = resultFactory();
       });
 
       it('should pass through resolved values', async () => {
-        const expectedResult = factory.completeDryRunResult();
+        // @ts-expect-error TS isn't smart enough
         testRunner1[runMethod].resolves(expectedResult);
         const result = await act(sut, options);
         expect(testRunner1[runMethod]).to.have.been.calledWith(options);
@@ -84,23 +84,26 @@ describe(RetryDecorator.name, () => {
 
       it('should retry on a new test runner if a run is rejected', async () => {
         testRunner1[runMethod].rejects(new Error('Error'));
-        testRunner2[runMethod].resolves(expectedRunResult);
+        // @ts-expect-error TS isn't smart enough
+        testRunner2[runMethod].resolves(expectedResult);
         const result = await act(sut, options);
-        expect(result).to.eq(expectedRunResult);
+        expect(result).to.eq(expectedResult);
       });
 
       it('should retry if a `ChildProcessCrashedError` occurred reject appears', async () => {
         testRunner1[runMethod].rejects(crashedError);
-        testRunner2[runMethod].resolves(expectedRunResult);
+        // @ts-expect-error TS isn't smart enough
+        testRunner2[runMethod].resolves(expectedResult);
         const result = await act(sut, options);
-        expect(result).to.eq(expectedRunResult);
+        expect(result).to.eq(expectedResult);
       });
 
       it('should log and retry when an `OutOfMemoryError` occurred.', async () => {
         testRunner1[runMethod].rejects(new OutOfMemoryError(123, 123));
-        testRunner2[runMethod].resolves(expectedRunResult);
+        // @ts-expect-error TS isn't smart enough
+        testRunner2[runMethod].resolves(expectedResult);
         const result = await act(sut, options);
-        expect(result).to.eq(expectedRunResult);
+        expect(result).to.eq(expectedResult);
         expect(logMock.info).calledWith(
           "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
           123
@@ -109,7 +112,8 @@ describe(RetryDecorator.name, () => {
 
       it('should dispose a test runner when it rejected, before creating a new one', async () => {
         testRunner1[runMethod].rejects(crashedError);
-        testRunner2[runMethod].resolves(expectedRunResult);
+        // @ts-expect-error TS isn't smart enough
+        testRunner2[runMethod].resolves(expectedResult);
         await act(sut, options);
         expect(testRunner1.dispose).calledBefore(testRunner2.init);
       });

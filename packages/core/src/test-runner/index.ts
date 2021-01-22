@@ -15,7 +15,7 @@ import MaxTestRunnerReuseDecorator from './max-test-runner-reuse-decorator';
 createTestRunnerFactory.inject = tokens(commonTokens.options, coreTokens.sandbox, coreTokens.loggingContext);
 export function createTestRunnerFactory(
   options: StrykerOptions,
-  sandbox: Pick<Sandbox, 'sandboxFileNames' | 'workingDirectory'>,
+  sandbox: Pick<Sandbox, 'workingDirectory'>,
   loggingContext: LoggingClientContext
 ): () => Required<TestRunner> {
   if (CommandTestRunner.is(options.testRunner)) {

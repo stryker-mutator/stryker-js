@@ -1,10 +1,10 @@
 import path = require('path');
+import { promises as fsPromises } from 'fs';
 
 import execa = require('execa');
 import npmRunPath = require('npm-run-path');
 import { expect } from 'chai';
 import sinon = require('sinon');
-import * as mkdirp from 'mkdirp';
 import { testInjector, tick } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
@@ -14,72 +14,184 @@ import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import * as fileUtils from '../../../src/utils/file-utils';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let files: File[];
-  let mkdirpSyncStub: sinon.SinonStub;
+  let mkdirpStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesStub: sinon.SinonStub;
   let execaMock: sinon.SinonStubbedInstance<typeof execa>;
+  let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
+  let readFile: sinon.SinonStub;
+  let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   const SANDBOX_WORKING_DIR = 'sandbox-123';
+  const BACKUP_DIR = 'backup-123';
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    temporaryDirectoryMock.createRandomDirectory.returns(SANDBOX_WORKING_DIR);
-    mkdirpSyncStub = sinon.stub(mkdirp, 'sync');
-    writeFileStub = sinon.stub(fileUtils, 'writeFile');
+    temporaryDirectoryMock.createRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
+    mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
+    writeFileStub = sinon.stub(fsPromises, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
+    moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
+    readFile = sinon.stub(fsPromises, 'readFile');
     execaMock = {
       command: sinon.stub(),
       commandSync: sinon.stub(),
       node: sinon.stub(),
       sync: sinon.stub(),
     };
+    unexpectedExitHandlerMock = {
+      registerHandler: sinon.stub(),
+      dispose: sinon.stub(),
+    };
     symlinkJunctionStub.resolves();
     findNodeModulesStub.resolves('node_modules');
     files = [];
   });
 
-  function createSut(): Promise<Sandbox> {
+  function createSut(): Sandbox {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
       .provideValue(coreTokens.execa, (execaMock as unknown) as typeof execa)
-      .injectFunction(Sandbox.create);
+      .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitHandlerMock)
+      .injectClass(Sandbox);
   }
 
-  describe('create()', () => {
-    it('should have created a sandbox folder', async () => {
-      await createSut();
-      expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
+  describe('init()', () => {
+    describe('with inPlace = false', () => {
+      beforeEach(() => {
+        testInjector.options.inPlace = false;
+      });
+
+      it('should have created a sandbox folder', async () => {
+        const sut = createSut();
+        await sut.init();
+        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
+      });
+
+      it('should copy regular input files', async () => {
+        const fileB = new File(path.resolve('a', 'b.txt'), 'b content');
+        const fileE = new File(path.resolve('c', 'd', 'e.log'), 'e content');
+        files.push(fileB);
+        files.push(fileE);
+        const sut = createSut();
+        await sut.init();
+        expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'a', 'b.txt'), fileB.content);
+        expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.log'), fileE.content);
+      });
+
+      it('should make the dir before copying the file', async () => {
+        files.push(new File(path.resolve('a', 'b.js'), 'b content'));
+        files.push(new File(path.resolve('c', 'd', 'e.js'), 'e content'));
+        const sut = createSut();
+        await sut.init();
+        expect(mkdirpStub).calledTwice;
+        expect(mkdirpStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'a'));
+        expect(mkdirpStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'c', 'd'));
+      });
+
+      it('should be able to copy a local file', async () => {
+        files.push(new File('localFile.txt', 'foobar'));
+        const sut = createSut();
+        await sut.init();
+        expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.txt'), Buffer.from('foobar'));
+      });
+
+      it('should symlink node modules in sandbox directory if exists', async () => {
+        const sut = createSut();
+        await sut.init();
+        expect(findNodeModulesStub).calledWith(process.cwd());
+        expect(symlinkJunctionStub).calledWith('node_modules', path.join(SANDBOX_WORKING_DIR, 'node_modules'));
+      });
     });
 
-    it('should copy regular input files', async () => {
-      const fileB = new File(path.resolve('a', 'b.txt'), 'b content');
-      const fileE = new File(path.resolve('c', 'd', 'e.log'), 'e content');
-      files.push(fileB);
-      files.push(fileE);
-      await createSut();
-      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'a', 'b.txt'), fileB.content);
-      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'c', 'd', 'e.log'), fileE.content);
-    });
+    describe('with inPlace = true', () => {
+      beforeEach(() => {
+        testInjector.options.inPlace = true;
+      });
 
-    it('should make the dir before copying the file', async () => {
-      files.push(new File(path.resolve('a', 'b.js'), 'b content'));
-      files.push(new File(path.resolve('c', 'd', 'e.js'), 'e content'));
-      await createSut();
-      expect(mkdirpSyncStub).calledTwice;
-      expect(mkdirpSyncStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'a'));
-      expect(mkdirpSyncStub).calledWithExactly(path.join(SANDBOX_WORKING_DIR, 'c', 'd'));
-    });
+      it('should have created a backup directory', async () => {
+        const sut = createSut();
+        await sut.init();
+        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('backup');
+      });
 
-    it('should be able to copy a local file', async () => {
-      files.push(new File('localFile.txt', 'foobar'));
-      await createSut();
-      expect(writeFileStub).calledWith(path.join(SANDBOX_WORKING_DIR, 'localFile.txt'), Buffer.from('foobar'));
+      it('should not override the current file if no changes were detected', async () => {
+        const fileB = new File(path.resolve('a', 'b.txt'), 'b content');
+        readFile.withArgs(path.resolve('a', 'b.txt')).resolves(Buffer.from('b content'));
+        files.push(fileB);
+        const sut = createSut();
+        await sut.init();
+        expect(writeFileStub).not.called;
+      });
+
+      it('should override original file if changes were detected', async () => {
+        // Arrange
+        const fileName = path.resolve('a', 'b.js');
+        const originalContent = Buffer.from('b content');
+        const fileB = new File(fileName, 'b mutated content');
+        readFile.withArgs(fileName).resolves(originalContent);
+        files.push(fileB);
+
+        // Act
+        const sut = createSut();
+        await sut.init();
+
+        // Assert
+        expect(writeFileStub).calledWith(fileB.name, fileB.content);
+      });
+
+      it('should override backup the original before overriding it', async () => {
+        // Arrange
+        const fileName = path.resolve('a', 'b.js');
+        const originalContent = Buffer.from('b content');
+        const fileB = new File(fileName, 'b mutated content');
+        readFile.withArgs(fileName).resolves(originalContent);
+        files.push(fileB);
+        const expectedBackupDirectory = path.join(BACKUP_DIR, 'a');
+        const expectedBackupFileName = path.join(expectedBackupDirectory, 'b.js');
+
+        // Act
+        const sut = createSut();
+        await sut.init();
+
+        // Assert
+        expect(mkdirpStub).calledWith(expectedBackupDirectory);
+        expect(writeFileStub).calledWith(expectedBackupFileName, originalContent);
+        expect(writeFileStub.withArgs(expectedBackupFileName)).calledBefore(writeFileStub.withArgs(fileB.name));
+      });
+
+      it('should log the backup file location', async () => {
+        // Arrange
+        const fileName = path.resolve('a', 'b.js');
+        const originalContent = Buffer.from('b content');
+        const fileB = new File(fileName, 'b mutated content');
+        readFile.withArgs(fileName).resolves(originalContent);
+        files.push(fileB);
+        const expectedBackupFileName = path.join(BACKUP_DIR, 'a', 'b.js');
+
+        // Act
+        const sut = createSut();
+        await sut.init();
+
+        // Assert
+        expect(testInjector.logger.debug).calledWith('Stored backup file at %s', expectedBackupFileName);
+      });
+
+      it('should register an unexpected exit handler', async () => {
+        // Act
+        const sut = createSut();
+        await sut.init();
+
+        // Assert
+        expect(unexpectedExitHandlerMock.registerHandler).called;
+      });
     });
 
     it('should not open too many file handles', async () => {
@@ -94,7 +206,8 @@ describe(Sandbox.name, () => {
       }
 
       // Act
-      const onGoingWork = createSut();
+      const sut = createSut();
+      const initPromise = sut.init();
       await tick();
       expect(writeFileStub).callCount(maxFileIO);
       fileHandles[0].task.resolve();
@@ -103,18 +216,13 @@ describe(Sandbox.name, () => {
       // Assert
       expect(writeFileStub).callCount(maxFileIO + 1);
       fileHandles.forEach(({ task }) => task.resolve());
-      await onGoingWork;
-    });
-
-    it('should symlink node modules in sandbox directory if exists', async () => {
-      await createSut();
-      expect(findNodeModulesStub).calledWith(process.cwd());
-      expect(symlinkJunctionStub).calledWith('node_modules', path.join(SANDBOX_WORKING_DIR, 'node_modules'));
+      await initPromise;
     });
 
     it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
       findNodeModulesStub.resolves(null);
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(testInjector.logger.warn).calledWithMatch('Could not find a node_modules');
       expect(testInjector.logger.warn).calledWithMatch(process.cwd());
       expect(symlinkJunctionStub).not.called;
@@ -123,7 +231,8 @@ describe(Sandbox.name, () => {
     it('should log a warning if "node_modules" already exists in the working folder', async () => {
       findNodeModulesStub.resolves('node_modules');
       symlinkJunctionStub.rejects(fileAlreadyExistsError());
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(testInjector.logger.warn).calledWithMatch(
         normalizeWhitespaces(
           `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
@@ -137,7 +246,8 @@ describe(Sandbox.name, () => {
       findNodeModulesStub.resolves('basePath/node_modules');
       const error = new Error('unknown');
       symlinkJunctionStub.rejects(error);
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(testInjector.logger.warn).calledWithMatch(
         normalizeWhitespaces('Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.'),
         error
@@ -146,44 +256,72 @@ describe(Sandbox.name, () => {
 
     it('should symlink node modules in sandbox directory if `symlinkNodeModules` is `false`', async () => {
       testInjector.options.symlinkNodeModules = false;
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(symlinkJunctionStub).not.called;
       expect(findNodeModulesStub).not.called;
     });
 
     it('should execute the buildCommand in the sandbox', async () => {
       testInjector.options.buildCommand = 'npm run build';
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(execaMock.command).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
-      expect(testInjector.logger.info).calledWith('Running build command "%s" in the sandbox at "%s".', 'npm run build', SANDBOX_WORKING_DIR);
+      expect(testInjector.logger.info).calledWith('Running build command "%s" in "%s".', 'npm run build', SANDBOX_WORKING_DIR);
     });
 
     it('should not execute a build command when non is configured', async () => {
       testInjector.options.buildCommand = undefined;
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(execaMock.command).not.called;
     });
 
     it('should execute the buildCommand before the node_modules are symlinked', async () => {
       // It is important to first run the buildCommand, otherwise the build dependencies are not correctly resolved
       testInjector.options.buildCommand = 'npm run build';
-      await createSut();
+      const sut = createSut();
+      await sut.init();
       expect(execaMock.command).calledBefore(symlinkJunctionStub);
     });
   });
 
-  describe('get sandboxFileNames()', () => {
-    it('should retrieve all files', async () => {
-      files.push(new File('a.js', ''));
-      files.push(new File(path.resolve('b', 'c', 'e.js'), ''));
-      const sut = await createSut();
-      expect(sut.sandboxFileNames).deep.eq([path.join(SANDBOX_WORKING_DIR, 'a.js'), path.join(SANDBOX_WORKING_DIR, 'b', 'c', 'e.js')]);
+  describe('dispose', () => {
+    it("shouldn't do anything when inPlace = false", () => {
+      const sut = createSut();
+      sut.dispose();
+      expect(moveDirectoryRecursiveSyncStub).not.called;
+    });
+
+    it('should recover from the backup dir synchronously if inPlace = true', () => {
+      testInjector.options.inPlace = true;
+      const sut = createSut();
+      sut.dispose();
+      expect(moveDirectoryRecursiveSyncStub).calledWith(BACKUP_DIR, process.cwd());
+    });
+
+    it('should recover from the backup dir if stryker exits unexpectedly while inPlace = true', () => {
+      testInjector.options.inPlace = true;
+      const errorStub = sinon.stub(console, 'error');
+      createSut();
+      unexpectedExitHandlerMock.registerHandler.callArg(0);
+      expect(moveDirectoryRecursiveSyncStub).calledWith(BACKUP_DIR, process.cwd());
+      expect(errorStub).calledWith(`Detecting unexpected exit, recovering original files from ${BACKUP_DIR}`);
     });
   });
+
   describe('workingDirectory', () => {
-    it('should retrieve the sandbox directory', async () => {
-      const sut = await createSut();
+    it('should retrieve the sandbox directory when inPlace = false', async () => {
+      const sut = createSut();
+      await sut.init();
       expect(sut.workingDirectory).eq(SANDBOX_WORKING_DIR);
+    });
+
+    it('should retrieve the cwd directory when inPlace = true', async () => {
+      testInjector.options.inPlace = true;
+      const sut = createSut();
+      await sut.init();
+      expect(sut.workingDirectory).eq(process.cwd());
     });
   });
 });

@@ -50,6 +50,7 @@ describe('PluginCreator', () => {
   });
 
   it('should throw if plugin is not recognized', () => {
+    // @ts-expect-error Testing wrong plugin format by choice
     testInjector.pluginResolver.resolve.returns({});
     expect(() => sut.create('foo')).throws('Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.');
   });

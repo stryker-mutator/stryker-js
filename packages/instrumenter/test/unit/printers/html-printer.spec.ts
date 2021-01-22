@@ -46,7 +46,11 @@ describe('html-printer', () => {
     // Arrange
     const expectedScriptContent = ['foo = bar;', 'qux = quux;'];
     const scripts = [createJSAst({ rawContent: '1' }), createJSAst({ rawContent: '2' })];
-    contextStub.print.withArgs(scripts[0]).returns(expectedScriptContent[0]).withArgs(scripts[1]).returns(expectedScriptContent[1]);
+    contextStub.print
+      .withArgs(scripts[0], sinon.match.any)
+      .returns(expectedScriptContent[0])
+      .withArgs(scripts[1], sinon.match.any)
+      .returns(expectedScriptContent[1]);
     scripts[0].root.start = 14;
     scripts[0].root.end = 15;
     scripts[1].root.start = 32;
@@ -67,7 +71,11 @@ describe('html-printer', () => {
     // Arrange
     const expectedScriptContent = ['foo = bar;', 'qux = quux;'];
     const scripts = [createJSAst({ rawContent: '1' }), createJSAst({ rawContent: '2' })];
-    contextStub.print.withArgs(scripts[0]).returns(expectedScriptContent[0]).withArgs(scripts[1]).returns(expectedScriptContent[1]);
+    contextStub.print
+      .withArgs(scripts[0], sinon.match.any)
+      .returns(expectedScriptContent[0])
+      .withArgs(scripts[1], sinon.match.any)
+      .returns(expectedScriptContent[1]);
     scripts[1].root.start = 14;
     scripts[1].root.end = 15;
     scripts[0].root.start = 32;

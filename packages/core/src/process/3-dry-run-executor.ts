@@ -15,8 +15,7 @@ import {
   FailedTestResult,
   ErrorDryRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { first } from 'rxjs/operators';
-
+import { of } from 'rxjs';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
@@ -35,7 +34,7 @@ import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
 export interface DryRunContext extends MutantInstrumenterContext {
-  [coreTokens.sandbox]: Sandbox;
+  [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
   [coreTokens.checkerPool]: I<Pool<Checker>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
@@ -90,8 +89,8 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const testRunner = await testRunnerPool.worker$.pipe(first()).toPromise();
-    const { dryRunResult, timing } = await this.timeDryRun(testRunner);
+    const { dryRunResult, timing } = await testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)).toPromise();
+
     this.logInitialTestRunSucceeded(dryRunResult.tests, timing);
     if (!dryRunResult.tests.length) {
       throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');

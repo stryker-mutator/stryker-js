@@ -30,16 +30,21 @@ export class TSConfigPreprocessor implements FilePreprocessor {
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
 
   public async preprocess(input: File[]): Promise<File[]> {
-    const tsconfigFile = path.resolve(this.options.tsconfigFile);
-    if (input.find((file) => file.name === tsconfigFile)) {
-      this.fs.clear();
-      input.forEach((file) => {
-        this.fs.set(file.name, file);
-      });
-      await this.rewriteTSConfigFile(tsconfigFile);
-      return [...this.fs.values()];
-    } else {
+    if (this.options.inPlace) {
+      // If stryker is running 'inPlace', we don't have to change the tsconfig file
       return input;
+    } else {
+      const tsconfigFile = path.resolve(this.options.tsconfigFile);
+      if (input.find((file) => file.name === tsconfigFile)) {
+        this.fs.clear();
+        input.forEach((file) => {
+          this.fs.set(file.name, file);
+        });
+        await this.rewriteTSConfigFile(tsconfigFile);
+        return [...this.fs.values()];
+      } else {
+        return input;
+      }
     }
   }
 

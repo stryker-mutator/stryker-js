@@ -1,3 +1,5 @@
+import { CpuInfo } from 'os';
+
 import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
@@ -7,7 +9,7 @@ import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { MutantTestCoverage } from '../../src/mutants/find-mutant-test-coverage';
-import { Worker, Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
+import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -33,10 +35,6 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   maxTestsToLog: 3,
 }));
 
-export type PoolMock<T extends Worker> = sinon.SinonStubbedInstance<Pool<T>> & {
-  worker$: ReplaySubject<sinon.SinonStubbedInstance<T>>;
-};
-
 export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<ConcurrencyTokenProvider> & {
   testRunnerToken$: ReplaySubject<number>;
   checkerToken$: ReplaySubject<number>;
@@ -51,21 +49,19 @@ export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMo
   };
 }
 
-export function createTestRunnerPoolMock(): PoolMock<TestRunner> {
+export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<Pool<TestRunner>> {
   return {
     dispose: sinon.stub(),
-    recycle: sinon.stub(),
     init: sinon.stub(),
-    worker$: new ReplaySubject<sinon.SinonStubbedInstance<TestRunner>>(),
+    schedule: sinon.stub(),
   };
 }
 
-export function createCheckerPoolMock(): PoolMock<Checker> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<Checker>> {
   return {
     dispose: sinon.stub(),
-    recycle: sinon.stub(),
     init: sinon.stub(),
-    worker$: new ReplaySubject<sinon.SinonStubbedInstance<Checker>>(),
+    schedule: sinon.stub(),
   };
 }
 
@@ -104,3 +100,18 @@ export const logger = (): Mock<Logger> => {
     warn: sinon.stub(),
   };
 };
+
+export function createCpuInfo(overrides?: Partial<CpuInfo>): CpuInfo {
+  return {
+    model: 'x86',
+    speed: 20000,
+    times: {
+      user: 0,
+      nice: 0,
+      sys: 0,
+      idle: 0,
+      irq: 0,
+    },
+    ...overrides,
+  };
+}

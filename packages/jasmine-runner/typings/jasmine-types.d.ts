@@ -56,7 +56,7 @@ declare namespace jasmine {
     failSpecWithNoExpectations?: boolean;
     oneFailurePerSpec?: boolean;
     hideDisabled?: boolean;
-    specFilter?: Function;
+    specFilter?: (spec: Spec) => boolean;
     promise?: Function;
   }
 
@@ -222,7 +222,7 @@ declare namespace jasmine {
     version(): any;
     versionString(): string;
     nextSpecId(): number;
-    addReporter(reporter: Reporter | CustomReporter): void;
+    addReporter(reporter: CustomReporter): void;
     execute(): void;
     describe(description: string, specDefinitions: () => void): Suite;
     // ddescribe(description: string, specDefinitions: () => void): Suite; Not a part of jasmine. Angular team adds these
@@ -640,7 +640,7 @@ declare namespace jasmine {
   type SpecFunction = (spec?: Spec) => void;
 
   interface SuiteOrSpec {
-    id: number;
+    id: string;
     env: Env;
     description: string;
     queue: Queue;

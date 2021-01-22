@@ -8,6 +8,7 @@ import * as mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
 import { deleteDir } from './file-utils';
+import { random } from './object-utils';
 
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
@@ -35,7 +36,7 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    const dir = path.resolve(this.temporaryDirectory, `${prefix}${this.random()}`);
+    const dir = path.resolve(this.temporaryDirectory, `${prefix}${random()}`);
     mkdirp.sync(dir);
     return dir;
   }
@@ -76,13 +77,5 @@ export class TemporaryDirectory implements Disposable {
         this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
       }
     }
-  }
-
-  /**
-   * Creates a random integer number.
-   * @returns A random integer.
-   */
-  public random(): number {
-    return Math.ceil(Math.random() * 10000000);
   }
 }

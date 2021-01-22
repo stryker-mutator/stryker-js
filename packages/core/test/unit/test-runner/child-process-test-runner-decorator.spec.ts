@@ -56,10 +56,11 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     );
   });
 
-  it('should forward `init` calls', () => {
+  it('should forward `init` calls', async () => {
     const sut = createSut();
-    childProcessProxyMock.proxy.init.resolves(42);
-    return expect(sut.init()).eventually.eq(42);
+    childProcessProxyMock.proxy.init.resolves();
+    await sut.init();
+    expect(childProcessProxyMock.proxy.init).called;
   });
 
   it('should forward `dryRun` calls', async () => {
