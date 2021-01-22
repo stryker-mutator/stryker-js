@@ -267,7 +267,7 @@ describe(Sandbox.name, () => {
       const sut = createSut();
       await sut.init();
       expect(execaMock.command).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
-      expect(testInjector.logger.info).calledWith('Running build command "%s" in the sandbox at "%s".', 'npm run build', SANDBOX_WORKING_DIR);
+      expect(testInjector.logger.info).calledWith('Running build command "%s" in "%s".', 'npm run build', SANDBOX_WORKING_DIR);
     });
 
     it('should not execute a build command when non is configured', async () => {

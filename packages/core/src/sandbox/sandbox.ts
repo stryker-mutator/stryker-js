@@ -75,7 +75,7 @@ export class Sandbox implements Disposable {
   private async runBuildCommand() {
     if (this.options.buildCommand) {
       const env = npmRunPath.env();
-      this.log.info('Running build command "%s" in the sandbox at "%s".', this.options.buildCommand, this.workingDirectory);
+      this.log.info('Running build command "%s" in "%s".', this.options.buildCommand, this.workingDirectory);
       this.log.debug('(using PATH: %s)', env.PATH);
       await this.exec.command(this.options.buildCommand, { cwd: this.workingDirectory, env });
     }
@@ -109,7 +109,7 @@ export class Sandbox implements Disposable {
     if (this.options.inPlace) {
       this.fileMap.set(file.name, file.name);
       const originalContent = await fsPromises.readFile(file.name);
-      if (originalContent.compare(file.content) !== 0) {
+      if (!originalContent.equals(file.content)) {
         // File is changed (either mutated or by a preprocessor), make a backup and replace in-place
         const backupFileName = path.join(this.backupDirectory, relativePath);
         await mkdirp(path.dirname(backupFileName));
