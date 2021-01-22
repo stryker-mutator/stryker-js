@@ -114,7 +114,7 @@ describe(MutationTestReportTotalsComponent.name, () => {
   });
 
   it('should provide a TemplateResult on renderHead()', () => {
-    const result: TemplateResult = sut.element.renderHead();
+    const result: TemplateResult | undefined = sut.element.renderHead();
     expect(result).ok;
   })
 });
