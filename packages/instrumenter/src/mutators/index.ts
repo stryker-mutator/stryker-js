@@ -17,6 +17,7 @@ import { ObjectLiteralMutator } from './object-literal-mutator';
 import { UnaryOperatorMutator } from './unary-operator-mutator';
 import { UpdateOperatorMutator } from './update-operator-mutator';
 import { MutatorOptions } from './mutator-options';
+import { RegexMutator } from './regex-mutator';
 
 export * from './node-mutator';
 export * from './mutator-options';
@@ -34,6 +35,7 @@ export const mutators: NodeMutator[] = [
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
+  new RegexMutator(),
 ];
 export const mutate = (node: NodePath, { excludedMutations }: MutatorOptions): NamedNodeMutation[] => {
   return flatMap(mutators, (mutator) =>
