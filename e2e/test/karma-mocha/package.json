@@ -6,8 +6,12 @@
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\"",
-    "test": "stryker run stryker.conf.js",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "test": "npm run test:not-in-place && npm run test:in-place",
+    "test:not-in-place": "stryker run stryker.conf.js",
+    "posttest:not-in-place": "npm run verify",
+    "test:in-place": "stryker run stryker.conf.js --inPlace",
+    "posttest:in-place": "npm run verify",
+    "verify": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "author": "",
   "license": "ISC"
