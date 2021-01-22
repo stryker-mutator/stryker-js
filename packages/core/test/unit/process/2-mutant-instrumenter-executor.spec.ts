@@ -52,7 +52,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
-    injectorMock.injectFunction.withArgs(Sandbox.create).returns(sandboxMock);
+    injectorMock.resolve.withArgs(coreTokens.sandbox).returns(sandboxMock);
     injectorMock.resolve
       .withArgs(coreTokens.concurrencyTokenProvider)
       .returns(concurrencyTokenProviderMock)
@@ -77,13 +77,13 @@ describe(MutantInstrumenterExecutor.name, () => {
   it('should preprocess files before initializing the sandbox', async () => {
     await sut.execute();
     expect(sandboxFilePreprocessorMock.preprocess).calledWithExactly([mutatedFile, testFile]);
-    expect(sandboxFilePreprocessorMock.preprocess).calledBefore(injectorMock.injectFunction);
+    expect(sandboxFilePreprocessorMock.preprocess).calledBefore(sandboxMock.init);
   });
 
   it('should provide the mutated files to the sandbox', async () => {
     await sut.execute();
     expect(injectorMock.provideValue).calledWithExactly(coreTokens.files, [mutatedFile, testFile]);
-    expect(injectorMock.provideValue.withArgs(coreTokens.files, sinon.match.any)).calledBefore(injectorMock.injectFunction);
+    expect(injectorMock.provideValue.withArgs(coreTokens.files, sinon.match.any)).calledBefore(sandboxMock.init);
   });
 
   it('should provide checkerToken$ to the checker pool', async () => {
@@ -101,7 +101,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   it('should initialize the CheckerPool before creating the sandbox', async () => {
     // This is important for in-place mutation. We need to initialize the typescript checker(s) before we write mutated files to disk.
     await sut.execute();
-    expect(checkerPoolMock.init).calledBefore(injectorMock.injectFunction.withArgs(Sandbox.create));
+    expect(checkerPoolMock.init).calledBefore(injectorMock.provideClass.withArgs(coreTokens.sandbox, Sandbox));
   });
 
   it('should provide mutants in the result', async () => {
@@ -111,6 +111,11 @@ describe(MutantInstrumenterExecutor.name, () => {
 
   it('should provide the sandbox in the result', async () => {
     await sut.execute();
-    expect(injectorMock.provideValue).calledWithExactly(coreTokens.sandbox, sandboxMock);
+    expect(injectorMock.provideClass).calledWithExactly(coreTokens.sandbox, Sandbox);
+  });
+
+  it('should initialize the sandbox', async () => {
+    await sut.execute();
+    expect(sandboxMock.init).calledOnce;
   });
 });

@@ -36,7 +36,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
-      .provideValue(coreTokens.sandbox, { sandboxFileNames: ['foo.js'], workingDirectory: __dirname })
+      .provideValue(coreTokens.sandbox, { workingDirectory: __dirname })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .injectFunction(createTestRunnerFactory);
 

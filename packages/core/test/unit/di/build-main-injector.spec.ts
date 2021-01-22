@@ -13,6 +13,7 @@ import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../..
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
 import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
 import currentLogMock from '../../helpers/log-mock';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
@@ -43,6 +44,10 @@ describe(buildMainInjector.name, () => {
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
     stubInjectable(configReaderModule, 'default').returns(configReaderMock);
     stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
+  });
+
+  afterEach(async () => {
+    await injector.dispose();
   });
 
   function stubInjectable<T>(obj: T, method: keyof T) {
@@ -103,5 +108,10 @@ describe(buildMainInjector.name, () => {
     const actualInjector = buildMainInjector(injector);
     expect(actualInjector.resolve(coreTokens.pluginCreatorReporter)).eq(pluginCreatorMock);
     expect(actualInjector.resolve(coreTokens.pluginCreatorChecker)).eq(pluginCreatorMock);
+  });
+
+  it('should be able to supply a UnexpectedExitRegister', () => {
+    const actualInjector = buildMainInjector(injector);
+    expect(actualInjector.resolve(coreTokens.unexpectedExitRegistry)).instanceOf(UnexpectedExitHandler);
   });
 });

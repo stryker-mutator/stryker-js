@@ -15,13 +15,6 @@ describe('fileUtils', () => {
     statStub = sinon.stub(fs.promises, 'stat');
   });
 
-  describe('writeFile', () => {
-    it('should call fs.writeFile', () => {
-      fileUtils.writeFile('filename', 'data');
-      expect(fs.promises.writeFile).calledWith('filename', 'data', 'utf8');
-    });
-  });
-
   describe('symlinkJunction', () => {
     it('should call fs.symlink', async () => {
       await fileUtils.symlinkJunction('a', 'b');

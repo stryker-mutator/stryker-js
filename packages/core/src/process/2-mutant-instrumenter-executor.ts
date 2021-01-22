@@ -49,8 +49,13 @@ export class MutantInstrumenterExecutor {
     await checkerPool.init();
 
     // Feed the sandbox
-    const sandbox = await this.injector.provideValue(coreTokens.files, files).injectFunction(Sandbox.create);
-    return checkerPoolProvider.provideValue(coreTokens.sandbox, sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
+    const dryRunProvider = checkerPoolProvider
+      .provideValue(coreTokens.files, files)
+      .provideClass(coreTokens.sandbox, Sandbox)
+      .provideValue(coreTokens.mutants, instrumentResult.mutants);
+    const sandbox = dryRunProvider.resolve(coreTokens.sandbox);
+    await sandbox.init();
+    return dryRunProvider;
   }
 
   private replaceInstrumentedFiles(instrumentResult: InstrumentResult): File[] {
