@@ -4,12 +4,7 @@ import { coreTokens } from './di';
 
 export type ExitHandler = () => void;
 
-export interface UnexpectedExitHandler {
-  registerHandler(handler: ExitHandler): void;
-}
-
 const signals = Object.freeze(['SIGABRT', 'SIGINT', 'SIGHUP', 'SIGTERM']);
-
 export class UnexpectedExitHandler implements Disposable {
   private readonly unexpectedExitHandlers: ExitHandler[] = [];
 
