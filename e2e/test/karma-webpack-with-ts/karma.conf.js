@@ -2,7 +2,7 @@ const webpack = require('./webpack.dev');
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['mocha', 'webpack'],
+    frameworks: ['mocha'],
     files: ['test/unit/index.js'],
     preprocessors: {
       'test/unit/index.js': ['webpack', 'sourcemap'],
