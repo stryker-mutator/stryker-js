@@ -296,7 +296,7 @@
     },
     "inPlace": {
       "type": "boolean",
-      "description": "Determines whether or not Stryker should mutate your files in-place. Note: mutating files in place is generally not needed, unless you have code in your project that is really dependent on the file locations.\n\nWhen true, Stryker will override your files, but it will keep a copy of the originals in a temp directory. It will place the originals back after it is done.\n\nWhen false (default) Stryker will work in a copy in a sandbox directory.",
+      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
       "default": false
     },
     "logLevel": {
