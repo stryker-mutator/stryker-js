@@ -60,7 +60,7 @@ describe('in place', () => {
     });
 
     // Act
-    const exit = await expect(onGoingStrykerRun).rejected;
+    await expect(onGoingStrykerRun).rejected;
 
     // Assert
     expect(await readAddJS()).eq(originalAddJSContent);
