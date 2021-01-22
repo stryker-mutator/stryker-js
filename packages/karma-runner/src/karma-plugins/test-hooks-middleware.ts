@@ -7,6 +7,10 @@ import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
 export const TEST_HOOKS_FILE_NAME = require.resolve('./test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0');
+<<<<<<< HEAD
+=======
+const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);
+>>>>>>> fb4641c3 (feat(in place): support in place mode in karma-runner)
 
 const SUPPORTED_FRAMEWORKS = Object.freeze(['mocha', 'jasmine'] as const);
 
@@ -102,7 +106,11 @@ export default class TestHooksMiddleware {
 
   public handler: RequestHandler = (request, response, next) => {
     const pathName = url.parse(request.url).pathname;
+<<<<<<< HEAD
     if (pathName?.endsWith(path.basename(TEST_HOOKS_FILE_NAME))) {
+=======
+    if (pathName?.endsWith(TEST_HOOKS_FILE_BASE_NAME)) {
+>>>>>>> fb4641c3 (feat(in place): support in place mode in karma-runner)
       response.writeHead(200, {
         'Cache-Control': 'no-cache',
         'Content-Type': 'application/javascript',
