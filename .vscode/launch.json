@@ -5,22 +5,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Program",
-      "program": "${workspaceFolder}/packages/core/bin/stryker",
-      "request": "launch",
-      "args": ["run"],
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/packages/**/*.js",
-        "!**/node_modules/**"
-      ],
-      "type": "node",
-      "cwd": "${workspaceFolder}/e2e/test/mocha-javascript",
-      "outputCapture": "console"
-    },
-    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Port",
