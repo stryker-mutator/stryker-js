@@ -42,6 +42,7 @@ describe(StrykerCli.name, () => {
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
       [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
+      [['--inPlace'], { inPlace: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],
@@ -100,14 +101,6 @@ describe(StrykerCli.name, () => {
     runMutationTestingStub.resolves();
     actRun(args);
     expect(runMutationTestingStub).called;
-    const actualOptions: PartialStrykerOptions = runMutationTestingStub.getCall(0).args[0];
-    for (const option in actualOptions) {
-      // Unfortunately, commander leaves all unspecified options as `undefined` on the object.
-      // This is not a problem for stryker, so let's clean them for this test.
-      if (actualOptions[option] === undefined) {
-        delete actualOptions[option];
-      }
-    }
     expect(runMutationTestingStub).calledWith(expectedOptions);
   }
 });
