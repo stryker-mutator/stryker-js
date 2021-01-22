@@ -86,7 +86,7 @@ describe('fileUtils', () => {
           Promise.all(
             matches.map(async (fileName) => {
               const content = await fsPromises.readFile(fileName);
-              return new File(fileName, content);
+              return new File(path.normalize(fileName), content);
             })
           )
         );
