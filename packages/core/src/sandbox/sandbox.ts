@@ -41,7 +41,10 @@ export class Sandbox implements Disposable {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
       this.backupDirectory = temporaryDirectory.createRandomDirectory('backup');
-      this.log.info('In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s', this.backupDirectory);
+      this.log.info(
+        'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
+        path.relative(process.cwd(), this.backupDirectory)
+      );
       unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
     } else {
       this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
@@ -129,9 +132,9 @@ export class Sandbox implements Disposable {
   public dispose(unexpected = false): void {
     if (this.backupDirectory) {
       if (unexpected) {
-        console.error(`Detecting unexpected exit, recovering original files from ${this.backupDirectory}`);
+        console.error(`Detecting unexpected exit, recovering original files from ${path.relative(process.cwd(), this.backupDirectory)}`);
       } else {
-        this.log.info(`Resetting your original files from ${this.backupDirectory}.`);
+        this.log.info(`Resetting your original files from ${path.relative(process.cwd(), this.backupDirectory)}.`);
       }
       moveDirectoryRecursiveSync(this.backupDirectory, this.workingDirectory);
     }
