@@ -30,7 +30,11 @@ describe(RegexMutator.name, () => {
     );
   });
 
-  // it('should mutate obvious Regex string literals', () => {
-  //   expectJSMutation(sut, 'new RegExp("\\d{4}", "i")', 'new RegExp("\\d", "i")', 'new RegExp("\\D{4}", "i")');
-  // });
+  it('should mutate obvious Regex string literals', () => {
+    expectJSMutation(sut, 'new RegExp("\\\\d{4}")', 'new RegExp("\\\\d")', 'new RegExp("\\\\D{4}")');
+  });
+
+  it('should not mutate the flags of a new RegExp constructor', () => {
+    expectJSMutation(sut, 'new RegExp("", "\\\\d{4}")');
+  });
 });
