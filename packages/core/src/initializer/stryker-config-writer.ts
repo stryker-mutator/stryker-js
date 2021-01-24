@@ -60,7 +60,7 @@ export default class StrykerConfigWriter {
    */
   public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
     const config = {
-      _comment: `This config was generated using a preset. Please see the handbook for more information: ${presetConfig.handbookUrl}`,
+      _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${presetConfig.guideUrl}`,
       ...presetConfig.config,
     };
 

@@ -2,7 +2,7 @@ import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 export default interface PresetConfiguration {
   config: PartialStrykerOptions;
-  handbookUrl: string;
+  guideUrl: string;
   dependencies: string[];
   additionalConfigFiles?: File[];
 }

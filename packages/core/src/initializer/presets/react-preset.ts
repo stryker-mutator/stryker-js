@@ -3,11 +3,11 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import Preset from './preset';
 import PresetConfiguration from './preset-configuration';
 
-const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react';
+const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/react';
 
 /**
  * More information can be found in the Stryker handbook:
- * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/react.md#react
+ * https://stryker-mutator.io/docs/stryker/guides/react
  */
 export class ReactPreset implements Preset {
   public readonly name = 'create-react-app';
@@ -23,6 +23,6 @@ export class ReactPreset implements Preset {
   };
 
   public async createConfig(): Promise<PresetConfiguration> {
-    return { config: this.config, handbookUrl, dependencies: this.dependencies };
+    return { config: this.config, guideUrl, dependencies: this.dependencies };
   }
 }

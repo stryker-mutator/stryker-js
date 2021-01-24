@@ -4,11 +4,11 @@ import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import Preset from './preset';
 import PresetConfiguration from './preset-configuration';
 
-const handbookUrl = 'https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs';
+const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/vuejs';
 
 /**
  * More information can be found in the Stryker handbook:
- * https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/vuejs.md#vuejs
+ * https://stryker-mutator.io/docs/stryker/guides/vuejs
  */
 export class VueJsPreset implements Preset {
   public readonly name = 'vue-cli';
@@ -50,7 +50,7 @@ export class VueJsPreset implements Preset {
     return {
       config: this.getConfig(chosenTestRunner),
       dependencies: this.createDependencies(chosenTestRunner),
-      handbookUrl,
+      guideUrl,
       additionalConfigFiles: this.getAdditionalConfigFiles(chosenTestRunner),
     };
   }
