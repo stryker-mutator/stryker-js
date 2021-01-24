@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/stryker-mutator/stryker/compare/v4.3.1...v4.4.0) (2021-01-24)
+
+
+### Bug Fixes
+
+* **child-process:** improve out-of-memory recognition ([#2697](https://github.com/stryker-mutator/stryker/issues/2697)) ([b97220a](https://github.com/stryker-mutator/stryker/commit/b97220a6c810b7ccc1f5fdb6e84be828a58ba1b0))
+
+
+### Features
+
+* **in place:** support in place mutation ([#2706](https://github.com/stryker-mutator/stryker/issues/2706)) ([2685a7e](https://github.com/stryker-mutator/stryker/commit/2685a7eb86c808c363aad3151f2c67f273bdf314))
+
+
+
+
+
 ## [4.3.1](https://github.com/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
 
 **Note:** Version bump only for package @stryker-mutator/core

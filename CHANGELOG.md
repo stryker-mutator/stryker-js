@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/stryker-mutator/stryker/compare/v4.3.1...v4.4.0) (2021-01-24)
+
+
+### Bug Fixes
+
+* **child-process:** improve out-of-memory recognition ([#2697](https://github.com/stryker-mutator/stryker/issues/2697)) ([b97220a](https://github.com/stryker-mutator/stryker/commit/b97220a6c810b7ccc1f5fdb6e84be828a58ba1b0))
+* **jasmine:** support jasmine >3.6.2 ([#2594](https://github.com/stryker-mutator/stryker/issues/2594)) ([582079b](https://github.com/stryker-mutator/stryker/commit/582079b97dbe7ad2526a6815740d452da66a8617))
+
+
+### Features
+
+* **in place:** support in place mutation ([#2706](https://github.com/stryker-mutator/stryker/issues/2706)) ([2685a7e](https://github.com/stryker-mutator/stryker/commit/2685a7eb86c808c363aad3151f2c67f273bdf314))
+* **regex-mutator:** smart regex mutations ([#2709](https://github.com/stryker-mutator/stryker/issues/2709)) ([0877f44](https://github.com/stryker-mutator/stryker/commit/0877f443219a29c34ac13ca27f33cbf884b5bb4b))
+
+
+
+
+
 ## [4.3.1](https://github.com/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
 
 **Note:** Version bump only for package stryker-parent

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.4.0](https://github.com/stryker-mutator/stryker/compare/v4.3.1...v4.4.0) (2021-01-24)
+
+
+### Features
+
+* **regex-mutator:** smart regex mutations ([#2709](https://github.com/stryker-mutator/stryker/issues/2709)) ([0877f44](https://github.com/stryker-mutator/stryker/commit/0877f443219a29c34ac13ca27f33cbf884b5bb4b))
+
+
+
+
+
 ## [4.3.1](https://github.com/stryker-mutator/stryker/compare/v4.3.0...v4.3.1) (2020-12-25)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter
