@@ -16,7 +16,7 @@
   ],
   "references": [
     {
-      "path": "../api/tsconfig.public.json",
+      "path": "../api/tsconfig.src.json",
     },
     {
       "path": "../util/tsconfig.src.json",
