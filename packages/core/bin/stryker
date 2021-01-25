@@ -5,5 +5,5 @@
 process.title = 'stryker';
 
 // Run the Stryker CLI
-const StrykerCli = require('../src/stryker-cli').default;
+const StrykerCli = require('../dist/src/stryker-cli').default;
 new StrykerCli(process.argv).run();
