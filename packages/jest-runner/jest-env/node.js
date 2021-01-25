@@ -1,1 +1,1 @@
-module.exports = require('../src/jest-plugins/jest-environment-node');
+module.exports = require('../dist/src/jest-plugins/jest-environment-node');
