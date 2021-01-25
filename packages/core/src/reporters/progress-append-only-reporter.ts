@@ -5,7 +5,7 @@ import { MatchedMutant } from '@stryker-mutator/api/report';
 import ProgressKeeper from './progress-keeper';
 
 export default class ProgressAppendOnlyReporter extends ProgressKeeper {
-  private intervalReference: NodeJS.Timer;
+  private intervalReference?: NodeJS.Timer;
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
@@ -15,7 +15,9 @@ export default class ProgressAppendOnlyReporter extends ProgressKeeper {
   }
 
   public onAllMutantsTested(): void {
-    clearInterval(this.intervalReference);
+    if (this.intervalReference) {
+      clearInterval(this.intervalReference);
+    }
   }
 
   private render() {
