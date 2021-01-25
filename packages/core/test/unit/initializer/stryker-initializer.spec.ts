@@ -127,18 +127,18 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should correctly write and format the stryker js configuration file', async () => {
-      const handbookUrl = 'https://awesome-preset.org';
+      const guideUrl = 'https://awesome-preset.org';
       const config = { awesomeConf: 'awesome' };
       childExec.resolves();
       resolvePresetConfig({
         config,
-        handbookUrl,
+        guideUrl,
       });
       const expectedOutput = `/**
          * @type {import('@stryker-mutator/api/core').StrykerOptions}
          */  
         module.exports = {
-          "_comment": "This config was generated using a preset. Please see the handbook for more information: https://awesome-preset.org",
+          "_comment": "This config was generated using 'stryker init'. Please see the guide for more information: https://awesome-preset.org",
           "awesomeConf": "${config.awesomeConf}"
         };`;
       inquirerPrompt.resolves({
@@ -427,7 +427,7 @@ describe(StrykerInitializer.name, () => {
     const presetConfig: PresetConfiguration = {
       config: {},
       dependencies: [],
-      handbookUrl: '',
+      guideUrl: '',
     };
     presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
   }
