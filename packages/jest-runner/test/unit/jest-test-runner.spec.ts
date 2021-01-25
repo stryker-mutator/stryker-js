@@ -46,10 +46,6 @@ describe(JestTestRunner.name, () => {
   });
 
   describe('constructor', () => {
-    it('should log the project root when constructing the JestTestRunner', () => {
-      createSut();
-      expect(testInjector.logger.debug).calledWith(`Project root is ${basePath}`);
-    });
     it('should log enabled find related tests helper message to debug if set', () => {
       options.jest.enableFindRelatedTests = true;
       createSut();
