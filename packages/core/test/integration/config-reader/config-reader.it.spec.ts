@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path = require('path');
 
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -8,6 +8,7 @@ import * as sinon from 'sinon';
 import ConfigReader from '../../../src/config/config-reader';
 import { coreTokens } from '../../../src/di';
 import { OptionsValidator } from '../../../src/config/options-validator';
+import { resolveFromRoot } from '../../helpers/test-utils';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;
@@ -20,9 +21,7 @@ describe(ConfigReader.name, () => {
       .injectClass(ConfigReader);
   }
 
-  function resolveTestResource(...segments: string[]) {
-    return path.resolve(__dirname, '..', '..', '..', 'testResources', 'config-reader', ...segments);
-  }
+  const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'config-reader');
 
   let originalCwd: string;
 

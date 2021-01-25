@@ -2,12 +2,12 @@
   "name": "@stryker-mutator/util",
   "version": "4.4.0",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha \"test/unit/**/*.js\"",
-    "test:integration": "mocha \"test/integration/**/*.js\"",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha \"dist/test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

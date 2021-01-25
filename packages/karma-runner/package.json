@@ -2,12 +2,12 @@
   "name": "@stryker-mutator/karma-runner",
   "version": "4.4.0",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha \"test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 60000 --exit \"test/integration/**/*.js\"",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 60000 --exit \"dist/test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

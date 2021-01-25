@@ -6,6 +6,6 @@ export function sleep(ms = 0) {
   });
 }
 
-export function resolveFromRoot(...pathSegments: string[]) {
-  return resolve(__dirname, '..', '..', ...pathSegments);
+export function resolveFromRoot(...pathSegments: string[]): string {
+  return resolve(__dirname, '..', '..', '..', ...pathSegments);
 }

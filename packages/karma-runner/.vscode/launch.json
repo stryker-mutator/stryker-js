@@ -8,13 +8,12 @@
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "--no-timeout",
-        "${workspaceRoot}/test/unit/**/*.js"
+        "${workspaceRoot}/dist/test/unit/**/*.js"
       ],
       "cwd": "${workspaceFolder}",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceRoot}/dist/**/*.js"
       ],
       "skipFiles": [
         "<node_internals>/**"
@@ -29,12 +28,11 @@
       "args": [
         "--no-timeout",
         "--exit",
-        "${workspaceRoot}/test/integration/**/*.js"
+        "${workspaceRoot}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceRoot}/dist/**/*.js"
       ],      
       "skipFiles": [
         "<node_internals>/**"

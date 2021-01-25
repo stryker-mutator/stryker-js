@@ -1,20 +1,15 @@
-import * as path from 'path';
-
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 
 const countSucceeded = (runResult: CompleteDryRunResult) => countTests(runResult, (t) => t.status === TestStatus.Success);
 const countFailed = (runResult: CompleteDryRunResult) => countTests(runResult, (t) => t.status === TestStatus.Failed);
-
-function resolve(fileName: string) {
-  return path.resolve(__dirname, '..', '..', fileName);
-}
 
 describe('Running a sample project', () => {
   let sut: MochaTestRunner;
@@ -26,7 +21,7 @@ describe('Running a sample project', () => {
 
   describe('when tests pass', () => {
     beforeEach(() => {
-      spec = [resolve('./testResources/sample-project/MyMath.js'), resolve('./testResources/sample-project/MyMathSpec.js')];
+      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
@@ -50,7 +45,7 @@ describe('Running a sample project', () => {
 
   describe('with an error in an un-included input file', () => {
     beforeEach(() => {
-      spec = [resolve('testResources/sample-project/MyMath.js'), resolve('testResources/sample-project/MyMathSpec.js')];
+      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({
         files: spec,
       });
@@ -66,7 +61,7 @@ describe('Running a sample project', () => {
 
   describe('with multiple failed tests', () => {
     before(() => {
-      spec = [resolve('testResources/sample-project/MyMath.js'), resolve('testResources/sample-project/MyMathFailedSpec.js')];
+      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathFailedSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
@@ -81,7 +76,7 @@ describe('Running a sample project', () => {
 
   describe('when no tests are executed', () => {
     beforeEach(() => {
-      spec = [resolve('./testResources/sample-project/MyMath.js')];
+      spec = [resolveTestResource('sample-project', 'MyMath.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();

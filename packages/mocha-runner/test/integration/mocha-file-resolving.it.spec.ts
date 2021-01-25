@@ -1,11 +1,10 @@
-import * as path from 'path';
-
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import MochaOptionsLoader from '../../src/mocha-options-loader';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
 import { createMochaTestRunnerFactory } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Mocha 6 file resolving integration', () => {
   let options: MochaRunnerWithStrykerOptions;
@@ -38,6 +37,6 @@ describe('Mocha 6 file resolving integration', () => {
   }
 
   function resolveTestDir(fileName = '.') {
-    return path.resolve(__dirname, '..', '..', 'testResources', 'file-resolving', fileName);
+    return resolveTestResource('file-resolving', fileName);
   }
 });

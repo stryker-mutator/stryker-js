@@ -1,7 +1,6 @@
 import { PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -126,7 +125,7 @@ describe('BroadcastReporter', () => {
 
       beforeEach(() => {
         actualError = new Error('some error');
-        ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
+        factory.ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
       });
 
       it('should still broadcast to other reporters', () => {
@@ -134,7 +133,7 @@ describe('BroadcastReporter', () => {
       });
 
       it('should log each error', () => {
-        ALL_REPORTER_EVENTS.forEach((eventName) => {
+        factory.ALL_REPORTER_EVENTS.forEach((eventName) => {
           (sut as any)[eventName]();
           expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
         });
@@ -149,7 +148,7 @@ describe('BroadcastReporter', () => {
   }
 
   function actArrangeAssertAllEvents() {
-    ALL_REPORTER_EVENTS.forEach((eventName) => {
+    factory.ALL_REPORTER_EVENTS.forEach((eventName) => {
       const eventData = eventName === 'wrapUp' ? undefined : eventName;
       (sut as any)[eventName](eventName);
       expect(rep1[eventName]).calledWith(eventData);

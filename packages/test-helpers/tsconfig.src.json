@@ -1,7 +1,8 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "outDir": "dist",
+    "rootDir": "src",
     "types": [
       "node",
       "mocha"
@@ -12,7 +13,7 @@
   ],
   "references": [
     {
-      "path": "../api/tsconfig.src.json"
+      "path": "../api/tsconfig.public.json"
     }
   ]
 }

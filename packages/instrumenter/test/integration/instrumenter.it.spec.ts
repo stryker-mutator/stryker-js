@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fsPromises } from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
@@ -8,16 +7,7 @@ import chaiJestSnapshot from 'chai-jest-snapshot';
 
 import { Instrumenter } from '../../src';
 import { createInstrumenterOptions } from '../helpers/factories';
-
-const resolveTestResource = path.resolve.bind(
-  path,
-  __dirname,
-  '..' /* integration */,
-  '..' /* test */,
-  '..' /* dist */,
-  'testResources',
-  'instrumenter'
-);
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('instrumenter integration', () => {
   let sut: Instrumenter;
@@ -72,11 +62,11 @@ describe('instrumenter integration', () => {
   });
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
-    const fullFileName = resolveTestResource(fileName);
-    const file = new File(fullFileName, await fs.readFile(fullFileName));
+    const fullFileName = resolveTestResource('instrumenter', fileName);
+    const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
     const result = await sut.instrument([file], options);
     expect(result.files).lengthOf(1);
-    chaiJestSnapshot.setFilename(resolveTestResource(`${fileName}.out.snap`));
+    chaiJestSnapshot.setFilename(resolveTestResource('instrumenter', `${fileName}.out.snap`));
     expect(result.files[0].textContent).matchSnapshot();
   }
 });

@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
+    "outDir": "dist",
     "rootDir": "."
   },
   "include": [
@@ -11,7 +12,7 @@
   ],
   "references": [
     {
-      "path": "../api/tsconfig.src.json"
+      "path": "../api/tsconfig.public.json"
     }
   ]
 }

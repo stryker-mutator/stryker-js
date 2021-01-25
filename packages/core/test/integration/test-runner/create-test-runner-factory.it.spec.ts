@@ -2,11 +2,8 @@ import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import * as log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
-import { LoggingServer, testInjector, factory } from '@stryker-mutator/test-helpers';
-
+import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test-runner';
-
-import { expectCompleted, expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
 
 import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
@@ -79,7 +76,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   it('should pass along the coverage result from the test runner behind', async () => {
     await arrangeSut('coverage-reporting');
     const result = await actDryRun();
-    expectCompleted(result);
+    assertions.expectCompleted(result);
     expect(result.mutantCoverage).deep.eq(factory.mutantCoverage({ static: { 1: 42 } }));
   });
 
@@ -92,7 +89,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   it('should try to report coverage from the global scope, even when the test runner behind does not', async () => {
     await arrangeSut('direct-resolved');
     const result = await actDryRun();
-    expectCompleted(result);
+    assertions.expectCompleted(result);
     expect(result.mutantCoverage).eq('coverageObject');
   });
 
@@ -112,20 +109,20 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   it('should convert any `Error` objects to string', async () => {
     await arrangeSut('errored');
     const result = await actDryRun(1000);
-    expectErrored(result);
+    assertions.expectErrored(result);
     expect(result.errorMessage).includes('SyntaxError: This is invalid syntax!').and.includes('at ErroredTestRunner.dryRun');
   });
 
   it('should run only after initialization, even when it is slow', async () => {
     await arrangeSut('slow-init-dispose');
     const result = await actDryRun(1000);
-    expectCompleted(result);
+    assertions.expectCompleted(result);
   });
 
   it('should be able to run twice in quick succession', async () => {
     await arrangeSut('direct-resolved');
     const result = await actDryRun();
-    expectCompleted(result);
+    assertions.expectCompleted(result);
   });
 
   it('should reject when `init` of test runner behind rejects', async () => {
@@ -135,7 +132,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   it('should change the current working directory to the sandbox directory', async () => {
     await arrangeSut('verify-working-folder');
     const result = await actDryRun();
-    expectCompleted(result);
+    assertions.expectCompleted(result);
   });
 
   it('should be able to recover from an async crash', async () => {
@@ -143,13 +140,13 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     await arrangeSut('time-bomb');
     await sleep(550);
     const result = await actDryRun();
-    expectCompleted(result);
+    assertions.expectCompleted(result);
   });
 
   it('should report if a crash happens twice', async () => {
     await arrangeSut('proximity-mine');
     const result = await actDryRun();
-    expectErrored(result);
+    assertions.expectErrored(result);
     expect(result.errorMessage).contains('Test runner crashed');
   });
 

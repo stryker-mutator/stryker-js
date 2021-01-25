@@ -2,10 +2,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { errorToString } from '@stryker-mutator/util';
 import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
-
-import { factory } from '@stryker-mutator/test-helpers';
-
-import { expectErrored } from '@stryker-mutator/test-helpers/src/assertions';
+import { factory, assertions } from '@stryker-mutator/test-helpers';
 
 import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
 import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
@@ -125,7 +122,7 @@ describe(RetryDecorator.name, () => {
         testRunner2[runMethod].rejects(finalError);
 
         const result = await act(sut, options);
-        expectErrored(result);
+        assertions.expectErrored(result);
         expect((result as any).errorMessage).to.be.deep.eq(
           `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`
         );

@@ -1,11 +1,10 @@
-import * as path from 'path';
-
 import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
+import { resolveFromRoot, resolveTestResource } from '../helpers/resolve-test-resource';
 
 import { jasmineInitSuccessResults } from './helpers';
 
@@ -13,13 +12,13 @@ describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
 
   afterEach(async () => {
-    process.chdir(path.resolve(__dirname, '../../..'));
+    process.chdir(resolveFromRoot());
     await sut.dispose();
   });
 
   describe('using the jasmine-init project', () => {
     beforeEach(() => {
-      process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init'));
+      process.chdir(resolveTestResource('jasmine-init'));
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
@@ -85,7 +84,7 @@ describe('JasmineRunner integration', () => {
 
   describe('using a jasmine-project with errors', () => {
     beforeEach(async () => {
-      process.chdir(path.resolve(__dirname, '../../testResources/errors'));
+      process.chdir(resolveTestResource('errors'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
 
@@ -100,7 +99,7 @@ describe('JasmineRunner integration', () => {
 
   describe('when it includes failed tests', () => {
     beforeEach(() => {
-      process.chdir(path.resolve(__dirname, '../../testResources/test-failures'));
+      process.chdir(resolveTestResource('test-failures'));
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
 

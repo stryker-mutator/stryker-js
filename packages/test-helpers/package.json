@@ -3,7 +3,7 @@
   "private": true,
   "version": "4.4.0",
   "description": "A helper package for testing",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {},
   "repository": {
     "type": "git",

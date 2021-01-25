@@ -4,7 +4,7 @@ import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { deepMerge } from '@stryker-mutator/util/src/deep-merge';
+import { deepMerge } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';

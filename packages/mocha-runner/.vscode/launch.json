@@ -13,13 +13,12 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/unit/**/*.js"
+        "${workspaceFolder}/dist/test/helpers/**/*.js",
+        "${workspaceFolder}/dist/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceRoot}/dist/**/*.js"
       ],
       "skipFiles": [
         "<node_internals>/**"
@@ -34,13 +33,12 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/integration/**/*.js"
+        "${workspaceFolder}/dist/test/helpers/**/*.js",
+        "${workspaceFolder}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceRoot}/test/**/*.js",
-        "${workspaceRoot}/src/**/*.js"
+        "${workspaceRoot}/dist/**/*.js"
       ],
       "skipFiles": [
         "<node_internals>/**"

@@ -1,4 +1,4 @@
 {
-  "require": ["test/setup.js"],
+  "require": ["dist/test/setup.js"],
   "timeout": 30000
 }

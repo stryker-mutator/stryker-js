@@ -5,7 +5,6 @@ import fs = require('fs');
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
-import { createIsDirError, fileNotFoundError } from '@stryker-mutator/test-helpers/src/factory';
 import { childProcessAsPromised, errorToString, Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
@@ -114,7 +113,7 @@ describe(InputFileResolver.name, () => {
       deleted/file.js
     `),
     });
-    const error = fileNotFoundError();
+    const error = factory.fileNotFoundError();
     readFileStub.withArgs('deleted/file.js').rejects(error);
     const result = await sut.resolve();
     expect(result.files).lengthOf(0);
@@ -127,7 +126,7 @@ describe(InputFileResolver.name, () => {
       submoduleDir
     `),
     });
-    const fileIsDirError = createIsDirError();
+    const fileIsDirError = factory.createIsDirError();
     readFileStub.withArgs('submoduleDir').rejects(fileIsDirError);
     const result = await sut.resolve();
     expect(result.files).lengthOf(0);

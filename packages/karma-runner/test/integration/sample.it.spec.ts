@@ -1,5 +1,3 @@
-import * as path from 'path';
-
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 
@@ -7,6 +5,7 @@ import KarmaTestRunner from '../../src/karma-test-runner';
 import { expectTestResults, TimelessTestResult } from '../helpers/assertions';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
 import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Sample project', () => {
   afterEach(() => {
@@ -14,7 +13,7 @@ describe('Sample project', () => {
   });
 
   it('should be able to run karma with jasmine', async () => {
-    testInjector.options.karma = { configFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma-jasmine.conf.js') };
+    testInjector.options.karma = { configFile: resolveTestResource('sampleProject', 'karma-jasmine.conf.js') };
     const runner = testInjector.injector.injectClass(KarmaTestRunner);
     await runner.init();
     const result = await runner.dryRun(factory.dryRunOptions());
@@ -63,7 +62,7 @@ describe('Sample project', () => {
   it('should be able to run karma with mocha', async () => {
     (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma = {
       projectType: 'custom',
-      configFile: path.resolve(__dirname, '..', '..', 'testResources', 'sampleProject', 'karma-mocha.conf.js'),
+      configFile: resolveTestResource('sampleProject', 'karma-mocha.conf.js'),
     };
 
     const runner = testInjector.injector.injectClass(KarmaTestRunner);

@@ -1,7 +1,6 @@
 import path = require('path');
 
 import execa = require('execa');
-
 import { expect } from 'chai';
 
 import { JasmineTestRunner } from '../../src';

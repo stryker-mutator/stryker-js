@@ -1,6 +1,6 @@
 {
   "include": [
-    "src/**/*.js"
+    "dist/src/**/*.js"
   ],
   "excludeAfterRemap": false,
   "checkCoverage": true,

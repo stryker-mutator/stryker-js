@@ -14,7 +14,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
-paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
+paths.appTsTestConfig = resolveTestResource('reactTsProject/tsconfig.test.json');
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';

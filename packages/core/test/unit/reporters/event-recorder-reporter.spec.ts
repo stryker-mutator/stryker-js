@@ -1,8 +1,7 @@
 import * as fs from 'fs';
 
 import { Reporter } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
@@ -62,7 +61,7 @@ describe(EventRecorderReporter.name, () => {
         });
       };
 
-      ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
+      factory.ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {

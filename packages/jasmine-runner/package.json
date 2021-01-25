@@ -2,10 +2,10 @@
   "name": "@stryker-mutator/jasmine-runner",
   "version": "4.4.0",
   "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "test": "nyc npm run test:all",
-    "test:all": "mocha \"test/**/*.js\"",
+    "test:all": "mocha \"dist/test/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "nyc": {

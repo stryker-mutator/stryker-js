@@ -1,11 +1,1 @@
-export { default as File } from './src/core/file';
-export { default as Position } from './src/core/position';
-export { default as Location } from './src/core/location';
-export { default as Range } from './src/core/range';
-export { default as Mutant } from './src/core/mutant';
-export * from './src-generated/stryker-core';
-export * from './src/core/report-types';
-export * from './src/core/stryker-options-schema';
-export * from './src/core/partial-stryker-options';
-export * from './src/core/instrument';
-export * from './src/core/mutant-coverage';
+export * from './dist/src/core';

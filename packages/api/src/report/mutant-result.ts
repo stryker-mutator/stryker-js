@@ -1,4 +1,4 @@
-import { Location, Range } from '../../core';
+import { Location, Range } from '../core';
 
 import MutantStatus from './mutant-status';
 

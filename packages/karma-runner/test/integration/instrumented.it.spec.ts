@@ -1,5 +1,3 @@
-import path = require('path');
-
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
@@ -7,6 +5,7 @@ import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/tes
 import KarmaTestRunner from '../../src/karma-test-runner';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
 import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 function createSut() {
   return testInjector.injector.injectClass(KarmaTestRunner);
@@ -19,7 +18,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
     before(async () => {
       (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma = {
         projectType: 'custom',
-        configFile: path.resolve(__dirname, '..', '..', 'testResources', 'instrumented', 'karma-jasmine.conf.js'),
+        configFile: resolveTestResource('instrumented', 'karma-jasmine.conf.js'),
       };
       sut = createSut();
       await sut.init();
@@ -154,7 +153,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
     before(async () => {
       (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma = {
         projectType: 'custom',
-        configFile: path.resolve(__dirname, '..', '..', 'testResources', 'instrumented', 'karma-mocha.conf.js'),
+        configFile: resolveTestResource('instrumented', 'karma-mocha.conf.js'),
       };
       sut = createSut();
       await sut.init();

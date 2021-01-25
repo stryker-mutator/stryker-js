@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
+    "outDir": "dist",
     "rootDir": ".",
     "noImplicitThis": true,
     "strictBindCallApply": true,
@@ -8,14 +9,14 @@
     "types": [] // Exclude global mocha functions for the sources
   },
   "include": [
-    "src", "../util/src/Task.ts"
+    "src"
   ],
   "references": [
     {
-      "path": "../api/tsconfig.src.json"
+      "path": "../api/tsconfig.public.json"
     },
     {
-      "path": "../instrumenter/src"
+      "path": "../instrumenter/tsconfig.src.json"
     },
     {
       "path": "../util/tsconfig.src.json"

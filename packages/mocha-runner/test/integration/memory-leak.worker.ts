@@ -1,11 +1,10 @@
-import path = require('path');
-
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { expect } from 'chai';
 import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { createMochaTestRunnerFactory } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 /**
  * This file will run the mocha runner a number of times in a test suite that is designed
@@ -25,7 +24,7 @@ if (require.main === module) {
 }
 
 async function main() {
-  process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'big-project'));
+  process.chdir(resolveTestResource('big-project'));
   testInjector.options.mochaOptions = { 'no-config': true };
   const mochaRunner = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
 

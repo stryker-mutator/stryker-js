@@ -3,7 +3,7 @@ import path from 'path';
 
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { logger, strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import CustomJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
 
@@ -20,7 +20,7 @@ describe(CustomJestConfigLoader.name, () => {
     readFileSyncStub.returns('{ "jest": { "exampleProperty": "examplePackageJsonValue" }}');
     requireStub.returns({ exampleProperty: 'exampleJestConfigValue' });
 
-    defaultConfigLoader = new CustomJestConfigLoader(logger(), strykerOptions(), requireStub, projectRoot);
+    defaultConfigLoader = new CustomJestConfigLoader(factory.logger(), factory.strykerOptions(), requireStub, projectRoot);
   });
 
   it('should load the Jest configuration from the jest.config.js in the project root', () => {

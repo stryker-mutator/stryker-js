@@ -45,7 +45,7 @@ export default class StrykerCli {
     const dashboard: Partial<DashboardOptions> = {};
     const defaultValues = defaultOptions();
     this.program
-      .version(require('../package.json').version)
+      .version(require('../../package.json').version)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:

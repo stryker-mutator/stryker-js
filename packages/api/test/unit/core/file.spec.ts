@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { deserialize, serialize } from 'surrial';
 
-import { File } from '../../../core';
+import { File } from '../../../src/core';
 
 describe('File', () => {
   it('should allow utf8 encoded string content in the constructor', () => {

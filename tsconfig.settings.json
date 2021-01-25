@@ -6,7 +6,6 @@
     "target": "es2017",
     "noImplicitAny": true,
     "moduleResolution": "node",
-    "rootDir": ".",
     "sourceMap": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,6 +17,7 @@
     "noImplicitReturns": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
+    "strictBindCallApply": true,
     "types": [
       "node"
     ],

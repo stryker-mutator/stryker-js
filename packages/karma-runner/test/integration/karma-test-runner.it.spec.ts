@@ -221,7 +221,8 @@ class DummyServer {
   }
 
   private async init(): Promise<void> {
-    await promisify(this.httpServer.listen.bind(this.httpServer))(0, '0.0.0.0');
+    const listen: (port: number, host: string) => Promise<void> = promisify(this.httpServer.listen.bind(this.httpServer));
+    await listen(0, '0.0.0.0');
   }
 
   public dispose(): Promise<void> {
