@@ -33,11 +33,11 @@ buildMainInjector.inject = tokens(commonTokens.injector);
 export function buildMainInjector(injector: CliOptionsProvider): Injector<MainContext> {
   const pluginResolverProvider = createPluginResolverProvider(injector);
   return pluginResolverProvider
+    .provideValue(coreTokens.timer, new Timer()) // greedy initialize, so the time starts immediately
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorChecker, PluginCreator.createFactory(PluginKind.Checker))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer)
     .provideValue(coreTokens.execa, execa)
     .provideValue(coreTokens.process, process)
     .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler);

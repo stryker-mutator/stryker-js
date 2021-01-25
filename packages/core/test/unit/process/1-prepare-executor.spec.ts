@@ -74,11 +74,6 @@ describe(PrepareExecutor.name, () => {
     expect(buildMainInjectorModule.buildMainInjector).calledWith(injectorMock);
   });
 
-  it('should reset the timer', async () => {
-    await sut.execute();
-    expect(timerMock.reset).calledOnce;
-  });
-
   it('should resolve input files', async () => {
     await sut.execute();
     expect(inputFileResolverMock.resolve).called;
