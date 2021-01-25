@@ -54,7 +54,7 @@ export class PluginLoader implements PluginResolver {
 
   public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
     const plugins = this.pluginsByKind.get(kind) || [];
-    return plugins as Array<Plugins[T]>;
+    return plugins;
   }
 
   private resolvePluginModules() {
@@ -63,8 +63,8 @@ export class PluginLoader implements PluginResolver {
       if (typeof pluginExpression === 'string') {
         if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
-          // So if current __dirname is './@stryker-mutator/core/src/di' so 4 directories above
-          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', pluginExpression));
+          // So if current __dirname is './@stryker-mutator/core/dist/src/di' so 4 directories above
+          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', '..', pluginExpression));
           const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
