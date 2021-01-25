@@ -145,7 +145,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should add collected files ', async () => {
-      sut.testFileNames.push('foo.js', 'bar.js', 'foo2.js');
+      sut.testFileNames!.push('foo.js', 'bar.js', 'foo2.js');
       await actDryRun();
       expect(mocha.addFile).calledThrice;
       expect(mocha.addFile).calledWith('foo.js');

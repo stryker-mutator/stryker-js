@@ -7,10 +7,10 @@ import { Injector, createInjector } from 'typed-inject';
 import * as factory from './factory';
 
 class TestInjector {
-  public pluginResolver: sinon.SinonStubbedInstance<PluginResolver>;
-  public options: StrykerOptions;
-  public logger: sinon.SinonStubbedInstance<Logger>;
-  public injector: Injector<PluginContext>;
+  public pluginResolver!: sinon.SinonStubbedInstance<PluginResolver>;
+  public options!: StrykerOptions;
+  public logger!: sinon.SinonStubbedInstance<Logger>;
+  public injector!: Injector<PluginContext>;
 
   public reset() {
     this.options = factory.strykerOptions();

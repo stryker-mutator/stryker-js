@@ -11,7 +11,7 @@ import { deserialize, serialize } from '../utils/object-utils';
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 
 export default class ChildProcessProxyWorker {
-  private log: Logger;
+  private log?: Logger;
 
   public realSubject: any;
 
@@ -100,7 +100,7 @@ export default class ChildProcessProxyWorker {
   private removeAnyAdditionalMessageListeners(exceptListener: NodeJS.MessageListener) {
     process.listeners('message').forEach((listener) => {
       if (listener !== exceptListener) {
-        this.log.debug(
+        this.log?.debug(
           "Removing an additional message listener, we don't want eavesdropping on our inter-process communication: %s",
           listener.toString()
         );
@@ -118,11 +118,11 @@ export default class ChildProcessProxyWorker {
     const unhandledRejections: Array<Promise<void>> = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
-      this.log.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
+      this.log?.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
     });
     process.on('rejectionHandled', (promise) => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;
-      this.log.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
+      this.log?.debug(`PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: ${unhandledPromiseId})`);
     });
   }
 }

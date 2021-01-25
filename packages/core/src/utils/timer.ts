@@ -1,20 +1,12 @@
 export default class Timer {
-  private readonly now: () => Date;
-  private start: Date;
-  private markers: {
+  private readonly start: Date;
+  private readonly markers: {
     [name: string]: Date | undefined;
-  };
+  } = Object.create(null);
 
-  constructor(now = () => new Date()) {
-    this.now = now;
-    this.reset();
-  }
-
-  public reset() {
-    this.markers = Object.create(null);
+  constructor(private readonly now = () => new Date()) {
     this.start = this.now();
   }
-
   public humanReadableElapsed(sinceMarker?: string) {
     const elapsedSeconds = this.elapsedSeconds(sinceMarker);
     return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);

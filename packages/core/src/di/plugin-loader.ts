@@ -54,7 +54,7 @@ export class PluginLoader implements PluginResolver {
 
   public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
     const plugins = this.pluginsByKind.get(kind) || [];
-    return plugins;
+    return plugins as Array<Plugins[T]>;
   }
 
   private resolvePluginModules() {

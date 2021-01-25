@@ -2,7 +2,7 @@ import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunRes
 import { Disposable } from 'typed-inject';
 
 export default class TestRunnerDecorator implements Required<TestRunner>, Disposable {
-  protected innerRunner: TestRunner;
+  protected innerRunner!: TestRunner;
 
   constructor(private readonly testRunnerProducer: () => TestRunner) {
     this.createInnerRunner();

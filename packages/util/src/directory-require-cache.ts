@@ -11,8 +11,8 @@ import { notEmpty } from './not-empty';
  * @see https://github.com/stryker-mutator/stryker/issues/2461
  */
 export class DirectoryRequireCache {
-  private cache: Set<string>;
-  private parents: Set<string>;
+  private cache: Set<string> | undefined;
+  private parents: Set<string> | undefined;
 
   /**
    * Records the files required in the current working directory (excluding node_modules)
@@ -20,33 +20,34 @@ export class DirectoryRequireCache {
    */
   public record() {
     if (!this.cache) {
+      const cache = (this.cache = new Set());
       const cwd = process.cwd();
-      this.cache = new Set();
       Object.keys(require.cache)
         .filter((fileName) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
-        .forEach((file) => this.cache.add(file));
+        .forEach((file) => cache.add(file));
 
       this.parents = new Set(
-        Array.from(this.cache)
+        Array.from(cache)
           // `module.parent` is deprecated, but seems to work fine, might never be removed.
           // See https://nodejs.org/api/modules.html#modules_module_parent
           .map((fileName) => require.cache[fileName]?.parent?.filename)
           .filter(notEmpty)
           // Filter out any parents that are in the current cache, since they will be removed anyway
-          .filter((parentFileName) => !this.cache.has(parentFileName))
+          .filter((parentFileName) => !cache.has(parentFileName))
       );
     }
   }
 
   public clear() {
     if (this.cache && this.parents) {
+      const cache = this.cache;
       this.parents.forEach((parent) => {
         const parentModule = require.cache[parent];
         if (parentModule) {
-          parentModule.children = parentModule.children.filter((childModule) => !this.cache.has(childModule.id));
+          parentModule.children = parentModule.children.filter((childModule) => !cache.has(childModule.id));
         }
       });
-      this.cache.forEach((fileName) => delete require.cache[fileName]);
+      cache.forEach((fileName) => delete require.cache[fileName]);
     }
   }
 }

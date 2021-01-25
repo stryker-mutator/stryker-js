@@ -13,7 +13,7 @@ export class StrykerMochaReporter {
   public static log: Logger | undefined;
   private readonly timer = new Timer();
   private passedCount = 0;
-  public tests: TestResult[];
+  public tests: TestResult[] = [];
 
   public static currentInstance: I<StrykerMochaReporter> | undefined;
 

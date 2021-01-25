@@ -23,7 +23,7 @@ import MochaOptionsLoader from './mocha-options-loader';
 import { MochaAdapter } from './mocha-adapter';
 
 export class MochaTestRunner implements TestRunner {
-  public testFileNames: string[];
+  public testFileNames?: string[];
   public rootHooks: any;
   public mochaOptions!: MochaOptions;
   private readonly instrumenterContext: InstrumenterContext;
@@ -136,7 +136,7 @@ export class MochaTestRunner implements TestRunner {
   }
 
   private addFiles(mocha: Mocha) {
-    this.testFileNames.forEach((fileName) => {
+    this.testFileNames?.forEach((fileName) => {
       mocha.addFile(fileName);
     });
   }

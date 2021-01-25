@@ -119,7 +119,7 @@ class NeverResolvedTestRunner implements TestRunner {
 }
 
 class SlowInitAndDisposeTestRunner implements TestRunner {
-  public inInit: boolean;
+  public inInit = false;
 
   public init() {
     return new Promise<void>((resolve) => {
@@ -160,13 +160,13 @@ class VerifyWorkingFolderTestRunner implements TestRunner {
 }
 
 class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
-  public promise: Promise<void>;
+  public promise?: Promise<void>;
 
   public async init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
   public async dryRun(): Promise<DryRunResult> {
-    this.promise.catch(() => {});
+    this.promise!.catch(() => {});
     return factory.completeDryRunResult();
   }
   public async mutantRun(): Promise<MutantRunResult> {

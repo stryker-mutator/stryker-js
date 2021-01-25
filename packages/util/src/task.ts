@@ -3,8 +3,8 @@
  */
 export class Task<T = void> {
   protected _promise: Promise<T>;
-  private resolveFn: (value: T | PromiseLike<T>) => void;
-  private rejectFn: (reason: any) => void;
+  private resolveFn!: (value: T | PromiseLike<T>) => void;
+  private rejectFn!: (reason: any) => void;
   private _isCompleted = false;
 
   constructor() {

@@ -1,23 +1,19 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "declarationMap": true,
+    "strict": true,
     "module": "commonjs",
     "target": "es2017",
-    "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "declaration": true,
+    "composite": true,
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": false,
     "resolveJsonModule": true,
     "importHelpers": true,
     "noUnusedLocals": true,
-    "alwaysStrict": true,
     "noImplicitReturns": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "strictBindCallApply": true,
     "types": [
       "node"
     ],

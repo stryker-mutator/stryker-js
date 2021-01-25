@@ -26,7 +26,7 @@ export interface ConfigOptions extends karma.ConfigOptions {
 }
 
 export default class KarmaTestRunner implements TestRunner {
-  private currentTestResults: TestResult[];
+  private currentTestResults: TestResult[] = [];
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;
   private readonly starter: ProjectStarter;

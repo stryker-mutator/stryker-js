@@ -40,7 +40,7 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
  * An in-memory type checker implementation which validates type errors of mutants.
  */
 export class TypescriptChecker implements Checker {
-  private currentTask: Task<CheckResult>;
+  private currentTask: Task<CheckResult> = new Task();
   private readonly currentErrors: ts.Diagnostic[] = [];
   /**
    * Keep track of all tsconfig files which are read during compilation (for project references)
