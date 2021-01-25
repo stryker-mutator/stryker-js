@@ -85,12 +85,6 @@ export default class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
-
-    // basePath will be used in future releases of Stryker as a way to define the project root
-    // Default to process.cwd when basePath is not set for now, should be removed when issue is solved
-    // https://github.com/stryker-mutator/stryker/issues/650
-    this.jestConfig.rootDir = (options.basePath as string) || process.cwd();
-    this.log.debug(`Project root is ${this.jestConfig.rootDir}`);
   }
 
   public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
