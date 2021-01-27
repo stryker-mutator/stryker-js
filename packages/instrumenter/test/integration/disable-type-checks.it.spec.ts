@@ -24,7 +24,7 @@ describe(`${disableTypeChecks.name} integration`, () => {
     const fullFileName = resolveTestResource('disable-type-checks', fileName);
     const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
     const result = await disableTypeChecks(file, options);
-    chaiJestSnapshot.setFilename(resolveTestResource(`${fileName}.out.snap`));
+    chaiJestSnapshot.setFilename(resolveTestResource('disable-type-checks', `${fileName}.out.snap`));
     expect(result.textContent).matchSnapshot();
   }
 });
