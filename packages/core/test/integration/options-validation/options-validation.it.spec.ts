@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { createPluginResolverProvider, coreTokens } from '../../../src/di';
 import { resolveFromRoot } from '../../helpers/test-utils';

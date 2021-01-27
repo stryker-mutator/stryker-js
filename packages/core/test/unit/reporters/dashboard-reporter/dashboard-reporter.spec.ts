@@ -1,7 +1,7 @@
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { ReportType } from '@stryker-mutator/api/core';
 
 import { CIProvider } from '../../../../src/reporters/ci/provider';

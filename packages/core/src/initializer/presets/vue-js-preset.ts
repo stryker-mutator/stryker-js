@@ -1,4 +1,4 @@
-import inquirer = require('inquirer');
+import inquirer from 'inquirer';
 import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { Preset } from './preset';

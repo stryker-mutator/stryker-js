@@ -1,5 +1,5 @@
-import { ChildProcess, fork } from 'child_process';
-import * as os from 'os';
+import childProcess from 'child_process';
+import os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
@@ -30,7 +30,7 @@ const TIMEOUT_FOR_DISPOSE = 2000;
 export class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
-  private readonly worker: ChildProcess;
+  private readonly worker: childProcess.ChildProcess;
   private readonly initTask: Task;
   private disposeTask: ExpirableTask | undefined;
   private currentError: ChildProcessCrashedError | undefined;
@@ -49,7 +49,7 @@ export class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string,
     execArgv: string[]
   ) {
-    this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
+    this.worker = childProcess.fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
     this.initTask = new Task();
     this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({

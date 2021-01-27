@@ -22,7 +22,7 @@ import {
   IgnoredMutantResult,
 } from '@stryker-mutator/api/report';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {

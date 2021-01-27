@@ -3,7 +3,7 @@ import { CpuInfo } from 'os';
 import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';

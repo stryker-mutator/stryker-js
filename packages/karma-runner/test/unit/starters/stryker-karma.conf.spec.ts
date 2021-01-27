@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Config, ConfigOptions, ClientOptions } from 'karma';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import * as utils from '@stryker-mutator/util';
 
 import sut = require('../../../src/starters/stryker-karma.conf');

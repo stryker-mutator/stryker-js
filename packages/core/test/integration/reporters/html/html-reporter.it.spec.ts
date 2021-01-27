@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';

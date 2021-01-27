@@ -1,11 +1,11 @@
-import * as path from 'path';
-import fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 import { promisify } from 'util';
 
-import * as nodeGlob from 'glob';
-import mkdirpModule = require('mkdirp');
-import * as rimraf from 'rimraf';
+import nodeGlob from 'glob';
+import mkdirpModule from 'mkdirp';
+import rimraf from 'rimraf';
 
 export const MAX_CONCURRENT_FILE_IO = 256;
 

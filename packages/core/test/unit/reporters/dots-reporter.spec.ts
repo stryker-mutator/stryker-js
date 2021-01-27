@@ -1,10 +1,10 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MutantStatus } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-import chalk = require('chalk');
+import sinon from 'sinon';
+import chalk from 'chalk';
 
 import { DotsReporter } from '../../../src/reporters/dots-reporter';
 

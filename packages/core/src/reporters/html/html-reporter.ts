@@ -1,6 +1,6 @@
-import * as path from 'path';
+import path from 'path';
 
-import fileUrl = require('file-url');
+import fileUrl from 'file-url';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';

@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import * as http from 'http';
+import http from 'http';
 
 import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';

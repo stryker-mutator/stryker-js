@@ -1,4 +1,4 @@
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 export class TestRunnerMock {
   public init: sinon.SinonStub = sinon.stub();

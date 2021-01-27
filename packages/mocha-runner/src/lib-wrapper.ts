@@ -1,6 +1,6 @@
 import path = require('path');
 
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 import glob = require('glob');
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';

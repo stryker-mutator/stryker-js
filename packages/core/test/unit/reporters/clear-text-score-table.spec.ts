@@ -1,12 +1,12 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
 
-import chalk = require('chalk');
-import flatMap = require('lodash.flatmap');
+import chalk from 'chalk';
+import flatMap from 'lodash.flatmap';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table';
 

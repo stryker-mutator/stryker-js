@@ -1,12 +1,12 @@
-import * as childProcess from 'child_process';
+import childProcess from 'child_process';
 import { EventEmitter } from 'events';
-import * as os from 'os';
+import os from 'os';
 
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import {

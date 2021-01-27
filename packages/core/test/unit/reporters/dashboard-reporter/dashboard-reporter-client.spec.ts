@@ -1,6 +1,6 @@
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
 

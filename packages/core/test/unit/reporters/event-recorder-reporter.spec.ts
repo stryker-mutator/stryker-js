@@ -1,9 +1,9 @@
-import * as fs from 'fs';
+import fs from 'fs';
 
 import { Reporter } from '@stryker-mutator/api/report';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { EventRecorderReporter } from '../../../src/reporters/event-recorder-reporter';
 import { StrictReporter } from '../../../src/reporters/strict-reporter';

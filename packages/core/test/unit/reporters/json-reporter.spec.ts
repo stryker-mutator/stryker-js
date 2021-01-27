@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { JsonReporter } from '../../../src/reporters/json-reporter';
 import * as JsonReporterUtil from '../../../src/reporters/reporter-util';

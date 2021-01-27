@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { toArray } from 'rxjs/operators';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
 import { range, ReplaySubject } from 'rxjs';

@@ -1,10 +1,10 @@
-import path = require('path');
+import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import execa = require('execa');
-import npmRunPath = require('npm-run-path');
+import execa from 'execa';
+import npmRunPath from 'npm-run-path';
 import { expect } from 'chai';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, Task } from '@stryker-mutator/util';

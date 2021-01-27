@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { File } from '@stryker-mutator/api/core';
 import { errorToString } from '@stryker-mutator/util';

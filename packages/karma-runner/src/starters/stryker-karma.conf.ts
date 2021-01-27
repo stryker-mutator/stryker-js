@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';

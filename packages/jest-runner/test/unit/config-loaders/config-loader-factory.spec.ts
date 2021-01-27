@@ -1,6 +1,6 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 

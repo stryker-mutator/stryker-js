@@ -1,11 +1,11 @@
-import * as child from 'child_process';
-import * as fs from 'fs';
+import child from 'child_process';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as inquirer from 'inquirer';
-import * as sinon from 'sinon';
+import inquirer from 'inquirer';
+import sinon from 'sinon';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';

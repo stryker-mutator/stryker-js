@@ -2,7 +2,7 @@ import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable } from 'rxjs';

@@ -1,4 +1,4 @@
-import * as child from 'child_process';
+import child from 'child_process';
 import { promises as fs } from 'fs';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';

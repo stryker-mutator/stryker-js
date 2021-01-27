@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { File, Location, Range } from '@stryker-mutator/api/core';
 import {
   MutantResult,

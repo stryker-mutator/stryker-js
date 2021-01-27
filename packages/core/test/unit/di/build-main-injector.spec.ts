@@ -2,7 +2,7 @@ import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 

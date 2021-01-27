@@ -1,6 +1,6 @@
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
 import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';

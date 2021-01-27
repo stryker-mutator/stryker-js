@@ -1,6 +1,6 @@
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';

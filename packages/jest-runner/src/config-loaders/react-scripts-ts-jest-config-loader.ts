@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';

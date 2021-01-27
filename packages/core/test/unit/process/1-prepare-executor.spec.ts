@@ -4,7 +4,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PartialStrykerOptions, File, LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { PrepareExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';

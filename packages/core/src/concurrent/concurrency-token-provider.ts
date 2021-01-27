@@ -1,4 +1,4 @@
-import os = require('os');
+import os from 'os';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { ReplaySubject, Observable, range } from 'rxjs';

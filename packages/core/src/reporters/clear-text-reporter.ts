@@ -1,6 +1,6 @@
-import * as os from 'os';
+import os from 'os';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';

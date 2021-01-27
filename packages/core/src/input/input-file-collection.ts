@@ -1,4 +1,4 @@
-import os = require('os');
+import os from 'os';
 
 import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';

@@ -1,4 +1,4 @@
-import os = require('os');
+import os from 'os';
 
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';

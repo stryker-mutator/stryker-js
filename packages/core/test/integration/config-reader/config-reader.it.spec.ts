@@ -1,9 +1,9 @@
-import path = require('path');
+import path from 'path';
 
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { ConfigReader } from '../../../src/config/config-reader';
 import { coreTokens } from '../../../src/di';

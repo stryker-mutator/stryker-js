@@ -1,5 +1,5 @@
-import * as logging from 'log4js';
-import * as sinon from 'sinon';
+import logging from 'log4js';
+import sinon from 'sinon';
 
 import { logger, Mock } from './producers';
 

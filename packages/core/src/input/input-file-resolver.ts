@@ -1,6 +1,6 @@
 import { StringDecoder } from 'string_decoder';
-import * as path from 'path';
-import fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 import { from } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';

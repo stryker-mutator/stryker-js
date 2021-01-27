@@ -1,13 +1,13 @@
-import * as os from 'os';
-import * as path from 'path';
-import fs = require('fs');
+import os from 'os';
+import path from 'path';
+import fs from 'fs';
 
 import { File } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, errorToString, Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { InputFileResolver } from '../../../src/input/input-file-resolver';

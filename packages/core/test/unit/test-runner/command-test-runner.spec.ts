@@ -1,10 +1,10 @@
-import * as childProcess from 'child_process';
-import * as os from 'os';
+import childProcess from 'child_process';
+import os from 'os';
 
 import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 

@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';

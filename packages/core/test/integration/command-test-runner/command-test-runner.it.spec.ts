@@ -1,7 +1,7 @@
 import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test-runner';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
 import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';

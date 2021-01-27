@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';

@@ -1,3 +1,3 @@
-import ProgressBar = require('progress');
+import ProgressBar from 'progress';
 
 export { ProgressBar };

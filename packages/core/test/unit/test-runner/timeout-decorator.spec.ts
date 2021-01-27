@@ -8,7 +8,7 @@ import {
   MutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { factory } from '@stryker-mutator/test-helpers';
 

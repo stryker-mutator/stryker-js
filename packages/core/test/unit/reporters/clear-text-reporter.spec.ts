@@ -1,11 +1,11 @@
-import * as os from 'os';
+import os from 'os';
 
 import { mutationTestReportSchema, MutantStatus } from '@stryker-mutator/api/report';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 
 import { ClearTextReporter } from '../../../src/reporters/clear-text-reporter';
 

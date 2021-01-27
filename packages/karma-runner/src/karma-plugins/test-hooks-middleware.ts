@@ -1,5 +1,5 @@
-import * as path from 'path';
-import * as url from 'url';
+import path from 'path';
+import url from 'url';
 
 import { RequestHandler } from 'express';
 import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';

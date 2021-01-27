@@ -1,8 +1,8 @@
-import path = require('path');
+import path from 'path';
 
 import { File } from '@stryker-mutator/api/core';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { expect } from 'chai';
 

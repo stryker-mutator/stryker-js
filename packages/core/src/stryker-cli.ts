@@ -1,4 +1,4 @@
-import * as commander from 'commander';
+import commander from 'commander';
 import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { MutantResult } from '@stryker-mutator/api/report';

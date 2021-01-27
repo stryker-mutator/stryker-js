@@ -4,6 +4,7 @@
     "module": "commonjs",
     "target": "es2017",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "sourceMap": true,
     "declaration": true,
     "composite": true,
