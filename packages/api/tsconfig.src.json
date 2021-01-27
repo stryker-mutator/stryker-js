@@ -1,18 +1,13 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
+    "outDir": "dist",
     "rootDir": "."
   },
   "include": [
     "src",
     "src-generated",
     "schema/*.json",
-    "check.ts",
-    "core.ts",
-    "logging.ts",
-    "plugin.ts",
-    "report.ts",
-    "test-runner.ts"
   ],
   "references": []
 }

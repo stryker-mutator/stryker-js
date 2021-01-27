@@ -2,7 +2,7 @@ import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable } from 'rxjs';
@@ -10,7 +10,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { I } from '@stryker-mutator/util';
 
-import Timer from '../../../src/utils/timer';
+import { Timer } from '../../../src/utils/timer';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';

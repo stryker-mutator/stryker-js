@@ -3,7 +3,7 @@ import { commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../logging';
 import { buildMainInjector, coreTokens, CliOptionsProvider } from '../di';
-import InputFileResolver from '../input/input-file-resolver';
+import { InputFileResolver } from '../input/input-file-resolver';
 import { ConfigError } from '../errors';
 
 import { MutantInstrumenterContext } from '.';
@@ -15,7 +15,6 @@ export class PrepareExecutor {
   public async execute(): Promise<Injector<MutantInstrumenterContext>> {
     LogConfigurator.configureMainProcess(this.cliOptions.logLevel, this.cliOptions.fileLogLevel, this.cliOptions.allowConsoleColors);
     const mainInjector = buildMainInjector(this.injector);
-    mainInjector.resolve(coreTokens.timer).reset();
     const options = mainInjector.resolve(commonTokens.options);
     const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
     const inputFiles = await mainInjector.injectClass(InputFileResolver).resolve();

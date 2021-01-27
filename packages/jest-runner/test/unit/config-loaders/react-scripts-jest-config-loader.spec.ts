@@ -3,7 +3,7 @@ import path from 'path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import ReactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
+import { ReactScriptsJestConfigLoader } from '../../../src/config-loaders/react-scripts-jest-config-loader';
 import * as helper from '../../../src/utils/create-react-jest-config';
 
 describe(ReactScriptsJestConfigLoader.name, () => {

@@ -1,5 +1,5 @@
-export { default as childProcessAsPromised } from './child-process-as-promised';
-export { default as StrykerError } from './stryker-error';
+export { childProcessAsPromised } from './child-process-as-promised';
+export { StrykerError } from './stryker-error';
 export * from './errors';
 export * from './immutable';
 export * from './known-keys';
@@ -11,3 +11,4 @@ export * from './i';
 export * from './task';
 export * from './directory-require-cache';
 export * from './require-resolve';
+export * from './deep-merge';

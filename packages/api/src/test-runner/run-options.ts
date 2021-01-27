@@ -1,4 +1,4 @@
-import { Mutant, CoverageAnalysis } from '../../core';
+import { Mutant, CoverageAnalysis } from '../core';
 
 export interface RunOptions {
   /**
@@ -19,5 +19,3 @@ export interface MutantRunOptions extends RunOptions {
   activeMutant: Mutant;
   sandboxFileName: string;
 }
-
-export default RunOptions;

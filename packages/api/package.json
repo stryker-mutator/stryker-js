@@ -9,7 +9,7 @@
   "scripts": {
     "stryker": "node ../core/bin/stryker run",
     "test": "nyc npm run test:unit",
-    "test:unit": "mocha \"test/unit/**/*.js\""
+    "test:unit": "mocha \"dist/test/unit/**/*.js\""
   },
   "keywords": [
     "mutation testing",

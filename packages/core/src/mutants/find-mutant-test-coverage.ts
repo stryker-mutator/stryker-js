@@ -7,7 +7,7 @@ import { MatchedMutant } from '@stryker-mutator/api/report';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
-import StrictReporter from '../reporters/strict-reporter';
+import { StrictReporter } from '../reporters/strict-reporter';
 
 export interface MutantTestCoverage {
   estimatedNetTime: number;

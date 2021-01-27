@@ -1,5 +1,5 @@
-import { StrykerOptions } from '../../core';
-import { Logger, LoggerFactoryMethod } from '../../logging';
+import { StrykerOptions } from '../core';
+import { Logger, LoggerFactoryMethod } from '../logging';
 
 import { PluginResolver } from './plugins';
 import { commonTokens } from './tokens';

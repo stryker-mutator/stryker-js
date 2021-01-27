@@ -1,6 +1,6 @@
-import os = require('os');
+import os from 'os';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';

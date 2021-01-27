@@ -1,14 +1,14 @@
-import execa = require('execa');
+import execa from 'execa';
 import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
 import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
-import ConfigReader from '../config/config-reader';
-import BroadcastReporter from '../reporters/broadcast-reporter';
+import { ConfigReader } from '../config/config-reader';
+import { BroadcastReporter } from '../reporters/broadcast-reporter';
 import { TemporaryDirectory } from '../utils/temporary-directory';
-import Timer from '../utils/timer';
+import { Timer } from '../utils/timer';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
 import { pluginResolverFactory } from './factory-methods';
@@ -33,11 +33,11 @@ buildMainInjector.inject = tokens(commonTokens.injector);
 export function buildMainInjector(injector: CliOptionsProvider): Injector<MainContext> {
   const pluginResolverProvider = createPluginResolverProvider(injector);
   return pluginResolverProvider
+    .provideValue(coreTokens.timer, new Timer()) // greedy initialize, so the time starts immediately
     .provideFactory(coreTokens.pluginCreatorReporter, PluginCreator.createFactory(PluginKind.Reporter))
     .provideFactory(coreTokens.pluginCreatorChecker, PluginCreator.createFactory(PluginKind.Checker))
     .provideClass(coreTokens.reporter, BroadcastReporter)
     .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-    .provideClass(coreTokens.timer, Timer)
     .provideValue(coreTokens.execa, execa)
     .provideValue(coreTokens.process, process)
     .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler);

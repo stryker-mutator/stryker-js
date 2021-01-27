@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -7,7 +7,7 @@ import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
-import LibWrapper from './lib-wrapper';
+import { LibWrapper } from './lib-wrapper';
 import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
 
@@ -29,7 +29,7 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   'async-only': false,
 });
 
-export default class MochaOptionsLoader {
+export class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 

@@ -1,10 +1,10 @@
-import * as path from 'path';
+import path from 'path';
 import { createReadStream, createWriteStream } from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import * as mkdirp from 'mkdirp';
+import mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
 import { deleteDir } from './file-utils';

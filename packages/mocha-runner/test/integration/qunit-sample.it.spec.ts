@@ -1,10 +1,9 @@
-import * as path from 'path';
-
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories';
 import { createMochaTestRunnerFactory } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('QUnit sample', () => {
   function createSut() {
@@ -14,7 +13,7 @@ describe('QUnit sample', () => {
   it('should work when configured with "qunit" ui', async () => {
     const mochaOptions = createMochaOptions({
       require: [],
-      spec: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
+      spec: [resolveTestResource('qunit-sample', 'MyMathSpec.js')],
       ui: 'qunit',
     });
     testInjector.options.mochaOptions = mochaOptions;
@@ -33,7 +32,7 @@ describe('QUnit sample', () => {
 
   it('should not run tests when not configured with "qunit" ui', async () => {
     testInjector.options.mochaOptions = createMochaOptions({
-      files: [resolve('./testResources/qunit-sample/MyMathSpec.js')],
+      files: [resolveTestResource('qunit-sample', 'MyMathSpec.js')],
     });
     const sut = createSut();
     await sut.init();
@@ -42,7 +41,3 @@ describe('QUnit sample', () => {
     expect(actualResult.tests).lengthOf(0);
   });
 });
-
-function resolve(fileName: string) {
-  return path.resolve(__dirname, '..', '..', fileName);
-}

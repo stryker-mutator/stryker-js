@@ -10,10 +10,10 @@ import { Config } from '@jest/types';
 import { Task } from '@stryker-mutator/util';
 
 import { JestTestAdapter } from '../../src/jest-test-adapters';
-import JestTestRunner from '../../src/jest-test-runner';
+import { JestTestRunner } from '../../src/jest-test-runner';
 import * as producers from '../helpers/producers';
 import * as pluginTokens from '../../src/plugin-tokens';
-import JestConfigLoader from '../../src/config-loaders/jest-config-loader';
+import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestRunResult } from '../../src/jest-run-result';
 import { state } from '../../src/messaging';

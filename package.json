@@ -15,6 +15,7 @@
     "@types/rimraf": "~3.0.0",
     "@types/sinon": "^9.0.10",
     "@types/sinon-chai": "~3.2.4",
+    "@types/source-map-support": "^0.5.3",
     "@typescript-eslint/eslint-plugin": "4.14.0",
     "@typescript-eslint/parser": "4.14.1",
     "chai": "~4.2.0",
@@ -41,7 +42,7 @@
     "rimraf": "~3.0.0",
     "sinon": "~9.2.0",
     "sinon-chai": "~3.5.0",
-    "source-map-support": "~0.5.6",
+    "source-map-support": "^0.5.19",
     "typescript": "~4.1.3"
   },
   "scripts": {
@@ -50,7 +51,7 @@
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx",
     "lint:log": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx -f compact -o lint.log",
     "lint:fix": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx --fix",
-    "clean": "rimraf \"packages/api/!(stryker.conf)+(.d.ts|.js|.map)\" \"packages/*/+(test|src)/**/*+(.d.ts|.js|.map)\" \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist}\"",
+    "clean": "rimraf \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
     "prebuild": "npm run generate",
     "build": "tsc -b && lerna run build",

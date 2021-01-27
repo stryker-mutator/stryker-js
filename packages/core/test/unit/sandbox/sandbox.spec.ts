@@ -1,13 +1,12 @@
-import path = require('path');
+import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import execa = require('execa');
-import npmRunPath = require('npm-run-path');
+import execa from 'execa';
+import npmRunPath from 'npm-run-path';
 import { expect } from 'chai';
-import sinon = require('sinon');
-import { testInjector, tick } from '@stryker-mutator/test-helpers';
+import sinon from 'sinon';
+import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
-import { fileAlreadyExistsError } from '@stryker-mutator/test-helpers/src/factory';
 import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox';
@@ -230,7 +229,7 @@ describe(Sandbox.name, () => {
 
     it('should log a warning if "node_modules" already exists in the working folder', async () => {
       findNodeModulesStub.resolves('node_modules');
-      symlinkJunctionStub.rejects(fileAlreadyExistsError());
+      symlinkJunctionStub.rejects(factory.fileAlreadyExistsError());
       const sut = createSut();
       await sut.init();
       expect(testInjector.logger.warn).calledWithMatch(

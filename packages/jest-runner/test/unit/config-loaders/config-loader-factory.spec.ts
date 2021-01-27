@@ -1,29 +1,29 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import Sinon, * as sinon from 'sinon';
+import sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
-import CustomJestConfigLoader, * as defaultJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
-import ReactScriptsJestConfigLoader, * as reactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
-import ReactScriptsTSJestConfigLoader, * as reactScriptsTSJestConfigLoader from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
+import * as customJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
+import * as reactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
+import * as reactScriptsTSJestConfigLoader from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options';
 import { configLoaderFactory } from '../../../src/config-loaders';
 
 describe(configLoaderFactory.name, () => {
-  let customConfigLoaderStub: Sinon.SinonStubbedInstance<CustomJestConfigLoader>;
-  let reactScriptsJestConfigLoaderStub: Sinon.SinonStubbedInstance<ReactScriptsJestConfigLoader>;
-  let reactScriptsTSJestConfigLoaderStub: Sinon.SinonStubbedInstance<ReactScriptsTSJestConfigLoader>;
+  let customConfigLoaderStub: sinon.SinonStubbedInstance<customJestConfigLoader.CustomJestConfigLoader>;
+  let reactScriptsJestConfigLoaderStub: sinon.SinonStubbedInstance<reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader>;
+  let reactScriptsTSJestConfigLoaderStub: sinon.SinonStubbedInstance<reactScriptsTSJestConfigLoader.ReactScriptsTSJestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
-    customConfigLoaderStub = sinon.createStubInstance(CustomJestConfigLoader);
-    reactScriptsJestConfigLoaderStub = sinon.createStubInstance(ReactScriptsJestConfigLoader);
-    reactScriptsTSJestConfigLoaderStub = sinon.createStubInstance(ReactScriptsTSJestConfigLoader);
+    customConfigLoaderStub = sinon.createStubInstance(customJestConfigLoader.CustomJestConfigLoader);
+    reactScriptsJestConfigLoaderStub = sinon.createStubInstance(reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader);
+    reactScriptsTSJestConfigLoaderStub = sinon.createStubInstance(reactScriptsTSJestConfigLoader.ReactScriptsTSJestConfigLoader);
 
-    sinon.stub(defaultJestConfigLoader, 'default').returns(customConfigLoaderStub);
-    sinon.stub(reactScriptsJestConfigLoader, 'default').returns(reactScriptsJestConfigLoaderStub);
-    sinon.stub(reactScriptsTSJestConfigLoader, 'default').returns(reactScriptsTSJestConfigLoaderStub);
+    sinon.stub(customJestConfigLoader, 'CustomJestConfigLoader').returns(customConfigLoaderStub);
+    sinon.stub(reactScriptsJestConfigLoader, 'ReactScriptsJestConfigLoader').returns(reactScriptsJestConfigLoaderStub);
+    sinon.stub(reactScriptsTSJestConfigLoader, 'ReactScriptsTSJestConfigLoader').returns(reactScriptsTSJestConfigLoaderStub);
 
     const defaultOptions: Partial<Config.InitialOptions> = {
       collectCoverage: true,

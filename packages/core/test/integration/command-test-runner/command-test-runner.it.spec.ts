@@ -1,18 +1,15 @@
-import * as path from 'path';
-
 import { TestStatus, DryRunStatus } from '@stryker-mutator/api/test-runner';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import { assertions } from '@stryker-mutator/test-helpers';
-
-import CommandTestRunner from '../../../src/test-runner/command-test-runner';
+import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
 import * as objectUtils from '../../../src/utils/object-utils';
+import { resolveFromRoot } from '../../helpers/test-utils';
 
 describe(`${CommandTestRunner.name} integration`, () => {
-  const workingDir = path.resolve(__dirname, '..', '..', '..', 'testResources', 'command-runner');
+  const workingDir = resolveFromRoot('testResources', 'command-runner');
 
   describe(CommandTestRunner.prototype.dryRun.name, () => {
     it('should report test as successful', async () => {

@@ -3,7 +3,7 @@ import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import { MochaAdapter } from './mocha-adapter';
-import MochaOptionsLoader from './mocha-options-loader';
+import { MochaOptionsLoader } from './mocha-options-loader';
 import { MochaTestRunner } from './mocha-test-runner';
 import * as pluginTokens from './plugin-tokens';
 

@@ -3,7 +3,7 @@ import { Surrializable, surrial } from 'surrial';
 /**
  * Represents a file within Stryker. Could be a strictly in-memory file.
  */
-export default class File implements Surrializable {
+export class File implements Surrializable {
   private _textContent: string | undefined;
   private readonly _content: Buffer;
 

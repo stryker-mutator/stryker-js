@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon = require('sinon');
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
@@ -9,7 +9,7 @@ import { MochaTestRunner } from '../../src/mocha-test-runner';
 import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
 import { MochaAdapter } from '../../src/mocha-adapter';
 import * as pluginTokens from '../../src/plugin-tokens';
-import MochaOptionsLoader from '../../src/mocha-options-loader';
+import { MochaOptionsLoader } from '../../src/mocha-options-loader';
 import { createMochaOptions } from '../helpers/factories';
 
 describe(MochaTestRunner.name, () => {
@@ -145,7 +145,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should add collected files ', async () => {
-      sut.testFileNames.push('foo.js', 'bar.js', 'foo2.js');
+      sut.testFileNames!.push('foo.js', 'bar.js', 'foo2.js');
       await actDryRun();
       expect(mocha.addFile).calledThrice;
       expect(mocha.addFile).calledWith('foo.js');

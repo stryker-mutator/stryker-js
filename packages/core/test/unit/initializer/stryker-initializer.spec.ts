@@ -1,23 +1,23 @@
-import * as child from 'child_process';
-import * as fs from 'fs';
+import childProcess from 'child_process';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import * as inquirer from 'inquirer';
-import * as sinon from 'sinon';
+import inquirer from 'inquirer';
+import sinon from 'sinon';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';
-import NpmClient from '../../../src/initializer/npm-client';
+import { NpmClient } from '../../../src/initializer/npm-client';
 import { PackageInfo } from '../../../src/initializer/package-info';
-import Preset from '../../../src/initializer/presets/preset';
-import PresetConfiguration from '../../../src/initializer/presets/preset-configuration';
-import StrykerConfigWriter from '../../../src/initializer/stryker-config-writer';
-import StrykerInitializer from '../../../src/initializer/stryker-initializer';
+import { Preset } from '../../../src/initializer/presets/preset';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
 import { Mock } from '../../helpers/producers';
-import GitignoreWriter from '../../../src/initializer/gitignore-writer';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -42,7 +42,7 @@ describe(StrykerInitializer.name, () => {
     };
     childExec = sinon.stub(childProcessAsPromised, 'exec');
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
-    childExecSync = sinon.stub(child, 'execSync');
+    childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
     restClientSearch = sinon.createStubInstance(RestClient);

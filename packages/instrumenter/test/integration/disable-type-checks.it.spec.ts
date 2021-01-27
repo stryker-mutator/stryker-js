@@ -1,5 +1,4 @@
-import path from 'path';
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
@@ -8,16 +7,7 @@ import { File } from '@stryker-mutator/api/core';
 
 import { disableTypeChecks } from '../../src';
 import { createInstrumenterOptions } from '../helpers/factories';
-
-const resolveTestResource = path.resolve.bind(
-  path,
-  __dirname,
-  '..' /* integration */,
-  '..' /* test */,
-  '..' /* dist */,
-  'testResources',
-  'disable-type-checks'
-);
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe(`${disableTypeChecks.name} integration`, () => {
   it('should be able disable type checks of a typescript file', async () => {
@@ -31,10 +21,10 @@ describe(`${disableTypeChecks.name} integration`, () => {
   });
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
-    const fullFileName = resolveTestResource(fileName);
-    const file = new File(fullFileName, await fs.readFile(fullFileName));
+    const fullFileName = resolveTestResource('disable-type-checks', fileName);
+    const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
     const result = await disableTypeChecks(file, options);
-    chaiJestSnapshot.setFilename(resolveTestResource(`${fileName}.out.snap`));
+    chaiJestSnapshot.setFilename(resolveTestResource('disable-type-checks', `${fileName}.out.snap`));
     expect(result.textContent).matchSnapshot();
   }
 });

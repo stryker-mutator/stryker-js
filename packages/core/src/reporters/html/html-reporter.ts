@@ -1,6 +1,6 @@
-import * as path from 'path';
+import path from 'path';
 
-import fileUrl = require('file-url');
+import fileUrl from 'file-url';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -13,7 +13,7 @@ import { reportTemplate as reportTemplate } from './report-template';
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
-export default class HtmlReporter implements Reporter {
+export class HtmlReporter implements Reporter {
   private _baseDir!: string;
   private mainPromise: Promise<void> | undefined;
 

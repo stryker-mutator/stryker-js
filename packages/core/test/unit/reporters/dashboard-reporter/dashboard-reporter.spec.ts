@@ -1,30 +1,22 @@
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import {
-  mutationTestReportSchemaFileResult,
-  mutationTestReportSchemaMutantResult,
-  mutationTestReportSchemaMutationTestResult,
-} from '@stryker-mutator/test-helpers/src/factory';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { ReportType } from '@stryker-mutator/api/core';
 
 import { CIProvider } from '../../../../src/reporters/ci/provider';
-import DashboardReporter from '../../../../src/reporters/dashboard-reporter/dashboard-reporter';
-import {
-  default as DashboardReporterClient,
-  default as StrykerDashboardClient,
-} from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
+import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { mock, Mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/report';
 
 describe(DashboardReporter.name, () => {
-  let dashboardClientMock: Mock<StrykerDashboardClient>;
+  let dashboardClientMock: Mock<DashboardReporterClient>;
   let ciProviderMock: Mock<CIProvider>;
 
   beforeEach(() => {
-    dashboardClientMock = mock(StrykerDashboardClient);
+    dashboardClientMock = mock(DashboardReporterClient);
     ciProviderMock = {
       determineProject: sinon.stub(),
       determineVersion: sinon.stub(),
@@ -47,7 +39,7 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.module = 'bazModule';
 
     // Act
-    await act(mutationTestReportSchemaMutationTestResult());
+    await act(factory.mutationTestReportSchemaMutationTestResult());
 
     // Assert
     expect(dashboardClientMock.updateReport).calledWithMatch({
@@ -62,7 +54,7 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.reportType = ReportType.Full;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
-    const expectedMutationTestResult = mutationTestReportSchemaMutationTestResult();
+    const expectedMutationTestResult = factory.mutationTestReportSchemaMutationTestResult();
 
     // Act
     await act(expectedMutationTestResult);
@@ -82,14 +74,14 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.reportType = ReportType.MutationScore;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
-    const mutationTestResult = mutationTestReportSchemaMutationTestResult({
+    const mutationTestResult = factory.mutationTestReportSchemaMutationTestResult({
       files: {
-        'a.js': mutationTestReportSchemaFileResult({
+        'a.js': factory.mutationTestReportSchemaFileResult({
           mutants: [
-            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived }),
+            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived }),
           ],
         }),
       },
@@ -116,7 +108,7 @@ describe(DashboardReporter.name, () => {
     const sut = createSut(null);
 
     // Act
-    sut.onMutationTestReportReady(mutationTestReportSchemaMutationTestResult());
+    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult());
     await sut.wrapUp();
 
     // Assert

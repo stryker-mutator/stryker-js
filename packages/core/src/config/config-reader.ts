@@ -1,10 +1,10 @@
-import * as path from 'path';
+import path from 'path';
 
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { deepMerge } from '@stryker-mutator/util/src/deep-merge';
+import { deepMerge } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
@@ -22,7 +22,7 @@ module.exports = {
 
 const DEFAULT_CONFIG_FILE = 'stryker.conf';
 
-export default class ConfigReader {
+export class ConfigReader {
   public static inject = tokens(coreTokens.cliOptions, commonTokens.logger, coreTokens.optionsValidator);
   constructor(private readonly cliOptions: PartialStrykerOptions, private readonly log: Logger, private readonly validator: OptionsValidator) {}
 

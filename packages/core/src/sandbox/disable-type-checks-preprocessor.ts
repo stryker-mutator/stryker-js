@@ -1,6 +1,6 @@
-import path = require('path');
+import path from 'path';
 
-import minimatch = require('minimatch');
+import minimatch from 'minimatch';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import type { disableTypeChecks } from '@stryker-mutator/instrumenter';

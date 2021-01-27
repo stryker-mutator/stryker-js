@@ -1,6 +1,6 @@
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
 import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { MutantResult } from '@stryker-mutator/api/report';
@@ -8,7 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../../src/logging';
-import Stryker from '../../src/stryker';
+import { Stryker } from '../../src/stryker';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process';
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';

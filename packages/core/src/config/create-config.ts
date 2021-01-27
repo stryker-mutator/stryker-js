@@ -1,4 +1,4 @@
-import { deepMerge } from '@stryker-mutator/util/src/deep-merge';
+import { deepMerge } from '@stryker-mutator/util';
 import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 /**

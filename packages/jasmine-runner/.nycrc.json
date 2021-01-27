@@ -7,5 +7,5 @@
   "functions": 100,
   "statements": 100,
   "branches": 85,
-  "include": "src/**/*.js"
+  "include": "dist/src/**/*.js"
 }

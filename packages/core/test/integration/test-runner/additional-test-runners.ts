@@ -1,5 +1,5 @@
-import * as os from 'os';
-import { isRegExp } from 'util';
+import os from 'os';
+import { types } from 'util';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
@@ -70,7 +70,7 @@ class DiscoverRegexTestRunner implements TestRunner {
   constructor(private readonly options: StrykerOptions) {}
 
   public async dryRun(): Promise<DryRunResult> {
-    if (isRegExp(this.options.someRegex)) {
+    if (types.isRegExp(this.options.someRegex)) {
       return factory.completeDryRunResult();
     } else {
       return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
@@ -119,7 +119,7 @@ class NeverResolvedTestRunner implements TestRunner {
 }
 
 class SlowInitAndDisposeTestRunner implements TestRunner {
-  public inInit: boolean;
+  public inInit = false;
 
   public init() {
     return new Promise<void>((resolve) => {
@@ -160,13 +160,13 @@ class VerifyWorkingFolderTestRunner implements TestRunner {
 }
 
 class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
-  public promise: Promise<void>;
+  public promise?: Promise<void>;
 
   public async init() {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
   public async dryRun(): Promise<DryRunResult> {
-    this.promise.catch(() => {});
+    this.promise!.catch(() => {});
     return factory.completeDryRunResult();
   }
   public async mutantRun(): Promise<MutantRunResult> {

@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 
 import { determineCIProvider } from '../../../../src/reporters/ci/provider';
-import TravisProvider from '../../../../src/reporters/ci/travis-provider';
-import CircleProvider from '../../../../src/reporters/ci/circle-provider';
+import { TravisProvider } from '../../../../src/reporters/ci/travis-provider';
+import { CircleProvider } from '../../../../src/reporters/ci/circle-provider';
 import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
-import GithubActionsProvider from '../../../../src/reporters/ci/github-actions-provider';
+import { GithubActionsCIProvider } from '../../../../src/reporters/ci/github-actions-provider';
 
-describe('determineCiProvider()', () => {
+describe(determineCIProvider.name, () => {
   const env = new EnvironmentVariableStore();
 
   beforeEach(() => {
@@ -38,6 +38,6 @@ describe('determineCiProvider()', () => {
   it('should provide Github when running in the github actions CI environment', () => {
     env.set('GITHUB_ACTION', 'true');
     const result = determineCIProvider();
-    expect(result).instanceOf(GithubActionsProvider);
+    expect(result).instanceOf(GithubActionsCIProvider);
   });
 });

@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
@@ -9,7 +9,7 @@ import { Checker } from '@stryker-mutator/api/check';
 import { I } from '@stryker-mutator/util';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import InputFileCollection from '../../../src/input/input-file-collection';
+import { InputFileCollection } from '../../../src/input/input-file-collection';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/checker-facade';

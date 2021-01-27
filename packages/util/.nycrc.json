@@ -5,9 +5,8 @@
   "branches": 90,
   "excludeAfterRemap": false,
   "checkCoverage": true,
-  "reporter": "html",
   "reportDir": "reports/coverage",
   "include": [
-    "src/**/*.js"
+    "dist/src/**/*.js"
   ]
 }

@@ -1,5 +1,5 @@
-import { ChildProcess, fork } from 'child_process';
-import * as os from 'os';
+import childProcess from 'child_process';
+import os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
@@ -9,11 +9,11 @@ import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/object-utils';
-import StringBuilder from '../utils/string-builder';
+import { StringBuilder } from '../utils/string-builder';
 
-import ChildProcessCrashedError from './child-process-crashed-error';
+import { ChildProcessCrashedError } from './child-process-crashed-error';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
-import OutOfMemoryError from './out-of-memory-error';
+import { OutOfMemoryError } from './out-of-memory-error';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -27,10 +27,10 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
-export default class ChildProcessProxy<T> implements Disposable {
+export class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
-  private readonly worker: ChildProcess;
+  private readonly worker: childProcess.ChildProcess;
   private readonly initTask: Task;
   private disposeTask: ExpirableTask | undefined;
   private currentError: ChildProcessCrashedError | undefined;
@@ -49,7 +49,7 @@ export default class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string,
     execArgv: string[]
   ) {
-    this.worker = fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
+    this.worker = childProcess.fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
     this.initTask = new Task();
     this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({

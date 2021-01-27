@@ -1,6 +1,6 @@
-import { Location, Range } from '../../core';
+import { Location, Range } from '../core';
 
-import MutantStatus from './mutant-status';
+import { MutantStatus } from './mutant-status';
 
 export interface BaseMutantResult {
   id: string;

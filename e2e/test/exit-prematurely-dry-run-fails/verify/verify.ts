@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 import chai, { expect } from 'chai';
-import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
 
@@ -9,7 +8,7 @@ describe('Verify stryker has handled dry run failure correctly', () => {
   let strykerLog: string;
 
   before(async () => {
-    strykerLog = await fs.readFile('./stryker.log', 'utf8');
+    strykerLog = await fsPromises.readFile('./stryker.log', 'utf8');
   });
 
   it('should about failed tests in initial test run', async () => {
@@ -30,6 +29,6 @@ describe('Verify stryker has handled dry run failure correctly', () => {
 
   
   it('should not delete the temp dir', async () => {
-    await expect(fs.stat('.stryker-tmp'), 'Expected the `.stryker-tmp` dir to not be deleted.').not.rejected;
+    await expect(fsPromises.stat('.stryker-tmp'), 'Expected the `.stryker-tmp` dir to not be deleted.').not.rejected;
   });
 });

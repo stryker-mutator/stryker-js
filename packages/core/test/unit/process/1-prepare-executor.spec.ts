@@ -4,15 +4,15 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PartialStrykerOptions, File, LogLevel } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { PrepareExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
 import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
-import Timer from '../../../src/utils/timer';
-import InputFileResolver from '../../../src/input/input-file-resolver';
-import InputFileCollection from '../../../src/input/input-file-collection';
+import { Timer } from '../../../src/utils/timer';
+import { InputFileResolver } from '../../../src/input/input-file-resolver';
+import { InputFileCollection } from '../../../src/input/input-file-collection';
 
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import { ConfigError } from '../../../src/errors';
@@ -72,11 +72,6 @@ describe(PrepareExecutor.name, () => {
   it('should build the main injector', async () => {
     await sut.execute();
     expect(buildMainInjectorModule.buildMainInjector).calledWith(injectorMock);
-  });
-
-  it('should reset the timer', async () => {
-    await sut.execute();
-    expect(timerMock.reset).calledOnce;
   });
 
   it('should resolve input files', async () => {

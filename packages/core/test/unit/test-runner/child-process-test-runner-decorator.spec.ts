@@ -1,17 +1,14 @@
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import { strykerOptions } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
-
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-
 import { factory } from '@stryker-mutator/test-helpers';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
-import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import { LoggingClientContext } from '../../../src/logging';
-import ChildProcessTestRunnerDecorator from '../../../src/test-runner/child-process-test-runner-decorator';
+import { ChildProcessTestRunnerDecorator } from '../../../src/test-runner/child-process-test-runner-decorator';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
 
 describe(ChildProcessTestRunnerDecorator.name, () => {
@@ -32,7 +29,7 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     };
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
-    options = strykerOptions({
+    options = factory.strykerOptions({
       plugins: ['foo-plugin', 'bar-plugin'],
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };

@@ -8,14 +8,14 @@ class State {
   }
 
   public coverageAnalysis: CoverageAnalysis = 'off';
-  private mutantCoverageHandler: MutantCoverageHandler;
+  private mutantCoverageHandler?: MutantCoverageHandler;
 
   public setMutantCoverageHandler(handler: MutantCoverageHandler) {
     this.mutantCoverageHandler = handler;
   }
 
   public handleMutantCoverage(fileName: string, coverage: MutantCoverage | undefined) {
-    this.mutantCoverageHandler(fileName, coverage);
+    this.mutantCoverageHandler!(fileName, coverage);
   }
 
   public resetMutantCoverageHandler() {

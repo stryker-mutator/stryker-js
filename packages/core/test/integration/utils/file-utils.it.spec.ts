@@ -1,12 +1,12 @@
-import os = require('os');
-import path = require('path');
+import os from 'os';
+import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import mkdirp = require('mkdirp');
+import mkdirp from 'mkdirp';
 
 import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
-import nodeGlob = require('glob');
+import nodeGlob from 'glob';
 import { assertions } from '@stryker-mutator/test-helpers';
 
 import * as fileUtils from '../../../src/utils/file-utils';

@@ -1,9 +1,9 @@
-import * as path from 'path';
-import * as fs from 'fs';
+import path from 'path';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { PluginLoader } from '../../../src/di/plugin-loader';
@@ -68,15 +68,17 @@ describe('PluginLoader', () => {
       });
 
       it('should read from a `node_modules` folder', () => {
-        expect(pluginDirectoryReadMock).calledWith(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator'));
+        expect(pluginDirectoryReadMock).calledWith(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', '@stryker-mutator'));
       });
 
       it('should load "@stryker-mutator/jasmine-framework" and "@stryker-mutator/karma-runner"', () => {
         expect(fileUtils.importModule).calledTwice;
         expect(fileUtils.importModule).calledWithMatch(
-          path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'jasmine-framework')
+          path.resolve(__dirname, '..', '..', '..', '..', '..', '..', '@stryker-mutator', 'jasmine-framework')
         );
-        expect(fileUtils.importModule).calledWithMatch(path.resolve(__dirname, '..', '..', '..', '..', '..', '@stryker-mutator', 'karma-runner'));
+        expect(fileUtils.importModule).calledWithMatch(
+          path.resolve(__dirname, '..', '..', '..', '..', '..', '..', '@stryker-mutator', 'karma-runner')
+        );
       });
     });
   });

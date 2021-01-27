@@ -20,7 +20,7 @@ import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
-import Timer from '../utils/timer';
+import { Timer } from '../utils/timer';
 import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
@@ -65,8 +65,6 @@ function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
 }
 
 export class DryRunExecutor {
-  private readonly dryRunTimeout: number;
-
   public static readonly inject = tokens(
     commonTokens.injector,
     commonTokens.logger,
@@ -125,7 +123,7 @@ export class DryRunExecutor {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info('Starting initial test run. This may take a while.');
-    this.log.debug(`Using timeout of ${this.dryRunTimeout} ms.`);
+    this.log.debug(`Using timeout of ${dryRunTimeout} ms.`);
     const dryRunResult = await testRunner.dryRun({ timeout: dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);

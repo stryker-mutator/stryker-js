@@ -1,17 +1,17 @@
-import * as child from 'child_process';
-import { promises as fs } from 'fs';
+import childProcess from 'child_process';
+import { promises as fsPromises } from 'fs';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import NpmClient from './npm-client';
+import { NpmClient } from './npm-client';
 import { PackageInfo } from './package-info';
-import Preset from './presets/preset';
-import PromptOption from './prompt-option';
-import StrykerConfigWriter from './stryker-config-writer';
+import { Preset } from './presets/preset';
+import { PromptOption } from './prompt-option';
+import { StrykerConfigWriter } from './stryker-config-writer';
 import { StrykerInquirer } from './stryker-inquirer';
-import GitignoreWriter from './gitignore-writer';
+import { GitignoreWriter } from './gitignore-writer';
 
 import { initializerTokens } from '.';
 
@@ -20,7 +20,7 @@ const enum PackageManager {
   Yarn = 'yarn',
 }
 
-export default class StrykerInitializer {
+export class StrykerInitializer {
   public static inject = tokens(
     commonTokens.logger,
     initializerTokens.out,
@@ -89,7 +89,7 @@ export default class StrykerInitializer {
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
     if (presetConfig.additionalConfigFiles) {
-      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fs.writeFile(name, content)));
+      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fsPromises.writeFile(name, content)));
     }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
@@ -184,7 +184,7 @@ export default class StrykerInitializer {
     const cmd = selectedOption.name === PackageManager.Npm ? `npm i --save-dev ${dependencyArg}` : `yarn add ${dependencyArg} --dev`;
     this.out(cmd);
     try {
-      child.execSync(cmd, { stdio: [0, 1, 2] });
+      childProcess.execSync(cmd, { stdio: [0, 1, 2] });
     } catch (_) {
       this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
     }

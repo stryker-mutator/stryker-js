@@ -1,9 +1,9 @@
-import * as fs from 'fs';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import HtmlReporter from '../../../../src/reporters/html/html-reporter';
+import { HtmlReporter } from '../../../../src/reporters/html/html-reporter';
 
 import { simpleReport } from './simple-report';
 

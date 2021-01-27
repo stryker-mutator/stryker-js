@@ -1,5 +1,4 @@
-import path from 'path';
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -7,8 +6,9 @@ import { expect } from 'chai';
 import { createParser } from '../../src/parsers';
 import { print } from '../../src/printers';
 import { createParserOptions } from '../helpers/factories';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
-const resolveTestResource = path.resolve.bind(path, __dirname, '..' /* integration */, '..' /* test */, '..' /* dist */, 'testResources', 'printer');
+const resolvePrinterTestResource = resolveTestResource.bind(null, 'printer');
 
 describe('parse and print integration', () => {
   describe('echo', () => {
@@ -17,8 +17,8 @@ describe('parse and print integration', () => {
     });
 
     async function actArrangeAndAssert(relativeFileName: string) {
-      const fileName = resolveTestResource('echo', relativeFileName);
-      const code = await fs.readFile(fileName, 'utf8');
+      const fileName = resolvePrinterTestResource('echo', relativeFileName);
+      const code = await fsPromises.readFile(fileName, 'utf8');
       const parsed = await createParser(createParserOptions())(code, fileName);
       const output = print(parsed);
       expect(normalizeWhitespaces(output)).eq(normalizeWhitespaces(code));
@@ -30,9 +30,9 @@ describe('parse and print integration', () => {
     });
 
     async function actArrangeAndAssert(testCase: string) {
-      const inputFileName = resolveTestResource('html', `${testCase}.in.html`);
-      const outputFileName = resolveTestResource('html', `${testCase}.out.html`);
-      const [input, expectedOutput] = await Promise.all([fs.readFile(inputFileName, 'utf8'), fs.readFile(outputFileName, 'utf8')]);
+      const inputFileName = resolvePrinterTestResource('html', `${testCase}.in.html`);
+      const outputFileName = resolvePrinterTestResource('html', `${testCase}.out.html`);
+      const [input, expectedOutput] = await Promise.all([fsPromises.readFile(inputFileName, 'utf8'), fsPromises.readFile(outputFileName, 'utf8')]);
       const parsed = await createParser(createParserOptions())(input, inputFileName);
       const actualOutput = print(parsed);
       expect(normalizeWhitespaces(actualOutput)).eq(normalizeWhitespaces(expectedOutput));

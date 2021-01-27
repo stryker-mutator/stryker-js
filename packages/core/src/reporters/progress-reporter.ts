@@ -1,10 +1,10 @@
 import { MatchedMutant, MutantResult } from '@stryker-mutator/api/report';
 
-import ProgressBar from './progress-bar';
-import ProgressKeeper from './progress-keeper';
+import { ProgressBar } from './progress-bar';
+import { ProgressKeeper } from './progress-keeper';
 
-export default class ProgressBarReporter extends ProgressKeeper {
-  private progressBar: ProgressBar;
+export class ProgressBarReporter extends ProgressKeeper {
+  private progressBar?: ProgressBar;
 
   public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
@@ -34,10 +34,10 @@ export default class ProgressBarReporter extends ProgressKeeper {
   }
 
   private tick(tickObj: Record<string, unknown>): void {
-    this.progressBar.tick(tickObj);
+    this.progressBar?.tick(tickObj);
   }
 
   private render(renderObj: Record<string, unknown>): void {
-    this.progressBar.render(renderObj);
+    this.progressBar?.render(renderObj);
   }
 }

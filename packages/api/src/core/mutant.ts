@@ -1,10 +1,10 @@
-import Range from './range';
-import Location from './location';
+import { Range } from './range';
+import { Location } from './location';
 
 /**
  * Represents a mutant
  */
-interface Mutant {
+export interface Mutant {
   /**
    * The id of the mutant. Unique within a run.
    */
@@ -34,5 +34,3 @@ interface Mutant {
    */
   ignoreReason?: string;
 }
-
-export default Mutant;

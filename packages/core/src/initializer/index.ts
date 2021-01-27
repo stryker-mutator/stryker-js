@@ -4,12 +4,12 @@ import { RestClient } from 'typed-rest-client';
 import { provideLogger } from '../di';
 
 import * as initializerTokens from './initializer-tokens';
-import NpmClient from './npm-client';
-import StrykerConfigWriter from './stryker-config-writer';
-import StrykerInitializer from './stryker-initializer';
+import { NpmClient } from './npm-client';
+import { StrykerConfigWriter } from './stryker-config-writer';
+import { StrykerInitializer } from './stryker-initializer';
 import { StrykerInquirer } from './stryker-inquirer';
-import strykerPresets from './stryker-presets';
-import GitignoreWriter from './gitignore-writer';
+import { strykerPresets } from './stryker-presets';
+import { GitignoreWriter } from './gitignore-writer';
 
 const BASE_NPM_SEARCH = 'https://api.npms.io';
 const BASE_NPM_PACKAGE = 'https://www.unpkg.com';

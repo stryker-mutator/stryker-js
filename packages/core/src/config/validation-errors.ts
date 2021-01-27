@@ -1,6 +1,6 @@
 import { ErrorObject } from 'ajv';
 
-import groupby = require('lodash.groupby');
+import groupby from 'lodash.groupby';
 
 /**
  * Convert AJV errors to human readable messages

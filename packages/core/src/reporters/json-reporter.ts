@@ -1,18 +1,18 @@
-import * as path from 'path';
+import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
 
-import fileUrl = require('file-url');
+import fileUrl from 'file-url';
 
 import * as ReporterUtil from './reporter-util';
 
 const INDENTION_LEVEL = 0;
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
-export default class JsonReporter implements Reporter {
+export class JsonReporter implements Reporter {
   private mainPromise: Promise<void> | undefined;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}

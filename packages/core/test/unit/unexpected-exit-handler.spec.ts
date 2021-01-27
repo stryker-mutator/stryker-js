@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 
 import { coreTokens } from '../../src/di';

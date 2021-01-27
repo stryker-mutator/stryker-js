@@ -1,5 +1,5 @@
-import * as path from 'path';
-import { promises as fs } from 'fs';
+import path from 'path';
+import { promises as fsPromises } from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -8,9 +8,9 @@ import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, Source
 
 import { cleanFolder } from '../utils/file-utils';
 
-import StrictReporter from './strict-reporter';
+import { StrictReporter } from './strict-reporter';
 
-export default class EventRecorderReporter implements StrictReporter {
+export class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
   private readonly allWork: Array<Promise<void>> = [];
@@ -24,7 +24,7 @@ export default class EventRecorderReporter implements StrictReporter {
   private writeToFile(methodName: keyof Reporter, data: any) {
     const filename = path.join(this.options.eventReporter.baseDir, `${this.format(this.index++)}-${methodName}.json`);
     this.log.debug(`Writing event ${methodName} to file ${filename}`);
-    return fs.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
+    return fsPromises.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
   }
 
   private format(input: number) {

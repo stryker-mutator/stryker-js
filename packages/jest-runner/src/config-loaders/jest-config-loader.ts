@@ -8,7 +8,7 @@
 
 import { Config } from '@jest/types';
 
-export default interface JestConfigLoader {
+export interface JestConfigLoader {
   /*
    * Load the JSON representation of a Jest Configuration.
    *

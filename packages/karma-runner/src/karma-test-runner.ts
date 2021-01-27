@@ -1,4 +1,4 @@
-import * as karma from 'karma';
+import karma from 'karma';
 import { StrykerOptions, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -16,17 +16,17 @@ import {
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
-import ProjectStarter from './starters/project-starter';
-import StrykerReporter from './karma-plugins/stryker-reporter';
+import { ProjectStarter } from './starters/project-starter';
+import { StrykerReporter } from './karma-plugins/stryker-reporter';
 import { KarmaRunnerOptionsWithStrykerOptions } from './karma-runner-options-with-stryker-options';
-import TestHooksMiddleware from './karma-plugins/test-hooks-middleware';
+import { TestHooksMiddleware } from './karma-plugins/test-hooks-middleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;
 }
 
-export default class KarmaTestRunner implements TestRunner {
-  private currentTestResults: TestResult[];
+export class KarmaTestRunner implements TestRunner {
+  private currentTestResults: TestResult[] = [];
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;
   private readonly starter: ProjectStarter;

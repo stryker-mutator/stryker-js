@@ -1,16 +1,15 @@
-import path = require('path');
-
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
 import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('JasmineRunner integration with code instrumentation', () => {
   let sut: JasmineTestRunner;
 
   beforeEach(() => {
-    process.chdir(path.resolve(__dirname, '../../testResources/jasmine-init-instrumented'));
+    process.chdir(resolveTestResource('jasmine-init-instrumented'));
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });
 

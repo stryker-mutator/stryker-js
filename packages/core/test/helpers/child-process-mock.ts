@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-export default class ChildProcessMock extends EventEmitter {
+export class ChildProcessMock extends EventEmitter {
   public stdout = new EventEmitter();
   public stderr = new EventEmitter();
 

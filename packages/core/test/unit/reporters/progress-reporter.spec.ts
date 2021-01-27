@@ -1,12 +1,11 @@
 import { MatchedMutant, MutantStatus } from '@stryker-mutator/api/report';
-import { matchedMutant } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-import ProgressBar = require('progress');
+import sinon from 'sinon';
+import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
 
 import * as progressBarModule from '../../../src/reporters/progress-bar';
-import ProgressReporter from '../../../src/reporters/progress-reporter';
+import { ProgressBarReporter } from '../../../src/reporters/progress-reporter';
 import { Mock, mock } from '../../helpers/producers';
 
 const SECOND = 1000;
@@ -15,8 +14,8 @@ const HUNDRED_SECONDS = SECOND * 100;
 const TEN_THOUSAND_SECONDS = SECOND * 10000;
 const ONE_HOUR = SECOND * 3600;
 
-describe('ProgressReporter', () => {
-  let sut: ProgressReporter;
+describe(ProgressBarReporter.name, () => {
+  let sut: ProgressBarReporter;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
   const progressBarContent =
@@ -24,49 +23,51 @@ describe('ProgressReporter', () => {
 
   beforeEach(() => {
     sinon.useFakeTimers();
-
-    sut = new ProgressReporter();
-
+    sut = new ProgressBarReporter();
     progressBar = mock(ProgressBar);
-    sinon.stub(progressBarModule, 'default').returns(progressBar);
+    sinon.stub(progressBarModule, 'ProgressBar').returns(progressBar);
   });
 
   describe('onAllMutantsMatchedWithTests()', () => {
     describe('when there are 3 MatchedMutants that all contain Tests', () => {
       beforeEach(() => {
-        matchedMutants = [matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true })];
+        matchedMutants = [
+          factory.matchedMutant({ runAllTests: true }),
+          factory.matchedMutant({ runAllTests: true }),
+          factory.matchedMutant({ runAllTests: true }),
+        ];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
 
       it('the total of MatchedMutants in the progress bar should be 3', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
     describe("when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn't have tests", () => {
       beforeEach(() => {
         matchedMutants = [
-          matchedMutant({ testFilter: undefined }),
-          matchedMutant({ testFilter: ['spec1'] }),
-          matchedMutant({ testFilter: ['spec2'] }),
+          factory.matchedMutant({ testFilter: undefined }),
+          factory.matchedMutant({ testFilter: ['spec1'] }),
+          factory.matchedMutant({ testFilter: ['spec2'] }),
         ];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
     describe('when mutants match to all tests', () => {
       beforeEach(() => {
-        matchedMutants = [matchedMutant({ runAllTests: true }), matchedMutant({ runAllTests: true })];
+        matchedMutants = [factory.matchedMutant({ runAllTests: true }), factory.matchedMutant({ runAllTests: true })];
 
         sut.onAllMutantsMatchedWithTests(matchedMutants);
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
   });
@@ -76,10 +77,10 @@ describe('ProgressReporter', () => {
 
     beforeEach(() => {
       matchedMutants = [
-        matchedMutant({ id: '0' }), // NoCoverage
-        matchedMutant({ id: '1', testFilter: [''] }),
-        matchedMutant({ id: '2', runAllTests: true }),
-        matchedMutant({ id: '3', testFilter: [''] }),
+        factory.matchedMutant({ id: '0' }), // NoCoverage
+        factory.matchedMutant({ id: '1', testFilter: [''] }),
+        factory.matchedMutant({ id: '2', runAllTests: true }),
+        factory.matchedMutant({ id: '3', testFilter: [''] }),
       ];
       sut.onAllMutantsMatchedWithTests(matchedMutants);
     });
@@ -107,9 +108,9 @@ describe('ProgressReporter', () => {
   describe('ProgressBar estimated time for 3 mutants', () => {
     beforeEach(() => {
       sut.onAllMutantsMatchedWithTests([
-        matchedMutant({ id: '1', runAllTests: true }),
-        matchedMutant({ id: '2', runAllTests: true }),
-        matchedMutant({ id: '3', runAllTests: true }),
+        factory.matchedMutant({ id: '1', runAllTests: true }),
+        factory.matchedMutant({ id: '2', runAllTests: true }),
+        factory.matchedMutant({ id: '3', runAllTests: true }),
       ]);
     });
 

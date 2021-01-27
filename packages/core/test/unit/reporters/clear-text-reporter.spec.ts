@@ -1,14 +1,13 @@
-import * as os from 'os';
+import os from 'os';
 
 import { mutationTestReportSchema, MutantStatus } from '@stryker-mutator/api/report';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { mutationScoreThresholds } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import chalk = require('chalk');
+import chalk from 'chalk';
 
-import ClearTextReporter from '../../../src/reporters/clear-text-reporter';
+import { ClearTextReporter } from '../../../src/reporters/clear-text-reporter';
 
 describe(ClearTextReporter.name, () => {
   let sut: ClearTextReporter;
@@ -41,7 +40,7 @@ describe(ClearTextReporter.name, () => {
           },
         },
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({}),
+        thresholds: factory.mutationScoreThresholds({}),
       });
 
       const serializedTable: string = stdoutStub.getCall(0).args[0];
@@ -65,7 +64,7 @@ describe(ClearTextReporter.name, () => {
       sut.onMutationTestReportReady({
         files: {},
         schemaVersion: '1.0',
-        thresholds: mutationScoreThresholds({}),
+        thresholds: factory.mutationScoreThresholds({}),
       });
 
       expect(chalk.level).to.eq(0);

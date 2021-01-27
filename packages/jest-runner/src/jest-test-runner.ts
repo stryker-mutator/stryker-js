@@ -24,12 +24,12 @@ import { JestOptions } from '../src-generated/jest-runner-options';
 
 import { jestTestAdapterFactory } from './jest-test-adapters';
 import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
-import JestConfigLoader from './config-loaders/jest-config-loader';
+import { JestConfigLoader } from './config-loaders/jest-config-loader';
 import { withCoverageAnalysis } from './jest-plugins';
 import * as pluginTokens from './plugin-tokens';
 import { configLoaderFactory } from './config-loaders';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
-import JEST_OVERRIDE_OPTIONS from './jest-override-options';
+import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
 import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
 
@@ -49,7 +49,7 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
 
 export const jestTestRunnerFactory = createJestTestRunnerFactory();
 
-export default class JestTestRunner implements TestRunner {
+export class JestTestRunner implements TestRunner {
   private readonly jestConfig: jest.Config.InitialOptions;
   private readonly enableFindRelatedTests: boolean;
 

@@ -1,15 +1,14 @@
-import * as os from 'os';
+import os from 'os';
 
 import { MutationScoreThresholds } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { metrics, metricsResult } from '@stryker-mutator/test-helpers/src/factory';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
 
-import chalk = require('chalk');
-import flatMap = require('lodash.flatmap');
+import chalk from 'chalk';
+import flatMap from 'lodash.flatmap';
 
-import ClearTextScoreTable from '../../../src/reporters/clear-text-score-table';
+import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
@@ -20,15 +19,15 @@ describe(ClearTextScoreTable.name, () => {
             childResults: [
               {
                 childResults: [],
-                metrics: metrics({ mutationScore: 59.99 }),
+                metrics: factory.metrics({ mutationScore: 59.99 }),
                 name: 'some/test/for/a/deep/file.js',
               },
             ],
-            metrics: metrics({ mutationScore: 60 }),
+            metrics: factory.metrics({ mutationScore: 60 }),
             name: 'child1',
           },
         ],
-        metrics: metrics({
+        metrics: factory.metrics({
           compileErrors: 7,
           killed: 1,
           mutationScore: 80,
@@ -58,7 +57,7 @@ describe(ClearTextScoreTable.name, () => {
     it('should grow columns widths based on value size', () => {
       const metricsResult: MetricsResult = {
         childResults: [],
-        metrics: metrics({
+        metrics: factory.metrics({
           killed: 1000000000,
         }),
         name: 'root',
@@ -75,15 +74,15 @@ describe(ClearTextScoreTable.name, () => {
 
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
       const thresholds: MutationScoreThresholds = { high: 60, low: 50, break: 0 };
-      const input: MetricsResult = metricsResult({
+      const input: MetricsResult = factory.metricsResult({
         childResults: [
-          metricsResult({ metrics: metrics({ mutationScore: 60.0 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 59.99 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 50.01 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }),
-          metricsResult({ metrics: metrics({ mutationScore: 49.99 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 60.0 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 59.99 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.01 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.0 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 49.99 }) }),
         ],
-        metrics: metrics({ mutationScore: 60.01 }),
+        metrics: factory.metrics({ mutationScore: 60.01 }),
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 
@@ -99,9 +98,12 @@ describe(ClearTextScoreTable.name, () => {
 
     it('should color score in red and green if low equals high thresholds', () => {
       const thresholds: MutationScoreThresholds = { high: 50, low: 50, break: 0 };
-      const input: MetricsResult = metricsResult({
-        childResults: [metricsResult({ metrics: metrics({ mutationScore: 50.0 }) }), metricsResult({ metrics: metrics({ mutationScore: 49.99 }) })],
-        metrics: metrics({ mutationScore: 50.01 }),
+      const input: MetricsResult = factory.metricsResult({
+        childResults: [
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.0 }) }),
+          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 49.99 }) }),
+        ],
+        metrics: factory.metrics({ mutationScore: 50.01 }),
       });
       const sut = new ClearTextScoreTable(input, thresholds);
 

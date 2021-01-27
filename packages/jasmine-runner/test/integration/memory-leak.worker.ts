@@ -1,11 +1,9 @@
-import path = require('path');
-
 import { testInjector } from '@stryker-mutator/test-helpers';
-
 import { expect } from 'chai';
 import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { createJasmineTestRunnerFactory } from '../../src';
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 /**
  * This file will run the jasmine runner a number of times in a test suite that is designed
@@ -25,7 +23,7 @@ if (require.main === module) {
 }
 
 async function main() {
-  process.chdir(path.resolve(__dirname, '..', '..', 'testResources', 'big-project'));
+  process.chdir(resolveTestResource('big-project'));
   const jasmineRunner = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   await doDryRun();
 

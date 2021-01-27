@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "outDir": "dist/test",
+    "rootDir": "test",
+    "strictBindCallApply": true,
     "types": [
       "mocha",
       "node"

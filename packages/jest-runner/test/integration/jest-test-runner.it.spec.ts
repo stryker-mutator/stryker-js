@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { platform } from 'os';
 
 import { expect } from 'chai';
@@ -6,7 +6,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import JestTestRunner, { jestTestRunnerFactory } from '../../src/jest-test-runner';
+import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
@@ -14,7 +14,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
-paths.appTsTestConfig = require.resolve('../../testResources/reactTsProject/tsconfig.test.json');
+paths.appTsTestConfig = resolveTestResource('reactTsProject/tsconfig.test.json');
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';

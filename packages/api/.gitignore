@@ -1,5 +1,0 @@
-/*.js
-/*.d.ts
-!/stryker.conf.js
-testResources/module/**/*.js
-testResources/module/**/*.d.ts

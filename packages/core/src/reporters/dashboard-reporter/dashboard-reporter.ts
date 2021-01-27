@@ -6,11 +6,11 @@ import { calculateMetrics } from 'mutation-testing-metrics';
 
 import { CIProvider } from '../ci/provider';
 
-import DashboardReporterClient from './dashboard-reporter-client';
+import { DashboardReporterClient } from './dashboard-reporter-client';
 import { dashboardReporterTokens } from './tokens';
 import { Report } from './report';
 
-export default class DashboardReporter implements Reporter {
+export class DashboardReporter implements Reporter {
   public static readonly inject = tokens(
     commonTokens.logger,
     dashboardReporterTokens.dashboardReporterClient,

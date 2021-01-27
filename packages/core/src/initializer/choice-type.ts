@@ -1,4 +1,4 @@
-import Separator = require('inquirer/lib/objects/separator');
+import Separator from 'inquirer/lib/objects/separator';
 
 /**
  * The "ChoiceType" is used often and is annoying to keep in sync (types change often).

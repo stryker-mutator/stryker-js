@@ -5,7 +5,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { Request, NextFunction, Response } from 'express';
 import sinon = require('sinon');
 
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
+import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
 
 describe(TestHooksMiddleware.name, () => {
   let sut: TestHooksMiddleware;

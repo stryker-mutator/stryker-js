@@ -1,20 +1,17 @@
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
-import { mutationTestReportSchemaMutationTestResult } from '@stryker-mutator/test-helpers/src/factory';
-
 import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
 
-import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
-import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { Mock, mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/report';
 import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
 
 describe(DashboardReporterClient.name, () => {
-  let sut: StrykerDashboardClient;
+  let sut: DashboardReporterClient;
   let httpClient: Mock<HttpClient>;
   let environment: EnvironmentVariableStore;
 
@@ -43,7 +40,7 @@ describe(DashboardReporterClient.name, () => {
       const expectedHref = 'foo/bar';
       respondWith(200, `{ "href": "${expectedHref}" }`);
       environment.set('STRYKER_DASHBOARD_API_KEY', apiKey);
-      const report = mutationTestReportSchemaMutationTestResult();
+      const report = factory.mutationTestReportSchemaMutationTestResult();
       const expectedBody = JSON.stringify(report);
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}`;
 
@@ -64,7 +61,7 @@ describe(DashboardReporterClient.name, () => {
     it('should put the report for a specific module', async () => {
       // Arrange
       respondWith();
-      const report = mutationTestReportSchemaMutationTestResult();
+      const report = factory.mutationTestReportSchemaMutationTestResult();
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}?module=stryker%20module`;
 
       // Act
@@ -77,7 +74,7 @@ describe(DashboardReporterClient.name, () => {
     it('should use configured baseUrl', async () => {
       // Arrange
       respondWith();
-      const report = mutationTestReportSchemaMutationTestResult();
+      const report = factory.mutationTestReportSchemaMutationTestResult();
       testInjector.options.dashboard.baseUrl = 'https://foo.bar.com/api';
       const expectedUrl = `https://foo.bar.com/api/${projectName}/${expectedVersion}?module=stryker%20module`;
 
@@ -107,7 +104,7 @@ describe(DashboardReporterClient.name, () => {
     it('should throw an unexpected error if the dashboard responds with 500', async () => {
       // Arrange
       respondWith(500, 'Internal server error');
-      const report = mutationTestReportSchemaMutationTestResult();
+      const report = factory.mutationTestReportSchemaMutationTestResult();
 
       // Act
       const promise = sut.updateReport({ report, projectName, version, moduleName: undefined });

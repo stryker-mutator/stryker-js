@@ -1,5 +1,5 @@
 import { LogLevel } from '@stryker-mutator/api/core';
-import * as log4js from 'log4js';
+import log4js from 'log4js';
 
 import { getFreePort } from '../utils/net-utils';
 

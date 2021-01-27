@@ -1,6 +1,6 @@
-import 'source-map-support/register';
-import { sep } from 'path';
+import path from 'path';
 
+import 'source-map-support/register';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
@@ -8,6 +8,7 @@ import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 import type { Context } from 'mocha';
+import { retrieveSourceMap } from 'source-map-support';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -29,6 +30,17 @@ export const mochaHooks = {
   beforeEach(this: Context) {
     originalCwd = process.cwd();
     chaiJestSnapshot.configureUsingMochaContext(this);
-    chaiJestSnapshot.setFilename(this.currentTest!.file!.replace(`${sep}dist`, '') + '.snap');
+    chaiJestSnapshot.setFilename(snapshotFileFor(this.currentTest!.file!));
   },
 };
+
+const snapshotFileMap = new Map<string, string>();
+function snapshotFileFor(outFile: string): string {
+  let originalFile = snapshotFileMap.get(outFile);
+  if (!originalFile) {
+    const sourceMapContent: { sources: string[] } = JSON.parse(retrieveSourceMap(outFile)!.map as string);
+    originalFile = path.resolve(path.dirname(outFile), sourceMapContent.sources[0]) + '.snap';
+    snapshotFileMap.set(outFile, originalFile);
+  }
+  return originalFile;
+}

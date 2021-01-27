@@ -1,4 +1,4 @@
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 

@@ -1,9 +1,9 @@
-import * as os from 'os';
+import os from 'os';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import Preset from './preset';
-import PresetConfiguration from './preset-configuration';
+import { Preset } from './preset';
+import { PresetConfiguration } from './preset-configuration';
 
 const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/angular';
 

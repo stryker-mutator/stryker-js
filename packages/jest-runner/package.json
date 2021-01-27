@@ -2,12 +2,12 @@
   "name": "@stryker-mutator/jest-runner",
   "version": "4.4.1",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha \"test/helpers/**/*.js\" \"test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 30000 \"test/helpers/**/*.js\" \"test/integration/**/*.js\"",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 30000 \"dist/test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker run"
   },
   "repository": {

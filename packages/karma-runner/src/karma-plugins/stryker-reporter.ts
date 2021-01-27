@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 
 import { DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { MutantCoverage } from '@stryker-mutator/api/core';
-import * as karma from 'karma';
+import karma from 'karma';
 
 export interface KarmaSpec {
   description: string;
@@ -22,7 +22,7 @@ export interface KarmaSpec {
  *
  * i.e. use `public readonly onFoo = () => {}` instead of `onFoo() { }`.
  */
-export default class StrykerReporter extends EventEmitter implements karma.Reporter {
+export class StrykerReporter extends EventEmitter implements karma.Reporter {
   public adapters: any[] = [];
 
   private constructor() {

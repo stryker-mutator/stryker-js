@@ -1,12 +1,10 @@
-import * as os from 'os';
+import os from 'os';
 
-import { matchedMutant } from '@stryker-mutator/test-helpers/src/factory';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
-
+import sinon from 'sinon';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import ProgressAppendOnlyReporter from '../../../src/reporters/progress-append-only-reporter';
+import { ProgressAppendOnlyReporter } from '../../../src/reporters/progress-append-only-reporter';
 
 const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;
@@ -26,9 +24,9 @@ describe(ProgressAppendOnlyReporter.name, () => {
   describe('onAllMutantsMatchedWithTests() with 3 mutants to test', () => {
     beforeEach(() => {
       sut.onAllMutantsMatchedWithTests([
-        matchedMutant({ runAllTests: true }),
-        matchedMutant({ runAllTests: true }),
-        matchedMutant({ runAllTests: true }),
+        factory.matchedMutant({ runAllTests: true }),
+        factory.matchedMutant({ runAllTests: true }),
+        factory.matchedMutant({ runAllTests: true }),
       ]);
     });
 

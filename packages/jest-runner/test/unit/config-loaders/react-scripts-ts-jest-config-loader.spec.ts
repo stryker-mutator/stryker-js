@@ -6,7 +6,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
 
-import ReactScriptsTSJestConfigLoader from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
+import { ReactScriptsTSJestConfigLoader } from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
 import * as helper from '../../../src/utils/create-react-jest-config';
 
 describe(ReactScriptsTSJestConfigLoader.name, () => {

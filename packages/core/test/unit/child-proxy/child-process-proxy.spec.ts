@@ -1,14 +1,14 @@
-import * as childProcess from 'child_process';
+import childProcess from 'child_process';
 import { EventEmitter } from 'events';
-import * as os from 'os';
+import os from 'os';
 
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import {
   autoStart,
   DisposeMessage,
@@ -21,8 +21,8 @@ import {
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
 import * as objectUtils from '../../../src/utils/object-utils';
-import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
-import currentLogMock from '../../helpers/log-mock';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
+import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
 import { HelloClass } from './hello-class';

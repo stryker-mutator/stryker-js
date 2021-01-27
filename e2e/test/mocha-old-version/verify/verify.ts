@@ -1,13 +1,12 @@
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 import { expect } from 'chai';
-import { it } from 'mocha';
 
 describe('Verify stryker runs with mocha < 6', () => {
 
   let strykerLog: string;
 
   before(async () => {
-    strykerLog = await fs.readFile('./stryker.log', 'utf8');
+    strykerLog = await fsPromises.readFile('./stryker.log', 'utf8');
   });
 
   it('should warn about old mocha version', async () => {

@@ -66,21 +66,17 @@
       "**/*.tsbuildinfo": true,
       "**/.stryker-tmp": true,
       "**/CHANGELOG.md": true,
+      "**/dist": true,
+      "**/.nyc_output": true,
+      "**/reports": true
     },
     "files.exclude": {
-      ".git": true,
-      ".tscache": true,
-      "{src,test}/**/*.d.ts": true, //base mapping not possible: https://github.com/Microsoft/vscode/issues/40850
-      "*.d.ts": true, // needed to exclude d.ts files in api
-      "**/*.js": {
-        "when": "$(basename).ts"
-      },
-      "**/**/*.js": { // HACK! Cannot reuse same key, but this key means essentially the same
-        "when": "$(basename).tsx"
-      },
-      "**/*.map": {
-        "when": "$(basename)"
-      }
+      "**/.git": true,
+      "**/.svn": true,
+      "**/.hg": true,
+      "**/CVS": true,
+      "**/.DS_Store": true,
+      "?(check).js": true
     },
     "eslint.enable": true,
     "eslint.validate": [

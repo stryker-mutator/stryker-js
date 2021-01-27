@@ -7,7 +7,7 @@ import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
-import LibWrapper from './lib-wrapper';
+import { LibWrapper } from './lib-wrapper';
 import { MochaTestRunner } from './mocha-test-runner';
 
 const DEFAULT_TEST_PATTERN = 'test/**/*.js';

@@ -1,13 +1,12 @@
-import * as fs from 'fs';
+import fs from 'fs';
 
 import { Reporter } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { ALL_REPORTER_EVENTS } from '@stryker-mutator/test-helpers/src/factory';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 
-import EventRecorderReporter from '../../../src/reporters/event-recorder-reporter';
-import StrictReporter from '../../../src/reporters/strict-reporter';
+import { EventRecorderReporter } from '../../../src/reporters/event-recorder-reporter';
+import { StrictReporter } from '../../../src/reporters/strict-reporter';
 import * as fileUtils from '../../../src/utils/file-utils';
 
 describe(EventRecorderReporter.name, () => {
@@ -62,7 +61,7 @@ describe(EventRecorderReporter.name, () => {
         });
       };
 
-      ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
+      factory.ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
     });
 
     describe('and cleanFolder results in a rejection', () => {

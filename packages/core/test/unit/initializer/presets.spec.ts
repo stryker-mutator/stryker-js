@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import * as inquirer from 'inquirer';
-import * as sinon from 'sinon';
+import inquirer from 'inquirer';
+import sinon from 'sinon';
 
 import { AngularPreset } from '../../../src/initializer/presets/angular-preset';
 import { ReactPreset } from '../../../src/initializer/presets/react-preset';

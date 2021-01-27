@@ -1,23 +1,18 @@
-import path = require('path');
-
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src';
 import { createMochaOptions } from '../helpers/factories';
-
-function resolve(fileName: string) {
-  return path.resolve(__dirname, '..', '..', fileName);
-}
+import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Running an instrumented project', () => {
   let sut: MochaTestRunner;
 
   beforeEach(async () => {
     const spec = [
-      resolve('./testResources/sample-project-instrumented/MyMath.js'),
-      resolve('./testResources/sample-project-instrumented/MyMathSpec.js'),
+      resolveTestResource('sample-project-instrumented', 'MyMath.js'),
+      resolveTestResource('sample-project-instrumented', 'MyMathSpec.js'),
     ];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));

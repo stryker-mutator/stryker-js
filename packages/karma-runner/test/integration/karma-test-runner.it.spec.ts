@@ -1,13 +1,13 @@
 import { promisify } from 'util';
-import * as http from 'http';
+import http from 'http';
 
 import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
 
-import KarmaTestRunner from '../../src/karma-test-runner';
-import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import { KarmaTestRunner } from '../../src/karma-test-runner';
+import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 
 function setOptions(
   files: ReadonlyArray<FilePattern | string> = [
@@ -221,7 +221,8 @@ class DummyServer {
   }
 
   private async init(): Promise<void> {
-    await promisify(this.httpServer.listen.bind(this.httpServer))(0, '0.0.0.0');
+    const listen: (port: number, host: string) => Promise<void> = promisify(this.httpServer.listen.bind(this.httpServer));
+    await listen(0, '0.0.0.0');
   }
 
   public dispose(): Promise<void> {

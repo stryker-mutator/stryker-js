@@ -2,13 +2,13 @@
   "name": "@stryker-mutator/core",
   "version": "4.4.1",
   "description": "The extendable JavaScript mutation testing framework",
-  "main": "src/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "start": "tsc -w",
     "test": "nyc npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha 'test/unit/**/*.js'",
-    "test:integration": "mocha --timeout 60000 'test/integration/**/*.js'",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
+    "test:integration": "mocha --timeout 60000 'dist/test/integration/**/*.js'",
     "stryker": "node bin/stryker run"
   },
   "repository": {

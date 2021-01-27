@@ -5,7 +5,15 @@ import { expect } from 'chai';
 
 import { requireResolve } from '../../src';
 
-const resolveTestResource: typeof path.resolve = path.resolve.bind(path, __dirname, '..', '..', 'testResources', 'require-resolve');
+const resolveTestResource: typeof path.resolve = path.resolve.bind(
+  path,
+  __dirname,
+  '..' /* integration */,
+  '..' /* test */,
+  '..' /* dist */,
+  'testResources',
+  'require-resolve'
+);
 
 describe(requireResolve.name, () => {
   it('should be able to require from parent', () => {

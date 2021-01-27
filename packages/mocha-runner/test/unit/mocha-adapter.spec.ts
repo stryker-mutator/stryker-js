@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { MochaAdapter } from '../../src/mocha-adapter';
-import LibWrapper from '../../src/lib-wrapper';
+import { LibWrapper } from '../../src/lib-wrapper';
 
 describe(MochaAdapter.name, () => {
   let requireStub: sinon.SinonStub;

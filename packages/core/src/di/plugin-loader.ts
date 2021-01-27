@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { readdirSync } from 'fs';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -63,8 +63,8 @@ export class PluginLoader implements PluginResolver {
       if (typeof pluginExpression === 'string') {
         if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
-          // So if current __dirname is './@stryker-mutator/core/src/di' so 4 directories above
-          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', pluginExpression));
+          // So if current __dirname is './@stryker-mutator/core/dist/src/di' so 4 directories above
+          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', '..', pluginExpression));
           const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
