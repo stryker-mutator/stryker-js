@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.4.1](https://github.com/stryker-mutator/stryker/compare/v4.4.0...v4.4.1) (2021-01-27)
+
+
+### Bug Fixes
+
+* **jest-runner:** support custom rootDir ([312f6fe](https://github.com/stryker-mutator/stryker/commit/312f6feb6350c6f4027854ab9847006f527fafd2))
+
+
+
+
+
 # [4.4.0](https://github.com/stryker-mutator/stryker/compare/v4.3.1...v4.4.0) (2021-01-24)
 
 **Note:** Version bump only for package @stryker-mutator/jest-runner
