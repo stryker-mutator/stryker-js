@@ -1,5 +1,5 @@
-import child from 'child_process';
-import { promises as fs } from 'fs';
+import childProcess from 'child_process';
+import { promises as fsPromises } from 'fs';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -89,7 +89,7 @@ export class StrykerInitializer {
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
     if (presetConfig.additionalConfigFiles) {
-      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fs.writeFile(name, content)));
+      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fsPromises.writeFile(name, content)));
     }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
@@ -184,7 +184,7 @@ export class StrykerInitializer {
     const cmd = selectedOption.name === PackageManager.Npm ? `npm i --save-dev ${dependencyArg}` : `yarn add ${dependencyArg} --dev`;
     this.out(cmd);
     try {
-      child.execSync(cmd, { stdio: [0, 1, 2] });
+      childProcess.execSync(cmd, { stdio: [0, 1, 2] });
     } catch (_) {
       this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
     }

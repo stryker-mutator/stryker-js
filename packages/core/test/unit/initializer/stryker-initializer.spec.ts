@@ -1,4 +1,4 @@
-import child from 'child_process';
+import childProcess from 'child_process';
 import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -42,7 +42,7 @@ describe(StrykerInitializer.name, () => {
     };
     childExec = sinon.stub(childProcessAsPromised, 'exec');
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
-    childExecSync = sinon.stub(child, 'execSync');
+    childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
     restClientSearch = sinon.createStubInstance(RestClient);
