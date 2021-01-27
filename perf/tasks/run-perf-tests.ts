@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path'
-import execa from 'execa';;
+import execa from 'execa';
 import { Observable } from 'rxjs';
 import { tap, throttleTime } from 'rxjs/operators';
-import minimatch from 'minimatch';;
+import minimatch from 'minimatch';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 

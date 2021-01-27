@@ -1,7 +1,7 @@
 import fs from 'fs';
-import minimatch from 'minimatch';;
+import minimatch from 'minimatch';
 import path from 'path'
-import execa from 'execa';;
+import execa from 'execa';
 
 const testRootDir = path.resolve(__dirname, '..', 'test');
 
