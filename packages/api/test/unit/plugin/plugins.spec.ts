@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
 import { tokens, commonTokens, PluginKind, declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin';
-import { Logger } from '../../../src/logging';
-import { MutantResult } from '../../../src/report';
+import { Logger } from '../../../logging';
+import { MutantResult } from '../../../report';
 
 describe('plugins', () => {
   describe(declareClassPlugin.name, () => {
