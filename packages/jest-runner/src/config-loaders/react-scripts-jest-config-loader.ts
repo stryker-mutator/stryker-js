@@ -6,7 +6,7 @@ import { Config } from '@jest/types';
 import { createReactJestConfig } from '../utils';
 import * as pluginTokens from '../plugin-tokens';
 
-import { JestConfigLoader }  from './jest-config-loader';
+import { JestConfigLoader } from './jest-config-loader';
 
 export class ReactScriptsJestConfigLoader implements JestConfigLoader {
   public static inject = tokens(pluginTokens.resolve, pluginTokens.projectRoot);

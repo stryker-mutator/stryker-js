@@ -9,7 +9,7 @@ import { Config } from '@jest/types';
 import { loader, projectRoot } from '../plugin-tokens';
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 
-import { JestConfigLoader }  from './jest-config-loader';
+import { JestConfigLoader } from './jest-config-loader';
 import { NodeRequireFunction } from './node-require-function';
 
 /**

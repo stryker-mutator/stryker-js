@@ -25,6 +25,7 @@ module.exports = {
         "groups": ["builtin", "external", "internal", "parent", "sibling", "index"]
       }
     ],
+    'import/no-default-export': 'error',
     'prettier/prettier': ['error'],
     'sort-imports': 'off',
     'no-case-declarations': 'off',
