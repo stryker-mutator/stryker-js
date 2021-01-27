@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { NodePath } from '@babel/core';
+import { NodePath, parseSync, types } from '@babel/core';
 import { expect } from 'chai';
 
 import { placeMutants, MutantPlacer } from '../../../src/mutant-placers';
@@ -52,6 +52,29 @@ describe(placeMutants.name, () => {
     expect(() => placeMutants(path, mutants, 'foo.js', [fooPlacer])).throws(
       SyntaxError,
       'foo.js:2:3 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new'
+    );
+  });
+
+  /**
+   * Create a node path _without using the `new File` workaround_ defined here: https://github.com/babel/babel/issues/11889
+   * This will make sure `buildCodeFrameError` fails.
+   * This also happens in normal flows when complex babel transpilation is happening.
+   * @see https://github.com/stryker-mutator/stryker/issues/2695
+   */
+  it('should throw a generic error if `buildCodeFrameError` fails (#2695)', () => {
+    // Arrange
+    const path = findNodePath(parseSync('const a = b') as types.File, (p) => p.isProgram());
+    const expectedError = new Error('expectedError');
+    const fooPlacer: MutantPlacer = () => {
+      throw expectedError;
+    };
+    mutantPlacers[0].throws(expectedError);
+    const mutants = [createMutant()];
+
+    // Arrange & Act
+    expect(() => placeMutants(path, mutants, 'foo.js', [fooPlacer])).throws(
+      Error,
+      'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new'
     );
   });
 });
