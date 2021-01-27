@@ -1,7 +1,6 @@
-import PresetConfig from './preset-configuration';
+import { PresetConfiguration } from './preset-configuration';
 
-interface Preset {
+export interface Preset {
   readonly name: string;
-  createConfig(): Promise<PresetConfig>;
+  createConfig(): Promise<PresetConfiguration>;
 }
-export default Preset;

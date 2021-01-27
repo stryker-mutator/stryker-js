@@ -10,7 +10,7 @@ import { mergeMap } from 'rxjs/operators';
 
 import { I } from '@stryker-mutator/util';
 
-import Timer from '../../../src/utils/timer';
+import { Timer } from '../../../src/utils/timer';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';

@@ -1,6 +1,6 @@
 // A test can mock away the 'real' Date class. Capture it while we still can.
 const RealDate = Date;
-export default class Timer {
+export class Timer {
   private start!: Date;
 
   constructor() {

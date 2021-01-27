@@ -5,7 +5,7 @@ import { MutantResult } from '@stryker-mutator/api/report';
 
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
-import Stryker from './stryker';
+import { Stryker } from './stryker';
 import { defaultOptions } from './config/options-validator';
 
 /**
@@ -31,7 +31,7 @@ function parseBoolean(val: string) {
   return v !== 'false' && v !== '0';
 }
 
-export default class StrykerCli {
+export class StrykerCli {
   private command = '';
   private strykerConfig: string | null = null;
 

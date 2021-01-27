@@ -7,8 +7,8 @@ import * as sinon from 'sinon';
 import * as utils from '@stryker-mutator/util';
 
 import sut = require('../../../src/starters/stryker-karma.conf');
-import StrykerReporter from '../../../src/karma-plugins/stryker-reporter';
-import TestHooksMiddleware, { TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
+import { StrykerReporter } from '../../../src/karma-plugins/stryker-reporter';
+import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
 
 describe('stryker-karma.conf.js', () => {
   let getLogger: sinon.SinonStub;

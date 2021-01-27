@@ -1,8 +1,6 @@
 import { PackageInfo } from './package-info';
 
-interface PromptOption {
+export interface PromptOption {
   name: string;
   pkg: PackageInfo | null;
 }
-
-export default PromptOption;

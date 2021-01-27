@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import JestTestRunner, { createJestTestRunnerFactory } from '../../src/jest-test-runner';
+import { JestTestRunner, createJestTestRunnerFactory } from '../../src/jest-test-runner';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 

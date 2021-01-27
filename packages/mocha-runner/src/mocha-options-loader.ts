@@ -7,7 +7,7 @@ import { PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
-import LibWrapper from './lib-wrapper';
+import { LibWrapper } from './lib-wrapper';
 import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
 
@@ -29,7 +29,7 @@ export const DEFAULT_MOCHA_OPTIONS: Readonly<MochaOptions> = Object.freeze({
   'async-only': false,
 });
 
-export default class MochaOptionsLoader {
+export class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 

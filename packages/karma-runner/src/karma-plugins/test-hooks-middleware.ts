@@ -24,7 +24,7 @@ const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
 
 const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID } = INSTRUMENTER_CONSTANTS;
 
-export default class TestHooksMiddleware {
+export class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
   private testFramework: 'mocha' | 'jasmine' | undefined;
   public currentTestHooks = '';

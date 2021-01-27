@@ -1,7 +1,7 @@
 import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { Disposable } from 'typed-inject';
 
-export default class TestRunnerDecorator implements Required<TestRunner>, Disposable {
+export class TestRunnerDecorator implements Required<TestRunner>, Disposable {
   protected innerRunner!: TestRunner;
 
   constructor(private readonly testRunnerProducer: () => TestRunner) {

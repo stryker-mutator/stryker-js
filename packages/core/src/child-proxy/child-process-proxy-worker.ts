@@ -10,7 +10,7 @@ import { deserialize, serialize } from '../utils/object-utils';
 
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 
-export default class ChildProcessProxyWorker {
+export class ChildProcessProxyWorker {
   private log?: Logger;
 
   public realSubject: any;

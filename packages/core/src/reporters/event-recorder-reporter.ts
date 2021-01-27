@@ -8,9 +8,9 @@ import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, Source
 
 import { cleanFolder } from '../utils/file-utils';
 
-import StrictReporter from './strict-reporter';
+import { StrictReporter } from './strict-reporter';
 
-export default class EventRecorderReporter implements StrictReporter {
+export class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
 
   private readonly allWork: Array<Promise<void>> = [];

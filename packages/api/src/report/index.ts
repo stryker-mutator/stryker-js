@@ -1,10 +1,10 @@
 import * as mutationTestReportSchema from 'mutation-testing-report-schema';
 
-export { default as Reporter } from './reporter';
+export { Reporter } from './reporter';
 export * from './mutant-result';
-export { default as MutantStatus } from './mutant-status';
-export { default as SourceFile } from './source-file';
-export { default as MatchedMutant } from './matched-mutant';
+export { MutantStatus } from './mutant-status';
+export { SourceFile } from './source-file';
+export { MatchedMutant } from './matched-mutant';
 export {
   /**
    * Types exported directly from mutation-testing-schema

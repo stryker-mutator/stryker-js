@@ -2,7 +2,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { MochaOptions } from '../../src-generated/mocha-runner-options';
-import MochaOptionsLoader, { DEFAULT_MOCHA_OPTIONS } from '../../src/mocha-options-loader';
+import { MochaOptionsLoader, DEFAULT_MOCHA_OPTIONS } from '../../src/mocha-options-loader';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 

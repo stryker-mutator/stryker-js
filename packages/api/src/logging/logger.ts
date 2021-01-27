@@ -1,4 +1,4 @@
-export default interface Logger {
+export interface Logger {
   isTraceEnabled(): boolean;
   isDebugEnabled(): boolean;
   isInfoEnabled(): boolean;

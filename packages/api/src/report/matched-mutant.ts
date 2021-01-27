@@ -1,4 +1,4 @@
-interface MatchedMutant {
+export interface MatchedMutant {
   /**
    * The ID of the mutant
    */
@@ -28,5 +28,3 @@ interface MatchedMutant {
    */
   readonly replacement: string;
 }
-
-export default MatchedMutant;

@@ -9,7 +9,7 @@ import { MochaTestRunner } from '../../src/mocha-test-runner';
 import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
 import { MochaAdapter } from '../../src/mocha-adapter';
 import * as pluginTokens from '../../src/plugin-tokens';
-import MochaOptionsLoader from '../../src/mocha-options-loader';
+import { MochaOptionsLoader } from '../../src/mocha-options-loader';
 import { createMochaOptions } from '../helpers/factories';
 
 describe(MochaTestRunner.name, () => {

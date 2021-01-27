@@ -6,7 +6,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ChildProcessProxyWorker from '../../../src/child-proxy/child-process-proxy-worker';
+import { ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker';
 import {
   CallMessage,
   InitMessage,
@@ -20,7 +20,7 @@ import * as di from '../../../src/di';
 import { LogConfigurator } from '../../../src/logging';
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
-import currentLogMock from '../../helpers/log-mock';
+import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
 import { HelloClass } from './hello-class';

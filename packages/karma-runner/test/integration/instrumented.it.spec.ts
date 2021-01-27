@@ -2,9 +2,9 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
-import KarmaTestRunner from '../../src/karma-test-runner';
+import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
-import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 function createSut() {

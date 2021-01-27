@@ -5,7 +5,7 @@ import ProgressBar = require('progress');
 import { factory } from '@stryker-mutator/test-helpers';
 
 import * as progressBarModule from '../../../src/reporters/progress-bar';
-import ProgressReporter from '../../../src/reporters/progress-reporter';
+import { ProgressBarReporter } from '../../../src/reporters/progress-reporter';
 import { Mock, mock } from '../../helpers/producers';
 
 const SECOND = 1000;
@@ -14,8 +14,8 @@ const HUNDRED_SECONDS = SECOND * 100;
 const TEN_THOUSAND_SECONDS = SECOND * 10000;
 const ONE_HOUR = SECOND * 3600;
 
-describe('ProgressReporter', () => {
-  let sut: ProgressReporter;
+describe(ProgressBarReporter.name, () => {
+  let sut: ProgressBarReporter;
   let matchedMutants: MatchedMutant[];
   let progressBar: Mock<ProgressBar>;
   const progressBarContent =
@@ -23,11 +23,9 @@ describe('ProgressReporter', () => {
 
   beforeEach(() => {
     sinon.useFakeTimers();
-
-    sut = new ProgressReporter();
-
+    sut = new ProgressBarReporter();
     progressBar = mock(ProgressBar);
-    sinon.stub(progressBarModule, 'default').returns(progressBar);
+    sinon.stub(progressBarModule, 'ProgressBar').returns(progressBar);
   });
 
   describe('onAllMutantsMatchedWithTests()', () => {
@@ -43,7 +41,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 3', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 3 });
       });
     });
     describe("when there are 2 MatchedMutants that all contain Tests and 1 MatchMutant that doesn't have tests", () => {
@@ -58,7 +56,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
     describe('when mutants match to all tests', () => {
@@ -69,7 +67,7 @@ describe('ProgressReporter', () => {
       });
 
       it('the total of MatchedMutants in the progress bar should be 2', () => {
-        expect(progressBarModule.default).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
+        expect(progressBarModule.ProgressBar).to.have.been.calledWithMatch(progressBarContent, { total: 2 });
       });
     });
   });

@@ -1,8 +1,8 @@
-export { default as File } from './file';
-export { default as Position } from './position';
-export { default as Location } from './location';
-export { default as Range } from './range';
-export { default as Mutant } from './mutant';
+export { File } from './file';
+export { Position } from './position';
+export { Location } from './location';
+export { Range } from './range';
+export { Mutant } from './mutant';
 export * from '../../src-generated/stryker-core';
 export * from './report-types';
 export * from './stryker-options-schema';

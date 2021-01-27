@@ -4,11 +4,11 @@ import sinon from 'sinon';
 
 import { Config } from '@jest/types';
 
-import JestGreaterThan25Adapter from '../../../src/jest-test-adapters/jest-greater-than-25-adapter';
+import { JestGreaterThan25TestAdapter } from '../../../src/jest-test-adapters/jest-greater-than-25-adapter';
 import { jestWrapper } from '../../../src/utils/jest-wrapper';
 
-describe(JestGreaterThan25Adapter.name, () => {
-  let sut: JestGreaterThan25Adapter;
+describe(JestGreaterThan25TestAdapter.name, () => {
+  let sut: JestGreaterThan25TestAdapter;
   let runCLIStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
@@ -22,7 +22,7 @@ describe(JestGreaterThan25Adapter.name, () => {
       result: 'testResult',
     });
 
-    sut = testInjector.injector.injectClass(JestGreaterThan25Adapter);
+    sut = testInjector.injector.injectClass(JestGreaterThan25TestAdapter);
   });
 
   it('should call the runCLI method with the correct ---projectRoot', async () => {

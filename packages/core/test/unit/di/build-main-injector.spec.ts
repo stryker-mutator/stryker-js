@@ -8,16 +8,16 @@ import { createInjector } from 'typed-inject';
 
 import * as optionsValidatorModule from '../../../src/config/options-validator';
 import * as pluginLoaderModule from '../../../src/di/plugin-loader';
-import ConfigReader, * as configReaderModule from '../../../src/config/config-reader';
+import * as configReaderModule from '../../../src/config/config-reader';
 import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
 import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
-import currentLogMock from '../../helpers/log-mock';
+import { currentLogMock } from '../../helpers/log-mock';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
-  let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
+  let configReaderMock: sinon.SinonStubbedInstance<configReaderModule.ConfigReader>;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind>>;
   let broadcastReporterMock: sinon.SinonStubbedInstance<Reporter>;
   let optionsValidatorStub: sinon.SinonStubbedInstance<optionsValidatorModule.OptionsValidator>;
@@ -27,7 +27,7 @@ describe(buildMainInjector.name, () => {
   let cliOptions: PartialStrykerOptions;
 
   beforeEach(() => {
-    configReaderMock = sinon.createStubInstance(ConfigReader);
+    configReaderMock = sinon.createStubInstance(configReaderModule.ConfigReader);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
@@ -42,8 +42,8 @@ describe(buildMainInjector.name, () => {
     stubInjectable(PluginCreator, 'createFactory').returns(() => pluginCreatorMock);
     stubInjectable(optionsValidatorModule, 'OptionsValidator').returns(optionsValidatorStub);
     stubInjectable(pluginLoaderModule, 'PluginLoader').returns(pluginLoaderMock);
-    stubInjectable(configReaderModule, 'default').returns(configReaderMock);
-    stubInjectable(broadcastReporterModule, 'default').returns(broadcastReporterMock);
+    stubInjectable(configReaderModule, 'ConfigReader').returns(configReaderMock);
+    stubInjectable(broadcastReporterModule, 'BroadcastReporter').returns(broadcastReporterMock);
   });
 
   afterEach(async () => {
@@ -84,7 +84,7 @@ describe(buildMainInjector.name, () => {
     it('should inject the `cliOptions` in the config reader', () => {
       cliOptions.mutate = ['some', 'files'];
       buildMainInjector(injector).resolve(commonTokens.options);
-      expect(configReaderModule.default).calledWith(cliOptions);
+      expect(configReaderModule.ConfigReader).calledWith(cliOptions);
     });
 
     it('should validate the options', () => {

@@ -5,7 +5,7 @@ import { CIProvider } from './provider';
 /**
  * https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables#default-environment-variables
  */
-export default class GithubActionsCIProvider implements CIProvider {
+export class GithubActionsCIProvider implements CIProvider {
   public determineProject(): string {
     return `github.com/${getEnvironmentVariableOrThrow('GITHUB_REPOSITORY')}`;
   }

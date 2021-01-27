@@ -4,11 +4,11 @@ import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunRes
 import { expect } from 'chai';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 
-import ChildProcessCrashedError from '../../../src/child-proxy/child-process-crashed-error';
-import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
-import RetryDecorator from '../../../src/test-runner/retry-decorator';
-import TestRunnerDecorator from '../../../src/test-runner/test-runner-decorator';
-import currentLogMock from '../../helpers/log-mock';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
+import { RetryDecorator } from '../../../src/test-runner/retry-decorator';
+import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator';
+import { currentLogMock } from '../../helpers/log-mock';
 
 describe(RetryDecorator.name, () => {
   let sut: RetryDecorator;

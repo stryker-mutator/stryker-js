@@ -1,4 +1,4 @@
-export default class Timer {
+export class Timer {
   private readonly start: Date;
   private readonly markers: {
     [name: string]: Date | undefined;

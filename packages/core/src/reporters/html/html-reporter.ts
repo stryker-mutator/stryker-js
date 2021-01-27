@@ -13,7 +13,7 @@ import { reportTemplate as reportTemplate } from './report-template';
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
-export default class HtmlReporter implements Reporter {
+export class HtmlReporter implements Reporter {
   private _baseDir!: string;
   private mainPromise: Promise<void> | undefined;
 

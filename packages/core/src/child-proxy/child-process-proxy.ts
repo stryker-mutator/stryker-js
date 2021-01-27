@@ -9,11 +9,11 @@ import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
 import { deserialize, kill, padLeft, serialize } from '../utils/object-utils';
-import StringBuilder from '../utils/string-builder';
+import { StringBuilder } from '../utils/string-builder';
 
-import ChildProcessCrashedError from './child-process-crashed-error';
+import { ChildProcessCrashedError } from './child-process-crashed-error';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
-import OutOfMemoryError from './out-of-memory-error';
+import { OutOfMemoryError } from './out-of-memory-error';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -27,7 +27,7 @@ const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
 const IPC_CHANNEL_CLOSED_ERROR_CODE = 'ERR_IPC_CHANNEL_CLOSED';
 const TIMEOUT_FOR_DISPOSE = 2000;
 
-export default class ChildProcessProxy<T> implements Disposable {
+export class ChildProcessProxy<T> implements Disposable {
   public readonly proxy: Promisified<T>;
 
   private readonly worker: ChildProcess;

@@ -41,7 +41,7 @@ try {
 /**
  * Wraps Mocha class and require for testability
  */
-export default class LibWrapper {
+export class LibWrapper {
   public static Mocha = Mocha;
   public static require = require;
   public static glob = glob.sync;

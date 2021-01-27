@@ -11,11 +11,11 @@ import { SourceFile } from '@stryker-mutator/api/report';
 import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
-import StrictReporter from '../reporters/strict-reporter';
+import { StrictReporter } from '../reporters/strict-reporter';
 import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
 import { defaultOptions } from '../config/options-validator';
 
-import InputFileCollection from './input-file-collection';
+import { InputFileCollection } from './input-file-collection';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -49,7 +49,7 @@ function decodeGitLsOutput(line: string) {
   return line;
 }
 
-export default class InputFileResolver {
+export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
   private readonly filePatterns: readonly string[] | undefined;
   private readonly tempDirName: string;

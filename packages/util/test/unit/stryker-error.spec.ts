@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { errorToString } from '../../src/errors';
-import StrykerError from '../../src/stryker-error';
+import { StrykerError } from '../../src/stryker-error';
 
 describe('StrykerError', () => {
   it('should set inner error', () => {

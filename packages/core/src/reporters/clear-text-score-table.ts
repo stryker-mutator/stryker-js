@@ -84,7 +84,7 @@ class FileColumn extends Column {
 /**
  * Represents a clear text table for mutation score
  */
-export default class ClearTextScoreTable {
+export class ClearTextScoreTable {
   private readonly columns: Column[];
 
   constructor(private readonly metricsResult: MetricsResult, thresholds: MutationScoreThresholds) {

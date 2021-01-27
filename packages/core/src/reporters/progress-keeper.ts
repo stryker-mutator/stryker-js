@@ -1,9 +1,9 @@
 import { MatchedMutant, MutantResult, Reporter } from '@stryker-mutator/api/report';
 import { MutantStatus } from '@stryker-mutator/api/report';
 
-import Timer from '../utils/timer';
+import { Timer } from '../utils/timer';
 
-abstract class ProgressKeeper implements Reporter {
+export abstract class ProgressKeeper implements Reporter {
   private timer!: Timer;
   private mutantIdsWithoutCoverage!: string[];
   protected progress = {
@@ -57,4 +57,3 @@ abstract class ProgressKeeper implements Reporter {
       : '<1m';
   }
 }
-export default ProgressKeeper;

@@ -4,15 +4,14 @@ import * as sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
 
-import StrykerDashboardClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
-import DashboardReporterClient from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { Mock, mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/report';
 import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
 
 describe(DashboardReporterClient.name, () => {
-  let sut: StrykerDashboardClient;
+  let sut: DashboardReporterClient;
   let httpClient: Mock<HttpClient>;
   let environment: EnvironmentVariableStore;
 

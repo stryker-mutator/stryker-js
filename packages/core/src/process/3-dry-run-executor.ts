@@ -20,7 +20,7 @@ import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';
-import Timer from '../utils/timer';
+import { Timer } from '../utils/timer';
 import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';

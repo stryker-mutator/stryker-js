@@ -5,8 +5,8 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import EventRecorderReporter from '../../../src/reporters/event-recorder-reporter';
-import StrictReporter from '../../../src/reporters/strict-reporter';
+import { EventRecorderReporter } from '../../../src/reporters/event-recorder-reporter';
+import { StrictReporter } from '../../../src/reporters/strict-reporter';
 import * as fileUtils from '../../../src/utils/file-utils';
 
 describe(EventRecorderReporter.name, () => {

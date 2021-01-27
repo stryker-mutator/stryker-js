@@ -5,7 +5,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ConfigReader from '../../../src/config/config-reader';
+import { ConfigReader } from '../../../src/config/config-reader';
 import { coreTokens } from '../../../src/di';
 import { OptionsValidator } from '../../../src/config/options-validator';
 import { resolveFromRoot } from '../../helpers/test-utils';

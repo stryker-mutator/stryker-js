@@ -19,7 +19,7 @@ import { MochaOptions } from '../src-generated/mocha-runner-options';
 import { StrykerMochaReporter } from './stryker-mocha-reporter';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
 import * as pluginTokens from './plugin-tokens';
-import MochaOptionsLoader from './mocha-options-loader';
+import { MochaOptionsLoader } from './mocha-options-loader';
 import { MochaAdapter } from './mocha-adapter';
 
 export class MochaTestRunner implements TestRunner {

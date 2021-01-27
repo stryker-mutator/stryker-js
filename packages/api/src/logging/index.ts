@@ -1,2 +1,2 @@
-export { default as Logger } from './logger';
-export { default as LoggerFactoryMethod } from './logger-factory-method';
+export { Logger } from './logger';
+export { LoggerFactoryMethod } from './logger-factory-method';

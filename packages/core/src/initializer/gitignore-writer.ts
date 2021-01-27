@@ -9,7 +9,7 @@ import { initializerTokens } from '.';
 
 const GITIGNORE_FILE = '.gitignore';
 
-export default class GitignoreWriter {
+export class GitignoreWriter {
   public static inject = tokens(initializerTokens.out);
   constructor(private readonly out: typeof console.log) {}
 

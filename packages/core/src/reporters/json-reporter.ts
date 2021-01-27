@@ -12,7 +12,7 @@ import * as ReporterUtil from './reporter-util';
 const INDENTION_LEVEL = 0;
 export const RESOURCES_DIR_NAME = 'strykerResources';
 
-export default class JsonReporter implements Reporter {
+export class JsonReporter implements Reporter {
   private mainPromise: Promise<void> | undefined;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}

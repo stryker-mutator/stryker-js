@@ -8,7 +8,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ChildProcessProxy from '../../../src/child-proxy/child-process-proxy';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import {
   autoStart,
   DisposeMessage,
@@ -21,8 +21,8 @@ import {
 import { LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
 import * as objectUtils from '../../../src/utils/object-utils';
-import OutOfMemoryError from '../../../src/child-proxy/out-of-memory-error';
-import currentLogMock from '../../helpers/log-mock';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
+import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 
 import { HelloClass } from './hello-class';

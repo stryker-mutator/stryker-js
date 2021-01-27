@@ -4,7 +4,7 @@ import { File } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
-export default class InputFileCollection {
+export class InputFileCollection {
   public readonly files: readonly File[];
   public readonly filesToMutate: readonly File[];
 

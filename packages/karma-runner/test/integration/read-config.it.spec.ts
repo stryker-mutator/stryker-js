@@ -2,8 +2,8 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import KarmaTestRunner from '../../src/karma-test-runner';
-import StrykerReporter from '../../src/karma-plugins/stryker-reporter';
+import { KarmaTestRunner } from '../../src/karma-test-runner';
+import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('read config integration', () => {

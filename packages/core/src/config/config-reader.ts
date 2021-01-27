@@ -22,7 +22,7 @@ module.exports = {
 
 const DEFAULT_CONFIG_FILE = 'stryker.conf';
 
-export default class ConfigReader {
+export class ConfigReader {
   public static inject = tokens(coreTokens.cliOptions, commonTokens.logger, coreTokens.optionsValidator);
   constructor(private readonly cliOptions: PartialStrykerOptions, private readonly log: Logger, private readonly validator: OptionsValidator) {}
 

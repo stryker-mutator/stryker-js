@@ -8,7 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../../src/logging';
-import Stryker from '../../src/stryker';
+import { Stryker } from '../../src/stryker';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process';
 import { coreTokens } from '../../src/di';
 import { ConfigError } from '../../src/errors';

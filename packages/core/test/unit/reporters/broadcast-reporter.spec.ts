@@ -6,7 +6,7 @@ import * as sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/plugin-creator';
-import BroadcastReporter from '../../../src/reporters/broadcast-reporter';
+import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
 
 describe('BroadcastReporter', () => {
   let sut: BroadcastReporter;

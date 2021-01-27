@@ -2,12 +2,12 @@ import { MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import TestRunnerDecorator from './test-runner-decorator';
+import { TestRunnerDecorator } from './test-runner-decorator';
 
 /**
  * Wraps a test runner and implements the retry functionality.
  */
-export default class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
+export class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
   public runs = 0;
   private readonly restartAfter;
 

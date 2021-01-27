@@ -5,10 +5,10 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
 import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
-import ConfigReader from '../config/config-reader';
-import BroadcastReporter from '../reporters/broadcast-reporter';
+import { ConfigReader } from '../config/config-reader';
+import { BroadcastReporter } from '../reporters/broadcast-reporter';
 import { TemporaryDirectory } from '../utils/temporary-directory';
-import Timer from '../utils/timer';
+import { Timer } from '../utils/timer';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
 import { pluginResolverFactory } from './factory-methods';

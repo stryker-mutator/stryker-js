@@ -4,7 +4,7 @@ import { MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/repor
 
 import chalk = require('chalk');
 
-export default class DotsReporter implements Reporter {
+export class DotsReporter implements Reporter {
   public onMutantTested(result: MutantResult) {
     let toLog: string;
     switch (result.status) {

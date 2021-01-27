@@ -3,8 +3,8 @@ import { HttpClient } from 'typed-rest-client/HttpClient';
 
 import { determineCIProvider } from '../ci/provider';
 
-import DashboardReporter from './dashboard-reporter';
-import DashboardReporterClient from './dashboard-reporter-client';
+import { DashboardReporter } from './dashboard-reporter';
+import { DashboardReporterClient } from './dashboard-reporter-client';
 import { dashboardReporterTokens } from './tokens';
 
 export function dashboardReporterFactory(injector: Injector<PluginContext>): DashboardReporter {

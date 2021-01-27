@@ -2,7 +2,7 @@ import { EOL } from 'os';
 
 const DEFAULT_MAX_SIZE = 2048;
 
-export default class StringBuilder {
+export class StringBuilder {
   private currentLength = 0;
   private readonly strings: string[] = [];
   private readonly maxSize = DEFAULT_MAX_SIZE;

@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { LogConfigurator } from '../../src/logging';
-import StrykerCli from '../../src/stryker-cli';
+import { StrykerCli } from '../../src/stryker-cli';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { TestResults } from 'karma';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import StrykerReporter, { KarmaSpec } from '../../../src/karma-plugins/stryker-reporter';
+import { StrykerReporter, KarmaSpec } from '../../../src/karma-plugins/stryker-reporter';
 
 describe('StrykerReporter', () => {
   let sut: StrykerReporter;

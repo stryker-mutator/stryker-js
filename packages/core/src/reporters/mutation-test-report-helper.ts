@@ -21,7 +21,7 @@ import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
-import InputFileCollection from '../input/input-file-collection';
+import { InputFileCollection } from '../input/input-file-collection';
 import { setExitCode } from '../utils/object-utils';
 import { MutantTestCoverage } from '../mutants/find-mutant-test-coverage';
 import { mutatedLines, originalLines } from '../utils/mutant-utils';

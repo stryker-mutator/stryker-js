@@ -3,7 +3,7 @@ import { JestRunResult } from '../jest-run-result';
 
 import { JestTestAdapter, RunSettings } from './jest-test-adapter';
 
-export default class JestGreaterThan25Adapter implements JestTestAdapter {
+export class JestGreaterThan25TestAdapter implements JestTestAdapter {
   public async run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
     const result = await jestWrapper.runCLI(

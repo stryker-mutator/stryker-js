@@ -1,3 +1,5 @@
+import fs = require('fs');
+
 import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import * as log4js from 'log4js';
@@ -11,8 +13,6 @@ import { sleep } from '../../helpers/test-utils';
 import { coreTokens } from '../../../src/di';
 
 import { CounterTestRunner } from './additional-test-runners';
-
-const fs = require('fs');
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => Required<TestRunner>;

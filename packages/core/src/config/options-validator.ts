@@ -10,8 +10,7 @@ import type { JSONSchema7 } from 'json-schema';
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 import { isWarningEnabled } from '../utils/object-utils';
-
-import CommandTestRunner from '../test-runner/command-test-runner';
+import { CommandTestRunner } from '../test-runner/command-test-runner';
 
 import { describeErrors } from './validation-errors';
 

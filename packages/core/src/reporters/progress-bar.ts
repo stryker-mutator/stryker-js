@@ -1,3 +1,3 @@
 import ProgressBar = require('progress');
 
-export default ProgressBar;
+export { ProgressBar };

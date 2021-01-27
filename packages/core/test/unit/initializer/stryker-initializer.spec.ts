@@ -9,15 +9,15 @@ import * as sinon from 'sinon';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';
-import NpmClient from '../../../src/initializer/npm-client';
+import { NpmClient } from '../../../src/initializer/npm-client';
 import { PackageInfo } from '../../../src/initializer/package-info';
-import Preset from '../../../src/initializer/presets/preset';
-import PresetConfiguration from '../../../src/initializer/presets/preset-configuration';
-import StrykerConfigWriter from '../../../src/initializer/stryker-config-writer';
-import StrykerInitializer from '../../../src/initializer/stryker-initializer';
+import { Preset } from '../../../src/initializer/presets/preset';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
 import { Mock } from '../../helpers/producers';
-import GitignoreWriter from '../../../src/initializer/gitignore-writer';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
