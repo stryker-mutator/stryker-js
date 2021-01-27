@@ -90,6 +90,9 @@ describe(StringLiteralMutator.name, () => {
     it('should not mutate class property keys', () => {
       expectJSMutation(sut, 'class Foo { "baz-bar" = 4; }');
     });
+    it('should not mutate method names', () => {
+      expectJSMutation(sut, 'const watchers = {"category.type"(categoryType) { }}');
+    });
     it('should mutate class property values', () => {
       expectJSMutation(sut, 'class Foo { bar = "4"; }', 'class Foo { bar = ""; }');
     });

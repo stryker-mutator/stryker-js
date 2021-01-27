@@ -30,11 +30,17 @@ export function placeMutants(node: NodePath, mutants: Mutant[], fileName: string
       } catch (error) {
         const location = `${path.relative(process.cwd(), fileName)}:${node.node.loc?.start.line}:${node.node.loc?.start.column}`;
         const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}"`;
-        throw node.buildCodeFrameError(
-          `${location} ${message}. Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
-            message
-          )}.`
-        );
+        const errorMessage = `${location} ${message}. Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
+          message
+        )}.`;
+        let builtError = new Error(errorMessage);
+        try {
+          // `buildCodeFrameError` is kind of flaky, see https://github.com/stryker-mutator/stryker/issues/2695
+          builtError = node.buildCodeFrameError(errorMessage);
+        } catch {
+          // Idle, regular error will have to suffice
+        }
+        throw builtError;
       }
     }
   }
