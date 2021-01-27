@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
@@ -22,7 +22,7 @@ describe(`${disableTypeChecks.name} integration`, () => {
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource('disable-type-checks', fileName);
-    const file = new File(fullFileName, await fs.readFile(fullFileName));
+    const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
     const result = await disableTypeChecks(file, options);
     chaiJestSnapshot.setFilename(resolveTestResource(`${fileName}.out.snap`));
     expect(result.textContent).matchSnapshot();

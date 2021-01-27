@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
 
@@ -73,7 +73,7 @@ describe('parsers integration', () => {
 
   async function act(testResourceFileName: string, options: ParserOptions) {
     const fileName = resolveParserTestResource(testResourceFileName);
-    const input = await fs.readFile(fileName, 'utf8');
+    const input = await fsPromises.readFile(fileName, 'utf8');
     const actual = await createParser(options)(input, fileName);
     cleanFileName(actual, testResourceFileName);
     return actual;

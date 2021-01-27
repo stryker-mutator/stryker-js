@@ -2,6 +2,7 @@
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
     "declaration": false,
+    "composite": false,
     "importHelpers": false,
     "esModuleInterop": true,
     "rootDir": ".",

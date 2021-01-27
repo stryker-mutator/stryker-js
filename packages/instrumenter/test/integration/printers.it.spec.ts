@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -18,7 +18,7 @@ describe('parse and print integration', () => {
 
     async function actArrangeAndAssert(relativeFileName: string) {
       const fileName = resolvePrinterTestResource('echo', relativeFileName);
-      const code = await fs.readFile(fileName, 'utf8');
+      const code = await fsPromises.readFile(fileName, 'utf8');
       const parsed = await createParser(createParserOptions())(code, fileName);
       const output = print(parsed);
       expect(normalizeWhitespaces(output)).eq(normalizeWhitespaces(code));
@@ -32,7 +32,7 @@ describe('parse and print integration', () => {
     async function actArrangeAndAssert(testCase: string) {
       const inputFileName = resolvePrinterTestResource('html', `${testCase}.in.html`);
       const outputFileName = resolvePrinterTestResource('html', `${testCase}.out.html`);
-      const [input, expectedOutput] = await Promise.all([fs.readFile(inputFileName, 'utf8'), fs.readFile(outputFileName, 'utf8')]);
+      const [input, expectedOutput] = await Promise.all([fsPromises.readFile(inputFileName, 'utf8'), fsPromises.readFile(outputFileName, 'utf8')]);
       const parsed = await createParser(createParserOptions())(input, inputFileName);
       const actualOutput = print(parsed);
       expect(normalizeWhitespaces(actualOutput)).eq(normalizeWhitespaces(expectedOutput));
