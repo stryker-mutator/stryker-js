@@ -70,13 +70,12 @@ during the mutation testing phase.
 
 * **all**: Stryker will determine the code covered by all tests during the initial test run phase. Only mutants actually covered by your
 test suite are tested during the mutation testing phase. This setting requires your test runner to be able to report the code coverage back to Stryker.
-Currently, only the `stryker-mocha-runner` and the `stryker-karma-runner` do this.
+Currently, only `@stryker-mutator/mocha-runner`, `@stryker-mutator/karma-runner` and `@stryker-mutator/jest-runner` do this.
 
 * **perTest**: Stryker will determine the code covered by your test per executed test during the initial test run phase. Only mutants actually covered by your
 test suite are tested during the mutation testing phase.
 Only the tests that cover a particular mutant are tested for each one. This requires your tests to be able to run independently of each other and in random order.
  before and after each test, as well as test filtering.
- Currently all test runner plugins, except for `@stryker-mutator/jest-runner`) support this feature.
 
 ### `dashboard` [`DashboardOptions`]
 
