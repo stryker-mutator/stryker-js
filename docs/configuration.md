@@ -68,15 +68,13 @@ The possible values are:
 * **off**: Stryker will not determine the code covered by tests during the initial test run phase. All tests will be executed for each mutant
 during the mutation testing phase.
 
-* **all**: Stryker will determine the code covered by all tests during the initial test run phase. Only mutants actually covered by your
-test suite are tested during the mutation testing phase. This setting requires your test runner to be able to report the code coverage back to Stryker.
-Currently, only the `stryker-mocha-runner` and the `stryker-karma-runner` do this.
+* **all**: Stryker will determine the code covered your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and are not tested during the mutation testing phase. Coverage analysis requires your test runner plugin to report code coverage back to Stryker.
+All official test runner plugins support this (`@stryker-mutator/mocha-runner`, `@stryker-mutator/jasmine-runner`, `@stryker-mutator/karma-runner` and `@stryker-mutator/jest-runner`), but the `command` test runner does not, since it just runs a command and has no way of knowing more information about your tests.
 
 * **perTest**: Stryker will determine the code covered by your test per executed test during the initial test run phase. Only mutants actually covered by your
 test suite are tested during the mutation testing phase.
 Only the tests that cover a particular mutant are tested for each one. This requires your tests to be able to run independently of each other and in random order.
  before and after each test, as well as test filtering.
- Currently all test runner plugins, except for `@stryker-mutator/jest-runner`) support this feature.
 
 ### `dashboard` [`DashboardOptions`]
 
