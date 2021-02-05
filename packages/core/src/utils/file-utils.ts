@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-
 import { promisify } from 'util';
 
 import nodeGlob from 'glob';
@@ -78,18 +77,44 @@ export function symlinkJunction(to: string, from: string) {
  * returns the first occurrence of the node_modules, or null of none could be found.
  * @param basePath starting point
  */
-export async function findNodeModules(basePath: string): Promise<string | null> {
+export async function findNodeModulesList(
+  basePath: string
+): Promise<{
+  nodeModulesList: string[];
+  basePath: string;
+}> {
   basePath = path.resolve(basePath);
-  const nodeModules = path.resolve(basePath, 'node_modules');
-  try {
-    await fs.promises.stat(nodeModules);
-    return nodeModules;
-  } catch (e) {
-    const parent = path.dirname(basePath);
-    if (parent === basePath) {
-      return null;
-    } else {
-      return findNodeModules(path.dirname(basePath));
+  const nodeModulesList: string[] = [];
+
+  const dirBfsQueue: string[] = (await fs.promises.readdir(basePath)) ?? [];
+
+  while (dirBfsQueue.length > 0) {
+    const dir = dirBfsQueue.pop();
+
+    if (!dir) {
+      continue;
+    }
+
+    if (dir && path.basename(dir) === '.stryker-tmps') {
+      continue;
+    }
+    if (dir && path.basename(dir) === 'node_modules') {
+      nodeModulesList.push(dir);
+    }
+
+    const dirs = await fs.promises.readdir(dir);
+    dirBfsQueue.push(...(dirs ?? []));
+  }
+
+  if (nodeModulesList.length === 0) {
+    const parentDir = path.dirname(basePath);
+    if (parentDir !== basePath) {
+      return findNodeModulesList(parentDir);
     }
   }
+
+  return {
+    nodeModulesList,
+    basePath,
+  };
 }

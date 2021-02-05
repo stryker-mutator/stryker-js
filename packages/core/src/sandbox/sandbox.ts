@@ -12,7 +12,7 @@ import { mergeMap, toArray } from 'rxjs/operators';
 import { from } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/temporary-directory';
-import { findNodeModules, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
+import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
 import { coreTokens } from '../di';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
@@ -88,19 +88,23 @@ export class Sandbox implements Disposable {
     if (this.options.symlinkNodeModules && !this.options.inPlace) {
       // TODO: Change with this.options.basePath when we have it
       const basePath = process.cwd();
-      const nodeModules = await findNodeModules(basePath);
-      if (nodeModules) {
-        await symlinkJunction(nodeModules, path.join(this.workingDirectory, 'node_modules')).catch((error: NodeJS.ErrnoException) => {
-          if (error.code === 'EEXIST') {
-            this.log.warn(
-              normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
+      const { nodeModulesList, basePath: actualBasePath } = await findNodeModulesList(basePath);
+
+      if (nodeModulesList.length > 0) {
+        for (const nodeModules of nodeModulesList) {
+          const relativePathToBase = path.resolve(nodeModules).replace(actualBasePath, '');
+          await symlinkJunction(nodeModules, path.join(this.workingDirectory, relativePathToBase)).catch((error: NodeJS.ErrnoException) => {
+            if (error.code === 'EEXIST') {
+              this.log.warn(
+                normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
               Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`)
-            );
-          } else {
-            this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
-          }
-        });
+              );
+            } else {
+              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+            }
+          });
+        }
       } else {
         this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
       }
