@@ -36,7 +36,7 @@ function guardJestVersion(jest: string, options: StrykerOptions, log: Logger) {
     }
     log.warn(
       '[DEPRECATED] Support for Jest version < 24 is deprecated and will be removed in the next major version of Stryker, please upgrade your jest version (your current version is %s).',
-      jestVersion
+      jest
     );
   }
 }
