@@ -1,4 +1,4 @@
-import { getEnvironmentVariable, getEnvironmentVariableOrThrow } from '../../utils/object-utils';
+import { getEnvironmentVariable, getEnvironmentVariableOrThrow, undefinedEmptyString } from '../../utils/object-utils';
 
 import { CIProvider } from './provider';
 
@@ -10,7 +10,11 @@ export class CircleProvider implements CIProvider {
     return `${this.determineProvider()}/${this.determineRepository()}`;
   }
   public determineVersion(): string | undefined {
-    return getEnvironmentVariable('CIRCLE_PR_NUMBER') ?? getEnvironmentVariable('CIRCLE_BRANCH') ?? getEnvironmentVariable('CIRCLE_TAG');
+    return (
+      undefinedEmptyString(getEnvironmentVariable('CIRCLE_PR_NUMBER')) ??
+      undefinedEmptyString(getEnvironmentVariable('CIRCLE_BRANCH')) ??
+      undefinedEmptyString(getEnvironmentVariable('CIRCLE_TAG'))
+    );
   }
 
   private determineRepository() {

@@ -18,6 +18,13 @@ export function getEnvironmentVariable(nameEnvironmentVariable: string): string 
   return process.env[nameEnvironmentVariable];
 }
 
+export function undefinedEmptyString(str: string | undefined): string | undefined {
+  if (str) {
+    return str;
+  }
+  return undefined;
+}
+
 export function getEnvironmentVariableOrThrow(name: string): string {
   const value = getEnvironmentVariable(name);
   if (value === undefined) {
