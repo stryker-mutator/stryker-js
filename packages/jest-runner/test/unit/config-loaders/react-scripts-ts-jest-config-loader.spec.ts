@@ -22,7 +22,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
     createReactJestConfigStub = sinon.stub(helper, 'createReactTsJestConfig');
     createReactJestConfigStub.callsFake((resolve: any, root: string, eject: boolean) => ({
       eject,
-      root,
+      projectRoot: root,
       relativePath: resolve('test'),
     }));
 
