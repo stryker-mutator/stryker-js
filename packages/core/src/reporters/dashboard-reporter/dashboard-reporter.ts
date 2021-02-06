@@ -40,7 +40,7 @@ export class DashboardReporter implements Reporter {
     })();
   }
 
-  public async wrapUp() {
+  public async wrapUp(): Promise<void> {
     await this.onGoingWork;
   }
 
@@ -71,8 +71,8 @@ export class DashboardReporter implements Reporter {
   private getContextFromEnvironment() {
     return {
       moduleName: this.options.dashboard.module,
-      projectName: this.options.dashboard.project || (this.ciProvider && this.ciProvider.determineProject()),
-      version: this.options.dashboard.version || (this.ciProvider && this.ciProvider.determineVersion()),
+      projectName: this.options.dashboard.project ?? this.ciProvider?.determineProject(),
+      version: this.options.dashboard.version ?? this.ciProvider?.determineVersion(),
     };
   }
 }

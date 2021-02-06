@@ -26,7 +26,7 @@ export class PluginLoader implements PluginResolver {
   public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
   constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
 
-  public load() {
+  public load(): void {
     this.resolvePluginModules().forEach((moduleName) => {
       this.requirePlugin(moduleName);
     });
@@ -39,9 +39,9 @@ export class PluginLoader implements PluginResolver {
   public resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
     const plugins = this.pluginsByKind.get(kind);
     if (plugins) {
-      const plugin = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
-      if (plugin) {
-        return plugin as Plugins[T];
+      const pluginFound = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
+      if (pluginFound) {
+        return pluginFound as Plugins[T];
       } else {
         throw new Error(
           `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
@@ -53,7 +53,7 @@ export class PluginLoader implements PluginResolver {
   }
 
   public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
-    const plugins = this.pluginsByKind.get(kind) || [];
+    const plugins = this.pluginsByKind.get(kind) ?? [];
     return plugins as Array<Plugins[T]>;
   }
 
@@ -121,11 +121,11 @@ export class PluginLoader implements PluginResolver {
 
   private isPluginModule(module: unknown): module is PluginModule {
     const pluginModule = module as PluginModule;
-    return pluginModule && pluginModule.strykerPlugins && Array.isArray(pluginModule.strykerPlugins);
+    return pluginModule?.strykerPlugins && Array.isArray(pluginModule.strykerPlugins);
   }
 
   private hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
     const pluginModule = module as SchemaValidationContribution;
-    return pluginModule && pluginModule.strykerValidationSchema && typeof pluginModule.strykerValidationSchema === 'object';
+    return pluginModule?.strykerValidationSchema && typeof pluginModule.strykerValidationSchema === 'object';
   }
 }

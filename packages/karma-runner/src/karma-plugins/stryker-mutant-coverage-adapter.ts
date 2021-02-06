@@ -10,7 +10,7 @@ window.__karma__.complete = (...args) => {
       args.push({});
     }
     // @ts-expect-error
-    args[0].mutantCoverage = window.__stryker__ && window.__stryker__.mutantCoverage;
+    args[0].mutantCoverage = window.__stryker__?.mutantCoverage;
   }
   originalComplete(...args);
 };

@@ -8,7 +8,7 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     sinon.restore();
   },
 };

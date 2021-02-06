@@ -21,7 +21,7 @@ export function glob(expression: string): Promise<string[]> {
 
 export const deleteDir = promisify(rimraf);
 
-export async function cleanFolder(folderName: string) {
+export async function cleanFolder(folderName: string): Promise<string | undefined> {
   try {
     await fs.promises.lstat(folderName);
     await deleteDir(folderName);
@@ -35,6 +35,7 @@ export async function cleanFolder(folderName: string) {
  * Wrapper around the 'require' function (for testability)
  */
 export function importModule(moduleName: string): unknown {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   return require(moduleName);
 }
 
@@ -43,7 +44,7 @@ export function importModule(moduleName: string): unknown {
  * @param from The source directory to move from
  * @param to The target directory to move to
  */
-export function moveDirectoryRecursiveSync(from: string, to: string) {
+export function moveDirectoryRecursiveSync(from: string, to: string): void {
   if (!fs.existsSync(from)) {
     return;
   }
@@ -69,7 +70,7 @@ export function moveDirectoryRecursiveSync(from: string, to: string) {
  * @param to The thing you want to point to
  * @param from The thing you want to point from
  */
-export function symlinkJunction(to: string, from: string) {
+export function symlinkJunction(to: string, from: string): Promise<void> {
   return fs.promises.symlink(to, from, 'junction');
 }
 

@@ -290,9 +290,9 @@ describe(Pool.name, () => {
     });
   });
 
-  async function captureWorkers(sut: Pool<Required<Worker>>, inputCount: number) {
+  async function captureWorkers(suite: Pool<Required<Worker>>, inputCount: number) {
     // Eagerly get all test runners
-    const createAllPromise = sut
+    const createAllPromise = suite
       .schedule(range(0, inputCount), async (worker) => {
         await tick();
         return worker;
@@ -305,7 +305,7 @@ describe(Pool.name, () => {
     await tick(inputCount);
 
     // Dispose completes the internal recycle bin subject, which in turn will complete.
-    await sut.dispose();
+    await suite.dispose();
     concurrencyToken$.complete();
     return createAllPromise;
   }

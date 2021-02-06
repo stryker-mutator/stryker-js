@@ -14,7 +14,7 @@ describe('TestRunnerDecorator', () => {
     sut = new TestRunnerDecorator(() => testRunner);
   });
 
-  function actArrangeAssert(methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {
+  function actArrangeAssert(methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
         testRunner[methodName].resolves('some value' as any);

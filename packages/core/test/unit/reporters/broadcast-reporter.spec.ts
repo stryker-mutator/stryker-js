@@ -78,8 +78,8 @@ describe('BroadcastReporter', () => {
     });
 
     describe('when "wrapUp" returns promises', () => {
-      let wrapUpResolveFn: (value?: void | PromiseLike<void>) => void;
-      let wrapUpResolveFn2: (value?: void | PromiseLike<void>) => void;
+      let wrapUpResolveFn: (value?: PromiseLike<void> | void) => void;
+      let wrapUpResolveFn2: (value?: PromiseLike<void> | void) => void;
       let wrapUpRejectFn: (reason?: any) => void;
       let result: Promise<void>;
       let isResolved: boolean;

@@ -88,9 +88,9 @@ describe(ChildProcessProxy.name, () => {
     const logEventTask = new Task<log4js.LoggingEvent>();
     loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.debug('test message');
-    const log = await logEventTask.promise;
-    expect(log.categoryName).eq(Echo.name);
-    expect(log.data).deep.eq(['test message']);
+    const logger = await logEventTask.promise;
+    expect(logger.categoryName).eq(Echo.name);
+    expect(logger.data).deep.eq(['test message']);
   });
 
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
@@ -98,10 +98,10 @@ describe(ChildProcessProxy.name, () => {
     loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     sut.proxy.trace('foo');
     sut.proxy.debug('bar');
-    const log = await logEventTask.promise;
-    expect(log.categoryName).eq(Echo.name);
-    expect(log.data).deep.eq(['bar']);
-    expect(toLogLevel(log.level)).eq(LogLevel.Debug);
+    const logger = await logEventTask.promise;
+    expect(logger.categoryName).eq(Echo.name);
+    expect(logger.data).deep.eq(['bar']);
+    expect(toLogLevel(logger.level)).eq(LogLevel.Debug);
   });
 
   it('should reject when the child process exits', () => {
@@ -135,6 +135,6 @@ describe(ChildProcessProxy.name, () => {
 function toLogLevel(level: log4js.Level) {
   const levelName = (level as any).levelStr.toLowerCase();
   return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(
-    (level) => level === levelName
+    (logLevel) => logLevel === levelName
   );
 }

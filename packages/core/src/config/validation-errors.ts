@@ -108,12 +108,12 @@ function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
   const typeErrorsByPath = groupby(typeErrors, (error) => error.dataPath);
   return Object.values(typeErrorsByPath).map(mergeTypeErrors);
 
-  function mergeTypeErrors(typeErrors: ErrorObject[]): ErrorObject {
+  function mergeTypeErrors(errors: ErrorObject[]): ErrorObject {
     const params = {
-      type: typeErrors.map((error) => error.params.type).join(','),
+      type: errors.map((error) => error.params.type).join(','),
     };
     return {
-      ...typeErrors[0],
+      ...errors[0],
       params,
     };
   }

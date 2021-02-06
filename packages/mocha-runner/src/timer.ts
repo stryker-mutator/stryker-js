@@ -7,11 +7,11 @@ export class Timer {
     this.reset();
   }
 
-  public reset() {
+  public reset(): void {
     this.start = new RealDate();
   }
 
-  public elapsedMs() {
+  public elapsedMs(): number {
     return new RealDate().getTime() - this.start.getTime();
   }
 }

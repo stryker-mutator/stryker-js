@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 import { AggregatedResult } from '@jest/test-result';
 

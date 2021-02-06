@@ -84,8 +84,8 @@ function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTe
   const testsByMutantId = new Map<number, Set<TestResult>>();
   coveragePerTest &&
     Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
-      const test = allTests.find((test) => test.id === testId);
-      if (!test) {
+      const foundTest = allTests.find((test) => test.id === testId);
+      if (!foundTest) {
         logger.debug(
           `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account`
         );
@@ -99,7 +99,7 @@ function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTe
             tests = new Set();
             testsByMutantId.set(mutantId, tests);
           }
-          tests.add(test);
+          tests.add(foundTest);
         }
       });
     });

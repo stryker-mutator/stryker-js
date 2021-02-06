@@ -1,5 +1,6 @@
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import mochaSchema = require('../schema/mocha-runner-options.json');
 
 export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
@@ -34,7 +35,7 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties
  * Filter out those config values that are actually useful to run mocha with Stryker
  * @param rawConfig The raw parsed mocha configuration
  */
-export function filterConfig(rawConfig: { [key: string]: any }): Partial<MochaOptions> {
+export function filterConfig(rawConfig: Record<string, any>): Partial<MochaOptions> {
   const options: Partial<MochaOptions> = {};
   Object.keys(rawConfig)
     .filter((rawOption) => SUPPORTED_MOCHA_OPTIONS.some((supportedOption) => rawOption === supportedOption))
@@ -44,7 +45,7 @@ export function filterConfig(rawConfig: { [key: string]: any }): Partial<MochaOp
   // For example:
   // When mocha.opts contains "--async-only test/**/*.js", then "test/**/*.js will be the positional argument
   // We must provide it to mocha as "spec"
-  if (rawConfig._ && rawConfig._.length) {
+  if (rawConfig._?.length) {
     if (!options.spec) {
       options.spec = [];
     }

@@ -12,9 +12,7 @@ import { StrictReporter } from './strict-reporter';
 export class BroadcastReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreatorReporter, commonTokens.logger);
 
-  public readonly reporters: {
-    [name: string]: Reporter;
-  };
+  public readonly reporters: Record<string, Reporter>;
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator<PluginKind.Reporter>,

@@ -8,11 +8,11 @@ export class Echo {
   public static inject = tokens('name');
   constructor(public name: string) {}
 
-  public say(value: string) {
+  public say(value: string): string {
     return `${this.name}: ${value}`;
   }
 
-  public sayDelayed(value: string, delay: number) {
+  public sayDelayed(value: string, delay: number): Promise<string> {
     return new Promise<string>((res) => {
       setTimeout(() => {
         res(this.say(`${value} (${delay} ms)`));
@@ -20,50 +20,50 @@ export class Echo {
     });
   }
 
-  public echoFile(file: File) {
+  public echoFile(file: File): string {
     return file.textContent;
   }
 
-  public exit(code: number) {
+  public exit(code: number): Promise<unknown> {
     process.exit(code);
     return new Promise(() => {
       /* Never resolve */
     });
   }
 
-  public readFile() {
+  public readFile(): File {
     return new File('foobar.txt', 'hello foobar');
   }
 
-  public warning() {
+  public warning(): void {
     process.emitWarning('Foo warning');
   }
 
-  public cwd() {
+  public cwd(): string {
     return process.cwd();
   }
 
-  public debug(message: string) {
+  public debug(message: string): void {
     this.logger.debug(message);
   }
 
-  public trace(message: string) {
+  public trace(message: string): void {
     this.logger.trace(message);
   }
 
-  public reject(error: string) {
+  public reject(error: string): Promise<never> {
     return Promise.reject(new Error(error));
   }
 
-  public stdout(...args: string[]) {
+  public stdout(...args: string[]): void {
     args.forEach((arg) => console.log(arg));
   }
 
-  public stderr(...args: string[]) {
+  public stderr(...args: string[]): void {
     args.forEach((arg) => console.error(arg));
   }
 
-  public memoryLeak() {
+  public memoryLeak(): void {
     const arr: number[] = [];
     // eslint-disable-next-line no-constant-condition
     while (true) {

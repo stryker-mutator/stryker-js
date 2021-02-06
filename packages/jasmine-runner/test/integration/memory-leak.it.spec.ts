@@ -1,6 +1,6 @@
-import path = require('path');
+import path from 'path';
 
-import execa = require('execa');
+import execa from 'execa';
 import { expect } from 'chai';
 
 import { JasmineTestRunner } from '../../src';

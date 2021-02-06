@@ -10,7 +10,7 @@ export class CircleProvider implements CIProvider {
     return `${this.determineProvider()}/${this.determineRepository()}`;
   }
   public determineVersion(): string | undefined {
-    return getEnvironmentVariable('CIRCLE_PR_NUMBER') || getEnvironmentVariable('CIRCLE_BRANCH') || getEnvironmentVariable('CIRCLE_TAG');
+    return getEnvironmentVariable('CIRCLE_PR_NUMBER') ?? getEnvironmentVariable('CIRCLE_BRANCH') ?? getEnvironmentVariable('CIRCLE_TAG');
   }
 
   private determineRepository() {

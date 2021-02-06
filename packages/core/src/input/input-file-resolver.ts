@@ -159,7 +159,7 @@ export class InputFileResolver {
   }
 
   private async readFiles(fileNames: string[]): Promise<File[]> {
-    const files = from(fileNames)
+    const promisedFiles = from(fileNames)
       .pipe(
         mergeMap((fileName) => this.readFile(fileName), MAX_CONCURRENT_FILE_IO),
         filter(notEmpty),
@@ -168,7 +168,7 @@ export class InputFileResolver {
         map((files) => files.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)))
       )
       .toPromise();
-    return files;
+    return promisedFiles;
   }
 
   private async readFile(fileName: string): Promise<File | null> {

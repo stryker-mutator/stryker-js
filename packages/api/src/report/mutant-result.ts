@@ -20,7 +20,7 @@ export interface KilledMutantResult extends BaseMutantResult {
 }
 
 export interface InvalidMutantResult extends BaseMutantResult {
-  status: MutantStatus.RuntimeError | MutantStatus.CompileError;
+  status: MutantStatus.CompileError | MutantStatus.RuntimeError;
   errorMessage: string;
 }
 
@@ -38,4 +38,4 @@ export interface TimeoutMutantResult extends BaseMutantResult {
   status: MutantStatus.TimedOut;
 }
 
-export type MutantResult = TimeoutMutantResult | UndetectedMutantResult | InvalidMutantResult | KilledMutantResult | IgnoredMutantResult;
+export type MutantResult = IgnoredMutantResult | InvalidMutantResult | KilledMutantResult | TimeoutMutantResult | UndetectedMutantResult;

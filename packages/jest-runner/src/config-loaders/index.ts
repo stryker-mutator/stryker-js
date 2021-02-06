@@ -12,7 +12,11 @@ import { ReactScriptsJestConfigLoader } from './react-scripts-jest-config-loader
 import { ReactScriptsTSJestConfigLoader } from './react-scripts-ts-jest-config-loader';
 
 configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
-export function configLoaderFactory(options: StrykerOptions, injector: Injector<PluginContext>, log: Logger) {
+export function configLoaderFactory(
+  options: StrykerOptions,
+  injector: Injector<PluginContext>,
+  log: Logger
+): CustomJestConfigLoader | ReactScriptsJestConfigLoader | ReactScriptsTSJestConfigLoader {
   const warnAboutConfigFile = (projectType: string, configFile: string | undefined) => {
     if (configFile) {
       log.warn(`Config setting "configFile" is not supported for projectType "${projectType}"`);

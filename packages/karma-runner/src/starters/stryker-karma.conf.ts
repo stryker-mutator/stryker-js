@@ -98,8 +98,8 @@ function setBasePath(config: Config) {
   }
 }
 
-function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: string | Record<string, InlinePluginType>) {
-  karmaConfig.plugins = karmaConfig.plugins || ['karma-*'];
+function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: Record<string, InlinePluginType> | string) {
+  karmaConfig.plugins = karmaConfig.plugins ?? ['karma-*'];
   karmaConfig.plugins.push(karmaPlugin);
 }
 
@@ -110,10 +110,10 @@ function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: string | Record<stri
  */
 function configureTestHooksMiddleware(config: Config) {
   // Add test run middleware file
-  config.files = config.files || [];
+  config.files = config.files ?? [];
 
   config.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
-  const middleware: string[] = config.beforeMiddleware || (config.beforeMiddleware = []);
+  const middleware: string[] = config.beforeMiddleware ?? (config.beforeMiddleware = []);
   middleware.unshift(TestHooksMiddleware.name);
 
   TestHooksMiddleware.instance.configureTestFramework(config.frameworks);
@@ -122,7 +122,7 @@ function configureTestHooksMiddleware(config: Config) {
 }
 
 function configureStrykerMutantCoverageAdapter(config: Config) {
-  config.files = config.files || [];
+  config.files = config.files ?? [];
   config.files.unshift({
     pattern: require.resolve('../karma-plugins/stryker-mutant-coverage-adapter'),
     included: true,
@@ -150,7 +150,7 @@ const globalSettings: {
   },
 };
 
-function configureKarma(config: Config) {
+function configureKarma(config: Config): void {
   const log = globalSettings.getLogger(path.basename(__filename));
   setDefaultOptions(config);
   setUserKarmaConfigFile(config, log);
@@ -171,7 +171,7 @@ function configureKarma(config: Config) {
 configureKarma.setGlobals = (globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; getLogger?: LoggerFactoryMethod }) => {
   globalSettings.karmaConfig = globals.karmaConfig;
   globalSettings.karmaConfigFile = globals.karmaConfigFile;
-  globalSettings.getLogger = globals.getLogger || (() => noopLogger);
+  globalSettings.getLogger = globals.getLogger ?? (() => noopLogger);
 };
 
 export = configureKarma;

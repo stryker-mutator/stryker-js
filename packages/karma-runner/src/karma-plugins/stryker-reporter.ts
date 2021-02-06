@@ -34,12 +34,12 @@ export class StrykerReporter extends EventEmitter implements karma.Reporter {
     return this._instance;
   }
 
-  public readonly onListening = (port: number) => {
+  public readonly onListening: (port: number) => void = (port: number) => {
     this.emit('server_start', port);
   };
 
-  public readonly onSpecComplete = (_browser: any, spec: KarmaSpec) => {
-    const name = spec.suite.reduce((name, suite) => name + suite + ' ', '') + spec.description;
+  public readonly onSpecComplete: (_browser: any, spec: KarmaSpec) => void = (_browser: any, spec: KarmaSpec) => {
+    const name = spec.suite.reduce((specName, suite) => specName + suite + ' ', '') + spec.description;
     const id = spec.id || name;
     let testResult: TestResult;
     if (spec.skipped) {
@@ -68,23 +68,28 @@ export class StrykerReporter extends EventEmitter implements karma.Reporter {
     this.emit('test_result', testResult);
   };
 
-  public readonly onRunComplete = (runResult: karma.TestResults) => {
+  public readonly onRunComplete: (runResult: karma.TestResults) => void = (runResult: karma.TestResults) => {
     this.emit('run_complete', this.collectRunState(runResult));
   };
 
-  public readonly onLoadError = (...args: any[]) => {
+  public readonly onLoadError: (...args: any[]) => void = (...args: any[]) => {
     this.emit('load_error', ...args);
   };
 
-  public readonly onBrowserComplete = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
+  public readonly onBrowserComplete: (
+    _browser: any,
+    result: {
+      mutantCoverage: MutantCoverage;
+    }
+  ) => void = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
     this.emit('coverage_report', result.mutantCoverage);
   };
 
-  public readonly onBrowsersReady = () => {
+  public readonly onBrowsersReady: () => void = () => {
     this.emit('browsers_ready');
   };
 
-  public readonly onBrowserError = (_browser: any, error: any) => {
+  public readonly onBrowserError: (_browser: any, error: any) => void = (_browser: any, error: any) => {
     // Karma 2.0 has different error messages
     if (error.message) {
       this.emit('browser_error', error.message);
@@ -93,7 +98,7 @@ export class StrykerReporter extends EventEmitter implements karma.Reporter {
     }
   };
 
-  public readonly onCompileError = (errors: string[]) => {
+  public readonly onCompileError: (errors: string[]) => void = (errors: string[]) => {
     // This is called from angular cli logic
     // https://github.com/angular/angular-cli/blob/012672161087a05ae5ecffbed5d1ee307ce1e0ad/packages/angular_devkit/build_angular/src/angular-cli-files/plugins/karma.ts#L96
     this.emit('compile_error', errors);

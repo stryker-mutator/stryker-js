@@ -34,7 +34,7 @@ export class CheckerFacade implements Checker, Disposable, Worker {
     }
   }
 
-  public async dispose() {
+  public async dispose(): Promise<void> {
     if (this.childProcess) {
       await this.childProcess.dispose();
     }

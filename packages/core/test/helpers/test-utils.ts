@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 
-export function sleep(ms = 0) {
+export function sleep(ms = 0): Promise<unknown> {
   return new Promise((res) => {
     setTimeout(res, ms);
   });

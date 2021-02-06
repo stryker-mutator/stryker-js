@@ -9,7 +9,9 @@ import { ParserOptions } from './parser-options';
 
 export { ParserOptions };
 
-export function createParser(parserOptions: ParserOptions) {
+export function createParser(
+  parserOptions: ParserOptions
+): <T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T | undefined) => Promise<AstByFormat[T]> {
   const jsParse = createJSParser(parserOptions);
   return function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
     const format = getFormat(fileName, formatOverride);

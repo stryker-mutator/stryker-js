@@ -2,14 +2,14 @@ import { CompleteDryRunResult, TestStatus, SkippedTestResult, FailedTestResult, 
 import { expect } from 'chai';
 
 export type TimelessTestResult =
-  | Omit<SuccessTestResult, 'timeSpentMs'>
   | Omit<FailedTestResult, 'timeSpentMs'>
-  | Omit<SkippedTestResult, 'timeSpentMs'>;
+  | Omit<SkippedTestResult, 'timeSpentMs'>
+  | Omit<SuccessTestResult, 'timeSpentMs'>;
 
 /**
  * Compares test results without comparing the time it took to run them
  */
-export function expectTestResults(result: CompleteDryRunResult, expectedTestResults: TimelessTestResult[]) {
+export function expectTestResults(result: CompleteDryRunResult, expectedTestResults: TimelessTestResult[]): void {
   const actualTestResults: TimelessTestResult[] = result.tests.map((test) => {
     const { timeSpentMs, ...timeless } = test;
     if (timeless.status === TestStatus.Failed) {

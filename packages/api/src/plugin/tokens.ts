@@ -31,6 +31,6 @@ export const commonTokens = Object.freeze({
  * ```
  * @param tokens The tokens as args
  */
-export function tokens<TS extends string[]>(...tokens: TS): TS {
-  return tokens;
+export function tokens<TS extends string[]>(...tokensList: TS): TS {
+  return tokensList;
 }

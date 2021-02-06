@@ -5,7 +5,7 @@ import { MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/repor
 import chalk from 'chalk';
 
 export class DotsReporter implements Reporter {
-  public onMutantTested(result: MutantResult) {
+  public onMutantTested(result: MutantResult): void {
     let toLog: string;
     switch (result.status) {
       case MutantStatus.Killed:

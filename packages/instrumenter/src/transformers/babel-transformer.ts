@@ -1,7 +1,9 @@
 import { traverse } from '@babel/core';
 
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
+/* eslint-enable @typescript-eslint/no-duplicate-imports */
 
 import { placeMutants } from '../mutant-placers';
 import { mutate } from '../mutators';

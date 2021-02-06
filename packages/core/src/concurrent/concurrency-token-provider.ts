@@ -17,7 +17,7 @@ export class ConcurrencyTokenProvider implements Disposable {
   public readonly checkerToken$: Observable<number>;
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  constructor(options: Pick<StrykerOptions, 'concurrency' | 'checkers'>, private readonly log: Logger) {
+  constructor(options: Pick<StrykerOptions, 'checkers' | 'concurrency'>, private readonly log: Logger) {
     const cpuCount = os.cpus().length;
     const concurrency = options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
     if (options.checkers.length > 0) {
@@ -34,7 +34,7 @@ export class ConcurrencyTokenProvider implements Disposable {
     Array.from({ length: this.concurrencyTestRunners }).forEach(() => this.testRunnerTokenSubject.next(this.tick()));
   }
 
-  public freeCheckers() {
+  public freeCheckers(): void {
     if (this.concurrencyCheckers > 0) {
       this.log.debug('Checking done, creating %s additional test runner process(es)', this.concurrencyCheckers);
       for (let i = 0; i < this.concurrencyCheckers; i++) {

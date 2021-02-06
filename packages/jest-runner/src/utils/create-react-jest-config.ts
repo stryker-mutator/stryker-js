@@ -1,7 +1,7 @@
 import { Config } from '@jest/types';
 
 const resolveCreateJestConfig = (path: string, loader?: NodeRequire): ((...args: any[]) => any) => {
-  loader = loader || /* istanbul ignore next */ require;
+  loader = loader ?? /* istanbul ignore next */ require;
 
   return loader(path);
 };

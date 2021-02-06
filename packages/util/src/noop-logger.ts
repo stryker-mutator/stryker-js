@@ -1,38 +1,38 @@
 export const noopLogger = {
-  isTraceEnabled() {
+  isTraceEnabled(): boolean {
     return false;
   },
-  isDebugEnabled() {
+  isDebugEnabled(): boolean {
     return false;
   },
-  isInfoEnabled() {
+  isInfoEnabled(): boolean {
     return false;
   },
-  isWarnEnabled() {
+  isWarnEnabled(): boolean {
     return false;
   },
-  isErrorEnabled() {
+  isErrorEnabled(): boolean {
     return false;
   },
-  isFatalEnabled() {
+  isFatalEnabled(): boolean {
     return false;
   },
-  trace() {
+  trace(): void {
     // noop
   },
-  debug() {
+  debug(): void {
     // noop
   },
-  info() {
+  info(): void {
     // noop
   },
-  warn() {
+  warn(): void {
     // noop
   },
-  error() {
+  error(): void {
     // noop
   },
-  fatal() {
+  fatal(): void {
     // noop
   },
 };

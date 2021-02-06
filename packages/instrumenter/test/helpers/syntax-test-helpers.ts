@@ -2,8 +2,10 @@ import { types, traverse, NodePath, parseSync } from '@babel/core';
 import { expect } from 'chai';
 import generate from '@babel/generator';
 
+/* eslint-disable @typescript-eslint/no-duplicate-imports */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
+/* eslint-enable @typescript-eslint/no-duplicate-imports */
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
 
@@ -26,14 +28,14 @@ export function expectAst(actual: types.File, assertion: AstExpectation): void {
   expect(found, `Expected to find ${assertion.toString()}`).true;
 }
 
-export function parseJS(code: string) {
+export function parseJS(code: string): types.File {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const { ast } = new File({ filename: 'foo.js' }, { code, ast: parseSync(code) });
-  return ast as types.File;
+  return ast;
 }
 
-export function parseTS(code: string, fileName = 'example.ts') {
+export function parseTS(code: string, fileName = 'example.ts'): types.File {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const { ast } = new File(
@@ -47,11 +49,11 @@ export function parseTS(code: string, fileName = 'example.ts') {
       }),
     }
   );
-  return ast as types.File;
+  return ast;
 }
 
 export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (nodePath: NodePath<types.Node>) => boolean): NodePath<T> {
-  let theNode: undefined | NodePath<T>;
+  let theNode: NodePath<T> | undefined;
   traverse(ast, {
     noScope: true,
     enter(path) {

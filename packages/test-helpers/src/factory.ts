@@ -349,7 +349,7 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => {
   return options;
 });
 
-export const strykerWithPluginOptions = <T>(pluginOptions: T): T & StrykerOptions => {
+export const strykerWithPluginOptions = <T>(pluginOptions: T): StrykerOptions & T => {
   return { ...strykerOptions(), ...pluginOptions };
 };
 
@@ -364,9 +364,9 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
 ];
 
 export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
-  const reporter = { name } as any;
-  ALL_REPORTER_EVENTS.forEach((event) => (reporter[event] = sinon.stub()));
-  return reporter;
+  const reporters = { name } as any;
+  ALL_REPORTER_EVENTS.forEach((event) => (reporters[event] = sinon.stub()));
+  return reporters;
 }
 
 export const matchedMutant = factoryMethod<MatchedMutant>(() => ({
@@ -395,7 +395,7 @@ export function injector(): sinon.SinonStubbedInstance<Injector> {
   return injectorMock;
 }
 
-export function file() {
+export function file(): File {
   return new File('', '');
 }
 
@@ -412,7 +412,7 @@ export function createIsDirError(): NodeJS.ErrnoException {
 }
 
 function createErrnoException(errorCode: string) {
-  const fileNotFoundError: NodeJS.ErrnoException = new Error('');
-  fileNotFoundError.code = errorCode;
-  return fileNotFoundError;
+  const fileNotFoundErrorInstance: NodeJS.ErrnoException = new Error('');
+  fileNotFoundErrorInstance.code = errorCode;
+  return fileNotFoundErrorInstance;
 }

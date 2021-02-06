@@ -1,7 +1,7 @@
-import path = require('path');
-import fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 

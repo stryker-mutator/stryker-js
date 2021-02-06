@@ -120,7 +120,7 @@ export class ClearTextScoreTable {
   /**
    * Returns a string with the score results drawn in a table.
    */
-  public draw() {
+  public draw(): string {
     return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawValues().join(os.EOL), this.drawBorder()].join(os.EOL);
   }
 }

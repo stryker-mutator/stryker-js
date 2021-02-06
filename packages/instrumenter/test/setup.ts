@@ -17,17 +17,17 @@ chai.use(chaiJestSnapshot);
 let originalCwd: string;
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     sinon.restore();
     testInjector.reset();
     process.chdir(originalCwd);
   },
 
-  before() {
+  before(): void {
     chaiJestSnapshot.resetSnapshotRegistry();
   },
 
-  beforeEach(this: Context) {
+  beforeEach(this: Context): void {
     originalCwd = process.cwd();
     chaiJestSnapshot.configureUsingMochaContext(this);
     chaiJestSnapshot.setFilename(snapshotFileFor(this.currentTest!.file!));

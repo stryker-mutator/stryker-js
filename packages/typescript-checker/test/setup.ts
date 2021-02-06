@@ -11,11 +11,11 @@ chai.use(chaiAsPromised);
 let originalCwd: string;
 
 export const mochaHooks = {
-  beforeEach() {
+  beforeEach(): void {
     originalCwd = process.cwd();
   },
 
-  afterEach() {
+  afterEach(): void {
     sinon.restore();
     testInjector.reset();
     process.chdir(originalCwd);

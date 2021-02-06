@@ -1,12 +1,11 @@
 import os from 'os';
 import { types } from 'util';
+import fs from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
-
-const fs = require('fs');
 
 class CoverageReportingTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
@@ -111,6 +110,7 @@ class RejectInitRunner implements TestRunner {
 
 class NeverResolvedTestRunner implements TestRunner {
   public dryRun(): Promise<DryRunResult> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     return new Promise<DryRunResult>(() => {});
   }
   public async mutantRun(): Promise<MutantRunResult> {
@@ -166,6 +166,7 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
     this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
   }
   public async dryRun(): Promise<DryRunResult> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.promise!.catch(() => {});
     return factory.completeDryRunResult();
   }

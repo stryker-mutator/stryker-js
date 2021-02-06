@@ -21,7 +21,7 @@ export class TemporaryDirectory implements Disposable {
     this.removeDuringDisposal = options.cleanTempDir;
   }
 
-  public initialize() {
+  public initialize(): void {
     this.isInitialized = true;
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
     mkdirp.sync(this.temporaryDirectory);

@@ -15,6 +15,6 @@ export class TravisProvider implements CIProvider {
     }
   }
   public determineVersion(): string | undefined {
-    return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') || getEnvironmentVariable('TRAVIS_BRANCH');
+    return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') ?? getEnvironmentVariable('TRAVIS_BRANCH');
   }
 }

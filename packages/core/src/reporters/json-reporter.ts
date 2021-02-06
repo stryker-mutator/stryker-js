@@ -19,11 +19,11 @@ export class JsonReporter implements Reporter {
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
   }
 
-  public wrapUp() {
+  public wrapUp(): Promise<void> | undefined {
     return this.mainPromise;
   }
 

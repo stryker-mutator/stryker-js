@@ -15,8 +15,8 @@ export enum ParentMessageKind {
   'DisposeCompleted',
 }
 
-export type WorkerMessage = InitMessage | CallMessage | DisposeMessage;
-export type ParentMessage = WorkResult | { kind: ParentMessageKind.Initialized | ParentMessageKind.DisposeCompleted } | RejectionResult;
+export type WorkerMessage = CallMessage | DisposeMessage | InitMessage;
+export type ParentMessage = RejectionResult | WorkResult | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized };
 
 // Make this an unlikely command line argument
 // (prevents incidental start of child process)

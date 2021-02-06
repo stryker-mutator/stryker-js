@@ -1,4 +1,4 @@
-import fs = require('fs');
+import fs from 'fs';
 import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -22,7 +22,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly require: NodeRequireFunction,
-    private readonly projectRoot: string
+    private readonly root: string
   ) {}
 
   public loadConfig(): Config.InitialOptions {
@@ -33,7 +33,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
   private readConfigFromJestConfigFile() {
     try {
       const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
-      const configFilePath = path.join(this.projectRoot, jestOptions.jest?.configFile || 'jest.config.js');
+      const configFilePath = path.join(this.root, jestOptions.jest?.configFile ?? 'jest.config.js');
       const config = this.require(configFilePath);
       this.log.debug(`Read Jest config from ${configFilePath}`);
       return config;
@@ -44,7 +44,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
 
   private readConfigFromPackageJson() {
     try {
-      const configFilePath = path.join(this.projectRoot, 'package.json');
+      const configFilePath = path.join(this.root, 'package.json');
       const config = JSON.parse(fs.readFileSync(configFilePath, 'utf8')).jest;
       this.log.debug(`Read Jest config from ${configFilePath}`);
       return config;

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
@@ -83,6 +83,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should handle requires and collect root hooks', async () => {
       const requires = ['test/setup.js'];
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const expectedRootHooks = { beforeEach() {} };
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
       mochaAdapterMock.handleRequires.resolves(expectedRootHooks);
@@ -138,6 +139,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should pass rootHooks to the mocha instance', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       const rootHooks = { beforeEach() {} };
       sut.rootHooks = rootHooks;
       await actDryRun();

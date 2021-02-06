@@ -36,6 +36,7 @@ describe(MutationTestReportHelper.name, () => {
     inputFiles = {
       files,
       filesToMutate: [],
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       logFiles: () => {},
     };
     dryRunResult = factory.completeDryRunResult();

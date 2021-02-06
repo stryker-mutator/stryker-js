@@ -27,9 +27,7 @@ const layouts: { color: log4js.PatternLayout; noColor: log4js.PatternLayout } = 
   },
 };
 
-interface AppendersConfiguration {
-  [name: string]: log4js.Appender;
-}
+type AppendersConfiguration = Record<string, log4js.Appender>;
 
 const LOG_FILE_NAME = 'stryker.log';
 export class LogConfigurator {
@@ -83,7 +81,7 @@ export class LogConfigurator {
     consoleLogLevel: LogLevel = LogLevel.Information,
     fileLogLevel: LogLevel = LogLevel.Off,
     allowConsoleColors = true
-  ) {
+  ): void {
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
   }
@@ -128,7 +126,7 @@ export class LogConfigurator {
    * Either call this method or `configureMainProcess` before any `getLogger` calls.
    * @param context the logging client context used to configure the logging client
    */
-  public static configureChildProcess(context: LoggingClientContext) {
+  public static configureChildProcess(context: LoggingClientContext): void {
     const clientAppender: log4js.MultiprocessAppender = { type: 'multiprocess', mode: 'worker', loggerPort: context.port };
     const appenders: AppendersConfiguration = { [AppenderName.All]: clientAppender };
     log4js.configure(this.createLog4jsConfig(context.level, appenders));

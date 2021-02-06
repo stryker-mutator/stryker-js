@@ -32,7 +32,7 @@ describe(EventRecorderReporter.name, () => {
 
       const arrangeActAssertEvent = (eventName: keyof Reporter) => {
         describe(`${eventName} event`, () => {
-          let writeFileRejection: undefined | Error;
+          let writeFileRejection: Error | undefined;
           const expected = { some: 'eventData' };
 
           const arrange = () =>

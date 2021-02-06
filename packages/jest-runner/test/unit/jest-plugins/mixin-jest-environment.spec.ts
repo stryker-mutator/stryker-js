@@ -58,13 +58,13 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       const spy = sinon.spy(TestJestEnvironment.prototype, 'handleTestEvent');
       const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
       const event = producers.createCircusRunStartEvent();
-      const state = producers.createCircusState();
+      const producersState = producers.createCircusState();
 
       // Act
-      await sut.handleTestEvent(event, state);
+      await sut.handleTestEvent(event, producersState);
 
       // Assert
-      expect(spy).calledWith(event, state);
+      expect(spy).calledWith(event, producersState);
     });
   });
 

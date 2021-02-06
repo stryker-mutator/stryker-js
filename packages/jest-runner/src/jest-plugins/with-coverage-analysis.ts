@@ -46,7 +46,7 @@ export function withCoverageAnalysis(jestConfig: Config.InitialOptions, coverage
 }
 
 function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
-  const setupFile = setupFilesForPerTestCoverageAnalysis[jestConfig.testRunner || jestDefaults.testRunner];
+  const setupFile = setupFilesForPerTestCoverageAnalysis[jestConfig.testRunner ?? jestDefaults.testRunner];
   if (setupFile) {
     overrides.setupFilesAfterEnv = [setupFile, ...(jestConfig.setupFilesAfterEnv ?? [])];
   } else if (jestConfig.testRunner !== JEST_CIRCUS_RUNNER) {
@@ -62,7 +62,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
 }
 
 function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
-  const jestEnvironment = getName(jestConfig.testEnvironment || jestDefaults.testEnvironment, 'jest-environment-');
+  const jestEnvironment = getName(jestConfig.testEnvironment ?? jestDefaults.testEnvironment, 'jest-environment-');
   if (testEnvironmentOverrides[jestEnvironment]) {
     overrides.testEnvironment = testEnvironmentOverrides[jestEnvironment];
   }

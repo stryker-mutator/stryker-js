@@ -34,7 +34,7 @@ const plugins = [
   'typescript',
 ] as ParserPlugin[];
 
-export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]) {
+export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]): void {
   const sourceFileName = 'source.js';
   const ast = parse(originalCode, {
     sourceFilename: sourceFileName,
@@ -54,8 +54,8 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
 
 function jsMutantToString(mutant: NodeMutation, originalCode: string): string {
   const mutatedCode = generate(mutant.replacement).code;
-  const beforeMutatedCode = originalCode.substring(0, mutant.original.start || 0);
-  const afterMutatedCode = originalCode.substring(mutant.original.end || 0);
+  const beforeMutatedCode = originalCode.substring(0, mutant.original.start ?? 0);
+  const afterMutatedCode = originalCode.substring(mutant.original.end ?? 0);
 
   return `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
 }

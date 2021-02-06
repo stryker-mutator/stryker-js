@@ -17,8 +17,7 @@ import {
   WorkResult,
 } from '../../../src/child-proxy/message-protocol';
 import * as di from '../../../src/di';
-import { LogConfigurator } from '../../../src/logging';
-import { LoggingClientContext } from '../../../src/logging';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
 import { serialize } from '../../../src/utils/object-utils';
 import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
@@ -112,7 +111,9 @@ describe(ChildProcessProxyWorker.name, () => {
 
     it('should remove any additional listeners', async () => {
       // Arrange
-      function noop() {}
+      function noop() {
+        //noop
+      }
       processes.push(noop);
 
       // Act

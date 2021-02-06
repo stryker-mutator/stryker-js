@@ -1,16 +1,16 @@
-import path = require('path');
+import path from 'path';
 
 import Mocha from 'mocha';
-import glob = require('glob');
+import glob from 'glob';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
 const mochaRoot = path.dirname(require.resolve('mocha/package.json'));
 
-let loadOptions: undefined | ((argv?: string[] | string) => { [key: string]: any } | undefined);
-let collectFiles: undefined | ((options: MochaOptions) => string[]);
-let handleRequires: undefined | ((requires?: string[]) => Promise<any>);
-let loadRootHooks: undefined | ((rootHooks: any) => Promise<any>);
+let loadOptions: ((argv?: string[] | string) => Record<string, any> | undefined) | undefined;
+let collectFiles: ((options: MochaOptions) => string[]) | undefined;
+let handleRequires: ((requires?: string[]) => Promise<any>) | undefined;
+let loadRootHooks: ((rootHooks: any) => Promise<any>) | undefined;
 
 try {
   /*
@@ -18,6 +18,7 @@ try {
    * @since 6.0.0'
    * @see https://mochajs.org/api/module-lib_cli_options.html#.loadOptions
    */
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   loadOptions = require(`${mochaRoot}/lib/cli/options`).loadOptions;
 } catch {
   // Mocha < 6 doesn't support `loadOptions`
@@ -25,6 +26,7 @@ try {
 
 try {
   // https://github.com/mochajs/mocha/blob/master/lib/cli/run-helpers.js#L132
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const runHelpers = require(`${mochaRoot}/lib/cli/run-helpers`);
   collectFiles = runHelpers.handleFiles;
   handleRequires = runHelpers.handleRequires; // handleRequires is available since mocha v7.2
@@ -32,6 +34,7 @@ try {
 
   if (!collectFiles) {
     // Might be moved: https://github.com/mochajs/mocha/commit/15b96afccaf508312445770e3af1c145d90b28c6#diff-39b692a81eb0c9f3614247af744ab4a8
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     collectFiles = require(`${mochaRoot}/lib/cli/collect-files`);
   }
 } catch {

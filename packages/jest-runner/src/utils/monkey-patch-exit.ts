@@ -11,8 +11,10 @@
 
 try {
   const exitModuleId = require.resolve('exit', { paths: [require.resolve('jest', { paths: [process.cwd()] })] });
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   require(exitModuleId);
   const exitModule = module.children.find((mdl) => mdl.id === exitModuleId);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   exitModule!.exports = () => {};
 } catch (error) {
   console.log('Unable to monkey-patch exit module', error);

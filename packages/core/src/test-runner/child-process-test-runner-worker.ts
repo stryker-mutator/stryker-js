@@ -28,7 +28,7 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
     }
   }
 
-  public async dispose() {
+  public async dispose(): Promise<void> {
     if (this.underlyingTestRunner.dispose) {
       await this.underlyingTestRunner.dispose();
     }

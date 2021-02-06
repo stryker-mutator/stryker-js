@@ -20,9 +20,9 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
 
   beforeEach(() => {
     createReactJestConfigStub = sinon.stub(helper, 'createReactTsJestConfig');
-    createReactJestConfigStub.callsFake((resolve: any, projectRoot: string, eject: boolean) => ({
+    createReactJestConfigStub.callsFake((resolve: any, root: string, eject: boolean) => ({
       eject,
-      projectRoot,
+      root,
       relativePath: resolve('test'),
     }));
 
