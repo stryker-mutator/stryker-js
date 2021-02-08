@@ -1,7 +1,5 @@
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { assertions, testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-
-import { assertions } from '@stryker-mutator/test-helpers';
 
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
 import { resolveTestResource } from '../helpers/resolve-test-resource';

@@ -19,7 +19,7 @@ export class ClearTextReporter implements Reporter {
   private readonly out: NodeJS.WritableStream = process.stdout;
 
   private writeLine(output?: string) {
-    this.out.write(`${output || ''}${os.EOL}`);
+    this.out.write(`${output ?? ''}${os.EOL}`);
   }
 
   private configConsoleColor() {
@@ -49,6 +49,7 @@ export class ClearTextReporter implements Reporter {
         case MutantStatus.NoCoverage:
           this.logMutantResult(result, writeLineFn);
           break;
+        default:
       }
     });
     this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
@@ -112,7 +113,7 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     const metricsResult = calculateMetrics(report.files);
     this.writeLine(new ClearTextScoreTable(metricsResult, this.options.thresholds).draw());
   }

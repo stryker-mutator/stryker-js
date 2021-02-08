@@ -22,7 +22,10 @@ import * as pluginTokens from './plugin-tokens';
 
 export function createJasmineTestRunnerFactory(
   namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
-) {
+): {
+  (injector: Injector<PluginContext>): JasmineTestRunner;
+  inject: ['$injector'];
+} {
   createJasmineTestRunner.inject = tokens(commonTokens.injector);
   function createJasmineTestRunner(injector: Injector<PluginContext>) {
     return injector
@@ -47,7 +50,7 @@ export class JasmineTestRunner implements TestRunner {
     globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
-    this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
+    this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -114,8 +117,8 @@ export class JasmineTestRunner implements TestRunner {
     }
   }
 
-  private createJasmineRunner(testFilter: undefined | string[]) {
-    let specFilter: undefined | ((spec: jasmine.Spec) => boolean) = undefined;
+  private createJasmineRunner(testFilter: string[] | undefined) {
+    let specFilter: ((spec: jasmine.Spec) => boolean) | undefined = undefined;
     if (testFilter) {
       specFilter = (spec) => testFilter.includes(spec.id.toString());
     }
@@ -128,6 +131,7 @@ export class JasmineTestRunner implements TestRunner {
       specFilter,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     jasmine.exit = () => {};
     jasmine.env.clearReporters();
     jasmine.randomizeTests(false);

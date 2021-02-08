@@ -19,7 +19,7 @@ export class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
-  public guardForExistingConfig() {
+  public guardForExistingConfig(): void {
     this.checkIfConfigFileExists(STRYKER_JS_CONFIG_FILE);
     this.checkIfConfigFileExists(STRYKER_JSON_CONFIG_FILE);
   }
@@ -58,7 +58,7 @@ export class StrykerConfigWriter {
    * Create config based on the chosen preset
    * @function
    */
-  public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean) {
+  public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean): Promise<string> {
     const config = {
       _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${presetConfig.guideUrl}`,
       ...presetConfig.config,

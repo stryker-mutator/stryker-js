@@ -51,5 +51,5 @@ export interface Reporter {
    * Stryker will not close until the promise is either resolved or rejected.
    * @return a promise which will resolve when the reporter is done reporting
    */
-  wrapUp?(): void | Promise<void> | Promise<void[]>;
+  wrapUp?(): Promise<void[]> | Promise<void> | void;
 }

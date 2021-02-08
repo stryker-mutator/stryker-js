@@ -7,16 +7,16 @@ export class StringBuilder {
   private readonly strings: string[] = [];
   private readonly maxSize = DEFAULT_MAX_SIZE;
 
-  public append(str: string) {
+  public append(str: string): void {
     this.strings.push(str);
     this.currentLength += str.length;
     while (this.currentLength > this.maxSize && this.strings.length > 1) {
-      const shifted = this.strings.shift() as string;
+      const shifted = this.strings.shift()!;
       this.currentLength -= shifted.length;
     }
   }
 
-  public toString() {
+  public toString(): string {
     return this.strings.join('');
   }
 

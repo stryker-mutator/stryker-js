@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
@@ -23,7 +23,7 @@ describe(MochaOptionsLoader.name, () => {
   });
 
   describe('with mocha >= 6', () => {
-    let rawOptions: { [option: string]: any };
+    let rawOptions: Record<string, any>;
 
     beforeEach(() => {
       rawOptions = Object.create(null);
@@ -32,10 +32,7 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should log about mocha >= 6', () => {
       sut.load(options);
-      expect(testInjector.logger.debug).calledWith(
-        "Mocha >= 6 detected. Using mocha's `%s` to load mocha options",
-        LibWrapper.loadOptions && LibWrapper.loadOptions.name
-      );
+      expect(testInjector.logger.debug).calledWith("Mocha >= 6 detected. Using mocha's `%s` to load mocha options", LibWrapper.loadOptions?.name);
     });
 
     it('should call `loadOptions` with serialized arguments', () => {
@@ -96,7 +93,7 @@ describe(MochaOptionsLoader.name, () => {
       };
       rawOptions.baz = 'qux';
       sut.load(options);
-      const fnName = LibWrapper.loadOptions && LibWrapper.loadOptions.name;
+      const fnName = LibWrapper.loadOptions?.name;
       expect(testInjector.logger.trace).calledWith(`Mocha: ${fnName}(['--no-config']) => {"baz":"qux"}`);
     });
 
@@ -106,7 +103,7 @@ describe(MochaOptionsLoader.name, () => {
     });
 
     it('should not allow to set parallel', () => {
-      rawOptions['parallel'] = true;
+      rawOptions.parallel = true;
       const actualOptions = sut.load(options);
       expect((actualOptions as any).parallel).undefined;
     });

@@ -9,7 +9,7 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     delete global.__stryker2__?.activeMutant;
     delete global.__stryker2__?.currentTestId;
     delete global.__stryker2__?.mutantCoverage;

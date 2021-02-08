@@ -2,7 +2,8 @@ export function isErrnoException(error: Error): error is NodeJS.ErrnoException {
   return typeof (error as NodeJS.ErrnoException).code === 'string';
 }
 
-export function errorToString(error: any) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export function errorToString(error: any): string {
   if (!error) {
     return '';
   } else if (isErrnoException(error)) {

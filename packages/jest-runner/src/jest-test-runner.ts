@@ -33,16 +33,24 @@ import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
 import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
 
-export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE) {
+export function createJestTestRunnerFactory(
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+): {
+  (injector: Injector<PluginContext>): JestTestRunner;
+  inject: ['$injector'];
+} {
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
-    return injector
-      .provideValue(pluginTokens.processEnv, process.env)
-      .provideValue(pluginTokens.jestVersion, require('jest/package.json').version as string)
-      .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
-      .provideFactory(pluginTokens.configLoader, configLoaderFactory)
-      .provideValue(pluginTokens.globalNamespace, namespace)
-      .injectClass(JestTestRunner);
+    return (
+      injector
+        .provideValue(pluginTokens.processEnv, process.env)
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        .provideValue(pluginTokens.jestVersion, require('jest/package.json').version as string)
+        .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
+        .provideFactory(pluginTokens.configLoader, configLoaderFactory)
+        .provideValue(pluginTokens.globalNamespace, namespace)
+        .injectClass(JestTestRunner)
+    );
   }
   return jestTestRunnerFactory;
 }
@@ -89,8 +97,8 @@ export class JestTestRunner implements TestRunner {
 
   public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
-    let mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
-    let fileNamesWithMutantCoverage: string[] = [];
+    const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
+    const fileNamesWithMutantCoverage: string[] = [];
     if (coverageAnalysis !== 'off') {
       state.setMutantCoverageHandler((fileName, report) => {
         mergeMutantCoverage(mutantCoverage, report);
@@ -183,7 +191,7 @@ export class JestTestRunner implements TestRunner {
     for (const suiteResult of suiteResults) {
       for (const testResult of suiteResult.testResults) {
         let result: TestResult;
-        let timeSpentMs = testResult.duration ?? 0;
+        const timeSpentMs = testResult.duration ?? 0;
 
         switch (testResult.status) {
           case 'passed':
@@ -220,7 +228,7 @@ export class JestTestRunner implements TestRunner {
   }
 
   private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestOptions): jest.Config.InitialOptions {
-    const config = (options.config || {}) as jest.Config.InitialOptions;
+    const config = (options.config ?? {}) as jest.Config.InitialOptions;
     config.bail = options.enableBail;
     const stringify = (obj: unknown) => JSON.stringify(obj, null, 2);
     this.log.debug(

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import decamelize = require('decamelize');
+import decamelize from 'decamelize';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import semver from 'semver';
 
@@ -20,7 +20,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
     cli = cli.default;
   }
   const cliArgs = ['test', '--progress=false', `--karma-config=${require.resolve('./stryker-karma.conf')}`];
-  if (ngConfig && ngConfig.testArguments) {
+  if (ngConfig?.testArguments) {
     const testArguments: NgTestArguments = ngConfig.testArguments;
 
     const ngTestArguments = Object.keys(testArguments);

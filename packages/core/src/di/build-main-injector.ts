@@ -28,7 +28,7 @@ export interface MainContext extends PluginContext {
 
 type PluginResolverProvider = Injector<PluginContext>;
 
-export type CliOptionsProvider = Injector<Pick<MainContext, 'logger' | 'getLogger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }>;
+export type CliOptionsProvider = Injector<Pick<MainContext, 'getLogger' | 'logger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }>;
 buildMainInjector.inject = tokens(commonTokens.injector);
 export function buildMainInjector(injector: CliOptionsProvider): Injector<MainContext> {
   const pluginResolverProvider = createPluginResolverProvider(injector);

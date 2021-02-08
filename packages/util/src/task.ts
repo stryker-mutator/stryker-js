@@ -3,7 +3,7 @@
  */
 export class Task<T = void> {
   protected _promise: Promise<T>;
-  private resolveFn!: (value: T | PromiseLike<T>) => void;
+  private resolveFn!: (value: PromiseLike<T> | T) => void;
   private rejectFn!: (reason: any) => void;
   private _isCompleted = false;
 
@@ -14,20 +14,20 @@ export class Task<T = void> {
     });
   }
 
-  public get promise() {
+  public get promise(): Promise<T> {
     return this._promise;
   }
 
-  public get isCompleted() {
+  public get isCompleted(): boolean {
     return this._isCompleted;
   }
 
-  public resolve = (result: T | PromiseLike<T>): void => {
+  public resolve = (result: PromiseLike<T> | T): void => {
     this._isCompleted = true;
     this.resolveFn(result);
   };
 
-  public reject = (reason: any): void => {
+  public reject: (reason: any) => void = (reason: any): void => {
     this._isCompleted = true;
     this.rejectFn(reason);
   };
@@ -44,8 +44,8 @@ export class ExpirableTask<T = void> extends Task<T | typeof ExpirableTask.Timeo
     this._promise = ExpirableTask.timeout(this._promise, timeoutMS);
   }
 
-  public static timeout<T>(promise: Promise<T>, ms: number): Promise<T | typeof ExpirableTask.TimeoutExpired> {
-    const sleep = new Promise<T | typeof ExpirableTask.TimeoutExpired>((res, rej) => {
+  public static timeout<K>(promise: Promise<K>, ms: number): Promise<K | typeof ExpirableTask.TimeoutExpired> {
+    const sleep = new Promise<K | typeof ExpirableTask.TimeoutExpired>((res, rej) => {
       const timer = setTimeout(() => res(ExpirableTask.TimeoutExpired), ms);
       promise
         .then((result) => {

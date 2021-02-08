@@ -9,7 +9,7 @@ export function provideLogger(injector: Injector): LoggerProvider {
 export type LoggerProvider = Injector<{ [commonTokens.getLogger]: LoggerFactoryMethod; [commonTokens.logger]: Logger }>;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function loggerFactory(getLogger: LoggerFactoryMethod, target: Function | undefined) {
-  return getLogger(target ? target.name : 'UNKNOWN');
+function loggerFactory(getLoggerMethod: LoggerFactoryMethod, target: Function | undefined) {
+  return getLoggerMethod(target ? target.name : 'UNKNOWN');
 }
 loggerFactory.inject = [commonTokens.getLogger, commonTokens.target] as const;

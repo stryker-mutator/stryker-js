@@ -1,3 +1,3 @@
 import { MutatorOptions } from '../mutators';
 
-export interface TransformerOptions extends MutatorOptions {}
+export type TransformerOptions = MutatorOptions;

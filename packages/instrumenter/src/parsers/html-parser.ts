@@ -27,10 +27,10 @@ export async function parse(text: string, originFileName: string, context: Parse
 }
 
 async function ngHtmlParser(text: string, fileName: string, parserContext: ParserContext): Promise<HtmlRootNode> {
-  const { parse } = await import('angular-html-parser');
+  const parser = (await import('angular-html-parser')).parse;
   const { RecursiveVisitor, visitAll } = await import('angular-html-parser/lib/compiler/src/ml_parser/ast');
 
-  const { rootNodes, errors } = parse(text, {
+  const { rootNodes, errors } = parser(text, {
     canSelfClose: true,
     allowHtmComponentClosingTags: true,
     isTagNameCaseSensitive: true,

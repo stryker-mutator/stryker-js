@@ -9,9 +9,14 @@ import * as pluginTokens from './plugin-tokens';
 
 export const createMochaTestRunner = createMochaTestRunnerFactory();
 
-export function createMochaTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE) {
-  createMochaTestRunner.inject = tokens(commonTokens.injector);
-  function createMochaTestRunner(injector: Injector<PluginContext>): MochaTestRunner {
+export function createMochaTestRunnerFactory(
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+): {
+  (injector: Injector<PluginContext>): MochaTestRunner;
+  inject: ['$injector'];
+} {
+  mochaTestRunnerFactory.inject = tokens(commonTokens.injector);
+  function mochaTestRunnerFactory(injector: Injector<PluginContext>): MochaTestRunner {
     return injector
       .provideClass(pluginTokens.loader, MochaOptionsLoader)
       .provideClass(pluginTokens.mochaAdapter, MochaAdapter)
@@ -19,5 +24,5 @@ export function createMochaTestRunnerFactory(namespace: typeof INSTRUMENTER_CONS
       .provideValue(pluginTokens.globalNamespace, namespace)
       .injectClass(MochaTestRunner);
   }
-  return createMochaTestRunner;
+  return mochaTestRunnerFactory;
 }

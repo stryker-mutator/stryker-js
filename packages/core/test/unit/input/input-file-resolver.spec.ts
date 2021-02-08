@@ -15,7 +15,7 @@ import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
 import * as fileUtils from '../../../src/utils/file-utils';
 import { Mock, mock } from '../../helpers/producers';
 
-const files = (...namesWithContent: Array<[string, string]>): File[] =>
+const createFiles = (...namesWithContent: Array<[string, string]>): File[] =>
   namesWithContent.map((nameAndContent): File => new File(path.resolve(nameAndContent[0]), Buffer.from(nameAndContent[1])));
 
 describe(InputFileResolver.name, () => {
@@ -296,23 +296,23 @@ describe(InputFileResolver.name, () => {
   describe('when excluding files with "!"', () => {
     it('should exclude the files that were previously included', async () => {
       testInjector.options.files = ['file2', 'file1', '!file2'];
-      const sut = createSut();
-      const result = await sut.resolve();
-      assertFilesEqual(result.files, files(['/file1.js', 'file 1 content']));
+      const suite = createSut();
+      const result = await suite.resolve();
+      assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content']));
     });
 
     it('should exclude the files that were previously with a wild card', async () => {
       testInjector.options.files = ['file*', '!file2'];
-      const sut = createSut();
-      const result = await sut.resolve();
-      assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
+      const suite = createSut();
+      const result = await suite.resolve();
+      assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should not exclude files when the globbing expression results in an empty array', async () => {
       testInjector.options.files = ['file2', '!does/not/exist'];
-      const sut = createSut();
-      const result = await sut.resolve();
-      assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
+      const suite = createSut();
+      const result = await suite.resolve();
+      assertFilesEqual(result.files, createFiles(['/file2.js', 'file 2 content']));
     });
   });
 
@@ -320,19 +320,19 @@ describe(InputFileResolver.name, () => {
     it('should deduplicate files that occur more than once', async () => {
       testInjector.options.files = ['file2', 'file2'];
       const result = await createSut().resolve();
-      assertFilesEqual(result.files, files(['/file2.js', 'file 2 content']));
+      assertFilesEqual(result.files, createFiles(['/file2.js', 'file 2 content']));
     });
 
     it('should deduplicate files that previously occurred in a wildcard expression', async () => {
       testInjector.options.files = ['file*', 'file2'];
       const result = await createSut().resolve();
-      assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
+      assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
     });
 
     it('should order files by expression order', async () => {
       testInjector.options.files = ['file2', 'file*'];
       const result = await createSut().resolve();
-      assertFilesEqual(result.files, files(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
+      assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content']));
     });
   });
 

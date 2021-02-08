@@ -74,16 +74,16 @@ export class TypescriptChecker implements Checker {
             }
             return content;
           },
-          watchFile: (path: string, callback: ts.FileWatcherCallback) => {
-            this.fs.watchFile(path, callback);
+          watchFile: (filePath: string, callback: ts.FileWatcherCallback) => {
+            this.fs.watchFile(filePath, callback);
             return {
               close: () => {
-                delete this.fs.getFile(path)!.watcher;
+                delete this.fs.getFile(filePath)!.watcher;
               },
             };
           },
-          writeFile: (path, data) => {
-            this.fs.writeFile(path, data);
+          writeFile: (filePath, data) => {
+            this.fs.writeFile(filePath, data);
           },
           createDirectory: () => {
             // Idle, no need to create directories in the hybrid fs
@@ -97,6 +97,7 @@ export class TypescriptChecker implements Checker {
           watchDirectory: (): ts.FileWatcher => {
             // this is used to see if new files are added to a directory. Can safely be ignored for mutation testing.
             return {
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
               close() {},
             };
           },

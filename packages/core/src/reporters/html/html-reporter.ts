@@ -21,11 +21,11 @@ export class HtmlReporter implements Reporter {
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult) {
+  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
   }
 
-  public wrapUp() {
+  public wrapUp(): Promise<void> | undefined {
     return this.mainPromise;
   }
 
@@ -39,7 +39,7 @@ export class HtmlReporter implements Reporter {
 
   private get baseDir(): string {
     if (!this._baseDir) {
-      if (this.options.htmlReporter && this.options.htmlReporter.baseDir) {
+      if (this.options.htmlReporter?.baseDir) {
         this._baseDir = this.options.htmlReporter.baseDir;
         this.log.debug(`Using configured output folder ${this._baseDir}`);
       } else {

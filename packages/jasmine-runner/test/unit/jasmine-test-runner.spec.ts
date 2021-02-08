@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
 import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test-runner';
-import Jasmine = require('jasmine');
+import Jasmine from 'jasmine';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import * as helpers from '../../src/helpers';
@@ -74,12 +74,12 @@ describe(JasmineTestRunner.name, () => {
     });
 
     function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {
-      let reporter: jasmine.CustomReporter;
+      let customReporter: jasmine.CustomReporter;
       function addReporter(rep: jasmine.CustomReporter) {
-        reporter = rep;
+        customReporter = rep;
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
-      jasmineStub.execute.callsFake(async () => reporter.jasmineDone!(createRunDetails()));
+      jasmineStub.execute.callsFake(async () => customReporter.jasmineDone!(createRunDetails()));
       return sut.mutantRun({ activeMutant, testFilter, timeout: 2000, sandboxFileName });
     }
   });

@@ -4,7 +4,7 @@ import { KnownKeys } from './known-keys';
  * Consolidates multiple consecutive white spaces into a single space.
  * @param str The string to be normalized
  */
-export function normalizeWhitespaces(str: string) {
+export function normalizeWhitespaces(str: string): string {
   return str.replace(/\s+/g, ' ').trim();
 }
 
@@ -26,7 +26,7 @@ export function propertyPath<T>(prop: keyof Pick<T, KnownKeys<T>>): string {
 export class PropertyPathBuilder<T> {
   constructor(private readonly pathSoFar: string[]) {}
 
-  public prop<TProp extends KnownKeys<T>>(prop: TProp) {
+  public prop<TProp extends KnownKeys<T>>(prop: TProp): PropertyPathBuilder<Pick<T, KnownKeys<T>>[TProp]> {
     return new PropertyPathBuilder<Pick<T, KnownKeys<T>>[TProp]>([...this.pathSoFar, prop.toString()]);
   }
 
@@ -40,8 +40,8 @@ export class PropertyPathBuilder<T> {
   /**
    * Creates a new `PropertyPathBuilder` for type T
    */
-  public static create<T>() {
-    return new PropertyPathBuilder<T>([]);
+  public static create<K>(): PropertyPathBuilder<K> {
+    return new PropertyPathBuilder<K>([]);
   }
 
   public toString(): string {
@@ -52,13 +52,13 @@ export class PropertyPathBuilder<T> {
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
  */
-export function escapeRegExpLiteral(input: string) {
+export function escapeRegExpLiteral(input: string): string {
   return input.replace(/[.*+\-?^${}()|[\]\\/]/g, '\\$&'); // $& means the whole matched string
 }
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
  */
-export function escapeRegExp(input: string) {
+export function escapeRegExp(input: string): string {
   return input.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }

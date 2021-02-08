@@ -28,17 +28,17 @@ describe('TimeoutDecorator', () => {
     testRunner1 = factory.testRunner();
     testRunner2 = factory.testRunner();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new TimeoutDecorator(() => availableTestRunners.shift() || expect.fail('test runners are empty'));
+    sut = new TimeoutDecorator(() => availableTestRunners.shift() ?? expect.fail('test runners are empty'));
   });
 
   afterEach(() => sandbox.restore());
 
-  function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'init' | 'dispose' | 'dryRun' | 'mutantRun') {
+  function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
     it('should proxy the request', () => {
       testRunner1[methodName].resolves('str' as any);
       const promise = action();
       expect(testRunner1[methodName]).to.have.been.called;
-      expect(promise && promise.then, `timeoutDecorator.${methodName} did not provide a promise`).ok;
+      expect(promise?.then, `timeoutDecorator.${methodName} did not provide a promise`).ok;
     });
 
     it('should resolve when inner promise resolves', () => {
@@ -54,7 +54,7 @@ describe('TimeoutDecorator', () => {
     });
   }
 
-  function itShouldProxyRequestsForMethod(methodName: 'init' | 'dispose') {
+  function itShouldProxyRequestsForMethod(methodName: 'dispose' | 'init') {
     itShouldProxyRequests(() => sut[methodName](), methodName);
   }
 
@@ -70,6 +70,7 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.dryRun({ coverageAnalysis: 'all', timeout: 20 }), 'dryRun');
 
     it('should not handle timeouts premature', () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       let resolve: (result: DryRunResult) => void = () => {};
       const expectedResult = factory.completeDryRunResult();
       testRunner1.dryRun.returns(new Promise<DryRunResult>((res) => (resolve = res)));
@@ -81,6 +82,7 @@ describe('TimeoutDecorator', () => {
 
     it('should handle timeouts', async () => {
       testRunner1.dryRun.returns(
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         new Promise<DryRunResult>(() => {})
       );
       const runPromise = sut.dryRun(factory.dryRunOptions({ timeout: 20 }));
@@ -98,6 +100,7 @@ describe('TimeoutDecorator', () => {
     itShouldProxyRequests(() => sut.mutantRun(factory.mutantRunOptions({ timeout: 20 })), 'mutantRun');
 
     it('should not handle timeouts premature', () => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       let resolve: (result: MutantRunResult) => void = () => {};
       const expectedResult = factory.killedMutantRunResult();
       testRunner1.mutantRun.returns(new Promise<MutantRunResult>((res) => (resolve = res)));
@@ -109,6 +112,7 @@ describe('TimeoutDecorator', () => {
 
     it('should handle timeouts', async () => {
       testRunner1.mutantRun.returns(
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         new Promise<MutantRunResult>(() => {})
       );
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ timeout: 20 }));

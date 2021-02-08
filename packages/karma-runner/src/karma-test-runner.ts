@@ -15,6 +15,7 @@ import {
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
 import { ProjectStarter } from './starters/project-starter';
 import { StrykerReporter } from './karma-plugins/stryker-reporter';
@@ -30,7 +31,7 @@ export class KarmaTestRunner implements TestRunner {
   private currentErrorMessage: string | undefined;
   private currentCoverageReport?: MutantCoverage;
   private readonly starter: ProjectStarter;
-  public port: undefined | number;
+  public port: number | undefined;
 
   public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options);
   constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions) {

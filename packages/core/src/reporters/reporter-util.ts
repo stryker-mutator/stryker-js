@@ -19,7 +19,7 @@ export function copyFile(fromFilename: string, toFilename: string): Promise<void
 export const deleteDir = promisify(rimraf);
 export const mkdir = mkdirp;
 
-export async function writeFile(fileName: string, content: string) {
+export async function writeFile(fileName: string, content: string): Promise<void> {
   await mkdirp(path.dirname(fileName));
   await fs.writeFile(fileName, content, 'utf8');
 }

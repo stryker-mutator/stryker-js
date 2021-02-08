@@ -1,4 +1,4 @@
-import assert = require('assert');
+import assert from 'assert';
 
 import { expect } from 'chai';
 
@@ -45,11 +45,11 @@ export function expectSurvived(runResult: MutantRunResult): asserts runResult is
   assert.equal(runResult.status, MutantRunStatus.Survived);
 }
 
-export function expectTextFileEqual(actual: File, expected: File) {
+export function expectTextFileEqual(actual: File, expected: File): void {
   expect(fileToJson(actual)).deep.eq(fileToJson(expected));
 }
 
-export function expectTextFilesEqual(actual: readonly File[], expected: readonly File[]) {
+export function expectTextFilesEqual(actual: readonly File[], expected: readonly File[]): void {
   expect(actual.map(fileToJson)).deep.eq(expected.map(fileToJson));
 }
 

@@ -29,7 +29,7 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
     public async handleTestEvent(event: Circus.Event, eventState: Circus.State): Promise<void> {
       await super.handleTestEvent?.(event, eventState);
       if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-        const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] || {});
+        const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
         ns.currentTestId = fullName(event.test);
       }
     }

@@ -63,24 +63,24 @@ describe(TemporaryDirectory.name, () => {
       it('should remove the dir if cleanTempDir option is enabled', async () => {
         const expectedPath = path.resolve(tempDirName);
         deleteDirStub.resolves();
-        const sut = createSut({ cleanTempDir: true });
-        sut.initialize();
-        await sut.dispose();
+        const suite = createSut({ cleanTempDir: true });
+        suite.initialize();
+        await suite.dispose();
         expect(fileUtils.deleteDir).calledWith(expectedPath);
       });
 
       it('should not remove the dir if cleanTempDir option is enabled', async () => {
-        const sut = createSut({ cleanTempDir: false });
-        sut.initialize();
-        await sut.dispose();
+        const suite = createSut({ cleanTempDir: false });
+        suite.initialize();
+        await suite.dispose();
         expect(fileUtils.deleteDir).not.called;
       });
 
       it('should not remove the dir if `removeDuringDisposal` is set to false', async () => {
-        const sut = createSut({ cleanTempDir: true });
-        sut.initialize();
-        sut.removeDuringDisposal = false;
-        await sut.dispose();
+        const suite = createSut({ cleanTempDir: true });
+        suite.initialize();
+        suite.removeDuringDisposal = false;
+        await suite.dispose();
         expect(fileUtils.deleteDir).not.called;
       });
 

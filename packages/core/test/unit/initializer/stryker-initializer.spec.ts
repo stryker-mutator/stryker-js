@@ -385,7 +385,7 @@ describe(StrykerInitializer.name, () => {
       statusCode: 200,
     } as unknown) as IRestResponse<PackageInfo[]>);
   };
-  const stubPackageClient = (packageConfigPerPackage: { [packageName: string]: Record<string, unknown> | null }) => {
+  const stubPackageClient = (packageConfigPerPackage: Record<string, Record<string, unknown> | null>) => {
     Object.keys(packageConfigPerPackage).forEach((packageName) => {
       const pkgConfig: PackageInfo & { initStrykerConfig?: Record<string, unknown> } = {
         keywords: [],

@@ -13,7 +13,7 @@ const initialCwd = process.cwd();
 export const originalProcessExit = process.exit;
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     sinon.restore();
     testInjector.reset();
     process.chdir(initialCwd);

@@ -23,7 +23,7 @@ export class HybridFileSystem {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public writeFile(fileName: string, data: string) {
+  public writeFile(fileName: string, data: string): void {
     fileName = toTSFileName(fileName);
     const existingFile = this.files.get(fileName);
     if (existingFile) {
@@ -34,7 +34,7 @@ export class HybridFileSystem {
     }
   }
 
-  public mutate(mutant: Pick<Mutant, 'fileName' | 'range' | 'replacement'>) {
+  public mutate(mutant: Pick<Mutant, 'fileName' | 'range' | 'replacement'>): void {
     const fileName = toTSFileName(mutant.fileName);
     const file = this.files.get(fileName);
     if (!file) {
@@ -47,7 +47,7 @@ export class HybridFileSystem {
     this.mutatedFile = file;
   }
 
-  public watchFile(fileName: string, watcher: ts.FileWatcherCallback) {
+  public watchFile(fileName: string, watcher: ts.FileWatcherCallback): void {
     const file = this.getFile(fileName);
     if (!file) {
       throw new Error(`Cannot find file ${fileName} for watching`);
@@ -59,9 +59,9 @@ export class HybridFileSystem {
   public getFile(fileName: string): ScriptFile | undefined {
     fileName = toTSFileName(fileName);
     if (!this.files.has(fileName)) {
-      let content = ts.sys.readFile(fileName);
+      const content = ts.sys.readFile(fileName);
       if (typeof content === 'string') {
-        let modifiedTime = ts.sys.getModifiedTime!(fileName)!;
+        const modifiedTime = ts.sys.getModifiedTime!(fileName)!;
         this.files.set(fileName, new ScriptFile(content, fileName, modifiedTime));
       } else {
         this.files.set(fileName, undefined);

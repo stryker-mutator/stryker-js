@@ -12,6 +12,7 @@ import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const paths = require('react-scripts-ts/config/paths');
 // It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
 paths.appTsTestConfig = resolveTestResource('reactTsProject/tsconfig.test.json');

@@ -11,8 +11,8 @@ import { PluginKind } from './plugin-kind';
  * Represents a StrykerPlugin
  */
 export type Plugin<TPluginKind extends PluginKind> =
-  | FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>
-  | ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>;
+  | ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>
+  | FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>;
 
 /**
  * Represents a plugin that is created with a factory method

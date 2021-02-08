@@ -4,7 +4,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -17,7 +17,7 @@ chai.use(chaiAsPromised);
 process.setMaxListeners(40);
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     testInjector.reset();
     sinon.restore();
   },

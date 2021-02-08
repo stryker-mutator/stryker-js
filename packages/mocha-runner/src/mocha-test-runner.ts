@@ -45,7 +45,7 @@ export class MochaTestRunner implements TestRunner {
     globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     StrykerMochaReporter.log = log;
-    this.instrumenterContext = global[globalNamespace] || (global[globalNamespace] = {});
+    this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
@@ -56,6 +56,7 @@ export class MochaTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     let interceptor: (mocha: Mocha) => void = () => {};
     if (options.coverageAnalysis === 'perTest') {
       interceptor = (mocha) => {
@@ -74,6 +75,7 @@ export class MochaTestRunner implements TestRunner {
 
   public async mutantRun({ activeMutant, testFilter }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = activeMutant.id;
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     let intercept: (mocha: Mocha) => void = () => {};
     if (testFilter) {
       const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');

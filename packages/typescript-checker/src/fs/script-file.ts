@@ -1,6 +1,5 @@
 import ts from 'typescript';
 import { Mutant } from '@stryker-mutator/api/core';
-import { FileWatcherCallback } from 'typescript';
 
 export class ScriptFile {
   private readonly originalContent: string;
@@ -8,20 +7,20 @@ export class ScriptFile {
     this.originalContent = content;
   }
 
-  public write(content: string) {
+  public write(content: string): void {
     this.content = content;
     this.touch();
   }
 
-  public watcher: FileWatcherCallback | undefined;
+  public watcher: ts.FileWatcherCallback | undefined;
 
-  public mutate(mutant: Pick<Mutant, 'replacement' | 'range'>) {
+  public mutate(mutant: Pick<Mutant, 'range' | 'replacement'>): void {
     this.guardMutationIsWatched();
     this.content = `${this.originalContent.substr(0, mutant.range[0])}${mutant.replacement}${this.originalContent.substr(mutant.range[1])}`;
     this.touch();
   }
 
-  public resetMutant() {
+  public resetMutant(): void {
     this.guardMutationIsWatched();
     this.content = this.originalContent;
     this.touch();

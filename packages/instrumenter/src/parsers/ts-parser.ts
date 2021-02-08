@@ -1,5 +1,4 @@
-import { types } from '@babel/core';
-import { parseAsync } from '@babel/core';
+import { types, parseAsync } from '@babel/core';
 
 import { AstFormat, TSAst } from '../syntax';
 

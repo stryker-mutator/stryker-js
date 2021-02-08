@@ -57,7 +57,7 @@ const fileContents = Object.freeze({
   ['test/todo.spec.ts']: fs.readFileSync(resolveTestResource('test', 'todo.spec.ts'), 'utf8'),
 });
 
-function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, offset: number = 0): Mutant {
+function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, offset = 0): Mutant {
   const originalOffset: number = fileContents[fileName].indexOf(findText);
   if (originalOffset === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
