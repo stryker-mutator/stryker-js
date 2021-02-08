@@ -15,8 +15,8 @@ export function createMochaTestRunnerFactory(
   (injector: Injector<PluginContext>): MochaTestRunner;
   inject: ['$injector'];
 } {
-  mochaTestRunner.inject = tokens(commonTokens.injector);
-  function mochaTestRunner(injector: Injector<PluginContext>): MochaTestRunner {
+  mochaTestRunnerFactory.inject = tokens(commonTokens.injector);
+  function mochaTestRunnerFactory(injector: Injector<PluginContext>): MochaTestRunner {
     return injector
       .provideClass(pluginTokens.loader, MochaOptionsLoader)
       .provideClass(pluginTokens.mochaAdapter, MochaAdapter)
@@ -24,5 +24,5 @@ export function createMochaTestRunnerFactory(
       .provideValue(pluginTokens.globalNamespace, namespace)
       .injectClass(MochaTestRunner);
   }
-  return mochaTestRunner;
+  return mochaTestRunnerFactory;
 }
