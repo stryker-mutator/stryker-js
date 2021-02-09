@@ -77,16 +77,10 @@ export function symlinkJunction(to: string, from: string) {
  * returns the first occurrence of the node_modules, or null of none could be found.
  * @param basePath starting point
  */
-export async function findNodeModulesList(
-  basePath: string
-): Promise<{
-  nodeModulesList: string[];
-  basePath: string;
-}> {
+export async function findNodeModulesList(basePath: string, tempDirName?: string): Promise<string[]> {
   basePath = path.resolve(basePath);
   const nodeModulesList: string[] = [];
-
-  const dirBfsQueue: string[] = (await fs.promises.readdir(basePath)) ?? [];
+  const dirBfsQueue: string[] = ['.'] ?? [];
 
   while (dirBfsQueue.length > 0) {
     const dir = dirBfsQueue.pop();
@@ -95,26 +89,19 @@ export async function findNodeModulesList(
       continue;
     }
 
-    if (dir && path.basename(dir) === '.stryker-tmps') {
+    if (dir && path.basename(dir) === tempDirName) {
       continue;
     }
+
     if (dir && path.basename(dir) === 'node_modules') {
       nodeModulesList.push(dir);
+      continue;
     }
 
-    const dirs = await fs.promises.readdir(dir);
-    dirBfsQueue.push(...(dirs ?? []));
+    const filesWithType = (await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true })) ?? [];
+    const dirs = filesWithType.filter((f) => f.isDirectory()).map((d) => path.join(dir, d.name));
+    dirBfsQueue.push(...dirs);
   }
 
-  if (nodeModulesList.length === 0) {
-    const parentDir = path.dirname(basePath);
-    if (parentDir !== basePath) {
-      return findNodeModulesList(parentDir);
-    }
-  }
-
-  return {
-    nodeModulesList,
-    basePath,
-  };
+  return nodeModulesList;
 }

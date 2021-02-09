@@ -85,15 +85,16 @@ export class Sandbox implements Disposable {
   }
 
   private async symlinkNodeModulesIfNeeded(): Promise<void> {
+    this.log.info('Start symlink node_modules');
     if (this.options.symlinkNodeModules && !this.options.inPlace) {
       // TODO: Change with this.options.basePath when we have it
       const basePath = process.cwd();
-      const { nodeModulesList, basePath: actualBasePath } = await findNodeModulesList(basePath);
+      const nodeModulesList = await findNodeModulesList(basePath);
 
       if (nodeModulesList.length > 0) {
         for (const nodeModules of nodeModulesList) {
-          const relativePathToBase = path.resolve(nodeModules).replace(actualBasePath, '');
-          await symlinkJunction(nodeModules, path.join(this.workingDirectory, relativePathToBase)).catch((error: NodeJS.ErrnoException) => {
+          this.log.debug(`Create symlink from ${path.resolve(nodeModules)} to ${path.resolve(this.workingDirectory, nodeModules)}`);
+          await symlinkJunction(path.resolve(nodeModules), path.resolve(this.workingDirectory, nodeModules)).catch((error: NodeJS.ErrnoException) => {
             if (error.code === 'EEXIST') {
               this.log.warn(
                 normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,

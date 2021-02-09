@@ -25,43 +25,44 @@ describe('fileUtils', () => {
   describe('findNodeModulesList', () => {
     it('should return node_modules array located in `basePath`', async () => {
       const basePath = path.resolve('a', 'b', 'c');
-      const expectedNodeModules = path.join(basePath, 'node_modules');
-      readdirStub.resolves([expectedNodeModules]);
+      const expectedNodeModules = path.join('node_modules');
+      readdirStub.resolves(['node_modules']);
       const actual = await fileUtils.findNodeModulesList(basePath);
-      expect(actual.nodeModulesList[0]).eq(expectedNodeModules);
+      expect(actual[0]).eq(expectedNodeModules);
     });
 
     it("should return node_modules array located in parent directory of `basePath` if it didn't exist in base path", async () => {
       const basePath = path.resolve('a', 'b', 'c');
-      const expectedNodeModules = path.resolve('a', 'node_modules');
-      readdirStub.withArgs(path.dirname(path.resolve(basePath))).resolves([expectedNodeModules]);
+      const expectedNodeModules = 'node_modules';
+      readdirStub.withArgs(path.resolve('a')).resolves(['node_modules']);
       const actual = await fileUtils.findNodeModulesList(basePath);
-      expect(actual.nodeModulesList[0]).eq(expectedNodeModules);
+      expect(actual[0]).eq(expectedNodeModules);
     });
 
     it('should return node_modules array in subDirectory of `basePath`', async () => {
-      const basePath = path.resolve('a');
-      const expectedNodeModulesList = [path.resolve('a', 'b', 'node_modules'), path.resolve('a', 'b', 'c', 'node_modules')];
-      readdirStub.withArgs(path.resolve(basePath)).resolves([path.resolve(basePath, 'b')]);
-      readdirStub.withArgs(path.resolve(basePath, 'b')).resolves([path.resolve(basePath, 'b', 'c'), path.resolve(basePath, 'b', 'node_modules')]);
-      readdirStub.withArgs(path.resolve(basePath, 'b', 'c')).resolves([path.resolve(basePath, 'b', 'c', 'node_modules')]);
+      const basePath = path.resolve('.');
+      const expectedNodeModulesList = [path.join('a', 'b', 'node_modules'), path.join('a', 'b', 'c', 'node_modules')];
+      readdirStub.withArgs(path.resolve(basePath)).resolves(['a']);
+      readdirStub.withArgs(path.resolve(basePath, 'a')).resolves(['b']);
+      readdirStub.withArgs(path.resolve(basePath, 'a', 'b')).resolves(['c', 'node_modules']);
+      readdirStub.withArgs(path.resolve(basePath, 'a', 'b', 'c')).resolves(['node_modules']);
       const actual = await fileUtils.findNodeModulesList(basePath);
-      expect(actual.nodeModulesList).deep.eq(expectedNodeModulesList);
+      expect(actual).deep.eq(expectedNodeModulesList);
     });
 
     it("should return node_modules array in parent directories's subDirectory of `basePath` if it did't exist in `basePath`", async () => {
       const basePath = path.resolve('a', 'b', 'c');
-      const expectedNodeModulesList = [path.resolve('a', 'b', 'node_modules')];
+      const expectedNodeModulesList = ['node_modules'];
       readdirStub.withArgs(path.resolve('a')).resolves([]);
-      readdirStub.withArgs(path.resolve('a', 'b')).resolves([path.resolve('a', 'b', 'c'), path.resolve('a', 'b', 'node_modules')]);
+      readdirStub.withArgs(path.resolve('a', 'b')).resolves(['c', 'node_modules']);
       const actual = await fileUtils.findNodeModulesList(basePath);
-      expect(actual.nodeModulesList).deep.eq(expectedNodeModulesList);
+      expect(actual).deep.eq(expectedNodeModulesList);
     });
 
     it('should return empty array if no node_modules exist in basePath or parent directories', async () => {
       const basePath = path.resolve('a', 'b', 'c');
       const actual = await fileUtils.findNodeModulesList(basePath);
-      expect(actual.nodeModulesList.length).eq(0);
+      expect(actual.length).eq(0);
     });
   });
 });
