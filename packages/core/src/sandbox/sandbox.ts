@@ -89,7 +89,7 @@ export class Sandbox implements Disposable {
     if (this.options.symlinkNodeModules && !this.options.inPlace) {
       // TODO: Change with this.options.basePath when we have it
       const basePath = process.cwd();
-      const nodeModulesList = await findNodeModulesList(basePath);
+      const nodeModulesList = await findNodeModulesList(basePath, this.options.tempDirName);
 
       if (nodeModulesList.length > 0) {
         for (const nodeModules of nodeModulesList) {

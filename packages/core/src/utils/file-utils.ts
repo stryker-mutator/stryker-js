@@ -82,24 +82,19 @@ export async function findNodeModulesList(basePath: string, tempDirName?: string
   const nodeModulesList: string[] = [];
   const dirBfsQueue: string[] = ['.'] ?? [];
 
-  while (dirBfsQueue.length > 0) {
-    const dir = dirBfsQueue.pop();
-
-    if (!dir) {
+  let dir: string | undefined = undefined;
+  while ((dir = dirBfsQueue.pop())) {
+    if (path.basename(dir) === tempDirName) {
       continue;
     }
 
-    if (dir && path.basename(dir) === tempDirName) {
-      continue;
-    }
-
-    if (dir && path.basename(dir) === 'node_modules') {
+    if (path.basename(dir) === 'node_modules') {
       nodeModulesList.push(dir);
       continue;
     }
 
     const filesWithType = (await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true })) ?? [];
-    const dirs = filesWithType.filter((f) => f.isDirectory()).map((d) => path.join(dir, d.name));
+    const dirs = filesWithType.filter((f) => f.isDirectory()).map((d) => path.join(dir!, d.name));
     dirBfsQueue.push(...dirs);
   }
 
