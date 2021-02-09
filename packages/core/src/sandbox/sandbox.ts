@@ -93,8 +93,8 @@ export class Sandbox implements Disposable {
 
       if (nodeModulesList.length > 0) {
         for (const nodeModules of nodeModulesList) {
-          this.log.debug(`Create symlink from ${path.resolve(nodeModules)} to ${path.resolve(this.workingDirectory, nodeModules)}`);
-          await symlinkJunction(path.resolve(nodeModules), path.resolve(this.workingDirectory, nodeModules)).catch((error: NodeJS.ErrnoException) => {
+          this.log.debug(`Create symlink from ${path.resolve(nodeModules)} to ${path.join(this.workingDirectory, nodeModules)}`);
+          await symlinkJunction(path.resolve(nodeModules), path.join(this.workingDirectory, nodeModules)).catch((error: NodeJS.ErrnoException) => {
             if (error.code === 'EEXIST') {
               this.log.warn(
                 normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
