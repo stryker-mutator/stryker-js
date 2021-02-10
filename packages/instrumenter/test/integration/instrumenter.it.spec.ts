@@ -61,6 +61,38 @@ describe('instrumenter integration', () => {
     });
   });
 
+  describe('Specific mutants', () => {
+    it('should only mutate specific mutants for the given file', async () => {
+      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
+
+      await arrangeAndActAssert('specific-mutants.ts', {
+        ...createInstrumenterOptions(),
+        specificMutants: [
+          {
+            filename: fullFileName,
+            start: { line: 1, column: 10 },
+            end: { line: 1, column: 15 },
+          },
+        ],
+      });
+    });
+
+    it('should not make any mutations in a file not found in the specific mutants', async () => {
+      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
+
+      await arrangeAndActAssert('specific-no-mutants.ts', {
+        ...createInstrumenterOptions(),
+        specificMutants: [
+          {
+            filename: fullFileName,
+            start: { line: 1, column: 10 },
+            end: { line: 1, column: 15 },
+          },
+        ],
+      });
+    });
+  });
+
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource('instrumenter', fileName);
     const file = new File(fullFileName, await fsPromises.readFile(fullFileName));

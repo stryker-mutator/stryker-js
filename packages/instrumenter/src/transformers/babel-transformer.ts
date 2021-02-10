@@ -22,6 +22,19 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
         // Don't mutate type declarations or import statements
         path.skip();
       } else {
+        if (
+          path.node.type !== 'Program' &&
+          options.specificMutants?.length &&
+          !options.specificMutants.find(
+            (mutant) =>
+              mutant.filename == originFileName &&
+              path.node.loc?.start.line === mutant.start.line &&
+              path.node.loc?.start.column === mutant.start.column &&
+              path.node.loc?.end.line === mutant.end.line &&
+              path.node.loc?.end.column === mutant.end.column
+          )
+        )
+          return;
         mutate(path, options).forEach((mutant) => {
           mutantCollector.add(originFileName, mutant);
         });
