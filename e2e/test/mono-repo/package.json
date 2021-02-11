@@ -1,0 +1,16 @@
+{
+  "name": "mocha-repo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "node tasks/bootstrap.js",
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "test:unit": "mocha",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "author": "",
+  "license": "ISC"
+}
