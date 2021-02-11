@@ -21,7 +21,7 @@ describe(Sandbox.name, () => {
   let mkdirpStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
-  let findNodeModulesStub: sinon.SinonStub;
+  let findNodeModulesListStub: sinon.SinonStub;
   let execaMock: sinon.SinonStubbedInstance<typeof execa>;
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
   let readFile: sinon.SinonStub;
@@ -35,7 +35,7 @@ describe(Sandbox.name, () => {
     mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
     writeFileStub = sinon.stub(fsPromises, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
-    findNodeModulesStub = sinon.stub(fileUtils, 'findNodeModules');
+    findNodeModulesListStub = sinon.stub(fileUtils, 'findNodeModulesList');
     moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
     readFile = sinon.stub(fsPromises, 'readFile');
     execaMock = {
@@ -49,7 +49,7 @@ describe(Sandbox.name, () => {
       dispose: sinon.stub(),
     };
     symlinkJunctionStub.resolves();
-    findNodeModulesStub.resolves('node_modules');
+    findNodeModulesListStub.resolves(['node_modules']);
     files = [];
   });
 
@@ -105,8 +105,8 @@ describe(Sandbox.name, () => {
       it('should symlink node modules in sandbox directory if exists', async () => {
         const sut = createSut();
         await sut.init();
-        expect(findNodeModulesStub).calledWith(process.cwd());
-        expect(symlinkJunctionStub).calledWith('node_modules', path.join(SANDBOX_WORKING_DIR, 'node_modules'));
+        expect(findNodeModulesListStub).calledWith(process.cwd());
+        expect(symlinkJunctionStub).calledWith(path.resolve('node_modules'), path.join(SANDBOX_WORKING_DIR, 'node_modules'));
       });
     });
 
@@ -218,8 +218,21 @@ describe(Sandbox.name, () => {
       await initPromise;
     });
 
+    it('should symlink node modules in sandbox directory if node_modules exist', async () => {
+      findNodeModulesListStub.resolves(['node_modules', 'packages/a/node_modules']);
+      const sut = createSut();
+      await sut.init();
+
+      const calls = symlinkJunctionStub.getCalls();
+      expect(calls[0]).calledWithExactly(path.resolve('node_modules'), path.join(SANDBOX_WORKING_DIR, 'node_modules'));
+      expect(calls[1]).calledWithExactly(
+        path.resolve('packages', 'a', 'node_modules'),
+        path.join(SANDBOX_WORKING_DIR, 'packages', 'a', 'node_modules')
+      );
+    });
+
     it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
-      findNodeModulesStub.resolves(null);
+      findNodeModulesListStub.resolves([]);
       const sut = createSut();
       await sut.init();
       expect(testInjector.logger.warn).calledWithMatch('Could not find a node_modules');
@@ -228,7 +241,7 @@ describe(Sandbox.name, () => {
     });
 
     it('should log a warning if "node_modules" already exists in the working folder', async () => {
-      findNodeModulesStub.resolves('node_modules');
+      findNodeModulesListStub.resolves(['node_modules']);
       symlinkJunctionStub.rejects(factory.fileAlreadyExistsError());
       const sut = createSut();
       await sut.init();
@@ -242,7 +255,7 @@ describe(Sandbox.name, () => {
     });
 
     it('should log a warning if linking "node_modules" results in an unknown error', async () => {
-      findNodeModulesStub.resolves('basePath/node_modules');
+      findNodeModulesListStub.resolves(['basePath/node_modules']);
       const error = new Error('unknown');
       symlinkJunctionStub.rejects(error);
       const sut = createSut();
@@ -253,12 +266,12 @@ describe(Sandbox.name, () => {
       );
     });
 
-    it('should symlink node modules in sandbox directory if `symlinkNodeModules` is `false`', async () => {
+    it('should not symlink node modules in sandbox directory if `symlinkNodeModules` is `false`', async () => {
       testInjector.options.symlinkNodeModules = false;
       const sut = createSut();
       await sut.init();
       expect(symlinkJunctionStub).not.called;
-      expect(findNodeModulesStub).not.called;
+      expect(findNodeModulesListStub).not.called;
     });
 
     it('should execute the buildCommand in the sandbox', async () => {

@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "mocha",
+  "concurrency": 2,
+  "mutate": [
+    "packages/*/{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)"
+  ],
+  "coverageAnalysis": "perTest",
+  "reporters": ["clear-text", "html", "event-recorder"],
+  "plugins": [
+    "@stryker-mutator/mocha-runner"
+  ]
+}

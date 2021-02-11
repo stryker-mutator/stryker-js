@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-
 import { promisify } from 'util';
 
 import nodeGlob from 'glob';
@@ -79,18 +78,26 @@ export function symlinkJunction(to: string, from: string): Promise<void> {
  * returns the first occurrence of the node_modules, or null of none could be found.
  * @param basePath starting point
  */
-export async function findNodeModules(basePath: string): Promise<string | null> {
-  basePath = path.resolve(basePath);
-  const nodeModules = path.resolve(basePath, 'node_modules');
-  try {
-    await fs.promises.stat(nodeModules);
-    return nodeModules;
-  } catch (e) {
-    const parent = path.dirname(basePath);
-    if (parent === basePath) {
-      return null;
-    } else {
-      return findNodeModules(path.dirname(basePath));
+export async function findNodeModulesList(basePath: string, tempDirName?: string): Promise<string[]> {
+  const nodeModulesList: string[] = [];
+  const dirBfsQueue: string[] = ['.'] ?? [];
+
+  let dir: string | undefined;
+  while ((dir = dirBfsQueue.pop())) {
+    if (path.basename(dir) === tempDirName) {
+      continue;
     }
+
+    if (path.basename(dir) === 'node_modules') {
+      nodeModulesList.push(dir);
+      continue;
+    }
+
+    const parentDir = dir;
+    const filesWithType = await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true });
+    const dirs = filesWithType.filter((file) => file.isDirectory()).map((childDir) => path.join(parentDir, childDir.name));
+    dirBfsQueue.push(...dirs);
   }
+
+  return nodeModulesList;
 }
