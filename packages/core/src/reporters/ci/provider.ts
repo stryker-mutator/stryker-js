@@ -22,7 +22,7 @@ export interface CIProvider {
  * Return an appropriate instance of CiProvider.
  * @returns An instance of CiProvider, or `null` if it appears Stryker is not running in a CI/CD environment.
  */
-export function determineCIProvider() {
+export function determineCIProvider(): CircleProvider | GithubActionsCIProvider | TravisProvider | null {
   // By far the coolest env. variable from all those listed at
   // https://docs.travis-ci.com/user/environment-variables/#Default-Environment-Variables
   if (getEnvironmentVariable('HAS_JOSH_K_SEAL_OF_APPROVAL')) {

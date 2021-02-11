@@ -16,7 +16,7 @@ export class LoggingServer {
         // Log4js also sends "__LOG4JS__" to signal an event end. Ignore those.
         const logEventStrings = data.toString().split('__LOG4JS__').filter(Boolean);
         const loggingEvents: log4js.LoggingEvent[] = logEventStrings.map((logEventString) => parse(logEventString));
-        loggingEvents.forEach((event) => this.subscriber && this.subscriber.next(event));
+        loggingEvents.forEach((event) => this.subscriber?.next(event));
       });
       socket.on('error', () => {
         // A client connection was killed unexpectedly.

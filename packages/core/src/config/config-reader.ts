@@ -1,7 +1,6 @@
 import path from 'path';
 
-import { PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { deepMerge } from '@stryker-mutator/util';
@@ -47,7 +46,7 @@ export class ConfigReader {
     return options;
   }
 
-  private loadConfigModule(): ((options: StrykerOptions) => void) | PartialStrykerOptions {
+  private loadConfigModule(): PartialStrykerOptions | ((options: StrykerOptions) => void) {
     let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
 
     if (!this.cliOptions.configFile) {
@@ -65,6 +64,7 @@ export class ConfigReader {
       this.log.debug(`Loading config ${this.cliOptions.configFile}`);
       const configFile = this.resolveConfigFile(this.cliOptions.configFile);
       try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         configModule = require(configFile);
       } catch (e) {
         this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');

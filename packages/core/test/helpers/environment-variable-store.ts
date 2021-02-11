@@ -2,7 +2,7 @@
  * A class that lets you manipulate env variables and reset them after a test
  */
 export class EnvironmentVariableStore {
-  private readonly originals: { [key: string]: string | undefined } = Object.create(null);
+  private readonly originals: Record<string, string | undefined> = Object.create(null);
 
   private store(key: string) {
     if (!(key in this.originals)) {
@@ -10,17 +10,17 @@ export class EnvironmentVariableStore {
     }
   }
 
-  public set(key: string, value: string) {
+  public set(key: string, value: string): void {
     this.store(key);
     process.env[key] = value;
   }
 
-  public unset(key: string) {
+  public unset(key: string): void {
     this.store(key);
     delete process.env[key];
   }
 
-  public restore() {
+  public restore(): void {
     Object.keys(this.originals).forEach((key) => {
       const value = this.originals[key];
       if (value === undefined) {

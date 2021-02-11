@@ -63,7 +63,7 @@ describe(placeMutants.name, () => {
    */
   it('should throw a generic error if `buildCodeFrameError` fails (#2695)', () => {
     // Arrange
-    const path = findNodePath(parseSync('const a = b') as types.File, (p) => p.isProgram());
+    const nodePath = findNodePath(parseSync('const a = b') as types.File, (p) => p.isProgram());
     const expectedError = new Error('expectedError');
     const fooPlacer: MutantPlacer = () => {
       throw expectedError;
@@ -72,7 +72,7 @@ describe(placeMutants.name, () => {
     const mutants = [createMutant()];
 
     // Arrange & Act
-    expect(() => placeMutants(path, mutants, 'foo.js', [fooPlacer])).throws(
+    expect(() => placeMutants(nodePath, mutants, 'foo.js', [fooPlacer])).throws(
       Error,
       'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new'
     );

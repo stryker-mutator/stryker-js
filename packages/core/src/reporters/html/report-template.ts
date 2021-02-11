@@ -5,7 +5,7 @@ import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 
 const promisedReadFile = promisify(readFile);
 
-export async function reportTemplate(report: mutationTestReportSchema.MutationTestResult) {
+export async function reportTemplate(report: mutationTestReportSchema.MutationTestResult): Promise<string> {
   const scriptContent = await promisedReadFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), 'utf-8');
 
   return `<!DOCTYPE html>

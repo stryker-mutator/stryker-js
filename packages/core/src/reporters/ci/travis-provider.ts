@@ -1,4 +1,4 @@
-import { getEnvironmentVariable } from '../../utils/object-utils';
+import { getEnvironmentVariable, undefinedEmptyString } from '../../utils/object-utils';
 
 import { CIProvider } from './provider';
 
@@ -15,6 +15,6 @@ export class TravisProvider implements CIProvider {
     }
   }
   public determineVersion(): string | undefined {
-    return getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH') || getEnvironmentVariable('TRAVIS_BRANCH');
+    return undefinedEmptyString(getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH')) ?? getEnvironmentVariable('TRAVIS_BRANCH');
   }
 }

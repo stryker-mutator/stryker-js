@@ -338,14 +338,14 @@ describe(markUnknownOptions.name, () => {
   });
 
   it('should not warn when unknown properties are postfixed with "_comment"', () => {
-    testInjector.options['maxConcurrentTestRunners_comment'] = 'Recommended to use half of your cores';
+    testInjector.options.maxConcurrentTestRunners_comment = 'Recommended to use half of your cores';
     markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });
 
   it('should warn about unknown properties', () => {
-    testInjector.options['karma'] = {};
-    testInjector.options['jest'] = {};
+    testInjector.options.karma = {};
+    testInjector.options.jest = {};
     markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).calledThrice;
     expect(testInjector.logger.warn).calledWith('Unknown stryker config option "karma".');
@@ -353,15 +353,15 @@ describe(markUnknownOptions.name, () => {
     expect(testInjector.logger.warn).calledWithMatch('Possible causes');
   });
   it('should not warn about unknown properties when warnings are disabled', () => {
-    testInjector.options['karma'] = {};
+    testInjector.options.karma = {};
     testInjector.options.warnings = factory.warningOptions({ unknownOptions: false });
     markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });
   it('should ignore options added by Stryker itself', () => {
-    testInjector.options['set'] = {};
-    testInjector.options['configFile'] = {};
-    testInjector.options['$schema'] = '';
+    testInjector.options.set = {};
+    testInjector.options.configFile = {};
+    testInjector.options.$schema = '';
     markUnknownOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
     expect(testInjector.logger.warn).not.called;
   });

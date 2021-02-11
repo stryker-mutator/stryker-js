@@ -26,7 +26,7 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
   declarationMap: false,
 });
 
-export function guardTSVersion() {
+export function guardTSVersion(): void {
   if (!semver.satisfies(ts.version, '>=3.6')) {
     throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
   }
@@ -36,7 +36,7 @@ export function guardTSVersion() {
  * Determines whether or not to use `--build` mode based on "references" being there in the config file
  * @param tsconfigFileName The tsconfig file to parse
  */
-export function determineBuildModeEnabled(tsconfigFileName: string) {
+export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
   const tsconfigFile = ts.sys.readFile(tsconfigFileName);
   if (!tsconfigFile) {
     throw new Error(`File "${tsconfigFileName}" not found!`);
@@ -50,7 +50,7 @@ export function determineBuildModeEnabled(tsconfigFileName: string) {
  * @param parsedConfig The parsed config file
  * @param useBuildMode whether or not `--build` mode is used
  */
-export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean) {
+export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean): string {
   const config = {
     ...parsedConfig.config,
     compilerOptions: {

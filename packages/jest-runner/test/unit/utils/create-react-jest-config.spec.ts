@@ -6,6 +6,7 @@ import { createReactJestConfig, createReactTsJestConfig } from '../../../src/uti
 describe('createReactJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   const loader: any = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     require: () => {},
   };
 
@@ -17,12 +18,14 @@ describe('createReactJestConfig', () => {
   });
 
   it('should call the loader with the react jest config generator', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     createReactJestConfig(() => {}, '/path/to/project', false, loader.require);
 
     assert(loaderStub.calledWith('react-scripts/scripts/utils/createJestConfig'));
   });
 
   it('should return a jest config', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     expect(createReactJestConfig(() => {}, '/path/to/project', false, loader.require)).to.equal('jestConfig');
   });
 });
@@ -30,6 +33,7 @@ describe('createReactJestConfig', () => {
 describe('createReactTsJestConfig', () => {
   let loaderStub: sinon.SinonStub;
   const loader: any = {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     require: () => {},
   };
 
@@ -39,12 +43,14 @@ describe('createReactTsJestConfig', () => {
   });
 
   it('should call the loader with the react jest config generator', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     createReactTsJestConfig(() => {}, '/path/to/project', false, loader.require);
 
     assert(loaderStub.calledWith('react-scripts-ts/scripts/utils/createJestConfig'));
   });
 
   it('should return a jest config', () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     expect(createReactTsJestConfig(() => {}, '/path/to/project', false, loader.require)).to.equal('jestConfig');
   });
 });

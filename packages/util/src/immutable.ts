@@ -1,4 +1,4 @@
-type ImmutablePrimitive = undefined | null | boolean | string | number | ((...args: any[]) => any);
+type ImmutablePrimitive = boolean | number | string | ((...args: any[]) => any) | null | undefined;
 
 export type Immutable<T> = T extends ImmutablePrimitive
   ? T
@@ -31,10 +31,10 @@ export function deepFreeze<T>(target: T): Immutable<T> {
         return (Object.freeze(new Set([...target.values()].map(deepFreeze))) as unknown) as Immutable<T>;
       }
       return Object.freeze({
-        ...Object.entries(target).reduce((result, [prop, val]) => {
+        ...Object.entries(target).reduce<any>((result, [prop, val]) => {
           result[prop] = deepFreeze(val);
           return result;
-        }, {} as any),
+        }, {}),
       });
     default:
       return target as Immutable<T>;

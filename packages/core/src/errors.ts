@@ -3,7 +3,7 @@ import { InjectionError } from 'typed-inject';
 
 export class ConfigError extends StrykerError {}
 
-export function retrieveCause(error: Error) {
+export function retrieveCause(error: Error): Error {
   if (error instanceof InjectionError) {
     return error.cause;
   } else {

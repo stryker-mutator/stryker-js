@@ -10,6 +10,6 @@ beforeEach(() => {
   sinon.stub(logging, 'getLogger').returns(log);
 });
 
-export function currentLogMock() {
+export function currentLogMock(): any {
   return log;
 }

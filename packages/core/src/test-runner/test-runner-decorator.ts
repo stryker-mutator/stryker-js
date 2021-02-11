@@ -15,7 +15,7 @@ export class TestRunnerDecorator implements Required<TestRunner>, Disposable {
       return Promise.resolve();
     }
   }
-  protected createInnerRunner() {
+  protected createInnerRunner(): void {
     this.innerRunner = this.testRunnerProducer();
   }
 

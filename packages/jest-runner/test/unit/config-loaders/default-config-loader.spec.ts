@@ -53,6 +53,4 @@ describe(`${CustomJestConfigLoader.name} integration`, () => {
   });
 });
 
-interface FsStub {
-  [key: string]: sinon.SinonStub;
-}
+type FsStub = Record<string, sinon.SinonStub>;

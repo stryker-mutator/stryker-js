@@ -9,4 +9,4 @@ export interface PassedCheckResult {
   status: CheckStatus.Passed;
 }
 
-export type CheckResult = PassedCheckResult | FailedCheckResult;
+export type CheckResult = FailedCheckResult | PassedCheckResult;

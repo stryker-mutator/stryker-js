@@ -48,14 +48,17 @@ export class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(pkg: PackageInfo): Promise<Record<string, unknown>> {
-    const path = `/${pkg.name}@${pkg.version}/package.json`;
+  public getAdditionalConfig(pkgInfo: PackageInfo): Promise<Record<string, unknown>> {
+    const path = `/${pkgInfo.name}@${pkgInfo.version}/package.json`;
     return this.packageClient
       .get<NpmPackage>(path)
       .then(handleResult(path))
-      .then((pkg) => pkg.initStrykerConfig || {})
+      .then((pkg) => pkg.initStrykerConfig ?? {})
       .catch((err) => {
-        this.log.warn(`Could not fetch additional initialization config for dependency ${pkg.name}. You might need to configure it manually`, err);
+        this.log.warn(
+          `Could not fetch additional initialization config for dependency ${pkgInfo.name}. You might need to configure it manually`,
+          err
+        );
         return {};
       });
   }

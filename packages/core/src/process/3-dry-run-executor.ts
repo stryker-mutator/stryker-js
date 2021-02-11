@@ -168,7 +168,7 @@ export class DryRunExecutor {
     this.log.error(message);
   }
   private logErrorsInInitialRun(runResult: ErrorDryRunResult) {
-    let message = `One or more tests resulted in an error:${EOL}\t${runResult.errorMessage}`;
+    const message = `One or more tests resulted in an error:${EOL}\t${runResult.errorMessage}`;
     this.log.error(message);
   }
 

@@ -1,6 +1,6 @@
-import path = require('path');
+import path from 'path';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { expect } from 'chai';
 
@@ -19,7 +19,7 @@ describe(DirectoryRequireCache.name, () => {
     cwdStub.returns(workingDirectory);
     sut = new DirectoryRequireCache();
     rootModule = createModule('root', 'root');
-    require.cache['root'] = rootModule;
+    require.cache.root = rootModule;
   });
 
   afterEach(() => {

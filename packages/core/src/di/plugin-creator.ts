@@ -36,10 +36,10 @@ export class PluginCreator<TPluginKind extends PluginKind> {
     return !!(plugin as ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>).injectableClass;
   }
 
-  public static createFactory<TPluginKind extends PluginKind, TContext extends PluginContext>(
-    kind: TPluginKind
-  ): InjectableFunctionWithInject<TContext, PluginCreator<TPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
-    function factory(pluginResolver: PluginResolver, injector: Injector<TContext>): PluginCreator<TPluginKind> {
+  public static createFactory<STPluginKind extends PluginKind, TContext extends PluginContext>(
+    kind: STPluginKind
+  ): InjectableFunctionWithInject<TContext, PluginCreator<STPluginKind>, [typeof commonTokens.pluginResolver, typeof commonTokens.injector]> {
+    function factory(pluginResolver: PluginResolver, injector: Injector<TContext>): PluginCreator<STPluginKind> {
       return new PluginCreator(kind, pluginResolver, injector);
     }
     factory.inject = tokens(commonTokens.pluginResolver, commonTokens.injector);

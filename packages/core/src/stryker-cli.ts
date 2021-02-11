@@ -41,10 +41,11 @@ export class StrykerCli {
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 
-  public run() {
+  public run(): void {
     const dashboard: Partial<DashboardOptions> = {};
     const defaultValues = defaultOptions();
     this.program
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       .version(require('../../package.json').version)
       .usage('<command> [options] [configFile]')
       .description(
@@ -177,7 +178,7 @@ export class StrykerCli {
     };
 
     if (Object.keys(commands).includes(this.command)) {
-      const promise: Promise<void | MutantResult[]> = commands[this.command as keyof typeof commands]();
+      const promise: Promise<MutantResult[] | void> = commands[this.command as keyof typeof commands]();
       promise.catch((err) => {
         process.exitCode = 1;
       });

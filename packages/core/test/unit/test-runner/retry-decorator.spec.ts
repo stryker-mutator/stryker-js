@@ -23,7 +23,7 @@ describe(RetryDecorator.name, () => {
     testRunner2 = factory.testRunner();
     logMock = currentLogMock();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new RetryDecorator(() => availableTestRunners.shift() || factory.testRunner());
+    sut = new RetryDecorator(() => availableTestRunners.shift() ?? factory.testRunner());
   });
 
   it('should not override `init`', () => {
@@ -36,13 +36,13 @@ describe(RetryDecorator.name, () => {
 
   describeRun(
     'dryRun',
-    (sut, options) => sut.dryRun(options),
+    (suite, options) => suite.dryRun(options),
     () => factory.dryRunOptions({ timeout: 23 }),
     () => factory.completeDryRunResult()
   );
   describeRun(
     'mutantRun',
-    (sut, options) => sut.mutantRun(options),
+    (suite, options) => suite.mutantRun(options),
     () => factory.mutantRunOptions({ timeout: 23 }),
     () => factory.survivedMutantRunResult()
   );

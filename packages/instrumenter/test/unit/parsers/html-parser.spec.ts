@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import sinon = require('sinon');
+import sinon from 'sinon';
 
 import { parse } from '../../../src/parsers/html-parser';
 import { ParserContext } from '../../../src/parsers/parser-context';

@@ -20,7 +20,7 @@ export const MUTANT_PLACERS = Object.freeze([expressionMutantPlacer, statementMu
  * @param fileName The name of the file where the mutants are placed
  * @param mutantPlacers The mutant placers to use (for unit testing purposes)
  */
-export function placeMutants(node: NodePath, mutants: Mutant[], fileName: string, mutantPlacers: readonly MutantPlacer[] = MUTANT_PLACERS) {
+export function placeMutants(node: NodePath, mutants: Mutant[], fileName: string, mutantPlacers: readonly MutantPlacer[] = MUTANT_PLACERS): boolean {
   if (mutants.length) {
     for (const placer of mutantPlacers) {
       try {

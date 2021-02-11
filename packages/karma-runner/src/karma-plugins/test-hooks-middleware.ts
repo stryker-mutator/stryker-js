@@ -11,7 +11,7 @@ const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);
 
 const SUPPORTED_FRAMEWORKS = Object.freeze(['mocha', 'jasmine'] as const);
 
-type SupportedFramework = 'mocha' | 'jasmine';
+type SupportedFramework = 'jasmine' | 'mocha';
 
 function isSupportedFramework(framework: string): framework is SupportedFramework {
   return (SUPPORTED_FRAMEWORKS as readonly string[]).includes(framework);
@@ -26,7 +26,7 @@ const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID } = INSTRUMENTER_CONSTANTS;
 
 export class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
-  private testFramework: 'mocha' | 'jasmine' | undefined;
+  private testFramework: 'jasmine' | 'mocha' | undefined;
   public currentTestHooks = '';
 
   public static get instance(): TestHooksMiddleware {
@@ -36,11 +36,11 @@ export class TestHooksMiddleware {
     return this._instance;
   }
 
-  public configureTestFramework(frameworks?: string[]) {
+  public configureTestFramework(frameworks?: string[]): void {
     this.testFramework = frameworks?.filter(isSupportedFramework)[0];
   }
 
-  public configureCoverageAnalysis(coverageAnalysis: CoverageAnalysis) {
+  public configureCoverageAnalysis(coverageAnalysis: CoverageAnalysis): void {
     switch (coverageAnalysis) {
       case 'perTest':
         this.configurePerTestCoverageAnalysis();
@@ -54,7 +54,7 @@ export class TestHooksMiddleware {
     }
   }
 
-  public configureActiveMutant({ activeMutant, testFilter }: MutantRunOptions) {
+  public configureActiveMutant({ activeMutant, testFilter }: MutantRunOptions): void {
     this.configureCoverageAnalysis('off');
     this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};
     window.${NAMESPACE}.${ACTIVE_MUTANT} = ${activeMutant.id};`;
@@ -69,6 +69,7 @@ export class TestHooksMiddleware {
           const metaRegExp = testFilter.map((testId) => `(${escapeRegExpLiteral(testId)})`).join('|');
           this.currentTestHooks += `mocha.grep(/${metaRegExp}/)`;
           break;
+        default:
       }
     }
   }

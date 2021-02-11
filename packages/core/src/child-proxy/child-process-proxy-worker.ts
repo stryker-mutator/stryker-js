@@ -56,6 +56,8 @@ export class ChildProcessProxyWorker {
     for (const token in locals) {
       injector = injector.provideValue(token, locals[token]);
     }
+    // we want it sync
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const RealSubjectClass = require(message.requirePath)[message.requireName];
     const workingDir = path.resolve(message.workingDirectory);
     if (process.cwd() !== workingDir) {
@@ -83,7 +85,7 @@ export class ChildProcessProxyWorker {
     }
   }
 
-  private doCall(message: CallMessage): Record<string, unknown> | PromiseLike<Record<string, unknown>> | undefined {
+  private doCall(message: CallMessage): PromiseLike<Record<string, unknown>> | Record<string, unknown> | undefined {
     if (typeof this.realSubject[message.methodName] === 'function') {
       return this.realSubject[message.methodName](...message.args);
     } else {

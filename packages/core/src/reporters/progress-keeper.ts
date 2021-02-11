@@ -1,5 +1,4 @@
-import { MatchedMutant, MutantResult, Reporter } from '@stryker-mutator/api/report';
-import { MutantStatus } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantResult, Reporter, MutantStatus } from '@stryker-mutator/api/report';
 
 import { Timer } from '../utils/timer';
 
@@ -31,11 +30,11 @@ export abstract class ProgressKeeper implements Reporter {
     }
   }
 
-  protected getElapsedTime() {
+  protected getElapsedTime(): string {
     return this.formatTime(this.timer.elapsedSeconds());
   }
 
-  protected getEtc() {
+  protected getEtc(): string {
     const totalSecondsLeft = Math.floor((this.timer.elapsedSeconds() / this.progress.tested) * (this.progress.total - this.progress.tested));
 
     if (isFinite(totalSecondsLeft) && totalSecondsLeft > 0) {

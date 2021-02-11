@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 
 import { notEmpty } from './not-empty';
 
@@ -18,7 +18,7 @@ export class DirectoryRequireCache {
    * Records the files required in the current working directory (excluding node_modules)
    * Only does so the first time, any subsequent calls will be ignored
    */
-  public record() {
+  public record(): void {
     if (!this.cache) {
       const cache = (this.cache = new Set());
       const cwd = process.cwd();
@@ -38,7 +38,7 @@ export class DirectoryRequireCache {
     }
   }
 
-  public clear() {
+  public clear(): void {
     if (this.cache && this.parents) {
       const cache = this.cache;
       this.parents.forEach((parent) => {

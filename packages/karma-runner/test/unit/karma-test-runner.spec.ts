@@ -8,6 +8,7 @@ import { expect } from 'chai';
 import karma from 'karma';
 import sinon from 'sinon';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import * as projectStarter from '../../src/starters/project-starter';

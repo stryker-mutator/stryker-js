@@ -78,7 +78,7 @@ export class ChildProcessProxy<T> implements Disposable {
     options: StrykerOptions,
     additionalInjectableValues: TAdditionalContext,
     workingDirectory: string,
-    injectableClass: InjectableClass<TAdditionalContext & PluginContext, R, Tokens>,
+    injectableClass: InjectableClass<PluginContext & TAdditionalContext, R, Tokens>,
     execArgv: string[]
   ): ChildProcessProxy<R> {
     return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory, execArgv);
@@ -168,11 +168,11 @@ export class ChildProcessProxy<T> implements Disposable {
     }
   }
 
-  public get stdout() {
+  public get stdout(): string {
     return this.stdoutBuilder.toString();
   }
 
-  public get stderr() {
+  public get stderr(): string {
     return this.stderrBuilder.toString();
   }
 

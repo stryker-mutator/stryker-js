@@ -41,7 +41,7 @@ export class CommandTestRunner implements TestRunner {
 
   private readonly settings: CommandRunnerOptions;
 
-  private timeoutHandler: undefined | (() => Promise<void>);
+  private timeoutHandler: (() => Promise<void>) | undefined;
 
   constructor(private readonly workingDir: string, options: StrykerOptions) {
     this.settings = options.commandRunner;
@@ -63,8 +63,8 @@ export class CommandTestRunner implements TestRunner {
 
   private run({ activeMutantId }: { activeMutantId?: number }): Promise<DryRunResult> {
     return new Promise((res, rej) => {
-      const timer = new Timer();
-      const output: Array<string | Buffer> = [];
+      const timerInstance = new Timer();
+      const output: Array<Buffer | string> = [];
       const env =
         activeMutantId === undefined
           ? process.env
@@ -76,7 +76,7 @@ export class CommandTestRunner implements TestRunner {
           .catch(rej);
       });
       childProcess.on('exit', (code) => {
-        const result = completeResult(code, timer);
+        const result = completeResult(code, timerInstance);
         handleResolve(result);
       });
       childProcess.stdout!.on('data', (chunk) => {

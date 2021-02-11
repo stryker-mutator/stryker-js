@@ -6,6 +6,7 @@ import { Config, ConfigOptions, ClientOptions } from 'karma';
 import sinon from 'sinon';
 import * as utils from '@stryker-mutator/util';
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import sut = require('../../../src/starters/stryker-karma.conf');
 import { StrykerReporter } from '../../../src/karma-plugins/stryker-reporter';
 import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
@@ -182,7 +183,7 @@ describe('stryker-karma.conf.js', () => {
   it('should allow for custom basePath', () => {
     const expectedBasePath = path.resolve('../baz');
     sut.setGlobals({ karmaConfigFile: '../foobar.conf.js' });
-    requireModuleStub.returns((config: Config) => config.set({ basePath: expectedBasePath }));
+    requireModuleStub.returns((configuration: Config) => configuration.set({ basePath: expectedBasePath }));
     sut(config);
     expect(config).deep.include({
       basePath: path.resolve(expectedBasePath),

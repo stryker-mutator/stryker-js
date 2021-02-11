@@ -29,7 +29,7 @@ export class MutantCollector {
     return mutant;
   }
 
-  public findUnplacedMutantsInScope(scope: Pick<types.Node, 'start' | 'end'>): Mutant[] {
+  public findUnplacedMutantsInScope(scope: Pick<types.Node, 'end' | 'start'>): Mutant[] {
     return this.unplacedMutants.filter((mutant) => scope.start! <= mutant.replacement.start! && scope.end! >= mutant.replacement.end!);
   }
 
@@ -37,7 +37,7 @@ export class MutantCollector {
     this.unplacedMutants = this.unplacedMutants.filter((unplaced) => !mutants.includes(unplaced));
   }
 
-  public hasPlacedMutants(fileName: string) {
+  public hasPlacedMutants(fileName: string): boolean {
     const unplacedMutants = this.unplacedMutants.filter((mutant) => mutant.fileName === fileName);
     return this.mutants.some((mutant) => !unplacedMutants.includes(mutant) && mutant.fileName === fileName);
   }

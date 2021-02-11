@@ -33,7 +33,7 @@ export class MochaOptionsLoader {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public load(strykerOptions: MochaRunnerWithStrykerOptions) {
+  public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
     const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
     return { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
   }
@@ -51,7 +51,7 @@ export class MochaOptionsLoader {
 
   private loadMocha6Options(overrides: MochaOptions) {
     const args = serializeMochaLoadOptionsArguments(overrides);
-    const rawConfig = LibWrapper.loadOptions!(args) || {};
+    const rawConfig = LibWrapper.loadOptions!(args) ?? {};
     if (this.log.isTraceEnabled()) {
       this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
@@ -87,6 +87,8 @@ export class MochaOptionsLoader {
           this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
           return {};
         }
+      default:
+        return {};
     }
   }
 
@@ -116,7 +118,7 @@ export class MochaOptionsLoader {
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'tdd' | 'qunit' | 'exports') ?? DEFAULT_MOCHA_OPTIONS.ui!;
+            mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'exports' | 'qunit' | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g':

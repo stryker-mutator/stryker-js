@@ -13,7 +13,7 @@ chai.use(chaiAsPromised);
 const cwd = process.cwd();
 
 export const mochaHooks = {
-  afterEach() {
+  afterEach(): void {
     if (process.cwd() !== cwd) {
       process.chdir(cwd);
     }

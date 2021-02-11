@@ -3,10 +3,6 @@ export interface MutantCoverage {
   perTest: CoveragePerTestId;
 }
 
-export interface CoveragePerTestId {
-  [testId: string]: CoverageData;
-}
+export type CoveragePerTestId = Record<string, CoverageData>;
 
-export interface CoverageData {
-  [mutantId: number]: number;
-}
+export type CoverageData = Record<number, number>;

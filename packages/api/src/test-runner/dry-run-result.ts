@@ -3,7 +3,7 @@ import { MutantCoverage } from '../core/mutant-coverage';
 import { DryRunStatus } from './dry-run-status';
 import { TestResult } from './test-result';
 
-export type DryRunResult = CompleteDryRunResult | TimeoutDryRunResult | ErrorDryRunResult;
+export type DryRunResult = CompleteDryRunResult | ErrorDryRunResult | TimeoutDryRunResult;
 
 export interface CompleteDryRunResult {
   /**

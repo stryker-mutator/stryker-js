@@ -50,15 +50,15 @@ export class MutationTestReportHelper {
     });
   }
 
-  public reportNoCoverage(mutant: Mutant) {
+  public reportNoCoverage(mutant: Mutant): MutantResult {
     return this.reportOne<UndetectedMutantResult>(mutant, { status: MutantStatus.NoCoverage, testFilter: [] });
   }
 
-  public reportMutantIgnored(mutant: Mutant) {
+  public reportMutantIgnored(mutant: Mutant): MutantResult {
     return this.reportOne<IgnoredMutantResult>(mutant, { status: MutantStatus.Ignored, ignoreReason: mutant.ignoreReason! });
   }
 
-  public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult) {
+  public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult): MutantResult {
     const { mutant, testFilter } = mutantWithTestCoverage;
     switch (result.status) {
       case MutantRunStatus.Error:
@@ -107,7 +107,7 @@ export class MutationTestReportHelper {
     }
   }
 
-  public reportAll(results: MutantResult[]) {
+  public reportAll(results: MutantResult[]): void {
     const report = this.mutationTestReport(results);
     this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report);

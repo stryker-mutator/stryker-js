@@ -60,9 +60,9 @@ export class MutantInstrumenterExecutor {
 
   private replaceInstrumentedFiles(instrumentResult: InstrumentResult): File[] {
     return this.inputFiles.files.map((inputFile) => {
-      const instrumentedFile = instrumentResult.files.find((instrumentedFile) => instrumentedFile.name === inputFile.name);
-      if (instrumentedFile) {
-        return instrumentedFile;
+      const instrumentedFileFound = instrumentResult.files.find((instrumentedFile) => instrumentedFile.name === inputFile.name);
+      if (instrumentedFileFound) {
+        return instrumentedFileFound;
       } else {
         return inputFile;
       }

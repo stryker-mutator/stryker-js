@@ -67,8 +67,8 @@ interface Position {
 }
 
 function eqLocation(a: types.SourceLocation, b: types.SourceLocation): boolean {
-  function eqPosition(a: Position, b: Position): boolean {
-    return a.column === b.column && a.line === b.line;
+  function eqPosition(start: Position, end: Position): boolean {
+    return start.column === end.column && start.line === end.line;
   }
   return eqPosition(a.start, b.start) && eqPosition(a.end, b.end);
 }

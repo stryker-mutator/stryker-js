@@ -1,5 +1,5 @@
-import path = require('path');
-import fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -23,7 +23,7 @@ export class MochaAdapter {
 
   constructor(private readonly log: Logger) {}
 
-  public create(options: Mocha.MochaOptions) {
+  public create(options: Mocha.MochaOptions): Mocha {
     return new LibWrapper.Mocha(options);
   }
 
@@ -66,6 +66,7 @@ export class MochaAdapter {
     const originalProcessExit = process.exit;
     try {
       // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       (process as any).exit = () => {};
       const files = LibWrapper.collectFiles!(options);
       return files;

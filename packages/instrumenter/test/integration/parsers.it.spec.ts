@@ -104,6 +104,7 @@ describe('parsers integration', () => {
         ast.root.scripts.forEach((script) => {
           script.originFileName = fileNameOverride;
         });
+      default:
     }
   }
 });

@@ -123,8 +123,7 @@ export class StrykerInitializer {
   }
 
   private async selectReporters(): Promise<PromptOption[]> {
-    let reporterOptions: PromptOption[];
-    reporterOptions = await this.client.getTestReporterOptions();
+    const reporterOptions = await this.client.getTestReporterOptions();
     reporterOptions.push(
       {
         name: 'html',

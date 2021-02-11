@@ -1,4 +1,4 @@
-import flatMap = require('lodash.flatmap');
+import flatMap from 'lodash.flatmap';
 
 /**
  * `Array.prototype.flatMap`, but also works on node 10

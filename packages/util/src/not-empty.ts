@@ -1,3 +1,3 @@
-export function notEmpty<T>(item: T | undefined | null): item is T {
+export function notEmpty<T>(item: T | null | undefined): item is T {
   return item !== undefined && item !== null;
 }
