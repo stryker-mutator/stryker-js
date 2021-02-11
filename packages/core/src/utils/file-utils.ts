@@ -79,16 +79,11 @@ export function symlinkJunction(to: string, from: string): Promise<void> {
  * @param basePath starting point
  */
 export async function findNodeModulesList(basePath: string, tempDirName?: string): Promise<string[]> {
-  basePath = path.resolve(basePath);
   const nodeModulesList: string[] = [];
   const dirBfsQueue: string[] = ['.'] ?? [];
 
-  while (dirBfsQueue.length > 0) {
-    const dir = dirBfsQueue.pop();
-    if (!dir) {
-      continue;
-    }
-
+  let dir: string | undefined;
+  while ((dir = dirBfsQueue.pop())) {
     if (path.basename(dir) === tempDirName) {
       continue;
     }
@@ -98,8 +93,9 @@ export async function findNodeModulesList(basePath: string, tempDirName?: string
       continue;
     }
 
-    const filesWithType = (await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true })) ?? [];
-    const dirs = filesWithType.filter((f) => f.isDirectory()).map((d) => path.join(dir, d.name));
+    const parentDir = dir;
+    const filesWithType = await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true });
+    const dirs = filesWithType.filter((file) => file.isDirectory()).map((childDir) => path.join(parentDir, childDir.name));
     dirBfsQueue.push(...dirs);
   }
 

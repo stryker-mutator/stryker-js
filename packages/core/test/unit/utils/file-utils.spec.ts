@@ -53,6 +53,7 @@ describe('fileUtils', () => {
 
     it('should return empty array if no node_modules exist in basePath or parent directories', async () => {
       const basePath = path.resolve('a', 'b', 'c');
+      readdirStub.resolves([]);
       const actual = await fileUtils.findNodeModulesList(basePath);
       expect(actual.length).eq(0);
     });
