@@ -1,5 +1,5 @@
-import { requireResolve } from '@stryker-mutator/util';
 import { JestEnvironment } from '@jest/environment';
+import { requireResolve } from '@stryker-mutator/util';
 
 import { mixinJestEnvironment } from './mixin-jest-environment';
 

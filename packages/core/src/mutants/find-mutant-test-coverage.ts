@@ -1,10 +1,10 @@
-import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId } from '@stryker-mutator/api/core';
+import { CoveragePerTestId, Mutant } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { MatchedMutant } from '@stryker-mutator/api/report';
 
-import { Logger } from '@stryker-mutator/api/logging';
+import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';

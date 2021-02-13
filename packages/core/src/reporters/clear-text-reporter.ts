@@ -1,10 +1,10 @@
 import os from 'os';
 
-import chalk from 'chalk';
 import { Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter, UndetectedMutantResult } from '@stryker-mutator/api/report';
+import chalk from 'chalk';
 import { calculateMetrics } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 

@@ -1,26 +1,25 @@
-import { InstrumenterContext, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
+import { INSTRUMENTER_CONSTANTS, InstrumenterContext, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
-
 import {
-  TestRunner,
-  DryRunResult,
+  CompleteDryRunResult,
   DryRunOptions,
+  DryRunResult,
+  DryRunStatus,
   MutantRunOptions,
   MutantRunResult,
-  DryRunStatus,
+  TestRunner,
   toMutantRunResult,
-  CompleteDryRunResult,
 } from '@stryker-mutator/api/test-runner';
+import { DirectoryRequireCache, escapeRegExp, I } from '@stryker-mutator/util';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
 
-import { StrykerMochaReporter } from './stryker-mocha-reporter';
+import { MochaAdapter } from './mocha-adapter';
+import { MochaOptionsLoader } from './mocha-options-loader';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
 import * as pluginTokens from './plugin-tokens';
-import { MochaOptionsLoader } from './mocha-options-loader';
-import { MochaAdapter } from './mocha-adapter';
+import { StrykerMochaReporter } from './stryker-mocha-reporter';
 
 export class MochaTestRunner implements TestRunner {
   public testFileNames?: string[];

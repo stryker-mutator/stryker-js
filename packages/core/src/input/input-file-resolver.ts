@@ -1,19 +1,19 @@
-import { StringDecoder } from 'string_decoder';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
+import { StringDecoder } from 'string_decoder';
 
-import { from } from 'rxjs';
-import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
+import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, notEmpty, StrykerError } from '@stryker-mutator/util';
+import { from } from 'rxjs';
+import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 
+import { defaultOptions } from '../config/options-validator';
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
 import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
-import { defaultOptions } from '../config/options-validator';
 
 import { InputFileCollection } from './input-file-collection';
 

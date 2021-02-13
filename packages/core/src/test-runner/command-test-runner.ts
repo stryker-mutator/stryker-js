@@ -1,17 +1,17 @@
 import { exec } from 'child_process';
 import os from 'os';
 
-import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+import { CommandRunnerOptions, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import {
-  TestRunner,
-  TestStatus,
+  CompleteDryRunResult,
   DryRunOptions,
-  MutantRunOptions,
   DryRunResult,
-  MutantRunResult,
   DryRunStatus,
   ErrorDryRunResult,
-  CompleteDryRunResult,
+  MutantRunOptions,
+  MutantRunResult,
+  TestRunner,
+  TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString, StrykerError } from '@stryker-mutator/util';

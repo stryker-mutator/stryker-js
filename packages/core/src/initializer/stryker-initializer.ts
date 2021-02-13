@@ -1,17 +1,17 @@
 import childProcess from 'child_process';
 import { promises as fsPromises } from 'fs';
 
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { notEmpty } from '@stryker-mutator/util';
 
+import { GitignoreWriter } from './gitignore-writer';
 import { NpmClient } from './npm-client';
 import { PackageInfo } from './package-info';
 import { Preset } from './presets/preset';
 import { PromptOption } from './prompt-option';
 import { StrykerConfigWriter } from './stryker-config-writer';
 import { StrykerInquirer } from './stryker-inquirer';
-import { GitignoreWriter } from './gitignore-writer';
 
 import { initializerTokens } from '.';
 

@@ -1,5 +1,5 @@
-import * as types from '@babel/types';
 import { NodePath } from '@babel/core';
+import * as types from '@babel/types';
 import * as weaponRegex from 'weapon-regex';
 
 import { NodeMutation } from '../mutant';

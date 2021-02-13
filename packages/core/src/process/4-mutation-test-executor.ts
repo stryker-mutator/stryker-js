@@ -1,20 +1,20 @@
-import { from, partition, merge, Observable } from 'rxjs';
-import { toArray, map, tap, shareReplay } from 'rxjs/operators';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Checker, CheckResult, CheckStatus, PassedCheckResult } from '@stryker-mutator/api/check';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test-runner';
-import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
-import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
+import { from, merge, Observable, partition } from 'rxjs';
+import { map, shareReplay, tap, toArray } from 'rxjs/operators';
 
+import { ConcurrencyTokenProvider, Pool } from '../concurrent';
 import { coreTokens } from '../di';
-import { StrictReporter } from '../reporters/strict-reporter';
 import { MutantTestCoverage } from '../mutants/find-mutant-test-coverage';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
-import { Timer } from '../utils/timer';
-import { Pool, ConcurrencyTokenProvider } from '../concurrent';
+import { StrictReporter } from '../reporters/strict-reporter';
 import { Sandbox } from '../sandbox';
+import { Timer } from '../utils/timer';
 
 import { DryRunContext } from './3-dry-run-executor';
 

@@ -1,9 +1,9 @@
 import path from 'path';
 
-import { testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
+import { assertions, testInjector } from '@stryker-mutator/test-helpers';
 
-import { FilePreprocessor, createPreprocessor } from '../../../src/sandbox';
+import { createPreprocessor, FilePreprocessor } from '../../../src/sandbox';
 
 describe(createPreprocessor.name, () => {
   let sut: FilePreprocessor;

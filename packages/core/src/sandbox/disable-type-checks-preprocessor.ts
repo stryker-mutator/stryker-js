@@ -1,11 +1,11 @@
 import path from 'path';
 
-import minimatch from 'minimatch';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
-import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
+import minimatch from 'minimatch';
 
 import { coreTokens } from '../di';
 import { isWarningEnabled } from '../utils/object-utils';

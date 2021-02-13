@@ -8,8 +8,8 @@ import { deepMerge } from '@stryker-mutator/util';
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 
-import { defaultOptions, OptionsValidator } from './options-validator';
 import { createConfig } from './create-config';
+import { defaultOptions, OptionsValidator } from './options-validator';
 
 export const CONFIG_SYNTAX_HELP = `
 /**

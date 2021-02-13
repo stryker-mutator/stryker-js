@@ -5,10 +5,10 @@ import { HttpClient } from 'typed-rest-client/HttpClient';
 import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
 
 import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
-import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
-import { Mock, mock } from '../../../helpers/producers';
 import { Report } from '../../../../src/reporters/dashboard-reporter/report';
+import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
 import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
+import { Mock, mock } from '../../../helpers/producers';
 
 describe(DashboardReporterClient.name, () => {
   let sut: DashboardReporterClient;

@@ -5,7 +5,7 @@ import { Mutant as MutantApi } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 
 import { Mutant } from '../../src/mutant';
-import { parseJS, findNodePath } from '../helpers/syntax-test-helpers';
+import { findNodePath, parseJS } from '../helpers/syntax-test-helpers';
 
 describe(Mutant.name, () => {
   describe('constructor', () => {

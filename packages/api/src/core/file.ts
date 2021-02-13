@@ -1,4 +1,4 @@
-import { Surrializable, surrial } from 'surrial';
+import { surrial, Surrializable } from 'surrial';
 
 /**
  * Represents a file within Stryker. Could be a strictly in-memory file.

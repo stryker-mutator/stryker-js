@@ -1,13 +1,13 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner,
   DryRunOptions,
-  MutantRunOptions,
-  MutantRunResult,
   DryRunResult,
   DryRunStatus,
+  MutantRunOptions,
+  MutantRunResult,
   MutantRunStatus,
+  TestRunner,
 } from '@stryker-mutator/api/test-runner';
 
 import { errorToString } from '@stryker-mutator/util';

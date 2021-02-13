@@ -1,5 +1,5 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';

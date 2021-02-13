@@ -1,10 +1,10 @@
 import path from 'path';
 import url from 'url';
 
-import { RequestHandler } from 'express';
 import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
+import { RequestHandler } from 'express';
 
 export const TEST_HOOKS_FILE_NAME = require.resolve('./test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0');
 const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);

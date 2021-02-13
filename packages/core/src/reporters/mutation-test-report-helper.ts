@@ -1,30 +1,30 @@
 import path from 'path';
 
-import { Location, Position, StrykerOptions, Mutant } from '@stryker-mutator/api/core';
+import { CheckResult, CheckStatus, PassedCheckResult } from '@stryker-mutator/api/check';
+import { Location, Mutant, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
+  BaseMutantResult,
+  IgnoredMutantResult,
+  InvalidMutantResult,
+  KilledMutantResult,
   MutantResult,
   MutantStatus,
   mutationTestReportSchema,
   Reporter,
   TimeoutMutantResult,
-  InvalidMutantResult,
-  BaseMutantResult,
   UndetectedMutantResult,
-  KilledMutantResult,
-  IgnoredMutantResult,
 } from '@stryker-mutator/api/report';
+import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
-import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
-import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import { InputFileCollection } from '../input/input-file-collection';
-import { setExitCode } from '../utils/object-utils';
 import { MutantTestCoverage } from '../mutants/find-mutant-test-coverage';
 import { mutatedLines, originalLines } from '../utils/mutant-utils';
+import { setExitCode } from '../utils/object-utils';
 
 /**
  * A helper class to convert and report mutants that survived or get killed

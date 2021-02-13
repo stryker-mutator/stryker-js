@@ -20,15 +20,28 @@ module.exports = {
     ],
 
     // import rules
-    'import/newline-after-import': 1,
+    'import/newline-after-import': ['error', { 'count': 1 }],
     'import/order': [
       'error',
       {
         'newlines-between': 'always-and-inside-groups',
-        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index']
+        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        'alphabetize': {
+          'order': 'asc',
+          'caseInsensitive': true,
+        }
       }
     ],
     'import/no-default-export': 'error',
+    // small help from eslint is needed -> sort members of import
+    // import { b, a } from 'c' -> import { a, b } from 'c'
+    'sort-imports': ['error', {
+      'ignoreCase': true,
+      'ignoreDeclarationSort': true,
+      'ignoreMemberSort': false,
+      'memberSyntaxSortOrder': ["none", "all", "multiple", "single"],
+      'allowSeparatedGroups': true
+    }],
 
     // prettier rules
     'prettier/prettier': ['error'],
@@ -82,6 +95,7 @@ module.exports = {
     
     // fix - serarate PR
     '@typescript-eslint/init-declarations': 'off',
+    '@typescript-eslint/no-unused-expressions': 'off',
 
     // Long term to fix
     '@typescript-eslint/no-explicit-any': 'off',
@@ -96,17 +110,16 @@ module.exports = {
     // useful
     '@typescript-eslint/no-type-alias': 'off', // it is useful!
     '@typescript-eslint/no-use-before-define': 'off', // we use it e.x in injections
-    '@typescript-eslint/no-confusing-void-expression': 'off', // sometimes usable
+    '@typescript-eslint/no-confusing-void-expression': 'off', // sometimes usable, explicitly showing our intention
     '@typescript-eslint/no-invalid-this': 'off', // we promise to be careful
     '@typescript-eslint/no-dynamic-delete': 'off', // we promise to be careful
-    '@typescript-eslint/no-non-null-assertion': 'off', // sometimes usable
+    '@typescript-eslint/no-non-null-assertion': 'off', // we like it, we use it.
 
     // can't do nothing about it
-    '@typescript-eslint/consistent-type-imports': 'off',
-    '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+    '@typescript-eslint/consistent-type-imports': 'off', // breaks with injections
+    '@typescript-eslint/prefer-readonly-parameter-types': 'off', // somehow doesn't work properly
     '@typescript-eslint/no-unsafe-assignment': 'off',
-    '@typescript-eslint/no-unused-expressions': 'off',
-    '@typescript-eslint/strict-boolean-expressions': 'off',
+    '@typescript-eslint/strict-boolean-expressions': 'off', // we do not like it, we sometimes want more wide check
     '@typescript-eslint/no-unsafe-return': 'off',
     '@typescript-eslint/no-unsafe-member-access': 'off',
     '@typescript-eslint/no-unsafe-call': 'off',

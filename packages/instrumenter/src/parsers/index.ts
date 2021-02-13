@@ -1,11 +1,11 @@
 import path from 'path';
 
-import { AstFormat, AstByFormat } from '../syntax';
+import { AstByFormat, AstFormat } from '../syntax';
 
-import { createParser as createJSParser } from './js-parser';
-import { parse as tsParse } from './ts-parser';
 import { parse as htmlParse } from './html-parser';
+import { createParser as createJSParser } from './js-parser';
 import { ParserOptions } from './parser-options';
+import { parse as tsParse } from './ts-parser';
 
 export { ParserOptions };
 

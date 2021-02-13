@@ -9,6 +9,7 @@ import sinon from 'sinon';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
 import { initializerTokens } from '../../../src/initializer';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 import { NpmClient } from '../../../src/initializer/npm-client';
 import { PackageInfo } from '../../../src/initializer/package-info';
 import { Preset } from '../../../src/initializer/presets/preset';
@@ -17,7 +18,6 @@ import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-wri
 import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
 import { Mock } from '../../helpers/producers';
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;

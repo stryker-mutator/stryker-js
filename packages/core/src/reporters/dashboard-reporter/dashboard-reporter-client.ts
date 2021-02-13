@@ -1,14 +1,14 @@
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 import { HttpClient } from 'typed-rest-client/HttpClient';
-import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import { isOK } from '../../utils/net-utils';
 import { getEnvironmentVariable } from '../../utils/object-utils';
 
-import { dashboardReporterTokens } from './tokens';
 import { Report } from './report';
+import { dashboardReporterTokens } from './tokens';
 
 interface ReportResponseBody {
   href: string;

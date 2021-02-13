@@ -1,10 +1,10 @@
 import { File } from '@stryker-mutator/api/core';
 import { assertions } from '@stryker-mutator/test-helpers';
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
-import * as parsers from '../../src/parsers';
 import { disableTypeChecks } from '../../src';
+import * as parsers from '../../src/parsers';
 
 describe(disableTypeChecks.name, () => {
   describe('with TS or JS AST format', () => {

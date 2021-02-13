@@ -1,5 +1,5 @@
-import { expect } from 'chai';
 import { types } from '@babel/core';
+import { expect } from 'chai';
 
 import { MutantCollector } from '../../../src/transformers/mutant-collector';
 import { createMutant, createNamedNodeMutation } from '../../helpers/factories';

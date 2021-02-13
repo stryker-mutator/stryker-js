@@ -1,5 +1,5 @@
+import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { deepMerge } from '@stryker-mutator/util';
-import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 /**
  * Adds a `set` method to the options object that can be used as a shorthand to

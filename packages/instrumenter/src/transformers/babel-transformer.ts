@@ -7,8 +7,8 @@ import { File } from '@babel/core';
 
 import { placeMutants } from '../mutant-placers';
 import { mutate } from '../mutators';
-import { instrumentationBabelHeader, isTypeNode, isImportDeclaration } from '../util/syntax-helpers';
 import { AstFormat } from '../syntax';
+import { instrumentationBabelHeader, isImportDeclaration, isTypeNode } from '../util/syntax-helpers';
 
 import { AstTransformer } from '.';
 

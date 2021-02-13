@@ -1,20 +1,19 @@
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
-import { Injector } from 'typed-inject';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
 import { Checker } from '@stryker-mutator/api/check';
-
+import { File } from '@stryker-mutator/api/core';
+import { Instrumenter, InstrumenterOptions, InstrumentResult } from '@stryker-mutator/instrumenter';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { I } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import { Injector } from 'typed-inject';
 
-import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
-import { coreTokens } from '../../../src/di';
-import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/checker-facade';
-import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
 import { Pool } from '../../../src/concurrent';
+import { coreTokens } from '../../../src/di';
+import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
+import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
+import { ConcurrencyTokenProviderMock, createCheckerPoolMock, createConcurrencyTokenProviderMock } from '../../helpers/producers';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;

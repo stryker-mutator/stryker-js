@@ -1,4 +1,4 @@
-import { PluginKind, declareFactoryPlugin } from '@stryker-mutator/api/plugin';
+import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
 import { create } from './typescript-checker';
 

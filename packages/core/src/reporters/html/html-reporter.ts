@@ -1,10 +1,10 @@
 import path from 'path';
 
-import fileUrl from 'file-url';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import fileUrl from 'file-url';
 
 import * as ReporterUtil from '../reporter-util';
 

@@ -1,19 +1,19 @@
 import { EOL } from 'os';
 
-import { StrykerOptions, CoverageAnalysis, InstrumenterContext, MutantCoverage, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
-import { commonTokens, tokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
+import { CoverageAnalysis, INSTRUMENTER_CONSTANTS, InstrumenterContext, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
+  DryRunOptions,
+  DryRunResult,
   DryRunStatus,
+  ErrorDryRunResult,
+  MutantRunOptions,
+  MutantRunResult,
   TestResult,
   TestRunner,
-  MutantRunOptions,
-  DryRunResult,
-  MutantRunResult,
   toMutantRunResult,
-  ErrorDryRunResult,
-  DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
-import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
+import { DirectoryRequireCache, errorToString, I, Task } from '@stryker-mutator/util';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 

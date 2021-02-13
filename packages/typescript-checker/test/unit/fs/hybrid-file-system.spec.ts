@@ -1,7 +1,7 @@
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 import sinon from 'sinon';
 import ts from 'typescript';
-import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { HybridFileSystem } from '../../../src/fs';
 

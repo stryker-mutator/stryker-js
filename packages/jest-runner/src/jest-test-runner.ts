@@ -1,37 +1,37 @@
 // monkey patch exit first!!
 import './utils/monkey-patch-exit';
 
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import type * as jestTestResult from '@jest/test-result';
+import type * as jest from '@jest/types';
+import { SerializableError } from '@jest/types/build/TestResult';
+import { INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner,
-  MutantRunOptions,
-  DryRunResult,
-  MutantRunResult,
-  toMutantRunResult,
-  DryRunStatus,
-  TestResult,
-  TestStatus,
   DryRunOptions,
+  DryRunResult,
+  DryRunStatus,
+  MutantRunOptions,
+  MutantRunResult,
+  TestResult,
+  TestRunner,
+  TestStatus,
+  toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
-import type * as jest from '@jest/types';
-import type * as jestTestResult from '@jest/test-result';
-import { SerializableError } from '@jest/types/build/TestResult';
 
 import { JestOptions } from '../src-generated/jest-runner-options';
 
+import { configLoaderFactory } from './config-loaders';
+import { JestConfigLoader } from './config-loaders/jest-config-loader';
+import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
+import { withCoverageAnalysis } from './jest-plugins';
+import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
 import { jestTestAdapterFactory } from './jest-test-adapters';
 import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
-import { JestConfigLoader } from './config-loaders/jest-config-loader';
-import { withCoverageAnalysis } from './jest-plugins';
-import * as pluginTokens from './plugin-tokens';
-import { configLoaderFactory } from './config-loaders';
-import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
-import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
-import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
+import * as pluginTokens from './plugin-tokens';
+import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 
 export function createJestTestRunnerFactory(
   namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE

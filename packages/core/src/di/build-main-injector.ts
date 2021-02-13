@@ -1,15 +1,15 @@
-import execa from 'execa';
-import { StrykerOptions, strykerCoreSchema, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
+import execa from 'execa';
 
-import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
+import { buildSchemaWithPluginContributions, markUnknownOptions, OptionsValidator, readConfig, validateOptions } from '../config';
 import { ConfigReader } from '../config/config-reader';
 import { BroadcastReporter } from '../reporters/broadcast-reporter';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 import { TemporaryDirectory } from '../utils/temporary-directory';
 import { Timer } from '../utils/timer';
-import { UnexpectedExitHandler } from '../unexpected-exit-handler';
 
 import { pluginResolverFactory } from './factory-methods';
 

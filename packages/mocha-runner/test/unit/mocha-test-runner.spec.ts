@@ -1,15 +1,15 @@
+import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import { DirectoryRequireCache } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
-import { DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { MochaTestRunner } from '../../src/mocha-test-runner';
-import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
 import { MochaAdapter } from '../../src/mocha-adapter';
-import * as pluginTokens from '../../src/plugin-tokens';
 import { MochaOptionsLoader } from '../../src/mocha-options-loader';
+import { MochaTestRunner } from '../../src/mocha-test-runner';
+import * as pluginTokens from '../../src/plugin-tokens';
+import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
 import { createMochaOptions } from '../helpers/factories';
 
 describe(MochaTestRunner.name, () => {

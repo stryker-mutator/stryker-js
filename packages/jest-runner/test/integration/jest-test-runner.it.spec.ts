@@ -1,14 +1,14 @@
-import path from 'path';
 import { platform } from 'os';
+import path from 'path';
 
-import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
-import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestOptions } from '../../src-generated/jest-runner-options';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
+import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 

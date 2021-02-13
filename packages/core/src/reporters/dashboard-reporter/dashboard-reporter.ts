@@ -1,4 +1,4 @@
-import { StrykerOptions, ReportType } from '@stryker-mutator/api/core';
+import { ReportType, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
@@ -7,8 +7,8 @@ import { calculateMetrics } from 'mutation-testing-metrics';
 import { CIProvider } from '../ci/provider';
 
 import { DashboardReporterClient } from './dashboard-reporter-client';
-import { dashboardReporterTokens } from './tokens';
 import { Report } from './report';
+import { dashboardReporterTokens } from './tokens';
 
 export class DashboardReporter implements Reporter {
   public static readonly inject = tokens(

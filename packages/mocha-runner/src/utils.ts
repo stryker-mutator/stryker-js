@@ -1,7 +1,6 @@
-import { MochaOptions } from '../src-generated/mocha-runner-options';
-
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import mochaSchema = require('../schema/mocha-runner-options.json');
+import { MochaOptions } from '../src-generated/mocha-runner-options';
 
 export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
   const args: string[] = [];

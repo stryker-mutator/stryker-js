@@ -1,14 +1,14 @@
+import { File } from '@stryker-mutator/api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { I } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { File } from '@stryker-mutator/api/core';
-import { I } from '@stryker-mutator/util';
 
 import { Instrumenter } from '../../src';
 import * as parsers from '../../src/parsers';
-import * as transformers from '../../src/transformers';
 import * as printers from '../../src/printers';
-import { createJSAst, createTSAst, createNamedNodeMutation, createInstrumenterOptions } from '../helpers/factories';
+import * as transformers from '../../src/transformers';
+import { createInstrumenterOptions, createJSAst, createNamedNodeMutation, createTSAst } from '../helpers/factories';
 
 describe(Instrumenter.name, () => {
   let sut: Instrumenter;

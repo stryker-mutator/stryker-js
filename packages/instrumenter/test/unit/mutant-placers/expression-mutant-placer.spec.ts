@@ -1,12 +1,12 @@
-import { expect } from 'chai';
-import { types, NodePath } from '@babel/core';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { NodePath, types } from '@babel/core';
 import generate from '@babel/generator';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { expect } from 'chai';
 
-import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 import { Mutant } from '../../../src/mutant';
+import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer';
 import { createMutant } from '../../helpers/factories';
+import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 
 describe(expressionMutantPlacer.name, () => {
   it('should have the correct name', () => {

@@ -1,8 +1,8 @@
-import type { JSONSchema7 } from 'json-schema';
-import { expect } from 'chai';
-import { deepFreeze, I } from '@stryker-mutator/util';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { deepFreeze, I } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import type { JSONSchema7 } from 'json-schema';
 
 import { buildSchemaWithPluginContributions } from '../../../src/config';
 

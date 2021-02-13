@@ -1,12 +1,11 @@
 import path from 'path';
 
-import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-
 import { Config } from '@jest/types';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
-import { createReactTsJestConfig } from '../utils';
 import * as pluginTokens from '../plugin-tokens';
+import { createReactTsJestConfig } from '../utils';
 
 import { JestConfigLoader } from './jest-config-loader';
 

@@ -1,4 +1,4 @@
-import { Mutant, CoverageAnalysis } from '../core';
+import { CoverageAnalysis, Mutant } from '../core';
 
 export interface RunOptions {
   /**

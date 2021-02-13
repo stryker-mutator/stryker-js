@@ -1,9 +1,9 @@
-import { Observable, Subject, merge, zip } from 'rxjs';
-import { mergeMap, filter, shareReplay, tap } from 'rxjs/operators';
-import { notEmpty } from '@stryker-mutator/util';
-import { Disposable, tokens } from 'typed-inject';
-import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
+import { TestRunner } from '@stryker-mutator/api/test-runner';
+import { notEmpty } from '@stryker-mutator/util';
+import { merge, Observable, Subject, zip } from 'rxjs';
+import { filter, mergeMap, shareReplay, tap } from 'rxjs/operators';
+import { Disposable, tokens } from 'typed-inject';
 
 import { coreTokens } from '../di';
 

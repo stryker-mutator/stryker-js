@@ -1,35 +1,35 @@
 import { EOL } from 'os';
 
-import { Injector } from 'typed-inject';
-import { I } from '@stryker-mutator/util';
+import { Checker } from '@stryker-mutator/api/check';
+import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import {
-  DryRunResult,
-  TestRunner,
-  DryRunStatus,
   CompleteDryRunResult,
-  TestStatus,
-  TestResult,
-  FailedTestResult,
+  DryRunResult,
+  DryRunStatus,
   ErrorDryRunResult,
+  FailedTestResult,
+  TestResult,
+  TestRunner,
+  TestStatus,
 } from '@stryker-mutator/api/test-runner';
+import { I } from '@stryker-mutator/util';
 import { of } from 'rxjs';
-import { Checker } from '@stryker-mutator/api/check';
+import { Injector } from 'typed-inject';
 
+import { ConcurrencyTokenProvider } from '../concurrent';
+import { createTestRunnerPool, Pool } from '../concurrent/pool';
 import { coreTokens } from '../di';
-import { Sandbox } from '../sandbox/sandbox';
-import { Timer } from '../utils/timer';
-import { createTestRunnerFactory } from '../test-runner';
-import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
-import { Pool, createTestRunnerPool } from '../concurrent/pool';
-import { ConcurrencyTokenProvider } from '../concurrent';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
+import { Sandbox } from '../sandbox/sandbox';
+import { createTestRunnerFactory } from '../test-runner';
+import { Timer } from '../utils/timer';
 
-import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
+import { MutationTestContext } from './4-mutation-test-executor';
 
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 

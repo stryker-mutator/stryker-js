@@ -1,10 +1,10 @@
-import sinon from 'sinon';
 import { NodePath, parseSync, types } from '@babel/core';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
-import { placeMutants, MutantPlacer } from '../../../src/mutant-placers';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
+import { MutantPlacer, placeMutants } from '../../../src/mutant-placers';
 import { createMutant } from '../../helpers/factories';
+import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 
 describe(placeMutants.name, () => {
   let mutantPlacers: Array<sinon.SinonStubbedMember<MutantPlacer>>;

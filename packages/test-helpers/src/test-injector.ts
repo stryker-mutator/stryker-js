@@ -2,7 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginContext, PluginResolver } from '@stryker-mutator/api/plugin';
 import sinon from 'sinon';
-import { Injector, createInjector } from 'typed-inject';
+import { createInjector, Injector } from 'typed-inject';
 
 import * as factory from './factory';
 

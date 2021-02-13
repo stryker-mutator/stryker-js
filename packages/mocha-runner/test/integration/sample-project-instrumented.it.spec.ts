@@ -1,8 +1,8 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
-import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
 import { createMochaOptions } from '../helpers/factories';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 

@@ -1,9 +1,8 @@
 import { promises as fsPromises } from 'fs';
 
+import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
-
-import { File } from '@stryker-mutator/api/core';
 
 import { disableTypeChecks } from '../../src';
 import { createInstrumenterOptions } from '../helpers/factories';

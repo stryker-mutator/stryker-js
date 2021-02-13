@@ -1,11 +1,11 @@
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
 import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
 
+import { AstByFormat, AstFormat, HtmlAst, HtmlRootNode, JSAst, ScriptFormat, TSAst } from '../syntax';
 import { offsetLocations } from '../util/syntax-helpers';
-import { HtmlAst, AstFormat, HtmlRootNode, TSAst, JSAst, ScriptFormat, AstByFormat } from '../syntax';
 
-import { ParserContext } from './parser-context';
 import { ParseError } from './parse-error';
+import { ParserContext } from './parser-context';
 
 const TS_SCRIPT_TYPES = Object.freeze(['ts', 'text/typescript', 'typescript']);
 const JS_SCRIPT_TYPES = Object.freeze(['js', 'text/javascript', 'javascript']);

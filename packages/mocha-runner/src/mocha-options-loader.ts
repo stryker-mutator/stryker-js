@@ -8,8 +8,8 @@ import { PropertyPathBuilder } from '@stryker-mutator/util';
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
 import { LibWrapper } from './lib-wrapper';
-import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
+import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
 
 /**
  * Subset of defaults for mocha options

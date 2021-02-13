@@ -1,7 +1,7 @@
+import { DashboardOptions, PartialStrykerOptions, ReportType, StrykerOptions } from '@stryker-mutator/api/core';
+import { expect } from 'chai';
 import { Command } from 'commander';
 import sinon from 'sinon';
-import { expect } from 'chai';
-import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { LogConfigurator } from '../../src/logging';
 import { StrykerCli } from '../../src/stryker-cli';

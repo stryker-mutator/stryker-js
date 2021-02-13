@@ -1,5 +1,5 @@
-import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
 import type { EnvironmentContext } from '@jest/environment';
+import type { AggregatedResult, AssertionResult, SerializableError, TestResult } from '@jest/test-result';
 import { Circus, Config } from '@jest/types';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';

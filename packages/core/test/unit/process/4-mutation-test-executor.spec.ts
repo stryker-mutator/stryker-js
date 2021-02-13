@@ -1,22 +1,22 @@
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
-import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { mergeMap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 import { Mutant } from '@stryker-mutator/api/core';
+import { Reporter } from '@stryker-mutator/api/report';
+import { MutantRunOptions, MutantRunResult, MutantRunStatus, TestRunner } from '@stryker-mutator/api/test-runner';
+import { factory, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { I, Task } from '@stryker-mutator/util';
+import { expect } from 'chai';
+import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
+import sinon from 'sinon';
 
-import { MutationTestExecutor } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { createTestRunnerPoolMock, createMutantTestCoverage, createCheckerPoolMock } from '../../helpers/producers';
-import { MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
-import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
-import { Timer } from '../../../src/utils/timer';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
+import { coreTokens } from '../../../src/di';
+import { MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
+import { MutationTestExecutor } from '../../../src/process';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
 import { Sandbox } from '../../../src/sandbox';
+import { Timer } from '../../../src/utils/timer';
+import { createCheckerPoolMock, createMutantTestCoverage, createTestRunnerPoolMock } from '../../helpers/producers';
 
 describe(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;

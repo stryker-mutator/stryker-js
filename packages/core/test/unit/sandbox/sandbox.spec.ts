@@ -1,19 +1,19 @@
-import path from 'path';
 import { promises as fsPromises } from 'fs';
+import path from 'path';
 
+import { File } from '@stryker-mutator/api/core';
+import { factory, testInjector, tick } from '@stryker-mutator/test-helpers';
+import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
+import { expect } from 'chai';
 import execa from 'execa';
 import npmRunPath from 'npm-run-path';
-import { expect } from 'chai';
 import sinon from 'sinon';
-import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
-import { File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
-import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
-import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
-import * as fileUtils from '../../../src/utils/file-utils';
+import { Sandbox } from '../../../src/sandbox/sandbox';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
+import * as fileUtils from '../../../src/utils/file-utils';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;

@@ -1,6 +1,6 @@
-import treeKill from 'tree-kill';
-import { StrykerError, KnownKeys } from '@stryker-mutator/util';
 import { WarningOptions } from '@stryker-mutator/api/core';
+import { KnownKeys, StrykerError } from '@stryker-mutator/util';
+import treeKill from 'tree-kill';
 
 export { serialize, deserialize } from 'surrial';
 

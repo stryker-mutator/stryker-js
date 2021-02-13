@@ -1,7 +1,7 @@
-import { Injector, Scope } from 'typed-inject';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { LoggerFactoryMethod, Logger } from '@stryker-mutator/api/logging';
 import { getLogger } from 'log4js';
+import { Injector, Scope } from 'typed-inject';
 
 export function provideLogger(injector: Injector): LoggerProvider {
   return injector.provideValue(commonTokens.getLogger, getLogger).provideFactory(commonTokens.logger, loggerFactory, Scope.Transient);

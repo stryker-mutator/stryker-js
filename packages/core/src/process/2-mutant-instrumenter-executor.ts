@@ -1,15 +1,15 @@
-import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 
-import { MainContext, coreTokens } from '../di';
+import { createCheckerFactory } from '../checker/checker-facade';
+import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
+import { coreTokens, MainContext } from '../di';
 import { InputFileCollection } from '../input/input-file-collection';
-import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 
-import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
-import { createCheckerFactory } from '../checker/checker-facade';
 import { createPreprocessor } from '../sandbox';
+import { Sandbox } from '../sandbox/sandbox';
 
 import { DryRunContext } from './3-dry-run-executor';
 

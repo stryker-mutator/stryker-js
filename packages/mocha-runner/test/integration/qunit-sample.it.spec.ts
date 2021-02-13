@@ -1,8 +1,8 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
 import { createMochaTestRunnerFactory } from '../../src';
+import { createMochaOptions } from '../helpers/factories';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('QUnit sample', () => {

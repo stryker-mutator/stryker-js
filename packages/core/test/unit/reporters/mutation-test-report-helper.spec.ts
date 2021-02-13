@@ -1,20 +1,20 @@
-import sinon from 'sinon';
+import { CheckStatus } from '@stryker-mutator/api/check';
 import { File, Location, Range } from '@stryker-mutator/api/core';
 import {
+  IgnoredMutantResult,
+  InvalidMutantResult,
+  KilledMutantResult,
   MutantResult,
   MutantStatus,
   mutationTestReportSchema,
   Reporter,
-  InvalidMutantResult,
-  UndetectedMutantResult,
-  KilledMutantResult,
   TimeoutMutantResult,
-  IgnoredMutantResult,
+  UndetectedMutantResult,
 } from '@stryker-mutator/api/report';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
-import { CheckStatus } from '@stryker-mutator/api/check';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { InputFileCollection } from '../../../src/input/input-file-collection';

@@ -1,16 +1,15 @@
 import {
-  DryRunStatus,
-  TimeoutDryRunResult,
-  TestRunner,
-  MutantRunStatus,
-  TimeoutMutantRunResult,
   DryRunResult,
+  DryRunStatus,
   MutantRunResult,
+  MutantRunStatus,
+  TestRunner,
+  TimeoutDryRunResult,
+  TimeoutMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-import { factory } from '@stryker-mutator/test-helpers';
 
 import { TimeoutDecorator } from '../../../src/test-runner/timeout-decorator';
 

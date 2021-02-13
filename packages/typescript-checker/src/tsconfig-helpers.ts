@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 
-import ts from 'typescript';
 import semver from 'semver';
+import ts from 'typescript';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker/issues/391 for more info

@@ -1,8 +1,8 @@
 import os from 'os';
 
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { factory } from '@stryker-mutator/test-helpers';
 
 import { ProgressAppendOnlyReporter } from '../../../src/reporters/progress-append-only-reporter';
 

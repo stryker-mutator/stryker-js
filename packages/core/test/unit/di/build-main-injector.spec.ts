@@ -1,19 +1,19 @@
+import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 
-import * as optionsValidatorModule from '../../../src/config/options-validator';
-import * as pluginLoaderModule from '../../../src/di/plugin-loader';
 import * as configReaderModule from '../../../src/config/config-reader';
-import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
+import * as optionsValidatorModule from '../../../src/config/options-validator';
+import { coreTokens, PluginCreator, PluginLoader, provideLogger } from '../../../src/di';
 import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
+import * as pluginLoaderModule from '../../../src/di/plugin-loader';
 import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
-import { currentLogMock } from '../../helpers/log-mock';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
+import { currentLogMock } from '../../helpers/log-mock';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;

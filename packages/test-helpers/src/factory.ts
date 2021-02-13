@@ -1,50 +1,50 @@
-import Ajv from 'ajv';
+import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 import {
   File,
   Location,
-  MutationScoreThresholds,
-  StrykerOptions,
-  strykerCoreSchema,
-  WarningOptions,
   Mutant,
   MutantCoverage,
+  MutationScoreThresholds,
+  strykerCoreSchema,
+  StrykerOptions,
+  WarningOptions,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {
+  IgnoredMutantResult,
+  InvalidMutantResult,
+  KilledMutantResult,
   MatchedMutant,
   MutantStatus,
   mutationTestReportSchema,
   Reporter,
-  KilledMutantResult,
-  InvalidMutantResult,
-  UndetectedMutantResult,
   TimeoutMutantResult,
-  IgnoredMutantResult,
+  UndetectedMutantResult,
 } from '@stryker-mutator/api/report';
+import {
+  CompleteDryRunResult,
+  DryRunOptions,
+  DryRunStatus,
+  ErrorDryRunResult,
+  ErrorMutantRunResult,
+  FailedTestResult,
+  KilledMutantRunResult,
+  MutantRunOptions,
+  MutantRunStatus,
+  SkippedTestResult,
+  SuccessTestResult,
+  SurvivedMutantRunResult,
+  TestResult,
+  TestRunner,
+  TestStatus,
+  TimeoutDryRunResult,
+  TimeoutMutantRunResult,
+} from '@stryker-mutator/api/test-runner';
+import Ajv from 'ajv';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { PluginResolver } from '@stryker-mutator/api/plugin';
-import {
-  MutantRunOptions,
-  DryRunOptions,
-  DryRunStatus,
-  TestRunner,
-  SuccessTestResult,
-  FailedTestResult,
-  SkippedTestResult,
-  CompleteDryRunResult,
-  ErrorDryRunResult,
-  TimeoutDryRunResult,
-  KilledMutantRunResult,
-  SurvivedMutantRunResult,
-  MutantRunStatus,
-  TimeoutMutantRunResult,
-  ErrorMutantRunResult,
-  TestStatus,
-  TestResult,
-} from '@stryker-mutator/api/test-runner';
-import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
 const ajv = new Ajv({ useDefaults: true, strict: false });
 

@@ -1,9 +1,9 @@
-import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
+import { createMochaTestRunnerFactory } from '../../src';
 import { MochaOptionsLoader } from '../../src/mocha-options-loader';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
-import { createMochaTestRunnerFactory } from '../../src';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Mocha 6 file resolving integration', () => {

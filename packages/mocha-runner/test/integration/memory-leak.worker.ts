@@ -1,7 +1,7 @@
+import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { expect } from 'chai';
-import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { createMochaTestRunnerFactory } from '../../src';
 import { resolveTestResource } from '../helpers/resolve-test-resource';

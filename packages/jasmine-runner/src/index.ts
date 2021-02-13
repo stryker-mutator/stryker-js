@@ -2,7 +2,7 @@ import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
 import strykerValidationSchema from '../schema/jasmine-runner-options.json';
 
-import { JasmineTestRunner, createJasmineTestRunner, createJasmineTestRunnerFactory } from './jasmine-test-runner';
+import { createJasmineTestRunner, createJasmineTestRunnerFactory, JasmineTestRunner } from './jasmine-test-runner';
 
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jasmine', createJasmineTestRunner)];
 

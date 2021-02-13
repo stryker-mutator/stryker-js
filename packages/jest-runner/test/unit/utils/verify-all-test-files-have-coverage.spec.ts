@@ -2,9 +2,8 @@ import path from 'path';
 
 import { expect } from 'chai';
 
-import * as producers from '../../helpers/producers';
-
 import { verifyAllTestFilesHaveCoverage } from '../../../src/utils';
+import * as producers from '../../helpers/producers';
 
 describe(verifyAllTestFilesHaveCoverage.name, () => {
   it('should not fail when all files have coverage', () => {

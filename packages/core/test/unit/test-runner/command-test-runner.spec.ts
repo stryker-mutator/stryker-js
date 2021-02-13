@@ -1,12 +1,12 @@
 import childProcess from 'child_process';
 import os from 'os';
 
+import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory } from '@stryker-mutator/test-helpers';
 import { errorToString, StrykerError } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { factory, assertions } from '@stryker-mutator/test-helpers';
-import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
 import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
 import * as objectUtils from '../../../src/utils/object-utils';

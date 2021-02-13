@@ -1,12 +1,12 @@
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Mutant } from '@stryker-mutator/api/core';
-import { Reporter, MatchedMutant } from '@stryker-mutator/api/report';
+import { MatchedMutant, Reporter } from '@stryker-mutator/api/report';
+import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import sinon from 'sinon';
 
-import { findMutantTestCoverage as sut, MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
 import { coreTokens } from '../../../src/di';
+import { MutantTestCoverage, findMutantTestCoverage as sut } from '../../../src/mutants/find-mutant-test-coverage';
 
 describe(sut.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;

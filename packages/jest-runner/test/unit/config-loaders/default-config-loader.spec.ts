@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 
+import { factory } from '@stryker-mutator/test-helpers';
 import { assert, expect } from 'chai';
 import sinon from 'sinon';
-import { factory } from '@stryker-mutator/test-helpers';
 
 import { CustomJestConfigLoader } from '../../../src/config-loaders/custom-jest-config-loader';
 

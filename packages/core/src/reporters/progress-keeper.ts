@@ -1,4 +1,4 @@
-import { MatchedMutant, MutantResult, Reporter, MutantStatus } from '@stryker-mutator/api/report';
+import { MatchedMutant, MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/report';
 
 import { Timer } from '../utils/timer';
 

@@ -1,10 +1,10 @@
+import fs from 'fs';
 import os from 'os';
 import { types } from 'util';
-import fs from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunResult, DryRunStatus, MutantRunResult, TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
 class CoverageReportingTestRunner implements TestRunner {

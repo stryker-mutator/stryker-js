@@ -1,12 +1,12 @@
-import os from 'os';
 import fs from 'fs';
+import os from 'os';
 
-import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 import { initializerTokens } from '../../../src/initializer';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
 
 const GITIGNORE_FILE = '.gitignore';
 

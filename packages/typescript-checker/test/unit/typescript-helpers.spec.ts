@@ -1,10 +1,10 @@
 import path from 'path';
 
+import { expect } from 'chai';
 import sinon from 'sinon';
 import ts from 'typescript';
-import { expect } from 'chai';
 
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers';
+import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects } from '../../src/tsconfig-helpers';
 
 describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {

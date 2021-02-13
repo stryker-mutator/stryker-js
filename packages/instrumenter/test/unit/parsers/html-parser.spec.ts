@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { parse } from '../../../src/parsers/html-parser';
-import { ParserContext } from '../../../src/parsers/parser-context';
-import { parserContextStub } from '../../helpers/stubs';
-import { createJSAst } from '../../helpers/factories';
-import { AstFormat } from '../../../src/syntax';
 import { ParseError } from '../../../src/parsers/parse-error';
+import { ParserContext } from '../../../src/parsers/parser-context';
+import { AstFormat } from '../../../src/syntax';
+import { createJSAst } from '../../helpers/factories';
+import { parserContextStub } from '../../helpers/stubs';
 
 describe('html-parser', () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;

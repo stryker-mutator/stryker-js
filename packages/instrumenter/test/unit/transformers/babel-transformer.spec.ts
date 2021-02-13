@@ -1,16 +1,16 @@
-import sinon from 'sinon';
-import { expect } from 'chai';
-import { types, NodePath } from '@babel/core';
+import { NodePath, types } from '@babel/core';
 import generate from '@babel/generator';
+import { expect } from 'chai';
+import sinon from 'sinon';
 
-import { transformerContextStub } from '../../helpers/stubs';
-import { TransformerContext } from '../../../src/transformers';
-import * as mutators from '../../../src/mutators';
 import * as mutantPlacers from '../../../src/mutant-placers';
-import { MutantCollector } from '../../../src/transformers/mutant-collector';
+import * as mutators from '../../../src/mutators';
+import { TransformerContext } from '../../../src/transformers';
 import { transformBabel } from '../../../src/transformers/babel-transformer';
-import { createJSAst, createNamedNodeMutation, createMutant, createTSAst } from '../../helpers/factories';
+import { MutantCollector } from '../../../src/transformers/mutant-collector';
 import { instrumentationBabelHeader } from '../../../src/util/syntax-helpers';
+import { createJSAst, createMutant, createNamedNodeMutation, createTSAst } from '../../helpers/factories';
+import { transformerContextStub } from '../../helpers/stubs';
 
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;

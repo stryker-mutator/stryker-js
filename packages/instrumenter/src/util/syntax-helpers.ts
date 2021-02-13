@@ -1,7 +1,7 @@
-import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
-import { types, NodePath } from '@babel/core';
-import traverse from '@babel/traverse';
+import { NodePath, types } from '@babel/core';
 import { parse } from '@babel/parser';
+import traverse from '@babel/traverse';
+import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
 
 import { Mutant } from '../mutant';
 

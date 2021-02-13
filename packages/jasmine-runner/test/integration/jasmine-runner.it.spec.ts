@@ -1,8 +1,8 @@
-import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner';
+import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/jasmine-test-runner';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 import { resolveFromRoot, resolveTestResource } from '../helpers/resolve-test-resource';
 

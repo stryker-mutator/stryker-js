@@ -1,14 +1,14 @@
 import path from 'path';
 
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Logger } from '@stryker-mutator/api/logging';
 import { File } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
-import { createParser } from './parsers';
-import { transform, MutantCollector } from './transformers';
-import { print } from './printers';
 import { InstrumentResult } from './instrument-result';
 import { InstrumenterOptions } from './instrumenter-options';
+import { createParser } from './parsers';
+import { print } from './printers';
+import { MutantCollector, transform } from './transformers';
 
 /**
  * The instrumenter is responsible for

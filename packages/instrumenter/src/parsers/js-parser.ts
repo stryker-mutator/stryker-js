@@ -1,5 +1,5 @@
-import { ParserPlugin } from '@babel/parser';
 import { parseAsync, types } from '@babel/core';
+import { ParserPlugin } from '@babel/parser';
 
 import { AstFormat, JSAst } from '../syntax';
 

@@ -1,13 +1,12 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import mkdirp from 'mkdirp';
 import sinon from 'sinon';
-
-import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as fileUtils from '../../../src/utils/file-utils';
 import * as objectUtils from '../../../src/utils/object-utils';

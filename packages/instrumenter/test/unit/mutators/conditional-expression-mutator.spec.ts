@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation';
 import { ConditionalExpressionMutator } from '../../../src/mutators/conditional-expression-mutator';
+import { expectJSMutation } from '../../helpers/expect-mutation';
 
 describe(ConditionalExpressionMutator.name, () => {
   let sut: ConditionalExpressionMutator;

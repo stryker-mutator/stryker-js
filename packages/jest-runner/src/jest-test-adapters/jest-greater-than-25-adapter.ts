@@ -1,5 +1,5 @@
-import { jestWrapper } from '../utils';
 import { JestRunResult } from '../jest-run-result';
+import { jestWrapper } from '../utils';
 
 import { JestTestAdapter, RunSettings } from './jest-test-adapter';
 

@@ -1,6 +1,6 @@
-import { tokens, commonTokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 
 import { requireResolve } from '@stryker-mutator/util';
 

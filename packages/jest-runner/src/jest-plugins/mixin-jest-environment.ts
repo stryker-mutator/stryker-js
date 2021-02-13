@@ -1,5 +1,5 @@
-import type { JestEnvironment, EnvironmentContext } from '@jest/environment';
-import type { Config, Circus } from '@jest/types';
+import type { EnvironmentContext, JestEnvironment } from '@jest/environment';
+import type { Circus, Config } from '@jest/types';
 
 import { state } from '../messaging';
 

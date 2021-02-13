@@ -1,4 +1,4 @@
-import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunOptions, DryRunResult, MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/api/test-runner';
 import { Disposable } from 'typed-inject';
 
 export class TestRunnerDecorator implements Required<TestRunner>, Disposable {

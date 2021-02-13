@@ -1,23 +1,22 @@
 import assert from 'assert';
 
-import { expect } from 'chai';
-
+import { CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
+import { File } from '@stryker-mutator/api/core';
 import {
-  MutantRunResult,
-  SurvivedMutantRunResult,
-  ErrorDryRunResult,
-  KilledMutantRunResult,
-  MutantRunStatus,
-  DryRunResult,
   CompleteDryRunResult,
+  DryRunResult,
   DryRunStatus,
+  ErrorDryRunResult,
   ErrorMutantRunResult,
-  TestResult,
   FailedTestResult,
+  KilledMutantRunResult,
+  MutantRunResult,
+  MutantRunStatus,
+  SurvivedMutantRunResult,
+  TestResult,
   TestStatus,
 } from '@stryker-mutator/api/test-runner';
-import { File } from '@stryker-mutator/api/core';
-import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { expect } from 'chai';
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
   assert.equal(result.status, MutantRunStatus.Killed);

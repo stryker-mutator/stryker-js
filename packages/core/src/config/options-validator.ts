@@ -1,16 +1,16 @@
 import os from 'os';
 
-import Ajv, { ValidateFunction } from 'ajv';
-import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
-import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
+import { strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { deepFreeze, noopLogger, propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
+import Ajv, { ValidateFunction } from 'ajv';
 import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
-import { isWarningEnabled } from '../utils/object-utils';
 import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { isWarningEnabled } from '../utils/object-utils';
 
 import { describeErrors } from './validation-errors';
 

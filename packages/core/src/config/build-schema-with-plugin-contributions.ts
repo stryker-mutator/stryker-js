@@ -1,7 +1,7 @@
-import { commonTokens, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import type { JSONSchema7 } from 'json-schema';
+import { commonTokens, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 import { I } from '@stryker-mutator/util';
+import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 

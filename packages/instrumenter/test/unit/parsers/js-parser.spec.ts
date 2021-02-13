@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
 import { createParser } from '../../../src/parsers/js-parser';
-import { JSAst, AstFormat } from '../../../src/syntax';
-import { expectAst, AstExpectation } from '../../helpers/syntax-test-helpers';
+import { AstFormat, JSAst } from '../../../src/syntax';
 import { createParserOptions } from '../../helpers/factories';
+import { AstExpectation, expectAst } from '../../helpers/syntax-test-helpers';
 
 describe('js-parser', () => {
   it('should be able to parse simple es5', async () => {

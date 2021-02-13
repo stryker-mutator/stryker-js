@@ -3,7 +3,7 @@ import os from 'os';
 
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
-import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
+import { ExpirableTask, isErrnoException, Task } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 

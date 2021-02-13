@@ -18,9 +18,9 @@ import {
   WorkerMessage,
   WorkerMessageKind,
 } from '../../../src/child-proxy/message-protocol';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
 import { LoggingClientContext } from '../../../src/logging';
 import * as objectUtils from '../../../src/utils/object-utils';
-import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
 import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 

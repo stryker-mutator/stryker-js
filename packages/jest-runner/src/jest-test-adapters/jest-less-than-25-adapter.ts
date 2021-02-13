@@ -2,7 +2,7 @@ import jest from 'jest';
 
 import { JestRunResult } from '../jest-run-result';
 
-import { RunSettings, JestTestAdapter } from './jest-test-adapter';
+import { JestTestAdapter, RunSettings } from './jest-test-adapter';
 
 /**
  * The adapter used for 22 < Jest < 25.

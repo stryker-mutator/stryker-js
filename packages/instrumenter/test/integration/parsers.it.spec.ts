@@ -3,7 +3,7 @@ import { promises as fsPromises } from 'fs';
 import { expect } from 'chai';
 
 import { createParser, ParserOptions } from '../../src/parsers';
-import { AstFormat, HtmlAst, TSAst, JSAst, Ast } from '../../src/syntax';
+import { Ast, AstFormat, HtmlAst, JSAst, TSAst } from '../../src/syntax';
 import { createParserOptions } from '../helpers/factories';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 

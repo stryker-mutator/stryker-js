@@ -1,7 +1,7 @@
 import path from 'path';
 
-import execa from 'execa';
 import { expect } from 'chai';
+import execa from 'execa';
 
 import { JasmineTestRunner } from '../../src';
 

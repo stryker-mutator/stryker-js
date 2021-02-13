@@ -1,6 +1,6 @@
-import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
-import { getLogger } from 'log4js';
+import { DryRunOptions, DryRunResult, DryRunStatus, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
+import { getLogger } from 'log4js';
 
 import { TestRunnerDecorator } from './test-runner-decorator';
 

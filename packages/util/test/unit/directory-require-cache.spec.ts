@@ -1,8 +1,7 @@
 import path from 'path';
 
-import sinon from 'sinon';
-
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import { DirectoryRequireCache } from '../../src';
 

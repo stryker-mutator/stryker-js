@@ -5,9 +5,9 @@ import { NodePath } from '@babel/core';
 
 import { Mutant } from '../mutant';
 
+import { expressionMutantPlacer } from './expression-mutant-placer';
 import { MutantPlacer } from './mutant-placer';
 import { statementMutantPlacer } from './statement-mutant-placer';
-import { expressionMutantPlacer } from './expression-mutant-placer';
 import { switchCaseMutantPlacer } from './switch-case-mutant-placer';
 
 export const MUTANT_PLACERS = Object.freeze([expressionMutantPlacer, statementMutantPlacer, switchCaseMutantPlacer]);

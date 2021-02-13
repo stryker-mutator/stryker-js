@@ -8,7 +8,7 @@ import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
 import { deserialize, serialize } from '../utils/object-utils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
+import { autoStart, CallMessage, InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
 
 export class ChildProcessProxyWorker {
   private log?: Logger;

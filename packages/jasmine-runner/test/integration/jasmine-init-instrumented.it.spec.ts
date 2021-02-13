@@ -1,8 +1,8 @@
-import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src';
+import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('JasmineRunner integration with code instrumentation', () => {

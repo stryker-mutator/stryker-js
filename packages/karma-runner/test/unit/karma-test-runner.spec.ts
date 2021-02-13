@@ -3,18 +3,18 @@ import { EventEmitter } from 'events';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
-import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import karma from 'karma';
 import sinon from 'sinon';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import * as projectStarter from '../../src/starters/project-starter';
-import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
+import { NgConfigOptions, StrykerKarmaSetup } from '../../src-generated/karma-runner-options';
 import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { TestHooksMiddleware } from '../../src/karma-plugins/test-hooks-middleware';
+import { KarmaTestRunner } from '../../src/karma-test-runner';
+import * as projectStarter from '../../src/starters/project-starter';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import strykerKarmaConf = require('../../src/starters/stryker-karma.conf');
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<projectStarter.ProjectStarter>;

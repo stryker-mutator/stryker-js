@@ -2,9 +2,8 @@ import path from 'path';
 
 import { File } from '@stryker-mutator/api/core';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
-import sinon from 'sinon';
-
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
 import { DisableTypeChecksPreprocessor } from '../../../src/sandbox/disable-type-checks-preprocessor';

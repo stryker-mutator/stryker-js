@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 
-import { mutantTestExpression, createMutatedAst, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
+import { createMutatedAst, mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
 
 import { MutantPlacer } from './mutant-placer';
 

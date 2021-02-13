@@ -1,16 +1,16 @@
 import fs from 'fs';
 
 import { LogLevel } from '@stryker-mutator/api/core';
+import { DryRunStatus, TestRunner } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
-import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test-runner';
 
+import { coreTokens } from '../../../src/di';
 import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/test-utils';
-import { coreTokens } from '../../../src/di';
 
 import { CounterTestRunner } from './additional-test-runners';
 

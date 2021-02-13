@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 
+import { CircleProvider } from '../../../../src/reporters/ci/circle-provider';
+import { GithubActionsCIProvider } from '../../../../src/reporters/ci/github-actions-provider';
 import { determineCIProvider } from '../../../../src/reporters/ci/provider';
 import { TravisProvider } from '../../../../src/reporters/ci/travis-provider';
-import { CircleProvider } from '../../../../src/reporters/ci/circle-provider';
 import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
-import { GithubActionsCIProvider } from '../../../../src/reporters/ci/github-actions-provider';
 
 describe(determineCIProvider.name, () => {
   const env = new EnvironmentVariableStore();

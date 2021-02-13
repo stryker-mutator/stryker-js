@@ -1,10 +1,10 @@
 import { traverse } from '@babel/core';
-import { parse, ParserPlugin } from '@babel/parser';
 import generate from '@babel/generator';
+import { parse, ParserPlugin } from '@babel/parser';
 import { expect } from 'chai';
 
-import { NodeMutator } from '../../src/mutators/node-mutator';
 import { NodeMutation } from '../../src/mutant';
+import { NodeMutator } from '../../src/mutators/node-mutator';
 
 const plugins = [
   'doExpressions',

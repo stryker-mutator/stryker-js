@@ -1,15 +1,15 @@
 import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
-import { Config, ConfigOptions, ClientOptions } from 'karma';
-import sinon from 'sinon';
 import * as utils from '@stryker-mutator/util';
+import { expect } from 'chai';
+import { ClientOptions, Config, ConfigOptions } from 'karma';
+import sinon from 'sinon';
 
+import { StrykerReporter } from '../../../src/karma-plugins/stryker-reporter';
+import { TEST_HOOKS_FILE_NAME, TestHooksMiddleware } from '../../../src/karma-plugins/test-hooks-middleware';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import sut = require('../../../src/starters/stryker-karma.conf');
-import { StrykerReporter } from '../../../src/karma-plugins/stryker-reporter';
-import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
 
 describe('stryker-karma.conf.js', () => {
   let getLogger: sinon.SinonStub;

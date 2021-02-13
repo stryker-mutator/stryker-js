@@ -1,10 +1,10 @@
-import { expect } from 'chai';
 import { types } from '@babel/core';
+import { expect } from 'chai';
 
+import { PrinterContext } from '../../../src/printers';
 import { print } from '../../../src/printers/ts-printer';
 import { createTSAst } from '../../helpers/factories';
 import { printerContextStub } from '../../helpers/stubs';
-import { PrinterContext } from '../../../src/printers';
 
 describe('ts-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;

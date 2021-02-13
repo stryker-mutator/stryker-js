@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
-import { createHtmlAst, createJSAst, createTransformerOptions, createTSAst } from '../helpers/factories';
 import { transform } from '../../src/transformers';
 import { MutantCollector } from '../../src/transformers/mutant-collector';
+import { createHtmlAst, createJSAst, createTransformerOptions, createTSAst } from '../helpers/factories';
 
 describe('transformers integration', () => {
   it('should transform an html file', () => {

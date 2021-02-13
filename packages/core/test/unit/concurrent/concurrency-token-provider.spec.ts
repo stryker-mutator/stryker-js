@@ -1,9 +1,9 @@
 import os from 'os';
 
-import { expect } from 'chai';
-import sinon from 'sinon';
-import { toArray } from 'rxjs/operators';
 import { testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import { toArray } from 'rxjs/operators';
+import sinon from 'sinon';
 
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { createCpuInfo } from '../../helpers/producers';

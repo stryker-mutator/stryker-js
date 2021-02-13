@@ -1,8 +1,8 @@
 import { MatchedMutant, MutantStatus } from '@stryker-mutator/api/report';
-import { expect } from 'chai';
-import sinon from 'sinon';
-import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
+import ProgressBar from 'progress';
+import sinon from 'sinon';
 
 import * as progressBarModule from '../../../src/reporters/progress-bar';
 import { ProgressBarReporter } from '../../../src/reporters/progress-reporter';

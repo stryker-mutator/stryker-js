@@ -1,11 +1,11 @@
 import path from 'path';
 
-import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
-import { Request, NextFunction, Response } from 'express';
+import { expect } from 'chai';
+import { NextFunction, Request, Response } from 'express';
 import sinon from 'sinon';
 
-import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
+import { TEST_HOOKS_FILE_NAME, TestHooksMiddleware } from '../../../src/karma-plugins/test-hooks-middleware';
 
 describe(TestHooksMiddleware.name, () => {
   let sut: TestHooksMiddleware;

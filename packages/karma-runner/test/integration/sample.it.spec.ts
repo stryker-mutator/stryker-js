@@ -1,10 +1,10 @@
 import { TestStatus } from '@stryker-mutator/api/test-runner';
-import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 
+import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { expectTestResults, TimelessTestResult } from '../helpers/assertions';
-import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
-import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Sample project', () => {

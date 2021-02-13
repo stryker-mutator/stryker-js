@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import sinon from 'sinon';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import { coreTokens } from '../../src/di';
 import { UnexpectedExitHandler } from '../../src/unexpected-exit-handler';

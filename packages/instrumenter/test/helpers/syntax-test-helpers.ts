@@ -1,11 +1,10 @@
-import { types, traverse, NodePath, parseSync } from '@babel/core';
-import { expect } from 'chai';
-import generate from '@babel/generator';
-
+import { NodePath, parseSync, traverse, types } from '@babel/core';
 /* eslint-disable @typescript-eslint/no-duplicate-imports */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 /* eslint-enable @typescript-eslint/no-duplicate-imports */
+import generate from '@babel/generator';
+import { expect } from 'chai';
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
 

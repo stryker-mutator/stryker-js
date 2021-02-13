@@ -1,5 +1,5 @@
-import path from 'path';
 import { createReadStream, createWriteStream } from 'fs';
+import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';

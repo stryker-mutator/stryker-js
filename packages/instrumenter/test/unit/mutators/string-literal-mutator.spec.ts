@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation';
 import { StringLiteralMutator } from '../../../src/mutators/string-literal-mutator';
+import { expectJSMutation } from '../../helpers/expect-mutation';
 
 describe(StringLiteralMutator.name, () => {
   let sut: StringLiteralMutator;

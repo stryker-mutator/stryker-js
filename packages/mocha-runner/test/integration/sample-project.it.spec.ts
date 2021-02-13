@@ -1,9 +1,9 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { CompleteDryRunResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
+import { createMochaOptions } from '../helpers/factories';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;

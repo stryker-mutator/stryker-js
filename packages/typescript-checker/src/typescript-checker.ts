@@ -1,16 +1,16 @@
 import { EOL } from 'os';
 import path from 'path';
 
-import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { commonTokens, Injector, PluginContext, Scope, tokens } from '@stryker-mutator/api/plugin';
+import { propertyPath, Task } from '@stryker-mutator/util';
+import ts from 'typescript';
 
 import { HybridFileSystem } from './fs';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers';
 import * as pluginTokens from './plugin-tokens';
+import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects } from './tsconfig-helpers';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,

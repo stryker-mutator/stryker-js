@@ -1,4 +1,4 @@
-import { types, NodePath } from '@babel/core';
+import { NodePath, types } from '@babel/core';
 
 import { NodeMutation } from '../mutant';
 import { BinaryOperator } from '../util';

@@ -1,13 +1,12 @@
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult } from '@stryker-mutator/api/report';
 import { createInjector } from 'typed-inject';
 
-import { commonTokens } from '@stryker-mutator/api/plugin';
-
-import { LogConfigurator } from './logging';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process';
 import { coreTokens, provideLogger } from './di';
-import { retrieveCause, ConfigError } from './errors';
+import { ConfigError, retrieveCause } from './errors';
+import { LogConfigurator } from './logging';
+import { DryRunExecutor, MutantInstrumenterExecutor, MutationTestExecutor, PrepareExecutor } from './process';
 
 /**
  * The main Stryker class.

@@ -3,8 +3,8 @@ import log4js from 'log4js';
 
 import { getFreePort } from '../utils/net-utils';
 
-import { LoggingClientContext } from './logging-client-context';
 import { minLevel } from './log-utils';
+import { LoggingClientContext } from './logging-client-context';
 
 const enum AppenderName {
   File = 'file',

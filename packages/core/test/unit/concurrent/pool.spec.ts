@@ -1,9 +1,9 @@
+import { factory, tick } from '@stryker-mutator/test-helpers';
+import { ExpirableTask, Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
+import { range, ReplaySubject } from 'rxjs';
 import { toArray } from 'rxjs/operators';
 import sinon from 'sinon';
-import { factory, tick } from '@stryker-mutator/test-helpers';
-import { Task, ExpirableTask } from '@stryker-mutator/util';
-import { range, ReplaySubject } from 'rxjs';
 
 import { Pool, Worker } from '../../../src/concurrent';
 

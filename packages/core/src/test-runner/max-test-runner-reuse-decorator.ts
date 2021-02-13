@@ -1,6 +1,5 @@
-import { MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/api/test-runner';
-
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/api/test-runner';
 
 import { TestRunnerDecorator } from './test-runner-decorator';
 

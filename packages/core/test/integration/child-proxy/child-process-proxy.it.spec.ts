@@ -3,11 +3,11 @@ import path from 'path';
 import { File, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
+import { LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
+import { Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import log4js from 'log4js';
 import { filter } from 'rxjs/operators';
-import { Task } from '@stryker-mutator/util';
 
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';

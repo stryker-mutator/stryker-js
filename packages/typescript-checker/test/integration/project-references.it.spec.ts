@@ -1,10 +1,10 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
-import { expect } from 'chai';
-import { Mutant, Range } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { Mutant, Range } from '@stryker-mutator/api/core';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-checker';

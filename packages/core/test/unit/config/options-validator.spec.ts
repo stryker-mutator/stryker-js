@@ -1,11 +1,11 @@
 import os from 'os';
 
-import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
-import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/options-validator';
+import { markUnknownOptions, OptionsValidator, validateOptions } from '../../../src/config/options-validator';
 import { coreTokens } from '../../../src/di';
 import { createCpuInfo } from '../../helpers/producers';
 

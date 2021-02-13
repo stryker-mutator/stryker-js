@@ -2,10 +2,10 @@ import { I } from '@stryker-mutator/util';
 
 import { Ast, AstByFormat, AstFormat } from '../syntax';
 
-import { TransformerOptions } from './transformer-options';
 import { transformBabel } from './babel-transformer';
 import { transformHtml } from './html-transformer';
 import { MutantCollector } from './mutant-collector';
+import { TransformerOptions } from './transformer-options';
 
 /**
  * Transform the AST by generating mutants and placing them in the AST.

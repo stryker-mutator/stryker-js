@@ -1,26 +1,26 @@
-import karma from 'karma';
-import { StrykerOptions, MutantCoverage } from '@stryker-mutator/api/core';
+import { MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
-  TestRunner,
-  TestResult,
-  DryRunStatus,
   DryRunOptions,
-  MutantRunOptions,
   DryRunResult,
+  DryRunStatus,
+  MutantRunOptions,
   MutantRunResult,
+  TestResult,
+  TestRunner,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
+import karma from 'karma';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
+import { StrykerReporter } from './karma-plugins/stryker-reporter';
+import { TestHooksMiddleware } from './karma-plugins/test-hooks-middleware';
+import { KarmaRunnerOptionsWithStrykerOptions } from './karma-runner-options-with-stryker-options';
+import { ProjectStarter } from './starters/project-starter';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import strykerKarmaConf = require('./starters/stryker-karma.conf');
-import { ProjectStarter } from './starters/project-starter';
-import { StrykerReporter } from './karma-plugins/stryker-reporter';
-import { KarmaRunnerOptionsWithStrykerOptions } from './karma-runner-options-with-stryker-options';
-import { TestHooksMiddleware } from './karma-plugins/test-hooks-middleware';
 
 export interface ConfigOptions extends karma.ConfigOptions {
   detached?: boolean;

@@ -1,19 +1,19 @@
-import path from 'path';
 import { promises as fsPromises } from 'fs';
+import path from 'path';
 
+import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, Disposable, tokens } from '@stryker-mutator/api/plugin';
+import { I, normalizeWhitespaces } from '@stryker-mutator/util';
 import execa from 'execa';
 import npmRunPath from 'npm-run-path';
-import { StrykerOptions, File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, I } from '@stryker-mutator/util';
-import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
-import { mergeMap, toArray } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { mergeMap, toArray } from 'rxjs/operators';
 
-import { TemporaryDirectory } from '../utils/temporary-directory';
-import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
 import { coreTokens } from '../di';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler';
+import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, mkdirp, moveDirectoryRecursiveSync, symlinkJunction } from '../utils/file-utils';
+import { TemporaryDirectory } from '../utils/temporary-directory';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();

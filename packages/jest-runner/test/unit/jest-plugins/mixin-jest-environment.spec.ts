@@ -1,15 +1,14 @@
 import { EnvironmentContext } from '@jest/environment';
-import JestEnvironmentNode from 'jest-environment-node';
-import sinon from 'sinon';
 import { Circus, Config } from '@jest/types';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
-
-import * as producers from '../../helpers/producers';
+import JestEnvironmentNode from 'jest-environment-node';
+import sinon from 'sinon';
 
 import { mixinJestEnvironment } from '../../../src/jest-plugins';
-import { state } from '../../../src/messaging';
 import * as constants from '../../../src/jest-plugins/constants';
+import { state } from '../../../src/messaging';
+import * as producers from '../../helpers/producers';
 
 describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   class TestJestEnvironment extends JestEnvironmentNode {

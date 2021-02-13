@@ -4,10 +4,10 @@ import { ClearTextReporter } from './clear-text-reporter';
 import { dashboardReporterFactory } from './dashboard-reporter';
 import { DotsReporter } from './dots-reporter';
 import { EventRecorderReporter } from './event-recorder-reporter';
-import { ProgressAppendOnlyReporter } from './progress-append-only-reporter';
-import { ProgressBarReporter } from './progress-reporter';
 import { HtmlReporter } from './html/html-reporter';
 import { JsonReporter } from './json-reporter';
+import { ProgressAppendOnlyReporter } from './progress-append-only-reporter';
+import { ProgressBarReporter } from './progress-reporter';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
