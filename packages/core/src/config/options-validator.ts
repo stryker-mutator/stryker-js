@@ -1,5 +1,7 @@
 import os from 'os';
 
+import * as path from 'path';
+
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
@@ -102,11 +104,12 @@ export class OptionsValidator {
     options.mutator.specificMutants = options.mutate
       .filter((fileToMutate) => RegExp('(:\\d+){4}$').exec(fileToMutate))
       .map((fileToMutate) => {
+        const fileName = fileToMutate.replace(RegExp('(:\\d+){4}$'), '');
         const [matchedItems] = RegExp('(:\\d+){4}$').exec(fileToMutate)!;
         const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
 
         return {
-          filename: fileToMutate,
+          filename: path.resolve(fileName),
           start: { line: parseInt(startLine), column: parseInt(startColumn) },
           end: { line: parseInt(endLine), column: parseInt(endColumn) },
         };

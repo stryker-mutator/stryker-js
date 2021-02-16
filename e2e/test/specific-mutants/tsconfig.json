@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "lib": [
+      "es2017",
+      "DOM"
+    ],
+    "types": [
+      "jest",
+      "node"
+    ],
+    "strict": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "outDir": "dist"
+  },
+  "include": [
+    "src",
+    "test"
+  ],
+  // Example pulled from: https://kulshekhar.github.io/ts-jest/user/config/#example
+  "paths": {
+    "@App/*": [
+      "src/*"
+    ],
+    "lib/*": [
+      "common/*"
+    ]
+  }
+}
