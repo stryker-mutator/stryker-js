@@ -117,6 +117,10 @@ export class InputFileResolver {
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
+    if (RegExp('(:\\d+){4}$').exec(globbingExpression)) {
+      globbingExpression = globbingExpression.replace(RegExp('(:\\d+){4}$'), '');
+    }
+
     const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
     if (!fileNames.length && logAboutUselessPatterns) {
       this.log.warn(`Globbing expression "${globbingExpression}" did not result in any files.`);
