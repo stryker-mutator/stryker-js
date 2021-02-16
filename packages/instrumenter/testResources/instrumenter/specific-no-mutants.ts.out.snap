@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration Specific mutants should not make any mutations in a file not found in the specific mutants 1`] = `
+"const a = 1 + 1;
+const b = 1 - 1;"
+`;
+
+exports[`instrumenter integration Specific mutants should not make any mutations in a file not found in the specific mutants 2`] = `
+"const a = 1 + 1;
+const b = 1 - 1;"
+`;

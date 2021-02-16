@@ -1,5 +1,7 @@
 import os from 'os';
 
+import * as path from 'path';
+
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -185,6 +187,23 @@ describe(OptionsValidator.name, () => {
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
+    });
+
+    it('should transform mutate into specificMutants', () => {
+      testInjector.options.mutate = ['src/index.ts:1:0:2:0', 'src/index.ts:1:3:1:5', 'src/other.ts'];
+      sut.validate(testInjector.options);
+      expect(testInjector.options.mutator.specificMutants).to.eql([
+        {
+          filename: path.resolve('src/index.ts'),
+          start: { line: 1, column: 0 },
+          end: { line: 2, column: 0 },
+        },
+        {
+          filename: path.resolve('src/index.ts'),
+          start: { line: 1, column: 3 },
+          end: { line: 1, column: 5 },
+        },
+      ]);
     });
   });
 
