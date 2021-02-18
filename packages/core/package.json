@@ -60,7 +60,7 @@
     "@stryker-mutator/util": "4.4.1",
     "ajv": "~7.1.0",
     "chalk": "~4.1.0",
-    "commander": "~7.0.0",
+    "commander": "~7.1.0",
     "execa": "~5.0.0",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
