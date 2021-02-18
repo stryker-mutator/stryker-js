@@ -189,12 +189,21 @@ describe(InputFileResolver.name, () => {
     await onGoingWork;
   });
 
-  it('should remove specific mutant descriptors when matching', async () => {
-    testInjector.options.mutate = ['mute*:0:0:1:0'];
-    testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
-    sut = createSut();
-    const result = await sut.resolve();
-    expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js'), path.resolve('/mute2.js')]);
+  describe('with specific mutant definitions', () => {
+    it('should remove specific mutant descriptors when matching', async () => {
+      testInjector.options.mutate = ['mute1:0:0:1:0'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      const result = await sut.resolve();
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
+    });
+
+    it('should not allow both glob patterns and specific mutants', () => {
+      testInjector.options.mutate = ['mute*:1:0:1:0'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      return expect(sut.resolve()).to.be.rejectedWith('Do not use glob patterns with specific mutants on the glob pattern');
+    });
   });
 
   describe('with mutate file expressions', () => {

@@ -10,6 +10,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
 
+import { hasMagic } from 'glob';
+
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
 import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
@@ -118,6 +120,10 @@ export class InputFileResolver {
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
     if (RegExp('(:\\d+){4}$').exec(globbingExpression)) {
+      if (hasMagic(globbingExpression)) {
+        throw new StrykerError('Do not use glob patterns with specific mutants on the glob pattern');
+      }
+
       globbingExpression = globbingExpression.replace(RegExp('(:\\d+){4}$'), '');
     }
 

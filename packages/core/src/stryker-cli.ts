@@ -67,7 +67,7 @@ export class StrykerCli {
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js',
+        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :[startLine]:[startColumn]:[endLine]:[endColumn]. This range is an exact match, not inclusive. It cannot be combined with glob patterns. Example: src/index.js:1:3:1:5',
         list
       )
       .option(

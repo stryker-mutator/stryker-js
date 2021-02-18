@@ -73,6 +73,26 @@ describe('instrumenter integration', () => {
             start: { line: 1, column: 10 },
             end: { line: 1, column: 15 },
           },
+          {
+            filename: fullFileName,
+            start: { line: 4, column: 4 },
+            end: { line: 4, column: 11 },
+          },
+          {
+            filename: fullFileName,
+            start: { line: 8, column: 15 },
+            end: { line: 8, column: 22 },
+          },
+          {
+            filename: fullFileName,
+            start: { line: 19, column: 2 },
+            end: { line: 19, column: 75 },
+          },
+          {
+            filename: fullFileName,
+            start: { line: 20, column: 2 },
+            end: { line: 20, column: 75 },
+          },
         ],
       });
     });

@@ -23,7 +23,6 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
         path.skip();
       } else {
         if (
-          path.node.type !== 'Program' &&
           options.specificMutants?.length &&
           !options.specificMutants.find(
             (mutant) =>
