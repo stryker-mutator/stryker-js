@@ -11,6 +11,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { expectTestResults } from '../helpers/assertions';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const paths = require('react-scripts-ts/config/paths');
@@ -91,6 +92,42 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
+    });
+
+    it('should report the test positions and file names', async () => {
+      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
+      const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
+      const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
+      const jestTestRunner = createSut();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'perTest' });
+      assertions.expectCompleted(runResult);
+      expectTestResults(runResult, [
+        {
+          id: 'Add should be able to add two numbers',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 7 },
+        },
+        {
+          id: 'Add should be able to add one to a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 17 },
+        },
+        {
+          id: 'Add should be able negate a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 26 },
+        },
+        {
+          id: 'Add should be able to recognize a negative number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 35 },
+        },
+        {
+          id: 'Circle should have a circumference of 2PI when the radius is 1',
+          fileName: circleSpecFileName,
+          startPosition: { column: 2, line: 4 },
+        },
+      ]);
     });
   });
 

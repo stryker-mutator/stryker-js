@@ -4,7 +4,7 @@ import { JestRunResult } from '../jest-run-result';
 import { JestTestAdapter, RunSettings } from './jest-test-adapter';
 
 export class JestGreaterThan25TestAdapter implements JestTestAdapter {
-  public async run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern }: RunSettings): Promise<JestRunResult> {
+  public async run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
     const result = await jestWrapper.runCLI(
       {
@@ -15,6 +15,7 @@ export class JestGreaterThan25TestAdapter implements JestTestAdapter {
         runInBand: true,
         silent: true,
         testNamePattern,
+        testLocationInResults,
       },
       [projectRoot]
     );
