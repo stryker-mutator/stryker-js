@@ -84,7 +84,7 @@ export class Sandbox implements Disposable {
   }
 
   private async symlinkNodeModulesIfNeeded(): Promise<void> {
-    this.log.info('Start symlink node_modules');
+    this.log.debug('Start symlink node_modules');
     if (this.options.symlinkNodeModules && !this.options.inPlace) {
       // TODO: Change with this.options.basePath when we have it
       const basePath = process.cwd();
