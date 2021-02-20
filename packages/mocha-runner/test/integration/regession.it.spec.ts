@@ -2,7 +2,7 @@ import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
+import { createMochaTestRunnerFactory } from '../../src';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
