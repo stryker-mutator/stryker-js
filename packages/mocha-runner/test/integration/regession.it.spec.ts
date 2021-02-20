@@ -55,8 +55,8 @@ describe('regression integration tests', () => {
         id: 'suite2 should fail in afterEach',
         status: TestStatus.Failed,
       };
-      expect(result.tests).lengthOf(1);
-      expect(result.tests[0]).deep.contains(expected);
+      expect(result.tests).lengthOf(2);
+      expect(result.tests[1]).deep.contains(expected);
     });
   });
 });

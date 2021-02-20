@@ -47,7 +47,7 @@ export class StrykerMochaReporter {
       const title = test.ctx?.currentTest?.fullTitle() ?? test.fullTitle();
       const result: FailedTestResult = {
         id: title,
-        failureMessage: err.message,
+        failureMessage: (err.message || err.stack) ?? '<empty failure message>',
         name: title,
         status: TestStatus.Failed,
         timeSpentMs: this.timer.elapsedMs(),
