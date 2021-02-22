@@ -43,11 +43,11 @@ export class StrykerMochaReporter {
       this.timer.reset();
     });
 
-    this.runner.on('fail', (test: Mocha.Test, err: Error) => {
-      const title = test.fullTitle();
+    this.runner.on('fail', (test: Mocha.Hook | Mocha.Test, err: Error) => {
+      const title = test.ctx?.currentTest?.fullTitle() ?? test.fullTitle();
       const result: FailedTestResult = {
         id: title,
-        failureMessage: err.message,
+        failureMessage: (err.message || err.stack) ?? '<empty failure message>',
         name: title,
         status: TestStatus.Failed,
         timeSpentMs: this.timer.elapsedMs(),
