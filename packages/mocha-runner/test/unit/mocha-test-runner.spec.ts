@@ -240,7 +240,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should active the given mutant', async () => {
-      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
       expect(global.__stryker2__?.activeMutant).eq(42);
     });
 

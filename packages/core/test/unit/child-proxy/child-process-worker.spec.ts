@@ -18,7 +18,7 @@ import {
 } from '../../../src/child-proxy/message-protocol';
 import * as di from '../../../src/di';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/object-utils';
+import { serialize } from '../../../src/utils/string-utils';
 import { currentLogMock } from '../../helpers/log-mock';
 import { Mock } from '../../helpers/producers';
 

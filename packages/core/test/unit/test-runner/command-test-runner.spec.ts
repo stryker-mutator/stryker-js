@@ -99,7 +99,7 @@ describe(CommandTestRunner.name, () => {
   describe(CommandTestRunner.prototype.mutantRun.name, () => {
     it('should run with __ACTIVE_MUTANT__ environment variable active', async () => {
       const sut = createSut(undefined, 'foobarDir');
-      await actMutantRun(sut, { activeMutantId: 0 });
+      await actMutantRun(sut, { activeMutantId: '0' });
       expect(childProcess.exec).calledWith('npm test', { cwd: 'foobarDir', env: { ...process.env, __STRYKER_ACTIVE_MUTANT__: '0' } });
     });
 
@@ -146,7 +146,7 @@ describe(CommandTestRunner.name, () => {
     return resultPromise;
   }
 
-  async function actMutantRun(sut: CommandTestRunner = createSut(), { exitCode = 0, activeMutantId = 0 }) {
+  async function actMutantRun(sut: CommandTestRunner = createSut(), { exitCode = 0, activeMutantId = '0' }) {
     const resultPromise = sut.mutantRun({ activeMutant: factory.mutant({ id: activeMutantId }) });
     await actTestProcessEnds(exitCode);
     return resultPromise;

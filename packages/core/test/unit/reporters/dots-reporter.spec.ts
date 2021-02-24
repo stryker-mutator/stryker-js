@@ -1,10 +1,10 @@
 import os from 'os';
 
-import { MutantStatus } from '@stryker-mutator/api/report';
-import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import chalk from 'chalk';
+import { MutantStatus } from '@stryker-mutator/api/core';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import { DotsReporter } from '../../../src/reporters/dots-reporter';
 
@@ -30,7 +30,7 @@ describe(DotsReporter.name, () => {
     });
 
     it('should log "S" when status is Survived', () => {
-      sut.onMutantTested(factory.undetectedMutantResult({ status: MutantStatus.Survived }));
+      sut.onMutantTested(factory.mutantResult({ status: MutantStatus.Survived }));
       expect(process.stdout.write).to.have.been.calledWith(chalk.bold.red('S'));
     });
   });

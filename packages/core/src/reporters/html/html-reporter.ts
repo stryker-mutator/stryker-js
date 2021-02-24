@@ -1,10 +1,10 @@
 import path from 'path';
 
 import fileUrl from 'file-url';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 
 import * as ReporterUtil from '../reporter-util';
 
@@ -21,7 +21,7 @@ export class HtmlReporter implements Reporter {
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
+  public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
   }
 
@@ -29,7 +29,7 @@ export class HtmlReporter implements Reporter {
     return this.mainPromise;
   }
 
-  private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
+  private async generateReport(report: schema.MutationTestResult) {
     const indexFileName = path.resolve(this.baseDir, 'index.html');
     const singleFile = await reportTemplate(report);
     await this.cleanBaseFolder();

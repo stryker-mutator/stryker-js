@@ -137,12 +137,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        activeMutant: factory.mutant({
-          id: 1,
-        }),
+        activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
-      mutantRunOptions.activeMutant.id = 1;
+      mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
@@ -158,7 +156,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
       });
-      mutantRunOptions.activeMutant.id = 11;
+      mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
@@ -173,11 +171,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
-      mutantRunOptions.activeMutant.id = 1;
+      mutantRunOptions.activeMutant.id = '1';
 
       // Act
       const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
-      mutantRunOptions.activeMutant.id = 10;
+      mutantRunOptions.activeMutant.id = '0';
       const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       // Assert

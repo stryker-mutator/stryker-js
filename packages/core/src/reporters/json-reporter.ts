@@ -1,9 +1,9 @@
 import path from 'path';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 
 import fileUrl from 'file-url';
 
@@ -19,7 +19,7 @@ export class JsonReporter implements Reporter {
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
+  public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
   }
 
@@ -27,7 +27,7 @@ export class JsonReporter implements Reporter {
     return this.mainPromise;
   }
 
-  private async generateReport(report: mutationTestReportSchema.MutationTestResult) {
+  private async generateReport(report: schema.MutationTestResult) {
     const filePath = path.normalize(this.options.jsonReporter.fileName);
     this.log.debug(`Using relative path ${filePath}`);
     await ReporterUtil.writeFile(path.resolve(filePath), JSON.stringify(report, null, INDENTION_LEVEL));

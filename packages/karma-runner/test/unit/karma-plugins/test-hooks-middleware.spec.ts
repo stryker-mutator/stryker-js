@@ -61,12 +61,12 @@ describe(TestHooksMiddleware.name, () => {
     });
 
     it('should declare the __stryker__ namespace', () => {
-      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
       expect(sut.currentTestHooks).contains('window.__stryker__ = window.__stryker__ || {}');
     });
 
     it('should set the "activeMutant" id', () => {
-      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
       expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = 42');
     });
 

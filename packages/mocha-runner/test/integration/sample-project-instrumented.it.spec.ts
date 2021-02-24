@@ -104,26 +104,26 @@ describe('Running an instrumented project', () => {
 
   describe('mutantRun', () => {
     it('should be able to survive a mutant', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 0 }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
       assertions.expectSurvived(result);
     });
 
     it('should be able to kill a mutant', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
       assertions.expectKilled(result);
       expect(result.killedBy).eq('MyMath should be able to add two numbers');
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 
     it('should bail after the first failed test', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
       assertions.expectKilled(result);
       expect(result.nrOfTests).eq(1);
     });
 
     it('should be able to kill a mutant with filtered test', async () => {
       const result = await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 3 }), testFilter: ['MyMath should be able to add two numbers'] })
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }), testFilter: ['MyMath should be able to add two numbers'] })
       );
       assertions.expectKilled(result);
       expect(result.killedBy).eq('MyMath should be able to add two numbers');
@@ -133,7 +133,7 @@ describe('Running an instrumented project', () => {
     it('should be able to survive if killer test is not filtered', async () => {
       const result = await sut.mutantRun(
         factory.mutantRunOptions({
-          activeMutant: factory.mutant({ id: 3 }),
+          activeMutant: factory.mutant({ id: '3' }),
           testFilter: ['MyMath should be able negate a number', 'MyMath should be able to recognize a negative number'],
         })
       );

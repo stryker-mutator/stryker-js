@@ -6,7 +6,9 @@
     "noImplicitThis": true,
     "strictBindCallApply": true,
     "resolveJsonModule": true,
-    "types": [] // Exclude global mocha functions for the sources
+    "types": [
+      "node" // Exclude global mocha functions for the sources
+    ]
   },
   "include": [
     "src"

@@ -1,14 +1,12 @@
 import { CpuInfo } from 'os';
 
 import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
-import { factory } from '@stryker-mutator/test-helpers';
 import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { MutantTestCoverage } from '../../src/mutants/find-mutant-test-coverage';
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
 export type Mutable<T> = {
@@ -62,15 +60,6 @@ export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<Checker
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub(),
-  };
-}
-
-export function createMutantTestCoverage(overrides?: Partial<MutantTestCoverage>): MutantTestCoverage {
-  return {
-    coveredByTests: true,
-    mutant: factory.mutant(),
-    estimatedNetTime: 10,
-    ...overrides,
   };
 }
 

@@ -1,13 +1,13 @@
 import os from 'os';
 
-import { MatchedMutant } from '@stryker-mutator/api/report';
+import { MutantTestCoverage } from '@stryker-mutator/api/core';
 
 import { ProgressKeeper } from './progress-keeper';
 
 export class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference?: NodeJS.Timer;
 
-  public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: readonly MutantTestCoverage[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
     if (matchedMutants.length) {
       this.intervalReference = setInterval(() => this.render(), 10000);
