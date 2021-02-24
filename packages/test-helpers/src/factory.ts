@@ -7,20 +7,14 @@ import {
   strykerCoreSchema,
   WarningOptions,
   Mutant,
+  MutantTestCoverage,
+  MutantResult,
   MutantCoverage,
+  schema,
+  MutantStatus,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import {
-  MatchedMutant,
-  MutantStatus,
-  mutationTestReportSchema,
-  Reporter,
-  KilledMutantResult,
-  InvalidMutantResult,
-  UndetectedMutantResult,
-  TimeoutMutantResult,
-  IgnoredMutantResult,
-} from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
@@ -87,75 +81,31 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   preprocessorErrors: true,
 }));
 
-export const killedMutantResult = factoryMethod<KilledMutantResult>(() => ({
+export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.Killed, killedBy: ['45'], testsCompleted: 2 });
+export const timeoutMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.Timeout, statusReason: 'expected error' });
+export const invalidMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.RuntimeError, statusReason: 'expected error' });
+export const ignoredMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.Ignored, statusReason: 'Ignored by "fooMutator" in excludedMutations' });
+export const undetectedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.NoCoverage });
+
+export const mutantResult = factoryMethod<MutantResult>(() => ({
   id: '256',
   location: location(),
-  mutatedLines: '',
   mutatorName: '',
-  originalLines: '',
   range: [0, 0],
   replacement: '',
   fileName: 'file.js',
-  status: MutantStatus.Killed,
-  killedBy: '',
-  nrOfTestsRan: 2,
-}));
-export const timeoutMutantResult = factoryMethod<TimeoutMutantResult>(() => ({
-  id: '256',
-  location: location(),
-  mutatedLines: '',
-  mutatorName: '',
-  originalLines: '',
-  range: [0, 0],
-  replacement: '',
-  fileName: 'file.js',
-  status: MutantStatus.TimedOut,
-  nrOfTestsRan: 0,
+  status: MutantStatus.Survived,
+  coveredBy: ['1', '2'],
+  testsCompleted: 2,
+  static: false,
 }));
 
-export const invalidMutantResult = factoryMethod<InvalidMutantResult>(() => ({
-  id: '256',
-  location: location(),
-  mutatedLines: '',
-  mutatorName: '',
-  originalLines: '',
-  range: [0, 0],
-  replacement: '',
-  fileName: 'file.js',
-  status: MutantStatus.RuntimeError,
-  errorMessage: 'expected error',
-  nrOfTestsRan: 2,
-}));
-
-export const ignoredMutantResult = factoryMethod<IgnoredMutantResult>(() => ({
-  id: '256',
-  location: location(),
-  mutatedLines: '',
-  mutatorName: '',
-  originalLines: '',
-  range: [0, 0],
-  replacement: '',
-  fileName: 'file.js',
-  status: MutantStatus.Ignored,
-  ignoreReason: 'Ignored by "fooMutator" in excludedMutations',
-  nrOfTestsRan: 2,
-}));
-
-export const undetectedMutantResult = factoryMethod<UndetectedMutantResult>(() => ({
-  id: '256',
-  location: location(),
-  mutatedLines: '',
-  mutatorName: '',
-  originalLines: '',
-  range: [0, 0],
-  replacement: '',
-  fileName: 'file.js',
-  status: MutantStatus.NoCoverage,
-  testFilter: undefined,
-  nrOfTestsRan: 2,
-}));
-
-export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestReportSchema.MutantResult>(() => ({
+export const mutationTestReportSchemaMutantResult = factoryMethod<schema.MutantResult>(() => ({
   id: '256',
   location: location(),
   mutatedLines: '',
@@ -164,17 +114,27 @@ export const mutationTestReportSchemaMutantResult = factoryMethod<mutationTestRe
   range: [0, 0],
   replacement: '',
   sourceFilePath: '',
-  status: mutationTestReportSchema.MutantStatus.Killed,
+  status: MutantStatus.Killed,
   testsRan: [''],
 }));
 
-export const mutationTestReportSchemaFileResult = factoryMethod<mutationTestReportSchema.FileResult>(() => ({
+export const mutationTestReportSchemaFileResult = factoryMethod<schema.FileResult>(() => ({
   language: 'javascript',
   mutants: [mutationTestReportSchemaMutantResult()],
   source: 'export function add (a, b) { return a + b; }',
 }));
 
-export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutationTestReportSchema.MutationTestResult>(() => ({
+export const mutationTestReportSchemaTestFile = factoryMethod<schema.TestFile>(() => ({
+  tests: [],
+  source: '',
+}));
+
+export const mutationTestReportSchemaTestDefinition = factoryMethod<schema.TestDefinition>(() => ({
+  id: '4',
+  name: 'foo should be bar',
+}));
+
+export const mutationTestReportSchemaMutationTestResult = factoryMethod<schema.MutationTestResult>(() => ({
   files: {
     'fileA.js': mutationTestReportSchemaFileResult(),
   },
@@ -186,7 +146,7 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<mutation
 }));
 
 export const mutant = factoryMethod<Mutant>(() => ({
-  id: 42,
+  id: '42',
   fileName: 'file',
   mutatorName: 'foobarMutator',
   range: [0, 0],
@@ -369,14 +329,16 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
   return reporters;
 }
 
-export const matchedMutant = factoryMethod<MatchedMutant>(() => ({
-  testFilter: undefined,
+export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
+  coveredBy: undefined,
   fileName: '',
   id: '1',
   mutatorName: '',
-  runAllTests: false,
+  static: false,
   replacement: '',
-  timeSpentScopedTests: 0,
+  location: location(),
+  estimatedNetTime: 42,
+  range: [0, 1],
 }));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {

@@ -36,7 +36,7 @@ describe(Mutant.name, () => {
       mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
-        id: 2,
+        id: '2',
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
         ignoreReason: 'ignore',
@@ -55,7 +55,6 @@ describe(Mutant.name, () => {
 
       // Assert
       expect(actual.location).deep.eq({ start: { line: 0, column: 3 }, end: { line: 0, column: 8 } });
-      expect(actual.range).deep.eq([3, 8]);
     });
   });
 });

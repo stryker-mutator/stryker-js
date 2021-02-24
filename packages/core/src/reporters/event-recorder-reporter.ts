@@ -1,10 +1,10 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantResult, MutantTestCoverage, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 
 import { cleanFolder } from '../utils/file-utils';
 
@@ -49,7 +49,7 @@ export class EventRecorderReporter implements StrictReporter {
     this.work('onAllSourceFilesRead', files);
   }
 
-  public onAllMutantsMatchedWithTests(results: readonly MatchedMutant[]): void {
+  public onAllMutantsMatchedWithTests(results: MutantTestCoverage[]): void {
     this.work('onAllMutantsMatchedWithTests', results);
   }
 
@@ -57,7 +57,7 @@ export class EventRecorderReporter implements StrictReporter {
     this.work('onMutantTested', result);
   }
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
+  public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.work('onMutationTestReportReady', report);
   }
 
@@ -65,8 +65,8 @@ export class EventRecorderReporter implements StrictReporter {
     this.work('onAllMutantsTested', results);
   }
 
-  public async wrapUp(): Promise<void[]> {
+  public async wrapUp(): Promise<void> {
     await this.createBaseFolderTask;
-    return Promise.all(this.allWork);
+    await Promise.all(this.allWork);
   }
 }

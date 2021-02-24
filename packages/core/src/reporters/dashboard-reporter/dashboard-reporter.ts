@@ -1,7 +1,7 @@
-import { StrykerOptions, ReportType } from '@stryker-mutator/api/core';
+import { StrykerOptions, ReportType, schema } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { mutationTestReportSchema, Reporter } from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 import { calculateMetrics } from 'mutation-testing-metrics';
 
 import { CIProvider } from '../ci/provider';
@@ -27,7 +27,7 @@ export class DashboardReporter implements Reporter {
 
   private onGoingWork: Promise<void> | undefined;
 
-  public onMutationTestReportReady(result: mutationTestReportSchema.MutationTestResult): void {
+  public onMutationTestReportReady(result: schema.MutationTestResult): void {
     this.onGoingWork = (async () => {
       const { projectName, version, moduleName } = this.getContextFromEnvironment();
       if (projectName && version) {
@@ -44,7 +44,7 @@ export class DashboardReporter implements Reporter {
     await this.onGoingWork;
   }
 
-  private toReport(result: mutationTestReportSchema.MutationTestResult): Report {
+  private toReport(result: schema.MutationTestResult): Report {
     if (this.options.dashboard.reportType === ReportType.Full) {
       return result;
     } else {

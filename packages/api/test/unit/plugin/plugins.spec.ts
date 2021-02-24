@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { tokens, commonTokens, PluginKind, declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin';
 import { Logger } from '../../../logging';
-import { MutantResult } from '../../../report';
+import { MutantResult } from '../../../core';
 
 describe('plugins', () => {
   describe(declareClassPlugin.name, () => {

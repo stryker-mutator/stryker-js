@@ -1,20 +1,9 @@
 import path from 'path';
 
-import { Location, Position, StrykerOptions, Mutant } from '@stryker-mutator/api/core';
+import { Location, Position, StrykerOptions, Mutant, MutantTestCoverage, MutantResult, schema, MutantStatus } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import {
-  MutantResult,
-  MutantStatus,
-  mutationTestReportSchema,
-  Reporter,
-  TimeoutMutantResult,
-  InvalidMutantResult,
-  BaseMutantResult,
-  UndetectedMutantResult,
-  KilledMutantResult,
-  IgnoredMutantResult,
-} from '@stryker-mutator/api/report';
+import { Reporter } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMetrics } from 'mutation-testing-metrics';
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
@@ -23,8 +12,6 @@ import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/ap
 import { coreTokens } from '../di';
 import { InputFileCollection } from '../input/input-file-collection';
 import { setExitCode } from '../utils/object-utils';
-import { MutantTestCoverage } from '../mutants/find-mutant-test-coverage';
-import { mutatedLines, originalLines } from '../utils/mutant-utils';
 
 /**
  * A helper class to convert and report mutants that survived or get killed
@@ -44,63 +31,64 @@ export class MutationTestReportHelper {
   }
 
   public reportCheckFailed(mutant: Mutant, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
-    return this.reportOne<InvalidMutantResult>(mutant, {
+    return this.reportOne({
+      ...mutant,
       status: this.checkStatusToResultStatus(checkResult.status),
-      errorMessage: checkResult.reason,
+      statusReason: checkResult.reason,
     });
   }
 
-  public reportNoCoverage(mutant: Mutant): MutantResult {
-    return this.reportOne<UndetectedMutantResult>(mutant, { status: MutantStatus.NoCoverage, testFilter: [] });
+  public reportNoCoverage(mutant: MutantTestCoverage): MutantResult {
+    return this.reportOne({
+      ...mutant,
+      status: MutantStatus.NoCoverage,
+      coveredBy: [],
+    });
   }
 
-  public reportMutantIgnored(mutant: Mutant): MutantResult {
-    return this.reportOne<IgnoredMutantResult>(mutant, { status: MutantStatus.Ignored, ignoreReason: mutant.ignoreReason! });
+  public reportMutantIgnored(mutant: MutantTestCoverage): MutantResult {
+    return this.reportOne({
+      ...mutant,
+      status: MutantStatus.Ignored,
+      statusReason: mutant.ignoreReason,
+    });
   }
 
   public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult): MutantResult {
-    const { mutant, testFilter } = mutantWithTestCoverage;
     switch (result.status) {
       case MutantRunStatus.Error:
-        return this.reportOne<InvalidMutantResult>(mutant, { status: MutantStatus.RuntimeError, errorMessage: result.errorMessage });
+        return this.reportOne({
+          ...mutantWithTestCoverage,
+          status: MutantStatus.RuntimeError,
+          statusReason: result.errorMessage,
+        });
       case MutantRunStatus.Killed:
-        return this.reportOne<KilledMutantResult>(mutant, {
+        return this.reportOne({
+          ...mutantWithTestCoverage,
           status: MutantStatus.Killed,
-          nrOfTestsRan: result.nrOfTests,
-          killedBy: this.testNamesById.get(result.killedBy)!,
+          testsCompleted: result.nrOfTests,
+          killedBy: [this.testNamesById.get(result.killedBy)!],
         });
       case MutantRunStatus.Timeout:
-        return this.reportOne<TimeoutMutantResult>(mutant, { status: MutantStatus.TimedOut });
+        return this.reportOne({
+          ...mutantWithTestCoverage,
+          status: MutantStatus.Timeout,
+        });
       case MutantRunStatus.Survived:
-        return this.reportOne<UndetectedMutantResult>(mutant, {
+        return this.reportOne({
+          ...mutantWithTestCoverage,
           status: MutantStatus.Survived,
-          nrOfTestsRan: result.nrOfTests,
-          testFilter: testFilter ? this.dryRunResult.tests.filter((t) => testFilter.includes(t.id)).map((t) => t.name) : undefined,
+          testsCompleted: result.nrOfTests,
         });
     }
   }
 
-  private reportOne<T extends MutantResult>(mutant: Mutant, additionalFields: Omit<T, keyof BaseMutantResult> & { nrOfTestsRan?: number }) {
-    const originalFileTextContent = this.inputFiles.filesToMutate.find((fileToMutate) => fileToMutate.name === mutant.fileName)!.textContent;
-
-    const mutantResult = {
-      id: mutant.id.toString(),
-      location: mutant.location,
-      mutatedLines: mutatedLines(originalFileTextContent, mutant),
-      mutatorName: mutant.mutatorName,
-      originalLines: originalLines(originalFileTextContent, mutant),
-      range: mutant.range,
-      replacement: mutant.replacement,
-      fileName: mutant.fileName,
-      nrOfTestsRan: 0,
-      ...additionalFields,
-    } as MutantResult;
-    this.reporter.onMutantTested(mutantResult);
-
-    return mutantResult;
+  private reportOne(result: MutantResult): MutantResult {
+    this.reporter.onMutantTested(result);
+    return result;
   }
 
-  private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus.CompileError {
+  private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus {
     switch (status) {
       case CheckStatus.CompileError:
         return MutantStatus.CompileError;
@@ -114,7 +102,7 @@ export class MutationTestReportHelper {
     this.determineExitCode(report);
   }
 
-  private determineExitCode(report: mutationTestReportSchema.MutationTestResult) {
+  private determineExitCode(report: schema.MutationTestResult) {
     const { metrics } = calculateMetrics(report.files);
     const breaking = this.options.thresholds.break;
     const formattedScore = metrics.mutationScore.toFixed(2);
@@ -133,7 +121,7 @@ export class MutationTestReportHelper {
     }
   }
 
-  private mutationTestReport(results: readonly MutantResult[]): mutationTestReportSchema.MutationTestResult {
+  private mutationTestReport(results: readonly MutantResult[]): schema.MutationTestResult {
     return {
       files: this.toFileResults(results),
       schemaVersion: '1.0',
@@ -141,8 +129,8 @@ export class MutationTestReportHelper {
     };
   }
 
-  private toFileResults(results: readonly MutantResult[]): mutationTestReportSchema.FileResultDictionary {
-    const resultDictionary: mutationTestReportSchema.FileResultDictionary = Object.create(null);
+  private toFileResults(results: readonly MutantResult[]): schema.FileResultDictionary {
+    const resultDictionary: schema.FileResultDictionary = Object.create(null);
     results.forEach((mutantResult) => {
       const fileResult = resultDictionary[mutantResult.fileName];
       if (fileResult) {
@@ -180,68 +168,27 @@ export class MutationTestReportHelper {
     }
   }
 
-  private toMutantResult(mutantResult: MutantResult): mutationTestReportSchema.MutantResult {
+  private toMutantResult(mutantResult: MutantResult): schema.MutantResult {
     return {
       id: mutantResult.id,
       location: this.toLocation(mutantResult.location),
       mutatorName: mutantResult.mutatorName,
       replacement: mutantResult.replacement,
-      status: this.toStatus(mutantResult.status),
-      description: this.describe(mutantResult),
+      status: mutantResult.status,
     };
   }
 
-  private toLocation(location: Location): mutationTestReportSchema.Location {
+  private toLocation(location: Location): schema.Location {
     return {
       end: this.toPosition(location.end),
       start: this.toPosition(location.start),
     };
   }
 
-  private toPosition(pos: Position): mutationTestReportSchema.Position {
+  private toPosition(pos: Position): schema.Position {
     return {
       column: pos.column + 1, // convert from 0-based to 1-based
       line: pos.line + 1,
     };
-  }
-
-  private toStatus(status: MutantStatus): mutationTestReportSchema.MutantStatus {
-    switch (status) {
-      case MutantStatus.Killed:
-        return mutationTestReportSchema.MutantStatus.Killed;
-      case MutantStatus.NoCoverage:
-        return mutationTestReportSchema.MutantStatus.NoCoverage;
-      case MutantStatus.RuntimeError:
-        return mutationTestReportSchema.MutantStatus.RuntimeError;
-      case MutantStatus.Survived:
-        return mutationTestReportSchema.MutantStatus.Survived;
-      case MutantStatus.TimedOut:
-        return mutationTestReportSchema.MutantStatus.Timeout;
-      case MutantStatus.CompileError:
-        return mutationTestReportSchema.MutantStatus.CompileError;
-      case MutantStatus.Ignored:
-        return mutationTestReportSchema.MutantStatus.Ignored;
-      default:
-        this.logUnsupportedMutantStatus(status);
-        return mutationTestReportSchema.MutantStatus.RuntimeError;
-    }
-  }
-
-  private describe(mutantResult: MutantResult): string | undefined {
-    switch (mutantResult.status) {
-      case MutantStatus.Ignored:
-        return `Ignore reason: ${mutantResult.ignoreReason}`;
-      case MutantStatus.Killed:
-        return `Killed by: ${mutantResult.killedBy}`;
-      case MutantStatus.CompileError:
-      case MutantStatus.RuntimeError:
-        return `Error message: ${mutantResult.errorMessage}`;
-      default:
-        return undefined;
-    }
-  }
-
-  private logUnsupportedMutantStatus(status: never) {
-    this.log.warn('Unable to convert "%s" to a MutantStatus', status);
   }
 }

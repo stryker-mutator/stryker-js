@@ -29,7 +29,7 @@ export class Mutant {
   public toApiMutant(): ApiMutant {
     return {
       fileName: this.fileName,
-      id: this.id,
+      id: this.id.toString(),
       location: toApiLocation(this.original.loc!),
       mutatorName: this.mutatorName,
       range: [this.original.start!, this.original.end!],

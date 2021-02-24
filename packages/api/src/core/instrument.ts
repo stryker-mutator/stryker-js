@@ -12,7 +12,7 @@ export const INSTRUMENTER_CONSTANTS = Object.freeze({
 } as const);
 
 export interface InstrumenterContext {
-  activeMutant?: number;
+  activeMutant?: string;
   currentTestId?: string;
   mutantCoverage?: MutantCoverage;
 }
