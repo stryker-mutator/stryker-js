@@ -1,6 +1,6 @@
 ---
 title: Create a plugin
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/plugins.md
+custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/create-a-plugin.md
 ---
 
 You can extend Stryker with the following plugin kinds:
