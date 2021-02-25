@@ -178,11 +178,11 @@ export class FooTestRunner implements TestRunner {
 export function fooTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
     .provideValue(pluginTokens.processEnv, process.env)
-    .provideValue(pluginTokens.fooTestRunnerVersion, require('jest/package.json').version as string)
+    .provideValue(pluginTokens.fooTestRunnerVersion, require('foo/package.json').version as string)
     .provideClass(pluginTokens.configLoader, FooTestRunnerConfigFileLoader)
-    .injectClass(JestTestRunner);
+    .injectClass(FooTestRunner);
 }
-jestTestRunnerFactory.inject = [commonTokens.injector] as const;
+fooTestRunnerFactory.inject = [commonTokens.injector] as const;
 ```
 
 In this example, you can see that some tokens are loaded from `commonTokens` and some are loaded from `pluginTokens`.
