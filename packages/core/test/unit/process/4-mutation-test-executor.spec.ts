@@ -6,7 +6,7 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
@@ -86,8 +86,8 @@ describe(MutationTestExecutor.name, () => {
 
   it('should short circuit ignored mutants (not check them or run them)', async () => {
     // Arrange
-    mutants.push(factory.mutantTestCoverage({ id: '1', ignoreReason: '1 is ignored' }));
-    mutants.push(factory.mutantTestCoverage({ id: '2', ignoreReason: '2 is ignored' }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', status: MutantStatus.Ignored, statusReason: '1 is ignored' }));
+    mutants.push(factory.mutantTestCoverage({ id: '2', status: MutantStatus.Ignored, statusReason: '2 is ignored' }));
 
     // Act
     const actualResults = await sut.execute();
@@ -177,13 +177,13 @@ describe(MutationTestExecutor.name, () => {
   it('should report an ignored mutant as `Ignored`', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', ignoreReason: '1 is ignored' }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', status: MutantStatus.Ignored, statusReason: '1 is ignored' }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantIgnored).calledWithExactly(mutants[0]);
+    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
   });
 
   it('should report an uncovered mutant with `NoCoverage`', async () => {
@@ -195,7 +195,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportNoCoverage).calledWithExactly(mutants[0]);
+    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
   });
 
   it('should report non-passed check results as "checkFailed"', async () => {

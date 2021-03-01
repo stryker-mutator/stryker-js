@@ -1,5 +1,5 @@
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, CoveragePerTestId, MutantTestCoverage, MutantStatus } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -25,13 +25,14 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
 
   const mutantCoverage = mutants.map(
     (mutant): MutantTestCoverage => {
-      if (mutant.ignoreReason !== undefined) {
+      if (mutant.status) {
         return {
           ...mutant,
           static: false,
           estimatedNetTime: 0,
         };
       } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
+        // When there is static coverage for this mutant, it is a static mutant.
         return {
           ...mutant,
           estimatedNetTime: timeSpentAllTests,
@@ -39,6 +40,7 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
           static: true,
         };
       } else {
+        // If no static coverage, but there is test coverage, it is a non-static, covered mutant
         const tests = testsByMutantId.get(mutant.id);
         if (tests && tests.size > 0) {
           return {
@@ -48,8 +50,10 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
             static: false,
           };
         } else {
+          // Otherwise it is has no coverage
           return {
             ...mutant,
+            status: MutantStatus.NoCoverage,
             estimatedNetTime: 0,
             coveredBy: [],
             static: false,

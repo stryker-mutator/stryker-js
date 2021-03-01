@@ -2,13 +2,13 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
 import { findMutantTestCoverage as sut } from '../../../src/mutants/find-mutant-test-coverage';
 import { coreTokens } from '../../../src/di';
 
-describe(sut.name, () => {
+describe.only(sut.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe(sut.name, () => {
   }
 
   it('should not match ignored mutants to any tests', () => {
-    const mutant = factory.mutant({ id: '2', ignoreReason: 'foo should ignore' });
+    const mutant = factory.mutant({ id: '2', status: MutantStatus.Ignored, statusReason: 'foo should ignore' });
     const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
 
     // Act
@@ -35,8 +35,20 @@ describe(sut.name, () => {
     expect(result).deep.eq(expected);
   });
 
+  it('should mark mutant as "NoCoverage" when there is coverage data, but none for the specific mutant', () => {
+    const mutant = factory.mutant({ id: '3' });
+    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
+
+    // Act
+    const result = act(dryRunResult, [mutant]);
+
+    // Assert
+    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, status: MutantStatus.NoCoverage, static: false, coveredBy: [] }];
+    expect(result).deep.eq(expected);
+  });
+
   describe('without mutant coverage data', () => {
-    it('should disable test filtering', () => {
+    it('should mark mutants as "static"', () => {
       // Arrange
       const mutant1 = factory.mutant({ id: '1' });
       const mutant2 = factory.mutant({ id: '2' });

@@ -9,7 +9,7 @@ export { MutantStatus } from 'mutation-testing-report-schema';
 /**
  * Represents a mutant in its initial state.
  */
-export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'mutatorName' | 'replacement'> {
+export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'mutatorName' | 'replacement' | 'statusReason'> {
   /**
    * The file name from which this mutant originated
    */
@@ -20,13 +20,13 @@ export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'm
    */
   range: Range;
   /**
-   * If the mutant was ignored during generation, the reason for ignoring it, otherwise `undefined`
-   */
-  ignoreReason?: string;
-  /**
    * Actual mutation that has been applied.
    */
   replacement: string;
+  /**
+   * The status if a mutant if known. This should be undefined for a mutant that still needs testing.
+   */
+  status?: schema.MutantStatus;
 }
 
 /**
@@ -40,4 +40,4 @@ export type MutantTestCoverage = Mutant &
 /**
  * Represents a mutant in its final state, ready to be reported.
  */
-export type MutantResult = Omit<Mutant, 'ignoreReason'> & schema.MutantResult;
+export type MutantResult = Mutant & schema.MutantResult;

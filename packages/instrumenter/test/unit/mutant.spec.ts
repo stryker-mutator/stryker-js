@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 
-import { Mutant as MutantApi } from '@stryker-mutator/api/core';
+import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
 
 import { expect } from 'chai';
 
@@ -26,7 +26,7 @@ describe(Mutant.name, () => {
   });
 
   describe(Mutant.prototype.toApiMutant.name, () => {
-    it('should map all properties as expected', () => {
+    it('should map all properties as expected for an ignored mutant', () => {
       const mutant = new Mutant(2, 'file.js', {
         original: types.stringLiteral(''),
         replacement: types.stringLiteral('Stryker was here!'),
@@ -39,7 +39,26 @@ describe(Mutant.name, () => {
         id: '2',
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
-        ignoreReason: 'ignore',
+        statusReason: 'ignore',
+        status: MutantStatus.Ignored,
+      };
+      expect(mutant.toApiMutant()).deep.include(expected);
+    });
+
+    it('should map all properties as expected for a placed mutant', () => {
+      const mutant = new Mutant(2, 'file.js', {
+        original: types.stringLiteral(''),
+        replacement: types.stringLiteral('Stryker was here!'),
+        mutatorName: 'fooMutator',
+      });
+      mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
+      const expected: Partial<MutantApi> = {
+        fileName: 'file.js',
+        id: '2',
+        mutatorName: 'fooMutator',
+        replacement: '"Stryker was here!"',
+        statusReason: undefined,
+        status: undefined,
       };
       expect(mutant.toApiMutant()).deep.include(expected);
     });

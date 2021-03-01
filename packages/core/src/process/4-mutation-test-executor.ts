@@ -1,7 +1,7 @@
 import { from, partition, merge, Observable } from 'rxjs';
 import { toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantTestCoverage, MutantResult, StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantTestCoverage, MutantResult, StrykerOptions, MutantStatus } from '@stryker-mutator/api/core';
 import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
@@ -65,17 +65,16 @@ export class MutationTestExecutor {
   }
 
   private executeIgnore(input$: Observable<MutantTestCoverage>) {
-    const [notIgnoredMutant$, ignoredMutant$] = partition(input$.pipe(shareReplay()), (mutant) => mutant.ignoreReason === undefined);
-    const ignoredResult$ = ignoredMutant$.pipe(map((mutant) => this.mutationTestReportHelper.reportMutantIgnored(mutant)));
+    const [ignoredMutant$, notIgnoredMutant$] = partition(input$.pipe(shareReplay()), (mutant) => mutant.status === MutantStatus.Ignored);
+    const ignoredResult$ = ignoredMutant$.pipe(map((mutant) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.Ignored)));
     return { ignoredResult$, notIgnoredMutant$ };
   }
 
   private executeNoCoverage(input$: Observable<MutantTestCoverage>) {
-    const [coveredMutant$, noCoverageMatchedMutant$] = partition(
-      input$.pipe(shareReplay()),
-      (mutant) => !!mutant.static || mutant.coveredBy!.length > 0
+    const [noCoverageMatchedMutant$, coveredMutant$] = partition(input$.pipe(shareReplay()), (mutant) => mutant.status === MutantStatus.NoCoverage);
+    const noCoverageResult$ = noCoverageMatchedMutant$.pipe(
+      map((mutant) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.NoCoverage))
     );
-    const noCoverageResult$ = noCoverageMatchedMutant$.pipe(map((mutant) => this.mutationTestReportHelper.reportNoCoverage(mutant)));
     return { noCoverageResult$, coveredMutant$ };
   }
 

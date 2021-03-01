@@ -38,19 +38,10 @@ export class MutationTestReportHelper {
     });
   }
 
-  public reportNoCoverage(mutant: MutantTestCoverage): MutantResult {
+  public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
     return this.reportOne({
       ...mutant,
-      status: MutantStatus.NoCoverage,
-      coveredBy: [],
-    });
-  }
-
-  public reportMutantIgnored(mutant: MutantTestCoverage): MutantResult {
-    return this.reportOne({
-      ...mutant,
-      status: MutantStatus.Ignored,
-      statusReason: mutant.ignoreReason,
+      status,
     });
   }
 
