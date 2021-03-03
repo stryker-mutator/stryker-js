@@ -86,11 +86,6 @@ describe('instrumenter integration', () => {
           {
             filename: fullFileName,
             start: { line: 19, column: 2 },
-            end: { line: 19, column: 75 },
-          },
-          {
-            filename: fullFileName,
-            start: { line: 20, column: 2 },
             end: { line: 20, column: 75 },
           },
         ],

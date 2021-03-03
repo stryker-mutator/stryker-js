@@ -1,6 +1,6 @@
 import os from 'os';
 
-import * as path from 'path';
+import path from 'path';
 
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';

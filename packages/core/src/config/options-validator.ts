@@ -104,7 +104,7 @@ export class OptionsValidator {
     options.mutator.specificMutants = options.mutate
       .filter((fileToMutate) => RegExp('(:\\d+){4}$').exec(fileToMutate))
       .map((fileToMutate) => {
-        const fileName = fileToMutate.replace(RegExp('(:\\d+){4}$'), '');
+        const fileName = fileToMutate.replace(/(:\d+){4}/, '');
         const [matchedItems] = RegExp('(:\\d+){4}$').exec(fileToMutate)!;
         const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
 

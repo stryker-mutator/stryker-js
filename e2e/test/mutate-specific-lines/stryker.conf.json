@@ -7,9 +7,6 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
-  "checkers": [
-    "typescript"
-  ],
   "coverageAnalysis": "off",
   "reporters": [
     "event-recorder",

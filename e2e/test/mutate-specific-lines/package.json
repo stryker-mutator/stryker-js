@@ -1,13 +1,10 @@
 {
-  "name": "specific-mutants",
+  "name": "mutate-specific-lines",
   "description": "A test project for only running specific mutants, rather than all mutants",
   "scripts": {
-    "test": "stryker run -m src/index.ts:2:18:2:25,src/index.ts:3:18:3:25",
+    "test": "stryker run -m src/index.js:3:18:3:26,src/index.js:4:18:4:25",
     "test:unit": "jest",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
-  },
-  "dependencies": {
-    "azure-storage": "~2.10.3"
   },
   "devDependencies": {
     "@types/jest": "~25.2.1",

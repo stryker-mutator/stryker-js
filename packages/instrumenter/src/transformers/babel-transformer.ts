@@ -27,10 +27,10 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
           !options.specificMutants.find(
             (mutant) =>
               mutant.filename == originFileName &&
-              path.node.loc?.start.line === mutant.start.line &&
-              path.node.loc?.start.column === mutant.start.column &&
-              path.node.loc?.end.line === mutant.end.line &&
-              path.node.loc?.end.column === mutant.end.column
+              path.node.loc!.start.line >= mutant.start.line &&
+              path.node.loc!.start.column >= mutant.start.column &&
+              path.node.loc!.end.line <= mutant.end.line &&
+              path.node.loc!.end.column <= mutant.end.column
           )
         )
           return;

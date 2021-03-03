@@ -119,7 +119,7 @@ export class InputFileResolver {
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
-    if (RegExp('(:\\d+){4}$').exec(globbingExpression)) {
+    if (RegExp(/(:\d+){4}/).exec(globbingExpression)) {
       if (hasMagic(globbingExpression)) {
         throw new StrykerError('Do not use glob patterns with specific mutants on the glob pattern');
       }
