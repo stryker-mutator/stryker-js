@@ -20,13 +20,13 @@ cd my-project
 ## 2 Install
 
 The easiest way to get started with Stryker is by installing the stryker-cli globally.
-It is a small package which forwards commands to your local stryker instance.
+It is a small package which forwards commands to your local Stryker instance.
 
 ```bash
 npm install -g stryker-cli
 ```
 
-Optionally, you could also install stryker directly yourself.
+Optionally, you could also install Stryker directly yourself.
 
 ```bash
 npm install --save-dev @stryker-mutator/core
@@ -38,13 +38,13 @@ If you choose to not install the stryker-cli, use `npx stryker` (after installin
 
 ## 3 Configure
 
-Run this command the configure stryker.
+Run this command to configure Stryker.
 
 ```bash
 stryker init
 ```
 
-If you're asked to install stryker, choose **Yes**. Follow the questionnaire.
+If you're asked to install Stryker, choose **Yes**. Follow the questionnaire.
 
 Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker/issues/new).
 
@@ -56,7 +56,7 @@ For more information on what these options mean, take a look at the [Stryker rea
 
 ## 4 Let's kill some mutants
 
-Run stryker to mutation test your project
+Run Stryker to mutation test your project
 
 ```bash
 stryker run

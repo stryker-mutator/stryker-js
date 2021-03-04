@@ -31,10 +31,10 @@
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
     "@babel/core": "~7.12.3",
-    "@babel/generator": "~7.12.1",
+    "@babel/generator": "~7.13.0",
     "@babel/parser": "~7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "~7.12.1 ",
+    "@babel/plugin-proposal-decorators": "~7.13.5 ",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/preset-typescript": "~7.12.1 ",
     "@stryker-mutator/api": "4.4.1",
