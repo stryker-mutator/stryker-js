@@ -165,7 +165,7 @@ describe(MutationTestExecutor.name, () => {
   it('should not run mutants that are uncovered by tests', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false, status: MutantStatus.NoCoverage }));
 
     // Act
     await sut.execute();
@@ -189,7 +189,7 @@ describe(MutationTestExecutor.name, () => {
   it('should report an uncovered mutant with `NoCoverage`', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, status: MutantStatus.NoCoverage }));
 
     // Act
     await sut.execute();

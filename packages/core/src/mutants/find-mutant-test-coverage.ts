@@ -1,5 +1,5 @@
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId, MutantTestCoverage, MutantStatus } from '@stryker-mutator/api/core';
+import { Mutant, CoveragePerTestId, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -53,7 +53,6 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
           // Otherwise it is has no coverage
           return {
             ...mutant,
-            status: MutantStatus.NoCoverage,
             estimatedNetTime: 0,
             coveredBy: [],
             static: false,

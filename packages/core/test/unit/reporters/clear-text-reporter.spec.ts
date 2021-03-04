@@ -18,65 +18,13 @@ describe(ClearTextReporter.name, () => {
     sut = testInjector.injector.injectClass(ClearTextReporter);
   });
 
-  describe('onMutationTestReportReady', () => {
-    it('should report the clear text table with correct values', () => {
-      testInjector.options.coverageAnalysis = 'all';
-      sut = testInjector.injector.injectClass(ClearTextReporter);
-
-      sut.onMutationTestReportReady({
-        files: {
-          'src/file.js': {
-            language: 'js',
-            mutants: [
-              {
-                id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
-                mutatorName: 'Block',
-                replacement: '{}',
-                status: MutantStatus.Killed,
-              },
-            ],
-            source: 'console.log("hello world!")',
-          },
-        },
-        schemaVersion: '1.0',
-        thresholds: factory.mutationScoreThresholds({}),
-      });
-
-      const serializedTable: string = stdoutStub.getCall(0).args[0];
-      const rows = serializedTable.split(os.EOL);
-      expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        '',
-      ]);
-    });
-
-    it('should not color score if `allowConsoleColors` config is false', () => {
-      testInjector.options.allowConsoleColors = false;
-      chalk.level = 1;
-
-      sut = testInjector.injector.injectClass(ClearTextReporter);
-      sut.onMutationTestReportReady({
-        files: {},
-        schemaVersion: '1.0',
-        thresholds: factory.mutationScoreThresholds({}),
-      });
-
-      expect(chalk.level).to.eq(0);
-    });
-  });
-
   describe(ClearTextReporter.prototype.onMutationTestReportReady.name, () => {
     let report: schema.MutationTestResult;
     let mutant: schema.MutantResult;
 
     beforeEach(() => {
       mutant = factory.mutationTestReportSchemaMutantResult({
+        id: '1',
         location: { start: { line: 2, column: 1 }, end: { line: 2, column: 4 } },
         replacement: 'bar',
         mutatorName: 'Math',
@@ -102,8 +50,59 @@ describe(ClearTextReporter.name, () => {
       });
     });
 
+    it('should report the clear text table with correct values', () => {
+      testInjector.options.coverageAnalysis = 'all';
+
+      sut.onMutationTestReportReady({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Killed,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+      expect(rows).to.deep.eq([
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        '',
+      ]);
+    });
+
+    it('should not color score if `allowConsoleColors` config is false', () => {
+      testInjector.options.allowConsoleColors = false;
+      chalk.level = 1;
+      sut = testInjector.injector.injectClass(ClearTextReporter); // recreate, `allowConsoleColors` is read in constructor
+
+      sut.onMutationTestReportReady({
+        files: {},
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      expect(chalk.level).to.eq(0);
+    });
+
     it('should report a killed mutant to debug', async () => {
       mutant.status = MutantStatus.Killed;
+      mutant.killedBy = ['1'];
       sut.onMutationTestReportReady(report);
       expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Killed] Math'));
       expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
@@ -132,13 +131,13 @@ describe(ClearTextReporter.name, () => {
     it('should report a Survived mutant to stdout', async () => {
       mutant.status = MutantStatus.Survived;
       sut.onMutationTestReportReady(report);
-      expect(stdoutStub).calledWithMatch(sinon.match('42. [Survived] Math'));
+      expect(stdoutStub).calledWithMatch(sinon.match('1. [Survived] Math'));
     });
 
     it('should report a Timeout mutant to stdout', async () => {
       mutant.status = MutantStatus.Timeout;
       sut.onMutationTestReportReady(report);
-      expect(testInjector.logger.debug).calledWithMatch(sinon.match('42. [TimedOut] Math'));
+      expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Timeout] Math'));
     });
 
     it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {
@@ -158,8 +157,8 @@ describe(ClearTextReporter.name, () => {
       sut.onMutationTestReportReady(report);
       expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
       expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
-      expect(stdoutStub).calledWithExactly(`    baz should be qux${os.EOL}`);
-      expect(stdoutStub).not.calledWithMatch(sinon.match('quux should be corge'));
+      expect(stdoutStub).calledWithExactly(`    bar should be baz${os.EOL}`);
+      expect(stdoutStub).not.calledWithMatch(sinon.match('baz should be qux'));
       expect(stdoutStub).calledWithExactly(`  and 1 more test!${os.EOL}`);
     });
 
@@ -203,12 +202,11 @@ describe(ClearTextReporter.name, () => {
       testInjector.options.allowConsoleColors = false;
       mutant.status = MutantStatus.Survived;
       mutant.location.start = { line: 4, column: 6 };
-      sut.onMutationTestReportReady(report);
       // Recreate, color setting is set in constructor
       sut = testInjector.injector.injectClass(ClearTextReporter);
       sut.onMutationTestReportReady(report);
 
-      expect(testInjector.logger.debug).calledWithMatch(sinon.match('foo.js:4:6'));
+      expect(stdoutStub).calledWithMatch(sinon.match('foo.js:4:6'));
     });
   });
 });

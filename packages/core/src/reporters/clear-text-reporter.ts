@@ -48,8 +48,7 @@ export class ClearTextReporter implements Reporter {
 
     const reportMutants = (metrics: MetricsResult[]) => {
       metrics.forEach((child) => {
-        const file = child.file;
-        file?.mutants.forEach((result) => {
+        child.file?.mutants.forEach((result) => {
           totalTests += result.testsCompleted ?? 0;
           switch (result.status) {
             case MutantStatus.Killed:
@@ -97,8 +96,8 @@ export class ClearTextReporter implements Reporter {
       } else if (result.coveredByTests) {
         this.logExecutedTests(result.coveredByTests, logImplementation);
       }
-    } else if (result.status === MutantStatus.Killed) {
-      logImplementation(`Killed by: ${result.killedBy}`);
+    } else if (result.status === MutantStatus.Killed && result.killedByTests && result.killedByTests.length) {
+      logImplementation(`Killed by: ${result.killedByTests[0].name}`);
     } else if (result.status === MutantStatus.RuntimeError || result.status === MutantStatus.CompileError) {
       logImplementation(`Error message: ${result.statusReason}`);
     }

@@ -3,9 +3,12 @@ import { Reporter } from '@stryker-mutator/api/report';
 
 import { Timer } from '../utils/timer';
 
+function mutantHasCoverage(mutant: Pick<MutantResult, 'coveredBy' | 'static'>) {
+  return !!mutant.static || !!mutant.coveredBy?.length;
+}
+
 export abstract class ProgressKeeper implements Reporter {
   private timer!: Timer;
-  private mutantIdsWithoutCoverage!: string[];
   protected progress = {
     survived: 0,
     timedOut: 0,
@@ -15,12 +18,11 @@ export abstract class ProgressKeeper implements Reporter {
 
   public onAllMutantsMatchedWithTests(mutants: readonly MutantTestCoverage[]): void {
     this.timer = new Timer();
-    this.mutantIdsWithoutCoverage = mutants.filter((m) => !m.static && !m.coveredBy?.length).map((m) => m.id);
-    this.progress.total = mutants.length - this.mutantIdsWithoutCoverage.length;
+    this.progress.total = mutants.filter(mutantHasCoverage).length;
   }
 
   public onMutantTested(result: MutantResult): void {
-    if (!this.mutantIdsWithoutCoverage.some((id) => result.id === id)) {
+    if (mutantHasCoverage(result)) {
       this.progress.tested++;
     }
     if (result.status === MutantStatus.Survived) {
