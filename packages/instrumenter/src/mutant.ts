@@ -18,7 +18,7 @@ export class Mutant {
   public readonly mutatorName: string;
   public readonly ignoreReason: string | undefined;
 
-  constructor(public readonly id: number, public readonly fileName: string, specs: NamedNodeMutation) {
+  constructor(public readonly id: string, public readonly fileName: string, specs: NamedNodeMutation) {
     this.original = specs.original;
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
@@ -29,7 +29,7 @@ export class Mutant {
   public toApiMutant(): ApiMutant {
     return {
       fileName: this.fileName,
-      id: this.id.toString(),
+      id: this.id,
       location: toApiLocation(this.original.loc!),
       mutatorName: this.mutatorName,
       range: [this.original.start!, this.original.end!],

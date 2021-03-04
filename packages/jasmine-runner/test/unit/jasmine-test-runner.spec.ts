@@ -72,7 +72,7 @@ describe(JasmineTestRunner.name, () => {
 
     it('should set the activeMutant on global scope', async () => {
       actEmptyMutantRun(undefined, factory.mutant({ id: '23' }));
-      expect(global.__stryker2__?.activeMutant).eq(23);
+      expect(global.__stryker2__?.activeMutant).eq('23');
     });
 
     function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {

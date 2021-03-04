@@ -6,7 +6,7 @@ exports[`instrumenter integration should be able to instrument super calls 1`] =
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -57,7 +57,7 @@ function stryMutAct_9fa48(id) {
 
 export class InjectionError extends TypedInjectError {
   constructor(public readonly path: InjectionTarget[], public readonly cause: Error) {
-    super(stryMutAct_9fa48(0) ? \`\` : (stryCov_9fa48(0), \`Could not \${describeInjectAction(path[0])} \${path.map(name).join(stryMutAct_9fa48(1) ? \\"\\" : (stryCov_9fa48(1), ' -> '))}. Cause: \${cause.message}\`));
+    super(stryMutAct_9fa48(\\"0\\") ? \`\` : (stryCov_9fa48(\\"0\\"), \`Could not \${describeInjectAction(path[0])} \${path.map(name).join(stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), ' -> '))}. Cause: \${cause.message}\`));
   }
 
 }"

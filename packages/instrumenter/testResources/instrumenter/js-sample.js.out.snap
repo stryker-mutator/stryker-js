@@ -6,7 +6,7 @@ exports[`instrumenter integration should be able to instrument a simple js file 
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -56,11 +56,11 @@ function stryMutAct_9fa48(id) {
 }
 
 function add(a, b) {
-  if (stryMutAct_9fa48(0)) {
+  if (stryMutAct_9fa48(\\"0\\")) {
     {}
   } else {
-    stryCov_9fa48(0);
-    return stryMutAct_9fa48(1) ? a - b : (stryCov_9fa48(1), a + b);
+    stryCov_9fa48(\\"0\\");
+    return stryMutAct_9fa48(\\"1\\") ? a - b : (stryCov_9fa48(\\"1\\"), a + b);
   }
 }
 

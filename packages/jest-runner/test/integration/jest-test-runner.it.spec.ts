@@ -156,7 +156,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
       });
-      mutantRunOptions.activeMutant.id = '1';
+      mutantRunOptions.activeMutant.id = '11';
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
@@ -166,7 +166,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
+      process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
@@ -175,7 +175,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Act
       const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
-      mutantRunOptions.activeMutant.id = '0';
+      mutantRunOptions.activeMutant.id = '10';
       const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       // Assert

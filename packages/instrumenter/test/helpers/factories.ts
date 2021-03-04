@@ -66,7 +66,7 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createMutant(overrides?: Partial<Mutant>): Mutant {
-  return new Mutant(overrides?.id ?? 1, overrides?.fileName ?? 'example.js', {
+  return new Mutant(overrides?.id ?? '1', overrides?.fileName ?? 'example.js', {
     mutatorName: overrides?.mutatorName ?? 'fooMutator',
     original: overrides?.original ?? types.identifier('foo'),
     replacement: overrides?.replacement ?? types.identifier('bar'),
