@@ -17,7 +17,7 @@ import { setExitCode } from '../utils/object-utils';
  * A helper class to convert and report mutants that survived or get killed
  */
 export class MutationTestReportHelper {
-  private readonly testNamesById: Map<string, string>;
+  public readonly testNamesById: Map<string, string>;
 
   public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
   constructor(
@@ -45,29 +45,30 @@ export class MutationTestReportHelper {
     });
   }
 
-  public reportMutantRunResult(mutantWithTestCoverage: MutantTestCoverage, result: MutantRunResult): MutantResult {
+  public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
     switch (result.status) {
       case MutantRunStatus.Error:
         return this.reportOne({
-          ...mutantWithTestCoverage,
+          ...mutant,
           status: MutantStatus.RuntimeError,
           statusReason: result.errorMessage,
         });
       case MutantRunStatus.Killed:
         return this.reportOne({
-          ...mutantWithTestCoverage,
+          ...mutant,
           status: MutantStatus.Killed,
           testsCompleted: result.nrOfTests,
-          killedBy: [this.testNamesById.get(result.killedBy)!],
+          killedBy: [result.killedBy],
+          statusReason: result.failureMessage,
         });
       case MutantRunStatus.Timeout:
         return this.reportOne({
-          ...mutantWithTestCoverage,
+          ...mutant,
           status: MutantStatus.Timeout,
         });
       case MutantRunStatus.Survived:
         return this.reportOne({
-          ...mutantWithTestCoverage,
+          ...mutant,
           status: MutantStatus.Survived,
           testsCompleted: result.nrOfTests,
         });

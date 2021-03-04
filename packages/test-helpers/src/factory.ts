@@ -85,11 +85,11 @@ export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'statu
   mutantResult({ ...overrides, status: MutantStatus.Killed, killedBy: ['45'], testsCompleted: 2 });
 export const timeoutMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.Timeout, statusReason: 'expected error' });
-export const invalidMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+export const runtimeErrorMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.RuntimeError, statusReason: 'expected error' });
 export const ignoredMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.Ignored, statusReason: 'Ignored by "fooMutator" in excludedMutations' });
-export const undetectedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+export const noCoverageMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.NoCoverage });
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
