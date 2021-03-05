@@ -60,6 +60,7 @@ export const jestTestRunnerFactory = createJestTestRunnerFactory();
 export class JestTestRunner implements TestRunner {
   private readonly jestConfig: jest.Config.InitialOptions;
   private readonly enableFindRelatedTests: boolean;
+  private readonly jestRunnerOptions: JestRunnerOptionsWithStrykerOptions;
 
   public static inject = tokens(
     commonTokens.logger,
@@ -78,13 +79,13 @@ export class JestTestRunner implements TestRunner {
     configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
-    const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
+    this.jestRunnerOptions = options as JestRunnerOptionsWithStrykerOptions;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, jestOptions.jest || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestRunnerOptions.jest || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
+    this.enableFindRelatedTests = this.jestRunnerOptions.jest.enableFindRelatedTests;
 
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
@@ -109,6 +110,7 @@ export class JestTestRunner implements TestRunner {
       const { dryRunResult, jestResult } = await this.run({
         jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
         projectRoot: process.cwd(),
+        jestConfigPath: this.jestRunnerOptions.jest?.configFile,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
         const errorMessage = verifyAllTestFilesHaveCoverage(jestResult, fileNamesWithMutantCoverage);
@@ -136,7 +138,13 @@ export class JestTestRunner implements TestRunner {
     }
     process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
     try {
-      const { dryRunResult } = await this.run({ fileNameUnderTest, jestConfig: this.jestConfig, projectRoot: process.cwd(), testNamePattern });
+      const { dryRunResult } = await this.run({
+        fileNameUnderTest,
+        jestConfig: this.jestConfig,
+        projectRoot: process.cwd(),
+        testNamePattern,
+        jestConfigPath: this.jestRunnerOptions.jest?.configFile,
+      });
       return toMutantRunResult(dryRunResult);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];

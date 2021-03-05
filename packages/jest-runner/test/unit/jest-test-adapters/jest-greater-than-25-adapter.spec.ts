@@ -1,3 +1,5 @@
+import { join } from 'path';
+
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -13,6 +15,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
 
   const projectRoot = '/path/to/project';
   const fileNameUnderTest = '/path/to/file';
+  const jestConfigPath = 'jest.config.js';
   const jestConfig: Config.InitialOptions = { rootDir: projectRoot };
 
   beforeEach(() => {
@@ -30,6 +33,42 @@ describe(JestGreaterThan25TestAdapter.name, () => {
     expect(runCLIStub).calledWith(sinon.match.object, [projectRoot]);
   });
 
+  describe('when jestConfigPath not provided', () => {
+    it('should call the runCLI method with the stringified jest config flag', async () => {
+      await sut.run({ jestConfig, projectRoot, fileNameUnderTest });
+
+      expect(runCLIStub).calledWith(
+        {
+          $0: 'stryker',
+          _: [fileNameUnderTest],
+          config: JSON.stringify({ rootDir: projectRoot }),
+          findRelatedTests: true,
+          runInBand: true,
+          silent: true,
+          testNamePattern: undefined,
+        },
+        [projectRoot]
+      );
+    });
+  });
+  describe('when jestConfigPath provided', () => {
+    it('should pass the config path instead jest config flag', async () => {
+      await sut.run({ jestConfig, projectRoot, fileNameUnderTest, jestConfigPath });
+
+      expect(runCLIStub).calledWith(
+        {
+          $0: 'stryker',
+          _: [fileNameUnderTest],
+          config: join(projectRoot, jestConfigPath),
+          findRelatedTests: true,
+          runInBand: true,
+          silent: true,
+          testNamePattern: undefined,
+        },
+        [projectRoot]
+      );
+    });
+  });
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
     await sut.run({ jestConfig, projectRoot, fileNameUnderTest });
 
