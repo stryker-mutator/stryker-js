@@ -3,11 +3,9 @@ import { Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
-import { ScriptFile } from './script-file';
+import { toPosixFileName } from '../tsconfig-helpers';
 
-function toTSFileName(fileName: string) {
-  return fileName.replace(/\\/g, '/');
-}
+import { ScriptFile } from './script-file';
 
 /**
  * A very simple hybrid file system.
@@ -24,7 +22,7 @@ export class HybridFileSystem {
   constructor(private readonly log: Logger) {}
 
   public writeFile(fileName: string, data: string): void {
-    fileName = toTSFileName(fileName);
+    fileName = toPosixFileName(fileName);
     const existingFile = this.files.get(fileName);
     if (existingFile) {
       existingFile.write(data);
@@ -35,7 +33,7 @@ export class HybridFileSystem {
   }
 
   public mutate(mutant: Pick<Mutant, 'fileName' | 'range' | 'replacement'>): void {
-    const fileName = toTSFileName(mutant.fileName);
+    const fileName = toPosixFileName(mutant.fileName);
     const file = this.files.get(fileName);
     if (!file) {
       throw new Error(`File "${mutant.fileName}" cannot be found.`);
@@ -57,7 +55,7 @@ export class HybridFileSystem {
   }
 
   public getFile(fileName: string): ScriptFile | undefined {
-    fileName = toTSFileName(fileName);
+    fileName = toPosixFileName(fileName);
     if (!this.files.has(fileName)) {
       const content = ts.sys.readFile(fileName);
       if (typeof content === 'string') {
@@ -71,6 +69,6 @@ export class HybridFileSystem {
   }
 
   public existsInMemory(fileName: string): boolean {
-    return !!this.files.get(toTSFileName(fileName));
+    return !!this.files.get(toPosixFileName(fileName));
   }
 }
