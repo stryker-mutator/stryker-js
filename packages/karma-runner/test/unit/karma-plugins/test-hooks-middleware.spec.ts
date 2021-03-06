@@ -67,7 +67,7 @@ describe(TestHooksMiddleware.name, () => {
 
     it('should set the "activeMutant" id', () => {
       sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
-      expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = 42');
+      expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = "42"');
     });
 
     it("should ignore the test filter if the current test framework doesn't support it", () => {
