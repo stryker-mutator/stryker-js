@@ -5,7 +5,7 @@ import { schema, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { calculateMutationTestMetrics, MetricsResult, MutantModel, TestModel, MutationTestMetricsResult } from 'mutation-testing-metrics';
+import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
 import { plural } from '../utils/string-utils';
@@ -32,10 +32,9 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  public onMutationTestReportReady(report: schema.MutationTestResult): void {
-    const metricsResult = calculateMutationTestMetrics(report);
-    this.reportAllMutants(metricsResult);
-    this.writeLine(new ClearTextScoreTable(metricsResult.systemUnderTestMetrics, this.options.thresholds).draw());
+  public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+    this.reportAllMutants(metrics);
+    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
   }
 
   private reportAllMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {

@@ -5,7 +5,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
-import { calculateMetrics } from 'mutation-testing-metrics';
+import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
@@ -89,17 +89,18 @@ export class MutationTestReportHelper {
 
   public reportAll(results: MutantResult[]): void {
     const report = this.mutationTestReport(results);
+    const metrics = calculateMutationTestMetrics(report);
     this.reporter.onAllMutantsTested(results);
-    this.reporter.onMutationTestReportReady(report);
-    this.determineExitCode(report);
+    this.reporter.onMutationTestReportReady(report, metrics);
+    this.determineExitCode(metrics);
   }
 
-  private determineExitCode(report: schema.MutationTestResult) {
-    const { metrics } = calculateMetrics(report.files);
+  private determineExitCode(metrics: MutationTestMetricsResult) {
+    const mutationScore = metrics.systemUnderTestMetrics.metrics.mutationScore;
     const breaking = this.options.thresholds.break;
-    const formattedScore = metrics.mutationScore.toFixed(2);
+    const formattedScore = mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
-      if (metrics.mutationScore < breaking) {
+      if (mutationScore < breaking) {
         this.log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
         this.log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
         setExitCode(1);

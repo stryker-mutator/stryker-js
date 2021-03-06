@@ -14,8 +14,8 @@ import {
   MutantStatus,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Reporter } from '@stryker-mutator/api/report';
-import { Metrics, MetricsResult } from 'mutation-testing-metrics';
+import { Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { calculateMutationTestMetrics, Metrics, MetricsResult, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
@@ -144,6 +144,10 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<schema.M
     low: 19,
   },
 }));
+
+export const mutationTestMetricsResult = factoryMethod<MutationTestMetricsResult>(() =>
+  calculateMutationTestMetrics(mutationTestReportSchemaMutationTestResult())
+);
 
 export const mutant = factoryMethod<Mutant>(() => ({
   id: '42',
@@ -360,6 +364,11 @@ export function injector(): sinon.SinonStubbedInstance<Injector> {
 export function file(): File {
   return new File('', '');
 }
+
+export const sourceFile = factoryMethod<SourceFile>(() => ({
+  content: 'foo.bar()',
+  path: 'foo.js',
+}));
 
 export function fileNotFoundError(): NodeJS.ErrnoException {
   return createErrnoException('ENOENT');

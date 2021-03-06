@@ -1,3 +1,5 @@
+import { MutationTestMetricsResult } from 'mutation-testing-metrics';
+
 import { MutantResult, MutantTestCoverage, schema } from '../core';
 
 import { SourceFile } from './source-file';
@@ -16,7 +18,7 @@ export interface Reporter {
    * Called when all source files were loaded
    * @param files The immutable source files
    */
-  onAllSourceFilesRead?(files: readonly SourceFile[]): void;
+  onAllSourceFilesRead?(files: ReadonlyArray<Readonly<SourceFile>>): void;
 
   /**
    * Called when mutants are matched with tests
@@ -41,7 +43,7 @@ export interface Reporter {
    * @param report the mutation test result that is valid according to the mutation-testing-report-schema (json schema)
    * @see https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/mutation-testing-report-schema#mutation-testing-elements-schema
    */
-  onMutationTestReportReady?(report: Readonly<schema.MutationTestResult>): void;
+  onMutationTestReportReady?(report: Readonly<schema.MutationTestResult>, metrics: Readonly<MutationTestMetricsResult>): void;
 
   /**
    * Called when stryker wants to quit

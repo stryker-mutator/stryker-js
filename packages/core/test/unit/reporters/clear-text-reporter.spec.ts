@@ -7,6 +7,8 @@ import sinon from 'sinon';
 
 import chalk from 'chalk';
 
+import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
+
 import { ClearTextReporter } from '../../../src/reporters/clear-text-reporter';
 
 describe(ClearTextReporter.name, () => {
@@ -53,7 +55,7 @@ describe(ClearTextReporter.name, () => {
     it('should report the clear text table with correct values', () => {
       testInjector.options.coverageAnalysis = 'all';
 
-      sut.onMutationTestReportReady({
+      act({
         files: {
           'src/file.js': {
             language: 'js',
@@ -91,7 +93,7 @@ describe(ClearTextReporter.name, () => {
       chalk.level = 1;
       sut = testInjector.injector.injectClass(ClearTextReporter); // recreate, `allowConsoleColors` is read in constructor
 
-      sut.onMutationTestReportReady({
+      act({
         files: {},
         schemaVersion: '1.0',
         thresholds: factory.mutationScoreThresholds({}),
@@ -103,7 +105,7 @@ describe(ClearTextReporter.name, () => {
     it('should report a killed mutant to debug', async () => {
       mutant.status = MutantStatus.Killed;
       mutant.killedBy = ['1'];
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Killed] Math'));
       expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
       expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
@@ -113,7 +115,7 @@ describe(ClearTextReporter.name, () => {
     it('should report a CompileError mutant to debug', async () => {
       mutant.status = MutantStatus.CompileError;
       mutant.statusReason = 'could not call bar of undefined';
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [CompileError] Math'));
       expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
       expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
@@ -122,7 +124,7 @@ describe(ClearTextReporter.name, () => {
 
     it('should report a NoCoverage mutant to stdout', async () => {
       mutant.status = MutantStatus.NoCoverage;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(stdoutStub).calledWithMatch(sinon.match('1. [NoCoverage] Math'));
       expect(stdoutStub).calledWith(`${chalk.red('-   foo')}${os.EOL}`);
       expect(stdoutStub).calledWith(`${chalk.green('+   bar')}${os.EOL}`);
@@ -130,20 +132,20 @@ describe(ClearTextReporter.name, () => {
 
     it('should report a Survived mutant to stdout', async () => {
       mutant.status = MutantStatus.Survived;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(stdoutStub).calledWithMatch(sinon.match('1. [Survived] Math'));
     });
 
     it('should report a Timeout mutant to stdout', async () => {
       mutant.status = MutantStatus.Timeout;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Timeout] Math'));
     });
 
     it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {
       mutant.coveredBy = ['1', '2', '3'];
       mutant.status = MutantStatus.Survived;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
       expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
       expect(stdoutStub).calledWithExactly(`    bar should be baz${os.EOL}`);
@@ -154,7 +156,7 @@ describe(ClearTextReporter.name, () => {
       testInjector.options.clearTextReporter.maxTestsToLog = 2;
       mutant.coveredBy = ['1', '2', '3'];
       mutant.status = MutantStatus.Survived;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
       expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
       expect(stdoutStub).calledWithExactly(`    bar should be baz${os.EOL}`);
@@ -166,7 +168,7 @@ describe(ClearTextReporter.name, () => {
       testInjector.options.clearTextReporter.maxTestsToLog = 2;
       mutant.static = true;
       mutant.status = MutantStatus.Survived;
-      sut.onMutationTestReportReady(report);
+      act(report);
       expect(stdoutStub).calledWithExactly(`Ran all tests for this mutant.${os.EOL}`);
     });
 
@@ -174,7 +176,7 @@ describe(ClearTextReporter.name, () => {
       testInjector.options.clearTextReporter.logTests = false;
       mutant.coveredBy = ['1', '2', '3'];
       mutant.status = MutantStatus.Survived;
-      sut.onMutationTestReportReady(report);
+      act(report);
 
       expect(process.stdout.write).not.calledWithMatch(sinon.match('Tests ran: '));
       expect(process.stdout.write).not.calledWithMatch(sinon.match('foo should be bar'));
@@ -185,7 +187,7 @@ describe(ClearTextReporter.name, () => {
       mutant.testsCompleted = 4;
       report.files['foo.js'].mutants.push(factory.mutationTestReportSchemaMutantResult({ testsCompleted: 5 }));
       report.files['foo.js'].mutants.push(factory.mutationTestReportSchemaMutantResult({ testsCompleted: 1 }));
-      sut.onMutationTestReportReady(report);
+      act(report);
 
       expect(stdoutStub).calledWithExactly(`Ran 3.33 tests per mutant on average.${os.EOL}`);
     });
@@ -193,7 +195,7 @@ describe(ClearTextReporter.name, () => {
     it('should log source file location', () => {
       mutant.status = MutantStatus.Survived;
       mutant.location.start = { line: 4, column: 6 };
-      sut.onMutationTestReportReady(report);
+      act(report);
 
       expect(stdoutStub).to.have.been.calledWithMatch(sinon.match(`${chalk.cyan('foo.js')}:${chalk.yellow('4')}:${chalk.yellow('6')}`));
     });
@@ -204,9 +206,13 @@ describe(ClearTextReporter.name, () => {
       mutant.location.start = { line: 4, column: 6 };
       // Recreate, color setting is set in constructor
       sut = testInjector.injector.injectClass(ClearTextReporter);
-      sut.onMutationTestReportReady(report);
+      act(report);
 
       expect(stdoutStub).calledWithMatch(sinon.match('foo.js:4:6'));
     });
   });
+
+  function act(report: schema.MutationTestResult) {
+    sut.onMutationTestReportReady(report, calculateMutationTestMetrics(report));
+  }
 });

@@ -3,6 +3,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { MutantStatus, ReportType, schema } from '@stryker-mutator/api/core';
 
+import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
+
 import { CIProvider } from '../../../../src/reporters/ci/provider';
 import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter';
 import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
@@ -107,7 +109,7 @@ describe(DashboardReporter.name, () => {
     const sut = createSut(null);
 
     // Act
-    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult());
+    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult(), factory.mutationTestMetricsResult());
     await sut.wrapUp();
 
     // Assert
@@ -119,7 +121,7 @@ describe(DashboardReporter.name, () => {
 
   async function act(result: schema.MutationTestResult) {
     const sut = createSut();
-    sut.onMutationTestReportReady(result);
+    sut.onMutationTestReportReady(result, calculateMutationTestMetrics(result));
     await sut.wrapUp();
   }
 });
