@@ -59,7 +59,7 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + b.nrOfTestsRan, 0);
+      const testsRan = (await stryker.runMutationTest()).reduce((a, b) =>  a + (b.testsCompleted ?? 0), 0);
 
       // Assert
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
@@ -79,7 +79,7 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + b.nrOfTestsRan, 0);
+      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
 
       // Assert
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
@@ -99,7 +99,7 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + b.nrOfTestsRan, 0);
+      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
 
       // Assert
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
