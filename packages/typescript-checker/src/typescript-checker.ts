@@ -159,7 +159,7 @@ export class TypescriptChecker implements Checker {
     if (parsedConfig.error) {
       return content; // let the ts compiler deal with this error
     } else {
-      for (const referencedProject of retrieveReferencedProjects(parsedConfig)) {
+      for (const referencedProject of retrieveReferencedProjects(parsedConfig, path.dirname(fileName))) {
         this.allTSConfigFiles.add(referencedProject);
       }
       return overrideOptions(parsedConfig, buildModeEnabled);
