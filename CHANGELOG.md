@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/stryker-mutator/stryker/compare/v4.4.1...v4.5.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* **logging:** log info about symlinking on debug ([#2756](https://github.com/stryker-mutator/stryker/issues/2756)) ([c672e2e](https://github.com/stryker-mutator/stryker/commit/c672e2e0fc27817aae43839f39a166b5b1b9ba07))
+* **mutator:** don't mutate string literal object methods ([#2718](https://github.com/stryker-mutator/stryker/issues/2718)) ([964537a](https://github.com/stryker-mutator/stryker/commit/964537a37dece036573f88bace6c714a0413a2e7))
+* **reporting:** report test name when a hook fails ([#2757](https://github.com/stryker-mutator/stryker/issues/2757)) ([5e062b2](https://github.com/stryker-mutator/stryker/commit/5e062b2b65a1269b45a66ecc536108aab529abae))
+* **typescript-checker:** improve error reporting ([2502eba](https://github.com/stryker-mutator/stryker/commit/2502eba08b0c26c1b91cbd5917092ccd7a89aa7c))
+* **typescript-checker:** resolve tsconfig files correctly ([8cf9e8c](https://github.com/stryker-mutator/stryker/commit/8cf9e8c43b7e3817452b32de9461829ed9ad6490))
+
+
+### Features
+
+* **package:** restructure package internals ([#2714](https://github.com/stryker-mutator/stryker/issues/2714)) ([e1711d2](https://github.com/stryker-mutator/stryker/commit/e1711d28f25e8ee7cbdf025adecb3234ee0515a6))
+* **sandbox:** support symlinking of node_modules anywhere ([ee66623](https://github.com/stryker-mutator/stryker/commit/ee666238b29facf512126d6e056037e8ac011260))
+
+
+
+
+
 ## [4.4.1](https://github.com/stryker-mutator/stryker/compare/v4.4.0...v4.4.1) (2021-01-27)
 
 

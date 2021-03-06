@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.5.0](https://github.com/stryker-mutator/stryker/compare/v4.4.1...v4.5.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* **logging:** log info about symlinking on debug ([#2756](https://github.com/stryker-mutator/stryker/issues/2756)) ([c672e2e](https://github.com/stryker-mutator/stryker/commit/c672e2e0fc27817aae43839f39a166b5b1b9ba07))
+
+
+### Features
+
+* **package:** restructure package internals ([#2714](https://github.com/stryker-mutator/stryker/issues/2714)) ([e1711d2](https://github.com/stryker-mutator/stryker/commit/e1711d28f25e8ee7cbdf025adecb3234ee0515a6))
+* **sandbox:** support symlinking of node_modules anywhere ([ee66623](https://github.com/stryker-mutator/stryker/commit/ee666238b29facf512126d6e056037e8ac011260))
+
+
+
+
+
 ## [4.4.1](https://github.com/stryker-mutator/stryker/compare/v4.4.0...v4.4.1) (2021-01-27)
 
 **Note:** Version bump only for package @stryker-mutator/core
