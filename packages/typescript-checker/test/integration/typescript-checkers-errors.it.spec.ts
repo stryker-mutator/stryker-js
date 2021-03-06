@@ -4,7 +4,6 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createTypescriptChecker } from '../../src';
-import { TypescriptChecker } from '../../src/typescript-checker';
 
 const resolveTestResource = (path.resolve.bind(
   path,
@@ -17,24 +16,25 @@ const resolveTestResource = (path.resolve.bind(
 ) as unknown) as typeof path.resolve;
 
 describe('Typescript checker errors', () => {
-  let sut: TypescriptChecker;
-
-  beforeEach(() => {
-    sut = testInjector.injector.injectFunction(createTypescriptChecker);
-  });
-
   it('should reject initialization if initial compilation failed', async () => {
-    process.chdir(resolveTestResource('compile-error'));
-    await expect(sut.init()).rejectedWith('TypeScript error(s) found in dry run compilation: add.ts(2,3): error TS2322:');
+    testInjector.options.tsconfigFile = resolveTestResource('compile-error', 'tsconfig.json');
+    const sut = testInjector.injector.injectFunction(createTypescriptChecker);
+    await expect(sut.init()).rejectedWith(
+      'TypeScript error(s) found in dry run compilation: testResources/errors/compile-error/add.ts(2,3): error TS2322:'
+    );
   });
 
   it('should reject initialization if tsconfig was invalid', async () => {
-    process.chdir(resolveTestResource('invalid-tsconfig'));
-    await expect(sut.init()).rejectedWith('TypeScript error(s) found in dry run compilation: tsconfig.json(1,1): error TS1005:');
+    testInjector.options.tsconfigFile = resolveTestResource('invalid-tsconfig', 'tsconfig.json');
+    const sut = testInjector.injector.injectFunction(createTypescriptChecker);
+    await expect(sut.init()).rejectedWith(
+      'TypeScript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:'
+    );
   });
 
   it("should reject when tsconfig file doesn't exist", async () => {
-    process.chdir(resolveTestResource('empty-dir'));
+    testInjector.options.tsconfigFile = resolveTestResource('empty-dir', 'tsconfig.json');
+    const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
       `The tsconfig file does not exist at: "${resolveTestResource(
         'empty-dir',

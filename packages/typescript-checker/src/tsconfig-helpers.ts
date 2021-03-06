@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import path from 'path';
 
 import ts from 'typescript';
 import semver from 'semver';
@@ -65,10 +65,11 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
 /**
  * Retrieves the referenced config files based on parsed configuration
  * @param parsedConfig The parsed config file
+ * @param fromDirName The directory where to resolve from
  */
-export function retrieveReferencedProjects(parsedConfig: { config?: any }): string[] {
+export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromDirName: string): string[] {
   if (Array.isArray(parsedConfig.config?.references)) {
-    return parsedConfig.config?.references.map((reference: any) => resolve(ts.resolveProjectReferencePath(reference)));
+    return parsedConfig.config?.references.map((reference: any) => path.resolve(fromDirName, ts.resolveProjectReferencePath(reference)));
   }
   return [];
 }
