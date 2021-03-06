@@ -72,8 +72,8 @@ describe(MutationTestExecutor.name, () => {
   it('should schedule mutants to be tested', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1' }));
-    mutants.push(factory.mutantTestCoverage({ id: '2' }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', static: true }));
+    mutants.push(factory.mutantTestCoverage({ id: '2', coveredBy: ['1'] }));
 
     // Act
     await sut.execute();
@@ -116,7 +116,7 @@ describe(MutationTestExecutor.name, () => {
   it('should calculate timeout correctly', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', estimatedNetTime: 10 }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', estimatedNetTime: 10, coveredBy: ['1'] }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 
@@ -165,7 +165,7 @@ describe(MutationTestExecutor.name, () => {
   it('should not run mutants that are uncovered by tests', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false, status: MutantStatus.NoCoverage }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false }));
 
     // Act
     await sut.execute();
@@ -232,7 +232,7 @@ describe(MutationTestExecutor.name, () => {
 
   it('should report mutant run results', async () => {
     // Arrange
-    const mutant = factory.mutantTestCoverage();
+    const mutant = factory.mutantTestCoverage({ static: true });
     const mutantRunResult = factory.killedMutantRunResult({ status: MutantRunStatus.Killed });
     mutants.push(mutant);
     arrangeScenario({ mutantRunResult });
