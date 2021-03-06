@@ -9,7 +9,7 @@ import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { HybridFileSystem } from './fs';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers';
 import * as pluginTokens from './plugin-tokens';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
@@ -51,7 +51,7 @@ export class TypescriptChecker implements Checker {
   private readonly tsconfigFile: string;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly fs: HybridFileSystem) {
-    this.tsconfigFile = options.tsconfigFile;
+    this.tsconfigFile = toPosixFileName(options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
 

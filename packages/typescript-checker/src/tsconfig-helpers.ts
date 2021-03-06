@@ -73,3 +73,12 @@ export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromD
   }
   return [];
 }
+
+/**
+ * Replaces backslashes with forward slashes (used by typescript)
+ * @param fileName The file name that may contain backslashes `\`
+ * @returns posix and ts complaint file name (with `/`)
+ */
+export function toPosixFileName(fileName: string): string {
+  return fileName.replace(/\\/g, '/');
+}
