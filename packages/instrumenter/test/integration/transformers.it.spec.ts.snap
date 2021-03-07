@@ -1702,7 +1702,7 @@ Object {
             "type": "Identifier",
           },
           "innerComments": undefined,
-          "leadingComments": undefined,
+          "leadingComments": Array [],
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -6838,7 +6838,7 @@ Object {
             "type": "Identifier",
           },
           "innerComments": undefined,
-          "leadingComments": undefined,
+          "leadingComments": Array [],
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
@@ -12024,7 +12024,7 @@ Object {
                   "type": "Identifier",
                 },
                 "innerComments": undefined,
-                "leadingComments": undefined,
+                "leadingComments": Array [],
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 1,

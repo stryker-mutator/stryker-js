@@ -36,6 +36,11 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
     },
   });
   if (mutantCollector.hasPlacedMutants(originFileName)) {
+    const innerComments = root.program.innerComments ?? [];
+    const leadingComments = root.program.body[0]?.leadingComments ?? [];
+    if (Array.isArray(leadingComments)) {
+      instrumentationBabelHeader[0].leadingComments = [...innerComments, ...leadingComments];
+    }
     root.program.body.unshift(...instrumentationBabelHeader);
   }
 };

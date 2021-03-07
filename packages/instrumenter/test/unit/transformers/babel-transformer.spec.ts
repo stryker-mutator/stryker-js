@@ -80,10 +80,26 @@ describe('babel-transformer', () => {
     expect(mutantCollectorMock.markMutantsAsPlaced).calledWith([mutant]);
   });
 
-  it('should add the global stuff on top', () => {
-    const ast = createJSAst({ rawContent: 'foo' });
+  it('should add the global stuff on top but after comments that are followed by newline', () => {
+    const ast = createJSAst({ rawContent: '// @flow\n// another comment\n\nconst foo="cat"' });
     mutantCollectorMock.hasPlacedMutants.returns(true);
     transformBabel(ast, mutantCollectorMock, context);
+
+    expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
+    expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
+
+    for (let i = 0; i < instrumentationBabelHeader.length; i++) {
+      expect(ast.root.program.body[i]).eq(instrumentationBabelHeader[i]);
+    }
+  });
+  it('should add the global stuff on top but after comments that are followed by a statement', () => {
+    const ast = createJSAst({ rawContent: '// @flow\n// another comment\nconst foo="cat"' });
+    mutantCollectorMock.hasPlacedMutants.returns(true);
+    transformBabel(ast, mutantCollectorMock, context);
+
+    expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
+    expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
+
     for (let i = 0; i < instrumentationBabelHeader.length; i++) {
       expect(ast.root.program.body[i]).eq(instrumentationBabelHeader[i]);
     }
