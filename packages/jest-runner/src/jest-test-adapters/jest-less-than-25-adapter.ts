@@ -1,4 +1,5 @@
 import { join } from 'path';
+import { promises as fs } from 'fs';
 
 import jest from 'jest';
 
@@ -11,15 +12,19 @@ import { RunSettings, JestTestAdapter } from './jest-test-adapter';
  * It has a lot of `any` typings here, since the installed typings are not in sync.
  */
 export class JestLessThan25TestAdapter implements JestTestAdapter {
-  public run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern, jestConfigPath }: RunSettings): Promise<JestRunResult> {
-    const config = jestConfigPath ? join(projectRoot, jestConfigPath) : JSON.stringify(jestConfig);
+  public async run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern, jestConfigPath }: RunSettings): Promise<JestRunResult> {
+    const config = JSON.stringify(jestConfig);
+    const mutatedConfigPath = jestConfigPath ? join(projectRoot, jestConfigPath + '.stryker-jest-config.json') : '';
+    if (mutatedConfigPath) await fs.writeFile(mutatedConfigPath, config, { flag: 'w+' });
+
     return jest.runCLI(
       {
         ...(fileNameUnderTest && { _: [fileNameUnderTest], findRelatedTests: true }),
-        config,
+        config: mutatedConfigPath || config,
         runInBand: true,
         silent: true,
         testNamePattern,
+        rootDir: projectRoot,
       } as any,
       [projectRoot]
     );

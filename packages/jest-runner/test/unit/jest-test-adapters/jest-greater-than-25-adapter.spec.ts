@@ -1,4 +1,5 @@
 import { join } from 'path';
+import fs from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -12,6 +13,7 @@ import { jestWrapper } from '../../../src/utils/jest-wrapper';
 describe(JestGreaterThan25TestAdapter.name, () => {
   let sut: JestGreaterThan25TestAdapter;
   let runCLIStub: sinon.SinonStub;
+  let fsWriteFileStub: sinon.SinonStub;
 
   const projectRoot = '/path/to/project';
   const fileNameUnderTest = '/path/to/file';
@@ -24,7 +26,8 @@ describe(JestGreaterThan25TestAdapter.name, () => {
       config: jestConfig,
       result: 'testResult',
     });
-
+    fsWriteFileStub = sinon.stub(fs.promises, 'writeFile');
+    fsWriteFileStub.resolves({});
     sut = testInjector.injector.injectClass(JestGreaterThan25TestAdapter);
   });
 
@@ -46,27 +49,35 @@ describe(JestGreaterThan25TestAdapter.name, () => {
           runInBand: true,
           silent: true,
           testNamePattern: undefined,
+          rootDir: projectRoot,
         },
         [projectRoot]
       );
     });
   });
   describe('when jestConfigPath provided', () => {
-    it('should pass the config path instead jest config flag', async () => {
+    const strykerConfigPath = join(projectRoot, jestConfigPath + '.stryker-jest-config.json');
+    it('should pass the stryker modified jest config path instead jest config flag', async () => {
       await sut.run({ jestConfig, projectRoot, fileNameUnderTest, jestConfigPath });
 
       expect(runCLIStub).calledWith(
         {
           $0: 'stryker',
           _: [fileNameUnderTest],
-          config: join(projectRoot, jestConfigPath),
+          config: strykerConfigPath,
           findRelatedTests: true,
           runInBand: true,
           silent: true,
           testNamePattern: undefined,
+          rootDir: projectRoot,
         },
         [projectRoot]
       );
+    });
+
+    it('should write the config to the json config with stryker suffix in the filename', async () => {
+      await sut.run({ jestConfig, projectRoot, fileNameUnderTest, jestConfigPath });
+      expect(fsWriteFileStub).calledWith(strykerConfigPath, JSON.stringify({ rootDir: projectRoot }));
     });
   });
   it('should call the runCLI method with the --findRelatedTests flag', async () => {
@@ -81,6 +92,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
         runInBand: true,
         silent: true,
         testNamePattern: undefined,
+        rootDir: projectRoot,
       },
       [projectRoot]
     );
@@ -98,6 +110,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
         runInBand: true,
         silent: true,
         testNamePattern: 'Foo should bar',
+        rootDir: projectRoot,
       },
       [projectRoot]
     );
