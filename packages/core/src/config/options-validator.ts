@@ -102,10 +102,10 @@ export class OptionsValidator {
 
   private specificMutantsValidation(options: StrykerOptions) {
     options.mutator.specificMutants = options.mutate
-      .filter((fileToMutate) => RegExp('(:\\d+){4}$').exec(fileToMutate))
+      .filter((fileToMutate) => /(:\d+){4}$/.exec(fileToMutate))
       .map((fileToMutate) => {
         const fileName = fileToMutate.replace(/(:\d+){4}/, '');
-        const [matchedItems] = RegExp('(:\\d+){4}$').exec(fileToMutate)!;
+        const [matchedItems] = /(:\d+){4}$/.exec(fileToMutate)!;
         const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
 
         return {

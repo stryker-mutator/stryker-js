@@ -119,12 +119,12 @@ export class InputFileResolver {
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
-    if (RegExp(/(:\d+){4}/).exec(globbingExpression)) {
+    if (/(:\d+){4}$/.exec(globbingExpression)) {
       if (hasMagic(globbingExpression)) {
         throw new StrykerError('Do not use glob patterns with specific mutants on the glob pattern');
       }
 
-      globbingExpression = globbingExpression.replace(RegExp('(:\\d+){4}$'), '');
+      globbingExpression = globbingExpression.replace(/(:\d+){4}$/, '');
     }
 
     const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
