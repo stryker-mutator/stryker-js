@@ -12,7 +12,11 @@ import { AstFormat } from '../syntax';
 
 import { AstTransformer } from '.';
 
-export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ root, originFileName, rawContent }, mutantCollector, { options }) => {
+export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = (
+  { root, originFileName, rawContent, offset },
+  mutantCollector,
+  { options }
+) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
@@ -23,7 +27,7 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
         path.skip();
       } else {
         mutate(path, options).forEach((mutant) => {
-          mutantCollector.add(originFileName, mutant);
+          mutantCollector.add(originFileName, mutant, offset?.position, offset?.line);
         });
       }
     },

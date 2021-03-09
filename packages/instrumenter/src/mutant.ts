@@ -18,7 +18,13 @@ export class Mutant {
   public readonly mutatorName: string;
   public readonly ignoreReason: string | undefined;
 
-  constructor(public readonly id: number, public readonly fileName: string, specs: NamedNodeMutation) {
+  constructor(
+    public readonly id: number,
+    public readonly fileName: string,
+    specs: NamedNodeMutation,
+    public readonly positionOffset: number = 0,
+    public readonly lineOffset: number = 0
+  ) {
     this.original = specs.original;
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
@@ -30,25 +36,25 @@ export class Mutant {
     return {
       fileName: this.fileName,
       id: this.id,
-      location: toApiLocation(this.original.loc!),
+      location: toApiLocation(this.original.loc!, this.lineOffset),
       mutatorName: this.mutatorName,
-      range: [this.original.start!, this.original.end!],
+      range: [this.original.start! + this.positionOffset, this.original.end! + this.positionOffset],
       replacement: this.replacementCode,
       ignoreReason: this.ignoreReason,
     };
   }
 }
 
-function toApiLocation(source: types.SourceLocation): Location {
+function toApiLocation(source: types.SourceLocation, lineOffset: number): Location {
   return {
-    start: toPosition(source.start),
-    end: toPosition(source.end),
+    start: toPosition(source.start, lineOffset),
+    end: toPosition(source.end, lineOffset),
   };
 }
 
-function toPosition(source: Position): Position {
+function toPosition(source: Position, lineOffset: number): Position {
   return {
     column: source.column,
-    line: source.line - 1, // Stryker works 0-based internally
+    line: source.line + lineOffset - 1, // Stryker works 0-based internally
   };
 }

@@ -1,7 +1,6 @@
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
 import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
 
-import { offsetLocations } from '../util/syntax-helpers';
 import { HtmlAst, AstFormat, HtmlRootNode, TSAst, JSAst, ScriptFormat, AstByFormat } from '../syntax';
 
 import { ParserContext } from './parser-context';
@@ -64,11 +63,15 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
     const ast = await parserContext.parse(content, fileName, scriptFormat);
     if (ast) {
       const offset = el.startSourceSpan!.end;
-      offsetLocations(ast.root, {
-        position: offset.offset,
-        column: offset.col,
-        line: offset.line + 1, // need to add 1, since ngHtmlParser lines start with 0
-      });
+      ast.root.start! += offset.offset;
+      ast.root.end! += offset.offset;
+      return {
+        ...ast,
+        offset: {
+          position: offset.offset,
+          line: offset.line,
+        },
+      };
     }
     return ast;
   }
