@@ -21,8 +21,8 @@ describe('JestTestRunner with "create-react-app" project type', () => {
     sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   });
 
-  it.only('should be able to run the tests', async () => {
-    const result = await sut.dryRun({ coverageAnalysis: 'perTest' });
+  it('should be able to run the tests', async () => {
+    const result = await sut.dryRun({ coverageAnalysis: 'off' });
 
     const expectedTest: Omit<SuccessTestResult, 'timeSpentMs'> = {
       id: 'renders learn react link',
