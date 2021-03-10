@@ -80,7 +80,7 @@ describe('babel-transformer', () => {
     expect(mutantCollectorMock.markMutantsAsPlaced).calledWith([mutant]);
   });
 
-  it('should add the global js header on top ', () => {
+  it('should add the global js header on top', () => {
     const ast = createJSAst({ rawContent: 'const foo="cat"' });
     mutantCollectorMock.hasPlacedMutants.returns(true);
     transformBabel(ast, mutantCollectorMock, context);
