@@ -42,7 +42,7 @@
     "@types/semver": "~7.3.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~4.4.0",
+    "@stryker-mutator/core": "~4.5.0",
     "typescript": ">=3.6"
   }
 }
