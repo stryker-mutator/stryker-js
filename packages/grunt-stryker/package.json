@@ -37,7 +37,7 @@
     "@types/node": "^14.0.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~4.4.0",
+    "@stryker-mutator/core": "~4.5.0",
     "grunt": ">=0.4.5"
   }
 }
