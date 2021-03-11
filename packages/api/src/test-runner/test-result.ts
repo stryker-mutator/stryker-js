@@ -3,7 +3,7 @@ import { TestStatus } from './test-status';
 /**
  * Indicates the result of a single test
  */
-interface BaseTestResult {
+export interface BaseTestResult {
   /**
    * The id of this test. Can be the name if the test runner doesn't have an 'id'
    */

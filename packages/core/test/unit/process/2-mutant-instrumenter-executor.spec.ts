@@ -39,7 +39,7 @@ describe(MutantInstrumenterExecutor.name, () => {
 
     instrumentResult = {
       files: [mutatedFile],
-      mutants: [factory.mutant({ id: 1, replacement: 'bar' })],
+      mutants: [factory.mutant({ id: '1', replacement: 'bar' })],
     };
     sandboxMock = sinon.createStubInstance(Sandbox);
     instrumenterMock = sinon.createStubInstance(Instrumenter);

@@ -43,20 +43,20 @@ describe('JasmineRunner integration with code instrumentation', () => {
 
   describe('mutantRun', () => {
     it('should be able to kill a mutant', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 1 }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }) }));
       assertions.expectKilled(result);
       expect(result.killedBy).eq('spec0');
       expect(result.failureMessage).eq('Expected Player({ currentlyPlayingSong: Song({  }), isPlaying: false }) to be playing Song({  }).');
     });
 
     it('should be able report "survive" when a mutant is invincible', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 12 }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '12' }) }));
       assertions.expectSurvived(result);
     });
 
     it('should be able to kill again after a mutant survived', async () => {
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 12 }) }));
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 2 }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '12' }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }) }));
       const expected = factory.killedMutantRunResult({
         killedBy: 'spec1',
         status: MutantRunStatus.Killed,

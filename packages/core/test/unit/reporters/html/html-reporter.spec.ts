@@ -1,9 +1,9 @@
 import path from 'path';
 
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { schema } from '@stryker-mutator/api/core';
 
 import { HtmlReporter } from '../../../../src/reporters/html/html-reporter';
 import * as ReporterUtil from '../../../../src/reporters/reporter-util';
@@ -49,7 +49,7 @@ describe(HtmlReporter.name, () => {
     });
 
     it('should write the mutation report in the index file', async () => {
-      const report: mutationTestReportSchema.MutationTestResult = {
+      const report: schema.MutationTestResult = {
         files: {
           'foo.js': {
             language: 'js',
@@ -69,7 +69,7 @@ describe(HtmlReporter.name, () => {
     });
 
     it('should escape HTML tags in the mutation testing report.', async () => {
-      const report: mutationTestReportSchema.MutationTestResult = {
+      const report: schema.MutationTestResult = {
         files: {
           'index.html': {
             language: 'html',

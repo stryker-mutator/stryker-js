@@ -24,7 +24,7 @@ describe(MutantCollector.name, () => {
       expect(sut.mutants).deep.eq([
         createMutant({
           fileName,
-          id: 0,
+          id: '0',
           original,
           replacement,
         }),
@@ -41,7 +41,7 @@ describe(MutantCollector.name, () => {
       expect(sut.mutants[1]).deep.eq(
         createMutant({
           fileName,
-          id: 1,
+          id: '1',
           original,
           replacement,
         })

@@ -8,8 +8,10 @@ import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging';
-import { deserialize, kill, padLeft, serialize } from '../utils/object-utils';
+import { kill } from '../utils/object-utils';
 import { StringBuilder } from '../utils/string-builder';
+
+import { deserialize, padLeft, serialize } from '../utils/string-utils';
 
 import { ChildProcessCrashedError } from './child-process-crashed-error';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';

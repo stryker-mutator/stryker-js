@@ -2,8 +2,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
-import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
-import { MutantResult } from '@stryker-mutator/api/report';
+import { PartialStrykerOptions, LogLevel, MutantResult } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 

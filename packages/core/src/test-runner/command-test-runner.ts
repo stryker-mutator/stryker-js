@@ -61,14 +61,12 @@ export class CommandTestRunner implements TestRunner {
     return toMutantRunResult(result);
   }
 
-  private run({ activeMutantId }: { activeMutantId?: number }): Promise<DryRunResult> {
+  private run({ activeMutantId }: { activeMutantId?: string }): Promise<DryRunResult> {
     return new Promise((res, rej) => {
       const timerInstance = new Timer();
       const output: Array<Buffer | string> = [];
       const env =
-        activeMutantId === undefined
-          ? process.env
-          : { ...process.env, [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutantId.toString() };
+        activeMutantId === undefined ? process.env : { ...process.env, [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutantId };
       const childProcess = exec(this.settings.command, { cwd: this.workingDir, env });
       childProcess.on('error', (error) => {
         kill(childProcess.pid)

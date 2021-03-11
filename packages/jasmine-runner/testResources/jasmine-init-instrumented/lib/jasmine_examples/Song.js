@@ -4,7 +4,7 @@
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -56,12 +56,12 @@ function stryMutAct_9fa48(id) {
 function Song() {}
 
 Song.prototype.persistFavoriteStatus = function (value) {
-  if (stryMutAct_9fa48(13)) {
+  if (stryMutAct_9fa48("13")) {
     {}
   } else {
-    stryCov_9fa48(13);
+    stryCov_9fa48("13");
     // something complicated
-    throw new Error(stryMutAct_9fa48(14) ? "" : (stryCov_9fa48(14), "not yet implemented"));
+    throw new Error(stryMutAct_9fa48("14") ? "" : (stryCov_9fa48("14"), "not yet implemented"));
   }
 };
 

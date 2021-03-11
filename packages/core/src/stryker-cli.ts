@@ -1,7 +1,5 @@
 import commander from 'commander';
-import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
-
-import { MutantResult } from '@stryker-mutator/api/report';
+import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';

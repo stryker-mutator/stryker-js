@@ -2,15 +2,6 @@ import treeKill from 'tree-kill';
 import { StrykerError, KnownKeys } from '@stryker-mutator/util';
 import { WarningOptions } from '@stryker-mutator/api/core';
 
-export { serialize, deserialize } from 'surrial';
-
-export function wrapInClosure(codeFragment: string): string {
-  return `
-    (function (window) {
-      ${codeFragment}
-    })((Function('return this'))());`;
-}
-
 /**
  * A wrapper around `process.env` (for testability)
  */
@@ -49,10 +40,6 @@ export function setExitCode(n: number): void {
   process.exitCode = n;
 }
 
-export function base64Decode(base64EncodedString: string): string {
-  return Buffer.from(base64EncodedString, 'base64').toString('utf8');
-}
-
 export function kill(pid: number): Promise<void> {
   return new Promise((res, rej) => {
     treeKill(pid, 'SIGKILL', (err?: Error & { code?: number }) => {
@@ -69,13 +56,6 @@ export function kill(pid: number): Promise<void> {
       return code === 255 || code === 128;
     }
   });
-}
-
-export function padLeft(input: string): string {
-  return input
-    .split('\n')
-    .map((str) => '\t' + str)
-    .join('\n');
 }
 
 /**

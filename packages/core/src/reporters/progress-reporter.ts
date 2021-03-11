@@ -1,4 +1,4 @@
-import { MatchedMutant, MutantResult } from '@stryker-mutator/api/report';
+import { MutantTestCoverage, MutantResult } from '@stryker-mutator/api/core';
 
 import { ProgressBar } from './progress-bar';
 import { ProgressKeeper } from './progress-keeper';
@@ -6,7 +6,7 @@ import { ProgressKeeper } from './progress-keeper';
 export class ProgressBarReporter extends ProgressKeeper {
   private progressBar?: ProgressBar;
 
-  public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
+  public onAllMutantsMatchedWithTests(matchedMutants: MutantTestCoverage[]): void {
     super.onAllMutantsMatchedWithTests(matchedMutants);
     const progressBarContent =
       'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';

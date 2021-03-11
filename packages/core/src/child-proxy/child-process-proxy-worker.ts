@@ -6,7 +6,7 @@ import { getLogger, Logger } from 'log4js';
 
 import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
-import { deserialize, serialize } from '../utils/object-utils';
+import { deserialize, serialize } from '../utils/string-utils';
 
 import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 

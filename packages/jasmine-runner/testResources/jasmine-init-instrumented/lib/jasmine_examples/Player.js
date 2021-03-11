@@ -4,7 +4,7 @@
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -56,52 +56,52 @@ function stryMutAct_9fa48(id) {
 function Player() {}
 
 Player.prototype.play = function (song) {
-  if (stryMutAct_9fa48(0)) {
+  if (stryMutAct_9fa48("0")) {
     {}
   } else {
-    stryCov_9fa48(0);
+    stryCov_9fa48("0");
     this.currentlyPlayingSong = song;
-    this.isPlaying = stryMutAct_9fa48(1) ? false : (stryCov_9fa48(1), true);
+    this.isPlaying = stryMutAct_9fa48("1") ? false : (stryCov_9fa48("1"), true);
   }
 };
 
 Player.prototype.pause = function () {
-  if (stryMutAct_9fa48(2)) {
+  if (stryMutAct_9fa48("2")) {
     {}
   } else {
-    stryCov_9fa48(2);
-    this.isPlaying = stryMutAct_9fa48(3) ? true : (stryCov_9fa48(3), false);
+    stryCov_9fa48("2");
+    this.isPlaying = stryMutAct_9fa48("3") ? true : (stryCov_9fa48("3"), false);
   }
 };
 
 Player.prototype.resume = function () {
-  if (stryMutAct_9fa48(4)) {
+  if (stryMutAct_9fa48("4")) {
     {}
   } else {
-    stryCov_9fa48(4);
+    stryCov_9fa48("4");
 
-    if (stryMutAct_9fa48(6) ? false : stryMutAct_9fa48(5) ? true : (stryCov_9fa48(5, 6), this.isPlaying)) {
-      if (stryMutAct_9fa48(7)) {
+    if (stryMutAct_9fa48("6") ? false : stryMutAct_9fa48("5") ? true : (stryCov_9fa48("5", "6"), this.isPlaying)) {
+      if (stryMutAct_9fa48("7")) {
         {}
       } else {
-        stryCov_9fa48(7);
-        throw new Error(stryMutAct_9fa48(8) ? "" : (stryCov_9fa48(8), "song is already playing"));
+        stryCov_9fa48("7");
+        throw new Error(stryMutAct_9fa48("8") ? "" : (stryCov_9fa48("8"), "song is already playing"));
       }
     }
 
-    this.isPlaying = stryMutAct_9fa48(9) ? false : (stryCov_9fa48(9), true);
+    this.isPlaying = stryMutAct_9fa48("9") ? false : (stryCov_9fa48("9"), true);
   }
 };
 
 Player.prototype.makeFavorite = function () {
-  if (stryMutAct_9fa48(10)) {
+  if (stryMutAct_9fa48("10")) {
     {}
   } else {
-    stryCov_9fa48(10);
-    this.currentlyPlayingSong.persistFavoriteStatus(stryMutAct_9fa48(11) ? false : (stryCov_9fa48(11), true));
+    stryCov_9fa48("10");
+    this.currentlyPlayingSong.persistFavoriteStatus(stryMutAct_9fa48("11") ? false : (stryCov_9fa48("11"), true));
   }
 }; // Add random string, resulting in a static mutant in the instrumented code.
 
 
-module.exports.foo = stryMutAct_9fa48(12) ? "" : (stryCov_9fa48(12), 'bar');
+module.exports.foo = stryMutAct_9fa48("12") ? "" : (stryCov_9fa48("12"), 'bar');
 module.exports = Player;

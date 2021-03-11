@@ -20,7 +20,7 @@ export const instrumentationBabelHeader = deepFreeze(
   var g = new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
-    ns.${ID.ACTIVE_MUTANT} = Number(g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE});
+    ns.${ID.ACTIVE_MUTANT} = g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE};
   }
   function retrieveNS(){
     return ns;
@@ -60,8 +60,8 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
  * returns syntax for `global.activeMutant === $mutantId`
  * @param mutantId The id of the mutant to switch
  */
-export function mutantTestExpression(mutantId: number): types.CallExpression {
-  return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [types.numericLiteral(mutantId)]);
+export function mutantTestExpression(mutantId: string): types.CallExpression {
+  return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [types.stringLiteral(mutantId)]);
 }
 
 interface Position {
@@ -143,7 +143,7 @@ export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpr
   const sequence: types.Expression[] = [
     types.callExpression(
       types.identifier(COVER_MUTANT_HELPER),
-      mutants.map((mutant) => types.numericLiteral(mutant.id))
+      mutants.map((mutant) => types.stringLiteral(mutant.id))
     ),
   ];
   if (targetExpression) {
