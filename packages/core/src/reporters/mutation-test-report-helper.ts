@@ -6,7 +6,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
-import { CompleteDryRunResult, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
@@ -17,18 +17,15 @@ import { setExitCode } from '../utils/object-utils';
  * A helper class to convert and report mutants that survived or get killed
  */
 export class MutationTestReportHelper {
-  public readonly testNamesById: Map<string, string>;
-
   public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
+
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
     private readonly inputFiles: InputFileCollection,
     private readonly log: Logger,
     private readonly dryRunResult: CompleteDryRunResult
-  ) {
-    this.testNamesById = new Map(this.dryRunResult.tests.map((test) => [test.id, test.name]));
-  }
+  ) {}
 
   public reportCheckFailed(mutant: Mutant, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
     return this.reportOne({
@@ -115,25 +112,38 @@ export class MutationTestReportHelper {
   }
 
   private mutationTestReport(results: readonly MutantResult[]): schema.MutationTestResult {
+    // Mocha, jest and karma use test titles as test ids.
+    // This can mean a lot of duplicate strings in the json report.
+    // Therefore we remap the test ids here to numbers.
+    const testIdMap = new Map(this.dryRunResult.tests.map((test, index) => [test.id, index.toString()]));
+    const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
+    const remapTestIds = (ids: string[] | undefined): string[] | undefined => ids?.map(remapTestId);
+
     return {
-      files: this.toFileResults(results),
+      files: this.toFileResults(results, remapTestIds),
       schemaVersion: '1.0',
       thresholds: this.options.thresholds,
+      testFiles: this.toTestFiles(remapTestId),
     };
   }
 
-  private toFileResults(results: readonly MutantResult[]): schema.FileResultDictionary {
+  private toFileResults(
+    results: readonly MutantResult[],
+    remapTestIds: (ids: string[] | undefined) => string[] | undefined
+  ): schema.FileResultDictionary {
     const resultDictionary: schema.FileResultDictionary = Object.create(null);
+
     results.forEach((mutantResult) => {
       const fileResult = resultDictionary[mutantResult.fileName];
+      const mutant = this.toMutantResult(mutantResult, remapTestIds);
       if (fileResult) {
-        fileResult.mutants.push(this.toMutantResult(mutantResult));
+        fileResult.mutants.push(mutant);
       } else {
         const sourceFile = this.inputFiles.files.find((file) => file.name === mutantResult.fileName);
         if (sourceFile) {
           resultDictionary[mutantResult.fileName] = {
             language: this.determineLanguage(sourceFile.name),
-            mutants: [this.toMutantResult(mutantResult)],
+            mutants: [mutant],
             source: sourceFile.textContent,
           };
         } else {
@@ -147,7 +157,22 @@ export class MutationTestReportHelper {
     return resultDictionary;
   }
 
-  public determineLanguage(name: string): string {
+  private toTestFiles(remapTestId: (id: string) => string): schema.TestFileDefinitionDictionary {
+    return {
+      '': {
+        tests: this.dryRunResult.tests.map((test) => this.toTestDefinition(test, remapTestId)),
+      },
+    };
+  }
+
+  private toTestDefinition(test: TestResult, remapTestId: (id: string) => string): schema.TestDefinition {
+    return {
+      id: remapTestId(test.id),
+      name: test.name,
+    };
+  }
+
+  private determineLanguage(name: string): string {
     const ext = path.extname(name).toLowerCase();
     switch (ext) {
       case '.ts':
@@ -161,13 +186,13 @@ export class MutationTestReportHelper {
     }
   }
 
-  private toMutantResult(mutantResult: MutantResult): schema.MutantResult {
+  private toMutantResult(mutantResult: MutantResult, remapTestIds: (ids: string[] | undefined) => string[] | undefined): schema.MutantResult {
+    const { range, fileName, location, killedBy, coveredBy, ...apiMutant } = mutantResult;
     return {
-      id: mutantResult.id,
-      location: this.toLocation(mutantResult.location),
-      mutatorName: mutantResult.mutatorName,
-      replacement: mutantResult.replacement,
-      status: mutantResult.status,
+      ...apiMutant,
+      killedBy: remapTestIds(killedBy),
+      coveredBy: remapTestIds(coveredBy),
+      location: this.toLocation(location),
     };
   }
 

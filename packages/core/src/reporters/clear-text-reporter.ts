@@ -88,7 +88,6 @@ export class ClearTextReporter implements Reporter {
       .forEach((line) => {
         logImplementation(chalk.green('+   ' + line));
       });
-    logImplementation('');
     if (result.status === MutantStatus.Survived) {
       if (result.static) {
         logImplementation('Ran all tests for this mutant.');
@@ -100,6 +99,7 @@ export class ClearTextReporter implements Reporter {
     } else if (result.status === MutantStatus.RuntimeError || result.status === MutantStatus.CompileError) {
       logImplementation(`Error message: ${result.statusReason}`);
     }
+    logImplementation('');
   }
 
   private colorSourceFileAndLocation(fileName: string, position: Position): string {

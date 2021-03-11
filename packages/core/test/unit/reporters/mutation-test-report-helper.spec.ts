@@ -6,6 +6,8 @@ import { expect } from 'chai';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
+import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
+
 import { coreTokens } from '../../../src/di';
 import { InputFileCollection } from '../../../src/input/input-file-collection';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
@@ -63,16 +65,16 @@ describe(MutationTestReportHelper.name, () => {
     });
 
     it('should copy thresholds', () => {
-      const actualReport = actReportAll();
+      const [actualReport] = actReportAll();
       expect(actualReport.thresholds).eq(testInjector.options.thresholds);
     });
 
     it('should set correct schema version', () => {
-      const actualReport = actReportAll();
+      const [actualReport] = actReportAll();
       expect(actualReport.schemaVersion).eq('1.0');
     });
 
-    it('should correctly map file properties', () => {
+    it('should correctly map system under test file properties', () => {
       // Arrange
       files.push(new File('foo.js', 'foo content'));
       files.push(new File('bar.html', 'bar content'));
@@ -82,7 +84,7 @@ describe(MutationTestReportHelper.name, () => {
       const inputMutants = files.map((file) => factory.killedMutantResult({ fileName: file.name }));
 
       // Act
-      const actualReport = actReportAll(inputMutants);
+      const [actualReport] = actReportAll(inputMutants);
 
       // Assert
       expect(Object.keys(actualReport.files)).lengthOf(5);
@@ -93,16 +95,46 @@ describe(MutationTestReportHelper.name, () => {
       expect(actualReport.files['corge.tsx']).include({ language: 'typescript', source: 'corge content' });
     });
 
+    it('should report the tests in `testFiles`', () => {
+      // Arrange
+      dryRunResult.tests.push(
+        factory.testResult({ id: 'spec1', name: 'dog should not eat dog' }),
+        factory.testResult({ id: 'spec2', name: 'dog should chase its own tail' })
+      );
+
+      // Act
+      const [actualReport] = actReportAll([]);
+
+      // Assert
+      const expected: schema.TestFileDefinitionDictionary = {
+        ['']: {
+          tests: [
+            { id: '0', name: 'dog should not eat dog' },
+            { id: '1', name: 'dog should chase its own tail' },
+          ],
+        },
+      };
+      expect(actualReport.testFiles).deep.eq(expected);
+    });
+
     it('should correctly map basic MutantResult properties', () => {
       // Arrange
+      const killedMutantResult: MutantResult = {
+        id: '1',
+        mutatorName: 'Foo',
+        replacement: 'foo replacement',
+        fileName: 'foo.js',
+        description: 'this is mutant foo',
+        duration: 42,
+        location: factory.location(),
+        range: [1, 2],
+        static: true,
+        statusReason: 'smacked on the head',
+        testsCompleted: 32,
+        status: MutantStatus.Killed,
+      };
       const inputMutants = [
-        factory.mutantResult({
-          id: '1',
-          mutatorName: 'Foo',
-          replacement: 'foo replacement',
-          fileName: 'foo.js',
-          status: MutantStatus.Killed,
-        }),
+        killedMutantResult,
         factory.mutantResult({
           fileName: 'bar.js',
           status: MutantStatus.NoCoverage,
@@ -127,16 +159,22 @@ describe(MutationTestReportHelper.name, () => {
       files.push(...inputMutants.map((m) => new File(m.fileName, '')));
 
       // Act
-      const actualReport = actReportAll(inputMutants);
+      const [actualReport] = actReportAll(inputMutants);
 
       // Assert
-      expect(Object.keys(actualReport.files)).lengthOf(6);
-      expect(actualReport.files['foo.js'].mutants[0]).include({
+      const expectedKilledMutant: Partial<schema.MutantResult> = {
         id: '1',
         mutatorName: 'Foo',
         replacement: 'foo replacement',
+        description: 'this is mutant foo',
+        duration: 42,
+        static: true,
+        statusReason: 'smacked on the head',
+        testsCompleted: 32,
         status: MutantStatus.Killed,
-      });
+      };
+      expect(Object.keys(actualReport.files)).lengthOf(6);
+      expect(actualReport.files['foo.js'].mutants[0]).include(expectedKilledMutant);
       expect(actualReport.files['bar.js'].mutants[0]).include({ status: MutantStatus.NoCoverage });
       expect(actualReport.files['baz.js'].mutants[0]).include({ status: MutantStatus.RuntimeError });
       expect(actualReport.files['qux.js'].mutants[0]).include({ status: MutantStatus.Survived });
@@ -147,8 +185,35 @@ describe(MutationTestReportHelper.name, () => {
     it('should offset location correctly', () => {
       const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
       files.push(...inputMutants.map((m) => new File(m.fileName, '')));
-      const actualReport = actReportAll(inputMutants);
+      const [actualReport] = actReportAll(inputMutants);
       expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
+    });
+
+    it('should remap test ids if possible (for brevity, since mocha, jest and karma use test titles as test ids)', () => {
+      // Arrange
+      dryRunResult.tests.push(
+        factory.testResult({ id: 'foo should bar', name: 'foo should bar' }),
+        factory.testResult({ id: 'baz should qux', name: 'baz should qux' })
+      );
+      const killedMutantResult = factory.mutantResult({
+        fileName: 'foo.js',
+        killedBy: ['foo should bar'],
+        coveredBy: ['foo should bar', 'baz should qux', 'not found'],
+      });
+      files.push(new File('foo.js', ''));
+
+      // Act
+      const [actualReport] = actReportAll([killedMutantResult]);
+
+      // Assert
+      const expectedTests: schema.TestDefinition[] = [
+        { id: '0', name: 'foo should bar' },
+        { id: '1', name: 'baz should qux' },
+      ];
+      const actualResultMutant = actualReport.files['foo.js'].mutants[0];
+      expect(actualReport.testFiles?.[''].tests).deep.eq(expectedTests);
+      expect(actualResultMutant.coveredBy).deep.eq(['0', '1', 'not found']);
+      expect(actualResultMutant.killedBy).deep.eq(['0']);
     });
 
     it('should group mutants by file name', () => {
@@ -166,7 +231,7 @@ describe(MutationTestReportHelper.name, () => {
       files.push(new File('foo.js', ''));
 
       // Act
-      const actualReport = actReportAll(inputMutants);
+      const [actualReport] = actReportAll(inputMutants);
 
       // Assert
       expect(Object.keys(actualReport.files)).lengthOf(1);
@@ -175,9 +240,32 @@ describe(MutationTestReportHelper.name, () => {
 
     it('should log a warning if source file could not be found', () => {
       const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
-      const actualReport = actReportAll(inputMutants);
+      const [actualReport] = actReportAll(inputMutants);
       expect(Object.keys(actualReport.files)).lengthOf(0);
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
+    });
+
+    it('should provide the metrics as second argument', () => {
+      // Arrange
+      const inputMutants: MutantResult[] = [
+        {
+          mutatorName: 'Foo',
+          fileName: 'foo.js',
+          status: MutantStatus.Killed,
+          range: [1, 2],
+          location: { start: { line: 1, column: 2 }, end: { line: 4, column: 5 } },
+          replacement: '+',
+          id: '1',
+        },
+      ];
+      files.push(new File('foo.js', ''));
+      dryRunResult.tests.push(factory.testResult({ id: 'foo should bar', name: 'foo should bar' }));
+
+      // Act
+      const [actualReport, metrics] = actReportAll(inputMutants);
+
+      // Assert
+      expect(metrics).deep.eq(calculateMutationTestMetrics(actualReport));
     });
 
     describe('determineExitCode', () => {
@@ -210,9 +298,9 @@ describe(MutationTestReportHelper.name, () => {
       });
     });
 
-    function actReportAll(input: MutantResult[] = []): schema.MutationTestResult {
+    function actReportAll(input: MutantResult[] = []): Parameters<Required<Reporter>['onMutationTestReportReady']> {
       sut.reportAll(input);
-      return reporterMock.onMutationTestReportReady.firstCall.args[0];
+      return reporterMock.onMutationTestReportReady.firstCall.args;
     }
   });
 
