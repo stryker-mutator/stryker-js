@@ -40,6 +40,17 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = (
     },
   });
   if (mutantCollector.hasPlacedMutants(originFileName)) {
-    root.program.body.unshift(...instrumentationBabelHeader);
+    // Be sure to leave comments like `// @flow` in.
+    let header = instrumentationBabelHeader;
+    if (Array.isArray(root.program.body[0]?.leadingComments)) {
+      header = [
+        {
+          ...instrumentationBabelHeader[0],
+          leadingComments: root.program.body[0]?.leadingComments,
+        },
+        ...instrumentationBabelHeader.slice(1),
+      ];
+    }
+    root.program.body.unshift(...header);
   }
 };
