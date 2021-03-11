@@ -16,7 +16,5 @@
       "path": "../test-helpers/tsconfig.src.json"
     }
   ],
-  "include": [
-    "test"
-  ]
+  "include": ["test", "typings"]
 }

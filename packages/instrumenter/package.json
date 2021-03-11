@@ -40,7 +40,7 @@
     "@stryker-mutator/api": "4.5.0",
     "@stryker-mutator/util": "4.5.0",
     "angular-html-parser": "~1.7.0",
-    "weapon-regex": "~0.3.0"
+    "weapon-regex": "~0.4.1"
   },
   "devDependencies": {
     "@babel/preset-react": "~7.12.1",
