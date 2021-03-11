@@ -131,38 +131,55 @@ export class MutationTestReportHelper {
     results: readonly MutantResult[],
     remapTestIds: (ids: string[] | undefined) => string[] | undefined
   ): schema.FileResultDictionary {
-    const resultDictionary: schema.FileResultDictionary = Object.create(null);
-
-    results.forEach((mutantResult) => {
-      const fileResult = resultDictionary[mutantResult.fileName];
-      const mutant = this.toMutantResult(mutantResult, remapTestIds);
-      if (fileResult) {
-        fileResult.mutants.push(mutant);
-      } else {
-        const sourceFile = this.inputFiles.files.find((file) => file.name === mutantResult.fileName);
-        if (sourceFile) {
-          resultDictionary[mutantResult.fileName] = {
-            language: this.determineLanguage(sourceFile.name),
-            mutants: [mutant],
-            source: sourceFile.textContent,
-          };
-        } else {
-          this.log.warn(
-            normalizeWhitespaces(`File "${mutantResult.fileName}" not found
-          in input files, but did receive mutant result for it. This shouldn't happen`)
-          );
-        }
-      }
-    });
-    return resultDictionary;
+    return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
+      const fileResult = acc[mutantResult.fileName] ?? (acc[mutantResult.fileName] = this.toFileResult(mutantResult.fileName));
+      fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
+      return acc;
+    }, Object.create(null));
   }
 
   private toTestFiles(remapTestId: (id: string) => string): schema.TestFileDefinitionDictionary {
-    return {
-      '': {
-        tests: this.dryRunResult.tests.map((test) => this.toTestDefinition(test, remapTestId)),
-      },
+    return this.dryRunResult.tests.reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
+      const test = this.toTestDefinition(testResult, remapTestId);
+      const fileName = testResult.fileName ?? ''; // by default we accumulate tests under the '' key
+      const testFile = acc[fileName] ?? (acc[fileName] = this.toTestFile(fileName));
+      testFile.tests.push(test);
+      return acc;
+    }, Object.create(null));
+  }
+
+  private toFileResult(fileName: string): schema.FileResult {
+    const fileResult: schema.FileResult = {
+      language: this.determineLanguage(fileName),
+      mutants: [],
+      source: '',
     };
+    const sourceFile = this.inputFiles.files.find((file) => file.name === fileName);
+    if (sourceFile) {
+      fileResult.source = sourceFile.textContent;
+    } else {
+      this.log.warn(
+        normalizeWhitespaces(`File "${fileName}" not found
+    in input files, but did receive mutant result for it. This shouldn't happen`)
+      );
+    }
+    return fileResult;
+  }
+
+  private toTestFile(fileName: string | undefined): schema.TestFile {
+    const testFile: schema.TestFile = { tests: [] };
+    if (fileName) {
+      const sourceFile = this.inputFiles.files.find((file) => file.name === fileName);
+      if (sourceFile) {
+        testFile.source = sourceFile.textContent;
+      } else {
+        this.log.warn(
+          normalizeWhitespaces(`Test file "${fileName}" not found
+        in input files, but did receive test result for it. This shouldn't happen.`)
+        );
+      }
+    }
+    return testFile;
   }
 
   private toTestDefinition(test: TestResult, remapTestId: (id: string) => string): schema.TestDefinition {

@@ -70,7 +70,8 @@ export class DryRunExecutor {
     commonTokens.logger,
     commonTokens.options,
     coreTokens.timer,
-    coreTokens.concurrencyTokenProvider
+    coreTokens.concurrencyTokenProvider,
+    coreTokens.sandbox
   );
 
   constructor(
@@ -78,7 +79,8 @@ export class DryRunExecutor {
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
-    private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
+    private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
+    public readonly sandbox: I<Sandbox>
   ) {}
 
   public async execute(): Promise<Injector<MutationTestContext>> {
@@ -128,8 +130,22 @@ export class DryRunExecutor {
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
     this.validateResultCompleted(dryRunResult);
+
+    this.remapSandboxFilesToOriginalFiles(dryRunResult);
     const timing = this.calculateTiming(grossTimeMS, humanReadableTimeElapsed, dryRunResult.tests);
     return { dryRunResult, timing };
+  }
+
+  /**
+   * Remaps test files to their respective original names outside the sandbox.
+   * @param dryRunResult the completed result
+   */
+  private remapSandboxFilesToOriginalFiles(dryRunResult: CompleteDryRunResult) {
+    dryRunResult.tests.forEach((test) => {
+      if (test.fileName) {
+        test.fileName = this.sandbox.originalFileFor(test.fileName);
+      }
+    });
   }
 
   private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {

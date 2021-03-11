@@ -95,6 +95,18 @@ describe(MutationTestReportHelper.name, () => {
       expect(actualReport.files['corge.tsx']).include({ language: 'typescript', source: 'corge content' });
     });
 
+    it('should correctly test file properties', () => {
+      // Arrange
+      dryRunResult.tests.push(factory.testResult({ id: 'spec1', name: 'dog should not eat dog', fileName: 'foo.spec.js' }));
+      files.push(new File('foo.js', 'foo content'), new File('foo.spec.js', 'it("dog should not eat dog")'), new File('baz.js', 'baz content'));
+
+      // Act
+      const [actualReport] = actReportAll();
+
+      // Assert
+      expect(actualReport.testFiles?.['foo.spec.js'].source).eq('it("dog should not eat dog")');
+    });
+
     it('should report the tests in `testFiles`', () => {
       // Arrange
       dryRunResult.tests.push(
@@ -238,11 +250,37 @@ describe(MutationTestReportHelper.name, () => {
       expect(actualReport.files['foo.js'].mutants).lengthOf(2);
     });
 
+    it('should group test by test file name', () => {
+      // Arrange
+      dryRunResult.tests.push(
+        factory.testResult({ fileName: 'foo.spec.js', name: '1' }),
+        factory.testResult({ fileName: 'bar.spec.js', name: '2' }),
+        factory.testResult({ fileName: 'foo.spec.js', name: '3' })
+      );
+      files.push(new File('foo.spec.js', ''), new File('bar.spec.js', ''));
+
+      // Act
+      const [actualReport] = actReportAll([]);
+
+      // Assert
+      expect(Object.keys(actualReport.testFiles!)).lengthOf(2);
+      expect(actualReport.testFiles!['foo.spec.js'].tests).lengthOf(2);
+      expect(actualReport.testFiles!['foo.spec.js'].tests[0].name).eq('1');
+      expect(actualReport.testFiles!['foo.spec.js'].tests[1].name).eq('3');
+      expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
+    });
+
     it('should log a warning if source file could not be found', () => {
       const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
       const [actualReport] = actReportAll(inputMutants);
-      expect(Object.keys(actualReport.files)).lengthOf(0);
+      expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
       expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
+    });
+
+    it('should log a warning the test file could not be found', () => {
+      dryRunResult.tests.push(factory.testResult({ fileName: 'foo.spec.js' }));
+      actReportAll([]);
+      expect(testInjector.logger.warn).calledWithMatch('Test file "foo.spec.js" not found in input files');
     });
 
     it('should provide the metrics as second argument', () => {
