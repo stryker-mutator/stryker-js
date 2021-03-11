@@ -14,13 +14,15 @@ export class MutantCollector {
    * Adds a mutant to the internal mutant list.
    * @param fileName file name that houses the mutant
    * @param mutationSpecs the named node mutation to be added
+   * @param positionOffset position offset of mutant node
+   * @param lineOffset line offset of mutant node
    * @returns The mutant (for testability)
    */
-  public add(fileName: string, mutationSpecs: NamedNodeMutation): Mutant {
+  public add(fileName: string, mutationSpecs: NamedNodeMutation, positionOffset = 0, lineOffset = 0): Mutant {
     mutationSpecs.replacement.end = mutationSpecs.original.end;
     mutationSpecs.replacement.start = mutationSpecs.original.start;
     mutationSpecs.replacement.loc = mutationSpecs.original.loc;
-    const mutant = new Mutant(this._mutants.length, fileName, mutationSpecs);
+    const mutant = new Mutant(this._mutants.length, fileName, mutationSpecs, positionOffset, lineOffset);
     this._mutants.push(mutant);
     if (mutant.ignoreReason === undefined) {
       // Only place mutants that are not ignored
