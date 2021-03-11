@@ -6,24 +6,20 @@ import { Config } from '@jest/types';
 
 import * as customJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
 import * as reactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
-import * as reactScriptsTSJestConfigLoader from '../../../src/config-loaders/react-scripts-ts-jest-config-loader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options';
 import { configLoaderFactory } from '../../../src/config-loaders';
 
 describe(configLoaderFactory.name, () => {
   let customConfigLoaderStub: sinon.SinonStubbedInstance<customJestConfigLoader.CustomJestConfigLoader>;
   let reactScriptsJestConfigLoaderStub: sinon.SinonStubbedInstance<reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader>;
-  let reactScriptsTSJestConfigLoaderStub: sinon.SinonStubbedInstance<reactScriptsTSJestConfigLoader.ReactScriptsTSJestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
     customConfigLoaderStub = sinon.createStubInstance(customJestConfigLoader.CustomJestConfigLoader);
     reactScriptsJestConfigLoaderStub = sinon.createStubInstance(reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader);
-    reactScriptsTSJestConfigLoaderStub = sinon.createStubInstance(reactScriptsTSJestConfigLoader.ReactScriptsTSJestConfigLoader);
 
     sinon.stub(customJestConfigLoader, 'CustomJestConfigLoader').returns(customConfigLoaderStub);
     sinon.stub(reactScriptsJestConfigLoader, 'ReactScriptsJestConfigLoader').returns(reactScriptsJestConfigLoaderStub);
-    sinon.stub(reactScriptsTSJestConfigLoader, 'ReactScriptsTSJestConfigLoader').returns(reactScriptsTSJestConfigLoaderStub);
 
     const defaultOptions: Partial<Config.InitialOptions> = {
       collectCoverage: true,
@@ -33,7 +29,6 @@ describe(configLoaderFactory.name, () => {
     };
     customConfigLoaderStub.loadConfig.returns(defaultOptions);
     reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
-    reactScriptsTSJestConfigLoaderStub.loadConfig.returns(defaultOptions);
 
     options = factory.strykerWithPluginOptions({
       jest: {
@@ -59,22 +54,6 @@ describe(configLoaderFactory.name, () => {
       const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
 
       expect(sut).eq(reactScriptsJestConfigLoaderStub);
-    });
-
-    it('should warn when a configFile is set', () => {
-      testConfigFileWarning(options);
-    });
-  });
-
-  describe('with "projectType": "create-react-app-ts"', () => {
-    beforeEach(() => {
-      options.jest.projectType = 'create-react-app-ts';
-    });
-
-    it('should create a ReactScriptsTSJestConfigLoader', () => {
-      const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-      expect(sut).eq(reactScriptsTSJestConfigLoaderStub);
     });
 
     it('should warn when a configFile is set', () => {
