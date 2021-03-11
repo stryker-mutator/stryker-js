@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.1](https://github.com/stryker-mutator/stryker/compare/v4.5.0...v4.5.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* **babel-transformer:** respect top of the file comments/pragma ([#2783](https://github.com/stryker-mutator/stryker/issues/2783)) ([ca42276](https://github.com/stryker-mutator/stryker/commit/ca422764a2ba5552ef34965532e0b9030f110669))
+* **instrumenter:** corect mutant location in .vue and .html files ([547a25c](https://github.com/stryker-mutator/stryker/commit/547a25cfa13e89a597c433bb329ee011abe84420)), closes [#2790](https://github.com/stryker-mutator/stryker/issues/2790)
+* **peer-deps:** use correct peer dep version ([a6ca0f2](https://github.com/stryker-mutator/stryker/commit/a6ca0f25b29cb84a2cb4b8c05a42e7305d5dde16))
+
+
+
+
+
 # [4.5.0](https://github.com/stryker-mutator/stryker/compare/v4.4.1...v4.5.0) (2021-03-06)
 
 
