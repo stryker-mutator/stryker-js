@@ -18,6 +18,10 @@ export interface BaseAst {
   originFileName: string;
   rawContent: string;
   root: Ast['root'];
+  offset?: {
+    position: number;
+    line: number;
+  };
 }
 
 /**

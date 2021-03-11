@@ -1,5 +1,4 @@
 import path from 'path';
-import { platform } from 'os';
 
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -12,11 +11,6 @@ import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 import { expectTestResults } from '../helpers/assertions';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const paths = require('react-scripts-ts/config/paths');
-// It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
-paths.appTsTestConfig = resolveTestResource('reactTsProject/tsconfig.test.json');
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
@@ -43,33 +37,14 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    it('should run tests on the example React + TypeScript project', async function () {
-      if (platform() === 'win32') {
-        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
-        this.skip();
-      }
-      // TODO: Get a proper React TS project that works on Windows
-      process.chdir(resolveTestResource('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
-
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
-
-      assertions.expectCompleted(runResult);
-      expectToHaveSuccessfulTests(runResult, 1);
-    });
-
     it('should set the test name and timeSpentMs', async function () {
-      if (platform() === 'win32') {
-        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
-        this.skip();
-      }
-      process.chdir(resolveTestResource('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
+      process.chdir(resolveTestResource('jasmine2-node'));
+      const jestTestRunner = createSut();
 
       const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
-      expect(runResult.tests[0].name).to.equal('renders without crashing');
+      expect(runResult.tests[0].name).to.equal('Add should be able to add two numbers');
       expect(runResult.tests[0].timeSpentMs).to.be.above(-1);
     });
 

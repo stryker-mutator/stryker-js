@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.1](https://github.com/stryker-mutator/stryker/compare/v4.5.0...v4.5.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* **babel-transformer:** respect top of the file comments/pragma ([#2783](https://github.com/stryker-mutator/stryker/issues/2783)) ([ca42276](https://github.com/stryker-mutator/stryker/commit/ca422764a2ba5552ef34965532e0b9030f110669))
+* **instrumenter:** corect mutant location in .vue and .html files ([547a25c](https://github.com/stryker-mutator/stryker/commit/547a25cfa13e89a597c433bb329ee011abe84420)), closes [#2790](https://github.com/stryker-mutator/stryker/issues/2790)
+
+
+
+
+
+# [4.5.0](https://github.com/stryker-mutator/stryker/compare/v4.4.1...v4.5.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* **mutator:** don't mutate string literal object methods ([#2718](https://github.com/stryker-mutator/stryker/issues/2718)) ([964537a](https://github.com/stryker-mutator/stryker/commit/964537a37dece036573f88bace6c714a0413a2e7))
+
+
+### Features
+
+* **package:** restructure package internals ([#2714](https://github.com/stryker-mutator/stryker/issues/2714)) ([e1711d2](https://github.com/stryker-mutator/stryker/commit/e1711d28f25e8ee7cbdf025adecb3234ee0515a6))
+
+
+
+
+
 ## [4.4.1](https://github.com/stryker-mutator/stryker/compare/v4.4.0...v4.4.1) (2021-01-27)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

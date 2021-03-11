@@ -23,6 +23,7 @@ describe('stringUtils', () => {
         baz: string;
       };
       qux: {
+        [name: string]: string;
         quux: string;
       };
     }
@@ -32,15 +33,26 @@ describe('stringUtils', () => {
       expect(path.build()).eq('bar.baz');
       expect(path.toString()).eq('bar.baz');
     });
+
+    it('should not be able to point to a path non-existing path', () => {
+      // @ts-expect-error Argument of type '"bar"' is not assignable to parameter of type '"quux"'.ts(2345)
+      PropertyPathBuilder.create<Foo>().prop('qux').prop('bar');
+    });
   });
 
   describe(propertyPath.name, () => {
     interface Foo {
       bar: string;
+      [name: string]: string;
     }
 
     it('should be able to point to a path', () => {
       expect(propertyPath<Foo>('bar')).eq('bar');
+    });
+
+    it('should not be able to point to a non-existing path', () => {
+      // @ts-expect-error Argument of type '"baz"' is not assignable to parameter of type '"bar"'.ts(2345)
+      propertyPath<Foo>('baz');
     });
   });
 

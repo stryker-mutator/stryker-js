@@ -23,8 +23,7 @@ describe('Typescript checker on a project with project references', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    process.chdir(resolveTestResource());
-    testInjector.options.tsconfigFile = 'tsconfig.root.json';
+    testInjector.options.tsconfigFile = resolveTestResource('tsconfig.root.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
   });

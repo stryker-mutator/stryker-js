@@ -47,6 +47,17 @@ describe(MutantCollector.name, () => {
         })
       );
     });
+
+    it('should create mutant with offset info', () => {
+      const fileName = 'file.js';
+      const original = types.identifier('foo');
+      const replacement = types.identifier('bar');
+
+      sut.add(fileName, { original, replacement, mutatorName: 'mutatorName' }, 42, 4);
+
+      expect(sut.mutants[0].positionOffset).eq(42);
+      expect(sut.mutants[0].lineOffset).eq(4);
+    });
   });
 
   describe(MutantCollector.prototype.findUnplacedMutantsInScope.name, () => {
