@@ -1,0 +1,9 @@
+{
+  "name": "workspace-b",
+  "version": "1.0.0",
+
+  "dependencies": {
+    "cross-env": "5.0.5",
+    "workspace-a": "1.0.0"
+  }
+}
