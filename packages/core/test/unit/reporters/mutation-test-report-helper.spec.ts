@@ -13,7 +13,7 @@ import { InputFileCollection } from '../../../src/input/input-file-collection';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
 import * as objectUtils from '../../../src/utils/object-utils';
 
-describe.only(MutationTestReportHelper.name, () => {
+describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let inputFiles: InputFileCollection;
   let files: File[];
