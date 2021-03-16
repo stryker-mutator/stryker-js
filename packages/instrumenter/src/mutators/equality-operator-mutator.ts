@@ -35,7 +35,7 @@ export class EqualityOperatorMutator implements NodeMutator {
       const mutatedOperators: BinaryOperator[] = this.operators[path.node.operator];
 
       return mutatedOperators.map((mutatedOperator) => {
-        const replacement = types.cloneNode(path.node, false) as types.BinaryExpression;
+        const replacement = types.cloneNode(path.node, false);
         replacement.operator = mutatedOperator;
 
         return {
