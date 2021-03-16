@@ -1,3 +1,5 @@
+import { Position } from '../core';
+
 import { TestStatus } from './test-status';
 
 /**
@@ -16,6 +18,16 @@ export interface BaseTestResult {
    * The time it took to run the test
    */
   timeSpentMs: number;
+
+  /**
+   * The file where this test was defined in (if known)
+   */
+  fileName?: string;
+
+  /**
+   * The position of the test (if known)
+   */
+  startPosition?: Position;
 }
 
 export interface FailedTestResult extends BaseTestResult {

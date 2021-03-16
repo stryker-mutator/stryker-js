@@ -26,7 +26,7 @@ describe(Sandbox.name, () => {
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
   let readFile: sinon.SinonStub;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
-  const SANDBOX_WORKING_DIR = 'sandbox-123';
+  const SANDBOX_WORKING_DIR = path.resolve('.stryker-tmp/sandbox-123');
   const BACKUP_DIR = 'backup-123';
 
   beforeEach(() => {
@@ -334,6 +334,34 @@ describe(Sandbox.name, () => {
       const sut = createSut();
       await sut.init();
       expect(sut.workingDirectory).eq(process.cwd());
+    });
+  });
+
+  describe(Sandbox.prototype.sandboxFileFor.name, () => {
+    it('should return the sandbox file if exists', async () => {
+      const originalFileName = path.resolve('src/foo.js');
+      files.push(new File(originalFileName, ''));
+      const sut = createSut();
+      await sut.init();
+      const actualSandboxFile = sut.sandboxFileFor(originalFileName);
+      expect(actualSandboxFile).eq(path.join(SANDBOX_WORKING_DIR, 'src/foo.js'));
+    });
+
+    it("should throw when the sandbox file doesn't exists", async () => {
+      const notExistingFile = 'src/bar.js';
+      files.push(new File(path.resolve('src/foo.js'), ''));
+      const sut = createSut();
+      await sut.init();
+      expect(() => sut.sandboxFileFor(notExistingFile)).throws('Cannot find sandbox file for src/bar.js');
+    });
+  });
+
+  describe(Sandbox.prototype.originalFileFor.name, () => {
+    it('should remap the file to the original', async () => {
+      const sut = createSut();
+      await sut.init();
+      const sandboxFile = path.join(SANDBOX_WORKING_DIR, 'src/foo.js');
+      expect(sut.originalFileFor(sandboxFile)).eq(path.resolve('src/foo.js'));
     });
   });
 });
