@@ -7,7 +7,6 @@ export interface RunSettings {
   projectRoot: string;
   testNamePattern?: string;
   fileNameUnderTest?: string;
-  testLocationInResults?: boolean;
 }
 
 export interface JestTestAdapter {

@@ -14,7 +14,6 @@ import {
   TestResult,
   TestStatus,
   DryRunOptions,
-  BaseTestResult,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
@@ -110,7 +109,6 @@ export class JestTestRunner implements TestRunner {
       const { dryRunResult, jestResult } = await this.run({
         jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
         projectRoot: process.cwd(),
-        testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
         const errorMessage = verifyAllTestFilesHaveCoverage(jestResult, fileNamesWithMutantCoverage);
@@ -192,35 +190,37 @@ export class JestTestRunner implements TestRunner {
 
     for (const suiteResult of suiteResults) {
       for (const testResult of suiteResult.testResults) {
-        const result: BaseTestResult = {
-          id: testResult.fullName,
-          name: testResult.fullName,
-          timeSpentMs: testResult.duration ?? 0,
-          fileName: suiteResult.testFilePath,
-          startPosition: testResult.location ?? undefined,
-        };
+        let result: TestResult;
+        const timeSpentMs = testResult.duration ?? 0;
 
         switch (testResult.status) {
           case 'passed':
-            testResults.push({
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
               status: TestStatus.Success,
-              ...result,
-            });
+              timeSpentMs,
+            };
             break;
           case 'failed':
-            testResults.push({
-              status: TestStatus.Failed,
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
               failureMessage: testResult.failureMessages.join(', '),
-              ...result,
-            });
+              status: TestStatus.Failed,
+              timeSpentMs,
+            };
             break;
           default:
-            testResults.push({
+            result = {
+              id: testResult.fullName,
+              name: testResult.fullName,
               status: TestStatus.Skipped,
-              ...result,
-            });
+              timeSpentMs,
+            };
             break;
         }
+        testResults.push(result);
       }
     }
 

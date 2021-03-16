@@ -9,7 +9,7 @@ import { RunSettings, JestTestAdapter } from './jest-test-adapter';
  * It has a lot of `any` typings here, since the installed typings are not in sync.
  */
 export class JestLessThan25TestAdapter implements JestTestAdapter {
-  public run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
+  public run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
     return jest.runCLI(
       {
@@ -18,7 +18,6 @@ export class JestLessThan25TestAdapter implements JestTestAdapter {
         runInBand: true,
         silent: true,
         testNamePattern,
-        testLocationInResults,
       } as any,
       [projectRoot]
     );
