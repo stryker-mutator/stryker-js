@@ -1,6 +1,6 @@
 import os from 'os';
 
-import * as path from 'path';
+import path from 'path';
 
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
