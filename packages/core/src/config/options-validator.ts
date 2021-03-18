@@ -1,6 +1,6 @@
 import os from 'os';
 
-import path from 'path';
+import { hasMagic } from 'glob';
 
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
@@ -31,7 +31,6 @@ export class OptionsValidator {
     this.removeDeprecatedOptions(options);
     this.schemaValidate(options);
     this.additionalValidation(options);
-    this.specificMutantsValidation(options);
   }
 
   private removeDeprecatedOptions(rawOptions: Record<string, unknown>) {
@@ -88,6 +87,10 @@ export class OptionsValidator {
         'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
       );
     }
+    if (options.mutate.some((mutateString) => hasMagic(mutateString) && /(:\d+){4}$/.exec(mutateString))) {
+      additionalErrors.push('Config option "mutate" cannot have both mutation range and glob expression');
+    }
+
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
   }
@@ -98,22 +101,6 @@ export class OptionsValidator {
       describedErrors.forEach((error) => this.log.error(error));
       this.throwErrorIfNeeded(describedErrors);
     }
-  }
-
-  private specificMutantsValidation(options: StrykerOptions) {
-    options.mutator.specificMutants = options.mutate
-      .filter((fileToMutate) => /(:\d+){4}$/.exec(fileToMutate))
-      .map((fileToMutate) => {
-        const fileName = fileToMutate.replace(/(:\d+){4}/, '');
-        const [matchedItems] = /(:\d+){4}$/.exec(fileToMutate)!;
-        const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
-
-        return {
-          filename: path.resolve(fileName),
-          start: { line: parseInt(startLine), column: parseInt(startColumn) },
-          end: { line: parseInt(endLine), column: parseInt(endColumn) },
-        };
-      });
   }
 
   private throwErrorIfNeeded(errors: string[]) {

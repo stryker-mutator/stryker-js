@@ -4,13 +4,11 @@ import fs from 'fs';
 
 import { from } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
-
-import { hasMagic } from 'glob';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
@@ -66,9 +64,13 @@ export class InputFileResolver {
   }
 
   public async resolve(): Promise<InputFileCollection> {
-    const [inputFileNames, mutateFiles] = await Promise.all([this.resolveInputFiles(), this.resolveMutateFiles()]);
+    const [inputFileNames, mutateFiles, mutationRange] = await Promise.all([
+      this.resolveInputFiles(),
+      this.resolveMutateFiles(),
+      this.resolveMutationRange(),
+    ]);
     const files: File[] = await this.readFiles(inputFileNames);
-    const inputFileCollection = new InputFileCollection(files, mutateFiles);
+    const inputFileCollection = new InputFileCollection(files, mutateFiles, mutationRange);
     this.reportAllSourceFilesRead(files);
     inputFileCollection.logFiles(this.log);
     return inputFileCollection;
@@ -99,6 +101,22 @@ export class InputFileResolver {
     }
   }
 
+  private resolveMutationRange(): MutationRange[] {
+    return this.mutatePatterns
+      .filter((fileToMutate) => /(:\d+){4}$/.exec(fileToMutate))
+      .map((fileToMutate) => {
+        const fileName = fileToMutate.replace(/(:\d+){4}/, '');
+        const [matchedItems] = /(:\d+){4}$/.exec(fileToMutate)!;
+        const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
+
+        return {
+          filename: path.resolve(fileName),
+          start: { line: parseInt(startLine), column: parseInt(startColumn) },
+          end: { line: parseInt(endLine), column: parseInt(endColumn) },
+        };
+      });
+  }
+
   /**
    * Takes a list of globbing patterns and expands them into files.
    * If a patterns starts with a `!`, it negates the pattern.
@@ -120,10 +138,6 @@ export class InputFileResolver {
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
     if (/(:\d+){4}$/.exec(globbingExpression)) {
-      if (hasMagic(globbingExpression)) {
-        throw new StrykerError('Do not use glob patterns with specific mutants on the glob pattern');
-      }
-
       globbingExpression = globbingExpression.replace(/(:\d+){4}$/, '');
     }
 

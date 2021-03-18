@@ -204,47 +204,6 @@
             "type": "string"
           },
           "default": []
-        },
-        "specificMutants": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["filename", "start", "end"],
-            "properties": {
-              "filename": {
-                "type": "string"
-              },
-              "start": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["line", "column"],
-                "properties": {
-                  "line": {
-                    "type": "number"
-                  },
-                  "column": {
-                    "type": "number"
-                  }
-                }
-              },
-              "end": {
-                "type": "object",
-                "additionalProperties": false,
-                "required": ["line", "column"],
-                "properties": {
-                  "line": {
-                    "type": "number"
-                  },
-                  "column": {
-                    "type": "number"
-                  }
-                }
-              }
-
-            }
-          },
-          "default": []
         }
       }
     },

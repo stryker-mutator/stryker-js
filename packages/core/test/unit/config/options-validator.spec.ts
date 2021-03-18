@@ -1,7 +1,5 @@
 import os from 'os';
 
-import path from 'path';
-
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
@@ -189,21 +187,14 @@ describe(OptionsValidator.name, () => {
       );
     });
 
-    it('should transform mutate into specificMutants', () => {
-      testInjector.options.mutate = ['src/index.ts:1:0:2:0', 'src/index.ts:1:3:1:5', 'src/other.ts'];
-      sut.validate(testInjector.options);
-      expect(testInjector.options.mutator.specificMutants).to.eql([
-        {
-          filename: path.resolve('src/index.ts'),
-          start: { line: 1, column: 0 },
-          end: { line: 2, column: 0 },
-        },
-        {
-          filename: path.resolve('src/index.ts'),
-          start: { line: 1, column: 3 },
-          end: { line: 1, column: 5 },
-        },
-      ]);
+    it('should accept mutationRange without a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.ts:1:0:2:0'];
+      actAssertValid();
+    });
+
+    it('should not accept mutationRange with a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.*.ts:1:0:2:0'];
+      actValidationErrors('Config option "mutate" cannot have both mutation range and glob expression');
     });
   });
 

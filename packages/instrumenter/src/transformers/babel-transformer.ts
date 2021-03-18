@@ -23,8 +23,8 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = ({ ro
         path.skip();
       } else {
         if (
-          options.specificMutants?.length &&
-          !options.specificMutants.find(
+          options.mutationRange?.length &&
+          !options.mutationRange.find(
             (mutant) =>
               mutant.filename == originFileName &&
               path.node.loc!.start.line >= mutant.start.line &&

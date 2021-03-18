@@ -38,6 +38,7 @@ describe(MutationTestReportHelper.name, () => {
       filesToMutate: [],
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       logFiles: () => {},
+      mutationRangeToInstrument: [],
     };
     dryRunResult = factory.completeDryRunResult();
   });
@@ -258,7 +259,7 @@ describe(MutationTestReportHelper.name, () => {
 
   describe('reportOne', () => {
     beforeEach(() => {
-      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js']);
+      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js'], []);
     });
 
     it('should map simple attributes to the mutant result', () => {

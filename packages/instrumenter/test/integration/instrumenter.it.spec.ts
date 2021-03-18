@@ -67,7 +67,7 @@ describe('instrumenter integration', () => {
 
       await arrangeAndActAssert('specific-mutants.ts', {
         ...createInstrumenterOptions(),
-        specificMutants: [
+        mutationRange: [
           {
             filename: fullFileName,
             start: { line: 1, column: 10 },
@@ -97,7 +97,7 @@ describe('instrumenter integration', () => {
 
       await arrangeAndActAssert('specific-no-mutants.ts', {
         ...createInstrumenterOptions(),
-        specificMutants: [
+        mutationRange: [
           {
             filename: fullFileName,
             start: { line: 1, column: 10 },

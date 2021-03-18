@@ -47,7 +47,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       preprocess: sinon.stub(),
     };
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
-    inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
+    inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
     injectorMock = factory.injector();
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
@@ -65,7 +65,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = testInjector.options.mutator;
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, mutationRange: [] };
     expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile], expectedInstrumenterOptions);
   });
 

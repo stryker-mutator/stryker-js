@@ -1,16 +1,18 @@
 import os from 'os';
 
-import { File } from '@stryker-mutator/api/core';
+import { File, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
 export class InputFileCollection {
   public readonly files: readonly File[];
   public readonly filesToMutate: readonly File[];
+  public readonly mutationRangeToInstrument: readonly MutationRange[];
 
-  constructor(files: readonly File[], mutateGlobResult: readonly string[]) {
+  constructor(files: readonly File[], mutateGlobResult: readonly string[], mutationRangeToInstrument: readonly MutationRange[]) {
     this.files = files;
     this.filesToMutate = files.filter((file) => mutateGlobResult.some((name) => name === file.name));
+    this.mutationRangeToInstrument = mutationRangeToInstrument;
   }
 
   public logFiles(log: Logger): void {
