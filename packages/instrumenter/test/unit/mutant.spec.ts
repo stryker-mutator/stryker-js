@@ -48,14 +48,14 @@ describe(Mutant.name, () => {
       // Arrange
       const lt = findNodePath<types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
       const lte = types.binaryExpression('<=', lt.left, lt.right);
-      const mutant = new Mutant(1, 'bar.js', { original: lt, replacement: lte, mutatorName: 'barMutator' });
+      const mutant = new Mutant(1, 'bar.js', { original: lt, replacement: lte, mutatorName: 'barMutator' }, 42, 4);
 
       // Act
       const actual = mutant.toApiMutant();
 
       // Assert
-      expect(actual.location).deep.eq({ start: { line: 0, column: 3 }, end: { line: 0, column: 8 } });
-      expect(actual.range).deep.eq([3, 8]);
+      expect(actual.location).deep.eq({ start: { line: 4, column: 3 }, end: { line: 4, column: 8 } });
+      expect(actual.range).deep.eq([45, 50]);
     });
   });
 });

@@ -80,13 +80,37 @@ describe('babel-transformer', () => {
     expect(mutantCollectorMock.markMutantsAsPlaced).calledWith([mutant]);
   });
 
-  it('should add the global stuff on top', () => {
-    const ast = createJSAst({ rawContent: 'foo' });
+  it('should add the global js header on top', () => {
+    const ast = createJSAst({ rawContent: 'const foo="cat"' });
     mutantCollectorMock.hasPlacedMutants.returns(true);
     transformBabel(ast, mutantCollectorMock, context);
-    for (let i = 0; i < instrumentationBabelHeader.length; i++) {
-      expect(ast.root.program.body[i]).eq(instrumentationBabelHeader[i]);
-    }
+    expect(ast.root.program.body.slice(0, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader);
+  });
+
+  it('should add the global js header on top but after comments that are followed by newline', () => {
+    const ast = createJSAst({ rawContent: '// @flow\n// another comment\n\nconst foo="cat"' });
+    mutantCollectorMock.hasPlacedMutants.returns(true);
+    transformBabel(ast, mutantCollectorMock, context);
+
+    expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
+    expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
+    const { leadingComments: _unused, ...actualFirstStatement } = ast.root.program.body[0];
+    const { leadingComments: _unused2, ...expectedFirstStatement } = instrumentationBabelHeader[0];
+    expect(actualFirstStatement).deep.eq(expectedFirstStatement);
+    expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
+  });
+
+  it('should add the global js header on top but after comments that are followed by a statement', () => {
+    const ast = createJSAst({ rawContent: '// @flow\n// another comment\nconst foo="cat"' });
+    mutantCollectorMock.hasPlacedMutants.returns(true);
+    transformBabel(ast, mutantCollectorMock, context);
+
+    expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
+    expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
+    const { leadingComments: _unused, ...actualFirstStatement } = ast.root.program.body[0];
+    const { leadingComments: _unused2, ...expectedFirstStatement } = instrumentationBabelHeader[0];
+    expect(actualFirstStatement).deep.eq(expectedFirstStatement);
+    expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
   });
 
   it('should not add global js header if no mutants were placed in the code', () => {

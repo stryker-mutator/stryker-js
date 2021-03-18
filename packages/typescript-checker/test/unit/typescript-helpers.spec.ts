@@ -110,11 +110,15 @@ describe('typescript-helpers', () => {
 
   describe(retrieveReferencedProjects.name, () => {
     it('should result in an empty array when references are missing', () => {
-      expect(retrieveReferencedProjects({ config: { compilerOptions: {} } })).deep.eq([]);
+      expect(retrieveReferencedProjects({ config: { compilerOptions: {} } }, '')).deep.eq([]);
     });
 
     it('should retrieve referenced projects', () => {
-      expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } })).deep.eq([path.resolve('some.json')]);
+      expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } }, process.cwd())).deep.eq([path.resolve('some.json')]);
+    });
+
+    it('should resolve from given dirname', () => {
+      expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } }, 'a/b')).deep.eq([path.resolve('a', 'b', 'some.json')]);
     });
   });
 
