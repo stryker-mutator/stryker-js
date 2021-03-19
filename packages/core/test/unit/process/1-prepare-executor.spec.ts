@@ -11,8 +11,7 @@ import { coreTokens } from '../../../src/di';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
 import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
 import { Timer } from '../../../src/utils/timer';
-import { InputFileResolver } from '../../../src/input/input-file-resolver';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileResolver, InputFileCollection } from '../../../src/input';
 
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import { ConfigError } from '../../../src/errors';

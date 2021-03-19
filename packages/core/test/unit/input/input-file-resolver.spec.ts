@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
-import { InputFileResolver } from '../../../src/input/input-file-resolver';
+import { InputFileResolver } from '../../../src/input';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
 import * as fileUtils from '../../../src/utils/file-utils';
 import { Mock, mock } from '../../helpers/producers';

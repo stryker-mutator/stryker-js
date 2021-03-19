@@ -17,7 +17,7 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../../../src/di';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileCollection } from '../../../src/input';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
 import * as objectUtils from '../../../src/utils/object-utils';
 import { createMutantTestCoverage } from '../../helpers/producers';

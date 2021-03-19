@@ -9,7 +9,7 @@ import { Checker } from '@stryker-mutator/api/check';
 import { I } from '@stryker-mutator/util';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileCollection } from '../../../src/input';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/checker-facade';
