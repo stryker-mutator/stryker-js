@@ -26,7 +26,7 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {

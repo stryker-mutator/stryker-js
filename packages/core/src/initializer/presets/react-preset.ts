@@ -3,11 +3,11 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Preset } from './preset';
 import { PresetConfiguration } from './preset-configuration';
 
-const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/react';
+const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/react';
 
 /**
  * More information can be found in the Stryker handbook:
- * https://stryker-mutator.io/docs/stryker/guides/react
+ * https://stryker-mutator.io/docs/stryker-js/guides/react
  */
 export class ReactPreset implements Preset {
   public readonly name = 'create-react-app';

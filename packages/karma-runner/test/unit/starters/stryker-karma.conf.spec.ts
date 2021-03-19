@@ -98,7 +98,7 @@ describe('stryker-karma.conf.js', () => {
     });
   });
 
-  // See https://github.com/stryker-mutator/stryker/issues/2049
+  // See https://github.com/stryker-mutator/stryker-js/issues/2049
   it('should force clearContext to false', () => {
     // Arrange
     sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });

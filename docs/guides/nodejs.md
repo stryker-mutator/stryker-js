@@ -167,4 +167,4 @@ You will need to override the `tempDirName` to a directory without a `.` in fron
 }
 ```
 
-See [#1691](https://github.com/stryker-mutator/stryker/issues/1691) for more info.
+See [#1691](https://github.com/stryker-mutator/stryker-js/issues/1691) for more info.

@@ -19,7 +19,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/stryker-mutator/stryker.git"
+    "url": "git+ssh://git@github.com/stryker-mutator/stryker.git",
+    "directory": "packages/jasmine-runner"
   },
   "keywords": [
     "stryker",
@@ -32,9 +33,9 @@
   "author": "Nico Jansen",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine-runner#readme",
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/jasmine-runner",
   "peerDependencies": {
     "@stryker-mutator/core": "~4.5.0",
     "jasmine": ">=2"

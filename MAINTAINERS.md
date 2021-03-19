@@ -10,7 +10,7 @@ We've written this document for:
 The purpose of this document is to _describe our processes_. We want to avoid conflicts and confusion around "unwritten rules". In our opinion, the most straightforward way to address this is to _write them down_. This _also_ happens to be the most straightforward way to change them!
 
 ## Code of conduct
-See [Code of conduct](https://github.com/stryker-mutator/stryker/blob/master/CODE_OF_CONDUCT.md)
+See [Code of conduct](https://github.com/stryker-mutator/stryker-js/blob/master/CODE_OF_CONDUCT.md)
 
 ## Contributor
 This is the most important thing:
@@ -30,7 +30,7 @@ A "contributor" is any individual who has given back in some way to the project 
 1. Recruiting more contributors! Don't spam.
 1. Researching the user base, getting feedback, etc. Don't spam.
 
-A contributor is usually a user as well, but this isn't a hard-and-fast rule. A contributor is also expected to adhere to the [Code of conduct](https://github.com/stryker-mutator/stryker/blob/master/CODE_OF_CONDUCT.md) as a user would.
+A contributor is usually a user as well, but this isn't a hard-and-fast rule. A contributor is also expected to adhere to the [Code of conduct](https://github.com/stryker-mutator/stryker-js/blob/master/CODE_OF_CONDUCT.md) as a user would.
 
 ## Maintainer 
 A maintainer has certain "rights" (or "permissions") to the Stryker project and other projects under the stryker-mutator organization. These rights come with increased responsibilities.

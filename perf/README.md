@@ -20,7 +20,7 @@ from github.
 ## Add new
 
 You can add a new one simply
-by adding it to the [test directory](https://github.com/stryker-mutator/stryker/tree/master/perf/test)
+by adding it to the [test directory](https://github.com/stryker-mutator/stryker-js/tree/master/perf/test)
 
 The package you add should have [local dependencies](https://github.com/nicojs/node-install-local#install-local) to
 the Stryker packages you need.

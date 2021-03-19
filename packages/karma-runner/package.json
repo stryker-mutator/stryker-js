@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.io/stryker-mutator/stryker"
+    "url": "https://github.io/stryker-mutator/stryker",
+    "directory": "packages/karma-runner"
   },
   "engines": {
     "node": ">=10"
@@ -28,9 +29,9 @@
   "author": "Nico Jansen <nicoj@infosupport.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/karma-runner#readme",
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "4.5.1",
     "@types/express": "~4.17.0",

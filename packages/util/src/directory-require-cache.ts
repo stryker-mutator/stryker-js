@@ -8,7 +8,7 @@ import { notEmpty } from './not-empty';
  * Then each time you call `clear` it will clear those files from the require cache
  *
  * It will also delete the `module.children` property of the root module.
- * @see https://github.com/stryker-mutator/stryker/issues/2461
+ * @see https://github.com/stryker-mutator/stryker-js/issues/2461
  */
 export class DirectoryRequireCache {
   private cache: Set<string> | undefined;

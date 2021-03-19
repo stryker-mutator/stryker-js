@@ -11,7 +11,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
  * to result in an OutOfMemory error when the mocha test runner does not clean it's memory
  * Start this process with `--max-old-space-size=32 --max-semi-space-size=1` to get a fast OutOfMemory error (if there is a memory leak)
  *
- * @see https://github.com/stryker-mutator/stryker/issues/2461
+ * @see https://github.com/stryker-mutator/stryker-js/issues/2461
  * @see https://nodejs.org/api/modules.html#modules_accessing_the_main_module
  * @see https://stackoverflow.com/questions/30252905/nodejs-decrease-v8-garbage-collector-memory-usage
  */

@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker.git"
+    "url": "https://github.com/stryker-mutator/stryker.git",
+    "directory": "packages/jest-runner"
   },
   "engines": {
     "node": ">=10"
@@ -36,9 +37,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/jest-runner#readme",
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
   "devDependencies": {
     "@jest/types": "~26.6.1",
     "@stryker-mutator/test-helpers": "4.5.1",

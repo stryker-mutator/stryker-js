@@ -14,14 +14,14 @@ Don't worry about plugins if you're just getting started. The needed plugins wil
 A test runner plugin can hook into your test runner support coverage analysis or improve performance. If your test runner isn't listed here, you can probably still use the
 [command test runner](./configuration#testrunner-string).
 
-- [Jasmine](./jasmine-runner.md) ([@stryker-mutator/jasmine-runner](https://github.com/stryker-mutator/stryker/tree/master/packages/jasmine-runner))
-- [Jest](./jest-runner.md) ([@stryker-mutator/jest-runner](https://github.com/stryker-mutator/stryker/tree/master/packages/jest-runner))
-- [Karma](./karma-runner.md) ([@stryker-mutator/karma-runner](https://github.com/stryker-mutator/stryker/tree/master/packages/karma-runner))
-- [Mocha](./mocha-runner.md) ([@stryker-mutator/mocha-runner](https://github.com/stryker-mutator/stryker/tree/master/packages/mocha-runner))
+- [Jasmine](./jasmine-runner.md) ([@stryker-mutator/jasmine-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jasmine-runner))
+- [Jest](./jest-runner.md) ([@stryker-mutator/jest-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jest-runner))
+- [Karma](./karma-runner.md) ([@stryker-mutator/karma-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/karma-runner))
+- [Mocha](./mocha-runner.md) ([@stryker-mutator/mocha-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/mocha-runner))
 
 Removed:
 
-- ~~Web Component Tester~~ ([@stryker-mutator/wct-runner](https://github.com/stryker-mutator/stryker/tree/v3.3.1/packages/wct-runner)) (Removed in v4 of Stryker).
+- ~~Web Component Tester~~ ([@stryker-mutator/wct-runner](https://github.com/stryker-mutator/stryker-js/tree/v3.3.1/packages/wct-runner)) (Removed in v4 of Stryker).
 
 After choosing your test runner plugin, install 
 
@@ -34,7 +34,7 @@ Stryker already comes with the most useful reporters included:
 - progress: Report progress during mutation testing.
 - dots: Report progress as dots during mutation testing.
 - clear-text: A clear text report at the end of the mutation testing phase.
-- html: An HTML report. See [Stryker's own report](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master) for an example.
+- html: An HTML report. See [Stryker's own report](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker-js/master) for an example.
 - dashboard: Upload your mutation testing report to the [Stryker dashboard](https://dashboard.stryker-mutator.io). See the [dashboard docs](./General/dashboard.md) for more information.
 - event-recorder: Write all events to disk. Useful for debug purposes.
 

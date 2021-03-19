@@ -51,7 +51,7 @@ describe(placeMutants.name, () => {
     const mutants = [createMutant()];
     expect(() => placeMutants(path, mutants, 'foo.js', [fooPlacer])).throws(
       SyntaxError,
-      'foo.js:2:3 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new'
+      'foo.js:2:3 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new'
     );
   });
 
@@ -59,7 +59,7 @@ describe(placeMutants.name, () => {
    * Create a node path _without using the `new File` workaround_ defined here: https://github.com/babel/babel/issues/11889
    * This will make sure `buildCodeFrameError` fails.
    * This also happens in normal flows when complex babel transpilation is happening.
-   * @see https://github.com/stryker-mutator/stryker/issues/2695
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2695
    */
   it('should throw a generic error if `buildCodeFrameError` fails (#2695)', () => {
     // Arrange
@@ -74,7 +74,7 @@ describe(placeMutants.name, () => {
     // Arrange & Act
     expect(() => placeMutants(nodePath, mutants, 'foo.js', [fooPlacer])).throws(
       Error,
-      'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker/issues/new'
+      'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or ignore the mutators. Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new'
     );
   });
 });

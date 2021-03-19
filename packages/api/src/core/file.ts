@@ -40,7 +40,7 @@ export class File implements Surrializable {
 
   /**
    * This fixes the issue of different File versions not being compatible.
-   * @see https://github.com/stryker-mutator/stryker/issues/2025
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2025
    */
   public surrialize(): string {
     return surrial`new File(${this.name}, ${this.content})`;
