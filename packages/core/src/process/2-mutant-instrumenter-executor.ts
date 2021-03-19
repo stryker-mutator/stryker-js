@@ -33,7 +33,7 @@ export class MutantInstrumenterExecutor {
     // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, {
       ...this.options.mutator,
-      mutationRange: this.inputFiles.mutationRangeToInstrument,
+      mutationRanges: this.inputFiles.mutationRanges,
     });
 
     // Preprocess sandbox files

@@ -38,7 +38,7 @@ describe(MutationTestReportHelper.name, () => {
       filesToMutate: [],
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       logFiles: () => {},
-      mutationRangeToInstrument: [],
+      mutationRanges: [],
     };
     dryRunResult = factory.completeDryRunResult();
   });

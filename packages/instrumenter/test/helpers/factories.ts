@@ -18,7 +18,7 @@ export function createParserOptions(overrides?: Partial<ParserOptions>): ParserO
 export function createTransformerOptions(overrides?: Partial<TransformerOptions>): TransformerOptions {
   return {
     excludedMutations: [],
-    mutationRange: [],
+    mutationRanges: [],
     ...overrides,
   };
 }

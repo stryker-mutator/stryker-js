@@ -7,12 +7,12 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 export class InputFileCollection {
   public readonly files: readonly File[];
   public readonly filesToMutate: readonly File[];
-  public readonly mutationRangeToInstrument: readonly MutationRange[];
+  public readonly mutationRanges: readonly MutationRange[];
 
   constructor(files: readonly File[], mutateGlobResult: readonly string[], mutationRangeToInstrument: readonly MutationRange[]) {
     this.files = files;
     this.filesToMutate = files.filter((file) => mutateGlobResult.some((name) => name === file.name));
-    this.mutationRangeToInstrument = mutationRangeToInstrument;
+    this.mutationRanges = mutationRangeToInstrument;
   }
 
   public logFiles(log: Logger): void {
