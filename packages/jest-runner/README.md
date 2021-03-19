@@ -4,8 +4,8 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker-js/raw/master/stryker-80x80.png)
 
-# @stryker-mutator/jest-runner
+# StrykerJS Jest Runner
 
-A plugin to use [Jest](https://jestjs.io/) as a test runner in [Stryker](https://stryker-mutator.io), the JavaScript mutation testing framework.
+A plugin to use [Jest](https://jestjs.io/) as a test runner in [StrykerJS](https://stryker-mutator.io), the JavaScript mutation testing framework.
 
 [See the Jest Runner's documentation on stryker-mutator.io](https://stryker-mutator.io/docs/stryker-js/jest-runner).

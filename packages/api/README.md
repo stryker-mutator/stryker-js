@@ -4,8 +4,8 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker-js/raw/master/stryker-80x80.png)
 
-# Stryker API
-This is the repository for maintaining the API of the [Stryker](https://stryker-mutator.io) JavaScript mutation testing framework.
+# StrykerJS API
+This is the repository for maintaining the API of the [StrykerJS](https://stryker-mutator.io/) mutation testing framework.
 Plugin creators should depend on this API rather than on the main Stryker repository directly.
 
 # Extension use cases

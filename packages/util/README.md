@@ -6,6 +6,6 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker-js/raw/master/stryker-80x80.png)
 
-# Stryker Util
+# StrykerJS Util
 
-Utility functions for Stryker plugins and/or core packages.
+Utility functions for StrykerJS plugins and/or core packages.

@@ -6,9 +6,9 @@
 
 ![Stryker](https://github.com/stryker-mutator/stryker-js/raw/master/stryker-80x80.png)
 
-# Typescript checker
+# StrykerJS Typescript checker
 
-A TypeScript type checker plugin for [Stryker](https://stryker-mutator.io), the ~~JavaScript~~ _TypeScript_ Mutation testing framework.
+A TypeScript type checker plugin for [StrykerJS](https://stryker-mutator.io), the ~~JavaScript~~ _TypeScript_ Mutation testing framework.
 This plugin enables type checking on mutants, so you won't have to waste time on mutants which results in a type error.
 
 [See the Typescript checker's documentation on stryker-mutator.io](https://stryker-mutator.io/docs/stryker-js/typescript-checker).

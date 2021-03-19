@@ -11,7 +11,7 @@
 *William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
 
 ## Introduction
-For an introduction to mutation testing and Stryker's features, see [stryker-mutator.io](https://stryker-mutator.io/).
+For an introduction to mutation testing and StrykerJS features, see [stryker-mutator.io](https://stryker-mutator.io/).
 
 ## Getting started
 
