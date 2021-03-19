@@ -1,6 +1,6 @@
 ---
 title: Usage
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/usage.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/usage.md
 ---
   
 ```sh

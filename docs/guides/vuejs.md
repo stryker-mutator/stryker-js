@@ -1,6 +1,6 @@
 ---
 title: VueJS
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/vuejs.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/vuejs.md
 ---
 
 Stryker supports Vue projects. It can mutate both your js/ts files as the script tags in your `*.vue` files.

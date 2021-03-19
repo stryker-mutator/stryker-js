@@ -1,6 +1,6 @@
 ---
 title: Plugins
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/plugins.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/plugins.md
 ---
 
 Stryker supports several plugins, which are listed below. You can also [search npm for the stryker-plugin tag](https://www.npmjs.com/search?q=stryker-plugin).

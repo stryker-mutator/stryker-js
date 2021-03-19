@@ -1,6 +1,6 @@
 ---
 title: Configuration
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/configuration.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/configuration.md
 ---
 
 This page describes the available configuration options in Stryker's core package. Please keep in mind that your plugins might also need configuration, see your plugin's configuration page for that.

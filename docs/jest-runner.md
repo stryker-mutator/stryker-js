@@ -1,6 +1,6 @@
 ---
 title: Jest Runner
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/jest-runner.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/jest-runner.md
 ---
 
 ## Installation

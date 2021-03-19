@@ -1,6 +1,6 @@
 ---
 title: TypeScript Checker
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/typescript-checker.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/typescript-checker.md
 ---
 
 A TypeScript type checker plugin for Stryker, the ~~JavaScript~~ _TypeScript_ Mutation testing framework.
