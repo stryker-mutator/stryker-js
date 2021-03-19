@@ -5,7 +5,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Preset } from './preset';
 import { PresetConfiguration } from './preset-configuration';
 
-const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/angular';
+const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/angular';
 
 export class AngularPreset implements Preset {
   public readonly name = 'angular-cli';

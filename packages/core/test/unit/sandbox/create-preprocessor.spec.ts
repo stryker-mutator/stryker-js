@@ -22,7 +22,7 @@ describe(createPreprocessor.name, () => {
     assertions.expectTextFilesEqual(output, [new File(path.resolve('src/app.ts'), '// @ts-nocheck\nfoo.bar()')]);
   });
 
-  it('should strip // @ts-expect-error (see https://github.com/stryker-mutator/stryker/issues/2364)', async () => {
+  it('should strip // @ts-expect-error (see https://github.com/stryker-mutator/stryker-js/issues/2364)', async () => {
     const output = await sut.preprocess([new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar()')]);
     assertions.expectTextFilesEqual(output, [new File(path.resolve('src/app.ts'), '// @ts-nocheck\n// \nfoo.bar()')]);
   });

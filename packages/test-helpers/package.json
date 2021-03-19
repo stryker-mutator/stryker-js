@@ -1,27 +1,28 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "4.4.1",
+  "version": "4.5.1",
   "description": "A helper package for testing",
   "main": "dist/index.js",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker.git"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/test-helpers"
   },
   "keywords": [],
   "author": "Nico Jansen <jansennico@gmail.com>",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/test-helpers#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/test-helpers#readme",
   "license": "ISC",
   "dependencies": {
-    "ajv": "~7.0.2",
+    "ajv": "~7.2.1",
     "mutation-testing-metrics": "~1.5.2"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "4.4.1",
+    "@stryker-mutator/api": "4.5.1",
     "@types/node": "^14.0.1",
     "typed-inject": "~3.0.0"
   }

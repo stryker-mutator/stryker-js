@@ -1,6 +1,6 @@
 ---
 title: Create a plugin
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/plugins.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/create-a-plugin.md
 ---
 
 You can extend Stryker with the following plugin kinds:
@@ -15,7 +15,7 @@ export enum PluginKind {
 
 They are loaded using the [`plugins` configuration option](../configuration#plugins-string)
 
-Each plugin has it's own job to do. For inspiration, check out the [stryker monorepo](https://github.com/stryker-mutator/stryker/tree/master/packages).
+Each plugin has it's own job to do. For inspiration, check out the [stryker monorepo](https://github.com/stryker-mutator/stryker-js/tree/master/packages).
 
 ## Creating a plugin
 
@@ -178,11 +178,11 @@ export class FooTestRunner implements TestRunner {
 export function fooTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
     .provideValue(pluginTokens.processEnv, process.env)
-    .provideValue(pluginTokens.fooTestRunnerVersion, require('jest/package.json').version as string)
+    .provideValue(pluginTokens.fooTestRunnerVersion, require('foo/package.json').version as string)
     .provideClass(pluginTokens.configLoader, FooTestRunnerConfigFileLoader)
-    .injectClass(JestTestRunner);
+    .injectClass(FooTestRunner);
 }
-jestTestRunnerFactory.inject = [commonTokens.injector] as const;
+fooTestRunnerFactory.inject = [commonTokens.injector] as const;
 ```
 
 In this example, you can see that some tokens are loaded from `commonTokens` and some are loaded from `pluginTokens`.

@@ -15,5 +15,5 @@
       "path": "../util/tsconfig.src.json"
     }
   ],
-  "include": ["src"]
+  "include": ["src", "typings"]
 }

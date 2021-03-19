@@ -56,7 +56,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
         'coverageAnalysis'
       )} "perTest" with "jestConfig.testRunner": "${
         jestConfig.testRunner
-      }". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker/issues`
+      }". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues`
     );
   }
 }

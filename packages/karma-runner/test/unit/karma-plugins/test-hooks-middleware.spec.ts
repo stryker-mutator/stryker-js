@@ -116,7 +116,7 @@ describe(TestHooksMiddleware.name, () => {
         writeHead: sinon.stub(),
         end: sinon.stub(),
       } as unknown) as Response;
-      next = sinon.stub();
+      next = (sinon.stub() as unknown) as NextFunction;
     });
 
     it('should pass through normal requests', () => {

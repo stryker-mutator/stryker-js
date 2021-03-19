@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "4.4.1",
+  "version": "4.5.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -13,7 +13,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/core"
   },
   "engines": {
     "node": ">=10"
@@ -48,19 +49,19 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme",
+  "homepage": "https://stryker-mutator.io/",
   "bin": {
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "4.4.1",
-    "@stryker-mutator/instrumenter": "4.4.1",
-    "@stryker-mutator/util": "4.4.1",
-    "ajv": "~7.0.2",
+    "@stryker-mutator/api": "4.5.1",
+    "@stryker-mutator/instrumenter": "4.5.1",
+    "@stryker-mutator/util": "4.5.1",
+    "ajv": "~7.2.1",
     "chalk": "~4.1.0",
-    "commander": "~7.0.0",
+    "commander": "~7.1.0",
     "execa": "~5.0.0",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
@@ -86,7 +87,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "4.0.0-beta.4",
-    "@stryker-mutator/test-helpers": "4.4.1",
+    "@stryker-mutator/test-helpers": "4.5.1",
     "@types/inquirer": "~7.3.1",
     "@types/lodash.flatmap": "~4.5.6",
     "@types/lodash.groupby": "~4.6.6",

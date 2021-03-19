@@ -1,6 +1,6 @@
 ---
 title: NodeJS
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/nodejs.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/nodejs.md
 ---
 
 Stryker can run Mutation Testing on all NodeJS projects. Either by using one of the test runner plugins or with the command test runner. It also supports a custom `buildCommand`. This command is useful to compile TypeScript or babel code or to bundle your code.
@@ -167,4 +167,4 @@ You will need to override the `tempDirName` to a directory without a `.` in fron
 }
 ```
 
-See [#1691](https://github.com/stryker-mutator/stryker/issues/1691) for more info.
+See [#1691](https://github.com/stryker-mutator/stryker-js/issues/1691) for more info.

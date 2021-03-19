@@ -1,0 +1,16 @@
+{
+    "presets": [
+        "@babel/preset-flow",
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "edge": "16",
+                    "firefox": "57",
+                    "chrome": "62",
+                    "safari": "11"
+                }
+            }
+        ]
+    ]
+}

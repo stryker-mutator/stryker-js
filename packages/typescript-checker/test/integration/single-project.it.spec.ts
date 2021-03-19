@@ -23,7 +23,7 @@ describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    process.chdir(resolveTestResource());
+    testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
   });

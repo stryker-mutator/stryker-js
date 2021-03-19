@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/instrumenter",
-  "version": "4.4.1",
+  "version": "4.5.1",
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/instrumenter"
   },
   "engines": {
@@ -26,25 +26,25 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.12.3",
-    "@babel/generator": "~7.12.1",
-    "@babel/parser": "~7.12.3",
+    "@babel/core": "~7.13.10",
+    "@babel/generator": "~7.13.0",
+    "@babel/parser": "~7.13.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "~7.12.1 ",
+    "@babel/plugin-proposal-decorators": "~7.13.5 ",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
-    "@babel/preset-typescript": "~7.12.1 ",
-    "@stryker-mutator/api": "4.4.1",
-    "@stryker-mutator/util": "4.4.1",
+    "@babel/preset-typescript": "~7.13.0 ",
+    "@stryker-mutator/api": "4.5.1",
+    "@stryker-mutator/util": "4.5.1",
     "angular-html-parser": "~1.7.0",
-    "weapon-regex": "~0.3.0"
+    "weapon-regex": "~0.4.1"
   },
   "devDependencies": {
     "@babel/preset-react": "~7.12.1",
-    "@stryker-mutator/test-helpers": "4.4.1",
+    "@stryker-mutator/test-helpers": "4.5.1",
     "@types/babel__core": "~7.1.10",
     "@types/babel__generator": "~7.6.2",
     "@types/babel__parser": "~7.1.1",

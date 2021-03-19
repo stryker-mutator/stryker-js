@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.5.1](https://github.com/stryker-mutator/stryker/compare/v4.5.0...v4.5.1) (2021-03-11)
+
+
+### Bug Fixes
+
+* **peer-deps:** use correct peer dep version ([a6ca0f2](https://github.com/stryker-mutator/stryker/commit/a6ca0f25b29cb84a2cb4b8c05a42e7305d5dde16))
+
+
+
+
+
+# [4.5.0](https://github.com/stryker-mutator/stryker/compare/v4.4.1...v4.5.0) (2021-03-06)
+
+
+### Bug Fixes
+
+* **typescript-checker:** improve error reporting ([2502eba](https://github.com/stryker-mutator/stryker/commit/2502eba08b0c26c1b91cbd5917092ccd7a89aa7c))
+* **typescript-checker:** resolve tsconfig files correctly ([8cf9e8c](https://github.com/stryker-mutator/stryker/commit/8cf9e8c43b7e3817452b32de9461829ed9ad6490))
+
+
+### Features
+
+* **package:** restructure package internals ([#2714](https://github.com/stryker-mutator/stryker/issues/2714)) ([e1711d2](https://github.com/stryker-mutator/stryker/commit/e1711d28f25e8ee7cbdf025adecb3234ee0515a6))
+
+
+
+
+
 ## [4.4.1](https://github.com/stryker-mutator/stryker/compare/v4.4.0...v4.4.1) (2021-01-27)
 
 **Note:** Version bump only for package @stryker-mutator/typescript-checker

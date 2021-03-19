@@ -1,10 +1,10 @@
-import { resolve } from 'path';
+import path from 'path';
 
 import ts from 'typescript';
 import semver from 'semver';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
-// See https://github.com/stryker-mutator/stryker/issues/391 for more info
+// See https://github.com/stryker-mutator/stryker-js/issues/391 for more info
 const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   allowUnreachableCode: true,
   noUnusedLocals: false,
@@ -65,10 +65,20 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
 /**
  * Retrieves the referenced config files based on parsed configuration
  * @param parsedConfig The parsed config file
+ * @param fromDirName The directory where to resolve from
  */
-export function retrieveReferencedProjects(parsedConfig: { config?: any }): string[] {
+export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromDirName: string): string[] {
   if (Array.isArray(parsedConfig.config?.references)) {
-    return parsedConfig.config?.references.map((reference: any) => resolve(ts.resolveProjectReferencePath(reference)));
+    return parsedConfig.config?.references.map((reference: any) => path.resolve(fromDirName, ts.resolveProjectReferencePath(reference)));
   }
   return [];
+}
+
+/**
+ * Replaces backslashes with forward slashes (used by typescript)
+ * @param fileName The file name that may contain backslashes `\`
+ * @returns posix and ts complaint file name (with `/`)
+ */
+export function toPosixFileName(fileName: string): string {
+  return fileName.replace(/\\/g, '/');
 }

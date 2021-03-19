@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/mocha-runner",
-  "version": "4.4.1",
+  "version": "4.5.1",
   "description": "A plugin to use the mocha test runner in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/mocha-runner"
   },
   "engines": {
     "node": ">=10"
@@ -32,22 +33,22 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/mocha-runner#readme",
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/mocha-runner",
   "dependencies": {
-    "@stryker-mutator/api": "4.4.1",
-    "@stryker-mutator/util": "4.4.1",
+    "@stryker-mutator/api": "4.5.1",
+    "@stryker-mutator/util": "4.5.1",
     "glob": "~7.1.6",
     "tslib": "~2.1.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "4.4.1",
+    "@stryker-mutator/test-helpers": "4.5.1",
     "@types/glob": "~7.1.3",
     "@types/node": "^14.0.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~4.4.0",
+    "@stryker-mutator/core": "~4.5.0",
     "mocha": ">= 2.3.3 < 9"
   }
 }

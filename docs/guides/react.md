@@ -1,6 +1,6 @@
 ---
 title: React
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/react.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/react.md
 ---
 
 Stryker supports React projects using Jest with both JSX and TSX code.

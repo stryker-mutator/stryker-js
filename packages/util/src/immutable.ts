@@ -1,4 +1,6 @@
-type ImmutablePrimitive = boolean | number | string | ((...args: any[]) => any) | null | undefined;
+import { Primitive } from './primitive';
+
+type ImmutablePrimitive = Primitive | ((...args: any[]) => any);
 
 export type Immutable<T> = T extends ImmutablePrimitive
   ? T
