@@ -14,7 +14,7 @@ import { FilePreprocessor } from './file-preprocessor';
 
 /**
  * Disabled type checking by inserting `@ts-nocheck` atop TS/JS files and removing other @ts-xxx directives from comments:
- * @see https://github.com/stryker-mutator/stryker/issues/2438
+ * @see https://github.com/stryker-mutator/stryker-js/issues/2438
  */
 export class DisableTypeChecksPreprocessor implements FilePreprocessor {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeChecksHelper);

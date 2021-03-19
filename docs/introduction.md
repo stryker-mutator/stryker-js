@@ -1,6 +1,6 @@
 ---
 title: Introduction
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/introduction.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/introduction.md
 ---
 
 Welcome to the Stryker for JavaScript & Friends documentation.

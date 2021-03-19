@@ -42,8 +42,8 @@ export class BlockStatementMutator implements NodeMutator {
    *     super(42);
    *   }
    * }
-   * @see https://github.com/stryker-mutator/stryker/issues/2314
-   * @see https://github.com/stryker-mutator/stryker/issues/2474
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2314
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2474
    */
   private isInvalidConstructorBody(blockStatement: NodePath<types.BlockStatement>): boolean {
     return !!(

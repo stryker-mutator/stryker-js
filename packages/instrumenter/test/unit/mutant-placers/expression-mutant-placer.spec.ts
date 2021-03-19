@@ -101,7 +101,7 @@ describe(expressionMutantPlacer.name, () => {
 
   /**
    * This describe has tests for anonymous classes and functions.
-   * @see https://github.com/stryker-mutator/stryker/issues/2362
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2362
    */
   describe('anonymous expressions', () => {
     function arrangeActAssert(ast: types.File, expression: NodePath, expectedMatch: RegExp) {

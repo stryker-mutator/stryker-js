@@ -1,5 +1,5 @@
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker/master)
-[![Build Status](https://github.com/stryker-mutator/stryker/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker/actions?query=workflow%3ACI+branch%3Amaster)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fstryker-mutator%2Fstryker%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker-js/master)
+[![Build Status](https://github.com/stryker-mutator/stryker-js/workflows/CI/badge.svg)](https://github.com/stryker-mutator/stryker-js/actions?query=workflow%3ACI+branch%3Amaster)
 [![NPM](https://img.shields.io/npm/dm/@stryker-mutator/core.svg)](https://www.npmjs.com/package/@stryker-mutator/core)
 [![Node version](https://img.shields.io/node/v/@stryker-mutator/core.svg)](https://img.shields.io/node/v/@stryker-mutator/core.svg)
 [![Slack Chat](https://img.shields.io/badge/slack-chat-brightgreen.svg?logo=slack)](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM)
@@ -22,15 +22,15 @@ For an introduction to mutation testing and Stryker's features, see [stryker-mut
 
 ## Getting started
 
-For the quickstart, see [quickstart](https://stryker-mutator.io/docs/stryker/getting-started/).
+For the quickstart, see [quickstart](https://stryker-mutator.io/docs/stryker-js/getting-started/).
 
 ## Usage
 
-For details on the `stryker run` command and others, see [stryker's readme](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme)
+For details on the `stryker run` command and others, see [stryker's readme](https://github.com/stryker-mutator/stryker-js/tree/master/packages/core#readme)
 
 ## Configuration
 
-See the [stryker's package readme](https://github.com/stryker-mutator/stryker/blob/master/packages/core/README.md#configuration) for all config options.
+See the [stryker's package readme](https://github.com/stryker-mutator/stryker-js/blob/master/packages/core/README.md#configuration) for all config options.
 
 ## Supported mutators
 

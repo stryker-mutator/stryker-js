@@ -1,6 +1,6 @@
 ---
 title: Getting started
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/getting-started.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/getting-started.md
 ---
 
 Install Stryker using [npm](https://nodejs.org).
@@ -46,11 +46,11 @@ stryker init
 
 If you're asked to install Stryker, choose **Yes**. Follow the questionnaire.
 
-Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker/issues/new).
+Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new).
 
 After the init is done, inspect the `stryker.conf.js` file.
 
-For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme)
+For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker-js/tree/master/packages/core#readme)
 
 ---
 
@@ -68,7 +68,7 @@ Have troubles running Stryker? Try running with trace logging.
 stryker run --logLevel trace
 ```
 
-You can also have a look at the [readme file of stryker](https://github.com/stryker-mutator/stryker/tree/master/packages/core#readme) for more information about the configuration.
+You can also have a look at the [readme file of stryker](https://github.com/stryker-mutator/stryker-js/tree/master/packages/core#readme) for more information about the configuration.
 
 Please [report any issues](http://github.com/stryker-mutator/stryker/issues) you have or let us know [via Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
 

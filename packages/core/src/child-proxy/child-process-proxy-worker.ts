@@ -114,7 +114,7 @@ export class ChildProcessProxyWorker {
   /**
    * During mutation testing, it's to be expected that promise rejections are not handled synchronously anymore (or not at all)
    * Let's handle those events so future versions of node don't crash
-   * See issue 350: https://github.com/stryker-mutator/stryker/issues/350
+   * See issue 350: https://github.com/stryker-mutator/stryker-js/issues/350
    */
   private handlePromiseRejections() {
     const unhandledRejections: Array<Promise<void>> = [];

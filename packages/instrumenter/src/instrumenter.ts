@@ -15,7 +15,7 @@ import { InstrumenterOptions } from './instrumenter-options';
  * * Generating mutants based on source files
  * * Instrumenting the source code with the mutants placed in `mutant switches`.
  * * Adding mutant coverage expressions in the source code.
- * @see https://github.com/stryker-mutator/stryker/issues/1514
+ * @see https://github.com/stryker-mutator/stryker-js/issues/1514
  */
 export class Instrumenter {
   public static inject = tokens(commonTokens.logger);

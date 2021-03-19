@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker.git"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/util"
   },
   "keywords": [
     "stryker",
@@ -24,9 +25,9 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/util#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
     "@types/lodash.flatmap": "~4.5.6",
     "@types/node": "^14.0.1"
