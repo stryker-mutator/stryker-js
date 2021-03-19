@@ -23,10 +23,10 @@ export async function reportTemplate(report: mutationTestReportSchema.MutationTe
       Please use a latest version of an evergreen browser (Firefox, Chrome, Safari, Opera, Edge, etc).
     </mutation-test-report-app>
     <script>
-      const app = document.querySelector('mutation-test-report-app');
+      const app = document.getElementsByTagName('mutation-test-report-app').item(0);
       app.report = ${escapeHtmlTags(JSON.stringify(report))};
       function updateTheme() {
-        document.body.style.backgroundColor = app.theme === 'dark' ? '#222' : '#fff';
+        document.body.style.backgroundColor = app.themeBackgroundColor;
       }
       app.addEventListener('theme-changed', updateTheme);
       updateTheme();
