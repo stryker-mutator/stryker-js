@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.io/stryker-mutator/stryker",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/karma-runner"
   },
   "engines": {

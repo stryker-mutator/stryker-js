@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker.git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/util"
   },
   "keywords": [
