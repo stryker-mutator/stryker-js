@@ -1,0 +1,17 @@
+{
+  "name": "jest-multiple-projects",
+  "description": "Tests for jest with with multiple projects configured: https://jestjs.io/docs/configuration#projects-arraystring--projectconfig",
+  "scripts": {
+    "test:unit": "jest",
+    "test": "stryker run",
+    "posttest": "mocha --require \"../../tasks/ts-node-register.js\" verify/*.ts"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "jest-circus": "^26.6.3",
+    "msw": "^0.27.1",
+    "supertest": "^6.1.3"
+  }
+}

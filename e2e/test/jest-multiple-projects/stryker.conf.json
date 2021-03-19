@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker.schema.json",
+  "coverageAnalysis": "perTest",
+  "jest": {
+    "configFile": "jest.config.js",
+    "enableFindRelatedTests": true
+  },
+  "mutate": [
+    "client/src/**/*.js",
+    "!client/src/index.js",
+    "!client/src/**/*.test.js",
+    "server/**/*.js",
+    "!server/server.js",
+    "!server/**/*.test.js",
+    "!server/static/*.js"
+  ],
+  "testRunner": "jest"
+}

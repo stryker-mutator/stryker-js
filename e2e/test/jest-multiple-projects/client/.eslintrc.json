@@ -1,0 +1,24 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "plugin:jsx-a11y/strict",
+    "plugin:react/recommended"
+  ],
+  "plugins": [
+    "react-hooks"
+  ],
+  "rules": {
+    "react/jsx-tag-spacing": "error",
+    "react/no-unused-prop-types": "error",
+    "react/prop-types": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}
