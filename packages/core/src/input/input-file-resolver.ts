@@ -110,7 +110,7 @@ export class InputFileResolver {
         const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
 
         return {
-          filename: path.resolve(fileName),
+          fileName: path.resolve(fileName),
           start: { line: parseInt(startLine), column: parseInt(startColumn) },
           end: { line: parseInt(endLine), column: parseInt(endColumn) },
         };

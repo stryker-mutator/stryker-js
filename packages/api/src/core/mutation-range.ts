@@ -5,7 +5,7 @@ export interface MutationRange {
   /**
    * The filename of the file that this range belongs to
    */
-  filename: string;
+  fileName: string;
 
   /**
    * The start of the range to instrument, by line and column number, inclusive

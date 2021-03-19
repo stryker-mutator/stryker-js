@@ -2,7 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs';
 
-import { File } from '@stryker-mutator/api/core';
+import { File, MutationRange } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, errorToString, Task } from '@stryker-mutator/util';
@@ -196,19 +196,20 @@ describe(InputFileResolver.name, () => {
       sut = createSut();
       const result = await sut.resolve();
       expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
-      expect(result.mutationRangeToInstrument).to.deep.equal([
+      const expectedRanges: MutationRange[] = [
         {
           end: {
             column: 0,
             line: 1,
           },
-          filename: path.resolve('mute1'),
+          fileName: path.resolve('mute1'),
           start: {
             column: 0,
             line: 0,
           },
         },
-      ]);
+      ];
+      expect(result.mutationRanges).to.deep.equal(expectedRanges);
     });
   });
 
