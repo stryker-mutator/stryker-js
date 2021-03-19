@@ -26,6 +26,8 @@ function toReportSourceFile(file: File): SourceFile {
 
 const IGNORE_PATTERN_CHARACTER = '!';
 
+export const MUTATION_RANGE_REGEX = /(.*):(\d+):(\d+):(\d+):(\d+)$/;
+
 /**
  *  When characters are represented as the octal values of its utf8 encoding
  *  e.g. å becomes \303\245 in git.exe output
@@ -103,12 +105,9 @@ export class InputFileResolver {
 
   private resolveMutationRange(): MutationRange[] {
     return this.mutatePatterns
-      .filter((fileToMutate) => /(:\d+){4}$/.exec(fileToMutate))
-      .map((fileToMutate) => {
-        const fileName = fileToMutate.replace(/(:\d+){4}/, '');
-        const [matchedItems] = /(:\d+){4}$/.exec(fileToMutate)!;
-        const [startLine, startColumn, endLine, endColumn] = matchedItems.match(/(\d+)/g)!;
-
+      .map((fileToMutate) => MUTATION_RANGE_REGEX.exec(fileToMutate))
+      .filter(notEmpty)
+      .map(([_, fileName, startLine, startColumn, endLine, endColumn]) => {
         return {
           fileName: path.resolve(fileName),
           start: { line: parseInt(startLine), column: parseInt(startColumn) },

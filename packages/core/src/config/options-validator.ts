@@ -13,6 +13,7 @@ import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 import { isWarningEnabled } from '../utils/object-utils';
 import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { MUTATION_RANGE_REGEX } from '../input';
 
 import { describeErrors } from './validation-errors';
 
@@ -87,7 +88,7 @@ export class OptionsValidator {
         'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
       );
     }
-    if (options.mutate.some((mutateString) => hasMagic(mutateString) && /(:\d+){4}$/.exec(mutateString))) {
+    if (options.mutate.some((mutateString) => hasMagic(mutateString) && MUTATION_RANGE_REGEX.exec(mutateString))) {
       additionalErrors.push('Config option "mutate" cannot have both mutation range and glob expression');
     }
 
