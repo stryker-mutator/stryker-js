@@ -2,7 +2,7 @@
   "name": "mutation-range",
   "description": "A test project for only running specific mutants, rather than all mutants",
   "scripts": {
-    "test": "stryker run -m src/index.js:3:18:3:26,src/index.js:4:18:4:25",
+    "test": "stryker run",
     "test:unit": "jest",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   }
