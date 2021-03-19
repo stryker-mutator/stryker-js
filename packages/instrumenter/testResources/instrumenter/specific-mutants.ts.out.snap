@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration Specific mutants should only mutate specific mutants for the given file 1`] = `
+exports[`instrumenter integration with mutation ranges should only mutate specific mutants for the given file 1`] = `
 "function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
