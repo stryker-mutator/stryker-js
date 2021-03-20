@@ -150,213 +150,217 @@ describe(MutationTestReportHelper.name, () => {
       });
     });
 
-    it('should correctly map system under test file properties', () => {
-      // Arrange
-      files.push(new File('foo.js', 'foo content'));
-      files.push(new File('bar.html', 'bar content'));
-      files.push(new File('baz.vue', 'baz content'));
-      files.push(new File('qux.ts', 'qux content'));
-      files.push(new File('corge.tsx', 'corge content'));
-      const inputMutants = files.map((file) => factory.killedMutantResult({ fileName: file.name }));
+    describe('system under test', () => {
+      it('should correctly map system under test file properties', () => {
+        // Arrange
+        files.push(new File('foo.js', 'foo content'));
+        files.push(new File('bar.html', 'bar content'));
+        files.push(new File('baz.vue', 'baz content'));
+        files.push(new File('qux.ts', 'qux content'));
+        files.push(new File('corge.tsx', 'corge content'));
+        const inputMutants = files.map((file) => factory.killedMutantResult({ fileName: file.name }));
 
-      // Act
-      const [actualReport] = actReportAll(inputMutants);
+        // Act
+        const [actualReport] = actReportAll(inputMutants);
 
-      // Assert
-      expect(Object.keys(actualReport.files)).lengthOf(5);
-      expect(actualReport.files['foo.js']).include({ language: 'javascript', source: 'foo content' });
-      expect(actualReport.files['bar.html']).include({ language: 'html', source: 'bar content' });
-      expect(actualReport.files['baz.vue']).include({ language: 'html', source: 'baz content' });
-      expect(actualReport.files['qux.ts']).include({ language: 'typescript', source: 'qux content' });
-      expect(actualReport.files['corge.tsx']).include({ language: 'typescript', source: 'corge content' });
-    });
-
-    it('should correctly test file properties', () => {
-      // Arrange
-      dryRunResult.tests.push(factory.testResult({ id: 'spec1', name: 'dog should not eat dog', fileName: 'foo.spec.js' }));
-      files.push(new File('foo.js', 'foo content'), new File('foo.spec.js', 'it("dog should not eat dog")'), new File('baz.js', 'baz content'));
-
-      // Act
-      const [actualReport] = actReportAll();
-
-      // Assert
-      expect(actualReport.testFiles?.['foo.spec.js'].source).eq('it("dog should not eat dog")');
-    });
-
-    it('should report the tests in `testFiles`', () => {
-      // Arrange
-      dryRunResult.tests.push(
-        factory.testResult({ id: 'spec1', name: 'dog should not eat dog' }),
-        factory.testResult({ id: 'spec2', name: 'dog should chase its own tail' })
-      );
-
-      // Act
-      const [actualReport] = actReportAll([]);
-
-      // Assert
-      const expected: schema.TestFileDefinitionDictionary = {
-        ['']: {
-          tests: [
-            { id: '0', name: 'dog should not eat dog' },
-            { id: '1', name: 'dog should chase its own tail' },
-          ],
-        },
-      };
-      expect(actualReport.testFiles).deep.eq(expected);
-    });
-
-    it('should correctly map basic MutantResult properties', () => {
-      // Arrange
-      const killedMutantResult: MutantResult = {
-        id: '1',
-        mutatorName: 'Foo',
-        replacement: 'foo replacement',
-        fileName: 'foo.js',
-        description: 'this is mutant foo',
-        duration: 42,
-        location: factory.location(),
-        range: [1, 2],
-        static: true,
-        statusReason: 'smacked on the head',
-        testsCompleted: 32,
-        status: MutantStatus.Killed,
-      };
-      const inputMutants = [
-        killedMutantResult,
-        factory.mutantResult({
-          fileName: 'bar.js',
-          status: MutantStatus.NoCoverage,
-        }),
-        factory.mutantResult({
-          fileName: 'baz.js',
-          status: MutantStatus.RuntimeError,
-        }),
-        factory.mutantResult({
-          fileName: 'qux.js',
-          status: MutantStatus.Survived,
-        }),
-        factory.mutantResult({
-          fileName: '5.js',
-          status: MutantStatus.Timeout,
-        }),
-        factory.mutantResult({
-          fileName: '6.js',
-          status: MutantStatus.CompileError,
-        }),
-      ];
-      files.push(...inputMutants.map((m) => new File(m.fileName, '')));
-
-      // Act
-      const [actualReport] = actReportAll(inputMutants);
-
-      // Assert
-      const expectedKilledMutant: Partial<schema.MutantResult> = {
-        id: '1',
-        mutatorName: 'Foo',
-        replacement: 'foo replacement',
-        description: 'this is mutant foo',
-        duration: 42,
-        static: true,
-        statusReason: 'smacked on the head',
-        testsCompleted: 32,
-        status: MutantStatus.Killed,
-      };
-      expect(Object.keys(actualReport.files)).lengthOf(6);
-      expect(actualReport.files['foo.js'].mutants[0]).include(expectedKilledMutant);
-      expect(actualReport.files['bar.js'].mutants[0]).include({ status: MutantStatus.NoCoverage });
-      expect(actualReport.files['baz.js'].mutants[0]).include({ status: MutantStatus.RuntimeError });
-      expect(actualReport.files['qux.js'].mutants[0]).include({ status: MutantStatus.Survived });
-      expect(actualReport.files['5.js'].mutants[0]).include({ status: MutantStatus.Timeout });
-      expect(actualReport.files['6.js'].mutants[0]).include({ status: MutantStatus.CompileError });
-    });
-
-    it('should offset location correctly', () => {
-      const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
-      files.push(...inputMutants.map((m) => new File(m.fileName, '')));
-      const [actualReport] = actReportAll(inputMutants);
-      expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
-    });
-
-    it('should remap test ids if possible (for brevity, since mocha, jest and karma use test titles as test ids)', () => {
-      // Arrange
-      dryRunResult.tests.push(
-        factory.testResult({ id: 'foo should bar', name: 'foo should bar' }),
-        factory.testResult({ id: 'baz should qux', name: 'baz should qux' })
-      );
-      const killedMutantResult = factory.mutantResult({
-        fileName: 'foo.js',
-        killedBy: ['foo should bar'],
-        coveredBy: ['foo should bar', 'baz should qux', 'not found'],
+        // Assert
+        expect(Object.keys(actualReport.files)).lengthOf(5);
+        expect(actualReport.files['foo.js']).include({ language: 'javascript', source: 'foo content' });
+        expect(actualReport.files['bar.html']).include({ language: 'html', source: 'bar content' });
+        expect(actualReport.files['baz.vue']).include({ language: 'html', source: 'baz content' });
+        expect(actualReport.files['qux.ts']).include({ language: 'typescript', source: 'qux content' });
+        expect(actualReport.files['corge.tsx']).include({ language: 'typescript', source: 'corge content' });
       });
-      files.push(new File('foo.js', ''));
 
-      // Act
-      const [actualReport] = actReportAll([killedMutantResult]);
-
-      // Assert
-      const expectedTests: schema.TestDefinition[] = [
-        { id: '0', name: 'foo should bar' },
-        { id: '1', name: 'baz should qux' },
-      ];
-      const actualResultMutant = actualReport.files['foo.js'].mutants[0];
-      expect(actualReport.testFiles?.[''].tests).deep.eq(expectedTests);
-      expect(actualResultMutant.coveredBy).deep.eq(['0', '1', 'not found']);
-      expect(actualResultMutant.killedBy).deep.eq(['0']);
-    });
-
-    it('should group mutants by file name', () => {
-      // Arrange
-      const inputMutants = [
-        factory.mutantResult({
+      it('should correctly map basic MutantResult properties', () => {
+        // Arrange
+        const killedMutantResult: MutantResult = {
+          id: '1',
           mutatorName: 'Foo',
+          replacement: 'foo replacement',
           fileName: 'foo.js',
-        }),
-        factory.mutantResult({
-          mutatorName: 'Bar',
+          description: 'this is mutant foo',
+          duration: 42,
+          location: factory.location(),
+          range: [1, 2],
+          static: true,
+          statusReason: 'smacked on the head',
+          testsCompleted: 32,
+          status: MutantStatus.Killed,
+        };
+        const inputMutants = [
+          killedMutantResult,
+          factory.mutantResult({
+            fileName: 'bar.js',
+            status: MutantStatus.NoCoverage,
+          }),
+          factory.mutantResult({
+            fileName: 'baz.js',
+            status: MutantStatus.RuntimeError,
+          }),
+          factory.mutantResult({
+            fileName: 'qux.js',
+            status: MutantStatus.Survived,
+          }),
+          factory.mutantResult({
+            fileName: '5.js',
+            status: MutantStatus.Timeout,
+          }),
+          factory.mutantResult({
+            fileName: '6.js',
+            status: MutantStatus.CompileError,
+          }),
+        ];
+        files.push(...inputMutants.map((m) => new File(m.fileName, '')));
+
+        // Act
+        const [actualReport] = actReportAll(inputMutants);
+
+        // Assert
+        const expectedKilledMutant: Partial<schema.MutantResult> = {
+          id: '1',
+          mutatorName: 'Foo',
+          replacement: 'foo replacement',
+          description: 'this is mutant foo',
+          duration: 42,
+          static: true,
+          statusReason: 'smacked on the head',
+          testsCompleted: 32,
+          status: MutantStatus.Killed,
+        };
+        expect(Object.keys(actualReport.files)).lengthOf(6);
+        expect(actualReport.files['foo.js'].mutants[0]).include(expectedKilledMutant);
+        expect(actualReport.files['bar.js'].mutants[0]).include({ status: MutantStatus.NoCoverage });
+        expect(actualReport.files['baz.js'].mutants[0]).include({ status: MutantStatus.RuntimeError });
+        expect(actualReport.files['qux.js'].mutants[0]).include({ status: MutantStatus.Survived });
+        expect(actualReport.files['5.js'].mutants[0]).include({ status: MutantStatus.Timeout });
+        expect(actualReport.files['6.js'].mutants[0]).include({ status: MutantStatus.CompileError });
+      });
+
+      it('should offset location correctly', () => {
+        const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
+        files.push(...inputMutants.map((m) => new File(m.fileName, '')));
+        const [actualReport] = actReportAll(inputMutants);
+        expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
+      });
+
+      it('should group mutants by file name', () => {
+        // Arrange
+        const inputMutants = [
+          factory.mutantResult({
+            mutatorName: 'Foo',
+            fileName: 'foo.js',
+          }),
+          factory.mutantResult({
+            mutatorName: 'Bar',
+            fileName: 'foo.js',
+          }),
+        ];
+        files.push(new File('foo.js', ''));
+
+        // Act
+        const [actualReport] = actReportAll(inputMutants);
+
+        // Assert
+        expect(Object.keys(actualReport.files)).lengthOf(1);
+        expect(actualReport.files['foo.js'].mutants).lengthOf(2);
+      });
+
+      it('should log a warning if source file could not be found', () => {
+        const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
+        const [actualReport] = actReportAll(inputMutants);
+        expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
+        expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
+      });
+    });
+
+    describe('tests', () => {
+      it('should correctly provide test file properties', () => {
+        // Arrange
+        dryRunResult.tests.push(factory.testResult({ id: 'spec1', name: 'dog should not eat dog', fileName: 'foo.spec.js' }));
+        files.push(new File('foo.js', 'foo content'), new File('foo.spec.js', 'it("dog should not eat dog")'), new File('baz.js', 'baz content'));
+
+        // Act
+        const [actualReport] = actReportAll();
+
+        // Assert
+        expect(actualReport.testFiles?.['foo.spec.js'].source).eq('it("dog should not eat dog")');
+      });
+
+      it('should report the tests in `testFiles`', () => {
+        // Arrange
+        dryRunResult.tests.push(
+          factory.testResult({ id: 'spec1', name: 'dog should not eat dog' }),
+          factory.testResult({ id: 'spec2', name: 'dog should chase its own tail', startPosition: { line: 5, column: 0 } })
+        );
+
+        // Act
+        const [actualReport] = actReportAll([]);
+
+        // Assert
+        const expected: schema.TestFileDefinitionDictionary = {
+          ['']: {
+            tests: [
+              { id: '0', name: 'dog should not eat dog', location: undefined },
+              { id: '1', name: 'dog should chase its own tail', location: { start: { line: 6, column: 1 } } }, // mutation testing elements uses offset 1 for both line and column
+            ],
+          },
+        };
+        expect(actualReport.testFiles).deep.eq(expected);
+      });
+
+      it('should remap test ids if possible (for brevity, since mocha, jest and karma use test titles as test ids)', () => {
+        // Arrange
+        dryRunResult.tests.push(
+          factory.testResult({ id: 'foo should bar', name: 'foo should bar' }),
+          factory.testResult({ id: 'baz should qux', name: 'baz should qux' })
+        );
+        const killedMutantResult = factory.mutantResult({
           fileName: 'foo.js',
-        }),
-      ];
-      files.push(new File('foo.js', ''));
+          killedBy: ['foo should bar'],
+          coveredBy: ['foo should bar', 'baz should qux', 'not found'],
+        });
+        files.push(new File('foo.js', ''));
 
-      // Act
-      const [actualReport] = actReportAll(inputMutants);
+        // Act
+        const [actualReport] = actReportAll([killedMutantResult]);
 
-      // Assert
-      expect(Object.keys(actualReport.files)).lengthOf(1);
-      expect(actualReport.files['foo.js'].mutants).lengthOf(2);
-    });
+        // Assert
+        const expectedTests: schema.TestDefinition[] = [
+          { id: '0', name: 'foo should bar', location: undefined },
+          { id: '1', name: 'baz should qux', location: undefined },
+        ];
+        const actualResultMutant = actualReport.files['foo.js'].mutants[0];
+        expect(actualReport.testFiles?.[''].tests).deep.eq(expectedTests);
+        expect(actualResultMutant.coveredBy).deep.eq(['0', '1', 'not found']);
+        expect(actualResultMutant.killedBy).deep.eq(['0']);
+      });
 
-    it('should group test by test file name', () => {
-      // Arrange
-      dryRunResult.tests.push(
-        factory.testResult({ fileName: 'foo.spec.js', name: '1' }),
-        factory.testResult({ fileName: 'bar.spec.js', name: '2' }),
-        factory.testResult({ fileName: 'foo.spec.js', name: '3' })
-      );
-      files.push(new File('foo.spec.js', ''), new File('bar.spec.js', ''));
+      it('should group test by test file name', () => {
+        // Arrange
+        dryRunResult.tests.push(
+          factory.testResult({ fileName: 'foo.spec.js', name: '1' }),
+          factory.testResult({ fileName: 'bar.spec.js', name: '2' }),
+          factory.testResult({ fileName: 'foo.spec.js', name: '3' })
+        );
+        files.push(new File('foo.spec.js', ''), new File('bar.spec.js', ''));
 
-      // Act
-      const [actualReport] = actReportAll([]);
+        // Act
+        const [actualReport] = actReportAll([]);
 
-      // Assert
-      expect(Object.keys(actualReport.testFiles!)).lengthOf(2);
-      expect(actualReport.testFiles!['foo.spec.js'].tests).lengthOf(2);
-      expect(actualReport.testFiles!['foo.spec.js'].tests[0].name).eq('1');
-      expect(actualReport.testFiles!['foo.spec.js'].tests[1].name).eq('3');
-      expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
-    });
+        // Assert
+        expect(Object.keys(actualReport.testFiles!)).lengthOf(2);
+        expect(actualReport.testFiles!['foo.spec.js'].tests).lengthOf(2);
+        expect(actualReport.testFiles!['foo.spec.js'].tests[0].name).eq('1');
+        expect(actualReport.testFiles!['foo.spec.js'].tests[1].name).eq('3');
+        expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
+      });
 
-    it('should log a warning if source file could not be found', () => {
-      const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
-      const [actualReport] = actReportAll(inputMutants);
-      expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
-      expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
-    });
-
-    it('should log a warning the test file could not be found', () => {
-      dryRunResult.tests.push(factory.testResult({ fileName: 'foo.spec.js' }));
-      actReportAll([]);
-      expect(testInjector.logger.warn).calledWithMatch('Test file "foo.spec.js" not found in input files');
+      it('should log a warning the test file could not be found', () => {
+        dryRunResult.tests.push(factory.testResult({ fileName: 'foo.spec.js' }));
+        actReportAll([]);
+        expect(testInjector.logger.warn).calledWithMatch('Test file "foo.spec.js" not found in input files');
+      });
     });
 
     it('should provide the metrics as second argument', () => {
