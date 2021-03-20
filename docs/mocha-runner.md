@@ -1,6 +1,6 @@
 ---
 title: Mocha Runner
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/mocha-runner.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/mocha-runner.md
 ---
 
 A plugin to use Mocha in Stryker

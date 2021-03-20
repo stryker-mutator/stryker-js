@@ -63,14 +63,14 @@ describe(BlockStatementMutator.name, () => {
     });
 
     /**
-     * @see https://github.com/stryker-mutator/stryker/issues/2314
+     * @see https://github.com/stryker-mutator/stryker-js/issues/2314
      */
     it('should not mutate a constructor containing a super call and has (typescript) parameter properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { constructor(private baz: string) { super(); } }');
     });
 
     /**
-     * @see https://github.com/stryker-mutator/stryker/issues/2474
+     * @see https://github.com/stryker-mutator/stryker-js/issues/2474
      */
     it('should not mutate a constructor containing a super call and contains initialized properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { private baz = "qux"; constructor() { super(); } }');

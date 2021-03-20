@@ -65,7 +65,7 @@ export class ChildProcessProxy<T> implements Disposable {
     });
     this.listenForMessages();
     this.listenToStdoutAndStderr();
-    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker/issues/1634
+    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
     this.worker.on('close', this.handleUnexpectedExit);
     this.worker.on('error', this.handleError);
     this.proxy = this.initProxy();

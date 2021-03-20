@@ -1,6 +1,6 @@
 ---
 title: Config file
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/config-file.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/config-file.md
 ---
 
 Although a config file is not mandatory, it is recommended. You can define your Stryker configuration in either a `.js` or `.json` file. If you use a `.js` file, it should contain a NodeJS module that exports the configuration object. Autocompletion is supported using JSON schema or using [`@type` JS docs](https://jsdoc.app/).

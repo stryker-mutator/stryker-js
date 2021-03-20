@@ -1,13 +1,12 @@
-# Contribute to Stryker
+# Contribute to StrykerJS
 
-This is the contribution guide for Stryker. Great to have you here! Here are a few ways you can help make this project better.
+This is the contribution guide for StrykerJS. Great to have you here! Here are a few ways you can help make this project better.
 
 ## Team members
 
 * Simon de Lang: Stryker dev. Started Stryker as part of his thesis at Info Support. [simondel](http://github.com/simondel) on github.
 * Nico Jansen: Stryker dev. Originally came up with the idea for the mutation testing framework as a thesis at Info Support.
 [nicojs](http://github.com/nicojs) on github or [@_nicojs](https://twitter.com/_nicojs) on twitter
-* Sander Koenders: Stryker dev. Creator of the stryker-webpack-plugin and stryker-jest-runner.
 
 ## Learn & listen
 
@@ -26,9 +25,9 @@ Please adhere to our [editorconfig](https://editorconfig.org) and [eslint](https
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
-## Runner Stryker locally
+## Runner StrykerJS locally
 
-We use [Lerna](https://lerna.js.org/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker/tree/master/packages). Commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
+We use [Lerna](https://lerna.js.org/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker-js/tree/master/packages). Commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
 
 1. Clone the repository
 1. Install dependencies using `npm install` in the root of the project
@@ -65,7 +64,7 @@ Some quick notes to help you get started:
 
 Have fun!
 
-## Running Stryker on Stryker
+## Running StrykerJS on StrykerJS
 
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 1. Make sure all Stryker packages are build: `npm run build`
@@ -79,7 +78,7 @@ New features are welcome! Either as requests or proposals.
 1. Please create an issue first or let us know via the [Stryker Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM)
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
-   See [.editorconfig](https://github.com/stryker-mutator/stryker/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
+   See [.editorconfig](https://github.com/stryker-mutator/stryker-js/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
     * You can check if there are lint issues using `npm run lint:log`. Output will be in root folder in `lint.log` file.
     * You can automatically fix a lot of lint issues using `npm run lint:fix`
 1. Please create or edit unit tests or integration tests.
@@ -95,13 +94,13 @@ maintainers is around a day or so.
 
 ## Tools
 
-As Stryker uses the Abstract Syntax Tree (AST) to create mutations, we recommend you to use [ASTExplorer](https://astexplorer.net/) to get familiar with the concepts involved.
+As StrykerJS uses the Abstract Syntax Tree (AST) to create mutations, we recommend you to use [ASTExplorer](https://astexplorer.net/) to get familiar with the concepts involved.
 
 # Bug triage
 
 Found a bug? Don't worry, we'll fix it, or you can ;)
 
-Please report a bug report on our [issues page](https://github.com/stryker-mutator/stryker/issues). In this please:
+Please report a bug report on our [issues page](https://github.com/stryker-mutator/stryker-js/issues). In this please:
 
 1. Label the issue as bug
 2. Explain what the bug is in clear English
@@ -117,4 +116,4 @@ Do you want to help? Great! These are a few things you can do:
 * Evangelize mutation testing
   Mutation testing is still relatively new, especially in JavaScript. Please help us get the word out there!
   Share your stories in blog posts an on social media. Please inform us about it!
-* Did you use Stryker? Your feedback is very valuable to us. Good and bad! Please contact us and let us know what you think!
+* Did you use StrykerJS? Your feedback is very valuable to us. Good and bad! Please contact us and let us know what you think!

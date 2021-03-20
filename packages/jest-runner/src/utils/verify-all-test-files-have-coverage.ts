@@ -43,5 +43,5 @@ If you're using your own custom test environment, please enrich the environment 
 const { mixinJestEnvironment} = require('@stryker-mutator/jest-runner');
 module.exports = mixinJestEnvironment(MyCustomTestEnvironment);
 
-For more info, see https://stryker-mutator.io/docs/stryker/jest-runner#coverage-analysis`;
+For more info, see https://stryker-mutator.io/docs/stryker-js/jest-runner#coverage-analysis`;
 }
