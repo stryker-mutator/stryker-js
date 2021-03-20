@@ -80,27 +80,27 @@ describe(`${JestTestRunner.name} integration test`, () => {
         {
           id: 'Add should be able to add two numbers',
           fileName: addSpecFileName,
-          startPosition: { column: 2, line: 7 },
+          startPosition: { column: 2, line: 6 },
         },
         {
           id: 'Add should be able to add one to a number',
           fileName: addSpecFileName,
-          startPosition: { column: 2, line: 17 },
+          startPosition: { column: 2, line: 16 },
         },
         {
           id: 'Add should be able negate a number',
           fileName: addSpecFileName,
-          startPosition: { column: 2, line: 26 },
+          startPosition: { column: 2, line: 25 },
         },
         {
           id: 'Add should be able to recognize a negative number',
           fileName: addSpecFileName,
-          startPosition: { column: 2, line: 35 },
+          startPosition: { column: 2, line: 34 },
         },
         {
           id: 'Circle should have a circumference of 2PI when the radius is 1',
           fileName: circleSpecFileName,
-          startPosition: { column: 2, line: 4 },
+          startPosition: { column: 2, line: 3 },
         },
       ]);
     });

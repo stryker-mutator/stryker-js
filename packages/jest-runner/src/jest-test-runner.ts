@@ -197,7 +197,13 @@ export class JestTestRunner implements TestRunner {
           name: testResult.fullName,
           timeSpentMs: testResult.duration ?? 0,
           fileName: suiteResult.testFilePath,
-          startPosition: testResult.location ?? undefined,
+          startPosition: testResult.location
+            ? {
+                // Stryker works 0-based internally, jest works 1-based: https://jestjs.io/docs/cli#--testlocationinresults
+                line: testResult.location.line - 1,
+                column: testResult.location.column,
+              }
+            : undefined,
         };
 
         switch (testResult.status) {

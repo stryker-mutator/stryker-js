@@ -128,7 +128,7 @@ describe(JestTestRunner.name, () => {
             name: 'App renders without crashing',
             status: TestStatus.Success,
             timeSpentMs: 23,
-            startPosition: { column: 4, line: 3 },
+            startPosition: { column: 3, line: 2 },
             fileName: 'foo.js',
           },
         ],
@@ -221,7 +221,7 @@ describe(JestTestRunner.name, () => {
             status: TestStatus.Success,
             timeSpentMs: 23,
             fileName: 'quux.js',
-            startPosition: { line: 42, column: 43 },
+            startPosition: { line: 41, column: 42 },
           },
         ],
       };
