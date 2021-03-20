@@ -1,6 +1,6 @@
 ---
 title: Jasmine Runner
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/jasmine-runner.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/jasmine-runner.md
 ---
 
 A plugin to use Jasmine **as a test runner for node** in Stryker.

@@ -4,7 +4,8 @@
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/api"
   },
   "scripts": {
     "stryker": "node ../core/bin/stryker run",
@@ -31,9 +32,9 @@
   ],
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/api#readme",
+  "homepage": "https://stryker-mutator.io/",
   "engines": {
     "node": ">=10"
   },

@@ -386,7 +386,7 @@ describe(JestTestRunner.name, () => {
         const sut = createSut();
         const onGoingRun = sut.dryRun({ coverageAnalysis: 'perTest' });
         await expect(onGoingRun).rejectedWith(
-          'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker/issues'
+          'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues'
         );
       });
 

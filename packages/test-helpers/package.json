@@ -7,17 +7,18 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/stryker-mutator/stryker.git"
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/test-helpers"
   },
   "keywords": [],
   "author": "Nico Jansen <jansennico@gmail.com>",
   "bugs": {
-    "url": "https://github.com/stryker-mutator/stryker/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
-  "homepage": "https://github.com/stryker-mutator/stryker/tree/master/packages/test-helpers#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/test-helpers#readme",
   "license": "ISC",
   "dependencies": {
-    "ajv": "~7.1.0",
+    "ajv": "~7.2.1",
     "mutation-testing-metrics": "~1.6.2"
   },
   "devDependencies": {

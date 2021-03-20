@@ -1,6 +1,6 @@
 ---
 title: Create a plugin
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/guides/create-a-plugin.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/create-a-plugin.md
 ---
 
 You can extend Stryker with the following plugin kinds:
@@ -15,7 +15,7 @@ export enum PluginKind {
 
 They are loaded using the [`plugins` configuration option](../configuration#plugins-string)
 
-Each plugin has it's own job to do. For inspiration, check out the [stryker monorepo](https://github.com/stryker-mutator/stryker/tree/master/packages).
+Each plugin has it's own job to do. For inspiration, check out the [stryker monorepo](https://github.com/stryker-mutator/stryker-js/tree/master/packages).
 
 ## Creating a plugin
 

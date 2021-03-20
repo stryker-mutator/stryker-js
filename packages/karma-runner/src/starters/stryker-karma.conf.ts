@@ -57,7 +57,7 @@ function setLifeCycleOptions(config: Config) {
 /**
  * Sets configuration that is needed to control client scripts in karma.
  * @param config The config to use
- * @see https://github.com/stryker-mutator/stryker/issues/2049
+ * @see https://github.com/stryker-mutator/stryker-js/issues/2049
  */
 function setClientOptions(config: Config) {
   // Disable clearContext because of issue #2049 (race condition in Karma)

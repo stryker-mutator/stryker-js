@@ -1,6 +1,6 @@
 ---
 title: TypeScript Checker
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/typescript-checker.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/typescript-checker.md
 ---
 
 A TypeScript type checker plugin for Stryker, the ~~JavaScript~~ _TypeScript_ Mutation testing framework.
@@ -40,7 +40,7 @@ Default: `'tsconfig.json'`
 
 The path to your [tsconfig](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html). Project references _are supported_, `--build` mode will be enabled automatically when references are found in your tsconfig.json file.
 
-_Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to avoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker/issues/391#issue-259829320) for more information on this_
+_Note: the following compiler options are always overridden by @stryker-mutator/typescript-checker to avoid false positives. See [issue 391](https://github.com/stryker-mutator/stryker-js/issues/391#issue-259829320) for more information on this_
 
 ```json
 {
@@ -59,7 +59,7 @@ The `@stryker-mutator/typescript-checker` package for `stryker` to enable `types
 - `typescript`
 - `@stryker-mutator/core`
 
-For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker/blob/master/packages/typescript/package.json).
+For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker-js/blob/master/packages/typescript/package.json).
 
 
 ## Load the plugin

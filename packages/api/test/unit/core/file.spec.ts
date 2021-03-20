@@ -23,7 +23,7 @@ describe('File', () => {
   });
 
   /**
-   * @see https://github.com/stryker-mutator/stryker/issues/2025
+   * @see https://github.com/stryker-mutator/stryker-js/issues/2025
    */
   it('should customize serialization to allow different instances of the class file to be compatible', () => {
     expect(new File('foo', Buffer.from('bar')).surrialize()).eq('new File("foo", Buffer.from("bar", "binary"))');

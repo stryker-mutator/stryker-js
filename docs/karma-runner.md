@@ -1,6 +1,6 @@
 ---
 title: Karma Runner
-custom_edit_url: https://github.com/stryker-mutator/stryker/edit/master/docs/karma-runner.md
+custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/karma-runner.md
 ---
 
 ## Installation

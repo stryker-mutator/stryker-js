@@ -4,11 +4,11 @@ import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Preset } from './preset';
 import { PresetConfiguration } from './preset-configuration';
 
-const guideUrl = 'https://stryker-mutator.io/docs/stryker/guides/vuejs';
+const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/vuejs';
 
 /**
  * More information can be found in the Stryker handbook:
- * https://stryker-mutator.io/docs/stryker/guides/vuejs
+ * https://stryker-mutator.io/docs/stryker-js/guides/vuejs
  */
 export class VueJsPreset implements Preset {
   public readonly name = 'vue-cli';

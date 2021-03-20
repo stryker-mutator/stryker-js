@@ -1,22 +1,22 @@
 [
-  "stryker/introduction",
-  "stryker/getting-started",
-  "stryker/usage",
-  "stryker/config-file",
-  "stryker/configuration",
-  "stryker/plugins",
-  "stryker/jasmine-runner",
-  "stryker/jest-runner",
-  "stryker/karma-runner",
-  "stryker/mocha-runner",
-  "stryker/typescript-checker",
+  "stryker-js/introduction",
+  "stryker-js/getting-started",
+  "stryker-js/usage",
+  "stryker-js/config-file",
+  "stryker-js/configuration",
+  "stryker-js/plugins",
+  "stryker-js/jasmine-runner",
+  "stryker-js/jest-runner",
+  "stryker-js/karma-runner",
+  "stryker-js/mocha-runner",
+  "stryker-js/typescript-checker",
   {
     "Guides": [
-      "stryker/guides/angular",
-      "stryker/guides/react",
-      "stryker/guides/vuejs",
-      "stryker/guides/nodejs",
-      "stryker/guides/create-a-plugin"
+      "stryker-js/guides/angular",
+      "stryker-js/guides/react",
+      "stryker-js/guides/vuejs",
+      "stryker-js/guides/nodejs",
+      "stryker-js/guides/create-a-plugin"
     ]
   }
 ]
