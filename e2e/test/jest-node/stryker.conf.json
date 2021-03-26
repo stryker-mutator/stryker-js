@@ -5,9 +5,6 @@
   "tempDirName": "stryker-tmp",
   "concurrency": 1,
   "coverageAnalysis": "off",
-  "plugins": [
-    "/home/nicojs/github/stryker-js/packages/jest-runner"
-  ],
   "reporters": [
     "clear-text",
     "progress",
