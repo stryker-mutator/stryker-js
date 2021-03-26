@@ -18,7 +18,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestRunResult } from '../../src/jest-run-result';
 import { state } from '../../src/messaging';
 
-describe(JestTestRunner.name, () => {
+describe.only(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
 
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
@@ -128,7 +128,7 @@ describe(JestTestRunner.name, () => {
             name: 'App renders without crashing',
             status: TestStatus.Success,
             timeSpentMs: 23,
-            startPosition: { column: 3, line: 2 },
+            startPosition: { column: 4, line: 2 },
             fileName: 'foo.js',
           },
         ],
@@ -221,7 +221,7 @@ describe(JestTestRunner.name, () => {
             status: TestStatus.Success,
             timeSpentMs: 23,
             fileName: 'quux.js',
-            startPosition: { line: 41, column: 42 },
+            startPosition: { line: 41, column: 43 },
           },
         ],
       };
