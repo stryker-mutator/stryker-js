@@ -144,6 +144,24 @@ describe(DryRunExecutor.name, () => {
         expect(sandbox.originalFileFor).calledWith('.stryker-tmp/sandbox-123/test/foo.spec.js');
       });
 
+      it('should remap test locations when type checking was disabled for a test file', async () => {
+        runResult.tests.push(
+          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
+          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } })
+        );
+        sandbox.originalFileFor
+          .withArgs('.stryker-tmp/sandbox-123/test/foo.spec.js')
+          .returns('test/foo.spec.js')
+          .withArgs('.stryker-tmp/sandbox-123/testResources/foo.spec.js')
+          .returns('testResources/foo.spec.js');
+        await sut.execute();
+        const actualDryRunResult = injectorMock.provideValue.getCalls().find((call) => call.args[0] === coreTokens.dryRunResult)!
+          .args[1] as DryRunResult;
+        assertions.expectCompleted(actualDryRunResult);
+        expect(actualDryRunResult.tests[0].startPosition).deep.eq({ line: 2, column: 1 });
+        expect(actualDryRunResult.tests[1].startPosition).deep.eq({ line: 5, column: 1 }); // should not have been remapped, since type checking wasn't disabled here
+      });
+
       it('should have logged the amount of tests ran', async () => {
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));

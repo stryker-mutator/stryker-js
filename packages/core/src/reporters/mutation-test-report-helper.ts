@@ -203,6 +203,7 @@ export class MutationTestReportHelper {
     return {
       id: remapTestId(test.id),
       name: test.name,
+      location: test.startPosition ? { start: this.toPosition(test.startPosition) } : undefined,
     };
   }
 

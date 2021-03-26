@@ -9,6 +9,7 @@
     "clear-text",
     "progress",
     "html",
-    "event-recorder"
+    "event-recorder",
+    "json"
   ]
 }

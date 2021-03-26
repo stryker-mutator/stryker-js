@@ -10,6 +10,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { expectTestResults } from '../helpers/assertions';
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
@@ -67,6 +68,42 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
     });
+
+    it('should report the test positions and file names', async () => {
+      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
+      const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
+      const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
+      const jestTestRunner = createSut();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'perTest' });
+      assertions.expectCompleted(runResult);
+      expectTestResults(runResult, [
+        {
+          id: 'Add should be able to add two numbers',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 6 },
+        },
+        {
+          id: 'Add should be able to add one to a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 16 },
+        },
+        {
+          id: 'Add should be able negate a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 25 },
+        },
+        {
+          id: 'Add should be able to recognize a negative number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 34 },
+        },
+        {
+          id: 'Circle should have a circumference of 2PI when the radius is 1',
+          fileName: circleSpecFileName,
+          startPosition: { column: 2, line: 3 },
+        },
+      ]);
+    });
   });
 
   describe('mutantRun', () => {
@@ -104,7 +141,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
+      process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
