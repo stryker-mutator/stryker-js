@@ -1,8 +1,5 @@
 import { EOL } from 'os';
 
-import path from 'path';
-
-import minimatch from 'minimatch';
 import { Injector } from 'typed-inject';
 import { I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -30,6 +27,7 @@ import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
 import { Pool, createTestRunnerPool } from '../concurrent/pool';
 import { ConcurrencyTokenProvider } from '../concurrent';
+import { FileMatcher } from '../config';
 
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
@@ -144,6 +142,7 @@ export class DryRunExecutor {
    * @param dryRunResult the completed result
    */
   private remapSandboxFilesToOriginalFiles(dryRunResult: CompleteDryRunResult) {
+    const disableTypeCheckingFileMatcher = new FileMatcher(this.options.disableTypeChecks);
     dryRunResult.tests.forEach((test) => {
       if (test.fileName) {
         test.fileName = this.sandbox.originalFileFor(test.fileName);
@@ -151,7 +150,7 @@ export class DryRunExecutor {
         // HACK line numbers of the tests can be offset by 1 because the disable type checks preprocessor could have added a `// @ts-nocheck` line.
         // We correct for that here if needed
         // If we do more complex stuff in sandbox preprocessing in the future, we might want to add a robust remapping logic
-        if (test.startPosition && this.options.disableTypeChecks && minimatch(test.fileName, path.resolve(this.options.disableTypeChecks))) {
+        if (test.startPosition && disableTypeCheckingFileMatcher.matches(test.fileName)) {
           test.startPosition.line--;
         }
       }
