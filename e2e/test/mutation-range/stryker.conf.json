@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "mutate": ["src/index.js:3:18:3:26", "src/index.js:4:18:4:25", "src/pi.js"],
+  "mutate": ["src/index.js:3:18-3:26", "src/index.js:4:18-4:25", "src/pi.js"],
   "packageManager": "npm",
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",

@@ -26,7 +26,7 @@ function toReportSourceFile(file: File): SourceFile {
 
 const IGNORE_PATTERN_CHARACTER = '!';
 
-export const MUTATION_RANGE_REGEX = /(.*):(\d+):(\d+):(\d+):(\d+)$/;
+export const MUTATION_RANGE_REGEX = /(.*):(\d+):(\d+)-(\d+):(\d+)$/;
 
 /**
  *  When characters are represented as the octal values of its utf8 encoding
@@ -136,8 +136,8 @@ export class InputFileResolver {
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
-    if (/(:\d+){4}$/.exec(globbingExpression)) {
-      globbingExpression = globbingExpression.replace(/(:\d+){4}$/, '');
+    if (MUTATION_RANGE_REGEX.exec(globbingExpression)) {
+      globbingExpression = globbingExpression.replace(MUTATION_RANGE_REGEX, '$1');
     }
 
     const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
