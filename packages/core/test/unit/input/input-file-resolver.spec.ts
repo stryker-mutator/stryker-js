@@ -190,8 +190,30 @@ describe(InputFileResolver.name, () => {
   });
 
   describe('with mutation range definitions', () => {
-    it('should remove specific mutant descriptors when matching', async () => {
-      testInjector.options.mutate = ['mute1:0:0-1:0'];
+    it('should remove specific mutant descriptors when matching with line and column', async () => {
+      testInjector.options.mutate = ['mute1:0:2-1:2'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      const result = await sut.resolve();
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
+      const expectedRanges: MutationRange[] = [
+        {
+          end: {
+            column: 2,
+            line: 1,
+          },
+          fileName: path.resolve('mute1'),
+          start: {
+            column: 2,
+            line: 0,
+          },
+        },
+      ];
+      expect(result.mutationRanges).to.deep.equal(expectedRanges);
+    });
+
+    it('should default column numbers to 0 if not present', async () => {
+      testInjector.options.mutate = ['mute1:0-1'];
       testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       sut = createSut();
       const result = await sut.resolve();

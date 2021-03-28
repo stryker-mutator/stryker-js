@@ -195,6 +195,11 @@ describe(OptionsValidator.name, () => {
       testInjector.options.mutate = ['src/index.*.ts:1:0-2:0'];
       actValidationErrors('Config option "mutate" cannot have both mutation range and glob expression');
     });
+
+    it('should not accept mutationRange (with no column numbers) with a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.*.ts:1-2'];
+      actValidationErrors('Config option "mutate" cannot have both mutation range and glob expression');
+    });
   });
 
   describe('testFramework', () => {
