@@ -182,9 +182,10 @@ The default will try to guess your production code files based on sane defaults.
 * Include all js-like files inside the `src` or `lib` dir
   * Except files inside `__tests__` directories and file names ending with `test` or `spec`.
 
-It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine:startColumn:endLine:endColumn`. Some examples:
-* `"src/app.js:1:0:11:0"` will mutate lines 1 through 10 inside app.js (10 included).
-* `"src/app.js:5:4:6:4"` will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
+It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Some examples:
+* `"src/app.js:1-11"` will mutate lines 1 through 10 inside app.js.
+* `"src/app.js:5:4-6:4"` will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
+* `"src/app.js:5-6:4"` will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
 
 *Note:* It is not possible to combine mutation range with a globbing expression in the same line.
 
