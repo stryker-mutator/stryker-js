@@ -63,7 +63,7 @@
     "chalk": "~4.1.0",
     "commander": "~7.2.0",
     "execa": "~5.0.0",
-    "file-url": "~3.0.0",
+    "file-url": "~4.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
     "inquirer": "~7.3.2",
