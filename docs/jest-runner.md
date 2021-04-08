@@ -55,7 +55,7 @@ Configure where jest should get its configuration from.
 * `"create-react-app"`: use [react-scripts](https://www.npmjs.com/package/react-scripts), for projects created with [create-react-app](https://github.com/facebook/create-react-app).
 * `"create-react-app-ts"`: **DEPRECATED** use [react-scripts-ts](https://www.npmjs.com/package/react-scripts-ts), for projects created with [create-react-app-typescript](https://github.com/wmonk/create-react-app-typescript). DEPRECATED, please [follow the migration guide](https://create-react-app.dev/docs/adding-typescript/) and move to `create-react-app`.
 
-### `jest.configFile`] [`string`]
+### `jest.configFile` [`string`]
 
 Default: `undefined`
 
