@@ -24,7 +24,7 @@ describe(StrykerInitializer.name, () => {
   let inquirerPrompt: sinon.SinonStub;
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
-  let fsWriteFile: sinon.SinonStub;
+  let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
   let fsExistsSync: sinon.SinonStub;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
@@ -78,7 +78,7 @@ describe(StrykerInitializer.name, () => {
           someOtherSetting: 'enabled',
         },
       });
-      fsWriteFile.resolves({});
+      fsWriteFile.resolves();
       presets.push(presetMock);
     });
 
@@ -230,7 +230,7 @@ describe(StrykerInitializer.name, () => {
       expect(fsWriteFile).calledOnce;
       const [fileName, content] = fsWriteFile.getCall(0).args;
       expect(fileName).eq('stryker.conf.json');
-      const normalizedContent = normalizeWhitespaces(content);
+      const normalizedContent = normalizeWhitespaces(content as string);
       expect(normalizedContent).contains('"testRunner": "awesome"');
       expect(normalizedContent).contains('"packageManager": "npm"');
       expect(normalizedContent).contains('"coverageAnalysis": "perTest"');
@@ -435,6 +435,6 @@ describe(StrykerInitializer.name, () => {
   function expectStrykerConfWritten(expectedRawConfig: string) {
     const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
     expect(fileName).eq('stryker.conf.js');
-    expect(normalizeWhitespaces(actualConfig)).deep.eq(normalizeWhitespaces(expectedRawConfig));
+    expect(normalizeWhitespaces(actualConfig as string)).deep.eq(normalizeWhitespaces(expectedRawConfig));
   }
 });

@@ -46,7 +46,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(require('../../package.json').version)
+      .version(require('../../package.json').version as string)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:

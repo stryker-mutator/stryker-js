@@ -23,6 +23,7 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = (
 
   // Range filters that are in scope for the current file
   const mutantRangesForCurrentFile = options.mutationRanges.filter((mutantRange) => mutantRange.fileName === originFileName);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
       // Don't mutate import statements, type definitions and nodes that don't have overlap with the current range filter
