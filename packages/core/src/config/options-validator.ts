@@ -88,9 +88,30 @@ export class OptionsValidator {
         'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
       );
     }
-    if (options.mutate.some((mutateString) => hasMagic(mutateString) && MUTATION_RANGE_REGEX.exec(mutateString))) {
-      additionalErrors.push('Config option "mutate" cannot have both mutation range and glob expression');
-    }
+    options.mutate.forEach((mutateString, index) => {
+      const match = MUTATION_RANGE_REGEX.exec(mutateString);
+      if (match) {
+        if (hasMagic(mutateString)) {
+          additionalErrors.push(
+            `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`
+          );
+        } else {
+          const [_, _fileName, mutationRange, startLine, _startColumn, endLine, _endColumn] = match;
+          const start = parseInt(startLine, 10);
+          const end = parseInt(endLine, 10);
+          if (start < 1) {
+            additionalErrors.push(
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid, line ${start} does not exist (lines start at 1).`
+            );
+          }
+          if (start > end) {
+            additionalErrors.push(
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid. The "from" line number (${start}) should be less then the "to" line number (${end}).`
+            );
+          }
+        }
+      }
+    });
 
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
