@@ -61,6 +61,53 @@ describe('instrumenter integration', () => {
     });
   });
 
+  describe('with mutation ranges', () => {
+    it('should only mutate specific mutants for the given file', async () => {
+      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
+
+      await arrangeAndActAssert('specific-mutants.ts', {
+        ...createInstrumenterOptions(),
+        mutationRanges: [
+          {
+            fileName: fullFileName,
+            start: { line: 0, column: 10 },
+            end: { line: 0, column: 15 },
+          },
+          {
+            fileName: fullFileName,
+            start: { line: 3, column: 4 },
+            end: { line: 3, column: 11 },
+          },
+          {
+            fileName: fullFileName,
+            start: { line: 7, column: 15 },
+            end: { line: 7, column: 22 },
+          },
+          {
+            fileName: fullFileName,
+            start: { line: 18, column: 2 },
+            end: { line: 19, column: 75 },
+          },
+        ],
+      });
+    });
+
+    it('should not make any mutations in a file not found in the specific mutants', async () => {
+      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
+
+      await arrangeAndActAssert('specific-no-mutants.ts', {
+        ...createInstrumenterOptions(),
+        mutationRanges: [
+          {
+            fileName: fullFileName,
+            start: { line: 1, column: 10 },
+            end: { line: 1, column: 15 },
+          },
+        ],
+      });
+    });
+  });
+
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource('instrumenter', fileName);
     const file = new File(fullFileName, await fsPromises.readFile(fullFileName));

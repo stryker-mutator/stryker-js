@@ -3,6 +3,8 @@ import { expect } from 'chai';
 import { types, NodePath } from '@babel/core';
 import generate from '@babel/generator';
 
+import { normalizeWhitespaces } from '@stryker-mutator/util';
+
 import { transformerContextStub } from '../../helpers/stubs';
 import { TransformerContext } from '../../../src/transformers';
 import * as mutators from '../../../src/mutators';
@@ -11,6 +13,8 @@ import { MutantCollector } from '../../../src/transformers/mutant-collector';
 import { transformBabel } from '../../../src/transformers/babel-transformer';
 import { createJSAst, createNamedNodeMutation, createMutant, createTSAst } from '../../helpers/factories';
 import { instrumentationBabelHeader } from '../../../src/util/syntax-helpers';
+import { JSAst } from '../../../src/syntax';
+import { NamedNodeMutation } from '../../../src/mutant';
 
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
@@ -167,6 +171,82 @@ describe('babel-transformer', () => {
     const ast = createTSAst({ rawContent: '@Component() class A {}' });
     transformBabel(ast, mutantCollectorMock, context);
     expectMutateNotCalledWith((t) => t.isDecorator());
+  });
+
+  describe('with mutationRanges', () => {
+    let ast: JSAst;
+    let mutant: NamedNodeMutation;
+
+    beforeEach(() => {
+      ast = createJSAst({
+        originFileName: 'foo.js',
+        rawContent:
+          'console.log("line 1");\n' +
+          'console.log("line 2");\n' +
+          '{\n' +
+          'console.log("line 4");\n' +
+          'console.log("line 5");\n' +
+          '}\n' +
+          'console.log("line 6");\n',
+      });
+      mutant = createNamedNodeMutation({ original: types.identifier('first') });
+      mutateStub.onFirstCall().returns([mutant]);
+    });
+
+    function range(startLine: number, startColumn: number, endLine: number, endColumn: number, fileName = 'foo.js') {
+      return {
+        fileName,
+        start: { line: startLine, column: startColumn },
+        end: { line: endLine, column: endColumn },
+      };
+    }
+
+    it('should mutate a node that matches the a single line range', () => {
+      context.options.mutationRanges = [range(4, 12, 4, 20)];
+      transformBabel(ast, mutantCollectorMock, context);
+      expect(mutateStub.firstCall.args[0].toString()).eq('"line 4"');
+    });
+
+    it('should not mutate a node that does not match a single line start range', () => {
+      context.options.mutationRanges = [range(4, 13, 4, 20)];
+      transformBabel(ast, mutantCollectorMock, context);
+      expect(mutateStub).not.called;
+    });
+
+    it('should not mutate a node that does not match a single line end range', () => {
+      context.options.mutationRanges = [range(4, 12, 4, 19)];
+      transformBabel(ast, mutantCollectorMock, context);
+      expect(mutateStub).not.called;
+    });
+
+    it('should mutate a node that matches a multi line range', () => {
+      context.options.mutationRanges = [range(3, 0, 7, 0)];
+      transformBabel(ast, mutantCollectorMock, context);
+      expect(normalizeWhitespaces(mutateStub.firstCall.args[0].toString())).eq('{ console.log("line 4"); console.log("line 5"); }');
+      expect(normalizeWhitespaces(mutateStub.secondCall.args[0].toString())).eq('console.log("line 4");');
+    });
+
+    it('should not mutate a node is not in the start line range', () => {
+      context.options.mutationRanges = [range(4, 0, 7, 0)];
+      transformBabel(ast, mutantCollectorMock, context);
+      mutateStub.getCalls().forEach((call) => {
+        expect(normalizeWhitespaces(call.args[0].toString())).not.eq('{ console.log("line 4"); console.log("line 5"); }');
+      });
+    });
+
+    it('should not mutate a node is not in the end line range', () => {
+      context.options.mutationRanges = [range(2, 0, 6, 0)];
+      transformBabel(ast, mutantCollectorMock, context);
+      mutateStub.getCalls().forEach((call) => {
+        expect(normalizeWhitespaces(call.args[0].toString())).not.eq('{ console.log("line 4"); console.log("line 5"); }');
+      });
+    });
+
+    it('should still mutate other files', () => {
+      context.options.mutationRanges = [range(100, 0, 101, 0, 'bar.js')];
+      transformBabel(ast, mutantCollectorMock, context);
+      expect(mutantCollectorMock.add).calledWith('foo.js', mutant);
+    });
   });
 
   function expectMutateNotCalledWith(predicate: (nodePath: NodePath) => boolean) {

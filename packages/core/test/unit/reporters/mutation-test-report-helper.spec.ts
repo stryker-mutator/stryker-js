@@ -17,7 +17,7 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../../../src/di';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileCollection } from '../../../src/input';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
 import * as objectUtils from '../../../src/utils/object-utils';
 import { createMutantTestCoverage } from '../../helpers/producers';
@@ -38,6 +38,7 @@ describe(MutationTestReportHelper.name, () => {
       filesToMutate: [],
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       logFiles: () => {},
+      mutationRanges: [],
     };
     dryRunResult = factory.completeDryRunResult();
   });
@@ -258,7 +259,7 @@ describe(MutationTestReportHelper.name, () => {
 
   describe('reportOne', () => {
     beforeEach(() => {
-      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js']);
+      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js'], []);
     });
 
     it('should map simple attributes to the mutant result', () => {

@@ -2,7 +2,7 @@ import os from 'os';
 import path from 'path';
 import fs from 'fs';
 
-import { File } from '@stryker-mutator/api/core';
+import { File, MutationRange } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, errorToString, Task } from '@stryker-mutator/util';
@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { coreTokens } from '../../../src/di';
-import { InputFileResolver } from '../../../src/input/input-file-resolver';
+import { InputFileResolver } from '../../../src/input';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
 import * as fileUtils from '../../../src/utils/file-utils';
 import { Mock, mock } from '../../helpers/producers';
@@ -187,6 +187,46 @@ describe(InputFileResolver.name, () => {
     expect(readFileStub).callCount(maxFileIO + 1);
     fileHandles.forEach(({ task }) => task.resolve(Buffer.from('content')));
     await onGoingWork;
+  });
+
+  describe('with mutation range definitions', () => {
+    it('should remove specific mutant descriptors when matching with line and column', async () => {
+      testInjector.options.mutate = ['mute1:1:2-2:2'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      const result = await sut.resolve();
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
+    });
+
+    it('should parse the mutation range', async () => {
+      testInjector.options.mutate = ['mute1:1:2-2:2'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      const result = await sut.resolve();
+      const expectedRanges: MutationRange[] = [
+        {
+          start: {
+            column: 2,
+            line: 0, // internally, Stryker works 0-based
+          },
+          end: {
+            column: 2,
+            line: 1,
+          },
+          fileName: path.resolve('mute1'),
+        },
+      ];
+      expect(result.mutationRanges).deep.eq(expectedRanges);
+    });
+
+    it('should default column numbers if not present', async () => {
+      testInjector.options.mutate = ['mute1:6-12'];
+      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
+      sut = createSut();
+      const result = await sut.resolve();
+      expect(result.mutationRanges[0].start).deep.eq({ column: 0, line: 5 });
+      expect(result.mutationRanges[0].end).deep.eq({ column: Number.MAX_SAFE_INTEGER, line: 11 });
+    });
   });
 
   describe('with mutate file expressions', () => {

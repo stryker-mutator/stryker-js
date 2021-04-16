@@ -4,7 +4,7 @@ import fs from 'fs';
 
 import { from } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
@@ -25,6 +25,8 @@ function toReportSourceFile(file: File): SourceFile {
 }
 
 const IGNORE_PATTERN_CHARACTER = '!';
+
+export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 
 /**
  *  When characters are represented as the octal values of its utf8 encoding
@@ -64,9 +66,13 @@ export class InputFileResolver {
   }
 
   public async resolve(): Promise<InputFileCollection> {
-    const [inputFileNames, mutateFiles] = await Promise.all([this.resolveInputFiles(), this.resolveMutateFiles()]);
+    const [inputFileNames, mutateFiles, mutationRange] = await Promise.all([
+      this.resolveInputFiles(),
+      this.resolveMutateFiles(),
+      this.resolveMutationRange(),
+    ]);
     const files: File[] = await this.readFiles(inputFileNames);
-    const inputFileCollection = new InputFileCollection(files, mutateFiles);
+    const inputFileCollection = new InputFileCollection(files, mutateFiles, mutationRange);
     this.reportAllSourceFilesRead(files);
     inputFileCollection.logFiles(this.log);
     return inputFileCollection;
@@ -97,6 +103,19 @@ export class InputFileResolver {
     }
   }
 
+  private resolveMutationRange(): MutationRange[] {
+    return this.mutatePatterns
+      .map((fileToMutate) => MUTATION_RANGE_REGEX.exec(fileToMutate))
+      .filter(notEmpty)
+      .map(([_, fileName, _mutationRange, startLine, startColumn = '0', endLine, endColumn = Number.MAX_SAFE_INTEGER.toString()]) => {
+        return {
+          fileName: path.resolve(fileName),
+          start: { line: parseInt(startLine) - 1, column: parseInt(startColumn) },
+          end: { line: parseInt(endLine) - 1, column: parseInt(endColumn) },
+        };
+      });
+  }
+
   /**
    * Takes a list of globbing patterns and expands them into files.
    * If a patterns starts with a `!`, it negates the pattern.
@@ -117,6 +136,10 @@ export class InputFileResolver {
   }
 
   private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
+    if (MUTATION_RANGE_REGEX.exec(globbingExpression)) {
+      globbingExpression = globbingExpression.replace(MUTATION_RANGE_REGEX, '$1');
+    }
+
     const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
     if (!fileNames.length && logAboutUselessPatterns) {
       this.log.warn(`Globbing expression "${globbingExpression}" did not result in any files.`);
