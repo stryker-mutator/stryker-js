@@ -1,2 +1,2 @@
-export { InputFileCollection } from './input-file-collection';
-export { InputFileResolver } from './input-file-resolver';
+export * from './input-file-collection';
+export * from './input-file-resolver';

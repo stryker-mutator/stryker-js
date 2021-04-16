@@ -10,7 +10,7 @@ import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } fr
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
-import { InputFileCollection } from '../input/input-file-collection';
+import { InputFileCollection } from '../input';
 import { setExitCode } from '../utils/object-utils';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({

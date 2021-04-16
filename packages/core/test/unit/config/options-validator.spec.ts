@@ -91,7 +91,7 @@ describe(OptionsValidator.name, () => {
     it('should be invalid with thresholds < 0 or > 100', () => {
       testInjector.options.thresholds.high = -1;
       testInjector.options.thresholds.low = 101;
-      actValidationErrors('Config option "thresholds.high" should be >= 0, was -1.', 'Config option "thresholds.low" should be <= 100, was 101.');
+      actValidationErrors('Config option "thresholds.high" must be >= 0, was -1.', 'Config option "thresholds.low" must be <= 100, was 101.');
     });
 
     it('should be invalid with thresholds.high null', () => {
@@ -132,7 +132,7 @@ describe(OptionsValidator.name, () => {
 
   it('should be invalid with negative numeric dryRunTimeout', () => {
     breakConfig('dryRunTimeoutMinutes', -1);
-    actValidationErrors('Config option "dryRunTimeoutMinutes" should be >= 0, was -1.');
+    actValidationErrors('Config option "dryRunTimeoutMinutes" must be >= 0, was -1.');
   });
 
   describe('plugins', () => {
@@ -184,6 +184,35 @@ describe(OptionsValidator.name, () => {
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
+    });
+
+    it('should accept mutationRange without a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.ts:1:0-2:0'];
+      actAssertValid();
+    });
+
+    it('should not accept mutationRange for line < 1 (lines are 1 based)', () => {
+      testInjector.options.mutate = ['src/app.ts:5:0-6:0', 'src/index.ts:0:0-2:0'];
+      actValidationErrors('Config option "mutate[1]" is invalid. Mutation range "0:0-2:0" is invalid, line 0 does not exist (lines start at 1).');
+    });
+
+    it('should not accept mutationRange for start > end', () => {
+      testInjector.options.mutate = ['src/index.ts:6-5'];
+      actValidationErrors(
+        'Config option "mutate[0]" is invalid. Mutation range "6-5" is invalid. The "from" line number (6) should be less then the "to" line number (5).'
+      );
+    });
+
+    it('should not accept mutationRange with a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.*.ts:1:0-2:0'];
+      actValidationErrors(
+        'Config option "mutate[0]" is invalid. Cannot combine a glob expression with a mutation range in "src/index.*.ts:1:0-2:0".'
+      );
+    });
+
+    it('should not accept mutationRange (with no column numbers) with a glob pattern', () => {
+      testInjector.options.mutate = ['src/index.*.ts:1-2'];
+      actValidationErrors('Config option "mutate[0]" is invalid. Cannot combine a glob expression with a mutation range in "src/index.*.ts:1-2".');
     });
   });
 

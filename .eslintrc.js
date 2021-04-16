@@ -8,7 +8,7 @@ module.exports = {
   },
   root: true,
   parser: '@typescript-eslint/parser',
-  extends: ['plugin:@typescript-eslint/all', 'prettier', 'prettier/@typescript-eslint'],
+  extends: ['plugin:@typescript-eslint/all', 'prettier'],
   plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
   rules: {
     // unicorn rules

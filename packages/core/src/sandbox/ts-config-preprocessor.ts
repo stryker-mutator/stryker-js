@@ -6,6 +6,10 @@ import { Logger } from '@stryker-mutator/api/logging';
 
 import { FilePreprocessor } from './file-preprocessor';
 
+interface TSConfigReferences {
+  references?: Array<{ path: string }>;
+  extends?: string;
+}
 /**
  * A helper class that rewrites `references` and `extends` file paths if they end up falling outside of the sandbox.
  * @example
@@ -55,7 +59,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       if (tsconfigFile) {
         this.log.debug('Rewriting file %s', tsconfigFile);
         const ts = await import('typescript');
-        const { config } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
+        const { config }: { config?: TSConfigReferences } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
         if (config) {
           await this.rewriteExtends(config, tsconfigFileName);
           await this.rewriteProjectReferences(config, tsconfigFileName);
@@ -65,12 +69,13 @@ export class TSConfigPreprocessor implements FilePreprocessor {
     }
   }
 
-  private async rewriteExtends(config: any, tsconfigFileName: string): Promise<boolean> {
-    if (typeof config.extends === 'string') {
-      const extendsFileName = path.resolve(path.dirname(tsconfigFileName), config.extends);
+  private async rewriteExtends(config: TSConfigReferences, tsconfigFileName: string): Promise<boolean> {
+    const extend = config.extends;
+    if (typeof extend === 'string') {
+      const extendsFileName = path.resolve(path.dirname(tsconfigFileName), extend);
       const relativeToSandbox = path.relative(process.cwd(), extendsFileName);
       if (relativeToSandbox.startsWith('..')) {
-        config.extends = this.join('..', '..', config.extends);
+        config.extends = this.join('..', '..', extend);
         return true;
       } else {
         await this.rewriteTSConfigFile(extendsFileName);
@@ -79,7 +84,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
     return false;
   }
 
-  private async rewriteProjectReferences(config: { references?: Array<{ path: string }> }, originTSConfigFileName: string): Promise<void> {
+  private async rewriteProjectReferences(config: TSConfigReferences, originTSConfigFileName: string): Promise<void> {
     const ts = await import('typescript');
     if (Array.isArray(config.references)) {
       for (const reference of config.references) {

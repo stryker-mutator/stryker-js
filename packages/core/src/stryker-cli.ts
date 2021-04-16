@@ -44,7 +44,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(require('../../package.json').version)
+      .version(require('../../package.json').version as string)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -65,7 +65,7 @@ export class StrykerCli {
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js',
+        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
         list
       )
       .option(

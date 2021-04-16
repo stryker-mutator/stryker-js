@@ -15,7 +15,7 @@ export function deepMerge<T>(defaults: T, overrides: DeepPartial<T>): void {
       if (defaultValue === undefined || typeof defaultValue !== 'object' || typeof overrideValue !== 'object' || Array.isArray(defaultValue)) {
         (defaults as any)[key] = overrideValue;
       } else {
-        deepMerge(defaultValue, overrideValue);
+        deepMerge(defaultValue, overrideValue as DeepPartial<T>);
       }
     }
   });

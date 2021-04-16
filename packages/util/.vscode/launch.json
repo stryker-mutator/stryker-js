@@ -13,32 +13,12 @@
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/unit/**/*.js",
-        "${workspaceFolder}/test/integration/**/*.js"
+        "${workspaceFolder}/dist/test/unit/**/*.js",
+        "${workspaceFolder}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
-        "${workspaceFolder}/test/**/*.js",
-        "${workspaceFolder}/src/**/*.js"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Integration tests",
-      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
-      "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/test/helpers/**/*.js",
-        "${workspaceFolder}/test/integration/**/*.js"
-      ],
-      "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceFolder}/test/**/*.js",
-        "${workspaceFolder}/src/**/*.js"
+        "${workspaceFolder}/dist/**/*.js"
       ]
     }
   ]
