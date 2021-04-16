@@ -9,15 +9,13 @@ describe('errors', () => {
     });
 
     it('should convert a nodejs Errno error to string', () => {
-      const error: NodeJS.ErrnoException = {
-        code: 'foo',
-        errno: 20,
-        message: 'message',
-        name: 'name',
-        path: 'bar',
-        stack: 'qux',
-        syscall: 'baz',
-      };
+      const error: NodeJS.ErrnoException = new Error('message');
+      error.code = 'foo';
+      error.errno = 20;
+      error.name = 'name';
+      error.path = 'bar';
+      error.stack = 'qux';
+      error.syscall = 'baz';
       expect(errorToString(error)).eq('name: foo (baz) qux');
     });
 
