@@ -91,7 +91,7 @@ describe(OptionsValidator.name, () => {
     it('should be invalid with thresholds < 0 or > 100', () => {
       testInjector.options.thresholds.high = -1;
       testInjector.options.thresholds.low = 101;
-      actValidationErrors('Config option "thresholds.high" should be >= 0, was -1.', 'Config option "thresholds.low" should be <= 100, was 101.');
+      actValidationErrors('Config option "thresholds.high" must be >= 0, was -1.', 'Config option "thresholds.low" must be <= 100, was 101.');
     });
 
     it('should be invalid with thresholds.high null', () => {
@@ -132,7 +132,7 @@ describe(OptionsValidator.name, () => {
 
   it('should be invalid with negative numeric dryRunTimeout', () => {
     breakConfig('dryRunTimeoutMinutes', -1);
-    actValidationErrors('Config option "dryRunTimeoutMinutes" should be >= 0, was -1.');
+    actValidationErrors('Config option "dryRunTimeoutMinutes" must be >= 0, was -1.');
   });
 
   describe('plugins', () => {
