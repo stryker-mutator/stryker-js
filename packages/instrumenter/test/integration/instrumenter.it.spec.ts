@@ -70,23 +70,23 @@ describe('instrumenter integration', () => {
         mutationRanges: [
           {
             fileName: fullFileName,
-            start: { line: 1, column: 10 },
-            end: { line: 1, column: 15 },
+            start: { line: 0, column: 10 },
+            end: { line: 0, column: 15 },
           },
           {
             fileName: fullFileName,
-            start: { line: 4, column: 4 },
-            end: { line: 4, column: 11 },
+            start: { line: 3, column: 4 },
+            end: { line: 3, column: 11 },
           },
           {
             fileName: fullFileName,
-            start: { line: 8, column: 15 },
-            end: { line: 8, column: 22 },
+            start: { line: 7, column: 15 },
+            end: { line: 7, column: 22 },
           },
           {
             fileName: fullFileName,
-            start: { line: 19, column: 2 },
-            end: { line: 20, column: 75 },
+            start: { line: 18, column: 2 },
+            end: { line: 19, column: 75 },
           },
         ],
       });

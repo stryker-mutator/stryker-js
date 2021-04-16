@@ -26,7 +26,7 @@ function toReportSourceFile(file: File): SourceFile {
 
 const IGNORE_PATTERN_CHARACTER = '!';
 
-export const MUTATION_RANGE_REGEX = /(.*?):(\d+)(?::(\d+))?-(\d+)(?::(\d+))?$/;
+export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 
 /**
  *  When characters are represented as the octal values of its utf8 encoding
@@ -107,11 +107,11 @@ export class InputFileResolver {
     return this.mutatePatterns
       .map((fileToMutate) => MUTATION_RANGE_REGEX.exec(fileToMutate))
       .filter(notEmpty)
-      .map(([_, fileName, startLine, startColumn = '0', endLine, endColumn = '0']) => {
+      .map(([_, fileName, _mutationRange, startLine, startColumn = '0', endLine, endColumn = Number.MAX_SAFE_INTEGER.toString()]) => {
         return {
           fileName: path.resolve(fileName),
-          start: { line: parseInt(startLine), column: parseInt(startColumn) },
-          end: { line: parseInt(endLine), column: parseInt(endColumn) },
+          start: { line: parseInt(startLine) - 1, column: parseInt(startColumn) },
+          end: { line: parseInt(endLine) - 1, column: parseInt(endColumn) },
         };
       });
   }
