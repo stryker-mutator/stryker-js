@@ -85,7 +85,7 @@ export class BroadcastReporter implements StrictReporter {
     await this.broadcast('wrapUp', undefined);
   }
 
-  private handleError(error: Error, methodName: string, reporterName: string) {
+  private handleError(error: unknown, methodName: string, reporterName: string) {
     this.log.error(`An error occurred during '${methodName}' on reporter '${reporterName}'.`, error);
   }
 }

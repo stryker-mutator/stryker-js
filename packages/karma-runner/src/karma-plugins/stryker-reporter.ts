@@ -72,10 +72,6 @@ export class StrykerReporter extends EventEmitter implements karma.Reporter {
     this.emit('run_complete', this.collectRunState(runResult));
   };
 
-  public readonly onLoadError: (...args: any[]) => void = (...args: any[]) => {
-    this.emit('load_error', ...args);
-  };
-
   public readonly onBrowserComplete: (
     _browser: any,
     result: {

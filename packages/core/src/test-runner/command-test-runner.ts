@@ -80,10 +80,10 @@ export class CommandTestRunner implements TestRunner {
         handleResolve(result);
       });
       childProcess.stdout!.on('data', (chunk) => {
-        output.push(chunk);
+        output.push(chunk as Buffer);
       });
       childProcess.stderr!.on('data', (chunk) => {
-        output.push(chunk);
+        output.push(chunk as Buffer);
       });
 
       this.timeoutHandler = async () => {

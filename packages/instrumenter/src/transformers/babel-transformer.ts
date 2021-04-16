@@ -20,6 +20,7 @@ export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = (
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
       if (isTypeNode(path) || isImportDeclaration(path) || path.isDecorator()) {

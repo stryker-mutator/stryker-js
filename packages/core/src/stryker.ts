@@ -56,7 +56,7 @@ export class Stryker {
       if (cause instanceof ConfigError) {
         log.error(cause.message);
       } else {
-        log.error(error);
+        log.error('Unexpected error occurred while running Stryker', error);
         if (!log.isTraceEnabled()) {
           log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
         }

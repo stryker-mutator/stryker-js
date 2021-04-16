@@ -69,7 +69,9 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
  */
 export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromDirName: string): string[] {
   if (Array.isArray(parsedConfig.config?.references)) {
-    return parsedConfig.config?.references.map((reference: any) => path.resolve(fromDirName, ts.resolveProjectReferencePath(reference)));
+    return parsedConfig.config?.references.map((reference: ts.ProjectReference) =>
+      path.resolve(fromDirName, ts.resolveProjectReferencePath(reference))
+    );
   }
   return [];
 }

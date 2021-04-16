@@ -14,7 +14,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 
 import { TimeoutDecorator } from '../../../src/test-runner/timeout-decorator';
 
-describe('TimeoutDecorator', () => {
+describe(TimeoutDecorator.name, () => {
   let sut: TimeoutDecorator;
   let sandbox: sinon.SinonSandbox;
   let clock: sinon.SinonFakeTimers;
@@ -35,13 +35,14 @@ describe('TimeoutDecorator', () => {
 
   function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
     it('should proxy the request', () => {
-      testRunner1[methodName].resolves('str' as any);
+      testRunner1[methodName].resolves();
       const promise = action();
       expect(testRunner1[methodName]).to.have.been.called;
       expect(promise?.then, `timeoutDecorator.${methodName} did not provide a promise`).ok;
     });
 
     it('should resolve when inner promise resolves', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       testRunner1[methodName].resolves('str' as any);
       const promise = action();
       return expect(promise).to.eventually.eq('str');

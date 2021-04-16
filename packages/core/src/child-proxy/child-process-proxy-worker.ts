@@ -64,6 +64,7 @@ export class ChildProcessProxyWorker {
       this.log.debug(`Changing current working directory for this process to ${workingDir}`);
       process.chdir(workingDir);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.realSubject = injector.injectClass(RealSubjectClass);
     this.send({ kind: ParentMessageKind.Initialized });
   }
@@ -117,7 +118,7 @@ export class ChildProcessProxyWorker {
    * See issue 350: https://github.com/stryker-mutator/stryker-js/issues/350
    */
   private handlePromiseRejections() {
-    const unhandledRejections: Array<Promise<void>> = [];
+    const unhandledRejections: Array<Promise<unknown>> = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
       this.log?.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);

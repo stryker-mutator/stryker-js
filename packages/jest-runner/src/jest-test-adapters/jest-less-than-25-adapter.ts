@@ -1,4 +1,5 @@
 import jest from 'jest';
+import { Config } from '@jest/types';
 
 import { JestRunResult } from '../jest-run-result';
 
@@ -18,7 +19,7 @@ export class JestLessThan25TestAdapter implements JestTestAdapter {
         runInBand: true,
         silent: true,
         testNamePattern,
-      } as any,
+      } as Config.Argv,
       [projectRoot]
     );
   }
