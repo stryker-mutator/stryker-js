@@ -2,7 +2,7 @@ import path from 'path';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { File } from '@stryker-mutator/api/core';
+import { File, MutationRange } from '@stryker-mutator/api/core';
 
 import { createParser } from './parsers';
 import { transform, MutantCollector } from './transformers';
@@ -30,7 +30,7 @@ export class Instrumenter {
     const parse = createParser(options);
     for await (const file of files) {
       const ast = await parse(file.textContent, file.name);
-      transform(ast, mutantCollector, { options });
+      transform(ast, mutantCollector, { options: { ...options, mutationRanges: options.mutationRanges.map(toBabelLineNumber) } });
       const mutatedContent = print(ast);
       outFiles.push(new File(file.name, mutatedContent));
       if (this.logger.isDebugEnabled()) {
@@ -46,4 +46,18 @@ export class Instrumenter {
       mutants,
     };
   }
+}
+
+function toBabelLineNumber(range: MutationRange): MutationRange {
+  return {
+    ...range,
+    end: {
+      ...range.end,
+      line: range.end.line + 1,
+    },
+    start: {
+      ...range.start,
+      line: range.start.line + 1,
+    },
+  };
 }

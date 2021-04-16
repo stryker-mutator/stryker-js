@@ -9,3 +9,4 @@ export * from './stryker-options-schema';
 export * from './partial-stryker-options';
 export * from './instrument';
 export * from './mutant-coverage';
+export * from './mutation-range';

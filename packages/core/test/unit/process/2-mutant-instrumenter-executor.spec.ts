@@ -9,7 +9,7 @@ import { Checker } from '@stryker-mutator/api/check';
 import { I } from '@stryker-mutator/util';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileCollection } from '../../../src/input';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
 import { createCheckerFactory } from '../../../src/checker/checker-facade';
@@ -47,7 +47,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       preprocess: sinon.stub(),
     };
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
-    inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name]);
+    inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
     injectorMock = factory.injector();
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
@@ -65,7 +65,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = testInjector.options.mutator;
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, mutationRanges: [] };
     expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile], expectedInstrumenterOptions);
   });
 

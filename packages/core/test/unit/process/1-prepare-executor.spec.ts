@@ -11,8 +11,7 @@ import { coreTokens } from '../../../src/di';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
 import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
 import { Timer } from '../../../src/utils/timer';
-import { InputFileResolver } from '../../../src/input/input-file-resolver';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { InputFileResolver, InputFileCollection } from '../../../src/input';
 
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
 import { ConfigError } from '../../../src/errors';
@@ -29,7 +28,7 @@ describe(PrepareExecutor.name, () => {
   let sut: PrepareExecutor;
 
   beforeEach(() => {
-    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js']);
+    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
     cliOptions = {};
     timerMock = sinon.createStubInstance(Timer);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
@@ -93,12 +92,12 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should reject when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
     await expect(sut.execute()).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
     await expect(sut.execute()).rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });

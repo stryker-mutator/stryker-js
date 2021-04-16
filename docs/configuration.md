@@ -176,9 +176,18 @@ Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{sr
 Command line: `[--mutate|-m] src/**/*.js,a.js`<br />
 Config file: `"mutate": ["src/**/*.js", "a.js"]`
 
-With `mutate` you configure the subset of files to use for mutation testing.
-Generally speaking, these should be your own source files.
-This is optional, as you can choose to not mutate any files at all and perform a dry-run (running only your tests without mutating).
+With `mutate` you configure the subset of files to be mutated. These should be your _production code files_, and definitely not your test files.
+The default will try to guess your production code files based on sane defaults. It reads like this:
+
+* Include all js-like files inside the `src` or `lib` dir
+  * Except files inside `__tests__` directories and file names ending with `test` or `spec`.
+
+It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Some examples:
+* `"src/app.js:1-11"` will mutate lines 1 through 11 inside app.js.
+* `"src/app.js:5:4-6:4"` will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
+* `"src/app.js:5-6:4"` will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
+
+*Note:* It is not possible to combine mutation range with a globbing expression in the same line.
 
 ### `mutator` [`MutatorDescriptor`]
 

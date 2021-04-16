@@ -18,7 +18,7 @@
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/test-helpers#readme",
   "license": "ISC",
   "dependencies": {
-    "ajv": "~7.2.1",
+    "ajv": "~8.1.0",
     "mutation-testing-metrics": "~1.5.2"
   },
   "devDependencies": {

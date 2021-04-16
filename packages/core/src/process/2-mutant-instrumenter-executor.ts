@@ -3,7 +3,7 @@ import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di';
-import { InputFileCollection } from '../input/input-file-collection';
+import { InputFileCollection } from '../input';
 import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 
@@ -31,7 +31,10 @@ export class MutantInstrumenterExecutor {
     const instrumenter = this.injector.injectClass(Instrumenter);
 
     // Instrument files in-memory
-    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, this.options.mutator);
+    const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, {
+      ...this.options.mutator,
+      mutationRanges: this.inputFiles.mutationRanges,
+    });
 
     // Preprocess sandbox files
     const preprocess = this.injector.injectFunction(createPreprocessor);
