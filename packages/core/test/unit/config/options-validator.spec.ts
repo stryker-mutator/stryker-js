@@ -31,6 +31,7 @@ describe(OptionsValidator.name, () => {
       checkers: [],
       cleanTempDir: true,
       inPlace: false,
+      ignorePatterns: ['node_modules'],
       clearTextReporter: {
         allowColor: true,
         logTests: true,

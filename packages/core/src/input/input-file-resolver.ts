@@ -1,6 +1,5 @@
-import { StringDecoder } from 'string_decoder';
 import path from 'path';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 
 import { from } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
@@ -8,7 +7,9 @@ import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
+import { isErrnoException, notEmpty } from '@stryker-mutator/util';
+
+import ignore from 'ignore';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
@@ -26,40 +27,25 @@ function toReportSourceFile(file: File): SourceFile {
 
 const IGNORE_PATTERN_CHARACTER = '!';
 
-export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
+const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git']);
 
-/**
- *  When characters are represented as the octal values of its utf8 encoding
- *  e.g. å becomes \303\245 in git.exe output
- */
-function decodeGitLsOutput(line: string) {
-  if (line.startsWith('"') && line.endsWith('"')) {
-    return line
-      .substr(1, line.length - 2)
-      .replace(/\\\\/g, '\\')
-      .replace(/(?:\\\d+)*/g, (octalEscapeSequence) =>
-        new StringDecoder('utf-8').write(
-          Buffer.from(
-            octalEscapeSequence
-              .split('\\')
-              .filter(Boolean)
-              .map((octal) => parseInt(octal, 8))
-          )
-        )
-      );
-  }
-  return line;
-}
+export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 
 export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
   private readonly filePatterns: readonly string[] | undefined;
+  private readonly ignorePatterns: string[];
   private readonly tempDirName: string;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
-  constructor(private readonly log: Logger, { mutate, files, tempDirName }: StrykerOptions, private readonly reporter: StrictReporter) {
+  constructor(
+    private readonly log: Logger,
+    { mutate, files, tempDirName, ignorePatterns }: StrykerOptions,
+    private readonly reporter: StrictReporter
+  ) {
     this.tempDirName = tempDirName;
     this.mutatePatterns = mutate;
+    this.ignorePatterns = ignorePatterns;
     if (files) {
       this.filePatterns = files;
     }
@@ -82,7 +68,7 @@ export class InputFileResolver {
     if (this.filePatterns) {
       return this.expand(this.filePatterns);
     } else {
-      return this.resolveFilesUsingGit();
+      return this.resolveFilesFromIgnore();
     }
   }
 
@@ -147,30 +133,26 @@ export class InputFileResolver {
     return fileNames;
   }
 
-  private async resolveFilesUsingGit(): Promise<string[]> {
-    try {
-      const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
-        maxBuffer: 10 * 1000 * 1024,
-      });
-      const relativeFileNames = stdout
-        .toString()
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean) // remove empty lines
-        .map(decodeGitLsOutput);
+  private async resolveFilesFromIgnore(): Promise<string[]> {
+    const ignorer = ignore().add([...ALWAYS_IGNORE, this.tempDirName, ...this.ignorePatterns]);
 
-      const fileNames = relativeFileNames.map((relativeFileName) => path.resolve(relativeFileName));
-      return fileNames;
-    } catch (error) {
-      throw new StrykerError(
-        normalizeWhitespaces(
-          `Cannot determine input files. Either specify a \`files\`
-        array in your stryker configuration, or make sure "${process.cwd()}"
-        is located inside a git repository`
-        ),
-        error
+    const crawlDir = async (relativeName: string, rootDir: string): Promise<string[]> => {
+      const dirEntries = await fsPromises.readdir(path.resolve(rootDir, relativeName), { withFileTypes: true });
+      const files = await Promise.all(
+        dirEntries
+          .filter((dirEntry) => !ignorer.ignores(path.join(relativeName, dirEntry.isDirectory() ? `${dirEntry.name}/` : dirEntry.name)))
+          .map(async (dirent) => {
+            if (dirent.isDirectory()) {
+              return crawlDir(path.join(relativeName, dirent.name), rootDir);
+            } else {
+              return path.resolve(rootDir, relativeName, dirent.name);
+            }
+          })
       );
-    }
+      return files.flat();
+    };
+    const files = await crawlDir('.', process.cwd());
+    return files;
   }
 
   private reportAllSourceFilesRead(allFiles: File[]) {
@@ -184,7 +166,9 @@ export class InputFileResolver {
   private async readFiles(fileNames: string[]): Promise<File[]> {
     const promisedFiles = from(fileNames)
       .pipe(
-        mergeMap((fileName) => this.readFile(fileName), MAX_CONCURRENT_FILE_IO),
+        mergeMap((fileName) => {
+          return this.readFile(fileName);
+        }, MAX_CONCURRENT_FILE_IO),
         filter(notEmpty),
         toArray(),
         // Filter the files here, so we force a deterministic instrumentation process
@@ -196,7 +180,7 @@ export class InputFileResolver {
 
   private async readFile(fileName: string): Promise<File | null> {
     try {
-      const content = await fs.promises.readFile(fileName);
+      const content = await fsPromises.readFile(fileName);
       const file = new File(fileName, content);
       this.reportSourceFilesRead(file);
       return file;

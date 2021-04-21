@@ -282,6 +282,14 @@
       "$ref": "#/definitions/eventRecorderOptions",
       "default": {}
     },
+    "ignorePatterns": {
+      "description": "Tell Stryker which files and directories to ignore. Ignored files will not be copied to the sandbox for mutation testing. Each patterns in this array .gitignore-style glob pattern. By default `.git` and `node_modules` are ignored, to un-ignore you can use `!node_modules` as your first pattern",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
       "$ref": "#/definitions/logLevel",
