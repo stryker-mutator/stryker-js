@@ -6,7 +6,7 @@ exports[`instrumenter integration with mutation ranges should only mutate specif
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -55,14 +55,14 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const a = stryMutAct_9fa48(0) ? 1 - 1 : (stryCov_9fa48(0), 1 + 1);
+const a = stryMutAct_9fa48(\\"0\\") ? 1 - 1 : (stryCov_9fa48(\\"0\\"), 1 + 1);
 const b = 1 - 1;
 
-if ((stryMutAct_9fa48(3) ? a !== 2 : stryMutAct_9fa48(2) ? false : stryMutAct_9fa48(1) ? true : (stryCov_9fa48(1, 2, 3), a === 2)) && b === 0) {
+if ((stryMutAct_9fa48(\\"3\\") ? a !== 2 : stryMutAct_9fa48(\\"2\\") ? false : stryMutAct_9fa48(\\"1\\") ? true : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), a === 2)) && b === 0) {
   console.log('a');
 }
 
-if (a === 2 && (stryMutAct_9fa48(6) ? b !== 0 : stryMutAct_9fa48(5) ? false : stryMutAct_9fa48(4) ? true : (stryCov_9fa48(4, 5, 6), b === 0))) {
+if (a === 2 && (stryMutAct_9fa48(\\"6\\") ? b !== 0 : stryMutAct_9fa48(\\"5\\") ? false : stryMutAct_9fa48(\\"4\\") ? true : (stryCov_9fa48(\\"4\\", \\"5\\", \\"6\\"), b === 0))) {
   console.log('b');
 }
 
@@ -72,5 +72,5 @@ const itemWithLongName = {
   longPropertyName3: 3
 };
 
-const item = () => stryMutAct_9fa48(9) ? itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName2 || itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName3 : stryMutAct_9fa48(8) ? false : stryMutAct_9fa48(7) ? true : (stryCov_9fa48(7, 8, 9), (stryMutAct_9fa48(12) ? itemWithLongName.longPropertyName1 !== itemWithLongName.longPropertyName2 : stryMutAct_9fa48(11) ? false : stryMutAct_9fa48(10) ? true : (stryCov_9fa48(10, 11, 12), itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName2)) && (stryMutAct_9fa48(15) ? itemWithLongName.longPropertyName1 !== itemWithLongName.longPropertyName3 : stryMutAct_9fa48(14) ? false : stryMutAct_9fa48(13) ? true : (stryCov_9fa48(13, 14, 15), itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName3)));"
+const item = () => stryMutAct_9fa48(\\"9\\") ? itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName2 || itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName3 : stryMutAct_9fa48(\\"8\\") ? false : stryMutAct_9fa48(\\"7\\") ? true : (stryCov_9fa48(\\"7\\", \\"8\\", \\"9\\"), (stryMutAct_9fa48(\\"12\\") ? itemWithLongName.longPropertyName1 !== itemWithLongName.longPropertyName2 : stryMutAct_9fa48(\\"11\\") ? false : stryMutAct_9fa48(\\"10\\") ? true : (stryCov_9fa48(\\"10\\", \\"11\\", \\"12\\"), itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName2)) && (stryMutAct_9fa48(\\"15\\") ? itemWithLongName.longPropertyName1 !== itemWithLongName.longPropertyName3 : stryMutAct_9fa48(\\"14\\") ? false : stryMutAct_9fa48(\\"13\\") ? true : (stryCov_9fa48(\\"13\\", \\"14\\", \\"15\\"), itemWithLongName.longPropertyName1 === itemWithLongName.longPropertyName3)));"
 `;
