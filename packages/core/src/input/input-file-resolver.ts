@@ -26,7 +26,7 @@ function toReportSourceFile(file: File): SourceFile {
 }
 
 const IGNORE_PATTERN_CHARACTER = '!';
-const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '/reports']);
+const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '/reports', '/stryker.log']);
 
 export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 

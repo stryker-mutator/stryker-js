@@ -102,13 +102,14 @@ describe(InputFileResolver.name, () => {
       expect(files[0].name).eq(path.resolve('packages', 'app', 'src', 'index.js'));
     });
 
-    it('should ignore node_modules, .git, reports and .stryker-tmp by default', async () => {
+    it('should ignore node_modules, .git, reports, stryker.log and .stryker-tmp by default', async () => {
       // Arrange
       stubFileSystem({
         '.git': { config: '' },
         node_modules: { rimraf: { 'index.js': '' } },
         '.stryker-tmp': { 'stryker-sandbox-123': { src: { 'index.js': '' } } },
         'index.js': '',
+        'stryker.log': '',
         reports: { mutation: { 'mutation.json': '' } },
       });
       const sut = createSut();
