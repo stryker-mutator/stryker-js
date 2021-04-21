@@ -102,13 +102,14 @@ describe(InputFileResolver.name, () => {
       expect(files[0].name).eq(path.resolve('packages', 'app', 'src', 'index.js'));
     });
 
-    it('should ignore node_modules, .git and .stryker-tmp by default', async () => {
+    it('should ignore node_modules, .git, reports and .stryker-tmp by default', async () => {
       // Arrange
       stubFileSystem({
         '.git': { config: '' },
         node_modules: { rimraf: { 'index.js': '' } },
         '.stryker-tmp': { 'stryker-sandbox-123': { src: { 'index.js': '' } } },
         'index.js': '',
+        reports: { mutation: { 'mutation.json': '' } },
       });
       const sut = createSut();
 
@@ -118,6 +119,21 @@ describe(InputFileResolver.name, () => {
       // Assert
       expect(files).lengthOf(1);
       expect(files[0].name).eq(path.resolve('index.js'));
+    });
+
+    it('should not ignore deep-report directories', async () => {
+      // Arrange
+      stubFileSystem({
+        app: { reports: { 'reporter.component.js': '' } },
+      });
+      const sut = createSut();
+
+      // Act
+      const { files } = await sut.resolve();
+
+      // Assert
+      expect(files).lengthOf(1);
+      expect(files[0].name).eq(path.resolve('app', 'reports', 'reporter.component.js'));
     });
 
     it('should ignore an alternative stryker-tmp dir', async () => {
@@ -286,6 +302,31 @@ describe(InputFileResolver.name, () => {
   });
 
   describe('with mutation range definitions', () => {
+    beforeEach(() => {
+      readFileStub
+        .withArgs(sinon.match.string)
+        .resolves(Buffer.from('')) // fallback
+        .withArgs(sinon.match('file1'))
+        .resolves(Buffer.from('file 1 content'))
+        .withArgs(sinon.match('file2'))
+        .resolves(Buffer.from('file 2 content'))
+        .withArgs(sinon.match('file3'))
+        .resolves(Buffer.from('file 3 content'))
+        .withArgs(sinon.match('mute1'))
+        .resolves(Buffer.from('mutate 1 content'))
+        .withArgs(sinon.match('mute2'))
+        .resolves(Buffer.from('mutate 2 content'));
+
+      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
+      globStub.withArgs('mute1').resolves(['/mute1.js']);
+      globStub.withArgs('mute2').resolves(['/mute2.js']);
+      globStub.withArgs('file1').resolves(['/file1.js']);
+      globStub.withArgs('file2').resolves(['/file2.js']);
+      globStub.withArgs('file3').resolves(['/file3.js']);
+      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
+      globStub.resolves([]); // default
+    });
+
     it('should remove specific mutant descriptors when matching with line and column', async () => {
       testInjector.options.mutate = ['mute1:1:2-2:2'];
       testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
@@ -326,6 +367,31 @@ describe(InputFileResolver.name, () => {
   });
 
   describe('with mutate file expressions', () => {
+    beforeEach(() => {
+      readFileStub
+        .withArgs(sinon.match.string)
+        .resolves(Buffer.from('')) // fallback
+        .withArgs(sinon.match('file1'))
+        .resolves(Buffer.from('file 1 content'))
+        .withArgs(sinon.match('file2'))
+        .resolves(Buffer.from('file 2 content'))
+        .withArgs(sinon.match('file3'))
+        .resolves(Buffer.from('file 3 content'))
+        .withArgs(sinon.match('mute1'))
+        .resolves(Buffer.from('mutate 1 content'))
+        .withArgs(sinon.match('mute2'))
+        .resolves(Buffer.from('mutate 2 content'));
+
+      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
+      globStub.withArgs('mute1').resolves(['/mute1.js']);
+      globStub.withArgs('mute2').resolves(['/mute2.js']);
+      globStub.withArgs('file1').resolves(['/file1.js']);
+      globStub.withArgs('file2').resolves(['/file2.js']);
+      globStub.withArgs('file3').resolves(['/file3.js']);
+      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
+      globStub.resolves([]); // default
+    });
+
     it('should result in the expected mutate files', async () => {
       testInjector.options.mutate = ['mute*'];
       testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
@@ -381,6 +447,31 @@ describe(InputFileResolver.name, () => {
   });
 
   describe('without mutate files', () => {
+    beforeEach(() => {
+      readFileStub
+        .withArgs(sinon.match.string)
+        .resolves(Buffer.from('')) // fallback
+        .withArgs(sinon.match('file1'))
+        .resolves(Buffer.from('file 1 content'))
+        .withArgs(sinon.match('file2'))
+        .resolves(Buffer.from('file 2 content'))
+        .withArgs(sinon.match('file3'))
+        .resolves(Buffer.from('file 3 content'))
+        .withArgs(sinon.match('mute1'))
+        .resolves(Buffer.from('mutate 1 content'))
+        .withArgs(sinon.match('mute2'))
+        .resolves(Buffer.from('mutate 2 content'));
+
+      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
+      globStub.withArgs('mute1').resolves(['/mute1.js']);
+      globStub.withArgs('mute2').resolves(['/mute2.js']);
+      globStub.withArgs('file1').resolves(['/file1.js']);
+      globStub.withArgs('file2').resolves(['/file2.js']);
+      globStub.withArgs('file3').resolves(['/file3.js']);
+      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
+      globStub.resolves([]); // default
+    });
+
     beforeEach(() => {
       testInjector.options.files = ['file1', 'mute1'];
     });
