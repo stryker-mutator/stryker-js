@@ -283,7 +283,7 @@
       "default": {}
     },
     "ignorePatterns": {
-      "description": "Tell Stryker which files and directories to ignore. Ignored files will not be copied to the sandbox for mutation testing. Each patterns in this array .gitignore-style glob pattern. By default `.git` and `node_modules` are ignored, to un-ignore you can use `!node_modules` as your first pattern",
+      "description": "Specify the patterns to all files or directories that are not needed to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing (blacklist).\nEach patterns in this array should be a `.gitignore`-style glob pattern.\n\nCombining both `files` and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`, if you want to undo one of these patterns, you can use the `!` prefix, for example: `['!node_modules']`.",
       "type": "array",
       "items": {
         "type": "string"
@@ -296,7 +296,7 @@
       "default": "off"
     },
     "files": {
-      "description": "With `files` you can choose which files should be included in your test runner sandbox.\nThis is normally not needed as it defaults to all files not ignored by git.\nTry it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.\n\nIf you do need to override `files` (for example: when your project does not live in a git repository),\nyou can override the files here.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\nWhen using the config file you can provide an array with `string`s",
+      "description": "Specify the patterns to all files or that are needed to run your tests and thus should _be copied_ to the sandbox directory for mutation testing (whitelist).\n\nSetting this config option is only needed in specific use cases, since the defaults should be fine for most projects.\n\nCombining both files and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\n\nYou can *ignore* files that are included by an earlier pattern by adding an exclamation mark (`!`) at the start of an expression, for example `[\"src/**/*.js\", \"!src/foo.js\"]`.",
       "type": "array",
       "items": {
         "type": "string"

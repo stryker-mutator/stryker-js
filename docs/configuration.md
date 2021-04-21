@@ -126,21 +126,35 @@ Set the log level that Stryker uses to write to the "stryker.log" file. Possible
 
 ### `files` [`string[]`]
 
-Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`<br />
+Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-With `files`, you can choose which files should be included in your test runner sandbox.
-This is normally not needed as it defaults to all files not ignored by git.
-Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
+Specify the patterns to all files or that are needed to run your tests and thus should _be copied_ to the sandbox directory for mutation testing (whitelist).
+Setting this config option is only needed in specific use cases, since the defaults should be fine for most projects.
 
-If you do need to override `files` (for example: when your project does not live in a git repository),
-you can override the files here.
+Combining both `files` and [`ignorePatterns`](#ignorepatterns-string) is _not supported_. When both ares specified, `files` will be used.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
-When using the config file you can provide an array with `string`s
 
-You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
+You can *ignore* files that are included by an earlier pattern by adding an exclamation mark (`!`) at the start of an expression, for example `["src/**/*.js", "!src/foo.js"]`.
+
+### `ignorePatterns` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--ignorePatterns dist,dist-test`<br />
+Config file: `"ignorePatterns": ["dist", "dist-test"]`<br />
+
+Specify the patterns to all files or directories that are not needed to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing (blacklist).
+Each patterns in this array should be a `.gitignore`-style glob pattern. 
+
+Combining both [`files`](#files-string) and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.
+
+If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
+
+When using the command line, the list can only contain a comma separated list of globbing expressions.
+
+These patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`, if you want to undo one of these patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
 ### `inPlace` [`boolean`]
 
