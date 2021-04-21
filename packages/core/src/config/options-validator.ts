@@ -83,6 +83,13 @@ export class OptionsValidator {
         options.concurrency = options.maxConcurrentTestRunners;
       }
     }
+    if (options.files && options.ignorePatterns.length > 0) {
+      this.log.warn(
+        `Config option "${propertyPath<StrykerOptions>('ignorePatterns')}" is ignored, since "${propertyPath<StrykerOptions>(
+          'files'
+        )}" was specified.`
+      );
+    }
     if (CommandTestRunner.is(options.testRunner) && options.testRunnerNodeArgs.length) {
       this.log.warn(
         'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'

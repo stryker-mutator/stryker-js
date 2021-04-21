@@ -88,6 +88,13 @@ describe(OptionsValidator.name, () => {
     actAssertValid();
   });
 
+  it('should log a warning when specifying both "files" and "ignorePatterns"', () => {
+    testInjector.options.files = ['foo.js'];
+    testInjector.options.ignorePatterns = ['!foo.js'];
+    sut.validate(testInjector.options);
+    expect(testInjector.logger.warn).calledWith('Config option "ignorePatterns" is ignored, since "files" was specified.');
+  });
+
   describe('thresholds', () => {
     it('should be invalid with thresholds < 0 or > 100', () => {
       testInjector.options.thresholds.high = -1;
