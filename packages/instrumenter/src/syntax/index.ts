@@ -4,14 +4,16 @@ export enum AstFormat {
   Html = 'html',
   JS = 'js',
   TS = 'ts',
+  TSX = 'tsx',
 }
 
-export type ScriptFormat = AstFormat.JS | AstFormat.TS;
+export type ScriptFormat = AstFormat.JS | AstFormat.TS | AstFormat.TSX;
 
 export interface AstByFormat {
   [AstFormat.Html]: HtmlAst;
   [AstFormat.JS]: JSAst;
   [AstFormat.TS]: TSAst;
+  [AstFormat.TSX]: TSAst;
 }
 
 export interface BaseAst {

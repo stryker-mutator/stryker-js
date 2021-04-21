@@ -16,6 +16,8 @@ export function createParser(
   return function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
     const format = getFormat(fileName, formatOverride);
     switch (format) {
+      case AstFormat.TSX:
+        return tsParse(code, fileName, true) as Promise<AstByFormat[T]>;
       case AstFormat.JS:
         return jsParse(code, fileName) as Promise<AstByFormat[T]>;
       case AstFormat.TS:

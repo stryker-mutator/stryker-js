@@ -7,8 +7,8 @@ import { AstFormat, TSAst } from '../syntax';
  * @param text The text to parse
  * @param fileName The name of the file
  */
-export async function parse(text: string, fileName: string): Promise<TSAst> {
-  const isTSX = fileName.endsWith('x');
+export async function parse(text: string, fileName: string, isTsx?: boolean): Promise<TSAst> {
+  const isTSX = fileName.endsWith('x') || isTsx;
   const ast = await parseAsync(text, {
     filename: fileName,
     parserOpts: {

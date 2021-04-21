@@ -89,6 +89,9 @@ function getScriptType(element: Element): ScriptFormat | undefined {
       const type = element.attrs.find((attr) => attr.name === 'type') ?? element.attrs.find((attr) => attr.name === 'lang');
       if (type) {
         const typeToLower = type.value.toLowerCase();
+        if (typeToLower === 'tsx') {
+          return AstFormat.TSX;
+        }
         if (TS_SCRIPT_TYPES.includes(typeToLower)) {
           return AstFormat.TS;
         }
