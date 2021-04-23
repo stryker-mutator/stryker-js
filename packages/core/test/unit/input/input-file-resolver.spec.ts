@@ -1,6 +1,6 @@
 import os from 'os';
 import path from 'path';
-import { promises as fsPromises } from 'fs';
+import { Dirent, promises as fsPromises } from 'fs';
 
 import { File, MutationRange } from '@stryker-mutator/api/core';
 import { SourceFile } from '@stryker-mutator/api/report';
@@ -8,8 +8,6 @@ import { assertions, factory, testInjector, tick } from '@stryker-mutator/test-h
 import { Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-import { Dirent } from 'node:fs';
 
 import { coreTokens } from '../../../src/di';
 import { InputFileResolver } from '../../../src/input';
@@ -180,6 +178,19 @@ describe(InputFileResolver.name, () => {
       const expectedError = factory.fileNotFoundError();
       readdirStub.rejects(expectedError);
       await expect(createSut().resolve()).rejectedWith(expectedError);
+    });
+
+    it('should allow whitelisting with "**"', async () => {
+      stubFileSystem({
+        src: { 'index.js': 'export * from "./app"' },
+        dist: { 'index.js': 'module.exports = require("./app")' },
+      });
+      testInjector.options.ignorePatterns = ['**', '!src/**/*.js'];
+      const sut = createSut();
+
+      const { files } = await sut.resolve();
+
+      assertions.expectTextFilesEqual(files, [new File(path.resolve('src', 'index.js'), 'export * from "./app"')]);
     });
 
     it('should not open too many file handles', async () => {
