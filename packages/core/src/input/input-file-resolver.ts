@@ -8,8 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { isErrnoException, notEmpty } from '@stryker-mutator/util';
-
-import ignore from 'ignore';
+import { Minimatch } from 'minimatch';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
@@ -33,7 +32,7 @@ export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/
 export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
   private readonly filePatterns: readonly string[] | undefined;
-  private readonly ignorePatterns: string[];
+  private readonly ignorePatterns: readonly string[];
   private readonly tempDirName: string;
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
@@ -133,16 +132,32 @@ export class InputFileResolver {
   }
 
   private async resolveFilesFromIgnore(): Promise<string[]> {
-    const ignorer = ignore().add([...ALWAYS_IGNORE, this.tempDirName, ...this.ignorePatterns]);
+    const ignoreRules = [...ALWAYS_IGNORE, this.tempDirName, ...this.ignorePatterns].map(
+      (pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true })
+    );
 
-    const crawlDir = async (relativeName: string, rootDir: string): Promise<string[]> => {
-      const dirEntries = await fsPromises.readdir(path.resolve(rootDir, relativeName), { withFileTypes: true });
+    const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
+      const dirEntries = await fsPromises.readdir(dir, { withFileTypes: true });
+      const relativeName = path.posix.relative(rootDir, dir);
       const files = await Promise.all(
         dirEntries
-          .filter((dirEntry) => !ignorer.ignores(path.join(relativeName, dirEntry.isDirectory() ? `${dirEntry.name}/` : dirEntry.name)))
+          .filter((dirEntry) => {
+            let included = true;
+            const entryName = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}${dirEntry.isDirectory() ? '/' : ''}`;
+            ignoreRules.forEach((rule) => {
+              if (rule.negate !== included) {
+                // @ts-expect-error
+                const match = rule.match(entryName, true) || rule.match(`/${entryName}`, true);
+                if (match) {
+                  included = rule.negate;
+                }
+              }
+            });
+            return included;
+          })
           .map(async (dirent) => {
             if (dirent.isDirectory()) {
-              return crawlDir(path.join(relativeName, dirent.name), rootDir);
+              return crawlDir(path.resolve(rootDir, relativeName, dirent.name), rootDir);
             } else {
               return path.resolve(rootDir, relativeName, dirent.name);
             }
@@ -150,7 +165,7 @@ export class InputFileResolver {
       );
       return files.flat();
     };
-    const files = await crawlDir('.', process.cwd());
+    const files = await crawlDir(process.cwd());
     return files;
   }
 
