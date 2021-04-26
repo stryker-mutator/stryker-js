@@ -55,7 +55,7 @@ export class InputFileResolver {
   }
 
   private resolveMutateFiles(inputFileNames: string[]) {
-    return this.filterPatterns(inputFileNames, this.mutatePatterns, isDeepStrictEqual(this.mutatePatterns, defaultOptions().mutate));
+    return this.filterPatterns(inputFileNames, this.mutatePatterns, !isDeepStrictEqual(this.mutatePatterns, defaultOptions().mutate));
   }
 
   private resolveMutationRange(): MutationRange[] {
@@ -78,30 +78,33 @@ export class InputFileResolver {
    * @param patterns The patterns to expand into files
    * @param logAboutUselessPatterns Weather or not to log about useless patterns
    */
-  private filterPatterns(fileNames: readonly string[], patterns: readonly string[], logAboutUselessPatterns = true): string[] {
+  private filterPatterns(fileNames: readonly string[], patterns: readonly string[], logAboutUselessPatterns: boolean): string[] {
     const fileSet = new Set<string>();
     for (const pattern of patterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
-        const files = this.filterPattern(fileSet, pattern.substr(1), logAboutUselessPatterns);
+        const files = this.filterPattern(fileSet, pattern.substr(1));
+        if (logAboutUselessPatterns && files.length === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not exclude any files.`);
+        }
         files.forEach((fileName) => fileSet.delete(fileName));
       } else {
-        const files = this.filterPattern(fileNames, pattern, logAboutUselessPatterns);
+        const files = this.filterPattern(fileNames, pattern);
+        if (logAboutUselessPatterns && files.length === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not result in any files.`);
+        }
         files.forEach((fileName) => fileSet.add(fileName));
       }
     }
     return Array.from(fileSet);
   }
 
-  private filterPattern(fileNames: Iterable<string>, pattern: string, logAboutUselessPatterns: boolean): string[] {
+  private filterPattern(fileNames: Iterable<string>, pattern: string): string[] {
     if (MUTATION_RANGE_REGEX.exec(pattern)) {
       pattern = pattern.replace(MUTATION_RANGE_REGEX, '$1');
     }
     const matcher = new FileMatcher(pattern);
 
     const filteredFileNames = [...fileNames].filter((fileName) => matcher.matches(fileName));
-    if (!filteredFileNames.length && logAboutUselessPatterns) {
-      this.log.warn(`Glob pattern "${pattern}" did not result in any files.`);
-    }
     return filteredFileNames;
   }
 

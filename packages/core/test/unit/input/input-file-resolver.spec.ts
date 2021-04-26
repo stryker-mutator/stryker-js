@@ -22,7 +22,6 @@ describe(InputFileResolver.name, () => {
     reporterMock = mock(BroadcastReporter);
     readdirStub = sinon.stub(fsPromises, 'readdir');
     readFileStub = sinon.stub(fsPromises, 'readFile');
-    testInjector.options.mutate = [];
   });
 
   it('should log a warning if no files were resolved', async () => {
@@ -34,7 +33,7 @@ describe(InputFileResolver.name, () => {
     );
   });
 
-  describe('with ignore patterns', () => {
+  describe('file resolving', () => {
     it('should discover files recursively using readdir', async () => {
       // Arrange
       stubFileSystem({
@@ -211,6 +210,36 @@ describe(InputFileResolver.name, () => {
     });
   });
 
+  describe('without mutate files', () => {
+    beforeEach(() => {
+      stubFileSystem({
+        'file1.js': 'file 1 content',
+        'file2.js': 'file 2 content',
+        'file3.js': 'file 3 content',
+        'mute1.js': 'mutate 1 content',
+        'mute2.js': 'mutate 2 content',
+      });
+    });
+
+    it('should warn about dry-run', async () => {
+      const sut = createSut();
+      await sut.resolve();
+      expect(testInjector.logger.warn).calledWith(
+        'No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything. You can configure the `mutate` property in your config file (or use `--mutate` via command line).'
+      );
+    });
+  });
+
+  function stubFileSystemWith5Files() {
+    stubFileSystem({
+      'file1.js': 'file 1 content',
+      'file2.js': 'file 2 content',
+      'file3.js': 'file 3 content',
+      'mute1.js': 'mutate 1 content',
+      'mute2.js': 'mutate 2 content',
+    });
+  }
+
   describe('with mutation range definitions', () => {
     beforeEach(() => {
       stubFileSystem({
@@ -262,17 +291,8 @@ describe(InputFileResolver.name, () => {
   });
 
   describe('with mutate file patterns', () => {
-    beforeEach(() => {
-      stubFileSystem({
-        'file1.js': 'file 1 content',
-        'file2.js': 'file 2 content',
-        'file3.js': 'file 3 content',
-        'mute1.js': 'mutate 1 content',
-        'mute2.js': 'mutate 2 content',
-      });
-    });
-
     it('should result in the expected mutate files', async () => {
+      stubFileSystemWith5Files();
       testInjector.options.mutate = ['mute*'];
       const sut = createSut();
       const result = await sut.resolve();
@@ -287,6 +307,7 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should only report a mutate file when it is included in the resolved files', async () => {
+      stubFileSystemWith5Files();
       testInjector.options.mutate = ['mute*'];
       testInjector.options.ignorePatterns = ['mute2.js'];
       const sut = createSut();
@@ -295,6 +316,7 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should report OnAllSourceFilesRead', async () => {
+      stubFileSystemWith5Files();
       testInjector.options.mutate = ['mute*'];
       const sut = createSut();
       await sut.resolve();
@@ -309,6 +331,7 @@ describe(InputFileResolver.name, () => {
     });
 
     it('should report OnSourceFileRead', async () => {
+      stubFileSystemWith5Files();
       testInjector.options.mutate = ['mute*'];
       const sut = createSut();
       await sut.resolve();
@@ -321,25 +344,30 @@ describe(InputFileResolver.name, () => {
       ];
       expected.forEach((sourceFile) => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
     });
-  });
 
-  describe('without mutate files', () => {
-    beforeEach(() => {
+    it('should warn about useless patterns custom "mutate" patterns', async () => {
+      testInjector.options.mutate = ['src/**/*.js', '!src/index.js', 'types/global.d.ts'];
       stubFileSystem({
-        'file1.js': 'file 1 content',
-        'file2.js': 'file 2 content',
-        'file3.js': 'file 3 content',
-        'mute1.js': 'mutate 1 content',
-        'mute2.js': 'mutate 2 content',
+        src: {
+          'foo.js': 'foo();',
+        },
       });
-    });
-
-    it('should warn about dry-run', async () => {
       const sut = createSut();
       await sut.resolve();
-      expect(testInjector.logger.warn).calledWith(
-        'No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything. You can configure the `mutate` property in your config file (or use `--mutate` via command line).'
-      );
+      expect(testInjector.logger.warn).calledTwice;
+      expect(testInjector.logger.warn).calledWith('Glob pattern "!src/index.js" did not exclude any files.');
+      expect(testInjector.logger.warn).calledWith('Glob pattern "types/global.d.ts" did not result in any files.');
+    });
+
+    it('should not warn about useless patterns if "mutate" isn\'t overridden', async () => {
+      stubFileSystem({
+        src: {
+          'foo.js': 'foo();',
+        },
+      });
+      const sut = createSut();
+      await sut.resolve();
+      expect(testInjector.logger.warn).not.called;
     });
   });
 
