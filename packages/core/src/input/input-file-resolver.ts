@@ -110,7 +110,7 @@ export class InputFileResolver {
 
     const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
       const dirEntries = await fsPromises.readdir(dir, { withFileTypes: true });
-      const relativeName = path.posix.relative(rootDir, dir);
+      const relativeName = path.relative(rootDir, dir);
       const files = await Promise.all(
         dirEntries
           .filter((dirEntry) => {
