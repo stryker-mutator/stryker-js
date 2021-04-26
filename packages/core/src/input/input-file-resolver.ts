@@ -10,7 +10,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { isErrnoException, notEmpty } from '@stryker-mutator/util';
-import { Minimatch } from 'minimatch';
+import { IMinimatch, Minimatch } from 'minimatch';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
@@ -111,6 +111,24 @@ export class InputFileResolver {
   private async resolveInputFiles(): Promise<string[]> {
     const ignoreRules = this.ignoreRules.map((pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }));
 
+    // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L124
+    const matchesDirectory = (entryName: string, rule: IMinimatch) => {
+      return (
+        rule.match(`/${entryName}/`) ||
+        rule.match(`${entryName}/`) ||
+        (rule.negate &&
+          // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
+          (rule.match(`/${entryName}`, true) ||
+            // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
+            rule.match(entryName, true)))
+      );
+    };
+
+    // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L123
+    const matchesFile = (entryName: string, rule: IMinimatch) => {
+      return rule.match(`/${entryName}`) || rule.match(entryName);
+    };
+
     const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
       const dirEntries = await fsPromises.readdir(dir, { withFileTypes: true });
       const relativeName = path.relative(rootDir, dir);
@@ -118,11 +136,10 @@ export class InputFileResolver {
         dirEntries
           .filter((dirEntry) => {
             let included = true;
-            const entryName = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}${dirEntry.isDirectory() ? '/' : ''}`;
+            const entryName = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}`;
             ignoreRules.forEach((rule) => {
               if (rule.negate !== included) {
-                // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
-                const match = rule.match(entryName, true) || rule.match(`/${entryName}`, true);
+                const match = dirEntry.isDirectory() ? matchesDirectory(entryName, rule) : matchesFile(entryName, rule);
                 if (match) {
                   included = rule.negate;
                 }

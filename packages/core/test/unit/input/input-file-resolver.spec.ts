@@ -183,6 +183,21 @@ describe(InputFileResolver.name, () => {
       assertions.expectTextFilesEqual(files, [new File(path.resolve('src', 'index.js'), 'export * from "./app"')]);
     });
 
+    it('should allow deep whitelisting with "**"', async () => {
+      stubFileSystem({
+        app: {
+          src: { 'index.js': 'export * from "./app"' },
+        },
+        dist: { 'index.js': 'module.exports = require("./app")' },
+      });
+      testInjector.options.ignorePatterns = ['**', '!app/src/index.js'];
+      const sut = createSut();
+
+      const { files } = await sut.resolve();
+
+      assertions.expectTextFilesEqual(files, [new File(path.resolve('app', 'src', 'index.js'), 'export * from "./app"')]);
+    });
+
     it('should not open too many file handles', async () => {
       // Arrange
       const maxFileIO = 256;
