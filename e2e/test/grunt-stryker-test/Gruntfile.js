@@ -19,12 +19,13 @@ module.exports = function (grunt) {
           testRunner: 'karma',
           logLevel: 'info',
           concurrency: 2,
-          tempDirName: '.stryker-tmp-2'
+          tempDirName: '.stryker-tmp-2',
+          karma: { config: { files: [ 'sampleProject/**' ] }}
         },
       },
       withConfigFile: {
         options: {
-          configFile: './stryker.conf.js'
+          configFile: './stryker.grunt.conf.json'
         }
       }
     }
