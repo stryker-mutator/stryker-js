@@ -1,4 +1,3 @@
-import os from 'os';
 import path from 'path';
 import { Dirent, promises as fsPromises } from 'fs';
 
@@ -12,38 +11,36 @@ import sinon from 'sinon';
 import { coreTokens } from '../../../src/di';
 import { InputFileResolver } from '../../../src/input';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
-import * as fileUtils from '../../../src/utils/file-utils';
 import { Mock, mock } from '../../helpers/producers';
 
-const createFiles = (...namesWithContent: Array<[string, string]>): File[] =>
-  namesWithContent.map((nameAndContent): File => new File(path.resolve(nameAndContent[0]), Buffer.from(nameAndContent[1])));
-
 describe(InputFileResolver.name, () => {
-  let globStub: sinon.SinonStub;
   let reporterMock: Mock<BroadcastReporter>;
   let readFileStub: sinon.SinonStub;
   let readdirStub: sinon.SinonStubbedMember<typeof fsPromises.readdir>;
 
   beforeEach(() => {
     reporterMock = mock(BroadcastReporter);
-    globStub = sinon.stub(fileUtils, 'glob');
     readdirStub = sinon.stub(fsPromises, 'readdir');
     readFileStub = sinon.stub(fsPromises, 'readFile');
     testInjector.options.mutate = [];
   });
 
   it('should log a warning if no files were resolved', async () => {
-    testInjector.options.files = [];
+    stubFileSystem({}); // emtpy dir
     const sut = createSut();
     await sut.resolve();
     expect(testInjector.logger.warn).calledWith(
       sinon
-        .match(`No files selected. Please make sure you either${os.EOL} (1) Run Stryker inside a Git repository`)
-        .and(sinon.match('(2) Specify the `files` property in your Stryker configuration'))
+        .match('No files found in directory')
+        .and(
+          sinon.match(
+            'ignore rules: ["node_modules",".git","/reports","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".'
+          )
+        )
     );
   });
 
-  describe('without "files"', () => {
+  describe('with ignore patterns', () => {
     it('should discover files recursively using readdir', async () => {
       // Arrange
       stubFileSystem({
@@ -220,131 +217,23 @@ describe(InputFileResolver.name, () => {
     });
   });
 
-  describe('with "files"', () => {
-    beforeEach(() => {
-      readFileStub
-        .withArgs(sinon.match.string)
-        .resolves(Buffer.from('')) // fallback
-        .withArgs(sinon.match('file1'))
-        .resolves(Buffer.from('file 1 content'))
-        .withArgs(sinon.match('file2'))
-        .resolves(Buffer.from('file 2 content'))
-        .withArgs(sinon.match('file3'))
-        .resolves(Buffer.from('file 3 content'))
-        .withArgs(sinon.match('mute1'))
-        .resolves(Buffer.from('mutate 1 content'))
-        .withArgs(sinon.match('mute2'))
-        .resolves(Buffer.from('mutate 2 content'));
-
-      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
-      globStub.withArgs('mute1').resolves(['/mute1.js']);
-      globStub.withArgs('mute2').resolves(['/mute2.js']);
-      globStub.withArgs('file1').resolves(['/file1.js']);
-      globStub.withArgs('file2').resolves(['/file2.js']);
-      globStub.withArgs('file3').resolves(['/file3.js']);
-      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
-      globStub.resolves([]); // default
-    });
-
-    it('should reject when a globbing expression results in a reject', () => {
-      testInjector.options.files = ['fileError', 'fileError'];
-      testInjector.options.mutate = ['file1'];
-      const sut = createSut();
-      const expectedError = new Error('ERROR: something went wrong');
-      globStub.withArgs('fileError').rejects(expectedError);
-      return expect(sut.resolve()).rejectedWith(expectedError);
-    });
-
-    it('should log a warning when a globbing expression does not result in a result', async () => {
-      testInjector.options.files = ['file1', 'notExists'];
-      testInjector.options.mutate = ['file1'];
-      const sut = createSut();
-      await sut.resolve();
-      expect(testInjector.logger.warn).to.have.been.calledWith('Globbing expression "notExists" did not result in any files.');
-    });
-
-    describe('when excluding files with "!"', () => {
-      it('should exclude the files that were previously included', async () => {
-        testInjector.options.files = ['file2', 'file1', '!file2'];
-        const suite = createSut();
-        const result = await suite.resolve();
-        assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content']));
-      });
-
-      it('should exclude the files that were previously with a wild card', async () => {
-        testInjector.options.files = ['file*', '!file2'];
-        const suite = createSut();
-        const result = await suite.resolve();
-        assertFilesEqual(result.files, createFiles(['/file1.js', 'file 1 content'], ['/file3.js', 'file 3 content']));
-      });
-
-      it('should not exclude files when the globbing expression results in an empty array', async () => {
-        testInjector.options.files = ['file2', '!does/not/exist'];
-        const suite = createSut();
-        const result = await suite.resolve();
-        assertFilesEqual(result.files, createFiles(['/file2.js', 'file 2 content']));
-      });
-    });
-
-    describe('when provided duplicate files', () => {
-      it('should deduplicate files that occur more than once', async () => {
-        testInjector.options.files = ['file2', 'file2'];
-        const result = await createSut().resolve();
-        assertFilesEqual(result.files, createFiles(['/file2.js', 'file 2 content']));
-      });
-
-      it('should deduplicate files that previously occurred in a wildcard expression', async () => {
-        testInjector.options.files = ['file*', 'file2'];
-        const result = await createSut().resolve();
-        assertFilesEqual(
-          result.files,
-          createFiles(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content'])
-        );
-      });
-
-      it('should order files by expression order', async () => {
-        testInjector.options.files = ['file2', 'file*'];
-        const result = await createSut().resolve();
-        assertFilesEqual(
-          result.files,
-          createFiles(['/file1.js', 'file 1 content'], ['/file2.js', 'file 2 content'], ['/file3.js', 'file 3 content'])
-        );
-      });
-    });
-  });
-
   describe('with mutation range definitions', () => {
     beforeEach(() => {
-      readFileStub
-        .withArgs(sinon.match.string)
-        .resolves(Buffer.from('')) // fallback
-        .withArgs(sinon.match('file1'))
-        .resolves(Buffer.from('file 1 content'))
-        .withArgs(sinon.match('file2'))
-        .resolves(Buffer.from('file 2 content'))
-        .withArgs(sinon.match('file3'))
-        .resolves(Buffer.from('file 3 content'))
-        .withArgs(sinon.match('mute1'))
-        .resolves(Buffer.from('mutate 1 content'))
-        .withArgs(sinon.match('mute2'))
-        .resolves(Buffer.from('mutate 2 content'));
-
-      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
-      globStub.withArgs('mute1').resolves(['/mute1.js']);
-      globStub.withArgs('mute2').resolves(['/mute2.js']);
-      globStub.withArgs('file1').resolves(['/file1.js']);
-      globStub.withArgs('file2').resolves(['/file2.js']);
-      globStub.withArgs('file3').resolves(['/file3.js']);
-      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
-      globStub.resolves([]); // default
+      stubFileSystem({
+        'file1.js': 'file 1 content',
+        'file2.js': 'file 2 content',
+        'file3.js': 'file 3 content',
+        'mute1.js': 'mutate 1 content',
+        'mute2.js': 'mutate 2 content',
+      });
     });
 
     it('should remove specific mutant descriptors when matching with line and column', async () => {
-      testInjector.options.mutate = ['mute1:1:2-2:2'];
+      testInjector.options.mutate = ['mute1.js:1:2-2:2'];
       testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       const sut = createSut();
       const result = await sut.resolve();
-      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('mute1.js')]);
     });
 
     it('should parse the mutation range', async () => {
@@ -378,81 +267,63 @@ describe(InputFileResolver.name, () => {
     });
   });
 
-  describe('with mutate file expressions', () => {
+  describe('with mutate file patterns', () => {
     beforeEach(() => {
-      readFileStub
-        .withArgs(sinon.match.string)
-        .resolves(Buffer.from('')) // fallback
-        .withArgs(sinon.match('file1'))
-        .resolves(Buffer.from('file 1 content'))
-        .withArgs(sinon.match('file2'))
-        .resolves(Buffer.from('file 2 content'))
-        .withArgs(sinon.match('file3'))
-        .resolves(Buffer.from('file 3 content'))
-        .withArgs(sinon.match('mute1'))
-        .resolves(Buffer.from('mutate 1 content'))
-        .withArgs(sinon.match('mute2'))
-        .resolves(Buffer.from('mutate 2 content'));
-
-      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
-      globStub.withArgs('mute1').resolves(['/mute1.js']);
-      globStub.withArgs('mute2').resolves(['/mute2.js']);
-      globStub.withArgs('file1').resolves(['/file1.js']);
-      globStub.withArgs('file2').resolves(['/file2.js']);
-      globStub.withArgs('file3').resolves(['/file3.js']);
-      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
-      globStub.resolves([]); // default
+      stubFileSystem({
+        'file1.js': 'file 1 content',
+        'file2.js': 'file 2 content',
+        'file3.js': 'file 3 content',
+        'mute1.js': 'mutate 1 content',
+        'mute2.js': 'mutate 2 content',
+      });
     });
 
     it('should result in the expected mutate files', async () => {
       testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       const sut = createSut();
       const result = await sut.resolve();
-      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js'), path.resolve('/mute2.js')]);
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('mute1.js'), path.resolve('mute2.js')]);
       expect(result.files.map((file) => file.name)).to.deep.equal([
-        path.resolve('/file1.js'),
-        path.resolve('/file2.js'),
-        path.resolve('/file3.js'),
-        path.resolve('/mute1.js'),
-        path.resolve('/mute2.js'),
+        path.resolve('file1.js'),
+        path.resolve('file2.js'),
+        path.resolve('file3.js'),
+        path.resolve('mute1.js'),
+        path.resolve('mute2.js'),
       ]);
     });
 
     it('should only report a mutate file when it is included in the resolved files', async () => {
       testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', /*'mute2'*/ 'file3'];
+      testInjector.options.ignorePatterns = ['mute2.js'];
       const sut = createSut();
       const result = await sut.resolve();
-      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('/mute1.js')]);
+      expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('mute1.js')]);
     });
 
     it('should report OnAllSourceFilesRead', async () => {
       testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       const sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
-        { path: path.resolve('/file1.js'), content: 'file 1 content' },
-        { path: path.resolve('/file2.js'), content: 'file 2 content' },
-        { path: path.resolve('/file3.js'), content: 'file 3 content' },
-        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
-        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
+        { path: path.resolve('file1.js'), content: 'file 1 content' },
+        { path: path.resolve('file2.js'), content: 'file 2 content' },
+        { path: path.resolve('file3.js'), content: 'file 3 content' },
+        { path: path.resolve('mute1.js'), content: 'mutate 1 content' },
+        { path: path.resolve('mute2.js'), content: 'mutate 2 content' },
       ];
       expect(reporterMock.onAllSourceFilesRead).calledWith(expected);
     });
 
     it('should report OnSourceFileRead', async () => {
       testInjector.options.mutate = ['mute*'];
-      testInjector.options.files = ['file1', 'mute1', 'file2', 'mute2', 'file3'];
       const sut = createSut();
       await sut.resolve();
       const expected: SourceFile[] = [
-        { path: path.resolve('/file1.js'), content: 'file 1 content' },
-        { path: path.resolve('/file2.js'), content: 'file 2 content' },
-        { path: path.resolve('/file3.js'), content: 'file 3 content' },
-        { path: path.resolve('/mute1.js'), content: 'mutate 1 content' },
-        { path: path.resolve('/mute2.js'), content: 'mutate 2 content' },
+        { path: path.resolve('file1.js'), content: 'file 1 content' },
+        { path: path.resolve('file2.js'), content: 'file 2 content' },
+        { path: path.resolve('file3.js'), content: 'file 3 content' },
+        { path: path.resolve('mute1.js'), content: 'mutate 1 content' },
+        { path: path.resolve('mute2.js'), content: 'mutate 2 content' },
       ];
       expected.forEach((sourceFile) => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
     });
@@ -460,32 +331,13 @@ describe(InputFileResolver.name, () => {
 
   describe('without mutate files', () => {
     beforeEach(() => {
-      readFileStub
-        .withArgs(sinon.match.string)
-        .resolves(Buffer.from('')) // fallback
-        .withArgs(sinon.match('file1'))
-        .resolves(Buffer.from('file 1 content'))
-        .withArgs(sinon.match('file2'))
-        .resolves(Buffer.from('file 2 content'))
-        .withArgs(sinon.match('file3'))
-        .resolves(Buffer.from('file 3 content'))
-        .withArgs(sinon.match('mute1'))
-        .resolves(Buffer.from('mutate 1 content'))
-        .withArgs(sinon.match('mute2'))
-        .resolves(Buffer.from('mutate 2 content'));
-
-      globStub.withArgs('mute*').resolves(['/mute1.js', '/mute2.js']);
-      globStub.withArgs('mute1').resolves(['/mute1.js']);
-      globStub.withArgs('mute2').resolves(['/mute2.js']);
-      globStub.withArgs('file1').resolves(['/file1.js']);
-      globStub.withArgs('file2').resolves(['/file2.js']);
-      globStub.withArgs('file3').resolves(['/file3.js']);
-      globStub.withArgs('file*').resolves(['/file1.js', '/file2.js', '/file3.js']);
-      globStub.resolves([]); // default
-    });
-
-    beforeEach(() => {
-      testInjector.options.files = ['file1', 'mute1'];
+      stubFileSystem({
+        'file1.js': 'file 1 content',
+        'file2.js': 'file 2 content',
+        'file3.js': 'file 3 content',
+        'mute1.js': 'mutate 1 content',
+        'mute2.js': 'mutate 2 content',
+      });
     });
 
     it('should warn about dry-run', async () => {
@@ -496,14 +348,6 @@ describe(InputFileResolver.name, () => {
       );
     });
   });
-
-  function assertFilesEqual(actual: readonly File[], expected: readonly File[]) {
-    expect(actual).lengthOf(expected.length);
-    expected.forEach((expectedFile, index) => {
-      expect(actual[index].name).eq(expectedFile.name);
-      expect(actual[index].textContent).eq(expectedFile.textContent);
-    });
-  }
 
   function createSut() {
     return testInjector.injector.provideValue(coreTokens.reporter, reporterMock).injectClass(InputFileResolver);

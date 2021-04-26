@@ -13,7 +13,7 @@ import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
 import { isWarningEnabled } from '../utils/object-utils';
 import { CommandTestRunner } from '../test-runner/command-test-runner';
-import { MUTATION_RANGE_REGEX } from '../input';
+import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input';
 
 import { describeErrors } from './validation-errors';
 
@@ -70,6 +70,25 @@ export class OptionsValidator {
       );
       delete rawOptions.transpilers;
     }
+    if (Array.isArray(rawOptions.files)) {
+      const ignorePatternsName = propertyPath<StrykerOptions>('ignorePatterns');
+      const isString = (uncertain: unknown): uncertain is string => typeof uncertain === 'string';
+      const files = rawOptions.files.filter(isString);
+      const newIgnorePatterns: string[] = [
+        '**',
+        ...files.map((filePattern) =>
+          filePattern.startsWith(IGNORE_PATTERN_CHARACTER) ? filePattern.substr(1) : `${IGNORE_PATTERN_CHARACTER}${filePattern}`
+        ),
+      ];
+      delete rawOptions.files;
+      this.log.warn(
+        `DEPRECATED. Use of "files" is deprecated, please use "${ignorePatternsName}" instead. For now, rewriting them as ${JSON.stringify(
+          newIgnorePatterns
+        )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`
+      );
+      const existingIgnorePatterns = Array.isArray(rawOptions[ignorePatternsName]) ? (rawOptions[ignorePatternsName] as unknown[]) : [];
+      rawOptions[ignorePatternsName] = [...newIgnorePatterns, ...existingIgnorePatterns];
+    }
   }
 
   private additionalValidation(options: StrykerOptions) {
@@ -82,13 +101,6 @@ export class OptionsValidator {
       if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
-    }
-    if (options.files && options.ignorePatterns.length > 0) {
-      this.log.warn(
-        `Config option "${propertyPath<StrykerOptions>('ignorePatterns')}" is ignored, since "${propertyPath<StrykerOptions>(
-          'files'
-        )}" was specified.`
-      );
     }
     if (CommandTestRunner.is(options.testRunner) && options.testRunnerNodeArgs.length) {
       this.log.warn(

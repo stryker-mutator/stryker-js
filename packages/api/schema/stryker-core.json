@@ -295,13 +295,6 @@
       "$ref": "#/definitions/logLevel",
       "default": "off"
     },
-    "files": {
-      "description": "Specify the patterns to all files or that are needed to run your tests and thus should _be copied_ to the sandbox directory for mutation testing (whitelist).\n\nSetting this config option is only needed in specific use cases, since the defaults should be fine for most projects.\n\nCombining both files and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\n\nYou can *ignore* files that are included by an earlier pattern by adding an exclamation mark (`!`) at the start of an expression, for example `[\"src/**/*.js\", \"!src/foo.js\"]`.",
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
     "inPlace": {
       "type": "boolean",
       "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",

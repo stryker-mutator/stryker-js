@@ -5,6 +5,8 @@ import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryke
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
+import { propertyPath } from '@stryker-mutator/util';
+
 import { OptionsValidator, validateOptions, markUnknownOptions } from '../../../src/config/options-validator';
 import { coreTokens } from '../../../src/di';
 import { createCpuInfo } from '../../helpers/producers';
@@ -15,84 +17,102 @@ describe(OptionsValidator.name, () => {
     sut = testInjector.injector.provideValue(coreTokens.validationSchema, strykerCoreSchema).injectClass(OptionsValidator);
   });
 
-  it('should validate an empty object', () => {
-    sut.validate({});
-    expect(testInjector.logger.fatal).not.called;
-    expect(testInjector.logger.error).not.called;
-    expect(testInjector.logger.warn).not.called;
+  describe('without options', () => {
+    it('should validate an empty object', () => {
+      sut.validate({});
+      expect(testInjector.logger.fatal).not.called;
+      expect(testInjector.logger.error).not.called;
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should fill default values', () => {
+      const options: Record<string, unknown> = {};
+      sut.validate(options);
+      const expectedOptions: StrykerOptions = {
+        allowConsoleColors: true,
+        appendPlugins: [],
+        checkers: [],
+        cleanTempDir: true,
+        inPlace: false,
+        ignorePatterns: [],
+        clearTextReporter: {
+          allowColor: true,
+          logTests: true,
+          maxTestsToLog: 3,
+        },
+        commandRunner: {
+          command: 'npm test',
+        },
+        coverageAnalysis: 'off',
+        dashboard: {
+          baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
+          reportType: ReportType.Full,
+        },
+        disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+        dryRunTimeoutMinutes: 5,
+        eventReporter: {
+          baseDir: 'reports/mutation/events',
+        },
+        fileLogLevel: LogLevel.Off,
+        jsonReporter: {
+          fileName: 'reports/mutation/mutation.json',
+        },
+        logLevel: LogLevel.Information,
+        maxConcurrentTestRunners: 9007199254740991,
+        maxTestRunnerReuse: 0,
+        mutate: [
+          '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+          '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+        ],
+        mutator: {
+          excludedMutations: [],
+          plugins: null,
+        },
+        plugins: ['@stryker-mutator/*'],
+        reporters: ['clear-text', 'progress', 'html'],
+        symlinkNodeModules: true,
+        tempDirName: '.stryker-tmp',
+        testRunner: 'command',
+        testRunnerNodeArgs: [],
+        thresholds: {
+          break: null,
+          high: 80,
+          low: 60,
+        },
+        timeoutFactor: 1.5,
+        timeoutMS: 5000,
+        tsconfigFile: 'tsconfig.json',
+        warnings: true,
+      };
+      expect(options).deep.eq(expectedOptions);
+    });
+
+    it('should validate the default options', () => {
+      actAssertValid();
+    });
   });
 
-  it('should fill default values', () => {
-    const options: Record<string, unknown> = {};
-    sut.validate(options);
-    const expectedOptions: StrykerOptions = {
-      allowConsoleColors: true,
-      appendPlugins: [],
-      checkers: [],
-      cleanTempDir: true,
-      inPlace: false,
-      ignorePatterns: [],
-      clearTextReporter: {
-        allowColor: true,
-        logTests: true,
-        maxTestsToLog: 3,
-      },
-      commandRunner: {
-        command: 'npm test',
-      },
-      coverageAnalysis: 'off',
-      dashboard: {
-        baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
-        reportType: ReportType.Full,
-      },
-      disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
-      dryRunTimeoutMinutes: 5,
-      eventReporter: {
-        baseDir: 'reports/mutation/events',
-      },
-      fileLogLevel: LogLevel.Off,
-      jsonReporter: {
-        fileName: 'reports/mutation/mutation.json',
-      },
-      logLevel: LogLevel.Information,
-      maxConcurrentTestRunners: 9007199254740991,
-      maxTestRunnerReuse: 0,
-      mutate: [
-        '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
-        '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
-      ],
-      mutator: {
-        excludedMutations: [],
-        plugins: null,
-      },
-      plugins: ['@stryker-mutator/*'],
-      reporters: ['clear-text', 'progress', 'html'],
-      symlinkNodeModules: true,
-      tempDirName: '.stryker-tmp',
-      testRunner: 'command',
-      testRunnerNodeArgs: [],
-      thresholds: {
-        break: null,
-        high: 80,
-        low: 60,
-      },
-      timeoutFactor: 1.5,
-      timeoutMS: 5000,
-      tsconfigFile: 'tsconfig.json',
-      warnings: true,
-    };
-    expect(options).deep.eq(expectedOptions);
-  });
+  describe('files', () => {
+    it('should log a deprecation warning when "files" are set', () => {
+      testInjector.options.files = ['src/**/*.js', '!src/index.js'];
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "files" is deprecated, please use "ignorePatterns" instead. For now, rewriting them as ["**","!src/**/*.js","src/index.js"]. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string'
+      );
+    });
 
-  it('should validate the default options', () => {
-    actAssertValid();
-  });
+    it(`should rewrite them to "${propertyPath<StrykerOptions>('ignorePatterns')}"`, () => {
+      testInjector.options.files = ['src/**/*.js', '!src/index.js'];
+      sut.validate(testInjector.options);
+      expect(testInjector.options.ignorePatterns).deep.eq(['**', '!src/**/*.js', 'src/index.js']);
+    });
 
-  it('should log a warning when specifying both "files" and "ignorePatterns"', () => {
-    testInjector.options.files = ['foo.js'];
-    testInjector.options.ignorePatterns = ['!foo.js'];
-    sut.validate(testInjector.options);
-    expect(testInjector.logger.warn).calledWith('Config option "ignorePatterns" is ignored, since "files" was specified.');
+    it(`should not clear existing "${propertyPath<StrykerOptions>('ignorePatterns')}" when rewritting "files"`, () => {
+      testInjector.options.files = ['src/**/*.js'];
+      testInjector.options.ignorePatterns = ['src/index.js'];
+      sut.validate(testInjector.options);
+      expect(testInjector.options.ignorePatterns).deep.eq(['**', '!src/**/*.js', 'src/index.js']);
+    });
   });
 
   describe('thresholds', () => {
