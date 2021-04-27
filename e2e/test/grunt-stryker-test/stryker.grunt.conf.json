@@ -12,5 +12,6 @@
   },
   "testRunner": "karma",
   "logLevel": "info",
+  "fileLogLevel": "warn",
   "concurrency": 2
 }
