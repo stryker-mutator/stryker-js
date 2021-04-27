@@ -112,21 +112,22 @@ export class InputFileResolver {
     const ignoreRules = this.ignoreRules.map((pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }));
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L124
-    const matchesDirectory = (entryName: string, rule: IMinimatch) => {
+    const matchesDirectory = (entryName: string, entryPath: string, rule: IMinimatch) => {
       return (
-        rule.match(`/${entryName}/`) ||
-        rule.match(`${entryName}/`) ||
+        matchesFile(entryName, entryPath, rule) ||
+        rule.match(`/${entryPath}/`) ||
+        rule.match(`${entryPath}/`) ||
         (rule.negate &&
           // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
-          (rule.match(`/${entryName}`, true) ||
+          (rule.match(`/${entryPath}`, true) ||
             // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
-            rule.match(entryName, true)))
+            rule.match(entryPath, true)))
       );
     };
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L123
-    const matchesFile = (entryName: string, rule: IMinimatch) => {
-      return rule.match(`/${entryName}`) || rule.match(entryName);
+    const matchesFile = (entryName: string, entryPath: string, rule: IMinimatch) => {
+      return rule.match(entryName) || rule.match(entryPath) || rule.match(`/${entryPath}`);
     };
 
     const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
@@ -136,10 +137,10 @@ export class InputFileResolver {
         dirEntries
           .filter((dirEntry) => {
             let included = true;
-            const entryName = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}`;
+            const entryPath = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}`;
             ignoreRules.forEach((rule) => {
               if (rule.negate !== included) {
-                const match = dirEntry.isDirectory() ? matchesDirectory(entryName, rule) : matchesFile(entryName, rule);
+                const match = dirEntry.isDirectory() ? matchesDirectory(dirEntry.name, entryPath, rule) : matchesFile(dirEntry.name, entryPath, rule);
                 if (match) {
                   included = rule.negate;
                 }

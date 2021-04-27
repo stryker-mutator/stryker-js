@@ -110,7 +110,7 @@ describe(InputFileResolver.name, () => {
       expect(files[0].name).eq(path.resolve('index.js'));
     });
 
-    it('should not ignore deep-report directories', async () => {
+    it('should not ignore deep report directories by default', async () => {
       // Arrange
       stubFileSystem({
         app: { reports: { 'reporter.component.js': '' } },
@@ -123,6 +123,20 @@ describe(InputFileResolver.name, () => {
       // Assert
       expect(files).lengthOf(1);
       expect(files[0].name).eq(path.resolve('app', 'reports', 'reporter.component.js'));
+    });
+
+    it('should ignore a deep node_modules directory by default', async () => {
+      // Arrange
+      stubFileSystem({
+        testResources: { 'require-resolve': { node_modules: { bar: 'index.js' } } },
+      });
+      const sut = createSut();
+
+      // Act
+      const { files } = await sut.resolve();
+
+      // Assert
+      expect(files).lengthOf(0);
     });
 
     it('should ignore an alternative stryker-tmp dir', async () => {
@@ -162,6 +176,23 @@ describe(InputFileResolver.name, () => {
       expect(files).lengthOf(2);
       expect(files[0].name).eq(path.resolve('index.js'));
       expect(files[1].name).eq(path.resolve('node_modules', 'rimraf', 'index.js'));
+    });
+
+    it('should allow un-ignore deep node_modules directory', async () => {
+      // Arrange
+      stubFileSystem({
+        node_modules: { rimraf: { 'index.js': '' } },
+        testResources: { 'require-resolve': { node_modules: { bar: 'index.js' } } },
+      });
+      testInjector.options.ignorePatterns = ['!testResources/**/node_modules'];
+      const sut = createSut();
+
+      // Act
+      const { files } = await sut.resolve();
+
+      // Assert
+      expect(files).lengthOf(1);
+      expect(files[0].name).eq(path.resolve('testResources', 'require-resolve', 'node_modules', 'bar', 'index.js'));
     });
 
     it('should reject if fs commands fail', async () => {
