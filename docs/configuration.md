@@ -130,14 +130,7 @@ Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-Specify the patterns to all files or that are needed to run your tests and thus should _be copied_ to the sandbox directory for mutation testing (whitelist).
-Setting this config option is only needed in specific use cases, since the defaults should be fine for most projects.
-
-Combining both `files` and [`ignorePatterns`](#ignorepatterns-string) is _not supported_. When both ares specified, `files` will be used.
-
-When using the command line, the list can only contain a comma separated list of globbing expressions.
-
-You can *ignore* files that are included by an earlier pattern by adding an exclamation mark (`!`) at the start of an expression, for example `["src/**/*.js", "!src/foo.js"]`.
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead. 
 
 ### `ignorePatterns` [`string[]`]
 
@@ -145,16 +138,13 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,dist-test`<br />
 Config file: `"ignorePatterns": ["dist", "dist-test"]`<br />
 
-Specify the patterns to all files or directories that are not needed to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing (blacklist).
-Each patterns in this array should be a `.gitignore`-style glob pattern. 
+Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format). 
 
-Combining both [`files`](#files-string) and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.
+These patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
 If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
-
-These patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`, if you want to undo one of these patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
 ### `inPlace` [`boolean`]
 
