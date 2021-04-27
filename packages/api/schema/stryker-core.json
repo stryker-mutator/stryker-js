@@ -253,7 +253,7 @@
       "type": "number"
     },
     "maxTestRunnerReuse": {
-      "description": "Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
+      "description": "Restart each forked worker after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
       "type": "number",
       "default": 0
     },
@@ -283,7 +283,7 @@
       "default": {}
     },
     "ignorePatterns": {
-      "description": "Specify the patterns to all files or directories that are not needed to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing (blacklist).\nEach patterns in this array should be a `.gitignore`-style glob pattern.\n\nCombining both `files` and `ignorePatterns` is _not supported_. When both ares specified, `files` will be used.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`, if you want to undo one of these patterns, you can use the `!` prefix, for example: `['!node_modules']`.",
+      "description": "Specify the patterns to all files or directories that are not used to run your tests and thus should *not be copied* to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
       "type": "array",
       "items": {
         "type": "string"
