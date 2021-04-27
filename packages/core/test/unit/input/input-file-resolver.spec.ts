@@ -128,7 +128,7 @@ describe(InputFileResolver.name, () => {
     it('should ignore a deep node_modules directory by default', async () => {
       // Arrange
       stubFileSystem({
-        testResources: { 'require-resolve': { node_modules: { bar: 'index.js' } } },
+        testResources: { 'require-resolve': { node_modules: { bar: { 'index.js': '' } } } },
       });
       const sut = createSut();
 
@@ -182,7 +182,7 @@ describe(InputFileResolver.name, () => {
       // Arrange
       stubFileSystem({
         node_modules: { rimraf: { 'index.js': '' } },
-        testResources: { 'require-resolve': { node_modules: { bar: 'index.js' } } },
+        testResources: { 'require-resolve': { node_modules: { bar: { 'index.js': '' } } } },
       });
       testInjector.options.ignorePatterns = ['!testResources/**/node_modules'];
       const sut = createSut();
