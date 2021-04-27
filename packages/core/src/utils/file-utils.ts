@@ -69,7 +69,8 @@ export function moveDirectoryRecursiveSync(from: string, to: string): void {
  * @param to The thing you want to point to
  * @param from The thing you want to point from
  */
-export function symlinkJunction(to: string, from: string): Promise<void> {
+export async function symlinkJunction(to: string, from: string): Promise<void> {
+  await fs.promises.mkdir(path.dirname(from), { recursive: true });
   return fs.promises.symlink(to, from, 'junction');
 }
 

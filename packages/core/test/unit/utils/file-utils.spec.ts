@@ -21,6 +21,7 @@ describe('fileUtils', () => {
   beforeEach(() => {
     sinon.stub(fs.promises, 'writeFile');
     sinon.stub(fs.promises, 'symlink');
+    sinon.stub(fs.promises, 'mkdir');
     readdirStub = sinon.stub(fs.promises, 'readdir');
   });
 
@@ -28,6 +29,10 @@ describe('fileUtils', () => {
     it('should call fs.symlink', async () => {
       await fileUtils.symlinkJunction('a', 'b');
       expect(fs.promises.symlink).calledWith('a', 'b', 'junction');
+    });
+    it("should create the dir if it doesn't exist", async () => {
+      await fileUtils.symlinkJunction('a', path.resolve('b', 'c'));
+      expect(fs.promises.mkdir).calledWith(path.resolve('b'), { recursive: true });
     });
   });
 
