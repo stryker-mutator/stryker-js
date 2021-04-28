@@ -59,7 +59,7 @@
     "@stryker-mutator/api": "4.6.0",
     "@stryker-mutator/instrumenter": "4.6.0",
     "@stryker-mutator/util": "4.6.0",
-    "ajv": "~8.1.0",
+    "ajv": "~8.2.0",
     "chalk": "~4.1.0",
     "commander": "~7.2.0",
     "execa": "~5.0.0",
