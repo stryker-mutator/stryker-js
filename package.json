@@ -26,7 +26,7 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.22.1",
     "eslint-plugin-prettier": "3.4.0",
-    "eslint-plugin-unicorn": "29.0.0",
+    "eslint-plugin-unicorn": "31.0.0",
     "execa": "~5.0.0",
     "glob": "~7.1.1",
     "install-local": "~3.0.1",
