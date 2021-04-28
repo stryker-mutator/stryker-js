@@ -48,3 +48,7 @@ Configuration:
 mutate: ['src/**/*.ts?(x)', '!src/**/*@(.test|.spec|Spec).ts?(x)'],
 mutator: 'typescript',
 ```
+
+## Troubleshooting
+
+Please take a look at the [troubleshooting page](../troubleshooting.md) when you run into any problems setting up StrykerJS.
