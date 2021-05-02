@@ -135,8 +135,8 @@ Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 ### `ignorePatterns` [`string[]`]
 
 Default: `[]`<br />
-Command line: `--ignorePatterns dist,dist-test`<br />
-Config file: `"ignorePatterns": ["dist", "dist-test"]`<br />
+Command line: `--ignorePatterns dist,coverage`<br />
+Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
 Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format). 
 
