@@ -82,7 +82,7 @@ export class OptionsValidator {
       ];
       delete rawOptions.files;
       this.log.warn(
-        `DEPRECATED. Use of "files" is deprecated, please use "${ignorePatternsName}" instead. For now, rewriting them as ${JSON.stringify(
+        `DEPRECATED. Use of "files" is deprecated, please use "${ignorePatternsName}" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ${JSON.stringify(
           newIgnorePatterns
         )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`
       );

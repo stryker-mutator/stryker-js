@@ -97,7 +97,7 @@ describe(OptionsValidator.name, () => {
       testInjector.options.files = ['src/**/*.js', '!src/index.js'];
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "files" is deprecated, please use "ignorePatterns" instead. For now, rewriting them as ["**","!src/**/*.js","src/index.js"]. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string'
+        'DEPRECATED. Use of "files" is deprecated, please use "ignorePatterns" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ["**","!src/**/*.js","src/index.js"]. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string'
       );
     });
 
