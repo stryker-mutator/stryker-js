@@ -73,7 +73,7 @@
     "minimatch": "~3.0.4",
     "mkdirp": "~1.0.3",
     "mutation-testing-elements": "~1.5.2",
-    "mutation-testing-metrics": "~1.5.2",
+    "mutation-testing-metrics": "~1.7.1",
     "npm-run-path": "~4.0.1",
     "progress": "~2.0.0",
     "rimraf": "~3.0.0",
