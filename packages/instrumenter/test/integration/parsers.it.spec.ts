@@ -29,7 +29,7 @@ describe('parsers integration', () => {
   });
 
   it('should allow to parse a tsx file', async () => {
-    const actual = await actAssertTS('App.tsx');
+    const actual = await actAssertTsx('App.tsx');
     expect(actual).to.matchSnapshot();
   });
 
@@ -86,6 +86,11 @@ describe('parsers integration', () => {
   async function actAssertTS(testResourceFileName: string, options = createParserOptions()): Promise<TSAst> {
     const actual = await act(testResourceFileName, options);
     expect(actual.format).eq(AstFormat.TS);
+    return actual as TSAst;
+  }
+  async function actAssertTsx(testResourceFileName: string, options = createParserOptions()): Promise<TSAst> {
+    const actual = await act(testResourceFileName, options);
+    expect(actual.format).eq(AstFormat.Tsx);
     return actual as TSAst;
   }
   async function actAssertJS(testResourceFileName: string, options = createParserOptions()): Promise<JSAst> {
