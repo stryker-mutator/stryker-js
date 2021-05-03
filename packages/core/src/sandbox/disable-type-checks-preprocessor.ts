@@ -8,7 +8,7 @@ import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di';
 import { isWarningEnabled } from '../utils/object-utils';
-import { FileMatcher } from '../config/file-matcher';
+import { FileMatcher } from '../config';
 
 import { FilePreprocessor } from './file-preprocessor';
 

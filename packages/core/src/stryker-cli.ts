@@ -60,7 +60,12 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        'A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js',
+        'A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        list
+      )
+      .option(
+        '--ignorePatterns <filesToIgnore>',
+        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
       .option(

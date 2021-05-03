@@ -126,21 +126,25 @@ Set the log level that Stryker uses to write to the "stryker.log" file. Possible
 
 ### `files` [`string[]`]
 
-Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`<br />
+Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-With `files`, you can choose which files should be included in your test runner sandbox.
-This is normally not needed as it defaults to all files not ignored by git.
-Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead. 
 
-If you do need to override `files` (for example: when your project does not live in a git repository),
-you can override the files here.
+### `ignorePatterns` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--ignorePatterns dist,coverage`<br />
+Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
+
+Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format). 
+
+These patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
+
+If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
-When using the config file you can provide an array with `string`s
-
-You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
 ### `inPlace` [`boolean`]
 
