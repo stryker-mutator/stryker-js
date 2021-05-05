@@ -1,11 +1,11 @@
 import os from 'os';
 
-import chalk from 'chalk';
+import chalk, { Color } from 'chalk';
 import { schema, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult } from 'mutation-testing-metrics';
+import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
 import { plural } from '../utils/string-utils';
@@ -22,9 +22,13 @@ export class ClearTextReporter implements Reporter {
 
   private readonly out: NodeJS.WritableStream = process.stdout;
 
-  private writeLine(output?: string) {
+  private readonly writeLine = (output?: string) => {
     this.out.write(`${output ?? ''}${os.EOL}`);
-  }
+  };
+
+  private readonly writeDebugLine = (input: string) => {
+    this.log.debug(input);
+  };
 
   private configConsoleColor() {
     if (!this.options.allowConsoleColors) {
@@ -33,17 +37,52 @@ export class ClearTextReporter implements Reporter {
   }
 
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+    this.writeLine();
+    this.reportAllTests(metrics);
     this.reportAllMutants(metrics);
     this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
+  }
+
+  private reportAllTests(metrics: MutationTestMetricsResult) {
+    function indent(depth: number) {
+      return new Array(depth).fill('  ').join('');
+    }
+    const formatTestLine = (test: TestModel, state: string): string => {
+      return `${this.color('grey', `${test.name}${test.location ? ` [line ${test.location.start.line}]` : ''}`)} (${state})`;
+    };
+
+    if (metrics.testMetrics) {
+      const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
+        const nameParts: string[] = [currentResult.name];
+        while (!currentResult.file && currentResult.childResults.length === 1) {
+          currentResult = currentResult.childResults[0];
+          nameParts.push(currentResult.name);
+        }
+        this.writeLine(`${indent(depth)}${nameParts.join('/')}`);
+        currentResult.file?.tests.forEach((test) => {
+          switch (test.status) {
+            case TestStatus.Killing:
+              this.writeLine(`${indent(depth + 1)}${this.color('greenBright', '✓')} ${formatTestLine(test, `killed ${test.killedMutants?.length}`)}`);
+              break;
+            case TestStatus.Covering:
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('blueBright', '~')} ${formatTestLine(test, `covered ${test.coveredMutants?.length}`)}`
+              );
+              break;
+            case TestStatus.NotCovering:
+              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${formatTestLine(test, 'covered 0')}`);
+              break;
+          }
+        });
+        currentResult.childResults.forEach((childResult) => reportTests(childResult, depth + 1));
+      };
+      reportTests(metrics.testMetrics);
+    }
   }
 
   private reportAllMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
     this.writeLine();
     let totalTests = 0;
-
-    // use these functions in order to preserve the 'this` pointer
-    const logDebugFn = (input: string) => this.log.debug(input);
-    const writeLineFn = (input: string) => this.writeLine(input);
 
     const reportMutants = (metrics: MetricsResult[]) => {
       metrics.forEach((child) => {
@@ -54,11 +93,11 @@ export class ClearTextReporter implements Reporter {
             case MutantStatus.Timeout:
             case MutantStatus.RuntimeError:
             case MutantStatus.CompileError:
-              this.reportMutantResult(result, logDebugFn);
+              this.reportMutantResult(result, this.writeDebugLine);
               break;
             case MutantStatus.Survived:
             case MutantStatus.NoCoverage:
-              this.reportMutantResult(result, writeLineFn);
+              this.reportMutantResult(result, this.writeLine);
               break;
             default:
           }
@@ -103,11 +142,14 @@ export class ClearTextReporter implements Reporter {
   }
 
   private colorSourceFileAndLocation(fileName: string, position: Position): string {
-    if (!this.options.clearTextReporter.allowColor) {
-      return `${fileName}:${position.line}:${position.column}`;
-    }
+    return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
+  }
 
-    return [chalk.cyan(fileName), chalk.yellow(`${position.line}`), chalk.yellow(`${position.column}`)].join(':');
+  private color(color: typeof Color, ...text: unknown[]) {
+    if (this.options.clearTextReporter.allowColor) {
+      return chalk[color](...text);
+    }
+    return text.join('');
   }
 
   private logExecutedTests(tests: TestModel[], logImplementation: (input: string) => void) {
