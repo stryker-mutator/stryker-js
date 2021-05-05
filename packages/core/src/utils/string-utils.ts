@@ -1,5 +1,3 @@
-export { serialize, deserialize } from 'surrial';
-
 export function wrapInClosure(codeFragment: string): string {
   return `
     (function (window) {
@@ -20,4 +18,12 @@ export function plural(items: number): string {
   } else {
     return '';
   }
+}
+
+export function serialize(thing: unknown): string {
+  return JSON.stringify(thing);
+}
+
+export function deserialize<T>(stringified: string): T {
+  return JSON.parse(stringified);
 }
