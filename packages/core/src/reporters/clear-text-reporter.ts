@@ -48,28 +48,31 @@ export class ClearTextReporter implements Reporter {
     }
 
     if (metrics.testMetrics) {
-      const reportTests = ({ file, childResults }: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
-        if (file) {
-          this.writeLine(`${indent(depth)}${file.name || 'All tests'}`);
-          file?.tests.forEach((test) => {
-            switch (test.status) {
-              case TestStatus.Killing:
-                this.writeLine(
-                  `${indent(depth + 1)}${this.color('greenBright', '✓')} ${this.color('grey', test.name)} (killed ${test.killedMutants?.length})`
-                );
-                break;
-              case TestStatus.Covering:
-                this.writeLine(
-                  `${indent(depth + 1)}${this.color('blueBright', '~')} ${this.color('grey', test.name)} (covered ${test.coveredMutants?.length})`
-                );
-                break;
-              case TestStatus.NotCovering:
-                this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${this.color('grey', test.name)} (covered 0)`);
-                break;
-            }
-          });
+      const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
+        const nameParts: string[] = [currentResult.name];
+        while (!currentResult.file && currentResult.childResults.length === 1) {
+          currentResult = currentResult.childResults[0];
+          nameParts.push(currentResult.name);
         }
-        childResults.forEach((childResult) => reportTests(childResult, depth + 1));
+        this.writeLine(`${indent(depth)}${nameParts.join('/')}`);
+        currentResult.file?.tests.forEach((test) => {
+          switch (test.status) {
+            case TestStatus.Killing:
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('greenBright', '✓')} ${this.color('grey', test.name)} (killed ${test.killedMutants?.length})`
+              );
+              break;
+            case TestStatus.Covering:
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('blueBright', '~')} ${this.color('grey', test.name)} (covered ${test.coveredMutants?.length})`
+              );
+              break;
+            case TestStatus.NotCovering:
+              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${this.color('grey', test.name)} (covered 0)`);
+              break;
+          }
+        });
+        currentResult.childResults.forEach((childResult) => reportTests(childResult, depth + 1));
       };
       reportTests(metrics.testMetrics);
     }
@@ -137,14 +140,10 @@ export class ClearTextReporter implements Reporter {
   }
 
   private colorSourceFileAndLocation(fileName: string, position: Position): string {
-    if (!this.options.clearTextReporter.allowColor) {
-      return `${fileName}:${position.line}:${position.column}`;
-    }
-
-    return [chalk.cyan(fileName), chalk.yellow(`${position.line}`), chalk.yellow(`${position.column}`)].join(':');
+    return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
   }
 
-  private color(color: typeof Color, ...text: string[]) {
+  private color(color: typeof Color, ...text: unknown[]) {
     if (this.options.clearTextReporter.allowColor) {
       return chalk[color](...text);
     }
