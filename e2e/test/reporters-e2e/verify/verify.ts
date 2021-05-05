@@ -27,6 +27,10 @@ describe('Verify stryker has ran correctly', () => {
       stdout = await fs.promises.readFile('reports/stdout.txt', 'utf8');
     })
 
+    it('should report all tests', () => {
+      expect(stdout).matches(createTestsRegex());
+    });
+    
     it('should report NoCoverage mutants', () => {
       expect(stdout).matches(createNoCoverageMutantRegex());
     });
@@ -51,10 +55,10 @@ describe('Verify stryker has ran correctly', () => {
       const indexOfClearTextTable = clearTextTableRegex.exec(stdout).index;
       expect(indexOfSurvivedMutant).lessThan(indexOfClearTextTable);
     });
-  })
-
-  
+  });
 });
+
+const createTestsRegex = () => /All tests\s*✓ Add should be able to add two numbers \(killed 2\)/;
 
 const createNoCoverageMutantRegex = () => /#6\.\s*\[NoCoverage\]/;
 
