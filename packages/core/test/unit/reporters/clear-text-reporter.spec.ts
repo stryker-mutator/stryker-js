@@ -302,6 +302,21 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithMatch(sinon.match('    ✘ quux should corge (covered 0)'));
       });
 
+      it('should report the line number if they are known', () => {
+        testInjector.options.clearTextReporter.allowColor = false;
+        const report = factory.mutationTestReportSchemaMutationTestResult({
+          testFiles: {
+            'foo.spec.js': factory.mutationTestReportSchemaTestFile({
+              tests: [
+                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar', location: { start: { line: 7, column: 1 } } }),
+              ],
+            }),
+          },
+        });
+        act(report);
+        expect(stdoutStub).calledWithMatch(sinon.match('✘ foo should bar [line 7] (covered 0)'));
+      });
+
       it('should merge deep directories with only one entry', () => {
         testInjector.options.clearTextReporter.allowColor = false;
         const report = factory.mutationTestReportSchemaMutationTestResult({

@@ -37,6 +37,7 @@ export class ClearTextReporter implements Reporter {
   }
 
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+    this.writeLine();
     this.reportAllTests(metrics);
     this.reportAllMutants(metrics);
     this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
@@ -46,6 +47,9 @@ export class ClearTextReporter implements Reporter {
     function indent(depth: number) {
       return new Array(depth).fill('  ').join('');
     }
+    const formatTestLine = (test: TestModel, state: string): string => {
+      return `${this.color('grey', `${test.name}${test.location ? ` [line ${test.location.start.line}]` : ''}`)} (${state})`;
+    };
 
     if (metrics.testMetrics) {
       const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
@@ -58,17 +62,15 @@ export class ClearTextReporter implements Reporter {
         currentResult.file?.tests.forEach((test) => {
           switch (test.status) {
             case TestStatus.Killing:
-              this.writeLine(
-                `${indent(depth + 1)}${this.color('greenBright', '✓')} ${this.color('grey', test.name)} (killed ${test.killedMutants?.length})`
-              );
+              this.writeLine(`${indent(depth + 1)}${this.color('greenBright', '✓')} ${formatTestLine(test, `killed ${test.killedMutants?.length}`)}`);
               break;
             case TestStatus.Covering:
               this.writeLine(
-                `${indent(depth + 1)}${this.color('blueBright', '~')} ${this.color('grey', test.name)} (covered ${test.coveredMutants?.length})`
+                `${indent(depth + 1)}${this.color('blueBright', '~')} ${formatTestLine(test, `covered ${test.coveredMutants?.length}`)}`
               );
               break;
             case TestStatus.NotCovering:
-              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${this.color('grey', test.name)} (covered 0)`);
+              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${formatTestLine(test, 'covered 0')}`);
               break;
           }
         });
