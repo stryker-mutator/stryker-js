@@ -39,7 +39,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "mutation-testing-report-schema": "~1.5.2",
+    "mutation-testing-report-schema": "~1.7.1",
     "surrial": "~2.0.2",
     "tslib": "~2.2.0"
   },
