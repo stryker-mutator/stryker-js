@@ -1,17 +1,15 @@
 import os from 'os';
 
 import { hasMagic } from 'glob';
-
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
+import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
-import { isWarningEnabled } from '../utils/object-utils';
 import { CommandTestRunner } from '../test-runner/command-test-runner';
 import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input';
 
@@ -164,34 +162,4 @@ validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidato
 export function validateOptions(options: Record<string, unknown>, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
   return deepFreeze(options) as StrykerOptions;
-}
-
-markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger): StrykerOptions {
-  const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
-
-  if (isWarningEnabled('unknownOptions', options.warnings)) {
-    const schemaKeys = Object.keys(schema.properties!);
-    const unknownPropertyNames = Object.keys(options)
-      .filter((key) => !key.endsWith('_comment'))
-      .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
-      .filter((key) => !schemaKeys.includes(key));
-
-    if (unknownPropertyNames.length) {
-      unknownPropertyNames.forEach((unknownPropertyName) => {
-        log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
-      });
-
-      const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unknownOptions').build();
-
-      log.warn(`Possible causes:
-   * Is it a typo on your end?
-   * Did you only write this property as a comment? If so, please postfix it with "_comment".
-   * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
-   * The plugin that is using it did not contribute explicit validation. 
-   (disable "${p}" to ignore this warning)`);
-    }
-  }
-
-  return options;
 }

@@ -221,6 +221,11 @@
           "description": "decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.",
           "type": "boolean",
           "default": true
+        },
+        "unserializableOptions": {
+          "description": "decide whether or not to log warnings when a configuration options is unserializable. For example, using a /regex/ in your config options.",
+          "type": "boolean",
+          "default": true
         }
       }
     }

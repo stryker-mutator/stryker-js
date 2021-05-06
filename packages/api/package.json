@@ -41,7 +41,6 @@
   "dependencies": {
     "mutation-testing-report-schema": "1.7.1",
     "mutation-testing-metrics": "1.7.2",
-    "surrial": "~2.0.2",
     "tslib": "~2.2.0"
   },
   "devDependencies": {
