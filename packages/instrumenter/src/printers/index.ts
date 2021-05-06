@@ -19,6 +19,8 @@ export function print(file: Ast): string {
       return jsPrint(file, context);
     case AstFormat.TS:
       return tsPrint(file, context);
+    case AstFormat.Tsx:
+      return tsPrint(file, context);
     case AstFormat.Html:
       return htmlPrint(file, context);
   }

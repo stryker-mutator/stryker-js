@@ -3,7 +3,7 @@ import { File, Range } from '@stryker-mutator/api/core';
 import { notEmpty } from '@stryker-mutator/util';
 
 import { createParser, getFormat, ParserOptions } from './parsers';
-import { AstFormat, HtmlAst, JSAst, TSAst } from './syntax';
+import { AstFormat, HtmlAst, ScriptAst } from './syntax';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
@@ -19,6 +19,7 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
   switch (ast.format) {
     case AstFormat.JS:
     case AstFormat.TS:
+    case AstFormat.Tsx:
       return new File(file.name, disableTypeCheckingInBabelAst(ast));
     case AstFormat.Html:
       return new File(file.name, disableTypeCheckingInHtml(ast));
@@ -30,7 +31,7 @@ function isJSFileWithoutTSDirectives(file: File) {
   return (format === AstFormat.TS || format === AstFormat.JS) && !tsDirectiveLikeRegEx.test(file.textContent);
 }
 
-function disableTypeCheckingInBabelAst(ast: JSAst | TSAst): string {
+function disableTypeCheckingInBabelAst(ast: ScriptAst): string {
   return prefixWithNoCheck(removeTSDirectives(ast.rawContent, ast.root.comments));
 }
 

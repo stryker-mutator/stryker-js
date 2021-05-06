@@ -8,15 +8,11 @@ import { File } from '@babel/core';
 import { placeMutants } from '../mutant-placers';
 import { mutate } from '../mutators';
 import { instrumentationBabelHeader, isTypeNode, isImportDeclaration, locationIncluded, locationOverlaps } from '../util/syntax-helpers';
-import { AstFormat } from '../syntax';
+import { ScriptFormat } from '../syntax';
 
 import { AstTransformer } from '.';
 
-export const transformBabel: AstTransformer<AstFormat.JS | AstFormat.TS> = (
-  { root, originFileName, rawContent, offset },
-  mutantCollector,
-  { options }
-) => {
+export const transformBabel: AstTransformer<ScriptFormat> = ({ root, originFileName, rawContent, offset }, mutantCollector, { options }) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
