@@ -18,7 +18,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestRunResult } from '../../src/jest-run-result';
 import { state } from '../../src/messaging';
 
-describe.only(JestTestRunner.name, () => {
+describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
 
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
