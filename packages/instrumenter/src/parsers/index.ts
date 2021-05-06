@@ -3,7 +3,7 @@ import path from 'path';
 import { AstFormat, AstByFormat } from '../syntax';
 
 import { createParser as createJSParser } from './js-parser';
-import { parse as tsParse } from './ts-parser';
+import { parseTS, parseTsx } from './ts-parser';
 import { parse as htmlParse } from './html-parser';
 import { ParserOptions } from './parser-options';
 
@@ -16,12 +16,12 @@ export function createParser(
   return function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
     const format = getFormat(fileName, formatOverride);
     switch (format) {
-      case AstFormat.TSX:
-        return tsParse(code, fileName, true) as Promise<AstByFormat[T]>;
       case AstFormat.JS:
         return jsParse(code, fileName) as Promise<AstByFormat[T]>;
+      case AstFormat.Tsx:
+        return parseTsx(code, fileName) as Promise<AstByFormat[T]>;
       case AstFormat.TS:
-        return tsParse(code, fileName) as Promise<AstByFormat[T]>;
+        return parseTS(code, fileName) as Promise<AstByFormat[T]>;
       case AstFormat.Html:
         return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
     }
@@ -40,8 +40,9 @@ export function getFormat(fileName: string, override?: AstFormat): AstFormat {
       case '.cjs':
         return AstFormat.JS;
       case '.ts':
-      case '.tsx':
         return AstFormat.TS;
+      case '.tsx':
+        return AstFormat.Tsx;
       case '.vue':
       case '.html':
       case '.htm':

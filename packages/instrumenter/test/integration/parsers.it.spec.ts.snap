@@ -6595,7 +6595,7 @@ export default Badge;
 
 exports[`parsers integration should allow to parse a tsx file 1`] = `
 Object {
-  "format": "ts",
+  "format": "tsx",
   "originFileName": "App.tsx",
   "rawContent": "const app = <Html foo={bar}></Html>
 ",
