@@ -17,7 +17,7 @@
     "directory": "packages/core"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "keywords": [
     "mutation testing",

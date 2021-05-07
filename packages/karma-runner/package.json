@@ -16,7 +16,7 @@
     "directory": "packages/karma-runner"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "keywords": [
     "stryker",
