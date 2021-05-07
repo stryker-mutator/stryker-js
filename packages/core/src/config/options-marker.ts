@@ -20,7 +20,7 @@ export function markOptions(options: StrykerOptions, schema: JSONSchema7, log: L
   return options;
 }
 
-function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger): void {
+function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger) {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
 
   if (isWarningEnabled('unknownOptions', options.warnings)) {
@@ -47,7 +47,7 @@ function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: L
   }
 }
 
-function markUnserializableOptions(options: StrykerOptions, log: Logger): void {
+function markUnserializableOptions(options: StrykerOptions, log: Logger) {
   if (isWarningEnabled('unserializableOptions', options.warnings)) {
     const unserializables = findUnserializables(options);
     if (unserializables) {
