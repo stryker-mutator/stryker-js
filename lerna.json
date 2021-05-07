@@ -11,6 +11,7 @@
         "epic/*"
       ],
       "conventionalCommits": true,
+      "createRelease": "github",
       "forcePublish": true,
       "exact": true
     }
