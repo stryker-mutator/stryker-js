@@ -223,7 +223,7 @@
           "default": true
         },
         "unserializableOptions": {
-          "description": "decide whether or not to log warnings when a configuration options is unserializable. For example, using a /regex/ in your config options.",
+          "description": "decide whether or not to log warnings when a configuration options are unserializable. For example, using a `/regex/` or `function` in your configuration options.",
           "type": "boolean",
           "default": true
         }
