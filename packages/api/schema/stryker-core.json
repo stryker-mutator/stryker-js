@@ -270,7 +270,7 @@
     "coverageAnalysis": {
       "$ref": "#/definitions/coverageAnalysis",
       "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
-      "default": "off"
+      "default": "perTest"
     },
     "clearTextReporter": {
       "description": "The options for the clear text reporter.",

@@ -100,10 +100,16 @@ export class OptionsValidator {
         options.concurrency = options.maxConcurrentTestRunners;
       }
     }
-    if (CommandTestRunner.is(options.testRunner) && options.testRunnerNodeArgs.length) {
-      this.log.warn(
-        'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
-      );
+    if (CommandTestRunner.is(options.testRunner)) {
+      if (options.testRunnerNodeArgs.length) {
+        this.log.warn(
+          'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+        );
+      }
+      if (options.coverageAnalysis !== 'off') {
+        // Downgrade coverage analysis when the command test runner is used
+        options.coverageAnalysis = 'off';
+      }
     }
     options.mutate.forEach((mutateString, index) => {
       const match = MUTATION_RANGE_REGEX.exec(mutateString);

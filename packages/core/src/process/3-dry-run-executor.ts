@@ -125,7 +125,9 @@ export class DryRunExecutor {
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
-    this.log.info('Starting initial test run. This may take a while.');
+    this.log.info(
+      `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
+    );
     this.log.debug(`Using timeout of ${dryRunTimeout} ms.`);
     const dryRunResult = await testRunner.dryRun({ timeout: dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
