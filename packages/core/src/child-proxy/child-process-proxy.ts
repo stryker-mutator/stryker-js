@@ -127,7 +127,7 @@ export class ChildProcessProxy<T> implements Disposable {
 
   private listenForMessages() {
     this.worker.on('message', (serializedMessage: string) => {
-      const message: ParentMessage = deserialize(serializedMessage);
+      const message = deserialize<ParentMessage>(serializedMessage);
       switch (message.kind) {
         case ParentMessageKind.Initialized:
           this.initTask.resolve(undefined);
