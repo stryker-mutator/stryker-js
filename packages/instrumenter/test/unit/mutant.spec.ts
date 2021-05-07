@@ -1,6 +1,7 @@
 import { types } from '@babel/core';
 
 import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
+import { location } from '@stryker-mutator/test-helpers/src/factory';
 
 import { expect } from 'chai';
 
@@ -33,7 +34,7 @@ describe(Mutant.name, () => {
         mutatorName: 'fooMutator',
         ignoreReason: 'ignore',
       });
-      mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
+      mutant.original.loc = location();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',
@@ -51,7 +52,7 @@ describe(Mutant.name, () => {
         replacement: types.stringLiteral('Stryker was here!'),
         mutatorName: 'fooMutator',
       });
-      mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
+      mutant.original.loc = location();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',
@@ -74,7 +75,6 @@ describe(Mutant.name, () => {
 
       // Assert
       expect(actual.location).deep.eq({ start: { line: 4, column: 3 }, end: { line: 4, column: 8 } });
-      expect(actual.range).deep.eq([45, 50]);
     });
   });
 });

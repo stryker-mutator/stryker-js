@@ -85,8 +85,8 @@ describe(sut.name, () => {
     it('should report onAllMutantsMatchedWithTests', () => {
       // Arrange
       const mutants = [
-        factory.mutant({ id: '1', fileName: 'foo.js', mutatorName: 'fooMutator', replacement: '<=', range: [0, 1] }),
-        factory.mutant({ id: '2', fileName: 'bar.js', mutatorName: 'barMutator', replacement: '{}', range: [2, 3] }),
+        factory.mutant({ id: '1', fileName: 'foo.js', mutatorName: 'fooMutator', replacement: '<=', location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } } }),
+        factory.mutant({ id: '2', fileName: 'bar.js', mutatorName: 'barMutator', replacement: '{}', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } } }),
       ];
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
@@ -105,7 +105,7 @@ describe(sut.name, () => {
           replacement: '<=',
           static: true,
           estimatedNetTime: 42,
-          range: [0, 1],
+          location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
         }),
         factory.mutantTestCoverage({
           id: '2',
@@ -114,7 +114,7 @@ describe(sut.name, () => {
           replacement: '{}',
           static: true,
           estimatedNetTime: 42,
-          range: [2, 3],
+          location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
         }),
       ]);
     });

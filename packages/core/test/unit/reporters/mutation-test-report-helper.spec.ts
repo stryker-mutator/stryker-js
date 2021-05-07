@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { File, Location, MutantResult, MutantStatus, Range, schema } from '@stryker-mutator/api/core';
+import { File, Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import * as strykerUtil from '@stryker-mutator/util';
@@ -182,7 +182,6 @@ describe(MutationTestReportHelper.name, () => {
           description: 'this is mutant foo',
           duration: 42,
           location: factory.location(),
-          range: [1, 2],
           static: true,
           statusReason: 'smacked on the head',
           testsCompleted: 32,
@@ -370,7 +369,6 @@ describe(MutationTestReportHelper.name, () => {
           mutatorName: 'Foo',
           fileName: 'foo.js',
           status: MutantStatus.Killed,
-          range: [1, 2],
           location: { start: { line: 1, column: 2 }, end: { line: 4, column: 5 } },
           replacement: '+',
           id: '1',
@@ -432,7 +430,6 @@ describe(MutationTestReportHelper.name, () => {
         // Arrange
         const sut = createSut();
         const location: Location = Object.freeze({ start: Object.freeze({ line: 1, column: 5 }), end: Object.freeze({ line: 3, column: 1 }) });
-        const range: Range = [21, 35];
 
         // Act
         const actual = sut.reportCheckFailed(
@@ -442,7 +439,6 @@ describe(MutationTestReportHelper.name, () => {
             location,
             replacement: '{}',
             mutatorName: 'fooMutator',
-            range,
           }),
           factory.failedCheckResult()
         );
@@ -452,7 +448,6 @@ describe(MutationTestReportHelper.name, () => {
           id: '32',
           location,
           mutatorName: 'fooMutator',
-          range,
           fileName: 'add.js',
           replacement: '{}',
         };
@@ -486,7 +481,6 @@ describe(MutationTestReportHelper.name, () => {
           id: '3',
           location: factory.location(),
           mutatorName: 'fooMutator',
-          range: [1, 3],
           replacement: '"bar"',
           coveredBy: ['1'],
           static: false,
@@ -503,7 +497,6 @@ describe(MutationTestReportHelper.name, () => {
           id: '3',
           location: factory.location(),
           mutatorName: 'fooMutator',
-          range: [1, 3],
           replacement: '"bar"',
           coveredBy: ['1'],
           static: false,

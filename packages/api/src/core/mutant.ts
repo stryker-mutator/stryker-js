@@ -1,7 +1,5 @@
 import * as schema from 'mutation-testing-report-schema';
 
-import { Range } from './range';
-
 export { MutantStatus } from 'mutation-testing-report-schema';
 
 // We're reusing the `MutantResult` interface here to acquire uniformity.
@@ -14,11 +12,6 @@ export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'm
    * The file name from which this mutant originated
    */
   fileName: string;
-  /**
-   * The range of this mutant (from/to within the file)
-   * deprecate?
-   */
-  range: Range;
   /**
    * Actual mutation that has been applied.
    */

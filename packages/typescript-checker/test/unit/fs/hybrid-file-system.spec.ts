@@ -125,7 +125,7 @@ describe('fs', () => {
         sut.watchFile('a.js', sinon.stub());
 
         // Act
-        sut.mutate({ fileName: 'a.js', range: [2, 3], replacement: '-' });
+        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
 
         // Assert
         expect(sut.getFile('a.js')!.content).eq('a - b');
@@ -134,7 +134,7 @@ describe('fs', () => {
       it('should convert path separator to forward slashes', () => {
         helper.readFileStub.returns('a + b');
         sut.watchFile('test/foo/a.js', sinon.stub());
-        sut.mutate({ fileName: 'test\\foo\\a.js', range: [2, 3], replacement: '-' });
+        sut.mutate({ fileName: 'test\\foo\\a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
         expect(sut.getFile('test/foo/a.js')!.content).eq('a - b');
       });
 
@@ -145,7 +145,7 @@ describe('fs', () => {
         sut.watchFile('a.js', watcher);
 
         // Act
-        sut.mutate({ fileName: 'a.js', range: [2, 3], replacement: '-' });
+        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
 
         // Assert
         expect(watcher).calledWith('a.js', ts.FileWatcherEventKind.Changed);
@@ -158,8 +158,8 @@ describe('fs', () => {
         sut.watchFile('b.js', sinon.stub());
 
         // Act
-        sut.mutate({ fileName: 'a.js', range: [2, 3], replacement: '-' });
-        sut.mutate({ fileName: 'b.js', range: [6, 7], replacement: '-' });
+        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
+        sut.mutate({ fileName: 'b.js', location: { start: { line: 0, column: 6 }, end: { line: 0, column: 7 } }, replacement: '-' });
 
         // Assert
         expect(sut.getFile('a.js')!.content).eq('a + b');
@@ -167,7 +167,7 @@ describe('fs', () => {
       });
 
       it("should throw if file doesn't exist", () => {
-        expect(() => sut.mutate({ fileName: 'a.js', range: [2, 3], replacement: '-' })).throws('File "a.js" cannot be found.');
+        expect(() => sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' })).throws('File "a.js" cannot be found.');
       });
     });
 

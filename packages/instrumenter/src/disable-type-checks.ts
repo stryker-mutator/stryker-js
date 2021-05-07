@@ -1,5 +1,5 @@
 import { types } from '@babel/core';
-import { File, Range } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/api/core';
 import { notEmpty } from '@stryker-mutator/util';
 
 import { createParser, getFormat, ParserOptions } from './parsers';
@@ -69,13 +69,13 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
   const directiveRanges = comments
     ?.map(tryParseTSDirective)
     .filter(notEmpty)
-    .sort((a, b) => a[0] - b[0]);
+    .sort((a, b) => a.startPos - b.startPos);
   if (directiveRanges) {
     let currentIndex = 0;
     let pruned = '';
     for (const directiveRange of directiveRanges) {
-      pruned += text.substring(currentIndex, directiveRange[0]);
-      currentIndex = directiveRange[1];
+      pruned += text.substring(currentIndex, directiveRange.startPos);
+      currentIndex = directiveRange.endPos;
     }
     pruned += text.substr(currentIndex);
     return pruned;
@@ -84,11 +84,11 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
   }
 }
 
-function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): Range | undefined {
+function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): { startPos: number, endPos: number } | undefined {
   const match = commentDirectiveRegEx.exec(comment.value);
   if (match) {
     const directiveStartPos = comment.start + match[1].length + 2; // +2 to account for the `//` or `/*` start character
-    return [directiveStartPos, directiveStartPos + match[2].length + 1];
+    return { startPos: directiveStartPos, endPos: directiveStartPos + match[2].length + 1 };
   }
   return undefined;
 }

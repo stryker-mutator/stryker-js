@@ -1,7 +1,6 @@
 export { File } from './file';
 export { Position } from './position';
 export { Location } from './location';
-export { Range } from './range';
 export * from './mutant';
 export * from '../../src-generated/stryker-core';
 export * from './report-types';
