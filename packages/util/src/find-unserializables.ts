@@ -8,9 +8,7 @@ export interface UnserializableDescription {
 export function findUnserializables(thing: unknown): UnserializableDescription[] | undefined {
   switch (typeof thing) {
     case 'number':
-      return isNaN(thing) || thing === Infinity || thing === -Infinity
-        ? [{ reason: `Number value \`${thing}\` has no JSON representation`, path: [] }]
-        : undefined;
+      return !isFinite(thing) ? [{ reason: `Number value \`${thing}\` has no JSON representation`, path: [] }] : undefined;
     case 'string':
     case 'boolean':
     case 'undefined':
