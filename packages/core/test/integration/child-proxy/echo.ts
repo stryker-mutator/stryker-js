@@ -1,4 +1,3 @@
-import { File } from '@stryker-mutator/api/core';
 import { tokens } from '@stryker-mutator/api/plugin';
 import { getLogger } from 'log4js';
 
@@ -20,19 +19,11 @@ export class Echo {
     });
   }
 
-  public echoFile(file: File): string {
-    return file.textContent;
-  }
-
   public exit(code: number): Promise<unknown> {
     process.exit(code);
     return new Promise(() => {
       /* Never resolve */
     });
-  }
-
-  public readFile(): File {
-    return new File('foobar.txt', 'hello foobar');
   }
 
   public warning(): void {

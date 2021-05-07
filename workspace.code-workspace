@@ -91,13 +91,14 @@
       "source.fixAll.eslint": true
     },
     "cSpell.words": [
-      "Surrializable",
+      "Unserializable",
+      "Unserializables",
+      "Whitespaces",
       "execa",
       "memfs",
       "nocheck",
       "preprocessors",
-      "serializable",
-      "surrialize"
+      "serializable"
     ]
   },
   "extensions": {

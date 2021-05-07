@@ -67,12 +67,6 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     return sut.mutantRun(factory.mutantRunOptions());
   }
 
-  it('should be able to receive a regex', async () => {
-    await arrangeSut('discover-regex');
-    const result = await actDryRun();
-    expect(result.status).eq(DryRunStatus.Complete);
-  });
-
   it('should pass along the coverage result from the test runner behind', async () => {
     await arrangeSut('coverage-reporting');
     const result = await actDryRun();

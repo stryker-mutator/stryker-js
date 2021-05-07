@@ -1,7 +1,7 @@
 import childProcess from 'child_process';
 import os from 'os';
 
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
 import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
@@ -87,7 +87,7 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private send(message: WorkerMessage) {
-    this.worker.send(serialize(message, [File]));
+    this.worker.send(serialize(message));
   }
 
   private initProxy(): Promisified<T> {
@@ -127,7 +127,7 @@ export class ChildProcessProxy<T> implements Disposable {
 
   private listenForMessages() {
     this.worker.on('message', (serializedMessage: string) => {
-      const message: ParentMessage = deserialize(serializedMessage, [File]);
+      const message = deserialize<ParentMessage>(serializedMessage);
       switch (message.kind) {
         case ParentMessageKind.Initialized:
           this.initTask.resolve(undefined);
