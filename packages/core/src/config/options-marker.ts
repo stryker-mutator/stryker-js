@@ -55,7 +55,7 @@ function markUnserializableOptions(options: StrykerOptions, log: Logger) {
         log.warn(
           `Config option "${path.join(
             '.'
-          )}" is not (fully) serializable. ${reason}. Any test runner or checker worker processes might not receive this value is intended.`
+          )}" is not (fully) serializable. ${reason}. Any test runner or checker worker processes might not receive this value as intended.`
         )
       );
       const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unserializableOptions').build();

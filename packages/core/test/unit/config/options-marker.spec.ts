@@ -62,7 +62,7 @@ describe(markOptions.name, () => {
       };
       markOptions(testInjector.options, strykerCoreSchema, testInjector.logger);
       expect(testInjector.logger.warn).calledWith(
-        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value is intended.'
+        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.'
       );
     });
     it('should not warn about unserializable values when the warning is disabled', () => {

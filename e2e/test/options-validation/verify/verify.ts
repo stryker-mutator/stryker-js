@@ -44,7 +44,7 @@ describe('Options validation', () => {
     });
 
     it('should report about unserializable options', () => {
-      expect(result.stdout).includes(' Config option "myCustomReporter.filter" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value is intended.');
+      expect(result.stdout).includes(' Config option "myCustomReporter.filter" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.');
     });
   });
 });
