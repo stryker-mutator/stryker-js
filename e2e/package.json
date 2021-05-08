@@ -42,8 +42,9 @@
     "webpack-cli": "~3.3.12"
   },
   "scripts": {
-    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
+    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && npm run link-parent-bin",
     "install-local-dependencies": "ts-node tasks/install-local-dependencies",
+    "link-parent-bin": "link-parent-bin -c test --link-local-dependencies true",
     "test": "ts-node tasks/run-e2e-tests.ts"
   },
   "localDependencies": {
