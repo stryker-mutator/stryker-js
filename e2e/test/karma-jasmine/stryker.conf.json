@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": ["src/*.js"],
+  "testRunner": "karma",
+  "reporters": ["clear-text", "html", "event-recorder"],
+  "concurrency": 2,
+  "karma": {
+    "config": {
+      "files": ["src/*.js", "test/*.js"],
+      "client": {
+        "clearContext": false
+      }
+    }
+  },
+  "timeoutMS": 60000
+}

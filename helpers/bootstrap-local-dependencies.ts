@@ -33,12 +33,13 @@ interface Package {
 
 /**
  * Installs local dependencies in one go,
- * reads package.json and test/* /package.json files and installs the local dependencies marked there
+ * reads the package.json files and installs the local dependencies marked there.
+ * The packageJsonGlobs default to ./package.json and test/* /package.json files 
  * @param directory the directory where the tests live
  */
-export async function bootstrapLocalDependencies(directory: string) {
-  console.log('bootstrap ' + path.resolve(directory));
-  const files = await globAsPromised('{package.json,test/*/package.json}', { cwd: path.resolve(directory) });
+export async function bootstrapLocalDependencies(directory: string, packageJsonGlobs = ['package.json', 'test/*/package.json']) {
+  console.log(`bootstrap ${path.resolve(directory)} (using ${packageJsonGlobs.join(',')})`);
+  const files = (await Promise.all(packageJsonGlobs.map((globPattern) => globAsPromised(globPattern, { cwd: path.resolve(directory) })))).flat();
   const packages = await Promise.all(files.map(fileName => readFile(fileName)
     .then(content => ({ dir: path.dirname(fileName), content: JSON.parse(content) as Package }))));
   const sourcesByTarget: ListByPackage = {};

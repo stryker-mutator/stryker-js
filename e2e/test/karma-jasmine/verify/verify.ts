@@ -7,9 +7,10 @@ describe('Verify stryker has ran correctly', () => {
       metrics: produceMetrics({
         killed: 16,
         mutationScore: 64,
-        mutationScoreBasedOnCoveredCode: 64,
-        survived: 9,
-        totalCovered: 25,
+        mutationScoreBasedOnCoveredCode: 94.12,
+        survived: 1,
+        noCoverage: 8,
+        totalCovered: 17,
         totalDetected: 16,
         totalMutants: 25,
         totalUndetected: 9,
