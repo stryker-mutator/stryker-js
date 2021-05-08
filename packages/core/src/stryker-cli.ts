@@ -44,7 +44,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(require('../../package.json').version)
+      .version(require('../../package.json').version as string)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -60,12 +60,17 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        'A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js',
+        'A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        list
+      )
+      .option(
+        '--ignorePatterns <filesToIgnore>',
+        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js',
+        'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
         list
       )
       .option(

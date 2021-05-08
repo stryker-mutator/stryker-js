@@ -37,6 +37,25 @@ describe(Instrumenter.name, () => {
     expect(actualResult.files).deep.eq([new File('foo.js', output[0]), new File('bar.ts', output[1])]);
   });
 
+  it('should convert line numbers to be 1-based (for babel internals)', async () => {
+    // Arrange
+    const { input } = arrangeTwoFiles();
+
+    // Act
+    await sut.instrument(
+      input,
+      createInstrumenterOptions({ mutationRanges: [{ fileName: 'foo.js', start: { line: 0, column: 0 }, end: { line: 6, column: 42 } }] })
+    );
+
+    // Assert
+    const actual = helper.transformerStub.getCall(0).args[2];
+    const expected: transformers.TransformerOptions = createInstrumenterOptions({
+      excludedMutations: [],
+      mutationRanges: [{ fileName: 'foo.js', start: { line: 1, column: 0 }, end: { line: 7, column: 42 } }],
+    });
+    expect(actual).deep.eq({ options: expected });
+  });
+
   it('should log about instrumenting', async () => {
     await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
     expect(testInjector.logger.debug).calledWith('Instrumenting %d source files with mutants', 2);

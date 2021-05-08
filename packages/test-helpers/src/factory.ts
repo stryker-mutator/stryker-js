@@ -79,6 +79,7 @@ export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
 export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
   preprocessorErrors: true,
+  unserializableOptions: true,
 }));
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>

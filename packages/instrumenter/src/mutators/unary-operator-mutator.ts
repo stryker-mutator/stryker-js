@@ -5,7 +5,7 @@ import { NodeMutation } from '../mutant';
 
 import { NodeMutator } from '.';
 
-enum UnaryOperators {
+enum UnaryOperator {
   '+' = '-',
   '-' = '+',
   '~' = '',
@@ -14,13 +14,12 @@ enum UnaryOperators {
 export class UnaryOperatorMutator implements NodeMutator {
   public name = 'UnaryOperator';
 
-  private readonly operators = UnaryOperators;
-
   public mutate(path: NodePath): NodeMutation[] {
     if (path.isUnaryExpression() && this.isSupported(path.node.operator) && path.node.prefix) {
-      const mutatedOperators = this.operators[path.node.operator];
-      const replacement =
-        mutatedOperators.length > 0 ? types.unaryExpression(mutatedOperators as any, path.node.argument) : types.cloneNode(path.node.argument, false);
+      const mutatedOperator = UnaryOperator[path.node.operator];
+      const replacement = mutatedOperator.length
+        ? types.unaryExpression(mutatedOperator as '-' | '+', path.node.argument)
+        : types.cloneNode(path.node.argument, false);
 
       return [
         {
@@ -33,7 +32,7 @@ export class UnaryOperatorMutator implements NodeMutator {
     return [];
   }
 
-  private isSupported(operator: string): operator is keyof typeof UnaryOperators {
-    return Object.keys(this.operators).includes(operator);
+  private isSupported(operator: string): operator is keyof typeof UnaryOperator {
+    return Object.keys(UnaryOperator).includes(operator);
   }
 }

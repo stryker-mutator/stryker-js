@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "grunt test"
+    "pretest": "rimraf reports stryker.log",
+    "test": "grunt test",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
   }
 }

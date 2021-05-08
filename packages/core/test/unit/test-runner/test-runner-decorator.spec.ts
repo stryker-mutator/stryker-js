@@ -17,6 +17,7 @@ describe('TestRunnerDecorator', () => {
   function actArrangeAssert(methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         testRunner[methodName].resolves('some value' as any);
         return expect((sut[methodName] as any)()).to.eventually.eq('some value');
       });

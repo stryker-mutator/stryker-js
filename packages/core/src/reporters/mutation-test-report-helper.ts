@@ -10,7 +10,7 @@ import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } fr
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
-import { InputFileCollection } from '../input/input-file-collection';
+import { InputFileCollection } from '../input';
 import { setExitCode } from '../utils/object-utils';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
@@ -152,7 +152,7 @@ export class MutationTestReportHelper {
       const fileResult = acc[mutantResult.fileName] ?? (acc[mutantResult.fileName] = this.toFileResult(mutantResult.fileName));
       fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
       return acc;
-    }, Object.create(null));
+    }, {});
   }
 
   private toTestFiles(remapTestId: (id: string) => string): schema.TestFileDefinitionDictionary {
@@ -162,7 +162,7 @@ export class MutationTestReportHelper {
       const testFile = acc[fileName] ?? (acc[fileName] = this.toTestFile(fileName));
       testFile.tests.push(test);
       return acc;
-    }, Object.create(null));
+    }, {});
   }
 
   private toFileResult(fileName: string): schema.FileResult {
@@ -281,6 +281,6 @@ export class MutationTestReportHelper {
         acc[dependency[0]] = dependency[1];
       }
       return acc;
-    }, Object.create(null));
+    }, {});
   }
 }

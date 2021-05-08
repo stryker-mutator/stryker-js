@@ -25,7 +25,7 @@ Please adhere to our [editorconfig](https://editorconfig.org) and [eslint](https
 
 We configured the tslint extension to run on save in or [vscode workspace](#vscode-environment-configuration).
 
-## Runner StrykerJS locally
+## Running StrykerJS locally
 
 We use [Lerna](https://lerna.js.org/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker-js/tree/master/packages). Commands such as `npm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `npm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
 
@@ -41,6 +41,22 @@ Here are some common tasks to use. Just remember that they don't include compili
 * Use `npm test` to run the unit tests. Using `npm test` in one of the package folders also works.
 * Use `npm run e2e` will install and execute the end to end tests (located in the e2e folder). These take a while.
 * Use `npm run perf` will install and execute the performance tests (located in the perf folder). These take a while.
+
+To run local changes you made in StrykerJS in an actual project you have two options:
+1. You can use [install-local](https://www.npmjs.com/package/install-local) to install StrykerJS with plugins in your project. Don't forget to include `instrumenter`, `core`, `util` and `api` in each install. For example, if you want to install Stryker with the jest-runner: 
+    ```sh
+    cd my-project
+    npx install-local ../stryker-js/packages/core ../stryker-js/packages/util ../stryker-js/packages/api ../stryker-js/packages/instrumenter ../stryker-js/packages/jest-runner
+    ```
+2. You can simply cd into your test project, add your plugin inside `"plugins"` configurtion and run Stryker from the command line. For example:
+    ```sh
+    cd my-project
+    open stryker.conf.json 
+    # Add `"plugins": ["/home/username/stryker-js/packages/jest-runner"]` inside the stryker.conf.json
+    /home/username/stryker-js/packages/core/bin/stryker run
+    ```
+    This way you can also debug from vscode using the "Attach" configuration and running Stryker from `my-project` like this: `node --inspect-brk /home/username/stryker-js/packages/core/bin/stryker run`.
+  
 
 ## VSCode environment configuration
 

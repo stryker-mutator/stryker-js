@@ -69,7 +69,7 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
   // For example when setting `logLevel: 4`, we don't want to see the error specifying that logLevel should be a string,
   // if the other error already specified that it should be one of the enum values.
   const nonShadowingTypeErrors = typeErrors.filter(
-    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.dataPath === typeError.dataPath)
+    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.instancePath === typeError.instancePath)
   );
   const typeErrorsMerged = mergeTypeErrorsByPath(nonShadowingTypeErrors);
   return [...nonTypeErrors, ...typeErrorsMerged];
@@ -85,8 +85,10 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
  */
 function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObject[]): ErrorObject[] {
   return singleErrors.filter((error) => {
-    if (metaErrors.some((metaError) => error.dataPath.startsWith(metaError.dataPath))) {
-      return !singleErrors.some((otherError) => otherError.dataPath.startsWith(error.dataPath) && otherError.dataPath.length > error.dataPath.length);
+    if (metaErrors.some((metaError) => error.instancePath.startsWith(metaError.instancePath))) {
+      return !singleErrors.some(
+        (otherError) => otherError.instancePath.startsWith(error.instancePath) && otherError.instancePath.length > error.instancePath.length
+      );
     } else {
       return true;
     }
@@ -105,7 +107,7 @@ function split<T>(items: T[], splitFn: (item: T) => boolean): [T[], T[]] {
  * @param typeErrors The type errors to merge by path
  */
 function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
-  const typeErrorsByPath = groupby(typeErrors, (error) => error.dataPath);
+  const typeErrorsByPath = groupby(typeErrors, (error) => error.instancePath);
   return Object.values(typeErrorsByPath).map(mergeTypeErrors);
 
   function mergeTypeErrors(errors: ErrorObject[]): ErrorObject {
@@ -124,7 +126,7 @@ function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
  * @param error The error to describe
  */
 function describeError(error: ErrorObject): string {
-  const errorPrefix = `Config option "${error.dataPath.substr(1)}"`;
+  const errorPrefix = `Config option "${error.instancePath.substr(1)}"`;
 
   switch (error.keyword) {
     case 'type':

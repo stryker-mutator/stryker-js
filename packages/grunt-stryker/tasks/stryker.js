@@ -17,7 +17,8 @@ module.exports = function (grunt) {
 
     var files = grunt.config.get(filesProperty);
     if (files) {
-      options.files = grunt.file.expand(grunt.util.toArray(files));
+      // Flip blacklist to a whitelist
+      options.ignorePatterns = ['**', ...grunt.file.expand(grunt.util.toArray(files)).map((file) => `!${file}`)];
     }
 
     var mutatedFiles = grunt.config.get(mutateProperty);

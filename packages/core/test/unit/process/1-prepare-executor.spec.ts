@@ -28,7 +28,7 @@ describe(PrepareExecutor.name, () => {
   let sut: PrepareExecutor;
 
   beforeEach(() => {
-    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js']);
+    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
     cliOptions = {};
     timerMock = sinon.createStubInstance(Timer);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
@@ -92,12 +92,12 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should reject when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
     await expect(sut.execute()).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
     await expect(sut.execute()).rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });

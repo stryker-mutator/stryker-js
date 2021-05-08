@@ -38,7 +38,7 @@ export class RetryDecorator extends TestRunnerDecorator {
     }
   }
 
-  private async run<T extends DryRunResult | MutantRunResult>(actRun: () => Promise<T>, attemptsLeft = 2, lastError?: Error): Promise<T | string> {
+  private async run<T extends DryRunResult | MutantRunResult>(actRun: () => Promise<T>, attemptsLeft = 2, lastError?: unknown): Promise<T | string> {
     if (attemptsLeft > 0) {
       try {
         return await actRun();

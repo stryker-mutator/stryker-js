@@ -2,7 +2,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { coreTokens } from '../../../src/di';
-import { InputFileResolver } from '../../../src/input/input-file-resolver';
+import { InputFileResolver } from '../../../src/input';
 import { resolveFromRoot } from '../../helpers/test-utils';
 
 const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'input-files');

@@ -129,7 +129,7 @@ describe(Stryker.name, () => {
       const expectedError = new Error('expected error for testing');
       prepareExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
-      expect(loggerMock.error).calledWith(expectedError);
+      expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
     });
 
     it('should disable `removeDuringDisposal` on the temp dir when dry run rejects', async () => {
@@ -145,7 +145,7 @@ describe(Stryker.name, () => {
       dryRunExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
       expect(getLoggerStub).calledWith('Stryker');
-      expect(loggerMock.error).calledWith(expectedError);
+      expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
     });
 
     it('should log a help message when log level "trace" is not enabled', async () => {

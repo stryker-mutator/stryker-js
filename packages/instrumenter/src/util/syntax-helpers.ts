@@ -201,3 +201,24 @@ const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.fr
 export function isImportDeclaration(path: NodePath): boolean {
   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
 }
+
+/**
+ * Determines if a location (needle) is included in an other location (haystack)
+ * @param haystack The range to look in
+ * @param needle the range to search for
+ */
+export function locationIncluded(haystack: types.SourceLocation, needle: types.SourceLocation): boolean {
+  const startIncluded =
+    haystack.start.line < needle.start.line || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
+  const endIncluded = haystack.end.line > needle.end.line || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
+  return startIncluded && endIncluded;
+}
+
+/**
+ * Determines if two locations overlap with each other
+ */
+export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocation): boolean {
+  const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
+  const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
+  return startIncluded && endIncluded;
+}

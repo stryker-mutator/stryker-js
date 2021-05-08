@@ -1,16 +1,17 @@
 import os from 'os';
 
+import { hasMagic } from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze, PropertyPathBuilder } from '@stryker-mutator/util';
+import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di';
 import { ConfigError } from '../errors';
-import { isWarningEnabled } from '../utils/object-utils';
 import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input';
 
 import { describeErrors } from './validation-errors';
 
@@ -67,6 +68,25 @@ export class OptionsValidator {
       );
       delete rawOptions.transpilers;
     }
+    if (Array.isArray(rawOptions.files)) {
+      const ignorePatternsName = propertyPath<StrykerOptions>('ignorePatterns');
+      const isString = (uncertain: unknown): uncertain is string => typeof uncertain === 'string';
+      const files = rawOptions.files.filter(isString);
+      const newIgnorePatterns: string[] = [
+        '**',
+        ...files.map((filePattern) =>
+          filePattern.startsWith(IGNORE_PATTERN_CHARACTER) ? filePattern.substr(1) : `${IGNORE_PATTERN_CHARACTER}${filePattern}`
+        ),
+      ];
+      delete rawOptions.files;
+      this.log.warn(
+        `DEPRECATED. Use of "files" is deprecated, please use "${ignorePatternsName}" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ${JSON.stringify(
+          newIgnorePatterns
+        )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`
+      );
+      const existingIgnorePatterns = Array.isArray(rawOptions[ignorePatternsName]) ? (rawOptions[ignorePatternsName] as unknown[]) : [];
+      rawOptions[ignorePatternsName] = [...newIgnorePatterns, ...existingIgnorePatterns];
+    }
   }
 
   private additionalValidation(options: StrykerOptions) {
@@ -85,6 +105,31 @@ export class OptionsValidator {
         'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
       );
     }
+    options.mutate.forEach((mutateString, index) => {
+      const match = MUTATION_RANGE_REGEX.exec(mutateString);
+      if (match) {
+        if (hasMagic(mutateString)) {
+          additionalErrors.push(
+            `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`
+          );
+        } else {
+          const [_, _fileName, mutationRange, startLine, _startColumn, endLine, _endColumn] = match;
+          const start = parseInt(startLine, 10);
+          const end = parseInt(endLine, 10);
+          if (start < 1) {
+            additionalErrors.push(
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid, line ${start} does not exist (lines start at 1).`
+            );
+          }
+          if (start > end) {
+            additionalErrors.push(
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid. The "from" line number (${start}) should be less then the "to" line number (${end}).`
+            );
+          }
+        }
+      }
+    });
+
     additionalErrors.forEach((error) => this.log.error(error));
     this.throwErrorIfNeeded(additionalErrors);
   }
@@ -117,34 +162,4 @@ validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidato
 export function validateOptions(options: Record<string, unknown>, optionsValidator: OptionsValidator): StrykerOptions {
   optionsValidator.validate(options);
   return deepFreeze(options) as StrykerOptions;
-}
-
-markUnknownOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
-export function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger): StrykerOptions {
-  const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
-
-  if (isWarningEnabled('unknownOptions', options.warnings)) {
-    const schemaKeys = Object.keys(schema.properties!);
-    const unknownPropertyNames = Object.keys(options)
-      .filter((key) => !key.endsWith('_comment'))
-      .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
-      .filter((key) => !schemaKeys.includes(key));
-
-    if (unknownPropertyNames.length) {
-      unknownPropertyNames.forEach((unknownPropertyName) => {
-        log.warn(`Unknown stryker config option "${unknownPropertyName}".`);
-      });
-
-      const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unknownOptions').build();
-
-      log.warn(`Possible causes:
-   * Is it a typo on your end?
-   * Did you only write this property as a comment? If so, please postfix it with "_comment".
-   * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
-   * The plugin that is using it did not contribute explicit validation. 
-   (disable "${p}" to ignore this warning)`);
-    }
-  }
-
-  return options;
 }
