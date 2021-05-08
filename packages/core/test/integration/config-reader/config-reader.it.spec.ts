@@ -79,7 +79,7 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
-      it('should use the default config if no stryker.conf file was found', () => {
+      it.only('should use the default config if no stryker.conf file was found', () => {
         process.chdir(resolveTestResource('no-config'));
 
         sut = createSut({});

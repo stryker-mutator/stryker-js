@@ -2,7 +2,7 @@ import childProcess from 'child_process';
 import os from 'os';
 
 import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
-import { errorToString, StrykerError } from '@stryker-mutator/util';
+import { errorToString } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
@@ -51,7 +51,7 @@ describe(CommandTestRunner.name, () => {
     it('should report failed test when the exit code != 0', async () => {
       timerMock.elapsedMs.returns(42);
       const sut = createSut();
-      const resultPromise = sut.dryRun({ coverageAnalysis: 'off' });
+      const resultPromise = sut.dryRun();
       await tick();
       childProcessMock.stdout.emit('data', 'x Test 1 failed');
       childProcessMock.stderr.emit('data', '1 != 2');
@@ -68,7 +68,7 @@ describe(CommandTestRunner.name, () => {
       killStub.resolves();
       const expectedError = new Error('foobar error');
       const sut = createSut();
-      const resultPromise = sut.dryRun({ coverageAnalysis: 'off' });
+      const resultPromise = sut.dryRun();
       await tick();
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
@@ -85,14 +85,6 @@ describe(CommandTestRunner.name, () => {
       expect(childProcessMock.listenerCount('error')).eq(0);
       expect(childProcessMock.stdout.listenerCount('data')).eq(0);
       expect(childProcessMock.stderr.listenerCount('data')).eq(0);
-    });
-
-    it('should reject if coverageAnalysis !== "off"', async () => {
-      const sut = createSut();
-      await expect(sut.dryRun({ coverageAnalysis: 'all' })).rejectedWith(
-        StrykerError,
-        'The "command" test runner does not support coverageAnalysis "all".'
-      );
     });
   });
 
@@ -119,14 +111,14 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      sut.dryRun({ coverageAnalysis: 'off' });
+      sut.dryRun();
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
 
     it('should resolve running processes in a timeout', async () => {
       const sut = createSut();
-      const resultPromise = sut.dryRun({ coverageAnalysis: 'off' });
+      const resultPromise = sut.dryRun();
       await sut.dispose();
       const result = await resultPromise;
       expect(result.status).eq(DryRunStatus.Timeout);
@@ -141,7 +133,7 @@ describe(CommandTestRunner.name, () => {
   });
 
   async function actDryRun(sut: CommandTestRunner = createSut(), exitCode = 0) {
-    const resultPromise = sut.dryRun({ coverageAnalysis: 'off' });
+    const resultPromise = sut.dryRun();
     await actTestProcessEnds(exitCode);
     return resultPromise;
   }

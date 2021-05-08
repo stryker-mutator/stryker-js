@@ -93,7 +93,9 @@ describe(DryRunExecutor.name, () => {
     it('should log about that this might take a while', async () => {
       runResult.tests.push(factory.successTestResult());
       await sut.execute();
-      expect(testInjector.logger.info).calledWith('Starting initial test run. This may take a while.');
+      expect(testInjector.logger.info).calledWith(
+        'Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.'
+      );
     });
 
     describe('with successful tests', () => {
