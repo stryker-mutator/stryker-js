@@ -78,7 +78,9 @@ export class StrykerCli {
         'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
-      .option('--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "perTest"')
+      .option(
+        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
+      )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
         '--testRunnerNodeArgs <listOfNodeArgs>',
@@ -150,7 +152,7 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true/false>',
-        'Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).',
+        `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
       .parse(this.argv);

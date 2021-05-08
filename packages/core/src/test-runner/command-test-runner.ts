@@ -5,7 +5,6 @@ import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@s
 import {
   TestRunner,
   TestStatus,
-  DryRunOptions,
   MutantRunOptions,
   DryRunResult,
   MutantRunResult,
@@ -14,7 +13,7 @@ import {
   CompleteDryRunResult,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { errorToString, StrykerError } from '@stryker-mutator/util';
+import { errorToString } from '@stryker-mutator/util';
 
 import { kill } from '../utils/object-utils';
 import { Timer } from '../utils/timer';
@@ -47,12 +46,7 @@ export class CommandTestRunner implements TestRunner {
     this.settings = options.commandRunner;
   }
 
-  public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
-    if (coverageAnalysis !== 'off') {
-      throw new StrykerError(
-        `The "${CommandTestRunner.runnerName}" test runner does not support coverageAnalysis "${coverageAnalysis}". Please set "coverageAnalysis": "off".`
-      );
-    }
+  public async dryRun(): Promise<DryRunResult> {
     return this.run({});
   }
 

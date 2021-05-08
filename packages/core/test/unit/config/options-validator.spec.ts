@@ -43,7 +43,7 @@ describe(OptionsValidator.name, () => {
         commandRunner: {
           command: 'npm test',
         },
-        coverageAnalysis: 'off',
+        coverageAnalysis: 'perTest',
         dashboard: {
           baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
           reportType: ReportType.Full,
