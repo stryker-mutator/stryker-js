@@ -70,9 +70,7 @@ support coverage analysis, except for the `command` test runner, since Stryker w
 The possible values are:
 
 * **off**: Stryker does no optimization. All tests are executed for each mutant.
-
 * **all**: Stryker will determine the mutants covered by your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and will not be tested. This requires your test runner plugin to report code coverage back to Stryker.
-
 * **perTest**: Stryker will determine which tests cover which mutant during the initial test run phase. Only the tests that cover a specific mutant are executed for each mutant. Your tests should be _able to run independently of each other and in random order_. Stryker will determine which mutants are _static_ and will run all tests for them during mutation testing. A mutant is 'static' when it is executed during the loading of the file rather than during a test. 
 
 ### `dashboard` [`DashboardOptions`]
