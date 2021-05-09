@@ -1,12 +1,12 @@
-import * as os from 'os';
-
 import ts from 'typescript';
-import { Mutant } from '@stryker-mutator/api/core';
+import { Mutant, Position } from '@stryker-mutator/api/core';
 
 export class ScriptFile {
   private readonly originalContent: string;
+  private readonly sourceFile: ts.SourceFile;
   constructor(public content: string, public fileName: string, public modifiedTime = new Date()) {
     this.originalContent = content;
+    this.sourceFile = ts.createSourceFile(fileName, content, ts.ScriptTarget.Latest, false, undefined);
   }
 
   public write(content: string): void {
@@ -18,18 +18,15 @@ export class ScriptFile {
 
   public mutate(mutant: Pick<Mutant, 'location' | 'replacement'>): void {
     this.guardMutationIsWatched();
-    const lines = this.originalContent.split(os.EOL);
 
-    const endLines = lines.slice(0, mutant.location.end.line);
-    endLines[endLines.length - 1] = endLines[endLines.length - 1].substring(0, mutant.location.end.column);
-    const endIndex = endLines.join(os.EOL).length;
-
-    const startLines = lines.slice(0, mutant.location.start.line);
-    startLines[startLines.length - 1] = startLines[startLines.length - 1].substring(0, mutant.location.start.column);
-    const startIndex = startLines.join(os.EOL).length;
-
-    this.content = `${this.originalContent.substr(0, startIndex)}${mutant.replacement}${this.originalContent.substr(endIndex)}`;
+    const start = this.getOffset(mutant.location.start);
+    const end = this.getOffset(mutant.location.end);
+    this.content = `${this.originalContent.substr(0, start)}${mutant.replacement}${this.originalContent.substr(end)}`;
     this.touch();
+  }
+
+  private getOffset(pos: Position): number {
+    return this.sourceFile.getPositionOfLineAndCharacter(pos.line, pos.column);
   }
 
   public resetMutant(): void {

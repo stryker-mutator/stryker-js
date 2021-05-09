@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -35,9 +34,7 @@ describe('Typescript checker on a single project', () => {
 
   it('should be able to validate a mutant that does not result in an error', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
+    const expectedResult: CheckResult = { status: CheckStatus.Passed };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);
   });
@@ -111,8 +108,8 @@ const fileContents = Object.freeze({
 });
 
 function createMutant(fileName: 'not-type-checked.js' | 'todo.spec.ts' | 'todo.ts', findText: string, replacement: string, offset = 0): Mutant {
-  const lines = fileContents[fileName].split(os.EOL);
-  const lineNumber = lines.findIndex((l) => l.includes(findText));
+  const lines = fileContents[fileName].split('\n');
+  const lineNumber = lines.findIndex((line) => line.includes(findText));
   if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
