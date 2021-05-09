@@ -1,8 +1,6 @@
 import { types } from '@babel/core';
-
 import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
-import { location } from '@stryker-mutator/test-helpers/src/factory';
-
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { Mutant } from '../../src/mutant';
@@ -34,7 +32,7 @@ describe(Mutant.name, () => {
         mutatorName: 'fooMutator',
         ignoreReason: 'ignore',
       });
-      mutant.original.loc = location();
+      mutant.original.loc = factory.location();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',
@@ -52,7 +50,7 @@ describe(Mutant.name, () => {
         replacement: types.stringLiteral('Stryker was here!'),
         mutatorName: 'fooMutator',
       });
-      mutant.original.loc = location();
+      mutant.original.loc = factory.location();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',
