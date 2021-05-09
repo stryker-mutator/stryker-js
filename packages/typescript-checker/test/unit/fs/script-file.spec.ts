@@ -36,7 +36,7 @@ describe('fs', () => {
       it('should throw when no watcher is registered', () => {
         sut.watcher = undefined;
         expect(() => sut.mutate({ location: { start: { line: 0, column: 21 }, end: { line: 0, column: 22 } }, replacement: '-' })).throws(
-          'ried to check file "add.js" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project'
+          'Tried to check file "add.js" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project'
         );
       });
 

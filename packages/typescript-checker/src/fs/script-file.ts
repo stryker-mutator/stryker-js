@@ -3,10 +3,9 @@ import { Mutant, Position } from '@stryker-mutator/api/core';
 
 export class ScriptFile {
   private readonly originalContent: string;
-  private readonly sourceFile: ts.SourceFile;
+  private sourceFile: ts.SourceFile | undefined;
   constructor(public content: string, public fileName: string, public modifiedTime = new Date()) {
     this.originalContent = content;
-    this.sourceFile = ts.createSourceFile(fileName, content, ts.ScriptTarget.Latest, false, undefined);
   }
 
   public write(content: string): void {
@@ -26,6 +25,9 @@ export class ScriptFile {
   }
 
   private getOffset(pos: Position): number {
+    if (!this.sourceFile) {
+      this.sourceFile = ts.createSourceFile(this.fileName, this.content, ts.ScriptTarget.Latest, false, undefined);
+    }
     return this.sourceFile.getPositionOfLineAndCharacter(pos.line, pos.column);
   }
 
