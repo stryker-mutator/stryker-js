@@ -96,6 +96,7 @@
       "Whitespaces",
       "execa",
       "memfs",
+      "mutators",
       "nocheck",
       "preprocessors",
       "serializable"

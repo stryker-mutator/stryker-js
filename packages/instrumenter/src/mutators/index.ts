@@ -14,10 +14,12 @@ import { BooleanLiteralMutator } from './boolean-literal-mutator';
 import { EqualityOperatorMutator } from './equality-operator-mutator';
 import { LogicalOperatorMutator } from './logical-operator-mutator';
 import { ObjectLiteralMutator } from './object-literal-mutator';
+
 import { UnaryOperatorMutator } from './unary-operator-mutator';
 import { UpdateOperatorMutator } from './update-operator-mutator';
 import { MutatorOptions } from './mutator-options';
 import { RegexMutator } from './regex-mutator';
+import { OptionalChainingMutator } from './optional-chaining-mutator';
 
 export * from './node-mutator';
 export * from './mutator-options';
@@ -32,6 +34,7 @@ export const mutators: NodeMutator[] = [
   new EqualityOperatorMutator(),
   new LogicalOperatorMutator(),
   new ObjectLiteralMutator(),
+  new OptionalChainingMutator(),
   new StringLiteralMutator(),
   new UnaryOperatorMutator(),
   new UpdateOperatorMutator(),
