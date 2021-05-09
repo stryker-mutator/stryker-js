@@ -167,7 +167,9 @@ describe('fs', () => {
       });
 
       it("should throw if file doesn't exist", () => {
-        expect(() => sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' })).throws('File "a.js" cannot be found.');
+        expect(() =>
+          sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' })
+        ).throws('File "a.js" cannot be found.');
       });
     });
 

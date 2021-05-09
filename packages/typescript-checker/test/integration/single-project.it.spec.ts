@@ -112,12 +112,15 @@ const fileContents = Object.freeze({
 
 function createMutant(fileName: 'not-type-checked.js' | 'todo.spec.ts' | 'todo.ts', findText: string, replacement: string, offset = 0): Mutant {
   const lines = fileContents[fileName].split(os.EOL);
-  const lineNumber = lines.findIndex(l => l.includes(findText));
+  const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
   const textColumn = lines[lineNumber].indexOf(findText);
-  const location: Location = { start: { line: lineNumber, column: textColumn + offset }, end: { line: lineNumber, column: textColumn + findText.length } };
+  const location: Location = {
+    start: { line: lineNumber, column: textColumn + offset },
+    end: { line: lineNumber, column: textColumn + findText.length },
+  };
   return factory.mutant({
     fileName: resolveTestResource('src', fileName),
     mutatorName: 'foo-mutator',

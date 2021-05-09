@@ -342,7 +342,6 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   replacement: '',
   location: location(),
   estimatedNetTime: 42,
-  range: [0, 1],
 }));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {

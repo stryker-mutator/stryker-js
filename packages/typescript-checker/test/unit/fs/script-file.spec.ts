@@ -86,7 +86,10 @@ describe('fs', () => {
 
       it('should reset the content after two mutations', () => {
         sut.mutate({ replacement: 'replaces', location: { start: { line: 0, column: 1 }, end: { line: 0, column: sut.content.length } } });
-        sut.mutate({ replacement: 'replaced a second time', location: { start: { line: 0, column: 1 }, end: { line: 0, column: sut.content.length } } });
+        sut.mutate({
+          replacement: 'replaced a second time',
+          location: { start: { line: 0, column: 1 }, end: { line: 0, column: sut.content.length } },
+        });
         sut.resetMutant();
         expect(sut.content).eq('add(a, b) { return a + b };');
       });

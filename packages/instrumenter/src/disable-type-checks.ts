@@ -84,7 +84,7 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
   }
 }
 
-function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): { startPos: number, endPos: number } | undefined {
+function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): { startPos: number; endPos: number } | undefined {
   const match = commentDirectiveRegEx.exec(comment.value);
   if (match) {
     const directiveStartPos = comment.start + match[1].length + 2; // +2 to account for the `//` or `/*` start character
