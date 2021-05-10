@@ -47,8 +47,8 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
       mutants.push(...sut.mutate(nodePath));
     },
   });
-  expect(mutants).lengthOf(expectedReplacements.length);
   const actualReplacements = mutants.map((mutant) => jsMutantToString(mutant, originalCode));
+  expect(mutants, `was: ${actualReplacements.join(',')}`).lengthOf(expectedReplacements.length);
   expectedReplacements.forEach((expected) => expect(actualReplacements, `was: ${actualReplacements.join(',')}`).to.include(expected));
 }
 

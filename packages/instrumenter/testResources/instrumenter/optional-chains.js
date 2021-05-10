@@ -1,2 +1,4 @@
 
 const baz = foo?.bar?.()?.[1] ?? 'qux';
+
+qux()?.map()
