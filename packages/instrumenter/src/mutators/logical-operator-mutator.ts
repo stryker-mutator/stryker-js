@@ -8,6 +8,7 @@ import { NodeMutator } from '.';
 enum LogicalOperators {
   '&&' = '||',
   '||' = '&&',
+  '??' = '&&',
 }
 
 export class LogicalOperatorMutator implements NodeMutator {
