@@ -222,7 +222,7 @@ export class MutationTestReportHelper {
   }
 
   private toMutantResult(mutantResult: MutantResult, remapTestIds: (ids: string[] | undefined) => string[] | undefined): schema.MutantResult {
-    const { range, fileName, location, killedBy, coveredBy, ...apiMutant } = mutantResult;
+    const { fileName, location, killedBy, coveredBy, ...apiMutant } = mutantResult;
     return {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),

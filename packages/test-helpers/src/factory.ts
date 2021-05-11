@@ -154,7 +154,6 @@ export const mutant = factoryMethod<Mutant>(() => ({
   id: '42',
   fileName: 'file',
   mutatorName: 'foobarMutator',
-  range: [0, 0],
   location: location(),
   replacement: 'replacement',
 }));
@@ -343,7 +342,6 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   replacement: '',
   location: location(),
   estimatedNetTime: 42,
-  range: [0, 1],
 }));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {

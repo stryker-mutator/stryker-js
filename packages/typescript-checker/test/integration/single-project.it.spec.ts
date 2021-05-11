@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { Mutant, Range } from '@stryker-mutator/api/core';
+import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { createTypescriptChecker } from '../../src';
@@ -34,9 +34,7 @@ describe('Typescript checker on a single project', () => {
 
   it('should be able to validate a mutant that does not result in an error', async () => {
     const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
+    const expectedResult: CheckResult = { status: CheckStatus.Passed };
     const actual = await sut.check(mutant);
     expect(actual).deep.eq(expectedResult);
   });
@@ -110,15 +108,20 @@ const fileContents = Object.freeze({
 });
 
 function createMutant(fileName: 'not-type-checked.js' | 'todo.spec.ts' | 'todo.ts', findText: string, replacement: string, offset = 0): Mutant {
-  const originalOffset: number = fileContents[fileName].indexOf(findText);
-  if (originalOffset === -1) {
+  const lines = fileContents[fileName].split('\n');
+  const lineNumber = lines.findIndex((line) => line.includes(findText));
+  if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
-  const range: Range = [originalOffset + offset, originalOffset + findText.length];
+  const textColumn = lines[lineNumber].indexOf(findText);
+  const location: Location = {
+    start: { line: lineNumber, column: textColumn + offset },
+    end: { line: lineNumber, column: textColumn + findText.length },
+  };
   return factory.mutant({
     fileName: resolveTestResource('src', fileName),
     mutatorName: 'foo-mutator',
-    range,
+    location,
     replacement,
   });
 }
