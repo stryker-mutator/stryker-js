@@ -141,3 +141,7 @@ Once mocha runs succesfully on the webpack output, you're ready to install and r
    ```
 
 Now give it a go with `npm run test:mutation` or `yarn test:mutation`.
+
+## Troubleshooting
+
+Please take a look at the [troubleshooting page](../troubleshooting.md) when you run into any problems setting up StrykerJS.
