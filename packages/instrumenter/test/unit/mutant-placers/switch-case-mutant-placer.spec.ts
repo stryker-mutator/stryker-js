@@ -38,7 +38,7 @@ describe(sut.name, () => {
 
     it('should place a mutant in the "consequent" part of a switch-case', () => {
       // Arrange
-      const mutant = createMutant({ id: 42, original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
 
       // Act
       const actual = sut(switchCase, [mutant]);
@@ -46,12 +46,12 @@ describe(sut.name, () => {
 
       // Assert
       expect(actual).true;
-      expect(actualCode).contains(normalizeWhitespaces('switch (foo) { case "bar": if (stryMutAct_9fa48(42))'));
+      expect(actualCode).contains(normalizeWhitespaces('switch (foo) { case "bar": if (stryMutAct_9fa48("42"))'));
     });
 
     it('should place the original code as alternative (inside `else`)', () => {
       // Arrange
-      const mutant = createMutant({ id: 42, original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
 
       // Act
       const actual = sut(switchCase, [mutant]);
@@ -64,7 +64,7 @@ describe(sut.name, () => {
 
     it('should add mutant coverage syntax', () => {
       // Arrange
-      const mutant = createMutant({ id: 42, original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
 
       // Act
       const actual = sut(switchCase, [mutant]);
@@ -72,15 +72,15 @@ describe(sut.name, () => {
 
       // Assert
       expect(actual).true;
-      expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\(42\)/);
+      expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\("42"\)/);
     });
 
     it('should be able to place multiple mutants', () => {
       // Arrange
       const mutants = [
-        createMutant({ id: 42, original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) }),
+        createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) }),
         createMutant({
-          id: 156,
+          id: '156',
           original: switchCase.node,
           replacement: types.switchCase(types.stringLiteral('bar'), [types.expressionStatement(types.callExpression(types.identifier('foo'), []))]),
         }),
@@ -92,11 +92,11 @@ describe(sut.name, () => {
 
       // Assert
       expect(actualCode).contains(
-        normalizeWhitespaces(`if (stryMutAct_9fa48(156)) {
+        normalizeWhitespaces(`if (stryMutAct_9fa48("156")) {
           foo();
-          } else if (stryMutAct_9fa48(42)) {} 
+          } else if (stryMutAct_9fa48("42")) {} 
           else {
-            stryCov_9fa48(42, 156)`)
+            stryCov_9fa48("42", "156")`)
       );
     });
   });

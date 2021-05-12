@@ -128,6 +128,8 @@ describe(JestTestRunner.name, () => {
             name: 'App renders without crashing',
             status: TestStatus.Success,
             timeSpentMs: 23,
+            startPosition: { column: 4, line: 2 },
+            fileName: 'foo.js',
           },
         ],
       };
@@ -147,7 +149,9 @@ describe(JestTestRunner.name, () => {
             id: 'App renders without crashing',
             name: 'App renders without crashing',
             status: TestStatus.Skipped,
+            startPosition: undefined,
             timeSpentMs: 0,
+            fileName: 'bar.js',
           },
         ],
       };
@@ -167,13 +171,17 @@ describe(JestTestRunner.name, () => {
             id: 'App renders without crashing',
             name: 'App renders without crashing',
             status: TestStatus.Success,
+            startPosition: undefined,
             timeSpentMs: 4,
+            fileName: 'baz.js',
           },
           {
             id: 'App renders without crashing with children',
             name: 'App renders without crashing with children',
             status: TestStatus.Skipped,
+            startPosition: undefined,
             timeSpentMs: 0,
+            fileName: 'baz.js',
           },
         ],
       };
@@ -195,6 +203,8 @@ describe(JestTestRunner.name, () => {
             failureMessage: 'Fail message 1, Fail message 2',
             status: TestStatus.Failed,
             timeSpentMs: 2,
+            fileName: 'qux.js',
+            startPosition: undefined,
           },
           {
             id: 'App render renders without crashing',
@@ -202,12 +212,16 @@ describe(JestTestRunner.name, () => {
             failureMessage: 'Fail message 3, Fail message 4',
             status: TestStatus.Failed,
             timeSpentMs: 0,
+            fileName: 'qux.js',
+            startPosition: undefined,
           },
           {
             id: 'App renders without crashing',
             name: 'App renders without crashing',
             status: TestStatus.Success,
             timeSpentMs: 23,
+            fileName: 'quux.js',
+            startPosition: { line: 41, column: 43 },
           },
         ],
       };
@@ -438,20 +452,20 @@ describe(JestTestRunner.name, () => {
 
     it('should set the active mutant in environment variable', async () => {
       const sut = createSut();
-      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
       await onGoingWork;
     });
 
     it('should reset the active mutant in environment variable', async () => {
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
     });
 
     it('should set the __strykerGlobalNamespace__ in globals', async () => {
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {
@@ -469,7 +483,7 @@ describe(JestTestRunner.name, () => {
       };
       options.jest.config = customConfig;
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 25 }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {

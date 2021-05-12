@@ -8,5 +8,8 @@
   },
   "karma": {
     "projectType": "Project type not supported"
+  },
+  "commandRunner": {
+    "command": "echo 'no-test'"
   }
 }

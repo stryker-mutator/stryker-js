@@ -1,14 +1,18 @@
 import os from 'os';
 
-import chalk from 'chalk';
-import { Position, StrykerOptions } from '@stryker-mutator/api/core';
+import chalk, { Color } from 'chalk';
+import { schema, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, MutantStatus, mutationTestReportSchema, Reporter, UndetectedMutantResult } from '@stryker-mutator/api/report';
-import { calculateMetrics } from 'mutation-testing-metrics';
+import { Reporter } from '@stryker-mutator/api/report';
+import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
+import { plural } from '../utils/string-utils';
+
 import { ClearTextScoreTable } from './clear-text-score-table';
+
+const { MutantStatus } = schema;
 
 export class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
@@ -18,9 +22,13 @@ export class ClearTextReporter implements Reporter {
 
   private readonly out: NodeJS.WritableStream = process.stdout;
 
-  private writeLine(output?: string) {
+  private readonly writeLine = (output?: string) => {
     this.out.write(`${output ?? ''}${os.EOL}`);
-  }
+  };
+
+  private readonly writeDebugLine = (input: string) => {
+    this.log.debug(input);
+  };
 
   private configConsoleColor() {
     if (!this.options.allowConsoleColors) {
@@ -28,93 +36,139 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  public onAllMutantsTested(mutantResults: MutantResult[]): void {
+  public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+    this.writeLine();
+    this.reportAllTests(metrics);
+    this.reportAllMutants(metrics);
+    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
+  }
+
+  private reportAllTests(metrics: MutationTestMetricsResult) {
+    function indent(depth: number) {
+      return new Array(depth).fill('  ').join('');
+    }
+    const formatTestLine = (test: TestModel, state: string): string => {
+      return `${this.color('grey', `${test.name}${test.location ? ` [line ${test.location.start.line}]` : ''}`)} (${state})`;
+    };
+
+    if (metrics.testMetrics) {
+      const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
+        const nameParts: string[] = [currentResult.name];
+        while (!currentResult.file && currentResult.childResults.length === 1) {
+          currentResult = currentResult.childResults[0];
+          nameParts.push(currentResult.name);
+        }
+        this.writeLine(`${indent(depth)}${nameParts.join('/')}`);
+        currentResult.file?.tests.forEach((test) => {
+          switch (test.status) {
+            case TestStatus.Killing:
+              this.writeLine(`${indent(depth + 1)}${this.color('greenBright', '✓')} ${formatTestLine(test, `killed ${test.killedMutants?.length}`)}`);
+              break;
+            case TestStatus.Covering:
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('blueBright', '~')} ${formatTestLine(test, `covered ${test.coveredMutants?.length}`)}`
+              );
+              break;
+            case TestStatus.NotCovering:
+              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${formatTestLine(test, 'covered 0')}`);
+              break;
+          }
+        });
+        currentResult.childResults.forEach((childResult) => reportTests(childResult, depth + 1));
+      };
+      reportTests(metrics.testMetrics);
+    }
+  }
+
+  private reportAllMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
     this.writeLine();
     let totalTests = 0;
 
-    // use these functions in order to preserve the 'this` pointer
-    const logDebugFn = (input: string) => this.log.debug(input);
-    const writeLineFn = (input: string) => this.writeLine(input);
-
-    mutantResults.forEach((result) => {
-      totalTests += result.nrOfTestsRan;
-      switch (result.status) {
-        case MutantStatus.Killed:
-        case MutantStatus.TimedOut:
-        case MutantStatus.RuntimeError:
-        case MutantStatus.CompileError:
-          this.logMutantResult(result, logDebugFn);
-          break;
-        case MutantStatus.Survived:
-        case MutantStatus.NoCoverage:
-          this.logMutantResult(result, writeLineFn);
-          break;
-        default:
-      }
-    });
-    this.writeLine(`Ran ${(totalTests / mutantResults.length).toFixed(2)} tests per mutant on average.`);
+    const reportMutants = (metrics: MetricsResult[]) => {
+      metrics.forEach((child) => {
+        child.file?.mutants.forEach((result) => {
+          totalTests += result.testsCompleted ?? 0;
+          switch (result.status) {
+            case MutantStatus.Killed:
+            case MutantStatus.Timeout:
+            case MutantStatus.RuntimeError:
+            case MutantStatus.CompileError:
+              this.reportMutantResult(result, this.writeDebugLine);
+              break;
+            case MutantStatus.Survived:
+            case MutantStatus.NoCoverage:
+              this.reportMutantResult(result, this.writeLine);
+              break;
+            default:
+          }
+        });
+        reportMutants(child.childResults);
+      });
+    };
+    reportMutants(systemUnderTestMetrics.childResults);
+    this.writeLine(`Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`);
   }
 
-  private logMutantResult(result: MutantResult, logImplementation: (input: string) => void): void {
+  private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {
     logImplementation(`#${result.id}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.fileName, result.location.start));
 
-    result.originalLines.split('\n').forEach((line) => {
-      logImplementation(chalk.red('-   ' + line));
-    });
-    result.mutatedLines.split('\n').forEach((line) => {
-      logImplementation(chalk.green('+   ' + line));
-    });
-    logImplementation('');
+    result
+      .getOriginalLines()
+      .split('\n')
+      .filter(Boolean)
+      .forEach((line) => {
+        logImplementation(chalk.red('-   ' + line));
+      });
+    result
+      .getMutatedLines()
+      .split('\n')
+      .filter(Boolean)
+      .forEach((line) => {
+        logImplementation(chalk.green('+   ' + line));
+      });
     if (result.status === MutantStatus.Survived) {
-      if (this.options.coverageAnalysis === 'perTest' && result.testFilter) {
-        this.logExecutedTests(result, logImplementation);
-      } else {
+      if (result.static) {
         logImplementation('Ran all tests for this mutant.');
+      } else if (result.coveredByTests) {
+        this.logExecutedTests(result.coveredByTests, logImplementation);
       }
-    } else if (result.status === MutantStatus.Killed) {
-      logImplementation(`Killed by: ${result.killedBy}`);
+    } else if (result.status === MutantStatus.Killed && result.killedByTests && result.killedByTests.length) {
+      logImplementation(`Killed by: ${result.killedByTests[0].name}`);
     } else if (result.status === MutantStatus.RuntimeError || result.status === MutantStatus.CompileError) {
-      logImplementation(`Error message: ${result.errorMessage}`);
+      logImplementation(`Error message: ${result.statusReason}`);
     }
+    logImplementation('');
   }
 
   private colorSourceFileAndLocation(fileName: string, position: Position): string {
-    if (!this.options.clearTextReporter.allowColor) {
-      return `${fileName}:${position.line}:${position.column}`;
-    }
-
-    return [chalk.cyan(fileName), chalk.yellow(`${position.line}`), chalk.yellow(`${position.column}`)].join(':');
+    return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
   }
 
-  private logExecutedTests(result: UndetectedMutantResult, logImplementation: (input: string) => void) {
+  private color(color: typeof Color, ...text: unknown[]) {
+    if (this.options.clearTextReporter.allowColor) {
+      return chalk[color](...text);
+    }
+    return text.join('');
+  }
+
+  private logExecutedTests(tests: TestModel[], logImplementation: (input: string) => void) {
     if (!this.options.clearTextReporter.logTests) {
       return;
     }
 
-    if (result.nrOfTestsRan > 0) {
-      const { maxTestsToLog } = this.options.clearTextReporter;
+    const testCount = Math.min(this.options.clearTextReporter.maxTestsToLog, tests.length);
 
-      if (maxTestsToLog > 0) {
-        logImplementation('Tests ran:');
-        for (let i = 0; i < maxTestsToLog; i++) {
-          if (i > result.testFilter!.length - 1) {
-            break;
-          }
-          logImplementation(`    ${result.testFilter![i]}`);
-        }
-        const diff = result.testFilter!.length - maxTestsToLog;
-        if (diff > 0) {
-          const plural = diff === 1 ? '' : 's';
-          logImplementation(`  and ${diff} more test${plural}!`);
-        }
-        logImplementation('');
+    if (testCount > 0) {
+      logImplementation('Tests ran:');
+      tests.slice(0, testCount).forEach((test) => {
+        logImplementation(`    ${test.name}`);
+      });
+      const diff = tests.length - this.options.clearTextReporter.maxTestsToLog;
+      if (diff > 0) {
+        logImplementation(`  and ${diff} more test${plural(diff)}!`);
       }
+      logImplementation('');
     }
-  }
-
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
-    const metricsResult = calculateMetrics(report.files);
-    this.writeLine(new ClearTextScoreTable(metricsResult, this.options.thresholds).draw());
   }
 }

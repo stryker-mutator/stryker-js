@@ -102,4 +102,11 @@ describe(deepFreeze.name, () => {
       expect(v).frozen;
     }
   });
+
+  it('should work for RegExps', () => {
+    const input = /filter/;
+    const output = deepFreeze(input);
+    expect(output).frozen;
+    expect(output).instanceOf(RegExp);
+  });
 });

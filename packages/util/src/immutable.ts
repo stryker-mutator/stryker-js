@@ -26,6 +26,9 @@ export function deepFreeze<T>(target: T): Immutable<T> {
       if (target instanceof Map) {
         return (Object.freeze(new Map([...target.entries()].map(([k, v]) => [deepFreeze(k), deepFreeze(v)]))) as unknown) as Immutable<T>;
       }
+      if (target instanceof RegExp) {
+        return Object.freeze(target) as Immutable<T>;
+      }
       if (target === null) {
         return null as Immutable<T>;
       }

@@ -1,9 +1,9 @@
 import path from 'path';
 
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { schema } from '@stryker-mutator/api/core';
 
 import { JsonReporter } from '../../../src/reporters/json-reporter';
 import * as JsonReporterUtil from '../../../src/reporters/reporter-util';
@@ -37,7 +37,7 @@ describe(JsonReporter.name, () => {
     });
 
     it('should write the mutation report to disk', async () => {
-      const report: mutationTestReportSchema.MutationTestResult = {
+      const report: schema.MutationTestResult = {
         files: {},
         schemaVersion: '1.0',
         thresholds: {

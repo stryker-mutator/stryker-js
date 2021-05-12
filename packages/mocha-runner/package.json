@@ -16,7 +16,7 @@
     "directory": "packages/mocha-runner"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "keywords": [
     "stryker",

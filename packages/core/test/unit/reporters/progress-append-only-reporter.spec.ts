@@ -24,9 +24,9 @@ describe(ProgressAppendOnlyReporter.name, () => {
   describe('onAllMutantsMatchedWithTests() with 3 mutants to test', () => {
     beforeEach(() => {
       sut.onAllMutantsMatchedWithTests([
-        factory.matchedMutant({ runAllTests: true }),
-        factory.matchedMutant({ runAllTests: true }),
-        factory.matchedMutant({ runAllTests: true }),
+        factory.mutantTestCoverage({ static: true }),
+        factory.mutantTestCoverage({ coveredBy: ['1'] }),
+        factory.mutantTestCoverage({ static: true }),
       ]);
     });
 

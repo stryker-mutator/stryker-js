@@ -27,7 +27,7 @@ describe(statementMutantPlacer.name, () => {
     const ast = parseJS('const foo = a + b');
     const statement = findNodePath(ast, (p) => p.isVariableDeclaration());
     const nodeToMutate = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
-    const mutant = new Mutant(1, 'file.js', {
+    const mutant = new Mutant('1', 'file.js', {
       original: nodeToMutate.node,
       replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
       mutatorName: 'fooMutator',
@@ -45,7 +45,7 @@ describe(statementMutantPlacer.name, () => {
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains(normalizeWhitespaces('if (stryMutAct_9fa48(1)) { const foo = bar >>> baz; } else '));
+    expect(actualCode).contains(normalizeWhitespaces('if (stryMutAct_9fa48("1")) { const foo = bar >>> baz; } else '));
   });
 
   it('should keep block statements in tact', () => {
@@ -78,7 +78,7 @@ describe(statementMutantPlacer.name, () => {
     const { ast, mutant, statement } = arrangeSingleMutant();
     statementMutantPlacer(statement, [mutant]);
     const actualCode = normalizeWhitespaces(generate(ast).code);
-    expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\(1\)/);
+    expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\("1"\)/);
   });
 
   it('should be able to place multiple mutants', () => {
@@ -88,12 +88,12 @@ describe(statementMutantPlacer.name, () => {
     const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
     const fooIdentifier = findNodePath<types.Identifier>(ast, (p) => p.isIdentifier());
     const mutants = [
-      new Mutant(52, 'file.js', {
+      new Mutant('52', 'file.js', {
         original: binaryExpression.node,
         replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
         mutatorName: 'fooMutator',
       }),
-      new Mutant(659, 'file.js', {
+      new Mutant('659', 'file.js', {
         original: fooIdentifier.node,
         replacement: types.identifier('bar'),
         mutatorName: 'fooMutator',
@@ -106,12 +106,12 @@ describe(statementMutantPlacer.name, () => {
 
     // Assert
     expect(actualCode).contains(
-      normalizeWhitespaces(`if (stryMutAct_9fa48(659)) {
+      normalizeWhitespaces(`if (stryMutAct_9fa48("659")) {
           const bar = a + b;
-        } else if (stryMutAct_9fa48(52)) {
+        } else if (stryMutAct_9fa48("52")) {
           const foo = bar >>> baz;
         } else {
-          stryCov_9fa48(52, 659)`)
+          stryCov_9fa48("52", "659")`)
     );
   });
 });

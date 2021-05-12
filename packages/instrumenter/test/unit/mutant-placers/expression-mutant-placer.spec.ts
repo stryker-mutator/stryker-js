@@ -22,7 +22,7 @@ describe(expressionMutantPlacer.name, () => {
   function arrangeSingleMutant() {
     const ast = parseJS('const foo = a + b');
     const binaryExpression = findNodePath(ast, (p) => p.isBinaryExpression());
-    const mutant = new Mutant(1, 'file.js', {
+    const mutant = new Mutant('1', 'file.js', {
       original: binaryExpression.node,
       replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
       mutatorName: 'fooMutator',
@@ -40,7 +40,7 @@ describe(expressionMutantPlacer.name, () => {
 
     // Assert
     expect(actual).true;
-    expect(actualCode).contains('const foo = stryMutAct_9fa48(1) ? bar >>> baz');
+    expect(actualCode).contains('const foo = stryMutAct_9fa48("1") ? bar >>> baz');
   });
 
   it('should place the original code as the alternative', () => {
@@ -56,7 +56,7 @@ describe(expressionMutantPlacer.name, () => {
     expressionMutantPlacer(binaryExpression, [mutant]);
     const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
     const actualAlternativeCode = generate(actualAlternative).code;
-    const expected = 'stryCov_9fa48(1), a + b';
+    const expected = 'stryCov_9fa48("1"), a + b';
     expect(actualAlternativeCode.startsWith(expected), `${actualAlternativeCode} did not start with "${expected}"`).true;
   });
 
@@ -66,12 +66,12 @@ describe(expressionMutantPlacer.name, () => {
     const binaryExpression = findNodePath(ast, (p) => p.isBinaryExpression());
     const mutants = [
       createMutant({
-        id: 52,
+        id: '52',
         original: binaryExpression.node,
         replacement: types.binaryExpression('-', types.identifier('bar'), types.identifier('baz')),
       }),
       createMutant({
-        id: 659,
+        id: '659',
         original: binaryExpression.node,
         replacement: types.identifier('bar'),
       }),
@@ -82,7 +82,7 @@ describe(expressionMutantPlacer.name, () => {
     const actualCode = normalizeWhitespaces(generate(ast).code);
 
     // Assert
-    expect(actualCode).contains('const foo = stryMutAct_9fa48(659) ? bar : stryMutAct_9fa48(52) ? bar - baz');
+    expect(actualCode).contains('const foo = stryMutAct_9fa48("659") ? bar : stryMutAct_9fa48("52") ? bar - baz');
   });
 
   describe('object literals', () => {
@@ -107,7 +107,7 @@ describe(expressionMutantPlacer.name, () => {
     function arrangeActAssert(ast: types.File, expression: NodePath, expectedMatch: RegExp) {
       const mutants = [
         createMutant({
-          id: 4,
+          id: '4',
           original: expression.node,
           replacement: types.identifier('bar'),
         }),

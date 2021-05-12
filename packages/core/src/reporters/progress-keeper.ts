@@ -1,10 +1,14 @@
-import { MatchedMutant, MutantResult, Reporter, MutantStatus } from '@stryker-mutator/api/report';
+import { MutantResult, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Reporter } from '@stryker-mutator/api/report';
 
 import { Timer } from '../utils/timer';
 
+function mutantHasCoverage(mutant: Pick<MutantResult, 'coveredBy' | 'static'>) {
+  return !!mutant.static || !!mutant.coveredBy?.length;
+}
+
 export abstract class ProgressKeeper implements Reporter {
   private timer!: Timer;
-  private mutantIdsWithoutCoverage!: string[];
   protected progress = {
     survived: 0,
     timedOut: 0,
@@ -12,20 +16,19 @@ export abstract class ProgressKeeper implements Reporter {
     total: 0,
   };
 
-  public onAllMutantsMatchedWithTests(matchedMutants: readonly MatchedMutant[]): void {
+  public onAllMutantsMatchedWithTests(mutants: readonly MutantTestCoverage[]): void {
     this.timer = new Timer();
-    this.mutantIdsWithoutCoverage = matchedMutants.filter((m) => !m.runAllTests && !m.testFilter?.length).map((m) => m.id);
-    this.progress.total = matchedMutants.length - this.mutantIdsWithoutCoverage.length;
+    this.progress.total = mutants.filter(mutantHasCoverage).length;
   }
 
   public onMutantTested(result: MutantResult): void {
-    if (!this.mutantIdsWithoutCoverage.some((id) => result.id === id)) {
+    if (mutantHasCoverage(result)) {
       this.progress.tested++;
     }
     if (result.status === MutantStatus.Survived) {
       this.progress.survived++;
     }
-    if (result.status === MutantStatus.TimedOut) {
+    if (result.status === MutantStatus.Timeout) {
       this.progress.timedOut++;
     }
   }

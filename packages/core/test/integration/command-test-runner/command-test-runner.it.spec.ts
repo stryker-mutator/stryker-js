@@ -14,7 +14,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
   describe(CommandTestRunner.prototype.dryRun.name, () => {
     it('should report test as successful', async () => {
       const sut = createSut();
-      const result = await sut.dryRun({ coverageAnalysis: 'off' });
+      const result = await sut.dryRun();
       assertions.expectCompleted(result);
       expect(result.tests).lengthOf(1);
       expect(result.tests[0].status).eq(TestStatus.Success);
@@ -25,7 +25,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
     it('should report test as failed if exit code != 0', async () => {
       const sut = createSut({ command: 'npm run fail' });
-      const result = await sut.dryRun({ coverageAnalysis: 'off' });
+      const result = await sut.dryRun();
       assertions.expectCompleted(result);
       expect(result.tests).lengthOf(1);
       expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Failed]);
@@ -39,7 +39,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
       // Arrange
       const killSpy = sinon.spy(objectUtils, 'kill');
       const sut = createSut({ command: 'npm run wait' });
-      const runPromise = sut.dryRun({ coverageAnalysis: 'off' });
+      const runPromise = sut.dryRun();
 
       // Act
       await sut.dispose();
@@ -54,12 +54,12 @@ describe(`${CommandTestRunner.name} integration`, () => {
   describe(CommandTestRunner.prototype.mutantRun.name, () => {
     it('should report mutant as survived if the process exits with 0', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: 41 }) });
+      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '41' }) });
       assertions.expectSurvived(result);
     });
     it('should report mutant as killed if the process exits with 1', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: 42 /* 42 should fail */ }) });
+      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }) });
       assertions.expectKilled(result);
       expect(result.killedBy).eq('all');
     });

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { File, LogLevel } from '@stryker-mutator/api/core';
+import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
@@ -58,17 +58,6 @@ describe(ChildProcessProxy.name, () => {
   it('should set the current working directory', async () => {
     const actual = await sut.proxy.cwd();
     expect(actual).eq(path.resolve(workingDir));
-  });
-
-  it('should be able to receive files', async () => {
-    const actual: string = await sut.proxy.echoFile(new File('hello.txt', 'hello world from file'));
-    expect(actual).eq('hello world from file');
-  });
-
-  it('should be able to send files', async () => {
-    const actual: File = await sut.proxy.readFile();
-    expect(actual.textContent).eq('hello foobar');
-    expect(actual.name).eq('foobar.txt');
   });
 
   it('should use `execArgv` to start the child process', async () => {

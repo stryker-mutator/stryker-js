@@ -4,10 +4,49 @@ import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { expect } from 'chai';
 import path from 'path';
 import { calculateMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
+import { execSync, ExecException } from 'child_process';
+
+interface PipedStdioSyncExecException extends ExecException {
+  stdout: Uint8Array;
+  stderr: Uint8Array;
+  status: number;
+}
+
+export interface ExecStrykerResult {
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+}
+
+export function execStryker(cmd: string): ExecStrykerResult {
+  let result: ExecStrykerResult;
+  try {
+    const out = execSync(cmd, { stdio: 'pipe' });
+    result = {
+      exitCode: 0,
+      stderr: '',
+      stdout: out.toString(),
+    };
+  } catch (err) {
+    const childError = err as PipedStdioSyncExecException;
+    result = {
+      exitCode: childError.status,
+      stderr: childError.stderr.toString(),
+      stdout: childError.stdout.toString(),
+    };
+  }
+  if (result.stdout) {
+    console.log(result.stdout);
+  }
+  if (result.stderr) {
+    console.error(result.stderr);
+  }
+  return result;
+}
 
 export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
   const allReportFiles = await fsPromises.readdir(eventResultDirectory);
-  const mutationTestReportFile = allReportFiles.find(file => !!file.match(/.*onMutationTestReportReady.*/));
+  const mutationTestReportFile = allReportFiles.find((file) => !!file.match(/.*onMutationTestReportReady.*/));
   expect(mutationTestReportFile).ok;
   const mutationTestReportContent = await fsPromises.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
   const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
@@ -36,7 +75,6 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
     if (typeof actualSnippet.metrics.mutationScoreBasedOnCoveredCode === 'number') {
       actualSnippet.metrics.mutationScoreBasedOnCoveredCode = parseFloat(actualSnippet.metrics.mutationScoreBasedOnCoveredCode.toFixed(2));
     }
-
   }
   expect(actualSnippet).deep.eq(expectedMetricsResult);
 }
@@ -71,6 +109,6 @@ export function produceMetrics(metrics: Partial<Metrics>): Metrics {
     totalMutants: 0,
     totalUndetected: 0,
     totalValid: 0,
-    ...metrics
+    ...metrics,
   };
 }

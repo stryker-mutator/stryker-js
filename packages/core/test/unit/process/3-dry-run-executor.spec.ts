@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
@@ -16,6 +16,7 @@ import { coreTokens } from '../../../src/di';
 import { ConfigError } from '../../../src/errors';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
 import { createTestRunnerPoolMock } from '../../helpers/producers';
+import { Sandbox } from '../../../src/sandbox';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
@@ -24,6 +25,7 @@ describe(DryRunExecutor.name, () => {
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
+  let sandbox: sinon.SinonStubbedInstance<Sandbox>;
 
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
@@ -36,12 +38,14 @@ describe(DryRunExecutor.name, () => {
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
+    sandbox = sinon.createStubInstance(Sandbox);
     sut = new DryRunExecutor(
       injectorMock as Injector<DryRunContext>,
       testInjector.logger,
       testInjector.options,
       timerMock,
-      concurrencyTokenProviderMock
+      concurrencyTokenProviderMock,
+      sandbox
     );
   });
 
@@ -89,7 +93,9 @@ describe(DryRunExecutor.name, () => {
     it('should log about that this might take a while', async () => {
       runResult.tests.push(factory.successTestResult());
       await sut.execute();
-      expect(testInjector.logger.info).calledWith('Starting initial test run. This may take a while.');
+      expect(testInjector.logger.info).calledWith(
+        'Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.'
+      );
     });
 
     describe('with successful tests', () => {
@@ -118,7 +124,7 @@ describe(DryRunExecutor.name, () => {
         expect(injector.provideValue).calledWithExactly(coreTokens.timeOverheadMS, 0);
       });
 
-      it('should provide the result', async () => {
+      it('should provide the dry run result', async () => {
         timerMock.elapsedMs.returns(42);
         runResult.tests.push(factory.successTestResult());
         runResult.mutantCoverage = {
@@ -127,6 +133,35 @@ describe(DryRunExecutor.name, () => {
         };
         const actualInjector = await sut.execute();
         expect(actualInjector.provideValue).calledWithExactly(coreTokens.dryRunResult, runResult);
+      });
+
+      it('should remap test files that are reported', async () => {
+        runResult.tests.push(factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js' }));
+        sandbox.originalFileFor.returns('test/foo.spec.js');
+        await sut.execute();
+        const actualDryRunResult = injectorMock.provideValue.getCalls().find((call) => call.args[0] === coreTokens.dryRunResult)!
+          .args[1] as DryRunResult;
+        assertions.expectCompleted(actualDryRunResult);
+        expect(actualDryRunResult.tests[0].fileName).eq('test/foo.spec.js');
+        expect(sandbox.originalFileFor).calledWith('.stryker-tmp/sandbox-123/test/foo.spec.js');
+      });
+
+      it('should remap test locations when type checking was disabled for a test file', async () => {
+        runResult.tests.push(
+          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
+          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } })
+        );
+        sandbox.originalFileFor
+          .withArgs('.stryker-tmp/sandbox-123/test/foo.spec.js')
+          .returns('test/foo.spec.js')
+          .withArgs('.stryker-tmp/sandbox-123/testResources/foo.spec.js')
+          .returns('testResources/foo.spec.js');
+        await sut.execute();
+        const actualDryRunResult = injectorMock.provideValue.getCalls().find((call) => call.args[0] === coreTokens.dryRunResult)!
+          .args[1] as DryRunResult;
+        assertions.expectCompleted(actualDryRunResult);
+        expect(actualDryRunResult.tests[0].startPosition).deep.eq({ line: 2, column: 1 });
+        expect(actualDryRunResult.tests[1].startPosition).deep.eq({ line: 5, column: 1 }); // should not have been remapped, since type checking wasn't disabled here
       });
 
       it('should have logged the amount of tests ran', async () => {

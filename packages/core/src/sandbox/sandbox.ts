@@ -65,6 +65,10 @@ export class Sandbox implements Disposable {
     return sandboxFileName;
   }
 
+  public originalFileFor(sandboxFileName: string): string {
+    return path.resolve(sandboxFileName).replace(this.workingDirectory, process.cwd());
+  }
+
   private fillSandbox(): Promise<void[]> {
     return from(this.files)
       .pipe(

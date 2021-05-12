@@ -19,6 +19,7 @@ import {
   WorkerMessageKind,
 } from '../../../src/child-proxy/message-protocol';
 import { LoggingClientContext } from '../../../src/logging';
+import * as stringUtils from '../../../src/utils/string-utils';
 import * as objectUtils from '../../../src/utils/object-utils';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
 import { currentLogMock } from '../../helpers/log-mock';
@@ -91,7 +92,7 @@ describe(ChildProcessProxy.name, () => {
       });
 
       // Assert
-      expect(childProcessMock.send).calledWith(objectUtils.serialize(expectedMessage));
+      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedMessage));
     });
 
     it('should log the exec arguments and require name', () => {
@@ -225,7 +226,7 @@ describe(ChildProcessProxy.name, () => {
 
       // Assert
       expect(result).eq('ack');
-      expect(childProcessMock.send).calledWith(objectUtils.serialize(expectedWorkerMessage));
+      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
     });
   });
 
@@ -237,7 +238,7 @@ describe(ChildProcessProxy.name, () => {
     it('should send a dispose message', async () => {
       await actDispose();
       const expectedWorkerMessage: DisposeMessage = { kind: WorkerMessageKind.Dispose };
-      expect(childProcessMock.send).calledWith(objectUtils.serialize(expectedWorkerMessage));
+      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
     });
 
     it('should kill the child process', async () => {
@@ -280,7 +281,7 @@ describe(ChildProcessProxy.name, () => {
   });
 
   function receiveMessage(workerResponse: ParentMessage) {
-    childProcessMock.emit('message', objectUtils.serialize(workerResponse));
+    childProcessMock.emit('message', stringUtils.serialize(workerResponse));
   }
 });
 

@@ -1,7 +1,5 @@
 import commander from 'commander';
-import { DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
-
-import { MutantResult } from '@stryker-mutator/api/report';
+import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer';
 import { LogConfigurator } from './logging';
@@ -62,7 +60,12 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        'A comma separated list of globbing expression used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: node_modules/a-lib/**/*.js,src/**/*.js,!src/index.js,a.js,test/**/*.js',
+        'A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        list
+      )
+      .option(
+        '--ignorePatterns <filesToIgnore>',
+        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
       .option(
@@ -76,8 +79,7 @@ export class StrykerCli {
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
       .option(
-        '--coverageAnalysis <perTest|all|off>',
-        `The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
+        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
@@ -150,7 +152,7 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true/false>',
-        'Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).',
+        `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
       .parse(this.argv);
@@ -179,7 +181,7 @@ export class StrykerCli {
 
     if (Object.keys(commands).includes(this.command)) {
       const promise: Promise<MutantResult[] | void> = commands[this.command as keyof typeof commands]();
-      promise.catch((err) => {
+      promise.catch(() => {
         process.exitCode = 1;
       });
     } else {

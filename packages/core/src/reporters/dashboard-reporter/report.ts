@@ -1,6 +1,6 @@
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { schema } from '@stryker-mutator/api/core';
 
 export interface MutationScoreOnlyReport {
   mutationScore: number;
 }
-export type Report = MutationScoreOnlyReport | mutationTestReportSchema.MutationTestResult;
+export type Report = MutationScoreOnlyReport | schema.MutationTestResult;

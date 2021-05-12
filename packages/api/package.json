@@ -36,11 +36,11 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "dependencies": {
-    "mutation-testing-report-schema": "~1.5.2",
-    "surrial": "~2.0.2",
+    "mutation-testing-report-schema": "1.7.1",
+    "mutation-testing-metrics": "1.7.2",
     "tslib": "~2.2.0"
   },
   "devDependencies": {

@@ -118,6 +118,7 @@ export const createFailResult = (): AggregatedResult =>
     success: false,
     testResults: [
       createJestTestResult({
+        testFilePath: 'qux.js',
         testResults: [
           createAssertionResult({
             failureMessages: ['Fail message 1', 'Fail message 2'],
@@ -134,10 +135,12 @@ export const createFailResult = (): AggregatedResult =>
         ],
       }),
       createJestTestResult({
+        testFilePath: 'quux.js',
         testResults: [
           createAssertionResult({
             ancestorTitles: ['App'],
             duration: 23,
+            location: { line: 42, column: 43 },
             failureMessages: [],
             fullName: 'App renders without crashing',
             numPassingAsserts: 0,
@@ -198,10 +201,12 @@ export const createSuccessResult = (): AggregatedResult =>
     success: true,
     testResults: [
       createJestTestResult({
+        testFilePath: 'foo.js',
         testResults: [
           createAssertionResult({
             fullName: 'App renders without crashing',
             status: 'passed',
+            location: { column: 4, line: 3 },
             duration: 23,
           }),
         ],
@@ -215,6 +220,7 @@ export const createPendingResult = (): AggregatedResult =>
     success: true,
     testResults: [
       createJestTestResult({
+        testFilePath: 'bar.js',
         testResults: [
           createAssertionResult({
             duration: 0,
@@ -232,6 +238,7 @@ export const createTodoResult = (): AggregatedResult =>
     testResults: [
       createJestTestResult({
         skipped: false,
+        testFilePath: 'baz.js',
         testResults: [
           createAssertionResult({
             duration: 4,

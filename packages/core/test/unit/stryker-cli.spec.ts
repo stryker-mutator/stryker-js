@@ -28,6 +28,7 @@ describe(StrykerCli.name, () => {
   describe('flat options', () => {
     const testCases: Array<[string[], PartialStrykerOptions]> = [
       [['--files', 'foo.js,bar.js'], { files: ['foo.js', 'bar.js'] }],
+      [['--ignorePatterns', 'foo.js,bar.js'], { ignorePatterns: ['foo.js', 'bar.js'] }],
       [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
       [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],

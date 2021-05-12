@@ -221,6 +221,11 @@
           "description": "decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.",
           "type": "boolean",
           "default": true
+        },
+        "unserializableOptions": {
+          "description": "decide whether or not to log warnings when a configuration options are unserializable. For example, using a `/regex/` or `function` in your configuration options.",
+          "type": "boolean",
+          "default": true
         }
       }
     }
@@ -253,7 +258,7 @@
       "type": "number"
     },
     "maxTestRunnerReuse": {
-      "description": "Restart each forked threads after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
+      "description": "Restart each forked worker after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
       "type": "number",
       "default": 0
     },
@@ -264,8 +269,8 @@
     },
     "coverageAnalysis": {
       "$ref": "#/definitions/coverageAnalysis",
-      "description": "Indicates which coverage analysis strategy to use. During mutation testing, stryker will try to only run the tests that cover a particular line of code.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
-      "default": "off"
+      "description": "Indicates which coverage analysis strategy to use. During mutation testing, Stryker will try to only run the tests that cover a particular mutant.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
+      "default": "perTest"
     },
     "clearTextReporter": {
       "description": "The options for the clear text reporter.",
@@ -282,17 +287,18 @@
       "$ref": "#/definitions/eventRecorderOptions",
       "default": {}
     },
+    "ignorePatterns": {
+      "description": "Specify the patterns to all files or directories that are not used to run your tests and thus should *not be copied* to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
       "$ref": "#/definitions/logLevel",
       "default": "off"
-    },
-    "files": {
-      "description": "With `files` you can choose which files should be included in your test runner sandbox.\nThis is normally not needed as it defaults to all files not ignored by git.\nTry it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.\n\nIf you do need to override `files` (for example: when your project does not live in a git repository),\nyou can override the files here.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.\nWhen using the config file you can provide an array with `string`s",
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
     },
     "inPlace": {
       "type": "boolean",
