@@ -31,8 +31,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### BREAKING CHANGES
 
 * **range:** The `range` property is no longer present on a `mutant`. Note, this is a breaking change for plugin creators only.
-
-Co-authored-by: Simon de Lang <simondelang@gmail.com>
 * **options:** `"perTest"` is now the default value for "coverageAnalysis" when the configured test runner is not "command". Explicitly set `"coverageAnalysis": "off"` manually to opt-out of this behavior.
 * **node:** Node 10 is no longer supported. Please use Node 12 or higher.
 * **serialize:** Having a non-JSON-serializable value in your configuration won't be sent to the child process anymore. If you really need them in your test runner configuration, you should isolate those values and put them in test runner-specific config files, loaded by the test runner plugin itself, for example, jest.config.js, karma.conf.js, webpack.config.js.
