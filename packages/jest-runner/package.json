@@ -55,7 +55,7 @@
     "react-scripts": "~4.0.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~4.6.0",
+    "@stryker-mutator/core": "~5.0.0",
     "jest": ">= 22.0.0"
   },
   "dependencies": {
