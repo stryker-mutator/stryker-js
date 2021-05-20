@@ -54,7 +54,7 @@ Stryker can also be used programmatically from nodejs. It exports 2 classes for 
 import { Stryker, StrykerCli } from '@stryker-mutator/core';
 ```
 
-Both classes can be used to run Stryker. The main difference is that `Stryker` is a slightly more low-level approach, while `StrykerCli` is the strait up CLI api.
+Both classes can be used to run Stryker. The main difference is that `Stryker` is a slightly more low-level approach, while `StrykerCli` is the straight up CLI api.
 
 In this example you can see how to use both. 
 
