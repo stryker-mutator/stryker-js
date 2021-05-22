@@ -10,7 +10,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-checker';
 
-const resolveTestResource = (path.resolve.bind(
+const resolveTestResource = path.resolve.bind(
   path,
   __dirname,
   '..' /* integration */,
@@ -18,7 +18,7 @@ const resolveTestResource = (path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'project-references'
-) as unknown) as typeof path.resolve;
+) as unknown as typeof path.resolve;
 
 describe('Typescript checker on a project with project references', () => {
   let sut: TypescriptChecker;

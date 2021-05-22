@@ -34,9 +34,7 @@ import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
 import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
 
-export function createJestTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
-): {
+export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;
   inject: ['$injector'];
 } {

@@ -40,14 +40,18 @@ describe(MutationTestExecutor.name, () => {
     checker = factory.checker();
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     sandboxMock = sinon.createStubInstance(Sandbox);
-    (checkerPoolMock.schedule as sinon.SinonStub<
-      [Observable<Mutant>, (testRunner: Checker, arg: Mutant) => Promise<CheckResult>],
-      Observable<CheckResult>
-    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
-    (testRunnerPoolMock.schedule as sinon.SinonStub<
-      [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
-      Observable<MutantRunResult>
-    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
+    (
+      checkerPoolMock.schedule as sinon.SinonStub<
+        [Observable<Mutant>, (testRunner: Checker, arg: Mutant) => Promise<CheckResult>],
+        Observable<CheckResult>
+      >
+    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
+    (
+      testRunnerPoolMock.schedule as sinon.SinonStub<
+        [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
+        Observable<MutantRunResult>
+      >
+    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
 
     mutants = [];
     sut = testInjector.injector

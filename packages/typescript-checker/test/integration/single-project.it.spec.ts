@@ -9,7 +9,7 @@ import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-checker';
 
-const resolveTestResource = (path.resolve.bind(
+const resolveTestResource = path.resolve.bind(
   path,
   __dirname,
   '..' /* integration */,
@@ -17,7 +17,7 @@ const resolveTestResource = (path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'single-project'
-) as unknown) as typeof path.resolve;
+) as unknown as typeof path.resolve;
 
 describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;

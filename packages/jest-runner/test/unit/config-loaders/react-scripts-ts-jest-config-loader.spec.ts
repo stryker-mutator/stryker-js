@@ -31,7 +31,7 @@ describe(ReactScriptsTSJestConfigLoader.name, () => {
 
     loggerStub = factory.logger();
 
-    sut = new ReactScriptsTSJestConfigLoader(loggerStub, (requireResolveStub as unknown) as RequireResolve, projectRoot);
+    sut = new ReactScriptsTSJestConfigLoader(loggerStub, requireResolveStub as unknown as RequireResolve, projectRoot);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts-ts', () => {

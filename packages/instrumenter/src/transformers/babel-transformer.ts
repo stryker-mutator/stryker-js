@@ -27,9 +27,11 @@ export const transformBabel: AstTransformer<ScriptFormat> = ({ root, originFileN
         isTypeNode(path) ||
         isImportDeclaration(path) ||
         path.isDecorator() ||
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         (mutantRangesForCurrentFile.length && mutantRangesForCurrentFile.every((range) => !locationOverlaps(range, path.node.loc!)))
       ) {
         path.skip();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       } else if (!mutantRangesForCurrentFile.length || mutantRangesForCurrentFile.some((range) => locationIncluded(range, path.node.loc!))) {
         mutate(path, options).forEach((mutant) => {
           mutantCollector.add(originFileName, mutant, offset?.position, offset?.line);

@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { createTypescriptChecker } from '../../src';
 
-const resolveTestResource = (path.resolve.bind(
+const resolveTestResource = path.resolve.bind(
   path,
   __dirname,
   '..' /* integration */,
@@ -13,7 +13,7 @@ const resolveTestResource = (path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'errors'
-) as unknown) as typeof path.resolve;
+) as unknown as typeof path.resolve;
 
 describe('Typescript checker errors', () => {
   it('should reject initialization if initial compilation failed', async () => {

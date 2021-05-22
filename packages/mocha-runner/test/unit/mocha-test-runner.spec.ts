@@ -27,7 +27,7 @@ describe(MochaTestRunner.name, () => {
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
     mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
-    mochaAdapterMock.create.returns((mocha as unknown) as Mocha);
+    mochaAdapterMock.create.returns(mocha as unknown as Mocha);
   });
 
   afterEach(() => {

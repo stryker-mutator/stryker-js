@@ -23,44 +23,42 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
   const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests, logger);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
-  const mutantCoverage = mutants.map(
-    (mutant): MutantTestCoverage => {
-      if (mutant.status) {
+  const mutantCoverage = mutants.map((mutant): MutantTestCoverage => {
+    if (mutant.status) {
+      return {
+        ...mutant,
+        static: false,
+        estimatedNetTime: 0,
+      };
+    } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
+      // When there is static coverage for this mutant, it is a static mutant.
+      return {
+        ...mutant,
+        estimatedNetTime: timeSpentAllTests,
+        coveredBy: undefined,
+        static: true,
+      };
+    } else {
+      // If no static coverage, but there is test coverage, it is a non-static, covered mutant
+      const tests = testsByMutantId.get(mutant.id);
+      if (tests && tests.size > 0) {
         return {
           ...mutant,
+          estimatedNetTime: calculateTotalTime(tests),
+          coveredBy: toTestIds(tests),
           static: false,
-          estimatedNetTime: 0,
-        };
-      } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
-        // When there is static coverage for this mutant, it is a static mutant.
-        return {
-          ...mutant,
-          estimatedNetTime: timeSpentAllTests,
-          coveredBy: undefined,
-          static: true,
         };
       } else {
-        // If no static coverage, but there is test coverage, it is a non-static, covered mutant
-        const tests = testsByMutantId.get(mutant.id);
-        if (tests && tests.size > 0) {
-          return {
-            ...mutant,
-            estimatedNetTime: calculateTotalTime(tests),
-            coveredBy: toTestIds(tests),
-            static: false,
-          };
-        } else {
-          // Otherwise it is has no coverage
-          return {
-            ...mutant,
-            estimatedNetTime: 0,
-            coveredBy: [],
-            static: false,
-          };
-        }
+        // Otherwise it is has no coverage
+        return {
+          ...mutant,
+          estimatedNetTime: 0,
+          coveredBy: [],
+          static: false,
+        };
       }
     }
-  );
+  });
   return mutantCoverage;
 }
 

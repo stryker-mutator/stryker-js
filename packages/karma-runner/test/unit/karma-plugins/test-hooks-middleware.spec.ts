@@ -112,11 +112,11 @@ describe(TestHooksMiddleware.name, () => {
       request = {
         url: '',
       } as Request;
-      response = ({
+      response = {
         writeHead: sinon.stub(),
         end: sinon.stub(),
-      } as unknown) as Response;
-      next = (sinon.stub() as unknown) as NextFunction;
+      } as unknown as Response;
+      next = sinon.stub() as unknown as NextFunction;
     });
 
     it('should pass through normal requests', () => {

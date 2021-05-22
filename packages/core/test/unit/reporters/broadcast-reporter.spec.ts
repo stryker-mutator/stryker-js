@@ -183,7 +183,7 @@ describe(BroadcastReporter.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorReporter, (pluginCreatorMock as unknown) as PluginCreator<PluginKind.Reporter>)
+      .provideValue(coreTokens.pluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
       .injectClass(BroadcastReporter);
   }
 
