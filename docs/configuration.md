@@ -172,6 +172,14 @@ Thus, to see logging output from the test runner set the `logLevel` to `all` or 
 
 **DEPRECATED**. Please use [concurrency](#concurrency-number) instead. 
 
+### `maxTestRunnerReuse` [`number`]
+
+Default: `0`<br />
+Command line: `--maxTestRunnerReuse 20`<br />
+Config file: `"maxTestRunnerReuse": 20`
+
+Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.
+
 ### `mutate` [`string[]`]
 
 Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{src,lib}/**/?(*.)+(spec|test).js?(x)', '!{src,lib}/**/*+(Spec|Test).js?(x)']`<br />
