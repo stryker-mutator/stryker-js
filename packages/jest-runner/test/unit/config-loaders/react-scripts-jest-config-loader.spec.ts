@@ -25,7 +25,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(reactScriptsPackagePath);
 
-    sut = new ReactScriptsJestConfigLoader((requireResolveStub as unknown) as RequireResolve, projectRoot);
+    sut = new ReactScriptsJestConfigLoader(requireResolveStub as unknown as RequireResolve, projectRoot);
   });
 
   it('should load the configuration via the createJestConfig method provided by react-scripts', () => {

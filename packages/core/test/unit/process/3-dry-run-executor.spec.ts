@@ -31,10 +31,12 @@ describe(DryRunExecutor.name, () => {
     timerMock = sinon.createStubInstance(Timer);
     testRunnerMock = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
-    (testRunnerPoolMock.schedule as sinon.SinonStub<
-      [Observable<unknown>, (testRunner: TestRunner, arg: unknown) => Promise<DryRunResult>],
-      Observable<DryRunResult>
-    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
+    (
+      testRunnerPoolMock.schedule as sinon.SinonStub<
+        [Observable<unknown>, (testRunner: TestRunner, arg: unknown) => Promise<DryRunResult>],
+        Observable<DryRunResult>
+      >
+    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);

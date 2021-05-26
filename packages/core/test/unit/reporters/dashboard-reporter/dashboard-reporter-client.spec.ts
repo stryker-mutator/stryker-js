@@ -21,7 +21,7 @@ describe(DashboardReporterClient.name, () => {
     environment = new EnvironmentVariableStore();
     httpClient = mock(HttpClient);
     sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.httpClient, (httpClient as unknown) as HttpClient)
+      .provideValue(dashboardReporterTokens.httpClient, httpClient as unknown as HttpClient)
       .injectClass(DashboardReporterClient);
   });
 
@@ -117,11 +117,11 @@ describe(DashboardReporterClient.name, () => {
   });
 
   function respondWith(statusCode = 200, body = '{ "href": "href" }') {
-    httpClient.put.resolves(({
+    httpClient.put.resolves({
       message: {
         statusCode,
       },
       readBody: sinon.stub().resolves(body),
-    } as unknown) as IHttpClientResponse);
+    } as unknown as IHttpClientResponse);
   }
 });

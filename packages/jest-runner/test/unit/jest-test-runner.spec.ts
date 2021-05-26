@@ -507,7 +507,7 @@ describe(JestTestRunner.name, () => {
   function createSut() {
     return testInjector.injector
       .provideValue(pluginTokens.processEnv, processEnvMock)
-      .provideValue(pluginTokens.jestTestAdapter, (jestTestAdapterMock as unknown) as JestTestAdapter)
+      .provideValue(pluginTokens.jestTestAdapter, jestTestAdapterMock as unknown as JestTestAdapter)
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JestTestRunner);

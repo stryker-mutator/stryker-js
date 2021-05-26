@@ -57,7 +57,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(coreTokens.execa, (execaMock as unknown) as typeof execa)
+      .provideValue(coreTokens.execa, execaMock as unknown as typeof execa)
       .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitHandlerMock)
       .injectClass(Sandbox);
   }

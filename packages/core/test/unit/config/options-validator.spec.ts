@@ -374,7 +374,7 @@ describe(validateOptions.name, () => {
 
   it('should validate the options using given optionsValidator', () => {
     const options = { foo: 'bar' };
-    const output = validateOptions(options, (optionsValidatorMock as unknown) as OptionsValidator);
+    const output = validateOptions(options, optionsValidatorMock as unknown as OptionsValidator);
     expect(options).deep.eq(output);
     expect(optionsValidatorMock.validate).calledWith(options);
   });
