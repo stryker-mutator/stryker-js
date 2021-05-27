@@ -38,7 +38,9 @@ export class MochaAdapter {
   }
 
   public async handleRequires(requires: string[]): Promise<unknown> {
+    this.log.trace('Resolving requires %s', requires);
     if (LibWrapper.handleRequires) {
+      this.log.trace('Using `handleRequires`');
       const rawRootHooks = await LibWrapper.handleRequires(requires);
       if (rawRootHooks) {
         if (LibWrapper.loadRootHooks) {
@@ -57,6 +59,7 @@ export class MochaAdapter {
           return moduleName;
         }
       });
+      this.log.trace('Requiring %s manually', modulesToRequire);
       modulesToRequire.forEach(LibWrapper.require);
     }
     return undefined;
