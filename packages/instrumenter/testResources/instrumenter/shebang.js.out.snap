@@ -8,7 +8,7 @@ function stryNS_9fa48() {
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -57,5 +57,5 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-console.log(stryMutAct_9fa48(0) ? \\"\\" : (stryCov_9fa48(0), 'test'));"
+console.log(stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'test'));"
 `;

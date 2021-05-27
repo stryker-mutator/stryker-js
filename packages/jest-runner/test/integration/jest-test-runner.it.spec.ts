@@ -1,5 +1,4 @@
 import path from 'path';
-import { platform } from 'os';
 
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -11,11 +10,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { createJestOptions } from '../helpers/producers';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const paths = require('react-scripts-ts/config/paths');
-// It's a bit hacky, but we need to tell create-react-app-ts to pick a different tsconfig.test.json
-paths.appTsTestConfig = resolveTestResource('reactTsProject/tsconfig.test.json');
+import { expectTestResults } from '../helpers/assertions';
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
@@ -42,33 +37,14 @@ describe(`${JestTestRunner.name} integration test`, () => {
   };
 
   describe('dryRun', () => {
-    it('should run tests on the example React + TypeScript project', async function () {
-      if (platform() === 'win32') {
-        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
-        this.skip();
-      }
-      // TODO: Get a proper React TS project that works on Windows
-      process.chdir(resolveTestResource('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
-
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
-
-      assertions.expectCompleted(runResult);
-      expectToHaveSuccessfulTests(runResult, 1);
-    });
-
     it('should set the test name and timeSpentMs', async function () {
-      if (platform() === 'win32') {
-        console.log("[SKIP] Skipping this test on windows, react ts doesn't work there.");
-        this.skip();
-      }
-      process.chdir(resolveTestResource('reactTsProject'));
-      const jestTestRunner = createSut({ projectType: 'create-react-app-ts' });
+      process.chdir(resolveTestResource('jasmine2-node'));
+      const jestTestRunner = createSut();
 
       const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
 
       assertions.expectCompleted(runResult);
-      expect(runResult.tests[0].name).to.equal('renders without crashing');
+      expect(runResult.tests[0].name).to.equal('Add should be able to add two numbers');
       expect(runResult.tests[0].timeSpentMs).to.be.above(-1);
     });
 
@@ -92,6 +68,42 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
     });
+
+    it('should report the test positions and file names', async () => {
+      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
+      const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
+      const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
+      const jestTestRunner = createSut();
+      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'perTest' });
+      assertions.expectCompleted(runResult);
+      expectTestResults(runResult, [
+        {
+          id: 'Add should be able to add two numbers',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 6 },
+        },
+        {
+          id: 'Add should be able to add one to a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 16 },
+        },
+        {
+          id: 'Add should be able negate a number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 25 },
+        },
+        {
+          id: 'Add should be able to recognize a negative number',
+          fileName: addSpecFileName,
+          startPosition: { column: 2, line: 34 },
+        },
+        {
+          id: 'Circle should have a circumference of 2PI when the radius is 1',
+          fileName: circleSpecFileName,
+          startPosition: { column: 2, line: 3 },
+        },
+      ]);
+    });
   });
 
   describe('mutantRun', () => {
@@ -100,12 +112,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        activeMutant: factory.mutant({
-          id: 1,
-        }),
+        activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
-      mutantRunOptions.activeMutant.id = 1;
+      mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
@@ -121,7 +131,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
       });
-      mutantRunOptions.activeMutant.id = 11;
+      mutantRunOptions.activeMutant.id = '11';
 
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
@@ -131,16 +141,16 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
+      process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
-      mutantRunOptions.activeMutant.id = 1;
+      mutantRunOptions.activeMutant.id = '1';
 
       // Act
       const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
-      mutantRunOptions.activeMutant.id = 10;
+      mutantRunOptions.activeMutant.id = '10';
       const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       // Assert

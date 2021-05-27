@@ -35,7 +35,11 @@ export class MochaOptionsLoader {
 
   public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
     const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
-    return { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
+    const options = { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Loaded options: ${JSON.stringify(options, null, 2)}`);
+    }
+    return options;
   }
 
   private loadMochaOptions(overrides: MochaOptions) {
@@ -56,9 +60,6 @@ export class MochaOptionsLoader {
       this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
-    if (this.log.isDebugEnabled()) {
-      this.log.debug(`Loaded options: ${JSON.stringify(options, null, 2)}`);
-    }
     return options;
   }
 

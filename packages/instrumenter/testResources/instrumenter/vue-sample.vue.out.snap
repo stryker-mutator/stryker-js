@@ -47,7 +47,7 @@ function stryNS_9fa48() {
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -96,32 +96,32 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-export default stryMutAct_9fa48(0) ? {} : (stryCov_9fa48(0), {
-  name: stryMutAct_9fa48(1) ? \\"\\" : (stryCov_9fa48(1), 'HelloWorld'),
+export default stryMutAct_9fa48(\\"0\\") ? {} : (stryCov_9fa48(\\"0\\"), {
+  name: stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'HelloWorld'),
 
   data() {
-    if (stryMutAct_9fa48(2)) {
+    if (stryMutAct_9fa48(\\"2\\")) {
       {}
     } else {
-      stryCov_9fa48(2);
-      return stryMutAct_9fa48(3) ? {} : (stryCov_9fa48(3), {
-        msg: stryMutAct_9fa48(4) ? \\"\\" : (stryCov_9fa48(4), 'Welcome to Your Vue.js App')
+      stryCov_9fa48(\\"2\\");
+      return stryMutAct_9fa48(\\"3\\") ? {} : (stryCov_9fa48(\\"3\\"), {
+        msg: stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'Welcome to Your Vue.js App')
       });
     }
   },
 
-  watch: stryMutAct_9fa48(5) ? {} : (stryCov_9fa48(5), {
+  watch: stryMutAct_9fa48(\\"5\\") ? {} : (stryCov_9fa48(\\"5\\"), {
     'category.type'(categoryType) {
-      if (stryMutAct_9fa48(6)) {
+      if (stryMutAct_9fa48(\\"6\\")) {
         {}
       } else {
-        stryCov_9fa48(6);
+        stryCov_9fa48(\\"6\\");
 
-        if (stryMutAct_9fa48(9) ? this.isNew || this.category : stryMutAct_9fa48(8) ? false : stryMutAct_9fa48(7) ? true : (stryCov_9fa48(7, 8, 9), this.isNew && this.category)) {
-          if (stryMutAct_9fa48(10)) {
+        if (stryMutAct_9fa48(\\"9\\") ? this.isNew || this.category : stryMutAct_9fa48(\\"8\\") ? false : stryMutAct_9fa48(\\"7\\") ? true : (stryCov_9fa48(\\"7\\", \\"8\\", \\"9\\"), this.isNew && this.category)) {
+          if (stryMutAct_9fa48(\\"10\\")) {
             {}
           } else {
-            stryCov_9fa48(10);
+            stryCov_9fa48(\\"10\\");
             this.category.permissions = getDefaultDocumentCategoryPermissions(categoryType);
           }
         }
@@ -137,7 +137,7 @@ function stryNS_9fa48() {
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -186,7 +186,7 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const b = stryMutAct_9fa48(11) ? a - c : (stryCov_9fa48(11), a + c);
+const b = stryMutAct_9fa48(\\"11\\") ? a - c : (stryCov_9fa48(\\"11\\"), a + c);
 </script>
 
 <!-- Add \\"scoped\\" attribute to limit CSS to this component only -->

@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.com/stryker-mutator/stryker-js/compare/v4.6.0...v5.0.0) (2021-05-14)
+
+
+### Features
+
+* **jest:** report test files and test positions ([#2808](https://github.com/stryker-mutator/stryker-js/issues/2808)) ([c19095e](https://github.com/stryker-mutator/stryker-js/commit/c19095e57f6a46d7d9c9b97f852747d4167ab256))
+* **jest-runner:** drop projectType "create-react-app-ts" ([#2788](https://github.com/stryker-mutator/stryker-js/issues/2788)) ([2581e32](https://github.com/stryker-mutator/stryker-js/commit/2581e32435894f47f47ad79f50ca12c3368c6c13)), closes [#2787](https://github.com/stryker-mutator/stryker-js/issues/2787) [#2787](https://github.com/stryker-mutator/stryker-js/issues/2787)
+* **node:** Drop support for node 10 ([#2879](https://github.com/stryker-mutator/stryker-js/issues/2879)) ([dd29f88](https://github.com/stryker-mutator/stryker-js/commit/dd29f883d384fd29b86a0ef9f78808975657a001))
+* **options:** make "perTest" the default for "coverageAnalysis" ([#2881](https://github.com/stryker-mutator/stryker-js/issues/2881)) ([518ebe6](https://github.com/stryker-mutator/stryker-js/commit/518ebe6b946fc35138b636a015b569fe9a272ed0))
+* **reporter api:** unify reporter api with mutation-testing-elements ([#2798](https://github.com/stryker-mutator/stryker-js/issues/2798)) ([d173b27](https://github.com/stryker-mutator/stryker-js/commit/d173b27117ade43e86a991643207532e338e7907)), closes [#2766](https://github.com/stryker-mutator/stryker-js/issues/2766)
+
+
+### BREAKING CHANGES
+
+* **options:** `"perTest"` is now the default value for "coverageAnalysis" when the configured test runner is not "command". Explicitly set `"coverageAnalysis": "off"` manually to opt-out of this behavior.
+* **node:** Node 10 is no longer supported. Please use Node 12 or higher.
+* **reporter api:** Changes to `Reporter` and `TestRunner` plugin API of Stryker
+* **jest-runner:** Support for project type `create-react-app-ts` is dropped from the jest-runner.
+
+
+
+
+
 # [4.6.0](https://github.com/stryker-mutator/stryker-js/compare/v4.5.1...v4.6.0) (2021-04-16)
 
 

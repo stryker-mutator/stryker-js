@@ -1,6 +1,6 @@
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { MutantStatus, schema } from '@stryker-mutator/api/core';
 
-export const simpleReport: mutationTestReportSchema.MutationTestResult = {
+export const simpleReport: schema.MutationTestResult = {
   files: {
     'test.js': {
       language: 'javascript',
@@ -19,7 +19,7 @@ export const simpleReport: mutationTestReportSchema.MutationTestResult = {
           },
           mutatorName: 'String Literal',
           replacement: '""',
-          status: mutationTestReportSchema.MutantStatus.Survived,
+          status: MutantStatus.Survived,
         },
         {
           id: '1',
@@ -35,7 +35,7 @@ export const simpleReport: mutationTestReportSchema.MutationTestResult = {
           },
           mutatorName: 'Arithmetic Operator',
           replacement: '-',
-          status: mutationTestReportSchema.MutantStatus.Survived,
+          status: MutantStatus.Survived,
         },
       ],
       source: '"use strict";\nfunction add(a, b) {\n  return a + b;\n}',

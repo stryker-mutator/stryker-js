@@ -1,7 +1,8 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantTestCoverage, MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { MatchedMutant, MutantResult, mutationTestReportSchema, Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
 import { coreTokens } from '../di';
@@ -42,13 +43,12 @@ export class BroadcastReporter implements StrictReporter {
     }
   }
 
-  private broadcast(methodName: keyof Reporter, eventArgs: any): Promise<void[]> {
+  private broadcast<TMethod extends keyof Reporter>(methodName: TMethod, ...eventArgs: Parameters<Required<Reporter>[TMethod]>): Promise<void[]> {
     return Promise.all(
-      Object.keys(this.reporters).map(async (reporterName) => {
-        const reporter = this.reporters[reporterName];
-        if (typeof reporter[methodName] === 'function') {
+      Object.entries(this.reporters).map(async ([reporterName, reporter]) => {
+        if (reporter[methodName]) {
           try {
-            await (reporter[methodName] as any)(eventArgs);
+            await (reporter[methodName] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)!(...eventArgs);
           } catch (error) {
             this.handleError(error, methodName, reporterName);
           }
@@ -65,7 +65,7 @@ export class BroadcastReporter implements StrictReporter {
     this.broadcast('onAllSourceFilesRead', files);
   }
 
-  public onAllMutantsMatchedWithTests(results: readonly MatchedMutant[]): void {
+  public onAllMutantsMatchedWithTests(results: readonly MutantTestCoverage[]): void {
     this.broadcast('onAllMutantsMatchedWithTests', results);
   }
 
@@ -77,12 +77,12 @@ export class BroadcastReporter implements StrictReporter {
     this.broadcast('onAllMutantsTested', results);
   }
 
-  public onMutationTestReportReady(report: mutationTestReportSchema.MutationTestResult): void {
-    this.broadcast('onMutationTestReportReady', report);
+  public onMutationTestReportReady(report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+    this.broadcast('onMutationTestReportReady', report, metrics);
   }
 
   public async wrapUp(): Promise<void> {
-    await this.broadcast('wrapUp', undefined);
+    await this.broadcast('wrapUp');
   }
 
   private handleError(error: unknown, methodName: string, reporterName: string) {

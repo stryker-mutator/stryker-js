@@ -24,13 +24,16 @@ export function deepFreeze<T>(target: T): Immutable<T> {
         return Object.freeze((target as any[]).map(deepFreeze)) as Immutable<T>;
       }
       if (target instanceof Map) {
-        return (Object.freeze(new Map([...target.entries()].map(([k, v]) => [deepFreeze(k), deepFreeze(v)]))) as unknown) as Immutable<T>;
+        return Object.freeze(new Map([...target.entries()].map(([k, v]) => [deepFreeze(k), deepFreeze(v)]))) as unknown as Immutable<T>;
+      }
+      if (target instanceof RegExp) {
+        return Object.freeze(target) as Immutable<T>;
       }
       if (target === null) {
         return null as Immutable<T>;
       }
       if (target instanceof Set) {
-        return (Object.freeze(new Set([...target.values()].map(deepFreeze))) as unknown) as Immutable<T>;
+        return Object.freeze(new Set([...target.values()].map(deepFreeze))) as unknown as Immutable<T>;
       }
       return Object.freeze({
         ...Object.entries(target).reduce<any>((result, [prop, val]) => {

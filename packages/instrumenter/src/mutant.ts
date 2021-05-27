@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 import generate from '@babel/generator';
-import { Mutant as ApiMutant, Location, Position } from '@stryker-mutator/api/core';
+import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
 
 export interface NodeMutation {
   replacement: types.Node;
@@ -19,7 +19,7 @@ export class Mutant {
   public readonly ignoreReason: string | undefined;
 
   constructor(
-    public readonly id: number,
+    public readonly id: string,
     public readonly fileName: string,
     specs: NamedNodeMutation,
     public readonly positionOffset: number = 0,
@@ -38,9 +38,9 @@ export class Mutant {
       id: this.id,
       location: toApiLocation(this.original.loc!, this.lineOffset),
       mutatorName: this.mutatorName,
-      range: [this.original.start! + this.positionOffset, this.original.end! + this.positionOffset],
       replacement: this.replacementCode,
-      ignoreReason: this.ignoreReason,
+      statusReason: this.ignoreReason,
+      status: this.ignoreReason ? MutantStatus.Ignored : undefined,
     };
   }
 }

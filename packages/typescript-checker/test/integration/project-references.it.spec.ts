@@ -1,15 +1,16 @@
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 import { expect } from 'chai';
-import { Mutant, Range } from '@stryker-mutator/api/core';
+import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-checker';
 
-const resolveTestResource = (path.resolve.bind(
+const resolveTestResource = path.resolve.bind(
   path,
   __dirname,
   '..' /* integration */,
@@ -17,7 +18,7 @@ const resolveTestResource = (path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'project-references'
-) as unknown) as typeof path.resolve;
+) as unknown as typeof path.resolve;
 
 describe('Typescript checker on a project with project references', () => {
   let sut: TypescriptChecker;
@@ -57,15 +58,20 @@ const fileContents = Object.freeze({
 });
 
 function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, offset = 0): Mutant {
-  const originalOffset: number = fileContents[fileName].indexOf(findText);
-  if (originalOffset === -1) {
+  const lines = fileContents[fileName].split(os.EOL);
+  const lineNumber = lines.findIndex((l) => l.includes(findText));
+  if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
   }
-  const range: Range = [originalOffset + offset, originalOffset + findText.length];
+  const textColumn = lines[lineNumber].indexOf(findText);
+  const location: Location = {
+    start: { line: lineNumber, column: textColumn + offset },
+    end: { line: lineNumber, column: textColumn + findText.length },
+  };
   return factory.mutant({
-    fileName: resolveTestResource(fileName),
+    fileName: resolveTestResource('src', fileName),
     mutatorName: 'foo-mutator',
-    range,
+    location,
     replacement,
   });
 }

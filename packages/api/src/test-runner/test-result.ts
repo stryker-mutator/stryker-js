@@ -1,9 +1,11 @@
+import { Position } from '../core';
+
 import { TestStatus } from './test-status';
 
 /**
  * Indicates the result of a single test
  */
-interface BaseTestResult {
+export interface BaseTestResult {
   /**
    * The id of this test. Can be the name if the test runner doesn't have an 'id'
    */
@@ -16,6 +18,16 @@ interface BaseTestResult {
    * The time it took to run the test
    */
   timeSpentMs: number;
+
+  /**
+   * The file where this test was defined in (if known)
+   */
+  fileName?: string;
+
+  /**
+   * The position of the test (if known)
+   */
+  startPosition?: Position;
 }
 
 export interface FailedTestResult extends BaseTestResult {

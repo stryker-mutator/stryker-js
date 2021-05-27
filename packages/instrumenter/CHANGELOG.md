@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.com/stryker-mutator/stryker-js/compare/v4.6.0...v5.0.0) (2021-05-14)
+
+
+### Bug Fixes
+
+* **vue-tsx:** support parsing tsx script in .vue file ([#2850](https://github.com/stryker-mutator/stryker-js/issues/2850)) ([dc66c28](https://github.com/stryker-mutator/stryker-js/commit/dc66c28999a548c3c1837dc10d4d38033ae36b1b))
+
+
+### Features
+
+* **es:** convert to es2019 ([#2846](https://github.com/stryker-mutator/stryker-js/issues/2846)) ([36c687f](https://github.com/stryker-mutator/stryker-js/commit/36c687fd5735e63502db0ad8b8a302f978cd8027))
+* **mutators:** mutate nullish coalescing operator ([#2884](https://github.com/stryker-mutator/stryker-js/issues/2884)) ([021a419](https://github.com/stryker-mutator/stryker-js/commit/021a4193232318155139ad5df68bf74748fc112c))
+* **node:** Drop support for node 10 ([#2879](https://github.com/stryker-mutator/stryker-js/issues/2879)) ([dd29f88](https://github.com/stryker-mutator/stryker-js/commit/dd29f883d384fd29b86a0ef9f78808975657a001))
+* **range:** remove Range from the API ([#2882](https://github.com/stryker-mutator/stryker-js/issues/2882)) ([b578b22](https://github.com/stryker-mutator/stryker-js/commit/b578b22eb9ccdd023602573d5d6e52c49bf99e0f)), closes [#322](https://github.com/stryker-mutator/stryker-js/issues/322)
+* **reporter api:** unify reporter api with mutation-testing-elements ([#2798](https://github.com/stryker-mutator/stryker-js/issues/2798)) ([d173b27](https://github.com/stryker-mutator/stryker-js/commit/d173b27117ade43e86a991643207532e338e7907)), closes [#2766](https://github.com/stryker-mutator/stryker-js/issues/2766)
+
+
+### BREAKING CHANGES
+
+* **range:** The `range` property is no longer present on a `mutant`. Note, this is a breaking change for plugin creators only.
+
+Co-authored-by: Simon de Lang <simondelang@gmail.com>
+* **node:** Node 10 is no longer supported. Please use Node 12 or higher.
+* **reporter api:** Changes to `Reporter` and `TestRunner` plugin API of Stryker
+
+
+
+
+
 # [4.6.0](https://github.com/stryker-mutator/stryker-js/compare/v4.5.1...v4.6.0) (2021-04-16)
 
 

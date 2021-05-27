@@ -1,8 +1,9 @@
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { ReportType } from '@stryker-mutator/api/core';
+import { MutantStatus, ReportType, schema } from '@stryker-mutator/api/core';
+
+import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
 import { CIProvider } from '../../../../src/reporters/ci/provider';
 import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter';
@@ -25,7 +26,7 @@ describe(DashboardReporter.name, () => {
 
   function createSut(ciProviderOverride: CIProvider | null = ciProviderMock) {
     return testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, (dashboardClientMock as unknown) as DashboardReporterClient)
+      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
       .provideValue(dashboardReporterTokens.ciProvider, ciProviderOverride)
       .injectClass(DashboardReporter);
   }
@@ -78,10 +79,10 @@ describe(DashboardReporter.name, () => {
       files: {
         'a.js': factory.mutationTestReportSchemaFileResult({
           mutants: [
-            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: mutationTestReportSchema.MutantStatus.Survived }),
+            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
+            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Survived }),
           ],
         }),
       },
@@ -108,7 +109,7 @@ describe(DashboardReporter.name, () => {
     const sut = createSut(null);
 
     // Act
-    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult());
+    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult(), factory.mutationTestMetricsResult());
     await sut.wrapUp();
 
     // Assert
@@ -118,9 +119,9 @@ describe(DashboardReporter.name, () => {
     );
   });
 
-  async function act(result: mutationTestReportSchema.MutationTestResult) {
+  async function act(result: schema.MutationTestResult) {
     const sut = createSut();
-    sut.onMutationTestReportReady(result);
+    sut.onMutationTestReportReady(result, calculateMutationTestMetrics(result));
     await sut.wrapUp();
   }
 });

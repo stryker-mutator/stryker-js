@@ -61,13 +61,13 @@ describe(TestHooksMiddleware.name, () => {
     });
 
     it('should declare the __stryker__ namespace', () => {
-      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
+      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
       expect(sut.currentTestHooks).contains('window.__stryker__ = window.__stryker__ || {}');
     });
 
     it('should set the "activeMutant" id', () => {
-      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: 42 }) }));
-      expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = 42');
+      sut.configureActiveMutant(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
+      expect(sut.currentTestHooks).contains('window.__stryker__.activeMutant = "42"');
     });
 
     it("should ignore the test filter if the current test framework doesn't support it", () => {
@@ -112,11 +112,11 @@ describe(TestHooksMiddleware.name, () => {
       request = {
         url: '',
       } as Request;
-      response = ({
+      response = {
         writeHead: sinon.stub(),
         end: sinon.stub(),
-      } as unknown) as Response;
-      next = (sinon.stub() as unknown) as NextFunction;
+      } as unknown as Response;
+      next = sinon.stub() as unknown as NextFunction;
     });
 
     it('should pass through normal requests', () => {

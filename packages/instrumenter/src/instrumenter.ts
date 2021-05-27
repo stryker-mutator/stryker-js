@@ -49,15 +49,18 @@ export class Instrumenter {
 }
 
 function toBabelLineNumber(range: MutationRange): MutationRange {
+  const start: number = range.start.line;
+  const end: number = range.end.line;
+
   return {
     ...range,
     end: {
       ...range.end,
-      line: range.end.line + 1,
+      line: end + 1,
     },
     start: {
       ...range.start,
-      line: range.start.line + 1,
+      line: start + 1,
     },
   };
 }

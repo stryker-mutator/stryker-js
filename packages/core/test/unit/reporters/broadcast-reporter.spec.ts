@@ -8,7 +8,7 @@ import { coreTokens } from '../../../src/di';
 import { PluginCreator } from '../../../src/di/plugin-creator';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
 
-describe('BroadcastReporter', () => {
+describe(BroadcastReporter.name, () => {
   let sut: BroadcastReporter;
   let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
   let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -68,13 +68,31 @@ describe('BroadcastReporter', () => {
     });
   });
 
-  describe('when created', () => {
+  describe('with 2 reporters', () => {
     beforeEach(() => {
       sut = createSut();
     });
 
-    it('should forward all events', () => {
-      actArrangeAssertAllEvents();
+    it('should forward "onSourceFileRead"', () => {
+      actAssertShouldForward('onSourceFileRead', factory.sourceFile());
+    });
+    it('should forward "onAllSourceFilesRead"', () => {
+      actAssertShouldForward('onAllSourceFilesRead', [factory.sourceFile()]);
+    });
+    it('should forward "onAllMutantsMatchedWithTests"', () => {
+      actAssertShouldForward('onAllMutantsMatchedWithTests', [factory.mutantTestCoverage()]);
+    });
+    it('should forward "onMutantTested"', () => {
+      actAssertShouldForward('onMutantTested', factory.mutantResult());
+    });
+    it('should forward "onAllMutantsTested"', () => {
+      actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
+    });
+    it('should forward "onMutationTestReportReady"', () => {
+      actAssertShouldForward('onMutationTestReportReady', factory.mutationTestReportSchemaMutationTestResult(), factory.mutationTestMetricsResult());
+    });
+    it('should forward "wrapUp"', () => {
+      actAssertShouldForward('wrapUp');
     });
 
     describe('when "wrapUp" returns promises', () => {
@@ -128,8 +146,30 @@ describe('BroadcastReporter', () => {
         factory.ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
       });
 
-      it('should still broadcast to other reporters', () => {
-        actArrangeAssertAllEvents();
+      it('should still broadcast "onSourceFileRead"', () => {
+        actAssertShouldForward('onSourceFileRead', factory.sourceFile());
+      });
+      it('should still broadcast "onAllSourceFilesRead"', () => {
+        actAssertShouldForward('onAllSourceFilesRead', [factory.sourceFile()]);
+      });
+      it('should still broadcast "onAllMutantsMatchedWithTests"', () => {
+        actAssertShouldForward('onAllMutantsMatchedWithTests', [factory.mutantTestCoverage()]);
+      });
+      it('should still broadcast "onMutantTested"', () => {
+        actAssertShouldForward('onMutantTested', factory.mutantResult());
+      });
+      it('should still broadcast "onAllMutantsTested"', () => {
+        actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
+      });
+      it('should still broadcast "onMutationTestReportReady"', () => {
+        actAssertShouldForward(
+          'onMutationTestReportReady',
+          factory.mutationTestReportSchemaMutationTestResult(),
+          factory.mutationTestMetricsResult()
+        );
+      });
+      it('should still broadcast "wrapUp"', () => {
+        actAssertShouldForward('wrapUp');
       });
 
       it('should log each error', () => {
@@ -143,17 +183,8 @@ describe('BroadcastReporter', () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorReporter, (pluginCreatorMock as unknown) as PluginCreator<PluginKind.Reporter>)
+      .provideValue(coreTokens.pluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
       .injectClass(BroadcastReporter);
-  }
-
-  function actArrangeAssertAllEvents() {
-    factory.ALL_REPORTER_EVENTS.forEach((eventName) => {
-      const eventData = eventName === 'wrapUp' ? undefined : eventName;
-      (sut as any)[eventName](eventName);
-      expect(rep1[eventName]).calledWith(eventData);
-      expect(rep2[eventName]).calledWith(eventData);
-    });
   }
 
   function captureTTY() {
@@ -166,5 +197,11 @@ describe('BroadcastReporter', () => {
 
   function setTTY(val: boolean) {
     process.stdout.isTTY = val;
+  }
+
+  function actAssertShouldForward<TMethod extends keyof Reporter>(method: TMethod, ...input: Parameters<Required<Reporter>[TMethod]>) {
+    (sut[method] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)(...input);
+    expect(rep1[method]).calledWithExactly(...input);
+    expect(rep2[method]).calledWithExactly(...input);
   }
 });

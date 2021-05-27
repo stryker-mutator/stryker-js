@@ -4,7 +4,7 @@ import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stry
 import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
-import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markUnknownOptions } from '../config';
+import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markOptions } from '../config';
 import { ConfigReader } from '../config/config-reader';
 import { BroadcastReporter } from '../reporters/broadcast-reporter';
 import { TemporaryDirectory } from '../utils/temporary-directory';
@@ -54,7 +54,7 @@ export function createPluginResolverProvider(parent: CliOptionsProvider): Plugin
     .provideFactory(coreTokens.validationSchema, buildSchemaWithPluginContributions)
     .provideClass(coreTokens.optionsValidator, OptionsValidator)
     .provideFactory(commonTokens.options, validateOptions)
-    .provideFactory(commonTokens.options, markUnknownOptions);
+    .provideFactory(commonTokens.options, markOptions);
 }
 
 function pluginDescriptorsFactory(options: StrykerOptions): readonly string[] {

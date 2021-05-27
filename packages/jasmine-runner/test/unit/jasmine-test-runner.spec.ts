@@ -5,6 +5,8 @@ import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator
 import Jasmine from 'jasmine';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
+import { MutantCoverage } from '@stryker-mutator/api/core';
+
 import * as helpers from '../../src/helpers';
 import * as pluginTokens from '../../src/plugin-tokens';
 import { JasmineTestRunner } from '../../src';
@@ -22,7 +24,7 @@ describe(JasmineTestRunner.name, () => {
   beforeEach(() => {
     jasmineStub = sinon.createStubInstance(Jasmine);
     jasmineEnvStub = createEnvStub();
-    jasmineStub.env = (jasmineEnvStub as unknown) as jasmine.Env;
+    jasmineStub.env = jasmineEnvStub as unknown as jasmine.Env;
     sinon.stub(helpers, 'Jasmine').returns(jasmineStub);
     clock = sinon.useFakeTimers();
     directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);
@@ -69,8 +71,8 @@ describe(JasmineTestRunner.name, () => {
     });
 
     it('should set the activeMutant on global scope', async () => {
-      actEmptyMutantRun(undefined, factory.mutant({ id: 23 }));
-      expect(global.__stryker2__?.activeMutant).eq(23);
+      actEmptyMutantRun(undefined, factory.mutant({ id: '23' }));
+      expect(global.__stryker2__?.activeMutant).eq('23');
     });
 
     function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {
@@ -108,9 +110,9 @@ describe(JasmineTestRunner.name, () => {
     (['perTest', 'all'] as const).forEach((coverageAnalysis) =>
       it(`should report mutation coverage when coverage analysis is ${coverageAnalysis}`, async () => {
         // Arrange
-        const expectedMutationCoverage = {
+        const expectedMutationCoverage: MutantCoverage = {
           perTest: {
-            [1]: [2, 3],
+            '1': { '0': 2, '1': 3 },
           },
           static: {},
         };

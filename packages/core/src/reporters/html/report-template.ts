@@ -1,11 +1,11 @@
 import { readFile } from 'fs';
 import { promisify } from 'util';
 
-import { mutationTestReportSchema } from '@stryker-mutator/api/report';
+import { schema } from '@stryker-mutator/api/core';
 
 const promisedReadFile = promisify(readFile);
 
-export async function reportTemplate(report: mutationTestReportSchema.MutationTestResult): Promise<string> {
+export async function reportTemplate(report: schema.MutationTestResult): Promise<string> {
   const scriptContent = await promisedReadFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), 'utf-8');
 
   return `<!DOCTYPE html>

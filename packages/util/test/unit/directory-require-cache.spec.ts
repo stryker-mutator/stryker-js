@@ -205,6 +205,7 @@ describe(DirectoryRequireCache.name, () => {
       paths: [],
       require,
       path: '',
+      isPreloading: false,
     };
   }
 });

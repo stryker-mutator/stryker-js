@@ -19,7 +19,7 @@
     "grunt": "~1.0.4",
     "jasmine": "~3.6.2",
     "jasmine-core": "~3.6.0",
-    "jest": "~26.4.2",
+    "jest": "~26.6.1",
     "jest-environment-jsdom-sixteen": "^1.0.3",
     "karma": "~6.0.1",
     "karma-chai": "~0.1.0",
@@ -31,7 +31,7 @@
     "link-parent-bin": "^2.0.0",
     "load-grunt-tasks": "~5.1.0",
     "mocha": "~8.2.0",
-    "mutation-testing-metrics": "~1.5.2",
+    "mutation-testing-metrics": "1.7.2",
     "rxjs": "~6.5.3",
     "semver": "~6.3.0",
     "ts-jest": "~26.3.0",
@@ -42,8 +42,9 @@
     "webpack-cli": "~3.3.12"
   },
   "scripts": {
-    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && link-parent-bin -c test --link-local-dependencies true",
+    "postinstall": "node ../node_modules/lerna/cli.js bootstrap && npm run install-local-dependencies && npm run link-parent-bin",
     "install-local-dependencies": "ts-node tasks/install-local-dependencies",
+    "link-parent-bin": "link-parent-bin -c test --link-local-dependencies true",
     "test": "ts-node tasks/run-e2e-tests.ts"
   },
   "localDependencies": {

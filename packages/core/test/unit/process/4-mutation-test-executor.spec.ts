@@ -6,13 +6,12 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
-import { createTestRunnerPoolMock, createMutantTestCoverage, createCheckerPoolMock } from '../../helpers/producers';
-import { MutantTestCoverage } from '../../../src/mutants/find-mutant-test-coverage';
+import { createTestRunnerPoolMock, createCheckerPoolMock } from '../../helpers/producers';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
 import { Timer } from '../../../src/utils/timer';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
@@ -41,14 +40,18 @@ describe(MutationTestExecutor.name, () => {
     checker = factory.checker();
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     sandboxMock = sinon.createStubInstance(Sandbox);
-    (checkerPoolMock.schedule as sinon.SinonStub<
-      [Observable<Mutant>, (testRunner: Checker, arg: Mutant) => Promise<CheckResult>],
-      Observable<CheckResult>
-    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
-    (testRunnerPoolMock.schedule as sinon.SinonStub<
-      [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
-      Observable<MutantRunResult>
-    >).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
+    (
+      checkerPoolMock.schedule as sinon.SinonStub<
+        [Observable<Mutant>, (testRunner: Checker, arg: Mutant) => Promise<CheckResult>],
+        Observable<CheckResult>
+      >
+    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
+    (
+      testRunnerPoolMock.schedule as sinon.SinonStub<
+        [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
+        Observable<MutantRunResult>
+      >
+    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
 
     mutants = [];
     sut = testInjector.injector
@@ -73,24 +76,22 @@ describe(MutationTestExecutor.name, () => {
   it('should schedule mutants to be tested', async () => {
     // Arrange
     arrangeScenario();
-    const mutant1 = factory.mutant({ id: 1 });
-    const mutant2 = factory.mutant({ id: 2 });
-    mutants.push(createMutantTestCoverage({ mutant: mutant1 }));
-    mutants.push(createMutantTestCoverage({ mutant: mutant2 }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', static: true }));
+    mutants.push(factory.mutantTestCoverage({ id: '2', coveredBy: ['1'] }));
 
     // Act
     await sut.execute();
 
     // Assert
     expect(testRunnerPoolMock.schedule).calledOnce;
-    expect(testRunner.mutantRun).calledWithMatch({ activeMutant: mutant1 });
-    expect(testRunner.mutantRun).calledWithMatch({ activeMutant: mutant2 });
+    expect(testRunner.mutantRun).calledWithMatch({ activeMutant: mutants[0] });
+    expect(testRunner.mutantRun).calledWithMatch({ activeMutant: mutants[1] });
   });
 
   it('should short circuit ignored mutants (not check them or run them)', async () => {
     // Arrange
-    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1, ignoreReason: '1 is ignored' }) }));
-    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 2, ignoreReason: '2 is ignored' }) }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', status: MutantStatus.Ignored, statusReason: '1 is ignored' }));
+    mutants.push(factory.mutantTestCoverage({ id: '2', status: MutantStatus.Ignored, statusReason: '2 is ignored' }));
 
     // Act
     const actualResults = await sut.execute();
@@ -104,24 +105,22 @@ describe(MutationTestExecutor.name, () => {
   it('should check the mutants before running them', async () => {
     // Arrange
     arrangeScenario();
-    const mutant1 = factory.mutant({ id: 1 });
-    const mutant2 = factory.mutant({ id: 2 });
-    mutants.push(createMutantTestCoverage({ mutant: mutant1 }));
-    mutants.push(createMutantTestCoverage({ mutant: mutant2 }));
+    mutants.push(factory.mutantTestCoverage({ id: '1' }));
+    mutants.push(factory.mutantTestCoverage({ id: '2' }));
 
     // Act
     await sut.execute();
 
     // Assert
     expect(checker.check).calledTwice;
-    expect(checker.check).calledWithMatch(mutant1);
-    expect(checker.check).calledWithMatch(mutant2);
+    expect(checker.check).calledWithMatch(mutants[0]);
+    expect(checker.check).calledWithMatch(mutants[1]);
   });
 
   it('should calculate timeout correctly', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), estimatedNetTime: 10 }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', estimatedNetTime: 10, coveredBy: ['1'] }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 
@@ -137,7 +136,7 @@ describe(MutationTestExecutor.name, () => {
     // Arrange
     arrangeScenario();
     const expectedTestFilter = ['spec1', 'foo', 'bar'];
-    mutants.push(createMutantTestCoverage({ testFilter: expectedTestFilter }));
+    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 
@@ -154,7 +153,7 @@ describe(MutationTestExecutor.name, () => {
     arrangeScenario();
     const expectedTestFilter = ['spec1', 'foo', 'bar'];
     sandboxMock.sandboxFileFor.returns('.stryker-tmp/sandbox1234/src/foo.js');
-    mutants.push(createMutantTestCoverage({ testFilter: expectedTestFilter, mutant: factory.mutant({ fileName: 'src/foo.js' }) }));
+    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter, fileName: 'src/foo.js' }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 
@@ -170,8 +169,7 @@ describe(MutationTestExecutor.name, () => {
   it('should not run mutants that are uncovered by tests', async () => {
     // Arrange
     arrangeScenario();
-    const mutant1 = factory.mutant({ id: 1 });
-    mutants.push(createMutantTestCoverage({ mutant: mutant1, coveredByTests: false }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false }));
 
     // Act
     await sut.execute();
@@ -183,35 +181,33 @@ describe(MutationTestExecutor.name, () => {
   it('should report an ignored mutant as `Ignored`', async () => {
     // Arrange
     arrangeScenario();
-    const mutant = factory.mutant({ id: 1, ignoreReason: '1 is ignored' });
-    mutants.push(createMutantTestCoverage({ mutant, coveredByTests: false }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', status: MutantStatus.Ignored, statusReason: '1 is ignored' }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantIgnored).calledWithExactly(mutant);
+    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
   });
 
   it('should report an uncovered mutant with `NoCoverage`', async () => {
     // Arrange
     arrangeScenario();
-    const mutant = factory.mutant({ id: 1 });
-    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }), coveredByTests: false }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, status: MutantStatus.NoCoverage }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportNoCoverage).calledWithExactly(mutant);
+    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
   });
 
   it('should report non-passed check results as "checkFailed"', async () => {
     // Arrange
-    const mutant = factory.mutant({ id: 1 });
+    const mutant = factory.mutantTestCoverage({ id: '1' });
     const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
     checker.check.resolves(failedCheckResult);
-    mutants.push(createMutantTestCoverage({ mutant }));
+    mutants.push(mutant);
 
     // Act
     await sut.execute();
@@ -222,7 +218,7 @@ describe(MutationTestExecutor.name, () => {
 
   it('should free checker resources after checking stage is complete', async () => {
     // Arrange
-    mutants.push(createMutantTestCoverage({ mutant: factory.mutant({ id: 1 }) }));
+    mutants.push(factory.mutantTestCoverage({ id: '1' }));
     const checkTask = new Task<CheckResult>();
     const testRunnerTask = new Task<MutantRunResult>();
     testRunner.mutantRun.returns(testRunnerTask.promise);
@@ -240,7 +236,7 @@ describe(MutationTestExecutor.name, () => {
 
   it('should report mutant run results', async () => {
     // Arrange
-    const mutant = createMutantTestCoverage();
+    const mutant = factory.mutantTestCoverage({ static: true });
     const mutantRunResult = factory.killedMutantRunResult({ status: MutantRunStatus.Killed });
     mutants.push(mutant);
     arrangeScenario({ mutantRunResult });

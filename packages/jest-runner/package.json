@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/jest-runner",
-  "version": "4.6.0",
+  "version": "5.0.0",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "directory": "packages/jest-runner"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=12"
   },
   "keywords": [
     "stryker",
@@ -42,7 +42,9 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
   "devDependencies": {
     "@jest/types": "~26.6.1",
-    "@stryker-mutator/test-helpers": "4.6.0",
+    "@stryker-mutator/test-helpers": "5.0.0",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
     "@types/node": "^15.0.0",
     "@types/semver": "~7.3.1",
     "jest": "~26.6.1",
@@ -50,16 +52,15 @@
     "jest-environment-jsdom-sixteen": "^2.0.0",
     "react": "~17.0.1",
     "react-dom": "~17.0.1",
-    "react-scripts": "~4.0.0",
-    "react-scripts-ts": "~3.1.0"
+    "react-scripts": "~4.0.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~4.6.0",
+    "@stryker-mutator/core": "~5.0.0",
     "jest": ">= 22.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "4.6.0",
-    "@stryker-mutator/util": "4.6.0",
+    "@stryker-mutator/api": "5.0.0",
+    "@stryker-mutator/util": "5.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.2.0"
   },

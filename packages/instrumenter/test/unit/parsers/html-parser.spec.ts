@@ -91,6 +91,8 @@ describe('html-parser', () => {
       { actualType: 'typescript', expectedType: AstFormat.TS },
       { actualType: 'TypeScript', expectedType: AstFormat.TS },
       { actualType: 'text/typescript', expectedType: AstFormat.TS },
+      { actualType: 'text/tsx', expectedType: AstFormat.Tsx },
+      { actualType: 'tsx', expectedType: AstFormat.Tsx },
     ];
 
     testCases.forEach(({ actualType, expectedType }) => {

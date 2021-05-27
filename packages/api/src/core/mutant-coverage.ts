@@ -5,4 +5,7 @@ export interface MutantCoverage {
 
 export type CoveragePerTestId = Record<string, CoverageData>;
 
-export type CoverageData = Record<number, number>;
+/**
+ * Keys are mutant ids, the numbers are the amount of times it was hit.
+ */
+export type CoverageData = Record<string, number>;

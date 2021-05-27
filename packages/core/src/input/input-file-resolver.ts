@@ -1,6 +1,7 @@
-import { StringDecoder } from 'string_decoder';
 import path from 'path';
-import fs from 'fs';
+import { promises as fsPromises } from 'fs';
+
+import { isDeepStrictEqual } from 'util';
 
 import { from } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
@@ -8,12 +9,15 @@ import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
-import { childProcessAsPromised, isErrnoException, normalizeWhitespaces, StrykerError, notEmpty } from '@stryker-mutator/util';
+import { isErrnoException, notEmpty } from '@stryker-mutator/util';
+import { IMinimatch, Minimatch } from 'minimatch';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
-import { glob, MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
+import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
 import { defaultOptions } from '../config/options-validator';
+
+import { FileMatcher } from '../config';
 
 import { InputFileCollection } from './input-file-collection';
 
@@ -24,83 +28,34 @@ function toReportSourceFile(file: File): SourceFile {
   };
 }
 
-const IGNORE_PATTERN_CHARACTER = '!';
+const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '/reports', '/stryker.log']);
 
+export const IGNORE_PATTERN_CHARACTER = '!';
 export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
-
-/**
- *  When characters are represented as the octal values of its utf8 encoding
- *  e.g. å becomes \303\245 in git.exe output
- */
-function decodeGitLsOutput(line: string) {
-  if (line.startsWith('"') && line.endsWith('"')) {
-    return line
-      .substr(1, line.length - 2)
-      .replace(/\\\\/g, '\\')
-      .replace(/(?:\\\d+)*/g, (octalEscapeSequence) =>
-        new StringDecoder('utf-8').write(
-          Buffer.from(
-            octalEscapeSequence
-              .split('\\')
-              .filter(Boolean)
-              .map((octal) => parseInt(octal, 8))
-          )
-        )
-      );
-  }
-  return line;
-}
 
 export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
-  private readonly filePatterns: readonly string[] | undefined;
-  private readonly tempDirName: string;
+  private readonly ignoreRules: readonly string[];
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
-  constructor(private readonly log: Logger, { mutate, files, tempDirName }: StrykerOptions, private readonly reporter: StrictReporter) {
-    this.tempDirName = tempDirName;
+  constructor(private readonly log: Logger, { mutate, tempDirName, ignorePatterns }: StrykerOptions, private readonly reporter: StrictReporter) {
     this.mutatePatterns = mutate;
-    if (files) {
-      this.filePatterns = files;
-    }
+    this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, ...ignorePatterns];
   }
 
   public async resolve(): Promise<InputFileCollection> {
-    const [inputFileNames, mutateFiles, mutationRange] = await Promise.all([
-      this.resolveInputFiles(),
-      this.resolveMutateFiles(),
-      this.resolveMutationRange(),
-    ]);
+    const inputFileNames = await this.resolveInputFiles();
+    const mutateFiles = this.resolveMutateFiles(inputFileNames);
+    const mutationRange = this.resolveMutationRange();
     const files: File[] = await this.readFiles(inputFileNames);
     const inputFileCollection = new InputFileCollection(files, mutateFiles, mutationRange);
     this.reportAllSourceFilesRead(files);
-    inputFileCollection.logFiles(this.log);
+    inputFileCollection.logFiles(this.log, this.ignoreRules);
     return inputFileCollection;
   }
 
-  private resolveInputFiles() {
-    if (this.filePatterns) {
-      return this.expand(this.filePatterns);
-    } else {
-      return this.resolveFilesUsingGit();
-    }
-  }
-
-  private resolveMutateFiles() {
-    return this.expand(this.mutatePatterns, !shallowEquals(this.mutatePatterns, defaultOptions().mutate));
-
-    function shallowEquals(arr1: readonly string[], arr2: readonly string[]): boolean {
-      if (arr1.length !== arr2.length) {
-        return false;
-      } else {
-        for (let i = 0; i < arr1.length; i++) {
-          if (arr1[i] !== arr2[i]) {
-            return false;
-          }
-        }
-        return true;
-      }
-    }
+  private resolveMutateFiles(inputFileNames: string[]) {
+    return this.filterPatterns(inputFileNames, this.mutatePatterns, !isDeepStrictEqual(this.mutatePatterns, defaultOptions().mutate));
   }
 
   private resolveMutationRange(): MutationRange[] {
@@ -119,58 +74,96 @@ export class InputFileResolver {
   /**
    * Takes a list of globbing patterns and expands them into files.
    * If a patterns starts with a `!`, it negates the pattern.
+   * @param fileNames the file names to filter
    * @param patterns The patterns to expand into files
+   * @param logAboutUselessPatterns Weather or not to log about useless patterns
    */
-  private async expand(patterns: readonly string[], logAboutUselessPatterns = true): Promise<string[]> {
+  private filterPatterns(fileNames: readonly string[], patterns: readonly string[], logAboutUselessPatterns: boolean): string[] {
     const fileSet = new Set<string>();
     for (const pattern of patterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
-        const files = await this.expandPattern(pattern.substr(1), logAboutUselessPatterns);
+        const files = this.filterPattern(fileSet, pattern.substr(1));
+        if (logAboutUselessPatterns && files.length === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not exclude any files.`);
+        }
         files.forEach((fileName) => fileSet.delete(fileName));
       } else {
-        const files = await this.expandPattern(pattern, logAboutUselessPatterns);
+        const files = this.filterPattern(fileNames, pattern);
+        if (logAboutUselessPatterns && files.length === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not result in any files.`);
+        }
         files.forEach((fileName) => fileSet.add(fileName));
       }
     }
     return Array.from(fileSet);
   }
 
-  private async expandPattern(globbingExpression: string, logAboutUselessPatterns: boolean): Promise<string[]> {
-    if (MUTATION_RANGE_REGEX.exec(globbingExpression)) {
-      globbingExpression = globbingExpression.replace(MUTATION_RANGE_REGEX, '$1');
+  private filterPattern(fileNames: Iterable<string>, pattern: string): string[] {
+    if (MUTATION_RANGE_REGEX.exec(pattern)) {
+      pattern = pattern.replace(MUTATION_RANGE_REGEX, '$1');
     }
+    const matcher = new FileMatcher(pattern);
 
-    const fileNames = (await glob(globbingExpression)).map((relativeFile) => path.resolve(relativeFile));
-    if (!fileNames.length && logAboutUselessPatterns) {
-      this.log.warn(`Globbing expression "${globbingExpression}" did not result in any files.`);
-    }
-    return fileNames;
+    const filteredFileNames = [...fileNames].filter((fileName) => matcher.matches(fileName));
+    return filteredFileNames;
   }
 
-  private async resolveFilesUsingGit(): Promise<string[]> {
-    try {
-      const { stdout } = await childProcessAsPromised.exec(`git ls-files --others --exclude-standard --cached --exclude /${this.tempDirName}/*`, {
-        maxBuffer: 10 * 1000 * 1024,
-      });
-      const relativeFileNames = stdout
-        .toString()
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean) // remove empty lines
-        .map(decodeGitLsOutput);
+  private async resolveInputFiles(): Promise<string[]> {
+    const ignoreRules = this.ignoreRules.map((pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }));
 
-      const fileNames = relativeFileNames.map((relativeFileName) => path.resolve(relativeFileName));
-      return fileNames;
-    } catch (error) {
-      throw new StrykerError(
-        normalizeWhitespaces(
-          `Cannot determine input files. Either specify a \`files\`
-        array in your stryker configuration, or make sure "${process.cwd()}"
-        is located inside a git repository`
-        ),
-        error
+    /**
+     * Rewrite of: https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L213-L215
+     */
+    const matchesDirectoryPartially = (entryPath: string, rule: IMinimatch) => {
+      // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
+      return rule.match(`/${entryPath}`, true) || rule.match(entryPath, true);
+    };
+
+    // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L124
+    const matchesDirectory = (entryName: string, entryPath: string, rule: IMinimatch) => {
+      return (
+        matchesFile(entryName, entryPath, rule) ||
+        rule.match(`/${entryPath}/`) ||
+        rule.match(`${entryPath}/`) ||
+        (rule.negate && matchesDirectoryPartially(entryPath, rule))
       );
-    }
+    };
+
+    // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L123
+    const matchesFile = (entryName: string, entryPath: string, rule: IMinimatch) => {
+      return rule.match(entryName) || rule.match(entryPath) || rule.match(`/${entryPath}`);
+    };
+
+    const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
+      const dirEntries = await fsPromises.readdir(dir, { withFileTypes: true });
+      const relativeName = path.relative(rootDir, dir);
+      const files = await Promise.all(
+        dirEntries
+          .filter((dirEntry) => {
+            let included = true;
+            const entryPath = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}`;
+            ignoreRules.forEach((rule) => {
+              if (rule.negate !== included) {
+                const match = dirEntry.isDirectory() ? matchesDirectory(dirEntry.name, entryPath, rule) : matchesFile(dirEntry.name, entryPath, rule);
+                if (match) {
+                  included = rule.negate;
+                }
+              }
+            });
+            return included;
+          })
+          .map(async (dirent) => {
+            if (dirent.isDirectory()) {
+              return crawlDir(path.resolve(rootDir, relativeName, dirent.name), rootDir);
+            } else {
+              return path.resolve(rootDir, relativeName, dirent.name);
+            }
+          })
+      );
+      return files.flat();
+    };
+    const files = await crawlDir(process.cwd());
+    return files;
   }
 
   private reportAllSourceFilesRead(allFiles: File[]) {
@@ -184,7 +177,9 @@ export class InputFileResolver {
   private async readFiles(fileNames: string[]): Promise<File[]> {
     const promisedFiles = from(fileNames)
       .pipe(
-        mergeMap((fileName) => this.readFile(fileName), MAX_CONCURRENT_FILE_IO),
+        mergeMap((fileName) => {
+          return this.readFile(fileName);
+        }, MAX_CONCURRENT_FILE_IO),
         filter(notEmpty),
         toArray(),
         // Filter the files here, so we force a deterministic instrumentation process
@@ -196,13 +191,13 @@ export class InputFileResolver {
 
   private async readFile(fileName: string): Promise<File | null> {
     try {
-      const content = await fs.promises.readFile(fileName);
+      const content = await fsPromises.readFile(fileName);
       const file = new File(fileName, content);
       this.reportSourceFilesRead(file);
       return file;
     } catch (error) {
-      if ((isErrnoException(error) && error.code === 'ENOENT') || error.code === 'EISDIR') {
-        return null; // file is deleted or a directory. This can be a valid result of the git command
+      if ((isErrnoException(error as unknown) && error.code === 'ENOENT') || error.code === 'EISDIR') {
+        return null; // file is deleted or a directory.
       } else {
         // Rethrow
         throw error;

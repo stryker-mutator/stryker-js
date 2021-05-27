@@ -22,7 +22,7 @@ export class MutantCollector {
     mutationSpecs.replacement.end = mutationSpecs.original.end;
     mutationSpecs.replacement.start = mutationSpecs.original.start;
     mutationSpecs.replacement.loc = mutationSpecs.original.loc;
-    const mutant = new Mutant(this._mutants.length, fileName, mutationSpecs, positionOffset, lineOffset);
+    const mutant = new Mutant(this._mutants.length.toString(), fileName, mutationSpecs, positionOffset, lineOffset);
     this._mutants.push(mutant);
     if (mutant.ignoreReason === undefined) {
       // Only place mutants that are not ignored

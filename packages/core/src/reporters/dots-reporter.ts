@@ -1,8 +1,8 @@
 import os from 'os';
 
-import { MutantResult, MutantStatus, Reporter } from '@stryker-mutator/api/report';
-
 import chalk from 'chalk';
+import { Reporter } from '@stryker-mutator/api/report';
+import { MutantResult, MutantStatus } from '@stryker-mutator/api/core';
 
 export class DotsReporter implements Reporter {
   public onMutantTested(result: MutantResult): void {
@@ -11,7 +11,7 @@ export class DotsReporter implements Reporter {
       case MutantStatus.Killed:
         toLog = '.';
         break;
-      case MutantStatus.TimedOut:
+      case MutantStatus.Timeout:
         toLog = chalk.yellow('T');
         break;
       case MutantStatus.Survived:

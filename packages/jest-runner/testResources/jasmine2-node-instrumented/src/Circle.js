@@ -4,7 +4,7 @@
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
-    ns.activeMutant = Number(g.process.env.__STRYKER_ACTIVE_MUTANT__);
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
   function retrieveNS() {
@@ -54,20 +54,20 @@ function stryMutAct_9fa48(id) {
 }
 
 exports.getCircumference = function (radius) {
-  if (stryMutAct_9fa48(14)) {
+  if (stryMutAct_9fa48("14")) {
     {}
   } else {
-    stryCov_9fa48(14);
+    stryCov_9fa48("14");
     //Function to test multiple math mutations in a single function.
-    return stryMutAct_9fa48(15) ? 2 * Math.PI / radius : (stryCov_9fa48(15), (stryMutAct_9fa48(16) ? 2 / Math.PI : (stryCov_9fa48(16), 2 * Math.PI)) * radius);
+    return stryMutAct_9fa48("15") ? 2 * Math.PI / radius : (stryCov_9fa48("15"), (stryMutAct_9fa48("16") ? 2 / Math.PI : (stryCov_9fa48("16"), 2 * Math.PI)) * radius);
   }
 };
 
 exports.untestedFunction = function () {
-  if (stryMutAct_9fa48(17)) {
+  if (stryMutAct_9fa48("17")) {
     {}
   } else {
-    stryCov_9fa48(17);
-    var i = stryMutAct_9fa48(18) ? 5 / 2 / 3 : (stryCov_9fa48(18), (stryMutAct_9fa48(19) ? 5 * 2 : (stryCov_9fa48(19), 5 / 2)) * 3);
+    stryCov_9fa48("17");
+    var i = stryMutAct_9fa48("18") ? 5 / 2 / 3 : (stryCov_9fa48("18"), (stryMutAct_9fa48("19") ? 5 * 2 : (stryCov_9fa48("19"), 5 / 2)) * 3);
   }
 };

@@ -1,7 +1,6 @@
 import { types } from '@babel/core';
-
-import { Mutant as MutantApi } from '@stryker-mutator/api/core';
-
+import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { Mutant } from '../../src/mutant';
@@ -15,7 +14,7 @@ describe(Mutant.name, () => {
       // Arrange
       const original = types.binaryExpression('+', types.numericLiteral(40), types.numericLiteral(2));
       const replacement = types.binaryExpression('-', types.numericLiteral(40), types.numericLiteral(2));
-      const mutant = new Mutant(2, 'file.js', { original, replacement, mutatorName: 'fooMutator' });
+      const mutant = new Mutant('2', 'file.js', { original, replacement, mutatorName: 'fooMutator' });
 
       // Act
       replacement.operator = '%';
@@ -26,20 +25,39 @@ describe(Mutant.name, () => {
   });
 
   describe(Mutant.prototype.toApiMutant.name, () => {
-    it('should map all properties as expected', () => {
-      const mutant = new Mutant(2, 'file.js', {
+    it('should map all properties as expected for an ignored mutant', () => {
+      const mutant = new Mutant('2', 'file.js', {
         original: types.stringLiteral(''),
         replacement: types.stringLiteral('Stryker was here!'),
         mutatorName: 'fooMutator',
         ignoreReason: 'ignore',
       });
-      mutant.original.loc = { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } };
+      mutant.original.loc = factory.location();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
-        id: 2,
+        id: '2',
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
-        ignoreReason: 'ignore',
+        statusReason: 'ignore',
+        status: MutantStatus.Ignored,
+      };
+      expect(mutant.toApiMutant()).deep.include(expected);
+    });
+
+    it('should map all properties as expected for a placed mutant', () => {
+      const mutant = new Mutant('2', 'file.js', {
+        original: types.stringLiteral(''),
+        replacement: types.stringLiteral('Stryker was here!'),
+        mutatorName: 'fooMutator',
+      });
+      mutant.original.loc = factory.location();
+      const expected: Partial<MutantApi> = {
+        fileName: 'file.js',
+        id: '2',
+        mutatorName: 'fooMutator',
+        replacement: '"Stryker was here!"',
+        statusReason: undefined,
+        status: undefined,
       };
       expect(mutant.toApiMutant()).deep.include(expected);
     });
@@ -48,14 +66,13 @@ describe(Mutant.name, () => {
       // Arrange
       const lt = findNodePath<types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
       const lte = types.binaryExpression('<=', lt.left, lt.right);
-      const mutant = new Mutant(1, 'bar.js', { original: lt, replacement: lte, mutatorName: 'barMutator' }, 42, 4);
+      const mutant = new Mutant('1', 'bar.js', { original: lt, replacement: lte, mutatorName: 'barMutator' }, 42, 4);
 
       // Act
       const actual = mutant.toApiMutant();
 
       // Assert
       expect(actual.location).deep.eq({ start: { line: 4, column: 3 }, end: { line: 4, column: 8 } });
-      expect(actual.range).deep.eq([45, 50]);
     });
   });
 });

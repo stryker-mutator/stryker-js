@@ -53,27 +53,25 @@ With `commandRunner`, you can specify the command to execute for running tests.
 
 ### `coverageAnalysis` [`string`]
 
-Default: `off`<br />
+Default: `perTest`<br />
 Command line: `--coverageAnalysis perTest`<br />
 Config file: `"coverageAnalysis": "perTest"`
 
-With `coverageAnalysis` you specify which coverage analysis strategy you want to use.
+_Note:_ The default changed from `"off"` to `"perTest"` in Stryker v5.
 
-Stryker can analyse code coverage results. This can potentially speed up mutation testing a lot, as only the tests covering a
-particular mutation are tested for each mutant.
-This does *not* influence the resulting mutation testing score. It only improves performance.
+With `coverageAnalysis` you specify which coverage analysis strategy you want to use. 
+
+Stryker can analyze mutant coverage results. Doing this can speed up mutation testing because Stryker then decides to run only the exact tests covering the mutant it is testing (instead of running them all).
+This performance optimization does *not* influence the resulting mutation testing score but does allow Stryker to distinguish between "Survived" and "NoCoverage". 
+
+All official test runner plugins (`@stryker-mutator/mocha-runner`, `@stryker-mutator/jasmine-runner`, `@stryker-mutator/karma-runner` and `@stryker-mutator/jest-runner`)
+support coverage analysis, except for the `command` test runner, since Stryker will just run your command has no way of knowing more about your tests.
 
 The possible values are:
 
-* **off**: Stryker will not determine the code covered by tests during the initial test run phase. All tests will be executed for each mutant
-during the mutation testing phase.
-
-* **all**: Stryker will determine the code covered by your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and are not tested during the mutation testing phase. This requires your test runner plugin to report code coverage back to Stryker.
-All official test runner plugins support this (`@stryker-mutator/mocha-runner`, `@stryker-mutator/jasmine-runner`, `@stryker-mutator/karma-runner` and `@stryker-mutator/jest-runner`), but the `command` test runner does not, since it just runs a command and has no way of knowing more information about your tests.
-
-* **perTest**: Stryker will determine the code covered by your test per executed test during the initial test run phase. Only mutants actually covered by your
-test suite are tested during the mutation testing phase.
-Only the tests that cover a particular mutant are tested for each one. This requires your tests to be able to run independently of each other and in random order.
+* **off**: Stryker does no optimization. All tests are executed for each mutant.
+* **all**: Stryker will determine the mutants covered by your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and will not be tested. This requires your test runner plugin to report code coverage back to Stryker.
+* **perTest**: Stryker will determine which tests cover which mutant during the initial test run phase. Only the tests that cover a specific mutant are executed for each mutant. Your tests should be _able to run independently of each other and in random order_. Stryker will determine which mutants are _static_ and will run all tests for them during mutation testing. A mutant is 'static' when it is executed during the loading of the file rather than during a test. 
 
 ### `dashboard` [`DashboardOptions`]
 
@@ -126,21 +124,25 @@ Set the log level that Stryker uses to write to the "stryker.log" file. Possible
 
 ### `files` [`string[]`]
 
-Default: result of `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`<br />
+Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-With `files`, you can choose which files should be included in your test runner sandbox.
-This is normally not needed as it defaults to all files not ignored by git.
-Try it out yourself with this command: `git ls-files --others --exclude-standard --cached --exclude .stryker-tmp`.
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead. 
 
-If you do need to override `files` (for example: when your project does not live in a git repository),
-you can override the files here.
+### `ignorePatterns` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--ignorePatterns dist,coverage`<br />
+Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
+
+Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format). 
+
+These patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
+
+If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
-When using the config file you can provide an array with `string`s
-
-You can *ignore* files by adding an exclamation mark (`!`) at the start of an expression.
 
 ### `inPlace` [`boolean`]
 
@@ -169,6 +171,14 @@ Thus, to see logging output from the test runner set the `logLevel` to `all` or 
 ### `maxConcurrentTestRunners` (DEPRECATED)
 
 **DEPRECATED**. Please use [concurrency](#concurrency-number) instead. 
+
+### `maxTestRunnerReuse` [`number`]
+
+Default: `0`<br />
+Command line: `--maxTestRunnerReuse 20`<br />
+Config file: `"maxTestRunnerReuse": 20`
+
+Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.
 
 ### `mutate` [`string[]`]
 

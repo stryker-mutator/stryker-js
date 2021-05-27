@@ -1,20 +1,11 @@
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId } from '@stryker-mutator/api/core';
+import { Mutant, CoveragePerTestId, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-
-import { MatchedMutant } from '@stryker-mutator/api/report';
 
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
-
-export interface MutantTestCoverage {
-  estimatedNetTime: number;
-  coveredByTests: boolean;
-  testFilter?: string[];
-  mutant: Mutant;
-}
 
 findMutantTestCoverage.inject = tokens(coreTokens.dryRunResult, coreTokens.mutants, coreTokens.reporter, commonTokens.logger);
 export function findMutantTestCoverage(
@@ -24,55 +15,46 @@ export function findMutantTestCoverage(
   logger: Logger
 ): MutantTestCoverage[] {
   const mutantTestCoverage = mapToMutantTestCoverage(dryRunResult, mutants, logger);
-  reporter.onAllMutantsMatchedWithTests(mutantTestCoverage.map(toMatchedMutant));
+  reporter.onAllMutantsMatchedWithTests(mutantTestCoverage);
   return mutantTestCoverage;
 }
 
-function toMatchedMutant({ mutant, testFilter, coveredByTests, estimatedNetTime }: MutantTestCoverage): MatchedMutant {
-  return {
-    fileName: mutant.fileName,
-    id: mutant.id.toString(),
-    mutatorName: mutant.mutatorName,
-    replacement: mutant.replacement,
-    runAllTests: !testFilter && coveredByTests,
-    testFilter: testFilter,
-    timeSpentScopedTests: estimatedNetTime,
-  };
-}
-
-function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[], logger: Logger) {
+function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[], logger: Logger): MutantTestCoverage[] {
   const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests, logger);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
-  const mutantCoverage = mutants.map((mutant) => {
-    if (mutant.ignoreReason !== undefined) {
+  const mutantCoverage = mutants.map((mutant): MutantTestCoverage => {
+    if (mutant.status) {
       return {
-        mutant,
+        ...mutant,
+        static: false,
         estimatedNetTime: 0,
-        coveredByTests: false,
       };
     } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
+      // When there is static coverage for this mutant, it is a static mutant.
       return {
-        mutant,
+        ...mutant,
         estimatedNetTime: timeSpentAllTests,
-        testFilter: undefined,
-        coveredByTests: true,
+        coveredBy: undefined,
+        static: true,
       };
     } else {
+      // If no static coverage, but there is test coverage, it is a non-static, covered mutant
       const tests = testsByMutantId.get(mutant.id);
       if (tests && tests.size > 0) {
         return {
-          mutant,
+          ...mutant,
           estimatedNetTime: calculateTotalTime(tests),
-          testFilter: toTestIds(tests),
-          coveredByTests: true,
+          coveredBy: toTestIds(tests),
+          static: false,
         };
       } else {
+        // Otherwise it is has no coverage
         return {
-          mutant,
+          ...mutant,
           estimatedNetTime: 0,
-          testFilter: undefined,
-          coveredByTests: false,
+          coveredBy: [],
+          static: false,
         };
       }
     }
@@ -81,7 +63,7 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
 }
 
 function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTests: TestResult[], logger: Logger) {
-  const testsByMutantId = new Map<number, Set<TestResult>>();
+  const testsByMutantId = new Map<string, Set<TestResult>>();
   coveragePerTest &&
     Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
       const foundTest = allTests.find((test) => test.id === testId);
@@ -91,9 +73,8 @@ function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTe
         );
         return;
       }
-      Object.entries(mutantCoverage).forEach(([mutantIdAsString, count]) => {
+      Object.entries(mutantCoverage).forEach(([mutantId, count]) => {
         if (count) {
-          const mutantId = parseInt(mutantIdAsString, 10);
           let tests = testsByMutantId.get(mutantId);
           if (!tests) {
             tests = new Set();

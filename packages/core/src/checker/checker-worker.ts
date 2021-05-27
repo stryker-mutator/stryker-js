@@ -17,7 +17,7 @@ export class CheckerWorker implements Checker {
     for await (const { name, checker } of this.innerCheckers) {
       try {
         await checker.init();
-      } catch (error) {
+      } catch (error: unknown) {
         throw new StrykerError(`An error occurred during initialization of the "${name}" checker`, error);
       }
     }

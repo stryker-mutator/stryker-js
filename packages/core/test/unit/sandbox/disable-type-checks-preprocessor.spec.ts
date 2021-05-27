@@ -32,31 +32,19 @@ describe(DisableTypeChecksPreprocessor.name, () => {
   });
 
   it('should be able to override "disableTypeChecks" glob pattern', async () => {
+    // Arrange
     testInjector.options.disableTypeChecks = 'src/**/*.ts';
+    const ignoredFile = new File(path.resolve('test/app.spec.ts'), 'spec');
     const expectedFile = new File(path.resolve('src/app.ts'), 'output');
-    const input = [new File(path.resolve('src/app.ts'), 'input')];
+    const expectedFiles = [expectedFile, ignoredFile];
+    const input = [new File(path.resolve('src/app.ts'), 'input'), ignoredFile];
     disableTypeCheckingStub.resolves(expectedFile);
-    const output = await sut.preprocess(input);
-    assertions.expectTextFilesEqual(output, [expectedFile]);
-  });
 
-  it('should not disable type checking when the "disableTypeChecks" glob pattern does not match', async () => {
-    testInjector.options.disableTypeChecks = 'src/**/*.ts';
-    const expectedFiles = [new File(path.resolve('test/app.spec.ts'), 'input')];
-    disableTypeCheckingStub.resolves(new File('', 'not expected'));
-    const output = await sut.preprocess(expectedFiles);
+    // Act
+    const output = await sut.preprocess(input);
+
+    // Assert
     assertions.expectTextFilesEqual(output, expectedFiles);
-  });
-
-  it('should not disable type checking if "disableTypeChecks" is set to `false`', async () => {
-    const input = [
-      new File(path.resolve('src/app.ts'), '// @ts-expect-error\nfoo.bar();'),
-      new File(path.resolve('test/app.spec.ts'), '/* @ts-expect-error */\nfoo.bar();'),
-      new File(path.resolve('testResources/project/app.ts'), '/* @ts-expect-error */\nfoo.bar();'),
-    ];
-    testInjector.options.disableTypeChecks = false;
-    const output = await sut.preprocess(input);
-    assertions.expectTextFilesEqual(output, input);
   });
 
   it('should not crash on error, instead log a warning', async () => {

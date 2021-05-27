@@ -1,8 +1,9 @@
 import ts from 'typescript';
-import { Mutant } from '@stryker-mutator/api/core';
+import { Mutant, Position } from '@stryker-mutator/api/core';
 
 export class ScriptFile {
   private readonly originalContent: string;
+  private sourceFile: ts.SourceFile | undefined;
   constructor(public content: string, public fileName: string, public modifiedTime = new Date()) {
     this.originalContent = content;
   }
@@ -14,10 +15,20 @@ export class ScriptFile {
 
   public watcher: ts.FileWatcherCallback | undefined;
 
-  public mutate(mutant: Pick<Mutant, 'range' | 'replacement'>): void {
+  public mutate(mutant: Pick<Mutant, 'location' | 'replacement'>): void {
     this.guardMutationIsWatched();
-    this.content = `${this.originalContent.substr(0, mutant.range[0])}${mutant.replacement}${this.originalContent.substr(mutant.range[1])}`;
+
+    const start = this.getOffset(mutant.location.start);
+    const end = this.getOffset(mutant.location.end);
+    this.content = `${this.originalContent.substr(0, start)}${mutant.replacement}${this.originalContent.substr(end)}`;
     this.touch();
+  }
+
+  private getOffset(pos: Position): number {
+    if (!this.sourceFile) {
+      this.sourceFile = ts.createSourceFile(this.fileName, this.content, ts.ScriptTarget.Latest, false, undefined);
+    }
+    return this.sourceFile.getPositionOfLineAndCharacter(pos.line, pos.column);
   }
 
   public resetMutant(): void {
