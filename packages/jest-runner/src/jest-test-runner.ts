@@ -31,7 +31,7 @@ import * as pluginTokens from './plugin-tokens';
 import { configLoaderFactory } from './config-loaders';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
 import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
-import { mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
+import { jestWrapper, mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
@@ -40,16 +40,13 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
 } {
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
-    return (
-      injector
-        .provideValue(pluginTokens.processEnv, process.env)
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        .provideValue(pluginTokens.jestVersion, require('jest/package.json').version as string)
-        .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
-        .provideFactory(pluginTokens.configLoader, configLoaderFactory)
-        .provideValue(pluginTokens.globalNamespace, namespace)
-        .injectClass(JestTestRunner)
-    );
+    return injector
+      .provideValue(pluginTokens.processEnv, process.env)
+      .provideValue(pluginTokens.jestVersion, jestWrapper.getVersion())
+      .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
+      .provideFactory(pluginTokens.configLoader, configLoaderFactory)
+      .provideValue(pluginTokens.globalNamespace, namespace)
+      .injectClass(JestTestRunner);
   }
   return jestTestRunnerFactory;
 }
