@@ -26,13 +26,14 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
       this.fileName = context!.testPath!;
     }
 
-    public async handleTestEvent(event: Circus.Event, eventState: Circus.State): Promise<void> {
-      await super.handleTestEvent?.(event, eventState);
+    public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      await super.handleTestEvent?.(event as any, eventState);
       if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
         const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
         ns.currentTestId = fullName(event.test);
       }
-    }
+    };
 
     public async teardown() {
       const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
