@@ -6,14 +6,15 @@ import { state } from '../messaging';
 function fullNameDescribeBlock(describe: Circus.DescribeBlock): string {
   if (describe.parent) {
     const parentName = fullNameDescribeBlock(describe.parent);
-    return `${parentName}${parentName.length > 0 ? ' ' : ''}${describe.name}`;
+    return `${parentName} ${describe.name}`.trimStart();
   } else {
     return ''; // describe.name === "ROOT_DESCRIBE_BLOCK"
   }
 }
 
 function fullName(test: Circus.TestEntry): string {
-  return `${fullNameDescribeBlock(test.parent)} ${test.name}`;
+  const suiteName = fullNameDescribeBlock(test.parent);
+  return `${suiteName} ${test.name}`.trimStart();
 }
 
 export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T): T {
