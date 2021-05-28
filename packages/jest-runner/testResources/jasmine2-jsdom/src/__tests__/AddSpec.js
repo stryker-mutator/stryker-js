@@ -1,5 +1,5 @@
 /**
- * @jest-environment jest-environment-jsdom-sixteen
+ * @jest-environment jest-environment-jsdom
  */
 require('../Add.js');
 

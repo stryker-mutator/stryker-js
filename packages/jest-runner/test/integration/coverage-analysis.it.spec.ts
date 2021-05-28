@@ -125,8 +125,8 @@ describe('JestTestRunner coverage analysis integration', () => {
   const jsdomTestCases: TestCase[] = [{ name: 'jasmine2' }, { name: 'jest-circus', jestConfig: { config: { testRunner: 'jest-circus/runner' } } }];
 
   jsdomTestCases.forEach((testCase) => {
-    (testCase.focus ? describe.only : describe)(`${testCase.name}-jsdom-sixteen project`, () => {
-      const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-dom-sixteen-instrumented');
+    (testCase.focus ? describe.only : describe)(`${testCase.name}-jsdom project`, () => {
+      const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-jsdom-instrumented');
       let sut: JestTestRunner;
       beforeEach(() => {
         process.chdir(resolveTestCase());

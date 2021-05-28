@@ -17,6 +17,7 @@ import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestRunResult } from '../../src/jest-run-result';
 import { state } from '../../src/messaging';
+import { jestWrapper } from '../../src/utils';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
@@ -350,6 +351,28 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun({ coverageAnalysis: 'perTest' });
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: [require.resolve('../../src/jest-plugins/jasmine2-setup-coverage-analysis')] }),
+        });
+      });
+
+      it('should add a set setupFile if testRunner is not specified and jest version < 27', async () => {
+        const getVersionStub = sinon.stub(jestWrapper, 'getVersion');
+        getVersionStub.returns('26.999.999');
+        options.jest.config = { testRunner: undefined };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'perTest' });
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ setupFilesAfterEnv: [require.resolve('../../src/jest-plugins/jasmine2-setup-coverage-analysis')] }),
+        });
+      });
+
+      it('should not add a set setupFile if testRunner is not specified and jest version >= 27 (circus test runner)', async () => {
+        const getVersionStub = sinon.stub(jestWrapper, 'getVersion');
+        getVersionStub.returns('27.0.0');
+        options.jest.config = { testRunner: undefined };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'perTest' });
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
         });
       });
 
