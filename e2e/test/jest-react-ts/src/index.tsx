@@ -47,7 +47,7 @@ const Controller: React.FC<Props> = ({ path }) => <App path={path} />
 
 ReactDOM.render(
   <ErrorBoundary>
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <Router>
         <Controller path="/" />
         <Controller path="/active" />

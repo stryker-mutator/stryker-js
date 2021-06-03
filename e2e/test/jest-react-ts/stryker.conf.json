@@ -7,8 +7,8 @@
     "src/App/TodoList/Item/index.tsx",
     "src/NotFound.tsx"
   ],
-  "concurrency": 2,
-  "coverageAnalysis": "off",
+  "concurrency": 6,
+  "coverageAnalysis": "perTest",
   "reporters": [
     "event-recorder",
     "progress",

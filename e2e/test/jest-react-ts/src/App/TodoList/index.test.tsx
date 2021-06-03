@@ -27,7 +27,7 @@ const initialAppState: AppState = {
 
 test('should be render 3 todo items in initialAppState', () => {
   const { getByTestId, getAllByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <TodoList path="/" />
     </Provider>
   )
@@ -42,7 +42,7 @@ test('should be render 3 todo items in initialAppState', () => {
 
 test('should be work delete todo button', () => {
   const { getByTestId, getAllByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <TodoList path="/" />
     </Provider>
   )
@@ -58,7 +58,7 @@ test('should be work delete todo button', () => {
 
 test('should be work correctly all completed:true|false checkbox toggle button', () => {
   const { getByTestId, getAllByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <TodoList path="/" />
     </Provider>
   )

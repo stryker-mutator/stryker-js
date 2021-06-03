@@ -3,9 +3,9 @@ import { CoverageAnalysis, StrykerOptions } from '@stryker-mutator/api/core';
 import { propertyPath } from '@stryker-mutator/util';
 import semver from 'semver';
 
-import { jestWrapper } from '../utils';
+import { state } from '../messaging';
 
-const JEST_CIRCUS_RUNNER = 'jest-circus/runner';
+import { jestWrapper } from '../utils';
 
 /**
  * Jest's defaults.
@@ -15,33 +15,15 @@ function getJestDefaults() {
   // New defaults since 27: https://jestjs.io/blog/2021/05/25/jest-27
   if (semver.satisfies(jestWrapper.getVersion(), '>=27')) {
     return {
-      testRunner: JEST_CIRCUS_RUNNER,
+      testRunner: 'jest-circus/runner',
       testEnvironment: 'node',
     };
   } else {
     return {
-      // the default test runner changed since version 27
+      // the defaults before v27
       testRunner: 'jest-jasmine2',
       testEnvironment: 'jsdom',
     };
-  }
-}
-
-const setupFilesForPerTestCoverageAnalysis: Record<string, string> = {
-  'jest-jasmine2': require.resolve('./jasmine2-setup-coverage-analysis'),
-};
-
-const testEnvironmentOverrides: Record<string, string> = {
-  node: require.resolve('./jest-environment-node'),
-  jsdom: require.resolve('./jest-environment-jsdom'),
-  'jsdom-sixteen': require.resolve('./jest-environment-jsdom-sixteen'),
-};
-
-function getName(requireId: string, optionalPrefix: string) {
-  if (requireId.startsWith(optionalPrefix)) {
-    return requireId.substr(optionalPrefix.length);
-  } else {
-    return requireId;
   }
 }
 
@@ -59,13 +41,17 @@ export function withCoverageAnalysis(jestConfig: Config.InitialOptions, coverage
   }
 }
 
+/**
+ * Setup the test framework (aka "runner" in jest terms) for "perTest" coverage analysis.
+ * Will use monkey patching for framework "jest-jasmine2", and will assume the test environment handles events when "jest-circus"
+ */
 function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
   const testRunner = jestConfig.testRunner ?? getJestDefaults().testRunner;
-  const setupFile = setupFilesForPerTestCoverageAnalysis[testRunner];
-  if (setupFile) {
-    overrides.setupFilesAfterEnv = [setupFile, ...(jestConfig.setupFilesAfterEnv ?? [])];
-  } else if (testRunner !== JEST_CIRCUS_RUNNER) {
+  if (testRunner === 'jest-jasmine2') {
+    overrides.setupFilesAfterEnv = [require.resolve('./jasmine2-setup-coverage-analysis'), ...(jestConfig.setupFilesAfterEnv ?? [])];
+  } else if (!testRunner.includes('jest-circus')) {
     // 'jest-circus/runner' is supported, via handleTestEvent, see https://jestjs.io/docs/en/configuration#testenvironment-string
+    // Use includes here, since "react-scripts" will specify the full path to `jest-circus`, see https://github.com/stryker-mutator/stryker-js/issues/2789
     throw new Error(
       `The @stryker-mutator/jest-runner doesn't support ${propertyPath<StrykerOptions>(
         'coverageAnalysis'
@@ -77,8 +63,11 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
 }
 
 function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
-  const jestEnvironment = getName(jestConfig.testEnvironment ?? getJestDefaults().testEnvironment, 'jest-environment-');
-  if (testEnvironmentOverrides[jestEnvironment]) {
-    overrides.testEnvironment = testEnvironmentOverrides[jestEnvironment];
-  }
+  const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults().testEnvironment;
+  state.jestEnvironment = nameEnvironment(originalJestEnvironment);
+  overrides.testEnvironment = require.resolve('./jest-environment-generic');
+}
+
+function nameEnvironment(shortName: string): string {
+  return ['node', 'jsdom'].includes(shortName) ? `jest-environment-${shortName}` : shortName;
 }
