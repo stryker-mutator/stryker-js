@@ -1,7 +1,7 @@
 import { ChildProcessCrashedError } from './child-process-crashed-error';
 
 export class OutOfMemoryError extends ChildProcessCrashedError {
-  constructor(pid: number, exitCode: number) {
+  constructor(pid: number | undefined, exitCode: number) {
     super(pid, `Process ${pid} ran out of memory`, exitCode);
     this.message = 'Process ';
     Error.captureStackTrace(this, OutOfMemoryError);
