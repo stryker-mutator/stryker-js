@@ -10,6 +10,7 @@
   "stryker-js/karma-runner",
   "stryker-js/mocha-runner",
   "stryker-js/typescript-checker",
+  "stryker-js/troubleshooting",
   {
     "Guides": [
       "stryker-js/guides/angular",

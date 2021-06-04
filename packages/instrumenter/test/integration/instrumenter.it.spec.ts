@@ -36,6 +36,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a vue sample', async () => {
     await arrangeAndActAssert('vue-sample.vue');
   });
+  it('should be able to instrument a vue tsx sample', async () => {
+    await arrangeAndActAssert('vue-tsx-sample.vue');
+  });
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });

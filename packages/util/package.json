@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/util",
-  "version": "4.6.0",
+  "version": "5.0.1",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "dist/src/index.js",
   "scripts": {
@@ -29,9 +29,9 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "4.6.0",
+    "@stryker-mutator/test-helpers": "5.0.1",
     "@types/lodash.flatmap": "~4.5.6",
-    "@types/node": "^14.0.1"
+    "@types/node": "^15.0.0"
   },
   "dependencies": {
     "lodash.flatmap": "~4.5.0"

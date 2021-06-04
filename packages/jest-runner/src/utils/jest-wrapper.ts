@@ -11,6 +11,9 @@ class JestWrapper {
   public runCLI: typeof jestModule.runCLI = (...args) => {
     return jest.runCLI(...args);
   };
+  public getVersion: typeof jestModule.getVersion = (...args) => {
+    return jest.getVersion(...args);
+  };
 }
 
 export const jestWrapper = new JestWrapper();

@@ -24,7 +24,7 @@ describe(JasmineTestRunner.name, () => {
   beforeEach(() => {
     jasmineStub = sinon.createStubInstance(Jasmine);
     jasmineEnvStub = createEnvStub();
-    jasmineStub.env = (jasmineEnvStub as unknown) as jasmine.Env;
+    jasmineStub.env = jasmineEnvStub as unknown as jasmine.Env;
     sinon.stub(helpers, 'Jasmine').returns(jasmineStub);
     clock = sinon.useFakeTimers();
     directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);

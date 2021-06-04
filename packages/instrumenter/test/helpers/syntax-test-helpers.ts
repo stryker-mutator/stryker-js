@@ -58,7 +58,7 @@ export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (node
     noScope: true,
     enter(path) {
       if (searchQuery(path)) {
-        theNode = (path as unknown) as NodePath<T>;
+        theNode = path as unknown as NodePath<T>;
         path.stop();
       }
     },

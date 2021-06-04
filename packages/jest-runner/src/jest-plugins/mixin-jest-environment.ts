@@ -6,14 +6,15 @@ import { state } from '../messaging';
 function fullNameDescribeBlock(describe: Circus.DescribeBlock): string {
   if (describe.parent) {
     const parentName = fullNameDescribeBlock(describe.parent);
-    return `${parentName}${parentName.length > 0 ? ' ' : ''}${describe.name}`;
+    return `${parentName} ${describe.name}`.trimStart();
   } else {
     return ''; // describe.name === "ROOT_DESCRIBE_BLOCK"
   }
 }
 
 function fullName(test: Circus.TestEntry): string {
-  return `${fullNameDescribeBlock(test.parent)} ${test.name}`;
+  const suiteName = fullNameDescribeBlock(test.parent);
+  return `${suiteName} ${test.name}`.trimStart();
 }
 
 export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T): T {
@@ -26,13 +27,14 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
       this.fileName = context!.testPath!;
     }
 
-    public async handleTestEvent(event: Circus.Event, eventState: Circus.State): Promise<void> {
-      await super.handleTestEvent?.(event, eventState);
+    public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      await super.handleTestEvent?.(event as any, eventState);
       if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
         const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
         ns.currentTestId = fullName(event.test);
       }
-    }
+    };
 
     public async teardown() {
       const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;

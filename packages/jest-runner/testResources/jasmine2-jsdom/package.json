@@ -2,10 +2,10 @@
   "private": true,
   "name": "example-project",
   "version": "0.0.0",
-  "description": "A test project with jest-jasmine2 as a test runner and jsdom-sixteen as test environment",
+  "description": "A test project with jest-jasmine2 as a test runner and jsdom as test environment",
   "jest": {
     "moduleFileExtensions": ["js", "json", "jsx", "node"],
-    "testEnvironment": "jest-environment-jsdom-sixteen",
+    "testEnvironment": "jest-environment-jsdom",
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
     "testURL": "http://localhost"
   }

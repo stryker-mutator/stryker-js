@@ -44,6 +44,26 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       expect(sut.global.__stryker2__?.currentTestId).eq('foo should be bar');
     });
 
+    it('should choose correct test name when it is not situated in a describe block', async () => {
+      // Arrange
+      state.coverageAnalysis = 'perTest';
+      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+
+      // Act
+      await sut.handleTestEvent(
+        producers.createCircusTestStartEvent(
+          producers.createCircusTestEntry({
+            name: 'concat',
+            parent: producers.createCircusDescribeBlock(), // direct root describe block
+          })
+        ),
+        producers.createCircusState()
+      );
+
+      // Assert
+      expect(sut.global.__stryker2__?.currentTestId).eq('concat');
+    });
+
     it('should not set the currentTestId if coverage analysis is not perTest', async () => {
       state.coverageAnalysis = 'all';
       const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());

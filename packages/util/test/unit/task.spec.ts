@@ -66,7 +66,7 @@ describe(ExpirableTask.name, () => {
 
     it('should remove any nodejs timers when promise resolves', async () => {
       // Arrange
-      const expectedTimer = (234 as unknown) as NodeJS.Timeout;
+      const expectedTimer = 234 as unknown as NodeJS.Timeout;
       const setTimeoutStub = sinon.stub(global, 'setTimeout');
       const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
       setTimeoutStub.returns(expectedTimer);

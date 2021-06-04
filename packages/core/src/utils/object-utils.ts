@@ -40,9 +40,9 @@ export function setExitCode(n: number): void {
   process.exitCode = n;
 }
 
-export function kill(pid: number): Promise<void> {
+export function kill(pid: number | undefined): Promise<void> {
   return new Promise((res, rej) => {
-    treeKill(pid, 'SIGKILL', (err?: Error & { code?: number }) => {
+    treeKill(pid!, 'SIGKILL', (err?: Error & { code?: number }) => {
       if (err && !canIgnore(err.code)) {
         rej(err);
       } else {

@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/stryker-mutator/stryker-js/compare/v5.0.0...v5.0.1) (2021-05-28)
+
+**Note:** Version bump only for package grunt-stryker
+
+
+
+
+
+# [5.0.0](https://github.com/stryker-mutator/stryker-js/compare/v4.6.0...v5.0.0) (2021-05-14)
+
+
+### Features
+
+* **ignore patterns:** add "ignorePatterns" config option ([#2848](https://github.com/stryker-mutator/stryker-js/issues/2848)) ([a69992c](https://github.com/stryker-mutator/stryker-js/commit/a69992cfe5983d94e1dce0dfb367302a42001fe2)), closes [#1593](https://github.com/stryker-mutator/stryker-js/issues/1593) [#2739](https://github.com/stryker-mutator/stryker-js/issues/2739)
+
+
+### BREAKING CHANGES
+
+* **ignore patterns:** Stryker will no longer use a git command to determine which files belong to your project. Instead, it will rely on sane defaults. You can change this behavior by defining [`ignorePatterns`](https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string).
+* **ignore patterns:** The `files` configuration option is deprecated and will be removed in a future release. Please use [`ignorePatterns`](https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string) instead.
+
+This:
+
+```json
+{
+  "files": ["foo.js"]
+}
+```
+
+Is equivalent to:
+
+```json
+{
+  "ignorePatterns": ["**", "!foo.js"]
+}
+```
+
+
+
+
+
 # [4.6.0](https://github.com/stryker-mutator/stryker-js/compare/v4.5.1...v4.6.0) (2021-04-16)
 
 

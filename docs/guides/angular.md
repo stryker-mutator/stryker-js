@@ -64,3 +64,7 @@ Consider adding the Stryker TypeScript checker to increase mutation testing perf
 ### Run
 
 Run Stryker using `stryker run`.
+
+## Troubleshooting
+
+Please take a look at the [troubleshooting page](../troubleshooting.md) when you run into any problems setting up StrykerJS.

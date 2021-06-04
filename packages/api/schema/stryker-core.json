@@ -258,7 +258,7 @@
       "type": "number"
     },
     "maxTestRunnerReuse": {
-      "description": "Restart each forked worker after <n> runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. (default: 0)",
+      "description": "Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.",
       "type": "number",
       "default": 0
     },

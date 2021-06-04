@@ -13,8 +13,20 @@ describe(LogicalOperatorMutator.name, () => {
     expect(sut.name).eq('LogicalOperator');
   });
 
-  it('should mutate && and ||', () => {
+  it('should mutate &&', () => {
     expectJSMutation(sut, 'a && b', 'a || b');
+  });
+
+  it('should mutate ||', () => {
     expectJSMutation(sut, 'a || b', 'a && b');
+  });
+
+  it('should not mutate & and |', () => {
+    expectJSMutation(sut, 'a & b');
+    expectJSMutation(sut, 'a | b');
+  });
+
+  it('should mutate ?? to &&', () => {
+    expectJSMutation(sut, 'a ?? b', 'a && b');
   });
 });

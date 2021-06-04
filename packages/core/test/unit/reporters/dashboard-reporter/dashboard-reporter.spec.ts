@@ -26,7 +26,7 @@ describe(DashboardReporter.name, () => {
 
   function createSut(ciProviderOverride: CIProvider | null = ciProviderMock) {
     return testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, (dashboardClientMock as unknown) as DashboardReporterClient)
+      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
       .provideValue(dashboardReporterTokens.ciProvider, ciProviderOverride)
       .injectClass(DashboardReporter);
   }

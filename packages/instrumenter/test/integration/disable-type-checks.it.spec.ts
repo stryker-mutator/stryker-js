@@ -19,6 +19,9 @@ describe(`${disableTypeChecks.name} integration`, () => {
   it('should be able disable type checks of a vue file', async () => {
     await arrangeAndActAssert('vue-sample.vue');
   });
+  it('should be able disable type checks of a vue tsx file', async () => {
+    await arrangeAndActAssert('vue-tsx-sample.vue');
+  });
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource('disable-type-checks', fileName);

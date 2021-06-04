@@ -1,5 +1,5 @@
 /**
- * @jest-environment @stryker-mutator/jest-runner/jest-env/jsdom-sixteen
+ * @jest-environment @stryker-mutator/jest-runner/jest-env/jsdom
  */
 import './calculator-element';
 

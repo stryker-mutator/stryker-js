@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "4.6.0",
+  "version": "5.0.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -56,17 +56,17 @@
     "stryker": "./bin/stryker"
   },
   "dependencies": {
-    "@stryker-mutator/api": "4.6.0",
-    "@stryker-mutator/instrumenter": "4.6.0",
-    "@stryker-mutator/util": "4.6.0",
-    "ajv": "~8.1.0",
+    "@stryker-mutator/api": "5.0.1",
+    "@stryker-mutator/instrumenter": "5.0.1",
+    "@stryker-mutator/util": "5.0.1",
+    "ajv": "~8.3.0",
     "chalk": "~4.1.0",
     "commander": "~7.2.0",
     "execa": "~5.0.0",
     "file-url": "~3.0.0",
     "get-port": "~5.0.0",
     "glob": "~7.1.2",
-    "inquirer": "~7.3.2",
+    "inquirer": "~8.1.0",
     "lodash.flatmap": "~4.5.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.2.1",
@@ -86,12 +86,12 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "4.0.0-beta.4",
-    "@stryker-mutator/test-helpers": "4.6.0",
+    "@stryker-mutator/test-helpers": "5.0.1",
     "@types/inquirer": "~7.3.1",
     "@types/lodash.flatmap": "~4.5.6",
     "@types/lodash.groupby": "~4.6.6",
     "@types/minimatch": "~3.0.3",
-    "@types/node": "^14.0.1",
+    "@types/node": "^15.0.0",
     "@types/progress": "~2.0.1",
     "flatted": "~3.1.0"
   }

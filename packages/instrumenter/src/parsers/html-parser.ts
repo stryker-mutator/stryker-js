@@ -1,11 +1,12 @@
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
 import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
 
-import { HtmlAst, AstFormat, HtmlRootNode, TSAst, JSAst, ScriptFormat, AstByFormat } from '../syntax';
+import { HtmlAst, AstFormat, HtmlRootNode, ScriptFormat, AstByFormat, ScriptAst } from '../syntax';
 
 import { ParserContext } from './parser-context';
 import { ParseError } from './parse-error';
 
+const TSX_SCRIPT_TYPES = Object.freeze(['tsx', 'text/tsx']);
 const TS_SCRIPT_TYPES = Object.freeze(['ts', 'text/typescript', 'typescript']);
 const JS_SCRIPT_TYPES = Object.freeze(['js', 'text/javascript', 'javascript']);
 
@@ -38,7 +39,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
   if (errors.length !== 0) {
     throw new ParseError(errors[0].msg, fileName, toSourceLocation(errors[0].span.start));
   }
-  const scriptsAsPromised: Array<Promise<JSAst | TSAst>> = [];
+  const scriptsAsPromised: Array<Promise<ScriptAst>> = [];
   visitAll(
     new (class extends RecursiveVisitor {
       public visitElement(el: Element, context: unknown): void {
@@ -89,6 +90,9 @@ function getScriptType(element: Element): ScriptFormat | undefined {
       const type = element.attrs.find((attr) => attr.name === 'type') ?? element.attrs.find((attr) => attr.name === 'lang');
       if (type) {
         const typeToLower = type.value.toLowerCase();
+        if (TSX_SCRIPT_TYPES.includes(typeToLower)) {
+          return AstFormat.Tsx;
+        }
         if (TS_SCRIPT_TYPES.includes(typeToLower)) {
           return AstFormat.TS;
         }

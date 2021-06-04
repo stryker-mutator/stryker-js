@@ -28,13 +28,15 @@ const mapSearchResultToPromptOption = (searchResults: NpmSearchResult): PromptOp
     pkg: result.package,
   }));
 
-const handleResult = (from: string) => <T>(response: IRestResponse<T>): T => {
-  if (response.statusCode === 200 && response.result) {
-    return response.result;
-  } else {
-    throw new Error(`Path ${from} resulted in http status code: ${response.statusCode}.`);
-  }
-};
+const handleResult =
+  (from: string) =>
+  <T>(response: IRestResponse<T>): T => {
+    if (response.statusCode === 200 && response.result) {
+      return response.result;
+    } else {
+      throw new Error(`Path ${from} resulted in http status code: ${response.statusCode}.`);
+    }
+  };
 
 export class NpmClient {
   public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpmSearch, initializerTokens.restClientNpm);

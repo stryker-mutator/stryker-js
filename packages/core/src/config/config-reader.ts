@@ -66,10 +66,10 @@ export class ConfigReader {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         configModule = require(configFile);
-      } catch (e) {
+      } catch (error: unknown) {
         this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
         this.log.info("Please execute `stryker init` in your project's root directory.");
-        throw new ConfigError('Invalid config file', e);
+        throw new ConfigError('Invalid config file', error);
       }
       if (typeof configModule !== 'function' && typeof configModule !== 'object') {
         this.log.fatal('Config file must export an object!\n' + CONFIG_SYNTAX_HELP);

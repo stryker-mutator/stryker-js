@@ -25,6 +25,7 @@ export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transfo
       break;
     case AstFormat.JS:
     case AstFormat.TS:
+    case AstFormat.Tsx:
       transformBabel(ast, mutantCollector, context);
       break;
   }

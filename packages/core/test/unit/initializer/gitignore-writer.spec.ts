@@ -22,7 +22,7 @@ describe(GitignoreWriter.name, () => {
     fsAppendFile = sinon.stub(fs.promises, 'appendFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
     fsReadFile = sinon.stub(fs.promises, 'readFile');
-    sut = testInjector.injector.provideValue(initializerTokens.out, (out as unknown) as typeof console.log).injectClass(GitignoreWriter);
+    sut = testInjector.injector.provideValue(initializerTokens.out, out as unknown as typeof console.log).injectClass(GitignoreWriter);
   });
 
   describe('addStrykerTempFolder', () => {

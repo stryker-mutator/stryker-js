@@ -49,14 +49,14 @@ describe(StrykerInitializer.name, () => {
     restClientPackage = sinon.createStubInstance(RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
     sut = testInjector.injector
-      .provideValue(initializerTokens.out, (out as unknown) as typeof console.log)
-      .provideValue(initializerTokens.restClientNpm, (restClientPackage as unknown) as RestClient)
-      .provideValue(initializerTokens.restClientNpmSearch, (restClientSearch as unknown) as RestClient)
+      .provideValue(initializerTokens.out, out as unknown as typeof console.log)
+      .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
+      .provideValue(initializerTokens.restClientNpmSearch, restClientSearch as unknown as RestClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
       .provideValue(initializerTokens.strykerPresets, presets)
       .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
-      .provideValue(initializerTokens.gitignoreWriter, (gitignoreWriter as unknown) as GitignoreWriter)
+      .provideValue(initializerTokens.gitignoreWriter, gitignoreWriter as unknown as GitignoreWriter)
       .injectClass(StrykerInitializer);
   });
 
@@ -360,30 +360,30 @@ describe(StrykerInitializer.name, () => {
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves(({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves({
       result: {
         results: testRunners.map((testRunner) => ({ package: { name: testRunner, version: '1.1.1' } })),
       },
       statusCode: 200,
-    } as unknown) as IRestResponse<PackageInfo[]>);
+    } as unknown as IRestResponse<PackageInfo[]>);
   };
 
   const stubMutators = (...mutators: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves(({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves({
       result: {
         results: mutators.map((mutator) => ({ package: { name: mutator, version: '1.1.1' } })),
       },
       statusCode: 200,
-    } as unknown) as IRestResponse<PackageInfo[]>);
+    } as unknown as IRestResponse<PackageInfo[]>);
   };
 
   const stubReporters = (...reporters: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves(({
+    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves({
       result: {
         results: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1' } })),
       },
       statusCode: 200,
-    } as unknown) as IRestResponse<PackageInfo[]>);
+    } as unknown as IRestResponse<PackageInfo[]>);
   };
   const stubPackageClient = (packageConfigPerPackage: Record<string, Record<string, unknown> | null>) => {
     Object.keys(packageConfigPerPackage).forEach((packageName) => {
@@ -396,10 +396,10 @@ describe(StrykerInitializer.name, () => {
       if (cfg) {
         pkgConfig.initStrykerConfig = cfg;
       }
-      restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves(({
+      restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves({
         result: pkgConfig,
         statusCode: 200,
-      } as unknown) as IRestResponse<PackageInfo[]>);
+      } as unknown as IRestResponse<PackageInfo[]>);
     });
   };
 
