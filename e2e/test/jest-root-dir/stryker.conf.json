@@ -1,0 +1,12 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "tempDirName": "stryker-tmp",
+  "reporters": ["html", "clear-text", "progress"],
+  "testRunner": "jest",
+  "jest": {
+    "configFile": "test/jest.config.js"
+  },
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "mutate": ["client/**/*.js", "!client/**/*.test.js"]
+}
