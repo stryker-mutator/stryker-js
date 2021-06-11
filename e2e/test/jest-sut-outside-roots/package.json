@@ -1,9 +1,0 @@
-{
-  "name": "jest-root-dir",
-  "description": "Test for jest with different root dir",
-  "scripts": {
-    "test:unit": "jest",
-    "test": "stryker run",
-    "posttest": "mocha --require \"../../tasks/ts-node-register.js\" verify/*.ts"
-  }
-}
