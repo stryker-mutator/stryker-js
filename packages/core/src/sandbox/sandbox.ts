@@ -8,7 +8,7 @@ import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 import { mergeMap, toArray } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, lastValueFrom } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/temporary-directory';
 import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
@@ -70,12 +70,11 @@ export class Sandbox implements Disposable {
   }
 
   private fillSandbox(): Promise<void[]> {
-    return from(this.files)
-      .pipe(
-        mergeMap((file) => this.fillFile(file), MAX_CONCURRENT_FILE_IO),
-        toArray()
-      )
-      .toPromise();
+    const files$ = from(this.files).pipe(
+      mergeMap((file) => this.fillFile(file), MAX_CONCURRENT_FILE_IO),
+      toArray()
+    );
+    return lastValueFrom(files$);
   }
 
   private async runBuildCommand() {

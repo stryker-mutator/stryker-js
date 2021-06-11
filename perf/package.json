@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "devDependencies": {
-    "ts-node": "~8.10.2"
+    "ts-node": "~8.10.2",
+    "rxjs": "~7.1.0"
   },
   "scripts": {
     "postinstall": "npm run merge-config && npm run bootstrap",

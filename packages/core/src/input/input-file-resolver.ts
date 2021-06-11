@@ -3,7 +3,7 @@ import { promises as fsPromises } from 'fs';
 
 import { isDeepStrictEqual } from 'util';
 
-import { from } from 'rxjs';
+import { from, lastValueFrom } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -175,18 +175,16 @@ export class InputFileResolver {
   }
 
   private async readFiles(fileNames: string[]): Promise<File[]> {
-    const promisedFiles = from(fileNames)
-      .pipe(
-        mergeMap((fileName) => {
-          return this.readFile(fileName);
-        }, MAX_CONCURRENT_FILE_IO),
-        filter(notEmpty),
-        toArray(),
-        // Filter the files here, so we force a deterministic instrumentation process
-        map((files) => files.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)))
-      )
-      .toPromise();
-    return promisedFiles;
+    const files$ = from(fileNames).pipe(
+      mergeMap((fileName) => {
+        return this.readFile(fileName);
+      }, MAX_CONCURRENT_FILE_IO),
+      filter(notEmpty),
+      toArray(),
+      // Filter the files here, so we force a deterministic instrumentation process
+      map((files) => files.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)))
+    );
+    return lastValueFrom(files$);
   }
 
   private async readFile(fileName: string): Promise<File | null> {
