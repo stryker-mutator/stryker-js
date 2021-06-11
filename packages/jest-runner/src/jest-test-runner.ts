@@ -148,16 +148,12 @@ export class JestTestRunner implements TestRunner {
   }
 
   private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
-    if (fileNameUnderTest) {
-      if (
-        this.jestConfig.roots &&
-        !this.jestConfig.roots.some((root) => fileNameUnderTest.startsWith(path.resolve(process.cwd(), this.jestConfig.rootDir ?? '.', root)))
-      ) {
-        return {
-          ...this.jestConfig,
-          roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
-        };
-      }
+    if (fileNameUnderTest && this.jestConfig.roots) {
+      // Make sure the file under test lives inside one of the roots
+      return {
+        ...this.jestConfig,
+        roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
+      };
     }
     return this.jestConfig;
   }
