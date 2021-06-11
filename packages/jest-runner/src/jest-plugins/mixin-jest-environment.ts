@@ -17,30 +17,37 @@ function fullName(test: Circus.TestEntry): string {
   return `${suiteName} ${test.name}`.trimStart();
 }
 
-export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T): T {
-  // @ts-expect-error wrong assumption about a mixin class: https://github.com/microsoft/TypeScript/issues/37142
-  class StrykerJestEnvironment extends JestEnvironmentClass {
-    private readonly fileName: string;
+const STRYKER_JEST_ENV = Symbol('StrykerJestEnvironment');
 
-    constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
-      super(config, context);
-      this.fileName = context!.testPath!;
-    }
+export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T & { [STRYKER_JEST_ENV]?: true }): T {
+  if (JestEnvironmentClass[STRYKER_JEST_ENV]) {
+    return JestEnvironmentClass;
+  } else {
+    class StrykerJestEnvironment extends JestEnvironmentClass {
+      private readonly fileName: string;
 
-    public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      await super.handleTestEvent?.(event as any, eventState);
-      if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-        const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
-        ns.currentTestId = fullName(event.test);
+      public static readonly [STRYKER_JEST_ENV] = true;
+
+      constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
+        super(config, context);
+        this.fileName = context!.testPath!;
       }
-    };
 
-    public async teardown() {
-      const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
-      state.handleMutantCoverage(this.fileName, mutantCoverage);
-      await super.teardown();
+      public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        await super.handleTestEvent?.(event as any, eventState);
+        if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
+          const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
+          ns.currentTestId = fullName(event.test);
+        }
+      };
+
+      public async teardown() {
+        const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
+        state.handleMutantCoverage(this.fileName, mutantCoverage);
+        await super.teardown();
+      }
     }
+    return StrykerJestEnvironment;
   }
-  return StrykerJestEnvironment;
 }

@@ -49,10 +49,7 @@
     "@types/semver": "~7.3.6",
     "jest": "~27.0.1",
     "jest-circus": "^27.0.1",
-    "jest-environment-jsdom-sixteen": "^2.0.0",
-    "react": "~17.0.2",
-    "react-dom": "~17.0.2",
-    "react-scripts": "~4.0.3"
+    "jest-environment-jsdom-sixteen": "^2.0.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~5.0.0",
