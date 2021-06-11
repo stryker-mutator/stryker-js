@@ -10,7 +10,7 @@ const initialAppState = {
 it('renders without crashing', () => {
   const div = document.createElement('div')
   ReactDOM.render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <App path="/" />
     </Provider>,
     div

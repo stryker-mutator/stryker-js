@@ -187,7 +187,7 @@ export const createCircusTestStartEvent = (test = createCircusTestEntry()): Circ
   name: 'test_start',
   test,
 });
-export const createCircusRunStartEvent = (): Circus.Event => ({
+export const createCircusRunStartEvent = (): Circus.AsyncEvent => ({
   name: 'run_start',
 });
 

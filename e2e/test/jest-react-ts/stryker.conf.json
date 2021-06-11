@@ -8,7 +8,7 @@
     "src/NotFound.tsx"
   ],
   "concurrency": 2,
-  "coverageAnalysis": "off",
+  "coverageAnalysis": "perTest",
   "reporters": [
     "event-recorder",
     "progress",
