@@ -34,13 +34,13 @@
     "@babel/generator": "~7.14.3",
     "@babel/parser": "~7.14.1",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "~7.13.5 ",
+    "@babel/plugin-proposal-decorators": "~7.14.5 ",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
-    "@babel/preset-typescript": "~7.13.0 ",
+    "@babel/preset-typescript": "~7.14.5 ",
     "@stryker-mutator/api": "5.0.1",
     "@stryker-mutator/util": "5.0.1",
     "angular-html-parser": "~1.8.0",
-    "weapon-regex": "~0.5.1"
+    "weapon-regex": "~0.6.0"
   },
   "devDependencies": {
     "@babel/preset-react": "~7.14.5",
