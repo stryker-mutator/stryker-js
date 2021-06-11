@@ -1,6 +1,6 @@
-import jest from 'jest';
 import { Config } from '@jest/types';
 
+import { jestWrapper } from '../utils';
 import { JestRunResult } from '../jest-run-result';
 
 import { RunSettings, JestTestAdapter } from './jest-test-adapter';
@@ -12,7 +12,7 @@ import { RunSettings, JestTestAdapter } from './jest-test-adapter';
 export class JestLessThan25TestAdapter implements JestTestAdapter {
   public run({ jestConfig, projectRoot, fileNameUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
-    return jest.runCLI(
+    return jestWrapper.runCLI(
       {
         ...(fileNameUnderTest && { _: [fileNameUnderTest], findRelatedTests: true }),
         config,
