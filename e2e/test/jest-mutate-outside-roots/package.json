@@ -1,0 +1,9 @@
+{
+  "name": "jest-mutate-outside-roots",
+  "description": "Test for jest where the mutated files are outside of Jest's project 'roots', see https://github.com/stryker-mutator/stryker-js/issues/2933",
+  "scripts": {
+    "test:unit": "jest",
+    "test": "stryker run",
+    "posttest": "mocha --require \"../../tasks/ts-node-register.js\" verify/*.ts"
+  }
+}
