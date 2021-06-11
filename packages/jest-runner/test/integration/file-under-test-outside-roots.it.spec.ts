@@ -1,5 +1,5 @@
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
@@ -9,7 +9,7 @@ import { createJestOptions } from '../helpers/producers';
 
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
-describe('jest with wrong roots', () => {
+describe('jest with fileUnderTest outside of roots', () => {
   function createSut(overrides?: Partial<JestOptions>) {
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
       jest: createJestOptions(overrides),
@@ -17,9 +17,11 @@ describe('jest with wrong roots', () => {
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
-  it.only('should error during mutantRun when findRelatedTests is enabled', async () => {
-    process.chdir(resolveTestResource('wrong-roots'));
+  it('should still be able perform a mutant run', async () => {
+    process.chdir(resolveTestResource('file-under-test-outside-roots'));
     const sut = createSut({ enableFindRelatedTests: true });
-    await expect(sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant(), sandboxFileName: 'src/foo.js' }))).rejectedWith();
+    const actual = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), sandboxFileName: 'src/foo.js' }));
+    assertions.expectKilled(actual);
+    expect(actual.killedBy).eq('foo should be 42');
   });
 });
