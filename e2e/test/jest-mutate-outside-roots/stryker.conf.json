@@ -8,5 +8,5 @@
   },
   "concurrency": 2,
   "coverageAnalysis": "perTest",
-  "mutate": ["client/**/*.js", "!client/**/*.test.js"]
+  "mutate": ["src/**/*.js"]
 }
