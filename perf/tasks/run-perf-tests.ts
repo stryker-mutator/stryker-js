@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path'
 import execa from 'execa';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { tap, throttleTime } from 'rxjs/operators';
 import minimatch from 'minimatch';
 
@@ -32,12 +32,11 @@ async function runPerfTests() {
 
 async function runTest(testDir: string) {
   console.time(testDir);
-  await runStryker(testDir)
+  await lastValueFrom(runStryker(testDir)
     .pipe(
       throttleTime(60000),
       tap((logMessage) => console.timeLog(testDir, 'last log message: ', logMessage))
-    )
-    .toPromise();
+    ));
   console.timeEnd(testDir);
 }
 

@@ -1,4 +1,4 @@
-import { Observable, Subject, merge, zip } from 'rxjs';
+import { lastValueFrom, Observable, Subject, merge, zip } from 'rxjs';
 import { mergeMap, filter, shareReplay, tap } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { Disposable, tokens } from 'typed-inject';
@@ -58,7 +58,7 @@ export class Pool<TWorker extends Worker> implements Disposable {
    * This is optional, workers will get initialized either way.
    */
   public async init(): Promise<void> {
-    await this.worker$.toPromise();
+    await lastValueFrom(this.worker$);
   }
 
   /**

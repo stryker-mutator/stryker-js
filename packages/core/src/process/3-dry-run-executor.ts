@@ -15,7 +15,7 @@ import {
   FailedTestResult,
   ErrorDryRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { of } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
 import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
@@ -90,7 +90,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const { dryRunResult, timing } = await testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)).toPromise();
+    const { dryRunResult, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)));
 
     this.logInitialTestRunSucceeded(dryRunResult.tests, timing);
     if (!dryRunResult.tests.length) {

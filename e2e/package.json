@@ -32,7 +32,7 @@
     "load-grunt-tasks": "~5.1.0",
     "mocha": "~8.2.0",
     "mutation-testing-metrics": "1.7.2",
-    "rxjs": "~6.5.3",
+    "rxjs": "~7.1.0",
     "semver": "~6.3.0",
     "ts-jest": "~27.0.1",
     "ts-loader": "~8.0.3",

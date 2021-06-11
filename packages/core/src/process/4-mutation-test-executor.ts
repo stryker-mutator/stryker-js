@@ -1,4 +1,4 @@
-import { from, partition, merge, Observable } from 'rxjs';
+import { from, partition, merge, Observable, lastValueFrom } from 'rxjs';
 import { toArray, map, tap, shareReplay } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantTestCoverage, MutantResult, StrykerOptions, MutantStatus } from '@stryker-mutator/api/core';
@@ -57,7 +57,7 @@ export class MutationTestExecutor {
     const { passedMutant$, checkResult$ } = this.executeCheck(from(notIgnoredMutant$));
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
-    const results = await merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()).toPromise();
+    const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();

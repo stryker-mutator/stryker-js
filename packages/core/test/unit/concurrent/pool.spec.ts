@@ -3,7 +3,7 @@ import { toArray } from 'rxjs/operators';
 import sinon from 'sinon';
 import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
-import { range, ReplaySubject } from 'rxjs';
+import { lastValueFrom, range, ReplaySubject } from 'rxjs';
 
 import { Pool, Worker } from '../../../src/concurrent';
 
@@ -55,7 +55,7 @@ describe(Pool.name, () => {
       const actualWorkers: Array<Required<Worker>> = [];
 
       // Act
-      const onGoingTask = sut.schedule(range(0, 3), async (worker) => actualWorkers.push(worker)).toPromise();
+      const onGoingTask = lastValueFrom(sut.schedule(range(0, 3), async (worker) => actualWorkers.push(worker)));
 
       // Assert
       expect(actualWorkers).lengthOf(0);
@@ -102,14 +102,8 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const firstResult = await sut
-        .schedule(range(0, 2), (worker) => worker)
-        .pipe(toArray())
-        .toPromise();
-      const secondResult = await sut
-        .schedule(range(0, 2), (worker) => worker)
-        .pipe(toArray())
-        .toPromise();
+      const firstResult = await lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
+      const secondResult = await lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
 
       // Assert
       await sut.dispose();
@@ -125,13 +119,14 @@ describe(Pool.name, () => {
       setConcurrency(2);
       const actualScheduledWork: Array<[number, Required<Worker>]> = [];
       sut = createSut();
-      const onGoingWork = sut
-        .schedule(range(0, 3), async (worker, input) => {
-          await tick();
-          actualScheduledWork.push([input, worker]);
-        })
-        .pipe(toArray())
-        .toPromise();
+      const onGoingWork = lastValueFrom(
+        sut
+          .schedule(range(0, 3), async (worker, input) => {
+            await tick();
+            actualScheduledWork.push([input, worker]);
+          })
+          .pipe(toArray())
+      );
       await tick(3);
 
       // Act
@@ -193,7 +188,7 @@ describe(Pool.name, () => {
       setConcurrency(2);
       const actualWorkers: Array<Required<Worker>> = [];
       sut = createSut();
-      const onGoingScheduledWork = sut.schedule(range(0, 2), (worker) => actualWorkers.push(worker)).toPromise();
+      const onGoingScheduledWork = lastValueFrom(sut.schedule(range(0, 2), (worker) => actualWorkers.push(worker)));
 
       // Act
       const timeoutResult = await ExpirableTask.timeout(sut.init(), 20);
@@ -250,10 +245,7 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const resultPromise = sut
-        .schedule(range(0, 2), (worker) => worker)
-        .pipe(toArray())
-        .toPromise();
+      const resultPromise = lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
       task.resolve();
       await sut.dispose();
       task2.resolve();
@@ -274,10 +266,7 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const actualTestRunnersPromise = sut
-        .schedule(range(0, 3), (worker) => worker)
-        .pipe(toArray())
-        .toPromise();
+      const actualTestRunnersPromise = lastValueFrom(sut.schedule(range(0, 3), (worker) => worker).pipe(toArray()));
       const disposePromise = sut.dispose();
       task.resolve();
       task2.resolve();
@@ -292,13 +281,14 @@ describe(Pool.name, () => {
 
   async function captureWorkers(suite: Pool<Required<Worker>>, inputCount: number) {
     // Eagerly get all test runners
-    const createAllPromise = suite
-      .schedule(range(0, inputCount), async (worker) => {
-        await tick();
-        return worker;
-      })
-      .pipe(toArray())
-      .toPromise();
+    const createAllPromise = lastValueFrom(
+      suite
+        .schedule(range(0, inputCount), async (worker) => {
+          await tick();
+          return worker;
+        })
+        .pipe(toArray())
+    );
 
     // But don't await yet, until after dispose.
     // Allow processes to be created
