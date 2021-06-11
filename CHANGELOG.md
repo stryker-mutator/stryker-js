@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.0.1](https://github.com/stryker-mutator/stryker-js/compare/v5.0.0...v5.0.1) (2021-05-28)
+
+
+### Bug Fixes
+
+* **jest-runner:** Support Jest v27 ([#2861](https://github.com/stryker-mutator/stryker-js/issues/2861)) ([8d3560b](https://github.com/stryker-mutator/stryker-js/commit/8d3560bd2f1b8cbb4235b13dbef9afa84708ac73))
+* **mocha-runner:** improve debug logging ([#2925](https://github.com/stryker-mutator/stryker-js/issues/2925)) ([ecc53ee](https://github.com/stryker-mutator/stryker-js/commit/ecc53ee3314f9e4b71aa370f35d87d699471fc55))
+
+
+
+
+
 # [5.0.0](https://github.com/stryker-mutator/stryker-js/compare/v4.6.0...v5.0.0) (2021-05-14)
 
 

@@ -23,7 +23,7 @@ export class LoggingServer {
         // This happens during integration tests, this is safe to ignore (log4js does that as well)
       });
     });
-    this.event$ = new Observable<log4js.LoggingEvent>((subscriber: Subscriber<log4js.LoggingEvent> | undefined) => {
+    this.event$ = new Observable<log4js.LoggingEvent>((subscriber) => {
       this.subscriber = subscriber;
       this.server.on('close', () => {
         subscriber.complete();
