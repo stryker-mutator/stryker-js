@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/stryker-mutator/stryker-js/compare/v5.0.1...v5.1.0) (2021-06-14)
+
+
+### Bug Fixes
+
+* **jest-runner:** allow a different rootDir ([b66a617](https://github.com/stryker-mutator/stryker-js/commit/b66a61711a8bea554e29efb8848fa4c9d0afb34c))
+* **jest-runner:** use local jest version when jest@<25 ([#2950](https://github.com/stryker-mutator/stryker-js/issues/2950)) ([3218c9e](https://github.com/stryker-mutator/stryker-js/commit/3218c9e57a641866f9b13028c9239af39e7c60a7))
+
+
+### Features
+
+* **jest-runner:** allow configuration in a custom package.json ([825548c](https://github.com/stryker-mutator/stryker-js/commit/825548c66956ff34c500caadb1ebc2030ef59df3))
+* **jest-runner:** dynamically override "testEnvironment" ([#2934](https://github.com/stryker-mutator/stryker-js/issues/2934)) ([0590869](https://github.com/stryker-mutator/stryker-js/commit/05908690cd5fb5c70ff032c6a985bb57bcebb301))
+* **jest-runner:** support findRelatedTests for mutated files outside of roots ([#2951](https://github.com/stryker-mutator/stryker-js/issues/2951)) ([19dccec](https://github.com/stryker-mutator/stryker-js/commit/19dcceca950c7c92d08826a4958db73eca7e71dd))
+* **mocha-runner:** officially support mocha 9 ([42848bb](https://github.com/stryker-mutator/stryker-js/commit/42848bba288adcefb8d8f8fac1cd34b17bd1d49f))
+
+
+
+
+
 ## [5.0.1](https://github.com/stryker-mutator/stryker-js/compare/v5.0.0...v5.0.1) (2021-05-28)
 
 
