@@ -2,8 +2,6 @@ import { tokens, commonTokens, Injector, PluginContext } from '@stryker-mutator/
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { requireResolve } from '@stryker-mutator/util';
-
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 import * as pluginTokens from '../plugin-tokens';
 
@@ -22,11 +20,7 @@ export function configLoaderFactory(
     }
   };
   const optionsWithJest: JestRunnerOptionsWithStrykerOptions = options as JestRunnerOptionsWithStrykerOptions;
-
-  const configLoaderInjector = injector
-    .provideValue(pluginTokens.loader, requireResolve)
-    .provideValue(pluginTokens.resolve, require.resolve)
-    .provideValue(pluginTokens.projectRoot, process.cwd());
+  const configLoaderInjector = injector.provideValue(pluginTokens.resolve, require.resolve);
 
   switch (optionsWithJest.jest.projectType) {
     case 'custom':

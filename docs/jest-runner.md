@@ -9,6 +9,8 @@ Install @stryker-mutator/jest-runner locally within your project folder, like so
 
 ```bash
 npm i --save-dev @stryker-mutator/jest-runner
+# OR
+yarn add --dev @stryker-mutator/jest-runner
 ```
 
 ## Peer dependencies
@@ -59,7 +61,7 @@ Configure where jest should get its configuration from.
 
 Default: `undefined`
 
-The path to your Jest config file.
+The path to your Jest config file of package.json file containing in the `"jest"` key. By default, the @stryker-mutator/jest-runner will try to look for "jest.conf.js" or "package.json" in the current working directory.
 
 ### `jest.config` [`object`]
 
@@ -80,15 +82,7 @@ The `@stryker-mutator/jest-runner` plugin supports coverage analysis and test fi
 
 ### Coverage reporting
 
-When using `"all"` or `"perTest"` coverage analysis, this plugin reports mutant coverage by hooking into the [jest's test environment](https://jestjs.io/docs/en/configuration.html#testenvironment-string). The test environment setting is overridden based on the `"testEnvironment"` configuration option in your jest config:
-
-Jest test environment|Jest runner's override|
----|---
-node|@stryker-mutator/jest-runner/jest-env/node
-jsdom|@stryker-mutator/jest-runner/jest-env/jsom
-jest-environment-jsdom-sixteen|@stryker-mutator/jest-runner/jest-env/jsom-sixteen
-
-As long as you're using one of these test environments, you won't have to do anything.
+When using `"all"` or `"perTest"` coverage analysis, this plugin reports mutant coverage by hooking into the [jest's test environment](https://jestjs.io/docs/en/configuration.html#testenvironment-string). The test environment setting in your configuration file is overridden by default and you won't have to do anything here.
 
 However, if you choose to override the jest-environment on a file-by-file basis using [jest's `@jest-environment` docblock](https://jestjs.io/docs/en/configuration.html#testenvironment-string), you will have to do the work. 
 
@@ -108,6 +102,14 @@ Becomes:
  */
 ```
 
+This is the list of jest environments that are shipped with @stryker-mutator/jest-runner.
+
+Jest test environment|@stryker-mutator/jest-runner override|
+---|---
+node|@stryker-mutator/jest-runner/jest-env/node
+jsdom|@stryker-mutator/jest-runner/jest-env/jsom
+jest-environment-jsdom-sixteen|@stryker-mutator/jest-runner/jest-env/jsom-sixteen
+
 Don't worry; using Stryker's alternative is harmless during regular unit testing.
 
 If you're using a custom test environment, you'll need to mixin the Stryker functionality yourself:
@@ -126,6 +128,6 @@ module.exports = mixinJestEnvironment(MyCustomTestEnvironment);
 
 ### Test filtering
 
-When using `"perTest"` coverage analysis, the `@stryker-mutator/jest-runner` will hook into the [jest test runner](https://jestjs.io/docs/en/configuration.html#testrunner-string). Both the default `"jasmine2"` as well as [jest-circus](https://www.npmjs.com/package/jest-circus) are supported here. 
+When using `"perTest"` coverage analysis, the `@stryker-mutator/jest-runner` will hook into the [jest test runner](https://jestjs.io/docs/en/configuration.html#testrunner-string). Both `"jasmine2"` as well as [`jest-circus`](https://www.npmjs.com/package/jest-circus) (default) are supported here. 
 
 If you're using a different test runner, you're out of luck. Please downgrade to using `"all"` coverage analysis. If you think we should support your test runner, please let us know by opening an [issue](https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%9A%80+Feature+request&template=feature_request.md&title=), or by joining our [slack channel](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
