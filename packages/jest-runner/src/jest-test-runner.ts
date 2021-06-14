@@ -1,6 +1,8 @@
 // monkey patch exit first!!
 import './utils/monkey-patch-exit';
 
+import path from 'path';
+
 import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
@@ -104,7 +106,6 @@ export class JestTestRunner implements TestRunner {
     try {
       const { dryRunResult, jestResult } = await this.run({
         jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
-        projectRoot: process.cwd(),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -133,11 +134,26 @@ export class JestTestRunner implements TestRunner {
     }
     process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
     try {
-      const { dryRunResult } = await this.run({ fileNameUnderTest, jestConfig: this.jestConfig, projectRoot: process.cwd(), testNamePattern });
+      const { dryRunResult } = await this.run({
+        fileNameUnderTest,
+        jestConfig: this.configForMutantRun(fileNameUnderTest),
+        testNamePattern,
+      });
       return toMutantRunResult(dryRunResult);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
     }
+  }
+
+  private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
+    if (fileNameUnderTest && this.jestConfig.roots) {
+      // Make sure the file under test lives inside one of the roots
+      return {
+        ...this.jestConfig,
+        roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
+      };
+    }
+    return this.jestConfig;
   }
 
   private async run(settings: RunSettings): Promise<{ dryRunResult: DryRunResult; jestResult: jestTestResult.AggregatedResult }> {

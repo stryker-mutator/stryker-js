@@ -6,50 +6,66 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 
-import { loader, projectRoot } from '../plugin-tokens';
+import { requireResolve } from '@stryker-mutator/util';
+
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 
 import { JestConfigLoader } from './jest-config-loader';
-import { NodeRequireFunction } from './node-require-function';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export class CustomJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, loader, projectRoot);
+  public static inject = tokens(commonTokens.logger, commonTokens.options);
 
-  constructor(
-    private readonly log: Logger,
-    private readonly options: StrykerOptions,
-    private readonly require: NodeRequireFunction,
-    private readonly root: string
-  ) {}
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
 
   public loadConfig(): Config.InitialOptions {
-    const jestConfig = this.readConfigFromJestConfigFile() || this.readConfigFromPackageJson() || {};
+    const jestConfig = this.readConfigFromJestConfigFile() ?? this.readConfigFromPackageJson() ?? {};
+    this.log.debug('Final jest config: %s', jestConfig);
     return jestConfig;
   }
 
-  private readConfigFromJestConfigFile() {
-    try {
-      const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
-      const configFilePath = path.join(this.root, jestOptions.jest?.configFile ?? 'jest.config.js');
-      const config = this.require(configFilePath);
+  private readConfigFromJestConfigFile(): Config.InitialOptions | undefined {
+    const configFilePath = this.resolveJestConfigFilePath();
+    if (configFilePath) {
+      const config = requireResolve(configFilePath) as Config.InitialOptions;
       this.log.debug(`Read Jest config from ${configFilePath}`);
+      this.setRootDir(config, configFilePath);
       return config;
-    } catch {
-      /* Don't return anything (implicitly return undefined) */
     }
+    return undefined;
   }
 
-  private readConfigFromPackageJson() {
-    try {
-      const configFilePath = path.join(this.root, 'package.json');
-      const config = JSON.parse(fs.readFileSync(configFilePath, 'utf8')).jest;
-      this.log.debug(`Read Jest config from ${configFilePath}`);
+  private readConfigFromPackageJson(): Config.InitialOptions | undefined {
+    const pkgJsonFilePath = this.resolvePackageJsonFilePath();
+    if (pkgJsonFilePath) {
+      const config: Config.InitialOptions = JSON.parse(fs.readFileSync(pkgJsonFilePath, 'utf8')).jest ?? {};
+      this.log.debug(`Read Jest config from ${pkgJsonFilePath}`);
+      this.setRootDir(config, pkgJsonFilePath);
       return config;
-    } catch {
-      /* Don't return anything (implicitly return undefined) */
     }
+    return undefined;
+  }
+
+  private resolvePackageJsonFilePath(): string | undefined {
+    const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
+    const packageJsonCandidate = path.resolve(jestOptions.jest.configFile ?? 'package.json');
+    if (packageJsonCandidate.endsWith('package.json') && (jestOptions.jest.configFile || fs.existsSync(packageJsonCandidate))) {
+      return packageJsonCandidate;
+    }
+    return undefined;
+  }
+  private setRootDir(config: Config.InitialOptions, configFilePath: string) {
+    config.rootDir = path.resolve(path.dirname(configFilePath), config.rootDir ?? '.');
+  }
+
+  private resolveJestConfigFilePath(): string | undefined {
+    const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
+    const configFileCandidate = path.resolve(jestOptions.jest.configFile ?? 'jest.config.js');
+    if (!configFileCandidate.endsWith('package.json') && (jestOptions.jest.configFile || fs.existsSync(configFileCandidate))) {
+      return configFileCandidate;
+    }
+    return undefined;
   }
 }

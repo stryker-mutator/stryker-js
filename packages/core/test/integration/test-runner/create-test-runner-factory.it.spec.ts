@@ -7,6 +7,8 @@ import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test-runner';
 
+import { lastValueFrom } from 'rxjs';
+
 import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/test-utils';
@@ -145,7 +147,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   });
 
   it('should handle asynchronously handled promise rejections from the underlying test runner', async () => {
-    const logEvents = loggingServer.event$.pipe(toArray()).toPromise();
+    const logEvents = lastValueFrom(loggingServer.event$.pipe(toArray()));
     await arrangeSut('async-promise-rejection-handler');
     await actDryRun();
     await sut.dispose();

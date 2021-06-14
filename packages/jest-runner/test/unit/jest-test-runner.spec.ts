@@ -112,7 +112,7 @@ describe(JestTestRunner.name, () => {
       const sut = createSut();
       testInjector.logger.isTraceEnabled.returns(true);
       await sut.dryRun({ coverageAnalysis: 'off' });
-      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*"projectRoot".*/));
+      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*/));
     });
 
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
@@ -329,20 +329,31 @@ describe(JestTestRunner.name, () => {
         expect(resetSpy).called;
       });
 
-      Object.entries({
-        node: require.resolve('../../src/jest-plugins/jest-environment-node'),
-        'jest-environment-node': require.resolve('../../src/jest-plugins/jest-environment-node'),
-        jsdom: require.resolve('../../src/jest-plugins/jest-environment-jsdom'),
-        'jsdom-sixteen': require.resolve('../../src/jest-plugins/jest-environment-jsdom-sixteen'),
-      }).forEach(([testEnvironment, expectedOverride]) => {
-        it(`should override the {testEnvironment: "${testEnvironment}"} if coverage analysis != off`, async () => {
-          options.jest.config = { testEnvironment };
-          const sut = createSut();
-          await sut.dryRun({ coverageAnalysis: 'all' });
-          expect(jestTestAdapterMock.run).calledWithMatch({
-            jestConfig: sinon.match({ testEnvironment: expectedOverride }),
-          });
+      it('should override the testEnvironment if coverage analysis != off', async () => {
+        const testEnvironment = 'my-test-environment';
+        options.jest.config = { testEnvironment };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'all' });
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ testEnvironment: require.resolve('../../src/jest-plugins/jest-environment-generic') }),
         });
+        expect(state.jestEnvironment).eq(testEnvironment);
+      });
+
+      it('should set the set the jestEnvironment to "jest-environment-jsdom" in the messaging state when the jest environment is "jsdom"', async () => {
+        options.jest.config = { testEnvironment: 'jsdom' };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'all' });
+
+        expect(state.jestEnvironment).eq('jest-environment-jsdom');
+      });
+
+      it('should set the set the jestEnvironment to "jest-environment-node" in the messaging state when the jest environment is "node"', async () => {
+        options.jest.config = { testEnvironment: 'node' };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'all' });
+
+        expect(state.jestEnvironment).eq('jest-environment-node');
       });
 
       it('should add a set setupFile if testRunner = "jest-jasmine2"', async () => {
@@ -369,6 +380,24 @@ describe(JestTestRunner.name, () => {
         const getVersionStub = sinon.stub(jestWrapper, 'getVersion');
         getVersionStub.returns('27.0.0');
         options.jest.config = { testRunner: undefined };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'perTest' });
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
+        });
+      });
+
+      it('should not allow the circus test runner for coverage analysis "perTest"', async () => {
+        options.jest.config = { testRunner: 'jest-circus/runner' };
+        const sut = createSut();
+        await sut.dryRun({ coverageAnalysis: 'perTest' });
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
+        });
+      });
+
+      it('should not allow a full path to circus test runner for coverage analysis "perTest"', async () => {
+        options.jest.config = { testRunner: require.resolve('jest-circus/runner') };
         const sut = createSut();
         await sut.dryRun({ coverageAnalysis: 'perTest' });
         expect(jestTestAdapterMock.run).calledWithMatch({
@@ -452,7 +481,6 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
-          projectRoot: sinon.match.string,
           testNamePattern: undefined,
           fileNameUnderTest: '.stryker-tmp/sandbox2/foo.js',
         })
@@ -466,7 +494,6 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
-          projectRoot: sinon.match.string,
           testNamePattern: undefined,
           fileNameUnderTest: undefined,
         })

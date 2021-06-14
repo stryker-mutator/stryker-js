@@ -23,6 +23,10 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   }
   const Sut = mixinJestEnvironment(TestJestEnvironment);
 
+  it('should mixin only once', () => {
+    expect(mixinJestEnvironment(Sut)).eq(Sut);
+  });
+
   describe(TestJestEnvironment.prototype.handleTestEvent.name, () => {
     it('should set the currentTestId on test_start with perTest coverage analysis', async () => {
       // Arrange

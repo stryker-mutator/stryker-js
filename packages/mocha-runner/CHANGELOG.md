@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/stryker-mutator/stryker-js/compare/v5.0.1...v5.1.0) (2021-06-14)
+
+
+### Features
+
+* **mocha-runner:** officially support mocha 9 ([42848bb](https://github.com/stryker-mutator/stryker-js/commit/42848bba288adcefb8d8f8fac1cd34b17bd1d49f))
+
+
+
+
+
 ## [5.0.1](https://github.com/stryker-mutator/stryker-js/compare/v5.0.0...v5.0.1) (2021-05-28)
 
 

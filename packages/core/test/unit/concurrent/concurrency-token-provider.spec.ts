@@ -5,6 +5,8 @@ import sinon from 'sinon';
 import { toArray } from 'rxjs/operators';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
+import { lastValueFrom } from 'rxjs';
+
 import { ConcurrencyTokenProvider } from '../../../src/concurrent';
 import { createCpuInfo } from '../../helpers/producers';
 
@@ -72,7 +74,7 @@ describe(ConcurrencyTokenProvider.name, () => {
     });
 
     function actAllTestRunnerTokens(sut: ConcurrencyTokenProvider): Promise<number[]> {
-      const tokens = sut.testRunnerToken$.pipe(toArray()).toPromise();
+      const tokens = lastValueFrom(sut.testRunnerToken$.pipe(toArray()));
       sut.dispose();
       return tokens;
     }
@@ -82,7 +84,7 @@ describe(ConcurrencyTokenProvider.name, () => {
     it('should emit one value when there are no checkers configured (no actual process will be created in that case)', async () => {
       testInjector.options.checkers = [];
       const sut = createSut();
-      const tokens = await sut.checkerToken$.pipe(toArray()).toPromise();
+      const tokens = await lastValueFrom(sut.checkerToken$.pipe(toArray()));
       expect(tokens).deep.eq([0]);
       sut.dispose();
     });
@@ -91,7 +93,7 @@ describe(ConcurrencyTokenProvider.name, () => {
       testInjector.options.checkers = ['typescript'];
       testInjector.options.concurrency = 6;
       const sut = createSut();
-      const tokens = await sut.checkerToken$.pipe(toArray()).toPromise();
+      const tokens = await lastValueFrom(sut.checkerToken$.pipe(toArray()));
       expect(tokens).deep.eq([0, 1, 2]);
       sut.dispose();
     });
@@ -100,7 +102,7 @@ describe(ConcurrencyTokenProvider.name, () => {
       testInjector.options.checkers = ['typescript'];
       testInjector.options.concurrency = 7;
       const sut = createSut();
-      const tokens = await sut.checkerToken$.pipe(toArray()).toPromise();
+      const tokens = await lastValueFrom(sut.checkerToken$.pipe(toArray()));
       expect(tokens).deep.eq([0, 1, 2, 3]);
       sut.dispose();
     });

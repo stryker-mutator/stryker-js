@@ -27,7 +27,7 @@ const App = () => {
 
 test('should each initialAppstate todo object value is set to Item element', () => {
   const { getByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <Item todo={initialAppState.todoList[0]} />
     </Provider>
   )
@@ -45,7 +45,7 @@ test('should each initialAppstate todo object value is set to Item element', () 
 
 test('should set css classes correctly', () => {
   const { getByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <App />
     </Provider>
   )
@@ -57,7 +57,7 @@ test('should set css classes correctly', () => {
 
 test('should work todo completed checkbox', () => {
   const { getByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <App />
     </Provider>
   )
@@ -79,7 +79,7 @@ test('should work todo completed checkbox', () => {
 
 test('should work edit mode and toggle show/hide', () => {
   const { getByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <App />
     </Provider>
   )
@@ -107,7 +107,7 @@ test('should work edit mode and toggle show/hide', () => {
 
 test('delete todo item', () => {
   const { getByTestId, queryByTestId } = render(
-    <Provider appState={initialAppState}>
+    <Provider initialState={initialAppState}>
       <App />
     </Provider>
   )

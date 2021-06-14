@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test:original": "react-scripts test",
+    "test:unit": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "test": "stryker run",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
     "eject": "react-scripts eject"
@@ -27,23 +27,23 @@
     ]
   },
   "dependencies": {
-    "@emotion/core": "~10.0.28",
-    "@emotion/styled": "~10.0.27",
-    "@laststance/use-app-state": "~1.2.5",
-    "@reach/router": "~1.3.3",
-    "@testing-library/jest-dom": "~4.2.4",
-    "@testing-library/react": "~9.3.2",
-    "@types/jest": "~24.9.1",
-    "@types/node": "^12.0.0",
-    "@types/react": "~16.9.0",
-    "@types/react-dom": "~16.9.0",
-    "react": "~16.13.1",
-    "react-dom": "~16.13.1",
-    "react-scripts": "~3.4.1",
-    "typescript": "~3.7.2"
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "~11.3.0",
+    "@laststance/use-app-state": "~1.2.14",
+    "@reach/router": "~1.3.4",
+    "@testing-library/jest-dom": "~5.12.0",
+    "@testing-library/react": "~11.2.7",
+    "@types/jest": "~26.0.23",
+    "@types/node": "^15.6.2",
+    "@types/react": "~17.0.9",
+    "@types/react-dom": "~17.0.6",
+    "react": "~17.0.2",
+    "react-dom": "~17.0.2",
+    "react-scripts": "~4.0.3",
+    "typescript": "~4.3.2"
   },
   "devDependencies": {
-    "@types/reach__router": "~1.3.5"
+    "@types/reach__router": "~1.3.8"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
