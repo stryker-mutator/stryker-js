@@ -57,6 +57,19 @@ describe(CustomJestConfigLoader.name, () => {
     expect(config).to.deep.contains({ rootDir: path.resolve(projectRoot, 'lib') });
   });
 
+  it('should allow users to configure a jest.config.json file as "configFile"', () => {
+    // Arrange
+    fileExistsSyncStub.returns(true);
+    options.jest.configFile = path.resolve(projectRoot, 'jest.config.json');
+
+    // Act
+    const config = sut.loadConfig();
+
+    // Assert
+    expect(requireStub).calledWith(path.join(projectRoot, 'jest.config.json'));
+    expect(config).to.deep.contain(readConfig);
+  });
+
   it('should allow users to configure a package.json file as "configFile"', () => {
     // Arrange
     fileExistsSyncStub

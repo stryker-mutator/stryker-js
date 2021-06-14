@@ -4,7 +4,6 @@ import { JestRunResult } from '../jest-run-result';
 
 export interface RunSettings {
   jestConfig: Config.InitialOptions;
-  projectRoot: string;
   testNamePattern?: string;
   fileNameUnderTest?: string;
   testLocationInResults?: boolean;

@@ -112,7 +112,7 @@ describe(JestTestRunner.name, () => {
       const sut = createSut();
       testInjector.logger.isTraceEnabled.returns(true);
       await sut.dryRun({ coverageAnalysis: 'off' });
-      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*"projectRoot".*/));
+      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*/));
     });
 
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
@@ -481,7 +481,6 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
-          projectRoot: sinon.match.string,
           testNamePattern: undefined,
           fileNameUnderTest: '.stryker-tmp/sandbox2/foo.js',
         })
@@ -495,7 +494,6 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
-          projectRoot: sinon.match.string,
           testNamePattern: undefined,
           fileNameUnderTest: undefined,
         })

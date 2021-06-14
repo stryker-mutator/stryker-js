@@ -51,7 +51,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
   private resolvePackageJsonFilePath(): string | undefined {
     const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
     const packageJsonCandidate = path.resolve(jestOptions.jest.configFile ?? 'package.json');
-    if (packageJsonCandidate.endsWith('.json') && (jestOptions.jest.configFile || fs.existsSync(packageJsonCandidate))) {
+    if (packageJsonCandidate.endsWith('package.json') && (jestOptions.jest.configFile || fs.existsSync(packageJsonCandidate))) {
       return packageJsonCandidate;
     }
     return undefined;
@@ -63,7 +63,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
   private resolveJestConfigFilePath(): string | undefined {
     const jestOptions = this.options as JestRunnerOptionsWithStrykerOptions;
     const configFileCandidate = path.resolve(jestOptions.jest.configFile ?? 'jest.config.js');
-    if (configFileCandidate.endsWith('.js') && (jestOptions.jest.configFile || fs.existsSync(configFileCandidate))) {
+    if (!configFileCandidate.endsWith('package.json') && (jestOptions.jest.configFile || fs.existsSync(configFileCandidate))) {
       return configFileCandidate;
     }
     return undefined;
