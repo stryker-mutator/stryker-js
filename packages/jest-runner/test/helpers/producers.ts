@@ -1,9 +1,15 @@
 import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
 import type { EnvironmentContext } from '@jest/environment';
 import { Circus, Config } from '@jest/types';
+import { factory } from '@stryker-mutator/test-helpers';
 
 import { JestOptions } from '../../src-generated/jest-runner-options';
 import { JestRunResult } from '../../src/jest-run-result';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
+
+export const createJestRunnerOptionsWithStrykerOptions = (overrides?: Partial<JestOptions>): JestRunnerOptionsWithStrykerOptions => {
+  return factory.strykerWithPluginOptions({ jest: createJestOptions(overrides) });
+};
 
 export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
   return {

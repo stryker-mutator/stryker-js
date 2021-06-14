@@ -3,28 +3,32 @@ import path from 'path';
 import { tokens } from '@stryker-mutator/api/plugin';
 import { Config } from '@jest/types';
 
-import { createReactJestConfig } from '../utils';
+import { PropertyPathBuilder, requireResolve } from '@stryker-mutator/util';
+
 import * as pluginTokens from '../plugin-tokens';
+import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
 
 import { JestConfigLoader } from './jest-config-loader';
 
 export class ReactScriptsJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(pluginTokens.resolve, pluginTokens.projectRoot);
+  public static inject = tokens(pluginTokens.resolve);
 
-  constructor(private readonly resolve: RequireResolve, private readonly projectRoot: string) {}
+  constructor(private readonly resolve: RequireResolve) {}
 
   public loadConfig(): Config.InitialOptions {
     try {
-      // Get the location of react script, this is later used to generate the Jest configuration used for React projects.
-      const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
-
       // Create the React configuration for Jest
-      const jestConfiguration = this.createJestConfig(reactScriptsLocation);
+      const jestConfiguration = this.createJestConfig();
 
       return jestConfiguration;
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
-        throw Error('Unable to locate package react-scripts. This package is required when projectType is set to "create-react-app".');
+        throw Error(
+          `Unable to locate package "react-scripts". This package is required when "${PropertyPathBuilder.create<JestRunnerOptionsWithStrykerOptions>()
+            .prop('jest')
+            .prop('projectType')
+            .build()}" is set to "create-react-app".`
+        );
       }
       throw e;
     }
@@ -34,7 +38,13 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     return arg.code !== undefined;
   }
 
-  private createJestConfig(reactScriptsLocation: string): Config.InitialOptions {
-    return createReactJestConfig((relativePath: string): string => path.join(reactScriptsLocation, relativePath), this.projectRoot, false);
+  private createJestConfig(): Config.InitialOptions {
+    const createReactJestConfig = requireResolve('react-scripts/scripts/utils/createJestConfig') as (
+      resolve: (thing: string) => string,
+      rootDir: string,
+      isEjecting: boolean
+    ) => Config.InitialOptions;
+    const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
+    return createReactJestConfig((relativePath) => path.join(reactScriptsLocation, relativePath), process.cwd(), false);
   }
 }
