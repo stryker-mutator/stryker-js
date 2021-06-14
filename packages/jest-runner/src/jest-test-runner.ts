@@ -106,7 +106,6 @@ export class JestTestRunner implements TestRunner {
     try {
       const { dryRunResult, jestResult } = await this.run({
         jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
-        projectRoot: process.cwd(),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -138,7 +137,6 @@ export class JestTestRunner implements TestRunner {
       const { dryRunResult } = await this.run({
         fileNameUnderTest,
         jestConfig: this.configForMutantRun(fileNameUnderTest),
-        projectRoot: process.cwd(),
         testNamePattern,
       });
       return toMutantRunResult(dryRunResult);
