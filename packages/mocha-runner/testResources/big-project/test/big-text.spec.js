@@ -8,6 +8,6 @@ describe('Big text', () => {
   });
 
   // Leave the garbage collector room to breath
-  afterEach(() => new Promise((res) => setTimeout(res, 10)));
+  afterEach(() => new Promise((res) => setTimeout(res, 100)));
 
 });
