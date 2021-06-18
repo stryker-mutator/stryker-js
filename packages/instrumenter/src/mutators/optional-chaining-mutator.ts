@@ -24,12 +24,26 @@ export class OptionalChainingMutator implements NodeMutator {
       return [
         {
           original: path.node,
-          replacement: types.optionalMemberExpression(path.node.object, path.node.property, path.node.computed, /*optional*/ false),
+          replacement: types.optionalMemberExpression(
+            types.cloneNode(path.node.object, true),
+            types.cloneNode(path.node.property, true),
+            path.node.computed,
+            /*optional*/ false
+          ),
         },
       ];
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
-      return [{ original: path.node, replacement: types.optionalCallExpression(path.node.callee, path.node.arguments, /*optional*/ false) }];
+      return [
+        {
+          original: path.node,
+          replacement: types.optionalCallExpression(
+            types.cloneNode(path.node.callee, true, false),
+            path.node.arguments.map((arg) => types.cloneNode(arg, true, false)),
+            /*optional*/ false
+          ),
+        },
+      ];
     }
     return [];
   }
