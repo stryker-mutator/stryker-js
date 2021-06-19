@@ -16,7 +16,7 @@ Keep in mind that you may have to change some configuration settings such as pat
 Follow this guide if you're using the if you're using the [unit-jest](https://cli.vuejs.org/core-plugins/unit-jest.html) plugin.
 
 1. Install the `@stryker-mutator/jest-runner` plugin: `npm i -D @stryker-mutator/jest-runner` or `yarn add --dev @stryker-mutator/jest-runner`.
-1. Install `crossenv` (if you haven't already) `npm i -D cross-env@stryker-mutator/jest-runner` plugin.
+1. Install `crossenv` plugin(if you haven't already): `npm i -D cross-env` or `yarn add -D cross-env`.
 1. Create a "stryker.conf.json" file that looks like this:
    ```
    {
