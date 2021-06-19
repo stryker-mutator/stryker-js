@@ -8,7 +8,7 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { transformerContextStub } from '../../helpers/stubs';
 import { TransformerContext } from '../../../src/transformers';
 import * as mutators from '../../../src/mutators';
-import * as mutantPlacers from '../../../src/mutant-placers';
+import * as mutantPlacers from '../../../src/mutant-placers/place-mutants';
 import { MutantCollector } from '../../../src/transformers/mutant-collector';
 import { transformBabel } from '../../../src/transformers/babel-transformer';
 import { createJSAst, createNamedNodeMutation, createMutant, createTSAst } from '../../helpers/factories';

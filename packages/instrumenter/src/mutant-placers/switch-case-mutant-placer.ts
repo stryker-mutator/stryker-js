@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 
-import { createMutatedAst, mutantTestExpression, mutationCoverageSequenceExpression } from '../util';
+import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util';
 
 import { MutantPlacer } from './mutant-placer';
 
@@ -14,30 +14,29 @@ import { MutantPlacer } from './mutant-placer';
  *      break;
  *   }
  */
-const switchCaseMutantPlacer: MutantPlacer = (path, mutants): boolean => {
+const switchCaseMutantPlacer: MutantPlacer = (path, mutants) => {
   if (path.isSwitchCase()) {
     // First transform the mutated ast before we start to apply mutants.
-    const appliedMutants = mutants.map((mutant) => {
-      const ast = createMutatedAst(path, mutant);
-      if (!types.isSwitchCase(ast)) {
-        throw new Error(`${switchCaseMutantPlacer.name} can only place SwitchCase syntax`);
-      }
-      return {
-        ast,
-        mutant,
-      };
-    });
+    // const appliedMutants = mutants.map((mutant) => {
+    //   const ast = createMutatedAst(path, mutant);
+    //   if (!types.isSwitchCase(ast)) {
+    //     throw new Error(`${switchCaseMutantPlacer.name} can only place SwitchCase syntax`);
+    //   }
+    //   return {
+    //     ast,
+    //     mutant,
+    //   };
+    // });
 
-    const instrumentedConsequent = appliedMutants.reduce(
+    const instrumentedConsequent = mutants.reduce(
       // Add if statements per mutant
-      (prev: types.Statement, { ast, mutant }) => types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement(ast.consequent), prev),
+      (prev: types.Statement, mutant) =>
+        types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement(mutant.applied(path.node).consequent), prev),
       types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), ...path.node.consequent])
     );
-    path.replaceWith(types.switchCase(path.node.test, [instrumentedConsequent]));
-    return true;
+    return types.switchCase(path.node.test, [instrumentedConsequent]);
   }
-
-  return false;
+  return;
 };
 
 // Export it after initializing so `fn.name` is properly set

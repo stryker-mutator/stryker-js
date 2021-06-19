@@ -222,3 +222,10 @@ export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocatio
   const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;
 }
+
+/**
+ * Helper for `types.cloneNode(node, deep: true, includeLocations: false);`
+ */
+export function deepCloneNode<TNode extends types.Node>(node: TNode): TNode {
+  return types.cloneNode(node, /* deep */ true, /* includeLocations */ false);
+}

@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { NodePath, parseSync, types } from '@babel/core';
 import { expect } from 'chai';
 
-import { placeMutants, MutantPlacer } from '../../../src/mutant-placers';
+import { placeMutants, MutantPlacer } from '../../../src/mutant-placers/place-mutants';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 import { createMutant } from '../../helpers/factories';
 

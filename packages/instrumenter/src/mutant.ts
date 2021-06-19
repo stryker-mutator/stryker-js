@@ -1,6 +1,8 @@
-import { types } from '@babel/core';
+import { traverse, types } from '@babel/core';
 import generate from '@babel/generator';
 import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
+
+import { eqNode } from './util';
 
 export interface NodeMutation {
   replacement: types.Node;
@@ -42,6 +44,36 @@ export class Mutant {
       statusReason: this.ignoreReason,
       status: this.ignoreReason ? MutantStatus.Ignored : undefined,
     };
+  }
+
+  /**
+   * Applies the mutant in (a copy of) the AST, without changing provided AST.
+   * Can the the tree itself (in which case the replacement is returned),
+   * or can be nested in the given tree.
+   * @param originalTree The original node, which will be treated as readonly
+   */
+  public applied<TNode extends types.Node>(originalTree: TNode): TNode {
+    if (eqNode(originalTree, this.original)) {
+      return this.replacement as TNode;
+    } else {
+      const mutatedAst = types.cloneNode(originalTree, /*deep*/ true, /* withLocations */ false);
+      let applied = false;
+      const { original, replacement } = this;
+      traverse(mutatedAst, {
+        noScope: true,
+        enter(path) {
+          if (eqNode(path.node, original)) {
+            path.replaceWith(replacement);
+            path.stop();
+            applied = true;
+          }
+        },
+      });
+      if (!applied) {
+        throw new Error(`Could not apply mutant ${JSON.stringify(this.replacement)}.`);
+      }
+      return mutatedAst;
+    }
   }
 }
 
