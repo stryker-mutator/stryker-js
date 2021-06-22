@@ -1,7 +1,5 @@
 import { NodePath, types } from '@babel/core';
 
-import { NodeMutation } from '../mutant';
-
 import { NodeMutator } from './node-mutator';
 
 enum ArithmeticOperators {
@@ -17,15 +15,13 @@ export class ArithmeticOperatorMutator implements NodeMutator {
 
   public name = 'ArithmeticOperator';
 
-  public mutate(path: NodePath): NodeMutation[] {
+  public *mutate(path: NodePath): Iterable<types.Node> {
     if (path.isBinaryExpression() && this.isSupported(path.node.operator, path.node)) {
       const mutatedOperator = this.operators[path.node.operator];
       const replacement = types.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
-      return [{ original: path.node, replacement }];
+      yield replacement;
     }
-
-    return [];
   }
 
   private isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof ArithmeticOperators {

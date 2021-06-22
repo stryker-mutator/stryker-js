@@ -1,7 +1,6 @@
 import { NodePath, types } from '@babel/core';
 
-import { Mutant } from '../mutant';
-import { deepCloneNode, mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
+import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
 
 import { MutantPlacer } from './mutant-placer';
 
@@ -42,7 +41,7 @@ function arrowFunctionExpressionNamedIfNeeded(path: NodePath<types.Expression>):
       types.arrowFunctionExpression(
         [],
         types.blockStatement([
-          types.variableDeclaration('const', [types.variableDeclarator(path.parentPath.node.id, deepCloneNode(path.node))]),
+          types.variableDeclaration('const', [types.variableDeclarator(path.parentPath.node.id, path.node)]),
           types.returnStatement(path.parentPath.node.id),
         ])
       ),
@@ -53,7 +52,7 @@ function arrowFunctionExpressionNamedIfNeeded(path: NodePath<types.Expression>):
 }
 
 function nameIfAnonymous(path: NodePath<types.Expression>): types.Expression {
-  return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? deepCloneNode(path.node);
+  return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
 }
 
 function isValidParent(child: NodePath<types.Expression>) {
@@ -67,22 +66,22 @@ function isValidParent(child: NodePath<types.Expression>) {
 /**
  * Places the mutants with a conditional expression: `global.activeMutant === 1? mutatedCode : originalCode`;
  */
-const expressionMutantPlacer: MutantPlacer = (path: NodePath, mutants: Mutant[]): types.Node | undefined => {
-  if (path.isExpression() && isValidParent(path)) {
+export const expressionMutantPlacer: MutantPlacer<types.Expression> = {
+  name: 'expressionMutantPlacer',
+  canPlace(path) {
+    return path.isExpression() && isValidParent(path);
+  },
+  place(path, appliedMutants) {
     // Make sure anonymous functions and classes keep their 'name' property
-    let workInProgress = nameIfAnonymous(path);
+    let expression = nameIfAnonymous(path);
 
     // Add the mutation coverage expression
-    workInProgress = mutationCoverageSequenceExpression(mutants, workInProgress);
+    expression = mutationCoverageSequenceExpression(appliedMutants.keys(), expression);
 
     // Now apply the mutants
-    for (const mutant of mutants) {
-      workInProgress = types.conditionalExpression(mutantTestExpression(mutant.id), mutant.applied(path.node), workInProgress);
+    for (const [mutant, appliedMutant] of appliedMutants) {
+      expression = types.conditionalExpression(mutantTestExpression(mutant.id), appliedMutant, expression);
     }
-    return workInProgress;
-  }
-  return;
+    path.replaceWith(expression);
+  },
 };
-
-// Export it after initializing so `fn.name` is properly set
-export { expressionMutantPlacer };

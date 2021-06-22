@@ -8,22 +8,19 @@ import { MutantPlacer } from './mutant-placer';
  * Mutant placer that places mutants in statements that allow it.
  * It uses an `if` statement to do so
  */
-const statementMutantPlacer: MutantPlacer = (path, mutants) => {
-  if (path.isStatement()) {
-    const placedAst = mutants.reduce(
-      (prev: types.Statement, mutant) => types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement([mutant.applied(path.node)]), prev),
-      path.isBlockStatement()
-        ? types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), ...path.node.body])
-        : types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), path.node])
-    );
-    if (path.isBlockStatement()) {
-      return types.blockStatement([placedAst]);
-    } else {
-      return placedAst;
+export const statementMutantPlacer: MutantPlacer<types.Statement> = {
+  name: 'statementMutantPlacer',
+  canPlace(path) {
+    return path.isStatement();
+  },
+  place(path, appliedMutants) {
+    let statement: types.Statement = types.blockStatement([
+      types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+      ...(path.isBlockStatement() ? path.node.body : [path.node]),
+    ]);
+    for (const [mutant, appliedMutant] of appliedMutants) {
+      statement = types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement([appliedMutant]), statement);
     }
-  }
-  return;
+    path.replaceWith(path.isBlockStatement() ? types.blockStatement([statement]) : statement);
+  },
 };
-
-// Export it after initializing so `fn.name` is properly set
-export { statementMutantPlacer };

@@ -14,30 +14,19 @@ import { MutantPlacer } from './mutant-placer';
  *      break;
  *   }
  */
-const switchCaseMutantPlacer: MutantPlacer = (path, mutants) => {
-  if (path.isSwitchCase()) {
-    // First transform the mutated ast before we start to apply mutants.
-    // const appliedMutants = mutants.map((mutant) => {
-    //   const ast = createMutatedAst(path, mutant);
-    //   if (!types.isSwitchCase(ast)) {
-    //     throw new Error(`${switchCaseMutantPlacer.name} can only place SwitchCase syntax`);
-    //   }
-    //   return {
-    //     ast,
-    //     mutant,
-    //   };
-    // });
-
-    const instrumentedConsequent = mutants.reduce(
-      // Add if statements per mutant
-      (prev: types.Statement, mutant) =>
-        types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement(mutant.applied(path.node).consequent), prev),
-      types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), ...path.node.consequent])
-    );
-    return types.switchCase(path.node.test, [instrumentedConsequent]);
-  }
-  return;
+export const switchCaseMutantPlacer: MutantPlacer<types.SwitchCase> = {
+  name: 'switchCaseMutantPlacer',
+  canPlace(path) {
+    return path.isSwitchCase();
+  },
+  place(path, appliedMutants) {
+    let consequence: types.Statement = types.blockStatement([
+      types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+      ...path.node.consequent,
+    ]);
+    for (const [mutant, appliedMutant] of appliedMutants) {
+      consequence = types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement(appliedMutant.consequent), consequence);
+    }
+    path.replaceWith(types.switchCase(path.node.test, [consequence]));
+  },
 };
-
-// Export it after initializing so `fn.name` is properly set
-export { switchCaseMutantPlacer };

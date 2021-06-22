@@ -2,18 +2,17 @@ import { traverse, types } from '@babel/core';
 import generate from '@babel/generator';
 import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
 
-import { eqNode } from './util';
+import { Offset } from './syntax';
+import { deepCloneNode, eqNode } from './util';
 
-export interface NodeMutation {
+export interface Mutable {
+  mutatorName: string;
+  ignoreReason?: string;
   replacement: types.Node;
   original: types.Node;
 }
-export interface NamedNodeMutation extends NodeMutation {
-  mutatorName: string;
-  ignoreReason?: string;
-}
 
-export class Mutant {
+export class Mutant implements Mutable {
   public readonly replacementCode: string;
   public readonly original: types.Node;
   public readonly replacement: types.Node;
@@ -23,9 +22,8 @@ export class Mutant {
   constructor(
     public readonly id: string,
     public readonly fileName: string,
-    specs: NamedNodeMutation,
-    public readonly positionOffset: number = 0,
-    public readonly lineOffset: number = 0
+    specs: Mutable,
+    private readonly offset: Offset = { position: 0, line: 0 }
   ) {
     this.original = specs.original;
     this.replacement = specs.replacement;
@@ -38,7 +36,7 @@ export class Mutant {
     return {
       fileName: this.fileName,
       id: this.id,
-      location: toApiLocation(this.original.loc!, this.lineOffset),
+      location: toApiLocation(this.original.loc!, this.offset.line),
       mutatorName: this.mutatorName,
       replacement: this.replacementCode,
       statusReason: this.ignoreReason,
@@ -48,7 +46,7 @@ export class Mutant {
 
   /**
    * Applies the mutant in (a copy of) the AST, without changing provided AST.
-   * Can the the tree itself (in which case the replacement is returned),
+   * Can the tree itself (in which case the replacement is returned),
    * or can be nested in the given tree.
    * @param originalTree The original node, which will be treated as readonly
    */
@@ -56,7 +54,7 @@ export class Mutant {
     if (eqNode(originalTree, this.original)) {
       return this.replacement as TNode;
     } else {
-      const mutatedAst = types.cloneNode(originalTree, /*deep*/ true, /* withLocations */ false);
+      const mutatedAst = deepCloneNode(originalTree);
       let applied = false;
       const { original, replacement } = this;
       traverse(mutatedAst, {

@@ -1,19 +1,13 @@
 import { types, NodePath } from '@babel/core';
 
-import { NodeMutation } from '../mutant';
-
 import { NodeMutator } from './node-mutator';
 
 export class BlockStatementMutator implements NodeMutator {
   public name = 'BlockStatement';
 
-  public mutate(path: NodePath): NodeMutation[] {
+  public *mutate(path: NodePath): Iterable<types.Node> {
     if (path.isBlockStatement() && this.isValid(path)) {
-      const replacement = types.cloneNode(path.node, false);
-      replacement.body = [];
-      return [{ original: path.node, replacement }];
-    } else {
-      return [];
+      yield types.blockStatement([]);
     }
   }
 

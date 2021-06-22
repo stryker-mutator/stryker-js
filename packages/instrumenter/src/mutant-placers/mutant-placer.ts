@@ -3,4 +3,8 @@ import * as types from '@babel/types';
 
 import { Mutant } from '../mutant';
 
-export type MutantPlacer = (node: NodePath, mutants: Mutant[]) => types.Node | undefined;
+export interface MutantPlacer<TNode extends types.Node> {
+  name: string;
+  canPlace(path: NodePath): boolean;
+  place(path: NodePath<TNode>, appliedMutants: Map<Mutant, TNode>): void;
+}

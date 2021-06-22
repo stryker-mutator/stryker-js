@@ -1,54 +1,31 @@
 import { types, NodePath } from '@babel/core';
 
-import { NodeMutation } from '../mutant';
-import { BinaryOperator } from '../util';
-
 import { NodeMutator } from './node-mutator';
 
-const enum EqualityOperators {
-  '<',
-  '<=',
-  '>',
-  '>=',
-  '==',
-  '!=',
-  '===',
-  '!==',
+const operators = {
+  '<': ['<=', '>='],
+  '<=': ['<', '>'],
+  '>': ['>=', '<='],
+  '>=': ['>', '<'],
+  '==': ['!='],
+  '!=': ['=='],
+  '===': ['!=='],
+  '!==': ['==='],
+} as const;
+
+function isEqualityOperator(operator: string): operator is keyof typeof operators {
+  return Object.keys(operators).includes(operator);
 }
-
 export class EqualityOperatorMutator implements NodeMutator {
-  private readonly operators = {
-    '<': ['<=', '>='],
-    '<=': ['<', '>'],
-    '>': ['>=', '<='],
-    '>=': ['>', '<'],
-    '==': ['!='],
-    '!=': ['=='],
-    '===': ['!=='],
-    '!==': ['==='],
-  };
-
   public name = 'EqualityOperator';
 
-  public mutate(path: NodePath): NodeMutation[] {
-    if (path.isBinaryExpression() && this.isSupported(path.node.operator)) {
-      const mutatedOperators: BinaryOperator[] = this.operators[path.node.operator];
-
-      return mutatedOperators.map((mutatedOperator) => {
-        const replacement = types.cloneNode(path.node, false);
-        replacement.operator = mutatedOperator;
-
-        return {
-          original: path.node,
-          replacement,
-        };
-      });
+  public *mutate(path: NodePath): Iterable<types.Node> {
+    if (path.isBinaryExpression() && isEqualityOperator(path.node.operator)) {
+      for (const mutableOperator of operators[path.node.operator]) {
+        const replacement = types.cloneNode(path.node, true);
+        replacement.operator = mutableOperator;
+        yield replacement;
+      }
     }
-
-    return [];
-  }
-
-  private isSupported(operator: string): operator is keyof EqualityOperators {
-    return Object.keys(this.operators).includes(operator);
   }
 }

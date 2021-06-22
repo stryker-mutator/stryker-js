@@ -4,7 +4,6 @@ import generate from '@babel/generator';
 import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator';
-import { NodeMutation } from '../../src/mutant';
 
 const plugins = [
   'doExpressions',
@@ -41,21 +40,18 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
     plugins,
     sourceType: 'module',
   });
-  const mutants: NodeMutation[] = [];
+  const mutants: string[] = [];
   traverse(ast, {
-    enter(nodePath) {
-      mutants.push(...sut.mutate(nodePath));
+    enter(path) {
+      for (const replacement of sut.mutate(path)) {
+        const mutatedCode = generate(replacement).code;
+        const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
+        const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
+
+        mutants.push(`${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`);
+      }
     },
   });
   expect(mutants).lengthOf(expectedReplacements.length);
-  const actualReplacements = mutants.map((mutant) => jsMutantToString(mutant, originalCode));
-  expectedReplacements.forEach((expected) => expect(actualReplacements, `was: ${actualReplacements.join(',')}`).to.include(expected));
-}
-
-function jsMutantToString(mutant: NodeMutation, originalCode: string): string {
-  const mutatedCode = generate(mutant.replacement).code;
-  const beforeMutatedCode = originalCode.substring(0, mutant.original.start ?? 0);
-  const afterMutatedCode = originalCode.substring(mutant.original.end ?? 0);
-
-  return `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
+  expectedReplacements.forEach((expected) => expect(mutants, `was: ${mutants.join(',')}`).to.include(expected));
 }

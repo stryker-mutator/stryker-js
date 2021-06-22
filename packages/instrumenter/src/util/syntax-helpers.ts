@@ -136,16 +136,12 @@ export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>,
  * Returns a sequence of mutation coverage counters with an optional last expression.
  *
  * @example (global.__coverMutant__(0, 1), 40 + 2)
- * @param mutants The mutant ids for which covering syntax needs to be generated
+ * @param mutants The mutants for which covering syntax needs to be generated
  * @param targetExpression The original expression
  */
-export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpression?: types.Expression): types.Expression {
-  const sequence: types.Expression[] = [
-    types.callExpression(
-      types.identifier(COVER_MUTANT_HELPER),
-      mutants.map((mutant) => types.stringLiteral(mutant.id))
-    ),
-  ];
+export function mutationCoverageSequenceExpression(mutants: Iterable<Mutant>, targetExpression?: types.Expression): types.Expression {
+  const mutantIds = [...mutants].map((mutant) => types.stringLiteral(mutant.id));
+  const sequence: types.Expression[] = [types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds)];
   if (targetExpression) {
     sequence.push(targetExpression);
   }
@@ -224,8 +220,8 @@ export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocatio
 }
 
 /**
- * Helper for `types.cloneNode(node, deep: true, includeLocations: false);`
+ * Helper for `types.cloneNode(node, deep: true, withoutLocations: false);`
  */
 export function deepCloneNode<TNode extends types.Node>(node: TNode): TNode {
-  return types.cloneNode(node, /* deep */ true, /* includeLocations */ false);
+  return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
 }

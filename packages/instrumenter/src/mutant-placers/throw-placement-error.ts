@@ -1,0 +1,30 @@
+import path from 'path';
+
+import { NodePath, types } from '@babel/core';
+import { PropertyPathBuilder } from '@stryker-mutator/util';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
+import { Mutant } from '../mutant';
+
+import { MutantPlacer } from './mutant-placer';
+
+export function throwPlacementError(error: Error, nodePath: NodePath, placer: MutantPlacer<types.Node>, mutants: Mutant[], fileName: string): never {
+  const location = `${path.relative(process.cwd(), fileName)}:${nodePath.node.loc?.start.line}:${nodePath.node.loc?.start.column}`;
+  const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}. Original error: ${
+    error.stack
+  }"`;
+  const errorMessage = `${location} ${message}. Either remove this file from the list of files to be mutated, or exclude the mutator (using ${PropertyPathBuilder.create<StrykerOptions>()
+    .prop('mutator')
+    .prop('excludedMutations')
+    .build()}). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
+    message
+  )}.`;
+  let builtError = new Error(errorMessage);
+  try {
+    // `buildCodeFrameError` is kind of flaky, see https://github.com/stryker-mutator/stryker-js/issues/2695
+    builtError = nodePath.buildCodeFrameError(errorMessage);
+  } catch {
+    // Idle, regular error will have to suffice
+  }
+  throw builtError;
+}

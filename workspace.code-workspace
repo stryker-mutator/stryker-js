@@ -96,8 +96,11 @@
       "Whitespaces",
       "execa",
       "memfs",
+      "mutables",
+      "mutators",
       "nocheck",
       "preprocessors",
+      "quasis",
       "serializable"
     ]
   },
