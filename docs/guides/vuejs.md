@@ -27,7 +27,7 @@ Follow this guide if you're using the if you're using the [unit-jest](https://cl
      "tempDirName_comment": "Jest doesn't play nice with the default (.stryker-tmp).",
      "tempDirName": "stryker-tmp",
      "testRunner": "jest",
-     "coverageAnalysis": "off",
+     "coverageAnalysis": "off"
    }
    ```
 1. Add `stryker-tmp` to your `.gitignore` file.
