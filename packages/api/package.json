@@ -41,7 +41,7 @@
   "dependencies": {
     "mutation-testing-metrics": "1.7.2",
     "mutation-testing-report-schema": "1.7.1",
-    "tslib": "~2.2.0"
+    "tslib": "~2.3.0"
   },
   "devDependencies": {
     "@types/node": "^15.0.0",
