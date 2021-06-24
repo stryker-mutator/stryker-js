@@ -11,13 +11,11 @@ enum ArithmeticOperators {
 }
 
 export class ArithmeticOperatorMutator implements NodeMutator {
-  private readonly operators = ArithmeticOperators;
-
   public name = 'ArithmeticOperator';
 
   public *mutate(path: NodePath): Iterable<types.Node> {
     if (path.isBinaryExpression() && this.isSupported(path.node.operator, path.node)) {
-      const mutatedOperator = this.operators[path.node.operator];
+      const mutatedOperator = ArithmeticOperators[path.node.operator];
       const replacement = types.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
       yield replacement;
@@ -25,7 +23,7 @@ export class ArithmeticOperatorMutator implements NodeMutator {
   }
 
   private isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof ArithmeticOperators {
-    if (!Object.keys(this.operators).includes(operator)) {
+    if (!Object.keys(ArithmeticOperators).includes(operator)) {
       return false;
     }
 

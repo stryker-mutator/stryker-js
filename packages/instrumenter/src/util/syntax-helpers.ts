@@ -104,34 +104,6 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
   file.end! += position;
 }
 
-export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>, mutant: Mutant): T {
-  if (eqNode(contextPath.node, mutant.original)) {
-    return mutant.replacement as T;
-  } else {
-    const mutatedAst = types.cloneNode(contextPath.node, /*deep*/ true);
-    let isAstMutated = false;
-
-    traverse(
-      mutatedAst,
-      {
-        noScope: true,
-        enter(path) {
-          if (eqNode(path.node, mutant.original)) {
-            path.replaceWith(mutant.replacement);
-            path.stop();
-            isAstMutated = true;
-          }
-        },
-      },
-      contextPath.scope
-    );
-    if (!isAstMutated) {
-      throw new Error(`Could not apply mutant ${JSON.stringify(mutant.replacement)}.`);
-    }
-    return mutatedAst;
-  }
-}
-
 /**
  * Returns a sequence of mutation coverage counters with an optional last expression.
  *

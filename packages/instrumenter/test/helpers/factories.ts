@@ -67,17 +67,16 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createMutant(overrides?: Partial<Mutant>): Mutant {
-  return new Mutant(overrides?.id ?? '1', overrides?.fileName ?? 'example.js', {
+  return new Mutant(overrides?.id ?? '1', overrides?.fileName ?? 'example.js', overrides?.original ?? types.identifier('foo'), {
     mutatorName: overrides?.mutatorName ?? 'fooMutator',
-    original: overrides?.original ?? types.identifier('foo'),
-    replacement: overrides?.replacement ?? types.identifier('bar'),
+    replacement: overrides?.replacement ?? parseJS('bar').program.body[0],
+    ignoreReason: overrides?.ignoreReason,
   });
 }
 
-export function createNamedNodeMutation(overrides?: Partial<Mutable>): Mutable {
+export function createMutable(overrides?: Partial<Mutable>): Mutable {
   return {
     mutatorName: 'fooMutator',
-    original: findNodePath(parseJS('foo'), (t) => t.isIdentifier()).node,
     replacement: findNodePath(parseJS('bar'), (t) => t.isIdentifier()).node,
     ...overrides,
   };

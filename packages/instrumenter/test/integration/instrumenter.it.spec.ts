@@ -9,7 +9,7 @@ import { Instrumenter } from '../../src';
 import { createInstrumenterOptions } from '../helpers/factories';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
-describe.only('instrumenter integration', () => {
+describe('instrumenter integration', () => {
   let sut: Instrumenter;
   beforeEach(() => {
     sut = testInjector.injector.injectClass(Instrumenter);

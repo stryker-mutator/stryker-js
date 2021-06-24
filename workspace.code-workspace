@@ -91,6 +91,7 @@
       "source.fixAll.eslint": true
     },
     "cSpell.words": [
+      "Instrumenter",
       "Unserializable",
       "Unserializables",
       "Whitespaces",

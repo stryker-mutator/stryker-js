@@ -9,12 +9,10 @@ export interface Mutable {
   mutatorName: string;
   ignoreReason?: string;
   replacement: types.Node;
-  original: types.Node;
 }
 
 export class Mutant implements Mutable {
   public readonly replacementCode: string;
-  public readonly original: types.Node;
   public readonly replacement: types.Node;
   public readonly mutatorName: string;
   public readonly ignoreReason: string | undefined;
@@ -22,10 +20,10 @@ export class Mutant implements Mutable {
   constructor(
     public readonly id: string,
     public readonly fileName: string,
+    public readonly original: types.Node,
     specs: Mutable,
-    private readonly offset: Offset = { position: 0, line: 0 }
+    public readonly offset: Offset = { position: 0, line: 0 }
   ) {
-    this.original = specs.original;
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
     this.ignoreReason = specs.ignoreReason;
@@ -51,7 +49,7 @@ export class Mutant implements Mutable {
    * @param originalTree The original node, which will be treated as readonly
    */
   public applied<TNode extends types.Node>(originalTree: TNode): TNode {
-    if (eqNode(originalTree, this.original)) {
+    if (originalTree === this.original) {
       return this.replacement as TNode;
     } else {
       const mutatedAst = deepCloneNode(originalTree);
