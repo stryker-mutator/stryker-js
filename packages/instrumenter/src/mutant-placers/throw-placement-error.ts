@@ -8,7 +8,7 @@ import { Mutant } from '../mutant';
 
 import { MutantPlacer } from './mutant-placer';
 
-export function throwPlacementError(error: Error, nodePath: NodePath, placer: MutantPlacer<types.Node>, mutants: Mutant[], fileName: string): never {
+export function throwPlacementError(error: Error, nodePath: NodePath, placer: MutantPlacer, mutants: Mutant[], fileName: string): never {
   const location = `${path.relative(process.cwd(), fileName)}:${nodePath.node.loc?.start.line}:${nodePath.node.loc?.start.column}`;
   const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}"`;
   const errorMessage = `${location} ${message}. Either remove this file from the list of files to be mutated, or exclude the mutator (using ${PropertyPathBuilder.create<StrykerOptions>()
