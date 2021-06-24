@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { NodePath, types } from '@babel/core';
+import { NodePath } from '@babel/core';
 import { PropertyPathBuilder } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 

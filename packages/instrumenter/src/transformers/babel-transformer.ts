@@ -44,7 +44,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // * Identify the nodes that can be used to place mutants on in the placement map.
   // * Generate the mutants on each node.
   //    * When a node generated mutants, do a short walk back up and register them in the placement map
-  //    * Call the `applied` function using the placement node, that way the mutant will capture the AST with mutation all the way to the placement node
+  //    * Call the `applied` method using the placement node, that way the mutant will capture the AST with mutation all the way to the placement node
   //
   // On the way up:
   // * If this node has mutants in the placementMap, place them in the AST.
