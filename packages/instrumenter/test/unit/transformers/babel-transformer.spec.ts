@@ -170,6 +170,7 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants).lengthOf(0);
     });
   });
+
   describe('with mutationRanges', () => {
     let ast: ScriptAst;
 

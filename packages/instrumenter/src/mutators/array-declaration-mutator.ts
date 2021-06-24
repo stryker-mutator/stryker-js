@@ -2,10 +2,10 @@ import { NodePath, types } from '@babel/core';
 
 import { NodeMutator } from './node-mutator';
 
-export class ArrayDeclarationMutator implements NodeMutator {
-  public name = 'ArrayDeclaration';
+export const arrayDeclarationMutator: NodeMutator = {
+  name: 'ArrayDeclaration',
 
-  public *mutate(path: NodePath): Iterable<types.Node> {
+  *mutate(path: NodePath): Iterable<types.Node> {
     if (path.isArrayExpression()) {
       const replacement = path.node.elements.length ? types.arrayExpression() : types.arrayExpression([types.stringLiteral('Stryker was here')]);
       yield replacement;
@@ -17,5 +17,5 @@ export class ArrayDeclarationMutator implements NodeMutator {
         : types.callExpression(path.node.callee, mutatedCallArgs);
       yield replacement;
     }
-  }
-}
+  },
+};

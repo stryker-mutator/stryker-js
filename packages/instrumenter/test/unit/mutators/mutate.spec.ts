@@ -22,12 +22,9 @@ describe('allMutators', () => {
           }
           return mutatorModule[keys[0]];
         })
-    )) as Array<new () => NodeMutator>;
-    actualMutators.forEach((Mutator) => {
-      expect(
-        allMutators.find((mutator) => mutator instanceof Mutator),
-        `${Mutator.name} is missing!`
-      ).ok;
+    )) as NodeMutator[];
+    actualMutators.forEach((mutator) => {
+      expect(allMutators.includes(mutator), `${mutator.name} is missing!`).ok;
     });
   });
 });

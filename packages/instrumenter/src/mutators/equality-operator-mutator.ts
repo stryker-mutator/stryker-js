@@ -1,4 +1,4 @@
-import { types, NodePath } from '@babel/core';
+import { types } from '@babel/core';
 
 import { NodeMutator } from './node-mutator';
 
@@ -16,10 +16,10 @@ const operators = {
 function isEqualityOperator(operator: string): operator is keyof typeof operators {
   return Object.keys(operators).includes(operator);
 }
-export class EqualityOperatorMutator implements NodeMutator {
-  public name = 'EqualityOperator';
+export const equalityOperatorMutator: NodeMutator = {
+  name: 'EqualityOperator',
 
-  public *mutate(path: NodePath): Iterable<types.Node> {
+  *mutate(path) {
     if (path.isBinaryExpression() && isEqualityOperator(path.node.operator)) {
       for (const mutableOperator of operators[path.node.operator]) {
         const replacement = types.cloneNode(path.node, true);
@@ -27,5 +27,5 @@ export class EqualityOperatorMutator implements NodeMutator {
         yield replacement;
       }
     }
-  }
-}
+  },
+};

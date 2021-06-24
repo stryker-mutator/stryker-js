@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { ObjectLiteralMutator } from '../../../src/mutators/object-literal-mutator';
+import { objectLiteralMutator as sut } from '../../../src/mutators/object-literal-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(ObjectLiteralMutator.name, () => {
-  let sut: ObjectLiteralMutator;
-  beforeEach(() => {
-    sut = new ObjectLiteralMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "ObjectLiteral"', () => {
     expect(sut.name).eq('ObjectLiteral');
   });

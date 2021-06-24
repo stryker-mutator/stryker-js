@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { ArithmeticOperatorMutator } from '../../../src/mutators/arithmetic-operator-mutator';
+import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(ArithmeticOperatorMutator.name, () => {
-  let sut: ArithmeticOperatorMutator;
-  beforeEach(() => {
-    sut = new ArithmeticOperatorMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "ArithmeticOperator"', () => {
     expect(sut.name).eq('ArithmeticOperator');
   });

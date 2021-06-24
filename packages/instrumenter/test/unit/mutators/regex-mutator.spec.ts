@@ -1,30 +1,27 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import weaponRegex from 'weapon-regex';
 
-import { RegexMutator } from '../../../src/mutators/regex-mutator';
+import { regexMutator as sut } from '../../../src/mutators/regex-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(RegexMutator.name, () => {
+describe(sut.name, () => {
   it('should have name "Regex"', () => {
-    const sut = new RegexMutator();
     expect(sut.name).eq('Regex');
   });
 
   it('should not mutate normal string literals', () => {
-    const sut = new RegexMutator();
     expectJSMutation(sut, '""');
   });
 
   it('should mutate a regex literal', () => {
-    const sut = new RegexMutator();
     expectJSMutation(sut, '/\\d{4}/', '/\\d/', '/\\D{4}/');
   });
 
   it("should not crash if a regex couldn't be parsed", () => {
     // Arrange
-    const weaponRegexStub = sinon.stub();
+    const weaponRegexStub = sinon.stub(weaponRegex, 'mutate');
     weaponRegexStub.throws(new Error('[Error] Parser: Position 1:1, found "[[]]"'));
-    const sut = new RegexMutator(weaponRegexStub);
     const errorStub = sinon.stub(console, 'error');
 
     // Act
@@ -37,12 +34,10 @@ describe(RegexMutator.name, () => {
   });
 
   it('should mutate obvious Regex string literals', () => {
-    const sut = new RegexMutator();
     expectJSMutation(sut, 'new RegExp("\\\\d{4}")', 'new RegExp("\\\\d")', 'new RegExp("\\\\D{4}")');
   });
 
   it('should not mutate the flags of a new RegExp constructor', () => {
-    const sut = new RegexMutator();
     expectJSMutation(sut, 'new RegExp("", "\\\\d{4}")');
   });
 });

@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
 import { expectJSMutation } from '../../helpers/expect-mutation';
-import { ConditionalExpressionMutator } from '../../../src/mutators/conditional-expression-mutator';
+import { conditionalExpressionMutator as sut } from '../../../src/mutators/conditional-expression-mutator';
 
-describe(ConditionalExpressionMutator.name, () => {
-  let sut: ConditionalExpressionMutator;
-  beforeEach(() => {
-    sut = new ConditionalExpressionMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "ConditionalExpression"', () => {
     expect(sut.name).eq('ConditionalExpression');
   });

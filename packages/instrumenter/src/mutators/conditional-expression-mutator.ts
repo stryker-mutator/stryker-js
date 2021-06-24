@@ -2,36 +2,18 @@ import { NodePath, types } from '@babel/core';
 
 import { NodeMutator } from './node-mutator';
 
-export class ConditionalExpressionMutator implements NodeMutator {
-  private readonly validOperators: string[] = ['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||'];
+const validOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
 
-  public name = 'ConditionalExpression';
+export const conditionalExpressionMutator: NodeMutator = {
+  name: 'ConditionalExpression',
 
-  private isTestOfALoop(path: NodePath): boolean {
-    const { parentPath } = path;
-    return (
-      Boolean(parentPath) &&
-      (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) &&
-      parentPath.node.test === path.node
-    );
-  }
-
-  private isTestOfCondition(path: NodePath): boolean {
-    const { parentPath } = path;
-    return Boolean(parentPath) && parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
-  }
-
-  private isValidOperator(operator: string): boolean {
-    return this.validOperators.includes(operator);
-  }
-
-  public *mutate(path: NodePath): Iterable<types.Node> {
-    if (this.isTestOfALoop(path)) {
+  *mutate(path) {
+    if (isTestOfALoop(path)) {
       yield types.booleanLiteral(false);
-    } else if (this.isTestOfCondition(path)) {
+    } else if (isTestOfCondition(path)) {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
-    } else if ((path.isBinaryExpression() || path.isLogicalExpression()) && this.isValidOperator(path.node.operator)) {
+    } else if ((path.isBinaryExpression() || path.isLogicalExpression()) && isValidOperator(path.node.operator)) {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
     } else if (path.isForStatement() && !path.node.test) {
@@ -44,5 +26,22 @@ export class ConditionalExpressionMutator implements NodeMutator {
       replacement.consequent = [];
       yield replacement;
     }
-  }
+  },
+};
+function isTestOfALoop(path: NodePath): boolean {
+  const { parentPath } = path;
+  return (
+    Boolean(parentPath) &&
+    (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) &&
+    parentPath.node.test === path.node
+  );
+}
+
+function isTestOfCondition(path: NodePath): boolean {
+  const { parentPath } = path;
+  return Boolean(parentPath) && parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
+}
+
+function isValidOperator(operator: string): boolean {
+  return validOperators.includes(operator);
 }
