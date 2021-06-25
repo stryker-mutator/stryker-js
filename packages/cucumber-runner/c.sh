@@ -1,2 +1,0 @@
-rimraf dist
-tsc -b
