@@ -27,10 +27,8 @@ async function main() {
     './packages/jest-runner/testResources/jasmine2-node/src/Add.js',
     './packages/jest-runner/testResources/jasmine2-node/src/Circle.js',
   ], './packages/jest-runner/testResources/jasmine2-node-instrumented/src',  '__stryker2__')
-  await instrument([
-    './packages/jest-runner/testResources/jasmine2-dom-sixteen/src/Add.js',
-    './packages/jest-runner/testResources/jasmine2-dom-sixteen/src/Circle.js',
-  ], './packages/jest-runner/testResources/jasmine2-dom-sixteen-instrumented/src',  '__stryker2__')
+  await instrument(['./packages/cucumber-runner/testResources/example/src/calculator.js'], 
+  './packages/cucumber-runner/testResources/example-instrumented/src', '__stryker2__')
 }
 
 /**
@@ -41,7 +39,7 @@ async function main() {
  */
 async function instrument(from, to, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
   const files = from.map(fileName => new File(path.basename(fileName), fs.readFileSync(fileName)));
-  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [] });
+  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [], mutationRanges: [] });
   out.files.forEach(file => {
     const toFileName = path.resolve(to, file.name);
     fs.writeFileSync(toFileName, `// This file is generated with ${path.relative(process.cwd(), __filename)}\n ${file.textContent.replace(new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'), globalNamespace)}`);

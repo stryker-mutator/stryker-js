@@ -1,0 +1,2 @@
+rimraf dist
+tsc -b

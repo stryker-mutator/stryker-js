@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "CucumberRunnerOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "cucumber": {
+      "description": "Configuration for @stryker-mutator/cucumber-runner",
+      "title": "CucumberSetup",
+      "additionalProperties": false,
+      "type": "object",
+      "default": {},
+      "properties": {
+        "tags": {
+          "description": "Use to run specific features or scenarios. See https://github.com/cucumber/cucumber-js/blob/main/docs/cli.md#tags",
+          "type":"string"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "karmaProjectKind": {
+      "title": "ProjectKind",
+      "description": "Specify which kind of project you're using. This determines which command is used to start karma\n* `custom`: configure @stryker-mutator/karma-runner to use `karma start`\n* `angular-cli`: configure @stryker-mutator/karma-runner to use `ng test`",
+      "enum": [
+        "custom",
+        "angular-cli"
+      ]
+    },
+    "karmaNgConfigOptions": {
+      "title": "NgConfigOptions",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "testArguments": {
+          "description": "Add [ng test arguments](https://github.com/angular/angular-cli/wiki/test#options). For example, specify an alternative project with: `\"testArguments\": { \"project\": \"my-lib\" }",
+          "title": "NgTestArguments",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
