@@ -1,3 +1,5 @@
+import path from 'path';
+
 import {
   assertions,
   factory,
@@ -14,6 +16,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Running in an example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
+  const simpleMathFileName = path.join('features', 'simple_math.feature');
 
   beforeEach(() => {
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
@@ -36,17 +39,17 @@ describe('Running in an example project', () => {
       assertions.expectCompleted(result);
       const expectedMutantCoverage: MutantCoverage = {
         perTest: {
-          'features/simple_math.feature:19': {
+          [`${simpleMathFileName}:19`]: {
             '0': 1,
             '1': 1,
             '2': 1,
           },
-          'features/simple_math.feature:20': {
+          [`${simpleMathFileName}:20`]: {
             '0': 1,
             '1': 1,
             '2': 1,
           },
-          'features/simple_math.feature:7': {
+          [`${simpleMathFileName}:7`]: {
             '0': 1,
             '1': 1,
             '2': 1,
@@ -82,7 +85,7 @@ describe('Running in an example project', () => {
       );
 
       assertions.expectKilled(actual);
-      expect(actual.killedBy).eq('features/simple_math.feature:19');
+      expect(actual.killedBy).eq(`${simpleMathFileName}:19`);
       expect(actual.nrOfTests).eq(2);
     });
 
@@ -91,7 +94,7 @@ describe('Running in an example project', () => {
       const actual = await sut.mutantRun(
         factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '2' }),
-          testFilter: ['features/simple_math.feature:7'],
+          testFilter: [`${simpleMathFileName}:7`],
         })
       );
 
@@ -104,18 +107,18 @@ describe('Running in an example project', () => {
       await sut.mutantRun(
         factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '2' }),
-          testFilter: ['features/simple_math.feature:7'],
+          testFilter: [`${simpleMathFileName}:7`],
         })
       );
       const actual = await sut.mutantRun(
         factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '2' }),
-          testFilter: ['features/simple_math.feature:19'],
+          testFilter: [`${simpleMathFileName}:19`],
         })
       );
 
       assertions.expectKilled(actual);
-      expect(actual.killedBy).eq('features/simple_math.feature:19');
+      expect(actual.killedBy).eq(`${simpleMathFileName}:19`);
       expect(actual.nrOfTests).eq(1);
     });
   });

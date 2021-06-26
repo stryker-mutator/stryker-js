@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import {
   assertions,
@@ -76,7 +78,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/failure-examples.feature';
+    const fileName = path.join('features', 'failure-examples.feature');
     assertions.expectTestResults(actual, [
       {
         id: `${fileName}:4`,
@@ -97,7 +99,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/failure-examples.feature';
+    const fileName = path.join('features', 'failure-examples.feature');
     assertions.expectTestResults(actual, [
       { id: `${fileName}:9`, status: TestStatus.Skipped },
     ]);
@@ -113,7 +115,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/failure-examples.feature';
+    const fileName = path.join('features', 'failure-examples.feature');
     assertions.expectTestResults(actual, [
       {
         id: `${fileName}:14`,
@@ -133,7 +135,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/failure-examples.feature';
+    const fileName = path.join('features', 'failure-examples.feature');
     assertions.expectTestResults(actual, [
       { id: `${fileName}:20`, status: TestStatus.Skipped },
     ]);
@@ -149,7 +151,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/failure-examples.feature';
+    const fileName = path.join('features', 'failure-examples.feature');
     assertions.expectTestResults(actual, [
       {
         id: `${fileName}:25`,
