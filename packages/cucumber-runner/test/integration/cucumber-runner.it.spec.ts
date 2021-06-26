@@ -35,7 +35,7 @@ describe('Running in an example project', () => {
     const actual = await sut.dryRun(factory.dryRunOptions());
 
     // Assert
-    const fileName = 'features/simple_math.feature';
+    const fileName = path.join('features', 'simple_math.feature');
     const expectedTests: Array<Partial<TestResult>> = [
       {
         status: TestStatus.Success,
