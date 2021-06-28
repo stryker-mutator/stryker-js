@@ -9,9 +9,12 @@ import {
   DryRunOptions,
   DryRunResult,
   DryRunStatus,
+  FailedTestResult,
   MutantRunOptions,
   MutantRunResult,
+  TestResult,
   TestRunner,
+  TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import {
@@ -107,14 +110,32 @@ export class CucumberTestRunner implements TestRunner {
     if (this.logger.isTraceEnabled()) {
       this.logger.trace(argv.map((arg) => `"${arg}"`).join(' '));
     }
-    await cli.run();
-
-    this.directoryRequireCache.record();
-    this.directoryRequireCache.clear();
+    try {
+      await cli.run();
+    } catch (err) {
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: err.stack,
+      };
+    } finally {
+      this.directoryRequireCache.record();
+      this.directoryRequireCache.clear();
+    }
+    const tests = StrykerFormatter.instance!.reportedTestResults;
+    const failedTest: FailedTestResult | undefined = tests.find(hasFailed);
+    if (failedTest?.failureMessage.startsWith('TypeError:')) {
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: failedTest.failureMessage,
+      };
+    }
     return {
       status: DryRunStatus.Complete,
       tests: StrykerFormatter.instance!.reportedTestResults,
       mutantCoverage: this.instrumenterContext.mutantCoverage,
     };
   }
+}
+function hasFailed(test: TestResult): test is FailedTestResult {
+  return test.status === TestStatus.Failed;
 }

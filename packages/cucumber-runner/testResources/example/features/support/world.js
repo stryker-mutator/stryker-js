@@ -1,6 +1,6 @@
 // features/support/world.js
 const { setWorldConstructor } = require('@cucumber/cucumber');
-const Calculator = require('../../src/calculator');
+const { Calculator } = require('../../src/calculator');
 
 class CustomWorld {
   constructor() {

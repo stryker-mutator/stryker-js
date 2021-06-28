@@ -14,7 +14,7 @@ import { CucumberTestRunner } from '../../src';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
-describe('Running in an example project', () => {
+describe('Running in an instrumented example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
   const simpleMathFileName = path.join('features', 'simple_math.feature');
 
@@ -49,13 +49,19 @@ describe('Running in an example project', () => {
             '1': 1,
             '2': 1,
           },
+          [`${simpleMathFileName}:22`]: {
+            '0': 1,
+            '1': 1,
+            '2': 1,
+            '6': 1,
+          },
           [`${simpleMathFileName}:7`]: {
             '0': 1,
             '1': 1,
             '2': 1,
           },
         },
-        static: {},
+        static: { '5': 1, '7': 1 },
       };
       expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
     });
@@ -68,9 +74,12 @@ describe('Running in an example project', () => {
       const expectedMutantCoverage: MutantCoverage = {
         perTest: {},
         static: {
-          '0': 3,
-          '1': 3,
-          '2': 3,
+          '0': 4,
+          '1': 4,
+          '2': 4,
+          '5': 1,
+          '6': 1,
+          '7': 1,
         },
       };
       expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
@@ -120,6 +129,38 @@ describe('Running in an example project', () => {
       assertions.expectKilled(actual);
       expect(actual.killedBy).eq(`${simpleMathFileName}:19`);
       expect(actual.nrOfTests).eq(1);
+    });
+
+    it('should report a runtime error when a TypeError occurs during setup', async () => {
+      const sut = createSut();
+      const actual = await sut.mutantRun(
+        factory.mutantRunOptions({
+          // Mutant 5 clears the exported object
+          // module.exports = stryMutAct_9fa48("5") ? {} : (stryCov_9fa48("5"), { Calculator });
+          // This will result a sync error during test setup
+          activeMutant: factory.mutant({ id: '5' }),
+        })
+      );
+      assertions.expectErrored(actual);
+      expect(actual.errorMessage.split('\n')[0]).eq(
+        'TypeError: Calculator is not a constructor'
+      );
+    });
+
+    it('should report a runtime error when a TypeError occurs during step execution', async () => {
+      const sut = createSut();
+      const actual = await sut.mutantRun(
+        factory.mutantRunOptions({
+          // Mutant 7 clears the exported object
+          // module.exports = stryMutAct_9fa48("7") ? {} : (stryCov_9fa48("7"), { incrementBy });
+          // This will result an error during step execution
+          activeMutant: factory.mutant({ id: '7' }),
+        })
+      );
+      assertions.expectErrored(actual);
+      expect(actual.errorMessage.split('\n')[0]).eq(
+        'TypeError: incrementBy is not a function'
+      );
     });
   });
 });

@@ -53,38 +53,15 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-class Calculator {
-  value = 0;
-
-  setTo(n) {
-    if (stryMutAct_9fa48("0")) {
-      {}
-    } else {
-      stryCov_9fa48("0");
-      this.value = n;
-    }
+function incrementBy(calc, n) {
+  if (stryMutAct_9fa48("6")) {
+    {}
+  } else {
+    stryCov_9fa48("6");
+    calc.incrementBy(n);
   }
-
-  incrementBy(n) {
-    if (stryMutAct_9fa48("1")) {
-      {}
-    } else {
-      stryCov_9fa48("1");
-      this.value = stryMutAct_9fa48("2") ? this.value - n : (stryCov_9fa48("2"), this.value + n);
-    }
-  }
-
-  multiplyBy(n) {
-    if (stryMutAct_9fa48("3")) {
-      {}
-    } else {
-      stryCov_9fa48("3");
-      this.value = stryMutAct_9fa48("4") ? this.value / n : (stryCov_9fa48("4"), this.value * n);
-    }
-  }
-
 }
 
-module.exports = stryMutAct_9fa48("5") ? {} : (stryCov_9fa48("5"), {
-  Calculator
+module.exports = stryMutAct_9fa48("7") ? {} : (stryCov_9fa48("7"), {
+  incrementBy
 });

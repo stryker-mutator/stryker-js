@@ -88,7 +88,7 @@ export default class StrykerFormatter extends Formatter {
       fileName: scenario.fileName,
       startPosition: determinePosition(scenario, example),
     };
-    const status = determineStatus(testSteps);
+    const status = determineTestStatus(testSteps);
     if (status === TestStatus.Failed) {
       this.reportedTestResults.push({
         status,
@@ -144,7 +144,7 @@ function determineTestId(
   }`;
 }
 
-function determineStatus(testSteps: TestStepFinished[]): TestStatus {
+function determineTestStatus(testSteps: TestStepFinished[]): TestStatus {
   if (
     !testSteps.some(
       (testStep) =>

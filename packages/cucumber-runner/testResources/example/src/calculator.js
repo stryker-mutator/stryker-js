@@ -1,4 +1,5 @@
-module.exports = class Calculator {
+
+class Calculator {
   value = 0;
 
   setTo(n) {
@@ -12,4 +13,6 @@ module.exports = class Calculator {
   multiplyBy(n) {
     this.value = this.value * n;
   }
-};
+}
+
+module.exports = { Calculator };

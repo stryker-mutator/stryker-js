@@ -18,3 +18,8 @@ Feature: Simple maths
       | var | increment | result |
       | 100 |         5 |    105 |
       |  99 |      1234 |   1333 |
+
+  Scenario: static math
+    Given a variable set to 40
+    When I increment the variable by 2 using the static calculator
+    Then the variable should contain 42
