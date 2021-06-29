@@ -1,0 +1,15 @@
+{
+  "name": "cucumber-ts",
+  "version": "0.1.0",
+  "description": "An e2e test for cucumber with typescript",
+  "private": true,
+  "scripts": {
+    "test": "stryker run",
+    "test:unit": "cucumber-js",
+    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+  },
+  "author": "Nico Jansen",
+  "license": "Apache-2.0",
+  "devDependencies": {},
+  "dependencies": {}
+}
