@@ -66,9 +66,16 @@ export class CucumberTestRunner implements TestRunner {
 
   private readonly directoryRequireCache = new DirectoryRequireCache();
 
-  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     StrykerFormatter.coverageAnalysis = options.coverageAnalysis;
-    return this.run();
+    const result = await this.run();
+    if (
+      result.status === DryRunStatus.Complete &&
+      options.coverageAnalysis !== 'off'
+    ) {
+      result.mutantCoverage = this.instrumenterContext.mutantCoverage;
+    }
+    return result;
   }
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
@@ -76,19 +83,9 @@ export class CucumberTestRunner implements TestRunner {
   }
 
   private async run(testFilter?: string[]): Promise<DryRunResult> {
-    let testFilterArgs: string[] = [];
-    if (testFilter) {
-      testFilterArgs = Object.entries(
-        testFilter?.reduce<Record<string, string[]>>((acc, testId) => {
-          const [fileName, lineNumber] = testId.split(':');
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          const lines = acc[fileName] ?? (acc[fileName] = []);
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          lines.push(lineNumber);
-          return acc;
-        }, {})
-      ).map(([fileName, lines]) => [fileName, ...lines].join(':'));
-    }
+    const testFilterArgs = this.determineFilterArgs(testFilter);
+    const tagsArgs = this.determineTagsArgs();
+    const profileArgs = this.determineProfileArgs();
     const argv = [
       'node',
       'cucumber-js',
@@ -99,7 +96,8 @@ export class CucumberTestRunner implements TestRunner {
       '0',
       '--format',
       require.resolve('./stryker-formatter'),
-      ...(this.options.tags ? ['--tags', this.options.tags] : []),
+      ...tagsArgs,
+      ...profileArgs,
       ...testFilterArgs,
     ];
     const cli = new Cli({
@@ -107,8 +105,10 @@ export class CucumberTestRunner implements TestRunner {
       cwd: process.cwd(),
       stdout: process.stdout,
     });
-    if (this.logger.isTraceEnabled()) {
-      this.logger.trace(argv.map((arg) => `"${arg}"`).join(' '));
+    if (this.logger.isDebugEnabled()) {
+      this.logger.debug(
+        `${process.cwd()} ${argv.map((arg) => `"${arg}"`).join(' ')}`
+      );
     }
     try {
       await cli.run();
@@ -132,8 +132,39 @@ export class CucumberTestRunner implements TestRunner {
     return {
       status: DryRunStatus.Complete,
       tests: StrykerFormatter.instance!.reportedTestResults,
-      mutantCoverage: this.instrumenterContext.mutantCoverage,
     };
+  }
+
+  private determineProfileArgs(): string[] {
+    if (this.options.profile) {
+      return ['--profile', this.options.profile];
+    }
+    return [];
+  }
+  private determineTagsArgs(): string[] {
+    if (this.options.tags) {
+      return this.options.tags.flatMap((tag) => ['--tags', tag]);
+    }
+    return [];
+  }
+
+  private determineFilterArgs(testFilter: string[] | undefined) {
+    if (testFilter) {
+      return Object.entries(
+        testFilter?.reduce<Record<string, string[]>>((acc, testId) => {
+          const [fileName, lineNumber] = testId.split(':');
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const lines = acc[fileName] ?? (acc[fileName] = []);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          lines.push(lineNumber);
+          return acc;
+        }, {})
+      ).map(([fileName, lines]) => [fileName, ...lines].join(':'));
+    } else if (this.options.features) {
+      return this.options.features;
+    } else {
+      return [];
+    }
   }
 }
 function hasFailed(test: TestResult): test is FailedTestResult {

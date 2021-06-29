@@ -86,17 +86,21 @@ export function pruneUnexpected<T>(actual: T, expected: Partial<T>): T extends A
   if (actual !== null && typeof actual === 'object') {
     if (Array.isArray(actual) && Array.isArray(expected)) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      return expected.map((expectedItem, index) => pruneUnexpected(actual[index], expectedItem)) as unknown as T extends Array<infer U>
+      return actual.map((actualItem, index) => pruneUnexpected(actualItem, expected[index])) as unknown as T extends Array<infer U>
         ? Array<Partial<U>>
         : Partial<T>;
     }
-    return Object.keys(expected).reduce<Partial<T>>((acc, key) => {
-      const actualValue = actual[key as keyof T];
-      if (actualValue !== undefined) {
-        acc[key as keyof T] = actualValue;
-      }
-      return acc;
-    }, {}) as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+    if (expected) {
+      return Object.keys(expected).reduce<Partial<T>>((acc, key) => {
+        const actualValue = actual[key as keyof T];
+        if (actualValue !== undefined) {
+          acc[key as keyof T] = actualValue;
+        }
+        return acc;
+      }, {}) as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+    } else {
+      return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+    }
   }
-  return expected as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+  return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
 }

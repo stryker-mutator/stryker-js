@@ -84,6 +84,14 @@ describe('Running in an instrumented example project', () => {
       };
       expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
     });
+    it('should be able to report "off" coverage analysis', async () => {
+      const sut = createSut();
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' })
+      );
+      assertions.expectCompleted(result);
+      expect(result.mutantCoverage).undefined;
+    });
   });
 
   describe(CucumberTestRunner.prototype.mutantRun.name, () => {

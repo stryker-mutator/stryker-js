@@ -13,6 +13,16 @@
       "properties": {
         "tags": {
           "description": "Use to run specific features or scenarios. See https://github.com/cucumber/cucumber-js/blob/main/docs/cli.md#tags",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "features": {
+          "description": "Run these feature files. See https://github.com/cucumber/cucumber-js/blob/main/docs/cli.md#running-specific-features",
+          "type":"array",
+          "items": { "type": "string" }
+        },
+        "profile": {
+          "description": "Configure which profile to use. The default is `undefined`, which results in the default profile being used. See https://github.com/cucumber/cucumber-js/blob/main/docs/profiles.md#profiles.",
           "type":"string"
         }
       }

@@ -7,5 +7,6 @@ declare namespace NodeJS {
     __stryker2__:
       | import('@stryker-mutator/api/core').InstrumenterContext
       | undefined;
+    sinonClock: import('sinon').SinonFakeTimers;
   }
 }

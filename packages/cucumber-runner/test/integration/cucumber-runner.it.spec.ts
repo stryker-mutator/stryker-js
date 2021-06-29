@@ -7,6 +7,8 @@ import {
   testInjector,
 } from '@stryker-mutator/test-helpers';
 
+import { expect } from 'chai';
+
 import * as pluginTokens from '../../src/plugin-tokens';
 import { CucumberTestRunner } from '../../src';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options';
@@ -14,23 +16,18 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Running in an example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
+  let sut: CucumberTestRunner;
 
   beforeEach(() => {
+    process.chdir(resolveTestResource('example'));
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
-  });
-
-  function createSut(): CucumberTestRunner {
-    return testInjector.injector
+    sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
-  }
+  });
 
   it('should be to run in the example', async () => {
-    // Arrange
-    process.chdir(resolveTestResource('example'));
-    const sut = createSut();
-
     // Act
     const actual = await sut.dryRun(factory.dryRunOptions());
 
@@ -64,100 +61,33 @@ describe('Running in an example project', () => {
           column: 7,
         },
       },
+      {
+        status: TestStatus.Success,
+        id: `${fileName}:22`,
+        fileName,
+        name: 'Feature: Simple maths -- Scenario: static math',
+        startPosition: {
+          column: 3,
+          line: 22,
+        },
+      },
     ];
     assertions.expectTestResults(actual, expectedTests);
   });
 
-  it('should report a failed step as "failed"', async () => {
-    // Arrange
-    options.cucumber = { tags: '@failed' };
-    const sut = createSut();
-    process.chdir(resolveTestResource('failure-example'));
-
-    // Act
-    const actual = await sut.dryRun(factory.dryRunOptions());
-
-    // Assert
-    const fileName = path.join('features', 'failure-examples.feature');
-    assertions.expectTestResults(actual, [
-      {
-        id: `${fileName}:4`,
-        status: TestStatus.Failed,
-        failureMessage: 'Error: Failed step',
-        startPosition: { line: 4, column: 3 },
-      },
-    ]);
+  it('should log the exec command on debug', async () => {
+    testInjector.logger.isDebugEnabled.returns(true);
+    await sut.dryRun(factory.dryRunOptions());
+    expect(testInjector.logger.debug).calledWith(
+      `${process.cwd()} "node" "cucumber-js" "--fail-fast" "--retry" "0" "--parallel" "0" "--format" "${require.resolve(
+        '../../src/stryker-formatter'
+      )}"`
+    );
   });
 
-  it('should report a not-implemented step as "skipped"', async () => {
-    // Arrange
-    options.cucumber = { tags: '@not-implemented' };
-    const sut = createSut();
-    process.chdir(resolveTestResource('failure-example'));
-
-    // Act
-    const actual = await sut.dryRun(factory.dryRunOptions());
-
-    // Assert
-    const fileName = path.join('features', 'failure-examples.feature');
-    assertions.expectTestResults(actual, [
-      { id: `${fileName}:9`, status: TestStatus.Skipped },
-    ]);
-  });
-
-  it('should report an ambiguous step as "failed"', async () => {
-    // Arrange
-    options.cucumber = { tags: '@ambiguous' };
-    const sut = createSut();
-    process.chdir(resolveTestResource('failure-example'));
-
-    // Act
-    const actual = await sut.dryRun(factory.dryRunOptions());
-
-    // Assert
-    const fileName = path.join('features', 'failure-examples.feature');
-    assertions.expectTestResults(actual, [
-      {
-        id: `${fileName}:14`,
-        status: TestStatus.Failed,
-        failureMessage: 'Multiple step definitions match:',
-      },
-    ]);
-  });
-
-  it('should report an pending step as "skipped"', async () => {
-    // Arrange
-    options.cucumber = { tags: '@pending' };
-    const sut = createSut();
-    process.chdir(resolveTestResource('failure-example'));
-
-    // Act
-    const actual = await sut.dryRun(factory.dryRunOptions());
-
-    // Assert
-    const fileName = path.join('features', 'failure-examples.feature');
-    assertions.expectTestResults(actual, [
-      { id: `${fileName}:20`, status: TestStatus.Skipped },
-    ]);
-  });
-
-  it('should report an test case where multiple things went wrong as "failed"', async () => {
-    // Arrange
-    options.cucumber = { tags: '@multiple-things-wrong' };
-    const sut = createSut();
-    process.chdir(resolveTestResource('failure-example'));
-
-    // Act
-    const actual = await sut.dryRun(factory.dryRunOptions());
-
-    // Assert
-    const fileName = path.join('features', 'failure-examples.feature');
-    assertions.expectTestResults(actual, [
-      {
-        id: `${fileName}:25`,
-        status: TestStatus.Failed,
-        failureMessage: 'Error: Failed step',
-      },
-    ]);
+  it("shouldn't log if debug isn't enabled", async () => {
+    testInjector.logger.isDebugEnabled.returns(false);
+    await sut.dryRun(factory.dryRunOptions());
+    expect(testInjector.logger.debug).not.called;
   });
 });
