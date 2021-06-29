@@ -34,6 +34,33 @@ describe('The Stryker meta schema', () => {
 
   const expectedErrors = [
     {
+      dataPath: '/cucumber/tags',
+      keyword: 'type',
+      message: 'should be array',
+      params: {
+        type: 'array',
+      },
+      schemaPath: '#/properties/cucumber/properties/tags/type',
+    },
+    {
+      dataPath: '/cucumber/features/0',
+      keyword: 'type',
+      message: 'should be string',
+      params: {
+        type: 'string',
+      },
+      schemaPath: '#/properties/cucumber/properties/features/items/type',
+    },
+    {
+      dataPath: '/cucumber/profile',
+      keyword: 'type',
+      message: 'should be string',
+      params: {
+        type: 'string',
+      },
+      schemaPath: '#/properties/cucumber/properties/profile/type',
+    },
+    {
       keyword: 'type',
       dataPath: '/jasmineConfigFile',
       schemaPath: '#/properties/jasmineConfigFile/type',
