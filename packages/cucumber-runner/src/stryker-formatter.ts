@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Formatter, IFormatterOptions } from '@cucumber/cucumber';
+import type { IFormatterOptions } from '@cucumber/cucumber';
 import {
   Envelope,
   GherkinDocument,
@@ -20,6 +20,8 @@ import {
   Position,
 } from '@stryker-mutator/api/core';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+
+import { Formatter } from './cucumber-wrapper';
 
 interface DescribedScenario extends Scenario {
   fileName: string;

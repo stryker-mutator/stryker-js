@@ -4,3 +4,5 @@ const cucumber = require(require.resolve(
 );
 // eslint-disable-next-line
 export const Cli: typeof import('@cucumber/cucumber').Cli = cucumber.Cli;
+export const Formatter: typeof import('@cucumber/cucumber').Formatter =
+  cucumber.Formatter;
