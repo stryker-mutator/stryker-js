@@ -3,7 +3,6 @@
   "testRunner": "cucumber",
   "concurrency": 1,
   "timeoutMS": 20000,
-  "testRunnerNodeArgs": ["--inspect-brk"],
   "reporters": [
     "json",
     "html"
