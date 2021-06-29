@@ -9,7 +9,6 @@
     "test:unit": "mocha 'dist/test/unit/**/*.js' || echo 'No unit tests yet'",
     "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker run"
-
   },
   "keywords": [],
   "author": "",
@@ -18,7 +17,11 @@
     "@cucumber/cucumber": "^7.3.0",
     "@stryker-mutator/test-helpers": "5.1.1"
   },
+  "peerDependencies": {
+    "@cucumber/cucumber": "^7.2.0"
+  },
   "dependencies": {
+    "@cucumber/messages": "^16.0.1",
     "@stryker-mutator/api": "^5.1.1",
     "@stryker-mutator/util": "^5.1.1"
   }
