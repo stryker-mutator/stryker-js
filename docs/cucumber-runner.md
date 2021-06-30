@@ -5,6 +5,8 @@ custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/
 
 A plugin to use CucumberJS in StrykerJS
 
+🥒 💖 👽
+
 ## Install
 
 Install @stryker-mutator/cucumber-runner locally within your project folder, like so:
@@ -38,7 +40,7 @@ You can configure the cucumber test runner in the `stryker.conf.json` (or `stryk
 
 The cucumber runner supports loading [cucumber profiles](https://github.com/cucumber/cucumber-js/blob/main/docs/profiles.md#profiles) from your `cucumber.js` configuration file. The `default` profile will automatically be loaded if none was specified.
 
-### `cucumber.profile` [`string[]`]
+### `cucumber.profile` [`string`]
 
 Default: `"default"`
 
@@ -97,8 +99,9 @@ And use this StrykerJS configuration
   "testRunner": "cucumber",
 +  "cucumber": {
 +   "profile": "stryker",
-+   "features": ["my-features/my-feature.feature"]
++   "features": ["my-features/**/*.feature"]
 +  }
 }
 ```
 
+This will make sure your feature files are run during the dry run and still allow the plugin to filter specific tests.
