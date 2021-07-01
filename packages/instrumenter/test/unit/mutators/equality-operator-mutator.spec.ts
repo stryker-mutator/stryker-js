@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { EqualityOperatorMutator } from '../../../src/mutators/equality-operator-mutator';
+import { equalityOperatorMutator as sut } from '../../../src/mutators/equality-operator-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(EqualityOperatorMutator.name, () => {
-  let sut: EqualityOperatorMutator;
-  beforeEach(() => {
-    sut = new EqualityOperatorMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "EqualityOperator"', () => {
     expect(sut.name).eq('EqualityOperator');
   });

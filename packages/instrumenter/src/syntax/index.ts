@@ -21,10 +21,12 @@ export interface BaseAst {
   originFileName: string;
   rawContent: string;
   root: Ast['root'];
-  offset?: {
-    position: number;
-    line: number;
-  };
+  offset?: Offset;
+}
+
+export interface Offset {
+  position: number;
+  line: number;
 }
 
 /**

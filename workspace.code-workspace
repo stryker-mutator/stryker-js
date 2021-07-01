@@ -91,13 +91,17 @@
       "source.fixAll.eslint": true
     },
     "cSpell.words": [
+      "Instrumenter",
       "Unserializable",
       "Unserializables",
       "Whitespaces",
       "execa",
       "memfs",
+      "mutables",
+      "mutators",
       "nocheck",
       "preprocessors",
+      "quasis",
       "serializable"
     ]
   },
