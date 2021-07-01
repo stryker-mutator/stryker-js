@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { ArrowFunctionMutator } from '../../../src/mutators/arrow-function-mutator';
+import { arrowFunctionMutator as sut } from '../../../src/mutators/arrow-function-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(ArrowFunctionMutator.name, () => {
-  let sut: ArrowFunctionMutator;
-  beforeEach(() => {
-    sut = new ArrowFunctionMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "ArrowFunction"', () => {
     expect(sut.name).eq('ArrowFunction');
   });

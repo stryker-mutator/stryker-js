@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { UpdateOperatorMutator } from '../../../src/mutators/update-operator-mutator';
+import { updateOperatorMutator as sut } from '../../../src/mutators/update-operator-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(UpdateOperatorMutator.name, () => {
-  let sut: UpdateOperatorMutator;
-  beforeEach(() => {
-    sut = new UpdateOperatorMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "UpdateOperator"', () => {
     expect(sut.name).eq('UpdateOperator');
   });

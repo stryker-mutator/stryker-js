@@ -1,6 +1,6 @@
 import { types } from '@babel/core';
 
-import { mutantTestExpression, createMutatedAst, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
+import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
 
 import { MutantPlacer } from './mutant-placer';
 
@@ -8,32 +8,19 @@ import { MutantPlacer } from './mutant-placer';
  * Mutant placer that places mutants in statements that allow it.
  * It uses an `if` statement to do so
  */
-const statementMutantPlacer: MutantPlacer = (path, mutants) => {
-  if (path.isStatement()) {
-    // First transform the mutated ast before we start to apply mutants.
-    const appliedMutants = mutants.map((mutant) => ({
-      mutant,
-      ast: createMutatedAst(path, mutant),
-    }));
-
-    const instrumentedAst = appliedMutants.reduce(
-      // Add if statements per mutant
-      (prev: types.Statement, { ast, mutant }) => types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement([ast]), prev),
-      path.isBlockStatement()
-        ? types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), ...path.node.body])
-        : types.blockStatement([types.expressionStatement(mutationCoverageSequenceExpression(mutants)), path.node])
-    );
-    if (path.isBlockStatement()) {
-      path.replaceWith(types.blockStatement([instrumentedAst]));
-    } else {
-      path.replaceWith(instrumentedAst);
+export const statementMutantPlacer: MutantPlacer<types.Statement> = {
+  name: 'statementMutantPlacer',
+  canPlace(path) {
+    return path.isStatement();
+  },
+  place(path, appliedMutants) {
+    let statement: types.Statement = types.blockStatement([
+      types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+      ...(path.isBlockStatement() ? path.node.body : [path.node]),
+    ]);
+    for (const [mutant, appliedMutant] of appliedMutants) {
+      statement = types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement([appliedMutant]), statement);
     }
-
-    return true;
-  } else {
-    return false;
-  }
+    path.replaceWith(path.isBlockStatement() ? types.blockStatement([statement]) : statement);
+  },
 };
-
-// Export it after initializing so `fn.name` is properly set
-export { statementMutantPlacer };

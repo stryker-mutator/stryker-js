@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { LogicalOperatorMutator } from '../../../src/mutators/logical-operator-mutator';
+import { logicalOperatorMutator as sut } from '../../../src/mutators/logical-operator-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(LogicalOperatorMutator.name, () => {
-  let sut: LogicalOperatorMutator;
-  beforeEach(() => {
-    sut = new LogicalOperatorMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "LogicalOperator"', () => {
     expect(sut.name).eq('LogicalOperator');
   });
