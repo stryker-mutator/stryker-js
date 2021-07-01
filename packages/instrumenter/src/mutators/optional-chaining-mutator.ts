@@ -1,8 +1,6 @@
-import { NodePath, types } from '@babel/core';
+import { types } from '@babel/core';
 
-import { NodeMutation } from '../mutant';
-
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from '.';
 
 /**
  * Mutates optional chaining operators
@@ -16,35 +14,24 @@ import { NodeMutator } from './node-mutator';
  * foo?.[1] -> foo[1]
  * foo?.() -> foo()
  */
-export class OptionalChainingMutator implements NodeMutator {
-  public readonly name = 'OptionalChaining';
+export const optionalChainingMutator: NodeMutator = {
+  name: 'OptionalChaining',
 
-  public mutate(path: NodePath): NodeMutation[] {
+  *mutate(path) {
     if (path.isOptionalMemberExpression() && path.node.optional) {
-      return [
-        {
-          original: path.node,
-          replacement: types.optionalMemberExpression(
-            types.cloneNode(path.node.object, true),
-            types.cloneNode(path.node.property, true),
-            path.node.computed,
-            /*optional*/ false
-          ),
-        },
-      ];
+      yield types.optionalMemberExpression(
+        types.cloneNode(path.node.object, true),
+        types.cloneNode(path.node.property, true),
+        path.node.computed,
+        /*optional*/ false
+      );
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
-      return [
-        {
-          original: path.node,
-          replacement: types.optionalCallExpression(
-            types.cloneNode(path.node.callee, true, false),
-            path.node.arguments.map((arg) => types.cloneNode(arg, true, false)),
-            /*optional*/ false
-          ),
-        },
-      ];
+      yield types.optionalCallExpression(
+        types.cloneNode(path.node.callee, true),
+        path.node.arguments.map((arg) => types.cloneNode(arg, true)),
+        /*optional*/ false
+      );
     }
-    return [];
-  }
-}
+  },
+};

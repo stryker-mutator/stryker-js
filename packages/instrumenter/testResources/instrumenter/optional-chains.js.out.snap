@@ -55,6 +55,6 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const baz = stryMutAct_9fa48(\\"0\\") ? (stryMutAct_9fa48(\\"2\\") ? foo?.bar() : (stryCov_9fa48(\\"2\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar : (stryCov_9fa48(\\"3\\"), foo?.bar))?.()))?.[1] && 'qux' : (stryCov_9fa48(\\"0\\"), (stryMutAct_9fa48(\\"1\\") ? foo?.bar?.()[1] : (stryCov_9fa48(\\"1\\"), (stryMutAct_9fa48(\\"2\\") ? foo?.bar() : (stryCov_9fa48(\\"2\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar : (stryCov_9fa48(\\"3\\"), foo?.bar))?.()))?.[1])) ?? (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'qux')));
+const baz = stryMutAct_9fa48(\\"0\\") ? foo?.bar?.()?.[1] && 'qux' : (stryCov_9fa48(\\"0\\"), (stryMutAct_9fa48(\\"1\\") ? foo?.bar?.()[1] : (stryCov_9fa48(\\"1\\"), (stryMutAct_9fa48(\\"2\\") ? foo?.bar() : (stryCov_9fa48(\\"2\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar : (stryCov_9fa48(\\"3\\"), foo?.bar))?.()))?.[1])) ?? (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'qux')));
 (stryMutAct_9fa48(\\"5\\") ? qux().map : (stryCov_9fa48(\\"5\\"), qux()?.map))();"
 `;

@@ -1,15 +1,10 @@
 import { expect } from 'chai';
 
-import { OptionalChainingMutator } from '../../../src/mutators/optional-chaining-mutator';
+import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator';
 
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(OptionalChainingMutator.name, () => {
-  let sut: OptionalChainingMutator;
-  beforeEach(() => {
-    sut = new OptionalChainingMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "OptionalChaining"', () => {
     expect(sut.name).eq('OptionalChaining');
   });
