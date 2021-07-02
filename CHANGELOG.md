@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/stryker-mutator/stryker-js/compare/v5.1.1...v5.2.0) (2021-07-02)
+
+
+### Bug Fixes
+
+* **ignore patterns:** always ignore *.tsbuildinfo files ([#2985](https://github.com/stryker-mutator/stryker-js/issues/2985)) ([794f103](https://github.com/stryker-mutator/stryker-js/commit/794f10390787d1bfa6e4a261315e4bc791790787))
+
+
+### Features
+
+* **🥒:** add support for cucumber-js test runner ([#2970](https://github.com/stryker-mutator/stryker-js/issues/2970)) ([86d6f79](https://github.com/stryker-mutator/stryker-js/commit/86d6f7998aeb2e0e2265480fd3f75d703e39b3dc))
+* **instrumenter:** Implement new mutant placing algorithm ([#2964](https://github.com/stryker-mutator/stryker-js/issues/2964)) ([24b8bc9](https://github.com/stryker-mutator/stryker-js/commit/24b8bc9a15f597d3c5b626dd282d9ecda57f9b32))
+
+
+
+
+
 ## [5.1.1](https://github.com/stryker-mutator/stryker-js/compare/v5.1.0...v5.1.1) (2021-06-15)
 
 

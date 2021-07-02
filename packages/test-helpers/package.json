@@ -1,7 +1,7 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "5.1.1",
+  "version": "5.2.0",
   "description": "A helper package for testing",
   "main": "dist/index.js",
   "scripts": {},
@@ -23,7 +23,7 @@
     "rxjs": "~7.1.0"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "5.1.1",
+    "@stryker-mutator/api": "5.2.0",
     "@types/node": "^15.0.0",
     "typed-inject": "~3.0.0"
   }

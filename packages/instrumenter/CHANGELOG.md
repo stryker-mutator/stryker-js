@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/stryker-mutator/stryker-js/compare/v5.1.1...v5.2.0) (2021-07-02)
+
+
+### Features
+
+* **instrumenter:** Implement new mutant placing algorithm ([#2964](https://github.com/stryker-mutator/stryker-js/issues/2964)) ([24b8bc9](https://github.com/stryker-mutator/stryker-js/commit/24b8bc9a15f597d3c5b626dd282d9ecda57f9b32))
+
+
+
+
+
 ## [5.1.1](https://github.com/stryker-mutator/stryker-js/compare/v5.1.0...v5.1.1) (2021-06-15)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

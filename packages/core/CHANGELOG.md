@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.2.0](https://github.com/stryker-mutator/stryker-js/compare/v5.1.1...v5.2.0) (2021-07-02)
+
+
+### Bug Fixes
+
+* **ignore patterns:** always ignore *.tsbuildinfo files ([#2985](https://github.com/stryker-mutator/stryker-js/issues/2985)) ([794f103](https://github.com/stryker-mutator/stryker-js/commit/794f10390787d1bfa6e4a261315e4bc791790787))
+
+
+
+
+
 ## [5.1.1](https://github.com/stryker-mutator/stryker-js/compare/v5.1.0...v5.1.1) (2021-06-15)
 
 **Note:** Version bump only for package @stryker-mutator/core
