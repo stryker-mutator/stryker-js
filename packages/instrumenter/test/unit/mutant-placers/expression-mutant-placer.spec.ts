@@ -46,18 +46,38 @@ describe(expressionMutantPlacer.name, () => {
       });
     });
 
-    describe('call expressions', () => {
-      it('should be false when expression is an OptionalCallExpression', () => {
+    describe('chain expressions', () => {
+      it('should be false when MemberExpression is part of an OptionalCallExpression chain', () => {
+        const isOptionalMemberExpression = findNodePath(parseJS('root.foo?.bar()'), (p) => p.isOptionalMemberExpression());
+        expect(expressionMutantPlacer.canPlace(isOptionalMemberExpression)).false;
+      });
+      it('should be false when MemberExpression is part of an OptionalMemberExpression chain with index accessor', () => {
+        const memberExpression = findNodePath(parseJS('root.foo?.[1] '), (p) => p.isMemberExpression());
+        expect(expressionMutantPlacer.canPlace(memberExpression)).false;
+      });
+      it('should be false when MemberExpression is part of a CallExpression', () => {
+        const memberExpression = findNodePath(parseJS('root.bar()'), (p) => p.isMemberExpression());
+        expect(expressionMutantPlacer.canPlace(memberExpression)).false;
+      });
+      it('should be true when expression is the root of an OptionalCallExpression', () => {
         const optionalCallExpression = findNodePath(parseJS('foo?.bar()'), (p) => p.isOptionalCallExpression());
-        expect(expressionMutantPlacer.canPlace(optionalCallExpression)).false;
+        expect(expressionMutantPlacer.canPlace(optionalCallExpression)).true;
       });
-      it('should be false when expression is an OptionalMemberExpression with index accessor', () => {
+      it('should be true when expression is the root of an OptionalMemberExpression with index accessor', () => {
         const optionalMemberExpression = findNodePath(parseJS('foo?.[1] '), (p) => p.isOptionalMemberExpression());
-        expect(expressionMutantPlacer.canPlace(optionalMemberExpression)).false;
+        expect(expressionMutantPlacer.canPlace(optionalMemberExpression)).true;
       });
-      it('should be false when expression is an OptionalMemberExpression', () => {
-        const optionalMemberExpression = findNodePath(parseJS('foo?.bar()'), (p) => p.isOptionalMemberExpression());
-        expect(expressionMutantPlacer.canPlace(optionalMemberExpression)).false;
+      it('should be true when expression is the root of an OptionalMemberExpression chain', () => {
+        const optionalExpression = findNodePath(parseJS('foo?.bar()'), (p) => p.isOptionalCallExpression());
+        expect(expressionMutantPlacer.canPlace(optionalExpression)).true;
+      });
+      it('should be true when expression is the root of an CallExpression', () => {
+        const callExpression = findNodePath(parseJS('foo() '), (p) => p.isCallExpression());
+        expect(expressionMutantPlacer.canPlace(callExpression)).true;
+      });
+      it('should be true when expression is the root of an MemberExpression', () => {
+        const memberExpression = findNodePath(parseJS('foo.bar;'), (p) => p.isMemberExpression());
+        expect(expressionMutantPlacer.canPlace(memberExpression)).true;
       });
     });
   });

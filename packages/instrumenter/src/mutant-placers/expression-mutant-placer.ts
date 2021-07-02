@@ -55,16 +55,20 @@ function nameIfAnonymous(path: NodePath<types.Expression>): types.Expression {
   return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
 }
 
+function isMemberOrCallExpression(path: NodePath) {
+  return path.isMemberExpression() || path.isCallExpression() || path.isOptionalCallExpression() || path.isOptionalMemberExpression();
+}
+
 function isValidExpression(path: NodePath<types.Expression>) {
   const parent = path.parentPath;
-  return !isObjectPropertyKey() && !isOptionalChain() && !parent.isTaggedTemplateExpression();
+  return !isObjectPropertyKey() && !isPartOfChain() && !parent.isTaggedTemplateExpression();
 
   function isObjectPropertyKey() {
     return parent.isObjectProperty() && parent.node.key === path.node;
   }
 
-  function isOptionalChain() {
-    return path.isOptionalCallExpression() || path.isOptionalMemberExpression();
+  function isPartOfChain() {
+    return isMemberOrCallExpression(path) && isMemberOrCallExpression(parent);
   }
 }
 
