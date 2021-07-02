@@ -55,11 +55,16 @@ function nameIfAnonymous(path: NodePath<types.Expression>): types.Expression {
   return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
 }
 
-function isValidParent(child: NodePath<types.Expression>) {
-  const parent = child.parentPath;
-  return !isObjectPropertyKey() && !parent.isTaggedTemplateExpression();
+function isValidExpression(path: NodePath<types.Expression>) {
+  const parent = path.parentPath;
+  return !isObjectPropertyKey() && !isOptionalChain() && !parent.isTaggedTemplateExpression();
+
   function isObjectPropertyKey() {
-    return parent.isObjectProperty() && parent.node.key === child.node;
+    return parent.isObjectProperty() && parent.node.key === path.node;
+  }
+
+  function isOptionalChain() {
+    return path.isOptionalCallExpression() || path.isOptionalMemberExpression();
   }
 }
 
@@ -69,7 +74,7 @@ function isValidParent(child: NodePath<types.Expression>) {
 export const expressionMutantPlacer: MutantPlacer<types.Expression> = {
   name: 'expressionMutantPlacer',
   canPlace(path) {
-    return path.isExpression() && isValidParent(path);
+    return path.isExpression() && isValidExpression(path);
   },
   place(path, appliedMutants) {
     // Make sure anonymous functions and classes keep their 'name' property

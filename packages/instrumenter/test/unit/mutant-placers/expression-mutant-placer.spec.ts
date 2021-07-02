@@ -45,6 +45,21 @@ describe(expressionMutantPlacer.name, () => {
         expect(expressionMutantPlacer.canPlace(stringLiteral)).true;
       });
     });
+
+    describe('call expressions', () => {
+      it('should be false when expression is an OptionalCallExpression', () => {
+        const optionalCallExpression = findNodePath(parseJS('foo?.bar()'), (p) => p.isOptionalCallExpression());
+        expect(expressionMutantPlacer.canPlace(optionalCallExpression)).false;
+      });
+      it('should be false when expression is an OptionalMemberExpression with index accessor', () => {
+        const optionalMemberExpression = findNodePath(parseJS('foo?.[1] '), (p) => p.isOptionalMemberExpression());
+        expect(expressionMutantPlacer.canPlace(optionalMemberExpression)).false;
+      });
+      it('should be false when expression is an OptionalMemberExpression', () => {
+        const optionalMemberExpression = findNodePath(parseJS('foo?.bar()'), (p) => p.isOptionalMemberExpression());
+        expect(expressionMutantPlacer.canPlace(optionalMemberExpression)).false;
+      });
+    });
   });
 
   describe(expressionMutantPlacer.place.name, () => {
