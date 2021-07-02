@@ -2,18 +2,18 @@ import { NodePath, types } from '@babel/core';
 
 import { NodeMutator } from './node-mutator';
 
-const validOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
+const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
 
 export const conditionalExpressionMutator: NodeMutator = {
   name: 'ConditionalExpression',
 
   *mutate(path) {
-    if (isTestOfALoop(path)) {
+    if (isTestOfLoop(path)) {
       yield types.booleanLiteral(false);
     } else if (isTestOfCondition(path)) {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
-    } else if ((path.isBinaryExpression() || path.isLogicalExpression()) && isValidOperator(path.node.operator)) {
+    } else if (isBooleanExpression(path)) {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
     } else if (path.isForStatement() && !path.node.test) {
@@ -28,20 +28,23 @@ export const conditionalExpressionMutator: NodeMutator = {
     }
   },
 };
-function isTestOfALoop(path: NodePath): boolean {
+
+function isTestOfLoop(path: NodePath): boolean {
   const { parentPath } = path;
-  return (
-    Boolean(parentPath) &&
-    (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) &&
-    parentPath.node.test === path.node
-  );
+  if (!parentPath) {
+    return false;
+  }
+  return (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) && parentPath.node.test === path.node;
 }
 
 function isTestOfCondition(path: NodePath): boolean {
   const { parentPath } = path;
-  return Boolean(parentPath) && parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
+  if (!parentPath) {
+    return false;
+  }
+  return parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
 }
 
-function isValidOperator(operator: string): boolean {
-  return validOperators.includes(operator);
+function isBooleanExpression(path: NodePath<types.Node>) {
+  return (path.isBinaryExpression() || path.isLogicalExpression()) && booleanOperators.includes(path.node.operator);
 }
