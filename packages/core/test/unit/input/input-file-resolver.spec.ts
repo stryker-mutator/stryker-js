@@ -29,7 +29,7 @@ describe(InputFileResolver.name, () => {
     const sut = createSut();
     await sut.resolve();
     expect(testInjector.logger.warn).calledWith(
-      `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+      `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","*.tsbuildinfo","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
     );
   });
 
