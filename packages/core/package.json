@@ -93,6 +93,6 @@
     "@types/minimatch": "~3.0.3",
     "@types/node": "^15.0.0",
     "@types/progress": "~2.0.1",
-    "flatted": "~3.1.0"
+    "flatted": "~3.2.0"
   }
 }
