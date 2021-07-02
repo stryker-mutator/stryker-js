@@ -29,7 +29,7 @@ describe(InputFileResolver.name, () => {
     const sut = createSut();
     await sut.resolve();
     expect(testInjector.logger.warn).calledWith(
-      `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+      `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","*.tsbuildinfo","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
     );
   });
 
@@ -90,7 +90,7 @@ describe(InputFileResolver.name, () => {
       expect(files[0].name).eq(path.resolve('packages', 'app', 'src', 'index.js'));
     });
 
-    it('should ignore node_modules, .git, reports, stryker.log and .stryker-tmp by default', async () => {
+    it('should ignore node_modules, .git, reports, stryker.log, *.tsbuildinfo and .stryker-tmp by default', async () => {
       // Arrange
       stubFileSystem({
         '.git': { config: '' },
@@ -98,6 +98,10 @@ describe(InputFileResolver.name, () => {
         '.stryker-tmp': { 'stryker-sandbox-123': { src: { 'index.js': '' } } },
         'index.js': '',
         'stryker.log': '',
+        'tsconfig.src.tsbuildinfo': '',
+        dist: {
+          'tsconfig.tsbuildinfo': '',
+        },
         reports: { mutation: { 'mutation.json': '' } },
       });
       const sut = createSut();
