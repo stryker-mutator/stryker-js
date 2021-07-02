@@ -30,7 +30,7 @@ jobs:
           npm install
           npm run build
       - name: Run Stryker
-        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,jest-runner,karma-runner,mocha-runner,jasmine-runner}" --concurrency 1 --stream stryker -- -- --concurrency 3
+        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,jest-runner,karma-runner,mocha-runner,jasmine-runner,cucumber-runner}" --concurrency 1 --stream stryker -- -- --concurrency 3
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
