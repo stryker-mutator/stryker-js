@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.1](https://github.com/stryker-mutator/stryker-js/compare/v5.2.0...v5.2.1) (2021-07-02)
+
+
+### Features
+
+* **html:** highlight  files in html report ([b7876a4](https://github.com/stryker-mutator/stryker-js/commit/b7876a4c6289e854167d2ed5b2915e16499e0651))
+
+
+
+
+
 # [5.2.0](https://github.com/stryker-mutator/stryker-js/compare/v5.1.1...v5.2.0) (2021-07-02)
 
 

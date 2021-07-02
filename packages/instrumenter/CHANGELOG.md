@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.1](https://github.com/stryker-mutator/stryker-js/compare/v5.2.0...v5.2.1) (2021-07-02)
+
+
+### Features
+
+* **mutator:** add the optional chaining mutator  ([#2988](https://github.com/stryker-mutator/stryker-js/issues/2988)) ([43ac767](https://github.com/stryker-mutator/stryker-js/commit/43ac76774d9f5b2bca3f56f99a88f341d6027027))
+
+
+
+
+
 # [5.2.0](https://github.com/stryker-mutator/stryker-js/compare/v5.1.1...v5.2.0) (2021-07-02)
 
 
