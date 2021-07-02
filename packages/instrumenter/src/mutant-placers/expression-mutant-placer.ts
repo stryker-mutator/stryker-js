@@ -55,11 +55,45 @@ function nameIfAnonymous(path: NodePath<types.Expression>): types.Expression {
   return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
 }
 
-function isValidParent(child: NodePath<types.Expression>) {
-  const parent = child.parentPath;
-  return !isObjectPropertyKey() && !parent.isTaggedTemplateExpression();
+function isMemberOrCallExpression(path: NodePath) {
+  return isCallExpression(path) || isMemberExpression(path);
+}
+
+function isMemberExpression(path: NodePath): path is NodePath<types.MemberExpression | types.OptionalMemberExpression> {
+  return path.isMemberExpression() || path.isOptionalMemberExpression();
+}
+
+function isCallExpression(path: NodePath): path is NodePath<types.CallExpression | types.OptionalCallExpression> {
+  return path.isCallExpression() || path.isOptionalCallExpression();
+}
+
+function isValidExpression(path: NodePath<types.Expression>) {
+  const parent = path.parentPath;
+  return !isObjectPropertyKey() && !isPartOfChain() && !parent.isTaggedTemplateExpression();
+
+  /**
+   * Determines if the expression is property of an object.
+   * @example
+   * const a = {
+   *  'foo': 'bar' // 'foo' here is an object property
+   * };
+   */
   function isObjectPropertyKey() {
-    return parent.isObjectProperty() && parent.node.key === child.node;
+    return parent.isObjectProperty() && parent.node.key === path.node;
+  }
+
+  /**
+   * Determines if the expression is part of a call/member chain.
+   * @example
+   * // bar is part of chain, foo is NOT part of the chain:
+   * foo.bar.baz();
+   * foo.bar?.baz()
+   * foo.bar;
+   * foo.bar();
+   * foo?.bar();
+   */
+  function isPartOfChain() {
+    return isMemberOrCallExpression(path) && (isMemberExpression(parent) || (isCallExpression(parent) && parent.node.callee === path.node));
   }
 }
 
@@ -69,7 +103,7 @@ function isValidParent(child: NodePath<types.Expression>) {
 export const expressionMutantPlacer: MutantPlacer<types.Expression> = {
   name: 'expressionMutantPlacer',
   canPlace(path) {
-    return path.isExpression() && isValidParent(path);
+    return path.isExpression() && isValidExpression(path);
   },
   place(path, appliedMutants) {
     // Make sure anonymous functions and classes keep their 'name' property

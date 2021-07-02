@@ -30,6 +30,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a lit-html file', async () => {
     await arrangeAndActAssert('lit-html-sample.ts');
   });
+  it('should be able to instrument optional chains', async () => {
+    await arrangeAndActAssert('optional-chains.js');
+  });
   it('should be able to instrument a vue sample', async () => {
     await arrangeAndActAssert('vue-sample.vue');
   });

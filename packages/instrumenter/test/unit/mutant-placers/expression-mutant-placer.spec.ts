@@ -45,6 +45,44 @@ describe(expressionMutantPlacer.name, () => {
         expect(expressionMutantPlacer.canPlace(stringLiteral)).true;
       });
     });
+
+    describe('chain expressions', () => {
+      type ChainExpressionArrangement = [string, (path: NodePath) => boolean];
+
+      const okPointers: ChainExpressionArrangement[] = [
+        ['bar()', (p) => p.isCallExpression()],
+        ['bar.foo', (p) => p.isMemberExpression()],
+        ['bar.foo()', (p) => p.isCallExpression()],
+        ['bar?.foo()', (p) => p.isOptionalCallExpression()],
+        ['bar?.foo', (p) => p.isOptionalMemberExpression()],
+        ['bar?.[1]', (p) => p.isOptionalMemberExpression()],
+        ['bar[1]', (p) => p.isMemberExpression()],
+        ['qux?.foo(bar());', (p) => p.isCallExpression() && types.isIdentifier(p.node.callee, { name: 'bar' })],
+        ['foo(bar());', (p) => p.isCallExpression() && types.isIdentifier(p.node.callee, { name: 'bar' })],
+        ['foo(bar.baz);', (p) => p.isMemberExpression() && types.isIdentifier(p.node.object, { name: 'bar' })],
+      ];
+
+      okPointers.forEach(([js, query]) => {
+        it(`should allow placing in \`bar\` of \`${js}\``, () => {
+          const path = findNodePath(parseJS(js), query);
+          expect(expressionMutantPlacer.canPlace(path)).true;
+        });
+      });
+
+      const falsePointers: ChainExpressionArrangement[] = [
+        ['foo.bar.baz', (p) => p.isMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+        ['foo.bar()', (p) => p.isMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+        ['foo?.bar()', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+        ['foo.bar?.baz', (p) => p.isMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+        ['foo?.bar.baz', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+      ];
+      falsePointers.forEach(([js, query]) => {
+        it(`should not allow placing in \`bar\` of \`${js}\``, () => {
+          const path = findNodePath(parseJS(js), query);
+          expect(expressionMutantPlacer.canPlace(path)).false;
+        });
+      });
+    });
   });
 
   describe(expressionMutantPlacer.place.name, () => {

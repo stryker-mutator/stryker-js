@@ -12,6 +12,7 @@ import { objectLiteralMutator } from './object-literal-mutator';
 import { unaryOperatorMutator } from './unary-operator-mutator';
 import { updateOperatorMutator } from './update-operator-mutator';
 import { regexMutator } from './regex-mutator';
+import { optionalChainingMutator } from './optional-chaining-mutator';
 
 export const allMutators: NodeMutator[] = [
   arithmeticOperatorMutator,
@@ -27,4 +28,5 @@ export const allMutators: NodeMutator[] = [
   unaryOperatorMutator,
   updateOperatorMutator,
   regexMutator,
+  optionalChainingMutator,
 ];
