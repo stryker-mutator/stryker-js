@@ -215,7 +215,7 @@ function determinePosition(
 
 function toPosition(location: Location): Position {
   return {
-    line: location.line,
+    line: location.line - 1, // StrykerJS works 0- based internally
     column: location.column ?? 0,
   };
 }

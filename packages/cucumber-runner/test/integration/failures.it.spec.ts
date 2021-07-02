@@ -41,7 +41,7 @@ describe('Running cucumber when steps are failing', () => {
         id: `${fileName}:4`,
         status: TestStatus.Failed,
         failureMessage: 'Error: Failed step',
-        startPosition: { line: 4, column: 3 },
+        startPosition: { line: 3, column: 3 },
       },
     ]);
   });
