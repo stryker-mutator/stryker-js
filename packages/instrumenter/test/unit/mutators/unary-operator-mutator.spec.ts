@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { UnaryOperatorMutator } from '../../../src/mutators/unary-operator-mutator';
+import { unaryOperatorMutator as sut } from '../../../src/mutators/unary-operator-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(UnaryOperatorMutator.name, () => {
-  let sut: UnaryOperatorMutator;
-  beforeEach(() => {
-    sut = new UnaryOperatorMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "UnaryOperator"', () => {
     expect(sut.name).eq('UnaryOperator');
   });

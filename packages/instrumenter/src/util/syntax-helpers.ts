@@ -104,48 +104,16 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
   file.end! += position;
 }
 
-export function createMutatedAst<T extends types.Node>(contextPath: NodePath<T>, mutant: Mutant): T {
-  if (eqNode(contextPath.node, mutant.original)) {
-    return mutant.replacement as T;
-  } else {
-    const mutatedAst = types.cloneNode(contextPath.node, /*deep*/ true);
-    let isAstMutated = false;
-
-    traverse(
-      mutatedAst,
-      {
-        noScope: true,
-        enter(path) {
-          if (eqNode(path.node, mutant.original)) {
-            path.replaceWith(mutant.replacement);
-            path.stop();
-            isAstMutated = true;
-          }
-        },
-      },
-      contextPath.scope
-    );
-    if (!isAstMutated) {
-      throw new Error(`Could not apply mutant ${JSON.stringify(mutant.replacement)}.`);
-    }
-    return mutatedAst;
-  }
-}
-
 /**
  * Returns a sequence of mutation coverage counters with an optional last expression.
  *
  * @example (global.__coverMutant__(0, 1), 40 + 2)
- * @param mutants The mutant ids for which covering syntax needs to be generated
+ * @param mutants The mutants for which covering syntax needs to be generated
  * @param targetExpression The original expression
  */
-export function mutationCoverageSequenceExpression(mutants: Mutant[], targetExpression?: types.Expression): types.Expression {
-  const sequence: types.Expression[] = [
-    types.callExpression(
-      types.identifier(COVER_MUTANT_HELPER),
-      mutants.map((mutant) => types.stringLiteral(mutant.id))
-    ),
-  ];
+export function mutationCoverageSequenceExpression(mutants: Iterable<Mutant>, targetExpression?: types.Expression): types.Expression {
+  const mutantIds = [...mutants].map((mutant) => types.stringLiteral(mutant.id));
+  const sequence: types.Expression[] = [types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds)];
   if (targetExpression) {
     sequence.push(targetExpression);
   }
@@ -221,4 +189,11 @@ export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocatio
   const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
   const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;
+}
+
+/**
+ * Helper for `types.cloneNode(node, deep: true, withoutLocations: false);`
+ */
+export function deepCloneNode<TNode extends types.Node>(node: TNode): TNode {
+  return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
 }

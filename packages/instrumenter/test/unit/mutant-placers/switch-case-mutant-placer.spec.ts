@@ -12,24 +12,25 @@ describe(sut.name, () => {
     expect(sut.name).eq('switchCaseMutantPlacer');
   });
 
-  it('should not place mutants on non-switch-case nodes', () => {
-    [
-      findNodePath(parseJS('foo + bar'), (p) => p.isBinaryExpression()),
-      findNodePath(parseJS('switch(foo) { }'), (p) => p.isSwitchStatement()),
-    ].forEach((node) => {
-      expect(sut(node, [])).false;
+  describe(sut.canPlace.name, () => {
+    it('should be false on non-switch-case nodes', () => {
+      [
+        findNodePath(parseJS('foo + bar'), (p) => p.isBinaryExpression()),
+        findNodePath(parseJS('switch(foo) { }'), (p) => p.isSwitchStatement()),
+      ].forEach((node) => {
+        expect(sut.canPlace(node)).false;
+      });
+    });
+
+    it('should be true on a SwitchCase node', () => {
+      const switchCase = findNodePath(parseJS('switch(foo) { case "bar": console.log("bar"); break; }'), (p) => p.isSwitchCase());
+      expect(sut.canPlace(switchCase)).true;
     });
   });
 
-  it('should only place SwitchCase nodes', () => {
-    const switchCase = findNodePath(parseJS('switch(foo) { case "bar": console.log("bar"); break; }'), (p) => p.isSwitchCase());
-    const mutant = createMutant({ original: switchCase.node, replacement: types.stringLiteral('foo') });
-    expect(() => sut(switchCase, [mutant])).throws('switchCaseMutantPlacer can only place SwitchCase syntax');
-  });
-
-  describe('given a SwitchCase node', () => {
+  describe(sut.place.name, () => {
     let ast: types.File;
-    let switchCase: NodePath;
+    let switchCase: NodePath<types.SwitchCase>;
 
     beforeEach(() => {
       ast = parseJS('switch(foo) { case "bar": console.log("bar"); break; }');
@@ -39,39 +40,39 @@ describe(sut.name, () => {
     it('should place a mutant in the "consequent" part of a switch-case', () => {
       // Arrange
       const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const appliedMutants = new Map([[mutant, mutant.applied(switchCase.node)]]);
 
       // Act
-      const actual = sut(switchCase, [mutant]);
+      sut.place(switchCase, appliedMutants);
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert
-      expect(actual).true;
       expect(actualCode).contains(normalizeWhitespaces('switch (foo) { case "bar": if (stryMutAct_9fa48("42"))'));
     });
 
     it('should place the original code as alternative (inside `else`)', () => {
       // Arrange
       const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const appliedMutants = new Map([[mutant, mutant.applied(switchCase.node)]]);
 
       // Act
-      const actual = sut(switchCase, [mutant]);
+      sut.place(switchCase, appliedMutants);
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert
-      expect(actual).true;
       expect(actualCode).matches(/else {.* console\.log\("bar"\); break; }/);
     });
 
     it('should add mutant coverage syntax', () => {
       // Arrange
       const mutant = createMutant({ id: '42', original: switchCase.node, replacement: types.switchCase(types.stringLiteral('bar'), []) });
+      const appliedMutants = new Map([[mutant, mutant.applied(switchCase.node)]]);
 
       // Act
-      const actual = sut(switchCase, [mutant]);
+      sut.place(switchCase, appliedMutants);
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert
-      expect(actual).true;
       expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\("42"\)/);
     });
 
@@ -85,18 +86,22 @@ describe(sut.name, () => {
           replacement: types.switchCase(types.stringLiteral('bar'), [types.expressionStatement(types.callExpression(types.identifier('foo'), []))]),
         }),
       ];
+      const appliedMutants = new Map([
+        [mutants[0], mutants[0].applied(switchCase.node)],
+        [mutants[1], mutants[1].applied(switchCase.node)],
+      ]);
 
       // Act
-      sut(switchCase, mutants);
+      sut.place(switchCase, appliedMutants);
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert
       expect(actualCode).contains(
         normalizeWhitespaces(`if (stryMutAct_9fa48("156")) {
-          foo();
-          } else if (stryMutAct_9fa48("42")) {} 
-          else {
-            stryCov_9fa48("42", "156")`)
+            foo();
+            } else if (stryMutAct_9fa48("42")) {}
+            else {
+              stryCov_9fa48("42", "156")`)
       );
     });
   });

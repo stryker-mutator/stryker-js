@@ -8,7 +8,8 @@ import { Instrumenter } from '../../src';
 import * as parsers from '../../src/parsers';
 import * as transformers from '../../src/transformers';
 import * as printers from '../../src/printers';
-import { createJSAst, createTSAst, createNamedNodeMutation, createInstrumenterOptions } from '../helpers/factories';
+import { createJSAst, createTSAst, createMutable, createInstrumenterOptions } from '../helpers/factories';
+import { parseJS } from '../helpers/syntax-test-helpers';
 
 describe(Instrumenter.name, () => {
   let sut: Instrumenter;
@@ -63,7 +64,7 @@ describe(Instrumenter.name, () => {
 
   it('should log about the result', async () => {
     helper.transformerStub.callsFake((_, collector: I<transformers.MutantCollector>) => {
-      collector.add('foo.js', createNamedNodeMutation());
+      collector.collect('foo.js', parseJS('bar').program.body[0], createMutable());
     });
     await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
     expect(testInjector.logger.info).calledWith('Instrumented %d source file(s) with %d mutant(s)', 2, 2);
@@ -75,11 +76,11 @@ describe(Instrumenter.name, () => {
     const { input, asts } = arrangeTwoFiles();
     const fakeTransform: typeof transformers.transform = (ast, collector) => {
       if (ast === asts[0]) {
-        collector.add('foo.js', createNamedNodeMutation());
+        collector.collect('foo.js', parseJS('bar').program.body[0], createMutable());
       }
       if (ast === asts[1]) {
-        collector.add('foo.js', createNamedNodeMutation());
-        collector.add('foo.js', createNamedNodeMutation());
+        collector.collect('foo.js', parseJS('bar').program.body[0], createMutable());
+        collector.collect('foo.js', parseJS('bar').program.body[0], createMutable());
       }
     };
     helper.transformerStub.callsFake(fakeTransform);

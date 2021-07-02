@@ -1,63 +1,50 @@
 import { NodePath, types } from '@babel/core';
 
-import { NodeMutation } from '../mutant';
-
 import { NodeMutator } from './node-mutator';
 
-export class ConditionalExpressionMutator implements NodeMutator {
-  private readonly validOperators: string[] = ['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||'];
+const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
 
-  public name = 'ConditionalExpression';
+export const conditionalExpressionMutator: NodeMutator = {
+  name: 'ConditionalExpression',
 
-  private hasValidParent(node: NodePath): boolean {
-    return !(
-      types.isForStatement(node.parent) ||
-      types.isWhileStatement(node.parent) ||
-      types.isIfStatement(node.parent) ||
-      types.isDoWhileStatement(node.parent)
-    );
-  }
-
-  private isValidOperator(operator: string): boolean {
-    return this.validOperators.includes(operator);
-  }
-
-  public mutate(path: NodePath): NodeMutation[] {
-    if ((path.isBinaryExpression() || path.isLogicalExpression()) && this.hasValidParent(path) && this.isValidOperator(path.node.operator)) {
-      return [
-        { original: path.node, replacement: types.booleanLiteral(true) },
-        { original: path.node, replacement: types.booleanLiteral(false) },
-      ];
-    }
-    if (path.isDoWhileStatement() || path.isWhileStatement()) {
-      return [{ original: path.node.test, replacement: types.booleanLiteral(false) }];
-    }
-    if (path.isForStatement()) {
-      if (!path.node.test) {
-        const replacement = types.cloneNode(path.node, /* deep */ false);
-        replacement.test = types.booleanLiteral(false);
-        return [{ original: path.node, replacement }];
-      }
-
-      return [{ original: path.node.test, replacement: types.booleanLiteral(false) }];
-    }
-    if (path.isIfStatement()) {
-      return [
-        // raw string mutations in the `if` condition
-        { original: path.node.test, replacement: types.booleanLiteral(true) },
-        { original: path.node.test, replacement: types.booleanLiteral(false) },
-      ];
-    }
-    if (
-      path.isSwitchCase() &&
+  *mutate(path) {
+    if (isTestOfLoop(path)) {
+      yield types.booleanLiteral(false);
+    } else if (isTestOfCondition(path)) {
+      yield types.booleanLiteral(true);
+      yield types.booleanLiteral(false);
+    } else if (isBooleanExpression(path)) {
+      yield types.booleanLiteral(true);
+      yield types.booleanLiteral(false);
+    } else if (path.isForStatement() && !path.node.test) {
+      const replacement = types.cloneNode(path.node, /* deep */ true);
+      replacement.test = types.booleanLiteral(false);
+      yield replacement;
+    } else if (path.isSwitchCase() && path.node.consequent.length > 0) {
       // if not a fallthrough case
-      path.node.consequent.length > 0
-    ) {
       const replacement = types.cloneNode(path.node);
       replacement.consequent = [];
-      return [{ original: path.node, replacement }];
+      yield replacement;
     }
+  },
+};
 
-    return [];
+function isTestOfLoop(path: NodePath): boolean {
+  const { parentPath } = path;
+  if (!parentPath) {
+    return false;
   }
+  return (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) && parentPath.node.test === path.node;
+}
+
+function isTestOfCondition(path: NodePath): boolean {
+  const { parentPath } = path;
+  if (!parentPath) {
+    return false;
+  }
+  return parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
+}
+
+function isBooleanExpression(path: NodePath<types.Node>) {
+  return (path.isBinaryExpression() || path.isLogicalExpression()) && booleanOperators.includes(path.node.operator);
 }

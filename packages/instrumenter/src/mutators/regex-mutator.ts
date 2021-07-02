@@ -1,8 +1,6 @@
-import * as types from '@babel/types';
 import { NodePath } from '@babel/core';
-import * as weaponRegex from 'weapon-regex';
-
-import { NodeMutation } from '../mutant';
+import * as types from '@babel/types';
+import weaponRegex from 'weapon-regex';
 
 import { NodeMutator } from '.';
 
@@ -22,44 +20,32 @@ function isObviousRegexString(path: NodePath<types.StringLiteral>) {
 }
 const weaponRegexOptions: weaponRegex.Options = { mutationLevels: [1] };
 
-export class RegexMutator implements NodeMutator {
-  public name = 'Regex';
+export const regexMutator: NodeMutator = {
+  name: 'Regex',
 
-  constructor(private readonly weaponRegexMutateImpl = weaponRegex.mutate) {}
-
-  public mutate(path: NodePath): NodeMutation[] {
+  *mutate(path) {
     if (path.isRegExpLiteral()) {
-      return this.mutatePattern(path.node.pattern).map((replacementPattern) => {
-        const replacement = types.cloneNode(path.node, false);
-        replacement.pattern = replacementPattern;
-        return {
-          original: path.node,
-          replacement,
-        };
-      });
+      for (const replacementPattern of mutatePattern(path.node.pattern)) {
+        const replacement = types.regExpLiteral(replacementPattern, path.node.flags);
+        yield replacement;
+      }
     } else if (path.isStringLiteral() && isObviousRegexString(path)) {
-      return this.mutatePattern(path.node.value).map((replacementPattern) => {
-        const replacement = types.cloneNode(path.node, false);
-        replacement.value = replacementPattern;
-        return {
-          original: path.node,
-          replacement,
-        };
-      });
-    }
-    return [];
-  }
-
-  private mutatePattern(pattern: string): string[] {
-    if (pattern.length) {
-      try {
-        return this.weaponRegexMutateImpl(pattern, weaponRegexOptions).map((mutant) => mutant.pattern);
-      } catch (err) {
-        console.error(
-          `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`
-        );
+      for (const replacementPattern of mutatePattern(path.node.value)) {
+        yield types.stringLiteral(replacementPattern);
       }
     }
-    return [];
+  },
+};
+
+function mutatePattern(pattern: string): string[] {
+  if (pattern.length) {
+    try {
+      return weaponRegex.mutate(pattern, weaponRegexOptions).map((mutant) => mutant.pattern);
+    } catch (err) {
+      console.error(
+        `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`
+      );
+    }
   }
+  return [];
 }

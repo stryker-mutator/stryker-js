@@ -1,14 +1,9 @@
 import { expect } from 'chai';
 
-import { BlockStatementMutator } from '../../../src/mutators/block-statement-mutator';
+import { blockStatementMutator as sut } from '../../../src/mutators/block-statement-mutator';
 import { expectJSMutation } from '../../helpers/expect-mutation';
 
-describe(BlockStatementMutator.name, () => {
-  let sut: BlockStatementMutator;
-  beforeEach(() => {
-    sut = new BlockStatementMutator();
-  });
-
+describe(sut.name, () => {
   it('should have name "BlockStatement"', () => {
     expect(sut.name).eq('BlockStatement');
   });
