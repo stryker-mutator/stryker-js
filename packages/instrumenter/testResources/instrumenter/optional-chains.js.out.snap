@@ -57,5 +57,6 @@ function stryMutAct_9fa48(id) {
 
 const baz = stryMutAct_9fa48(\\"0\\") ? foo?.bar?.()?.[1] && 'qux' : (stryCov_9fa48(\\"0\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar?.()?.[1] : stryMutAct_9fa48(\\"2\\") ? foo?.bar()?.[1] : stryMutAct_9fa48(\\"1\\") ? foo?.bar?.()[1] : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), foo?.bar?.()?.[1])) ?? (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'qux')));
 stryMutAct_9fa48(\\"5\\") ? qux().map() : (stryCov_9fa48(\\"5\\"), qux()?.map());
-const directiveRanges = stryMutAct_9fa48(\\"6\\") ? comments.map(tryParseTSDirective) : (stryCov_9fa48(\\"6\\"), comments?.map(tryParseTSDirective));"
+const directiveRanges = stryMutAct_9fa48(\\"6\\") ? comments.map(tryParseTSDirective) : (stryCov_9fa48(\\"6\\"), comments?.map(tryParseTSDirective));
+const qux = quux(stryMutAct_9fa48(\\"7\\") ? corge.cov() : (stryCov_9fa48(\\"7\\"), corge?.cov()));"
 `;

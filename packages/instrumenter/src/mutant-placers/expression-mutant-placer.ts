@@ -56,19 +56,44 @@ function nameIfAnonymous(path: NodePath<types.Expression>): types.Expression {
 }
 
 function isMemberOrCallExpression(path: NodePath) {
-  return path.isMemberExpression() || path.isCallExpression() || path.isOptionalCallExpression() || path.isOptionalMemberExpression();
+  return isCallExpression(path) || isMemberExpression(path);
+}
+
+function isMemberExpression(path: NodePath): path is NodePath<types.MemberExpression | types.OptionalMemberExpression> {
+  return path.isMemberExpression() || path.isOptionalMemberExpression();
+}
+
+function isCallExpression(path: NodePath): path is NodePath<types.CallExpression | types.OptionalCallExpression> {
+  return path.isCallExpression() || path.isOptionalCallExpression();
 }
 
 function isValidExpression(path: NodePath<types.Expression>) {
   const parent = path.parentPath;
   return !isObjectPropertyKey() && !isPartOfChain() && !parent.isTaggedTemplateExpression();
 
+  /**
+   * Determines if the expression is property of an object.
+   * @example
+   * const a = {
+   *  'foo': 'bar' // 'foo' here is an object property
+   * };
+   */
   function isObjectPropertyKey() {
     return parent.isObjectProperty() && parent.node.key === path.node;
   }
 
+  /**
+   * Determines if the expression is part of a call/member chain.
+   * @example
+   * // bar is part of chain, foo is NOT part of the chain:
+   * foo.bar.baz();
+   * foo.bar?.baz()
+   * foo.bar;
+   * foo.bar();
+   * foo?.bar();
+   */
   function isPartOfChain() {
-    return isMemberOrCallExpression(path) && isMemberOrCallExpression(parent);
+    return isMemberOrCallExpression(path) && (isMemberExpression(parent) || (isCallExpression(parent) && parent.node.callee === path.node));
   }
 }
 
