@@ -7,6 +7,8 @@ A plugin to use CucumberJS in StrykerJS
 
 🥒 💖 👽
 
+_Note: this plugin only supports the [`@cucumber/cucumber` nodejs test runner](https://github.com/cucumber/cucumber-js/blob/main/docs/cli.md#cli). If you're running cucumber with Jest or Karma, be sure to use those respective test runners instead._
+
 ## Install
 
 Install @stryker-mutator/cucumber-runner locally within your project folder, like so:
@@ -104,4 +106,4 @@ And use this StrykerJS configuration
 }
 ```
 
-This will make sure your feature files are run during the dry run and still allow the plugin to filter specific tests.
+This will make sure your feature files are run during the dry run and still allow the plugin to filter specific tests during the mutation testing phase.
