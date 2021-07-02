@@ -39,7 +39,7 @@ describe('Running in an example project', () => {
         id: `${fileName}:7`,
         fileName,
         name: 'Feature: Simple maths -- Scenario: easy maths',
-        startPosition: { line: 7, column: 3 },
+        startPosition: { line: 6, column: 3 },
       },
       {
         status: TestStatus.Success,
@@ -47,7 +47,7 @@ describe('Running in an example project', () => {
         name: 'Feature: Simple maths -- Scenario Outline: much more complex stuff [Example L19]',
         fileName,
         startPosition: {
-          line: 19,
+          line: 18,
           column: 7,
         },
       },
@@ -57,7 +57,7 @@ describe('Running in an example project', () => {
         name: 'Feature: Simple maths -- Scenario Outline: much more complex stuff [Example L20]',
         fileName,
         startPosition: {
-          line: 20,
+          line: 19,
           column: 7,
         },
       },
@@ -68,7 +68,7 @@ describe('Running in an example project', () => {
         name: 'Feature: Simple maths -- Scenario: static math',
         startPosition: {
           column: 3,
-          line: 22,
+          line: 21,
         },
       },
     ];

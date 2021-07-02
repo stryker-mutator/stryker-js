@@ -10,8 +10,27 @@
     "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker run"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/cucumber-runner"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "keywords": [
+    "stryker",
+    "cucumber",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/cucumber-runner",
+  "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@cucumber/cucumber": "^7.3.0",
