@@ -30,7 +30,7 @@ export class ConfigReader {
     let options: StrykerOptions;
     if (typeof configModule === 'function') {
       this.log.warn(
-        'Usage of `module.export = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
+        'Usage of `module.exports = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
       );
       options = defaultOptions();
       configModule(createConfig(options));
