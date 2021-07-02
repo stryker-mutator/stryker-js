@@ -59,3 +59,48 @@ function fileToJson(file: File) {
     textContent: file.textContent,
   };
 }
+
+/**
+ * Compares test results while trimming failure messages to their first line (no stack traces)
+ */
+export function expectTestResults(actual: DryRunResult, expectedTestResults: Array<Partial<TestResult>>): void {
+  expectCompleted(actual);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const actualPruned = pruneUnexpected(actual.tests, expectedTestResults as any);
+  actualPruned.forEach((test) => {
+    if (test.status === TestStatus.Failed && test.failureMessage) {
+      test.failureMessage = test.failureMessage.substr(0, test.failureMessage.indexOf('\n'));
+    }
+  });
+  expect(actualPruned).deep.eq(expectedTestResults);
+}
+
+/**
+ * Recursively prune unexpected values from an actual result. This will allow for a much cleaner chai diffing experience.
+ * Will not mutate any given input, instead build a new output.
+ * @param actual Some actual result you want to prune
+ * @param expected Some expected result you want to match to
+ * @returns A new `actual` object with all unexpected values pruned.
+ */
+export function pruneUnexpected<T>(actual: T, expected: Partial<T>): T extends Array<infer U> ? Array<Partial<U>> : Partial<T> {
+  if (actual !== null && typeof actual === 'object') {
+    if (Array.isArray(actual) && Array.isArray(expected)) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return actual.map((actualItem, index) => pruneUnexpected(actualItem, expected[index])) as unknown as T extends Array<infer U>
+        ? Array<Partial<U>>
+        : Partial<T>;
+    }
+    if (expected) {
+      return Object.keys(expected).reduce<Partial<T>>((acc, key) => {
+        const actualValue = actual[key as keyof T];
+        if (actualValue !== undefined) {
+          acc[key as keyof T] = actualValue;
+        }
+        return acc;
+      }, {}) as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+    } else {
+      return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+    }
+  }
+  return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+}

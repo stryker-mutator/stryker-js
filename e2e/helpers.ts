@@ -54,6 +54,13 @@ export async function readMutationTestResult(eventResultDirectory = path.resolve
   return metricsResult;
 }
 
+async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
+  const mutationTestReportContent = await fsPromises.readFile(jsonReportFile, 'utf8');
+  const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
+  const metricsResult = calculateMetrics(report.files);
+  return metricsResult;
+}
+
 type WritableMetricsResult = {
   -readonly [K in keyof MetricsResult]: MetricsResult[K];
 };
@@ -79,8 +86,20 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   expect(actualSnippet).deep.eq(expectedMetricsResult);
 }
 
+export async function expectMetricsJson(expectedMetrics: Partial<Metrics>) {
+  const actualMetricsResult = await readMutationTestingJsonResult();
+  expectActualMetrics(expectedMetrics, actualMetricsResult);
+}
+
+/**
+ * @deprecated please use expectMetricsJson instead (and activate the json reporter)
+ */
 export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
   const actualMetricsResult = await readMutationTestResult();
+  expectActualMetrics(expectedMetrics, actualMetricsResult);
+}
+
+function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
   const actualMetrics: Partial<Metrics> = {};
   Object.entries(expectedMetrics).forEach(([key]) => {
     if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {

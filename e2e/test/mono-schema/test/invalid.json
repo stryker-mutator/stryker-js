@@ -9,5 +9,10 @@
     "ngConfig": {
       "testArguments": "--test test"
     }
+  },
+  "cucumber": {
+    "features": [32],
+    "tags": "tag",
+    "profile": 42
   }
 }

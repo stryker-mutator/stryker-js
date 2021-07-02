@@ -23,5 +23,10 @@
   },
   "tsconfig": {
     "moduleResolution": "node"
+  },
+  "cucumber": {
+    "features": ["my-feature.feature"],
+    "profile": "stryker",
+    "tags": ["@tag", "@tag2"]
   }
 }

@@ -5,6 +5,7 @@
   "stryker-js/config-file",
   "stryker-js/configuration",
   "stryker-js/plugins",
+  "stryker-js/cucumber-runner",
   "stryker-js/jasmine-runner",
   "stryker-js/jest-runner",
   "stryker-js/karma-runner",

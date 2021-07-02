@@ -12,7 +12,6 @@
     "packages/api/report.ts",
     "packages/api/test_framework.ts",
     "packages/api/test_runner.ts",
-    "packages/api/test_runner2.ts",
     "packages/api/transpile.ts",
     "packages/api/plugin.ts"
   ]

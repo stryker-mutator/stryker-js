@@ -5,32 +5,53 @@ import { CoverageAnalysisReporter } from './coverage-analysis-reporter';
 import { calculateMetrics, Metrics } from 'mutation-testing-metrics';
 import { describe } from 'mocha';
 
-
 describe('Coverage analysis', () => {
-  
   let strykerOptions: PartialStrykerOptions;
-  
+
   describe('with the jasmine-runner', () => {
     beforeEach(() => {
       strykerOptions = {
         coverageAnalysis: 'off',
         testRunner: 'jasmine',
-        reporters: ['coverageAnalysis'],
+        reporters: ['coverageAnalysis', 'html'],
         concurrency: 2,
         plugins: ['@stryker-mutator/jasmine-runner', require.resolve('./coverage-analysis-reporter')],
-        jasmineConfigFile: 'jasmine-spec/support/jasmine.json'
+        jasmineConfigFile: 'jasmine-spec/support/jasmine.json',
       };
-    })
-
+    });
+    
     describeTests({
       off: 18,
       all: 12,
-      perTest: 6
-    })
+      perTest: 6,
+    });
+  });
+  
+  describe('with the cucumber-runner', () => {
+    beforeEach(() => {
+      strykerOptions = {
+        coverageAnalysis: 'off',
+        testRunner: 'cucumber',
+        reporters: ['coverageAnalysis', 'html'],
+        concurrency: 1,
+        cucumber: {
+          profile: 'stryker',
+          features: ['cucumber-features/*.feature']
+        },
+        plugins: ['@stryker-mutator/cucumber-runner', require.resolve('./coverage-analysis-reporter')],
+        // testRunnerNodeArgs: ['--inspect-brk'],
+        timeoutMS: 99999
+      };
+    });
+    
+    describeTests({
+      off: 18,
+      all: 12,
+      perTest: 6,
+    });
   });
 
   describe('with the jest-runner', () => {
-
     beforeEach(() => {
       strykerOptions = {
         testRunner: 'jest',
@@ -39,17 +60,16 @@ describe('Coverage analysis', () => {
         concurrency: 2,
         plugins: ['@stryker-mutator/jest-runner', require.resolve('./coverage-analysis-reporter')],
         jest: {
-          configFile: 'jest-spec/jest.config.json'
-        }
+          configFile: 'jest-spec/jest.config.json',
+        },
       };
     });
 
     describeTests({
       off: 14,
       all: 10,
-      perTest: 6
+      perTest: 6,
     });
-
   });
 
   function describeTests(expectedTestCount: Readonly<{ off: number; all: number; perTest: number }>) {
@@ -59,7 +79,7 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) =>  a + (b.testsCompleted ?? 0), 0);
+      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
 
       // Assert
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
@@ -67,7 +87,7 @@ describe('Coverage analysis', () => {
         noCoverage: 0,
         survived: 3,
         killed: 5,
-        mutationScore: 62.5
+        mutationScore: 62.5,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.off);
@@ -87,7 +107,7 @@ describe('Coverage analysis', () => {
         noCoverage: 2,
         survived: 1,
         killed: 5,
-        mutationScore: 62.5
+        mutationScore: 62.5,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.all);
@@ -99,15 +119,16 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
-
+      const result = await stryker.runMutationTest();
+      
       // Assert
+      const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
       const expectedMetricsResult: Partial<Metrics> = {
         noCoverage: 2,
         survived: 1,
         killed: 5,
-        mutationScore: 62.5
+        mutationScore: 62.5,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.perTest);
