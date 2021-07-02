@@ -72,7 +72,7 @@
     "log4js": "~6.2.1",
     "minimatch": "~3.0.4",
     "mkdirp": "~1.0.3",
-    "mutation-testing-elements": "1.7.2",
+    "mutation-testing-elements": "1.7.3",
     "mutation-testing-metrics": "1.7.2",
     "npm-run-path": "~4.0.1",
     "progress": "~2.0.0",
