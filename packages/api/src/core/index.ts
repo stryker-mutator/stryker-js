@@ -12,5 +12,5 @@ export * from './mutant-coverage';
 /**
  * Re-export all members from "mutation-testing-report-schema" under the `schema` key
  */
-export * as schema from 'mutation-testing-report-schema';
+export * as schema from 'mutation-testing-report-schema/api';
 export * from './mutation-range';

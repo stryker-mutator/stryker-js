@@ -1,5 +1,5 @@
 import { LitElement, html, property, customElement, svg } from 'lit-element';
-import { Thresholds } from 'mutation-testing-report-schema';
+import { Thresholds } from 'mutation-testing-report-schema/api';
 import { pathJoin } from '../lib/codeHelpers';
 import { MetricsResult } from 'mutation-testing-metrics';
 import { toAbsoluteUrl } from '../lib/htmlHelpers';

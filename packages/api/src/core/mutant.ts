@@ -1,6 +1,6 @@
-import * as schema from 'mutation-testing-report-schema';
+import * as schema from 'mutation-testing-report-schema/api';
 
-export { MutantStatus } from 'mutation-testing-report-schema';
+export { MutantStatus } from 'mutation-testing-report-schema/api';
 
 // We're reusing the `MutantResult` interface here to acquire uniformity.
 
