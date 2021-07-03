@@ -1,4 +1,4 @@
-import { MutantResult, MutantStatus, FileResult } from 'mutation-testing-report-schema';
+import { MutantResult, MutantStatus, FileResult } from 'mutation-testing-report-schema/api';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 
 export function createMutantResult(overrides?: Partial<MutantResult>): MutantResult {

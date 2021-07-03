@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
-import { MutationTestResult, TestFileDefinitionDictionary } from 'mutation-testing-report-schema';
+import { MutationTestResult, TestFileDefinitionDictionary } from 'mutation-testing-report-schema/api';
 import { expectMetricsResult, produceMetrics } from '../../../helpers';
 
 describe('After running stryker with test runner jest on test environment "node"', () => {
