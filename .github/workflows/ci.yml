@@ -23,7 +23,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies
-      run: npm install
+      run: npm install || npm install # retry once, install on windows is flaky...
     - name: Build & lint & test
       run: npm run all
 
@@ -37,7 +37,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install dependencies
-      run: npm install
+      run: npm install || npm install # retry once, install on windows is flaky...
     - name: Build packages
       run: npm run build
     - name: Run e2e tests
