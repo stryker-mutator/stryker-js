@@ -32,8 +32,8 @@
     "link-parent-bin": "^2.0.0",
     "load-grunt-tasks": "~5.1.0",
     "mocha": "~9.0.0",
-    "mutation-testing-metrics": "1.7.3",
-    "mutation-testing-report-schema": "1.7.3",
+    "mutation-testing-metrics": "1.7.4",
+    "mutation-testing-report-schema": "1.7.4",
     "rxjs": "~7.1.0",
     "semver": "~6.3.0",
     "ts-jest": "~27.0.1",
@@ -45,7 +45,7 @@
   },
   "scripts": {
     "bootstrap": "node ../node_modules/lerna/cli.js bootstrap",
-    "postinstall": "(node run bootstrap || npm run bootstrap) && npm run install-local-dependencies && npm run link-parent-bin",
+    "postinstall": "(npm run bootstrap || npm run bootstrap) && npm run install-local-dependencies && npm run link-parent-bin",
     "install-local-dependencies": "ts-node tasks/install-local-dependencies",
     "link-parent-bin": "link-parent-bin -c test --link-local-dependencies true",
     "test": "ts-node tasks/run-e2e-tests.ts"
