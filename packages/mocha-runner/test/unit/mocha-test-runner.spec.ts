@@ -93,7 +93,7 @@ describe(MochaTestRunner.name, () => {
       expect(sut.rootHooks).eq(expectedRootHooks);
     });
 
-    it.only('should reject when requires contains "esm" (see #3014)', async () => {
+    it('should reject when requires contains "esm" (see #3014)', async () => {
       const requires = ['esm', 'ts-node/require'];
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
       await expect(sut.init()).rejectedWith(
