@@ -51,6 +51,11 @@ export class MochaTestRunner implements TestRunner {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
     if (this.mochaOptions.require) {
+      if (this.mochaOptions.require.includes('esm')) {
+        throw new Error(
+          'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
+        );
+      }
       this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
     }
   }

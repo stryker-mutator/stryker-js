@@ -104,6 +104,8 @@ Default: `[]`
 
 Set mocha's [`require` option](https://mochajs.org/#-r---require-module-name)
 
+_Note:_ if you want to require [`esm`](https://www.npmjs.com/package/esm), you will need to use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See [#3014](https://github.com/stryker-mutator/stryker-js/issues/3014) for more information.
+
 ### `mochaOptions.async-only` [`boolean`]
 
 Default: `false`

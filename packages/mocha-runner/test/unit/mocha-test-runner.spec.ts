@@ -92,6 +92,14 @@ describe(MochaTestRunner.name, () => {
 
       expect(sut.rootHooks).eq(expectedRootHooks);
     });
+
+    it('should reject when requires contains "esm" (see #3014)', async () => {
+      const requires = ['esm', 'ts-node/require'];
+      mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
+      await expect(sut.init()).rejectedWith(
+        'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
+      );
+    });
   });
 
   describe(MochaTestRunner.prototype.dryRun.name, () => {
