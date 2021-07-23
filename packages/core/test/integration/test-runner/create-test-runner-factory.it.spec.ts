@@ -14,9 +14,9 @@ import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/test-utils';
 import { coreTokens } from '../../../src/di';
 
-import { CounterTestRunner } from './additional-test-runners';
+import { CounterTestRunner, SecondTimeIsTheCharm } from './additional-test-runners';
 
-describe(`${createTestRunnerFactory.name} integration`, () => {
+describe.only(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => Required<TestRunner>;
   let sut: Required<TestRunner>;
   let loggingContext: LoggingClientContext;
@@ -51,7 +51,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     await loggingServer.dispose();
 
     if (fs.existsSync(CounterTestRunner.COUNTER_FILE)) {
-      await fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
+      fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
     }
   });
 
@@ -65,8 +65,8 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     return sut.dryRun({ timeout, coverageAnalysis: 'all' });
   }
 
-  function actMutantRun() {
-    return sut.mutantRun(factory.mutantRunOptions());
+  function actMutantRun(options = factory.mutantRunOptions()) {
+    return sut.mutantRun(options);
   }
 
   it('should pass along the coverage result from the test runner behind', async () => {
@@ -161,6 +161,20 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
           logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection')
       )
     ).ok;
+  });
+
+  it('should retry when a mutant run results in an empty survived result', async () => {
+    // Arrange
+    fs.writeFileSync(SecondTimeIsTheCharm.COUNTER_FILE, '0');
+    await arrangeSut('second-time-is-the-charm');
+
+    // Act
+    const result = await actMutantRun();
+
+    // Assert
+    assertions.expectKilled(result);
+    expect(result.nrOfTests).eq(1);
+    expect(fs.readFileSync(SecondTimeIsTheCharm.COUNTER_FILE, 'utf-8')).eq('2');
   });
 
   it('should restart the worker after it has exceeded the maxTestRunnerReuse', async () => {

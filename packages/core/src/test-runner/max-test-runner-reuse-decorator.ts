@@ -27,12 +27,6 @@ export class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
     return super.mutantRun(options);
   }
 
-  private async recover(): Promise<void> {
-    await this.dispose();
-    this.createInnerRunner();
-    return this.init();
-  }
-
   public dispose(): Promise<any> {
     this.runs = 0;
     return super.dispose();
