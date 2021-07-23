@@ -16,7 +16,7 @@ import { coreTokens } from '../../../src/di';
 
 import { CounterTestRunner, SecondTimeIsTheCharm } from './additional-test-runners';
 
-describe.only(`${createTestRunnerFactory.name} integration`, () => {
+describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => Required<TestRunner>;
   let sut: Required<TestRunner>;
   let loggingContext: LoggingClientContext;
