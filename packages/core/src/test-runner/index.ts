@@ -30,7 +30,16 @@ export function createTestRunnerFactory(
           new RetryRejectedDecorator(
             () =>
               new MaxTestRunnerReuseDecorator(
-                () => new TimeoutDecorator(() => new ChildProcessTestRunnerDecorator(options, sandbox.workingDirectory, loggingContext)),
+                () =>
+                  new TimeoutDecorator(
+                    () =>
+                      new ChildProcessTestRunnerDecorator(
+                        options,
+                        sandbox.workingDirectory,
+                        loggingContext,
+                        getLogger(ChildProcessTestRunnerDecorator.name)
+                      )
+                  ),
                 options
               )
           ),

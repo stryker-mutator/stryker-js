@@ -112,6 +112,10 @@ class ErroredTestRunner implements TestRunner {
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
   }
+
+  public dispose(): Promise<void> {
+    throw new Error('Test runner exited with exit code 1');
+  }
 }
 
 class RejectInitRunner implements TestRunner {
