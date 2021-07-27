@@ -1,193 +1,161 @@
-import { DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { expect } from 'chai';
-import { TestResults } from 'karma';
-import { MutantCoverage } from '@stryker-mutator/api/core';
+// import { DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+// import { expect } from 'chai';
+// import { TestResults } from 'karma';
+// import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import { StrykerReporter, KarmaSpec } from '../../../src/karma-plugins/stryker-reporter';
+// import { StrykerReporter, KarmaSpec } from '../../../src/karma-plugins/stryker-reporter';
 
-describe('StrykerReporter', () => {
-  let sut: StrykerReporter;
+// describe('StrykerReporter', () => {
+//   let sut: StrykerReporter;
 
-  beforeEach(() => {
-    sut = StrykerReporter.instance;
-  });
+//   beforeEach(() => {
+//     sut = StrykerReporter.instance;
+//   });
 
-  afterEach(() => {
-    StrykerReporter.instance.removeAllListeners();
-  });
+//   it('should provide a singleton instance', () => {
+//     expect(StrykerReporter.instance).eq(StrykerReporter.instance);
+//     expect(StrykerReporter.instance).instanceOf(StrykerReporter);
+//   });
 
-  it('should provide a singleton instance', () => {
-    expect(StrykerReporter.instance).eq(StrykerReporter.instance);
-    expect(StrykerReporter.instance).instanceOf(StrykerReporter);
-  });
+//   describe('onSpecComplete', () => {
+//     let events: () => TestResult[];
 
-  describe('onSpecComplete', () => {
-    let events: () => TestResult[];
+//     beforeEach(() => {
+//       events = listenTo('test_result');
+//     });
+//     it('should emit "test_result"', () => {
+//       sut.onSpecComplete(
+//         undefined,
+//         karmaSpec({
+//           id: '23',
+//           description: '3',
+//           success: true,
+//           suite: ['1', '2'],
+//           time: 64,
+//         })
+//       );
+//       const expectedTestResult: TestResult = {
+//         id: '23',
+//         name: '1 2 3',
+//         status: TestStatus.Success,
+//         timeSpentMs: 64,
+//       };
+//       expect(events()).lengthOf(1);
+//       expect(events()[0]).deep.eq(expectedTestResult);
+//     });
 
-    beforeEach(() => {
-      events = listenTo('test_result');
-    });
-    it('should emit "test_result"', () => {
-      sut.onSpecComplete(
-        undefined,
-        karmaSpec({
-          id: '23',
-          description: '3',
-          success: true,
-          suite: ['1', '2'],
-          time: 64,
-        })
-      );
-      const expectedTestResult: TestResult = {
-        id: '23',
-        name: '1 2 3',
-        status: TestStatus.Success,
-        timeSpentMs: 64,
-      };
-      expect(events()).lengthOf(1);
-      expect(events()[0]).deep.eq(expectedTestResult);
-    });
+//     it('should convert "skipped" to Timeout', () => {
+//       sut.onSpecComplete(undefined, karmaSpec({ skipped: true }));
+//       expect(events()[0]).include({
+//         status: TestStatus.Skipped,
+//       });
+//     });
 
-    it('should convert "skipped" to Timeout', () => {
-      sut.onSpecComplete(undefined, karmaSpec({ skipped: true }));
-      expect(events()[0]).include({
-        status: TestStatus.Skipped,
-      });
-    });
+//     it('should convert "success" = false to Failed', () => {
+//       sut.onSpecComplete(undefined, karmaSpec({ success: false }));
+//       expect(events()[0]).include({
+//         status: TestStatus.Failed,
+//       });
+//     });
 
-    it('should convert "success" = false to Failed', () => {
-      sut.onSpecComplete(undefined, karmaSpec({ success: false }));
-      expect(events()[0]).include({
-        status: TestStatus.Failed,
-      });
-    });
+//     it('should assemble the right name when suites is undefined', () => {
+//       sut.onSpecComplete(undefined, karmaSpec({ suite: [], description: 'foobar' }));
+//       expect(events()[0]).include({ name: 'foobar' });
+//     });
+//   });
 
-    it('should assemble the right name when suites is undefined', () => {
-      sut.onSpecComplete(undefined, karmaSpec({ suite: [], description: 'foobar' }));
-      expect(events()[0]).include({ name: 'foobar' });
-    });
-  });
+//   describe('onRunComplete', () => {
+//     let events: () => DryRunStatus[];
 
-  describe('onRunComplete', () => {
-    let events: () => DryRunStatus[];
+//     beforeEach(() => {
+//       events = listenTo('run_complete');
+//     });
 
-    beforeEach(() => {
-      events = listenTo('run_complete');
-    });
+//     it('should emit "run_complete"', () => {
+//       sut.onRunComplete(undefined, testResults());
+//       expect(events()).lengthOf(1);
+//     });
 
-    it('should emit "run_complete"', () => {
-      sut.onRunComplete(testResults());
-      expect(events()).lengthOf(1);
-    });
+//     it('should convert error to RunState.Error', () => {
+//       sut.onRunComplete(undefined, testResults({ error: true }));
+//       expect(events()[0]).eq(DryRunStatus.Error);
+//     });
 
-    it('should convert error to RunState.Error', () => {
-      sut.onRunComplete(
-        testResults({
-          error: true,
-        })
-      );
-      expect(events()[0]).eq(DryRunStatus.Error);
-    });
+//     it('should convert disconnected to RunState.Timeout', () => {
+//       sut.onRunComplete(undefined, testResults({ disconnected: true }));
+//       expect(events()[0]).eq(DryRunStatus.Timeout);
+//     });
+//   });
 
-    it('should convert disconnected to RunState.Timeout', () => {
-      sut.onRunComplete(
-        testResults({
-          disconnected: true,
-        })
-      );
-      expect(events()[0]).eq(DryRunStatus.Timeout);
-    });
-  });
+//   describe('onBrowserReady', () => {
+//     it('should emit "browsers_ready"', () => {
+//       const events = listenTo('browsers_ready');
+//       sut.onBrowsersReady();
+//       expect(events()).lengthOf(1);
+//     });
+//   });
 
-  describe('onBrowserReady', () => {
-    it('should emit "browsers_ready"', () => {
-      const events = listenTo('browsers_ready');
-      sut.onBrowsersReady();
-      expect(events()).lengthOf(1);
-    });
-  });
+//   describe('onBrowserComplete', () => {
+//     it('should emit "coverage_report"', () => {
+//       const events = listenTo('coverage_report');
+//       const expectedCoverage: MutantCoverage = { static: { [1]: 4 }, perTest: {} };
+//       sut.onBrowserComplete(undefined, { mutantCoverage: expectedCoverage });
+//       expect(events()).lengthOf(1);
+//       expect(events()[0]).eq(expectedCoverage);
+//     });
+//   });
 
-  describe('onListening', () => {
-    it('should emit "server_start" with port', () => {
-      const port = 1924;
-      const events = listenTo('server_start');
-      sut.onListening(port);
-      expect(events()).lengthOf(1);
-      expect(events()[0]).eq(port);
-    });
-  });
+//   describe('onBrowserError', () => {
+//     let events: () => string[];
 
-  describe('onBrowserComplete', () => {
-    it('should emit "coverage_report"', () => {
-      const events = listenTo('coverage_report');
-      const expectedCoverage: MutantCoverage = { static: { [1]: 4 }, perTest: {} };
-      sut.onBrowserComplete(undefined, { mutantCoverage: expectedCoverage });
-      expect(events()).lengthOf(1);
-      expect(events()[0]).eq(expectedCoverage);
-    });
-  });
+//     beforeEach(() => {
+//       events = listenTo('browser_error');
+//     });
 
-  describe('onBrowserError', () => {
-    let events: () => string[];
+//     it('should emit "browser_error" with error message', () => {
+//       sut.onBrowserError(undefined, { message: 'foobar error' });
+//       expect(events()).lengthOf(1);
+//       expect(events()[0]).eq('foobar error');
+//     });
 
-    beforeEach(() => {
-      events = listenTo('browser_error');
-    });
+//     it('should emit "browser_error" with error', () => {
+//       sut.onBrowserError(undefined, 'foobar error');
+//       expect(events()).lengthOf(1);
+//       expect(events()[0]).eq('foobar error');
+//     });
+//   });
 
-    it('should emit "browser_error" with error message', () => {
-      sut.onBrowserError(undefined, { message: 'foobar error' });
-      expect(events()).lengthOf(1);
-      expect(events()[0]).eq('foobar error');
-    });
+//   function listenTo(eventName: string) {
+//     const events: any[] = [];
+//     sut.on(eventName, (event: any) => events.push(event));
+//     return () => events;
+//   }
 
-    it('should emit "browser_error" with error', () => {
-      sut.onBrowserError(undefined, 'foobar error');
-      expect(events()).lengthOf(1);
-      expect(events()[0]).eq('foobar error');
-    });
-  });
+//   function karmaSpec(overrides?: Partial<KarmaSpec>): KarmaSpec {
+//     return Object.assign(
+//       {
+//         description: 'baz',
+//         id: '1',
+//         log: [],
+//         skipped: false,
+//         success: true,
+//         suite: ['foo', 'bar'],
+//         time: 42,
+//       },
+//       overrides
+//     );
+//   }
 
-  describe('onCompileError', () => {
-    it('should emit "compile_error" with the errors', () => {
-      const events = listenTo('compile_error');
-      const expectedErrors = ['foo', 'bar'];
-      sut.onCompileError(expectedErrors);
-      expect(events()).lengthOf(1);
-      expect(events()[0]).eq(expectedErrors);
-    });
-  });
-
-  function listenTo(eventName: string) {
-    const events: any[] = [];
-    sut.on(eventName, (event: any) => events.push(event));
-    return () => events;
-  }
-
-  function karmaSpec(overrides?: Partial<KarmaSpec>): KarmaSpec {
-    return Object.assign(
-      {
-        description: 'baz',
-        id: '1',
-        log: [],
-        skipped: false,
-        success: true,
-        suite: ['foo', 'bar'],
-        time: 42,
-      },
-      overrides
-    );
-  }
-
-  function testResults(overrides?: Partial<TestResults>): TestResults {
-    return Object.assign(
-      {
-        disconnected: false,
-        error: false,
-        exitCode: 0,
-        failed: 0,
-        success: 0,
-      },
-      overrides
-    );
-  }
-});
+//   function testResults(overrides?: Partial<TestResults>): TestResults {
+//     return Object.assign(
+//       {
+//         disconnected: false,
+//         error: false,
+//         exitCode: 0,
+//         failed: 0,
+//         success: 0,
+//       },
+//       overrides
+//     );
+//   }
+// });

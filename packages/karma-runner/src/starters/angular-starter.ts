@@ -10,7 +10,7 @@ import { NgConfigOptions, NgTestArguments } from '../../src-generated/karma-runn
 
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 
-export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<void> {
+export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<number> {
   const logger: Logger = getLogger(path.basename(__filename));
   verifyAngularCliVersion();
 
@@ -44,6 +44,7 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
         `\`ng test\` command failed with exit code ${exitCode}. Please run with logLevel 'trace' to see the angular-cli console output (actual command was ${actualCommand})`
       );
     }
+    return exitCode;
   });
 }
 

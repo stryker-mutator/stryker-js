@@ -49,8 +49,8 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
 
     describe('dryRun()', () => {
@@ -85,8 +85,8 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     describe('dryRun', () => {
       it('should report the first failed test (bail)', async () => {
@@ -117,8 +117,8 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     describe('dryRun', () => {
       it('should report Error with the error message', async () => {
@@ -143,8 +143,8 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -164,8 +164,8 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -187,12 +187,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       if (dummyServer) {
         await dummyServer.dispose();
       }
-      StrykerReporter.instance.removeAllListeners();
+      await sut.dispose();
     });
 
     it('should choose different port automatically and report Complete without errors', async () => {
       const actualResult = await sut.dryRun(factory.dryRunOptions());
-      expect(sut.port).not.eq(dummyServer.port);
+      expect(StrykerReporter.instance.karmaConfig!.port).not.eq(dummyServer.port);
       assertions.expectCompleted(actualResult);
     });
   });

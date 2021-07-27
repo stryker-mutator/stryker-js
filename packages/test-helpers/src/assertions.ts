@@ -15,12 +15,17 @@ import {
   TestResult,
   FailedTestResult,
   TestStatus,
+  TimeoutMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { File } from '@stryker-mutator/api/core';
 import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
   assert.strictEqual(result.status, MutantRunStatus.Killed, result.status === MutantRunStatus.Error ? result.errorMessage : '');
+}
+
+export function expectTimeout(result: MutantRunResult): asserts result is TimeoutMutantRunResult {
+  assert.strictEqual(result.status, MutantRunStatus.Timeout);
 }
 
 export function expectFailed(result: TestResult): asserts result is FailedTestResult {
