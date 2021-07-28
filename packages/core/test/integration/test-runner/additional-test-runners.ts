@@ -54,25 +54,6 @@ export class CounterTestRunner implements TestRunner {
   }
 }
 
-export class SecondTimeIsTheCharm implements TestRunner {
-  public static COUNTER_FILE = `${os.tmpdir()}/stryker-js-test-second-time-is-the-charm-file`;
-  private count = parseInt(fs.readFileSync(SecondTimeIsTheCharm.COUNTER_FILE, 'utf-8'));
-
-  public async dryRun(): Promise<DryRunResult> {
-    return factory.completeDryRunResult();
-  }
-
-  public async mutantRun(): Promise<MutantRunResult> {
-    this.count++;
-    fs.writeFileSync(SecondTimeIsTheCharm.COUNTER_FILE, `${this.count}`);
-    if (this.count === 2) {
-      return factory.killedMutantRunResult({ nrOfTests: 1 });
-    } else {
-      return factory.survivedMutantRunResult({ nrOfTests: 0 });
-    }
-  }
-}
-
 class DirectResolvedTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'coverageObject';
@@ -208,7 +189,6 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'second-time-is-the-charm', SecondTimeIsTheCharm),
   declareClassPlugin(PluginKind.TestRunner, 'counter', CounterTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
