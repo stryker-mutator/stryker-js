@@ -3,21 +3,24 @@ import path from 'path';
 import decamelize from 'decamelize';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import semver from 'semver';
-
 import { requireResolve } from '@stryker-mutator/util';
 
 import { NgConfigOptions, NgTestArguments } from '../../src-generated/karma-runner-options';
 
+import { StartedProject } from './started-project';
+
 const MIN_ANGULAR_CLI_VERSION = '6.1.0';
 
-export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<number> {
+type AngularCli = (options: { testing?: boolean; cliArgs: string[] }) => Promise<number>;
+
+export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigOptions): Promise<StartedProject> {
   const logger: Logger = getLogger(path.basename(__filename));
   verifyAngularCliVersion();
 
   // Make sure require angular cli from inside this function, that way it won't break if angular isn't installed and this file is required.
-  let cli: any = requireResolve('@angular/cli');
+  let cli = requireResolve('@angular/cli') as AngularCli;
   if ('default' in cli) {
-    cli = cli.default;
+    cli = (cli as unknown as { default: AngularCli }).default;
   }
   const cliArgs = ['test', '--progress=false', `--karma-config=${require.resolve('./stryker-karma.conf')}`];
   if (ngConfig?.testArguments) {
@@ -34,18 +37,9 @@ export async function start(getLogger: LoggerFactoryMethod, ngConfig?: NgConfigO
   }
   const actualCommand = `ng ${cliArgs.join(' ')}`;
   logger.debug(`Starting Angular tests: ${actualCommand}`);
-  return cli({
-    cliArgs,
-    inputStream: process.stdin,
-    outputStream: process.stdout,
-  }).then((exitCode: number) => {
-    if (exitCode > 0) {
-      throw new Error(
-        `\`ng test\` command failed with exit code ${exitCode}. Please run with logLevel 'trace' to see the angular-cli console output (actual command was ${actualCommand})`
-      );
-    }
-    return exitCode;
-  });
+  return {
+    exitPromise: cli({ cliArgs }),
+  };
 }
 
 function verifyAngularCliVersion() {

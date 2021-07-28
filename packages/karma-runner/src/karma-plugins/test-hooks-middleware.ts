@@ -54,7 +54,7 @@ export class TestHooksMiddleware {
     }
   }
 
-  public configureActiveMutant({ activeMutant, testFilter }: MutantRunOptions): void {
+  public configureMutantRun({ activeMutant, testFilter }: MutantRunOptions): void {
     this.configureCoverageAnalysis('off');
     this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};
     window.${NAMESPACE}.${ACTIVE_MUTANT} = "${activeMutant.id}";`;

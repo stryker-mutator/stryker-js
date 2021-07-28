@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
-describe.only('Infinite loop', () => {
+describe('Infinite loop', () => {
   let sut: KarmaTestRunner;
   beforeEach(async () => {
     const karmaOptions = {
@@ -23,7 +23,7 @@ describe.only('Infinite loop', () => {
     await sut.dispose();
   });
 
-  it.only('should report a timeout eventually and be able to recover from it', async () => {
+  it('should report a timeout eventually and be able to recover from it', async () => {
     // This is a slow test, so I decided to put 2 tests into one 🤷‍♀️
     // Act
     const result = await sut.mutantRun(factory.mutantRunOptions());

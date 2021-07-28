@@ -24,8 +24,10 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    this.exitPromise = this.starter.start();
-    await StrykerReporter.instance.whenBrowsersReady();
+    const browsersReadyPromise = StrykerReporter.instance.whenBrowsersReady();
+    const { exitPromise } = await this.starter.start();
+    this.exitPromise = exitPromise;
+    await browsersReadyPromise;
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -34,15 +36,15 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    TestHooksMiddleware.instance.configureActiveMutant(options);
+    TestHooksMiddleware.instance.configureMutantRun(options);
     const dryRunResult = await this.run();
     return toMutantRunResult(dryRunResult);
   }
 
-  private async run(): Promise<DryRunResult> {
+  private run(): Promise<DryRunResult> {
+    const runPromise = StrykerReporter.instance.whenRunCompletes();
     this.runServer();
-    const runResult = await StrykerReporter.instance.whenRunCompletes();
-    return runResult;
+    return runPromise;
   }
 
   public async dispose(): Promise<void> {

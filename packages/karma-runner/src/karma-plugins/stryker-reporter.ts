@@ -13,7 +13,7 @@ export interface KarmaSpec {
   log: string[];
 }
 
-interface Browser {
+export interface Browser {
   id: string;
   state: string;
 }
@@ -51,7 +51,7 @@ export class StrykerReporter implements karma.Reporter {
     return this._instance;
   }
 
-  public readonly onBrowsersReady = (_s: unknown, browsers: unknown[]): void => {
+  public readonly onBrowsersReady = (): void => {
     this.initTask?.resolve();
     this.runTask?.resolve(this.collectRunResult());
   };
@@ -70,7 +70,7 @@ export class StrykerReporter implements karma.Reporter {
     });
   }
 
-  public readonly onSpecComplete: (_browser: any, spec: KarmaSpec) => void = (_browser: any, spec: KarmaSpec) => {
+  public readonly onSpecComplete = (_browser: unknown, spec: KarmaSpec): void => {
     const name = spec.suite.reduce((specName, suite) => specName + suite + ' ', '') + spec.description;
     const id = spec.id || name;
     if (spec.skipped) {
@@ -93,7 +93,7 @@ export class StrykerReporter implements karma.Reporter {
         name,
         timeSpentMs: spec.time,
         status: TestStatus.Failed,
-        failureMessage: spec.log.join(','),
+        failureMessage: spec.log.join(', '),
       });
     }
   };
@@ -124,7 +124,6 @@ export class StrykerReporter implements karma.Reporter {
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public readonly onBrowserError = (browser: Browser, error: any): void => {
-    // Karma 2.0 has different error messages
     if (this.initTask) {
       this.initTask.reject(error);
     } else {
@@ -133,6 +132,7 @@ export class StrykerReporter implements karma.Reporter {
         this.karmaServer!.get('launcher').restart(browser.id);
         this.browserIsRestarting = true;
       }
+      // Karma 2.0 has different error messages
       if (error.message) {
         this.errorMessage = error.message;
       } else {

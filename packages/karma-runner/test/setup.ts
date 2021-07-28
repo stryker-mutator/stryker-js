@@ -6,6 +6,8 @@ import sinonChai from 'sinon-chai';
 
 import sinon from 'sinon';
 
+import { StrykerReporter } from '../src/karma-plugins/stryker-reporter';
+
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
@@ -20,5 +22,8 @@ export const mochaHooks = {
   afterEach(): void {
     testInjector.reset();
     sinon.restore();
+
+    StrykerReporter.instance.karmaServer = undefined;
+    StrykerReporter.instance.karmaConfig = undefined;
   },
 };

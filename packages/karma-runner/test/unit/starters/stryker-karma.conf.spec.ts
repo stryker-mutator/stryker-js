@@ -6,9 +6,8 @@ import { Config, ConfigOptions, ClientOptions } from 'karma';
 import sinon from 'sinon';
 import * as utils from '@stryker-mutator/util';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import sut = require('../../../src/starters/stryker-karma.conf');
-import { StrykerReporter } from '../../../src/karma-plugins/stryker-reporter';
+import sut from '../../../src/starters/stryker-karma.conf';
+import { strykerReporterFactory } from '../../../src/karma-plugins/stryker-reporter';
 import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware';
 
 describe('stryker-karma.conf.js', () => {
@@ -159,7 +158,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
     expect(config.reporters).include('StrykerReporter');
     expect(config.plugins).include('karma-*');
-    expect(config.plugins).deep.include({ ['reporter:StrykerReporter']: ['value', StrykerReporter.instance] });
+    expect(config.plugins).deep.include({ ['reporter:StrykerReporter']: ['factory', strykerReporterFactory] });
   });
 
   it('should allow custom plugins', () => {
