@@ -52,8 +52,6 @@ export class KarmaTestRunner implements TestRunner {
       await StrykerReporter.instance.karmaServer.stop();
       await this.exitPromise;
     }
-    StrykerReporter.instance.karmaServer = undefined;
-    StrykerReporter.instance.karmaConfig = undefined;
   }
 
   private loadSetup(options: StrykerOptions): StrykerKarmaSetup {

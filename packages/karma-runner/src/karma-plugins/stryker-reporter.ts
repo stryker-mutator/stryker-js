@@ -109,7 +109,7 @@ export class StrykerReporter implements karma.Reporter {
   public readonly onRunComplete = (_browsers: unknown, runResult: karma.TestResults): void => {
     this.karmaRunResult = runResult;
     if (!this.browserIsRestarting) {
-      this.runTask?.resolve(this.collectRunResult());
+      this.runTask!.resolve(this.collectRunResult());
     }
   };
 

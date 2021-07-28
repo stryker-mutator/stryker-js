@@ -1,8 +1,8 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
+import { testInjector, assertions, factory, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import karma, { TestResults } from 'karma';
+import type { TestResults } from 'karma';
 import sinon from 'sinon';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -18,13 +18,14 @@ import * as projectStarter from '../../src/starters/project-starter';
 import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
 import { Browser, KarmaSpec, StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { TestHooksMiddleware } from '../../src/karma-plugins/test-hooks-middleware';
+import { karma } from '../../src/karma-wrapper';
 
 // Unit tests for both the KarmaTestRunner and the StrykerReporter, as they are closely related
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<projectStarter.ProjectStarter>;
   let setGlobalsStub: sinon.SinonStub;
-  let karmaRunStub: sinon.SinonStub;
+  let karmaRunStub: sinon.SinonStubbedMember<typeof karma.runner.run>;
   let getLogger: LoggerFactoryMethod;
   let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
 
@@ -130,7 +131,7 @@ describe(KarmaTestRunner.name, () => {
 
     beforeEach(() => {
       sut = createSut();
-      karmaRunStub.callsArgOn(1, 0);
+      karmaRunStub.callsArgOnWith(1, null, 0);
     });
 
     function actDryRun({
@@ -178,6 +179,17 @@ describe(KarmaTestRunner.name, () => {
       const actualResult = await actDryRun({ specResults });
       assertions.expectCompleted(actualResult);
       expect(actualResult.tests).deep.eq(expectedTests);
+    });
+
+    it('should run karma', async () => {
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+      await actDryRun({});
+      expect(karmaRunStub).calledWith(StrykerReporter.instance.karmaConfig, sinon.match.func);
+    });
+
+    it('should log when karma run is done', async () => {
+      await actDryRun({});
+      expect(testInjector.logger.debug).calledWith('karma run done with ', 0);
     });
 
     it('should clear run results between runs', async () => {
@@ -287,9 +299,47 @@ describe(KarmaTestRunner.name, () => {
       // Assert
       expect(launcherMock.restart).calledWith('42');
       StrykerReporter.instance.onRunComplete(null, createKarmaTestResults({ disconnected: true }));
+      await tick();
       expect(runCompleted).false;
       StrykerReporter.instance.onBrowsersReady();
       await onGoingRun;
+    });
+  });
+
+  describe('dispose', () => {
+    it('should not do anything if there is no karma server', async () => {
+      const sut = createSut();
+      await expect(sut.dispose()).not.rejected;
+    });
+
+    it('should stop the karma server', async () => {
+      const karmaServerMock = sinon.createStubInstance(karma.Server);
+      StrykerReporter.instance.karmaServer = karmaServerMock;
+      const sut = createSut();
+      await sut.dispose();
+      expect(karmaServerMock.stop).called;
+    });
+
+    it('should await the exit promise provided at startup', async () => {
+      // Arrange
+      const sut = createSut();
+      const karmaServerMock = sinon.createStubInstance(karma.Server);
+      StrykerReporter.instance.karmaServer = karmaServerMock;
+      const exitTask = new Task<number>();
+      let disposeResolved = false;
+      projectStarterMock.start.resolves({ exitPromise: exitTask.promise });
+      const initPromise = sut.init();
+      StrykerReporter.instance.onBrowsersReady();
+      await initPromise;
+
+      // Act
+      const onGoingDisposal = sut.dispose().then(() => (disposeResolved = true));
+
+      // Assert
+      await tick();
+      expect(disposeResolved).false;
+      exitTask.resolve(1);
+      await onGoingDisposal;
     });
   });
 
