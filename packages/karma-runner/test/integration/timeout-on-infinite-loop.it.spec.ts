@@ -1,11 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
-
 
 describe('Infinite loop', () => {
   let sut: KarmaTestRunner;
