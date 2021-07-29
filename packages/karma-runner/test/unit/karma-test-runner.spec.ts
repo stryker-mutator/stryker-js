@@ -319,7 +319,7 @@ describe(KarmaTestRunner.name, () => {
 
     it('should restart the browser and wait until it is restarted when it gets disconnected (issue #2989)', async () => {
       // Arrange
-      const launcherMock = arrangeLauncherMock();
+      const { launcher, karmaServer } = arrangeLauncherMock();
 
       // Act
       let runCompleted = false;
@@ -328,7 +328,8 @@ describe(KarmaTestRunner.name, () => {
       StrykerReporter.instance.onBrowserError(createBrowser({ id: '42', state: 'DISCONNECTED' }), 'disconnected');
 
       // Assert
-      expect(launcherMock.restart).calledWith('42');
+      expect(launcher.restart).calledWith('42');
+      expect(karmaServer.get).calledWith('launcher');
       StrykerReporter.instance.onRunComplete(null, createKarmaTestResults({ disconnected: true }));
       await tick();
       expect(runCompleted).false;
@@ -404,7 +405,7 @@ function arrangeLauncherMock() {
   const launcherMock = sinon.createStubInstance(karma.launcher.Launcher);
   StrykerReporter.instance.karmaServer = karmaServerMock;
   karmaServerMock.get.returns(launcherMock);
-  return launcherMock;
+  return { launcher: launcherMock, karmaServer: karmaServerMock };
 }
 
 function createKarmaSpec(overrides?: Partial<KarmaSpec>): KarmaSpec {

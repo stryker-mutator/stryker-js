@@ -15,7 +15,7 @@ function setDefaultOptions(config: Config) {
 }
 
 function setUserKarmaConfigFile(config: Config, log: Logger) {
-  if (globalSettings.karmaConfigFile && typeof globalSettings.karmaConfigFile === 'string') {
+  if (globalSettings.karmaConfigFile) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
     try {
@@ -31,7 +31,7 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
           `Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`
         );
       } else {
-        log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+        throw error; // oops
       }
     }
   }

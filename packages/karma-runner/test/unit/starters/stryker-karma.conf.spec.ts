@@ -80,6 +80,12 @@ describe('stryker-karma.conf.js', () => {
     expect(requireModuleStub).calledWith(path.resolve(expectedKarmaConfigFile));
   });
 
+  it("should throw if the user's karma config file didn't export a function", () => {
+    sut.setGlobals({ karmaConfigFile: 'foo.js' });
+    requireModuleStub.returns({ foo: 'bar' });
+    expect(() => sut(config)).throws(`Karma config file "${path.resolve('foo.js')}" should export a function! Found: object`);
+  });
+
   it('should set user configuration from custom karma config', () => {
     sut.setGlobals({ karmaConfig: { basePath: 'foobar' } });
     sut(config);
@@ -119,7 +125,9 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect((config.client as any).jasmine).deep.eq({ random: false, failFast: true });
+    const clientConfig = config.client as any;
+    expect(clientConfig.jasmine).deep.eq({ random: false, failFast: true });
+    expect(clientConfig.mocha).undefined;
   });
 
   it('should force bail options when dealing with mocha', () => {
@@ -131,7 +139,9 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    expect((config.client as any).mocha).deep.include({ bail: true });
+    const clientConfig = config.client as any;
+    expect(clientConfig.jasmine).undefined;
+    expect(clientConfig.mocha).deep.include({ bail: true });
   });
 
   it('should configure the tests hooks middleware', () => {
@@ -156,9 +166,20 @@ describe('stryker-karma.conf.js', () => {
 
   it('should configure the stryker reporter', () => {
     sut(config);
-    expect(config.reporters).include('StrykerReporter');
+    expect(config.reporters).deep.eq(['StrykerReporter']);
     expect(config.plugins).include('karma-*');
     expect(config.plugins).deep.include({ ['reporter:StrykerReporter']: ['factory', strykerReporterFactory] });
+  });
+
+  it('should configure the stryker coverage adapter', () => {
+    sut(config);
+    expect(config.files![0]).deep.eq({
+      pattern: require.resolve('../../../src/karma-plugins/stryker-mutant-coverage-adapter'),
+      included: true,
+      watched: false,
+      served: true,
+      nocache: true,
+    });
   });
 
   it('should allow custom plugins', () => {
@@ -188,6 +209,11 @@ describe('stryker-karma.conf.js', () => {
       basePath: path.resolve(expectedBasePath),
       configFile: path.resolve('../foobar.conf.js'),
     });
+  });
+
+  it('should default basePath to cwd', () => {
+    sut(config);
+    expect(config).deep.include({ basePath: process.cwd() });
   });
 });
 
