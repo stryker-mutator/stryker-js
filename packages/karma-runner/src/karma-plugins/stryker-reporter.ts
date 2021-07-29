@@ -41,6 +41,8 @@ export class StrykerReporter implements karma.Reporter {
   private testResults: TestResult[] = [];
   private errorMessage: string | undefined;
   private mutantCoverage: MutantCoverage | undefined;
+  private hitCount: number | undefined;
+  private hitLimit: number | undefined;
   private initTask: Task | undefined;
   private runTask: Task<DryRunResult> | undefined;
   private karmaRunResult: karma.TestResults | undefined;
@@ -55,6 +57,11 @@ export class StrykerReporter implements karma.Reporter {
     this.initTask?.resolve();
     this.runTask?.resolve(this.collectRunResult());
   };
+
+  public configureHitLimit(hitLimit: number | undefined): void {
+    this.hitLimit = hitLimit;
+    this.hitCount = undefined;
+  }
 
   public whenBrowsersReady(): Promise<void> {
     this.initTask = new Task();
@@ -113,13 +120,15 @@ export class StrykerReporter implements karma.Reporter {
     }
   };
 
-  public readonly onBrowserComplete: (
+  public readonly onBrowserComplete = (
     _browser: any,
     result: {
-      mutantCoverage: MutantCoverage;
+      mutantCoverage: MutantCoverage | undefined;
+      hitCount: number | undefined;
     }
-  ) => void = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
+  ): void => {
     this.mutantCoverage = result.mutantCoverage;
+    this.hitCount = result.hitCount;
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -142,6 +151,9 @@ export class StrykerReporter implements karma.Reporter {
   };
 
   private collectRunResult(): DryRunResult {
+    if (this.hitCount !== undefined && this.hitLimit !== undefined && this.hitCount > this.hitLimit) {
+      return { status: DryRunStatus.Timeout };
+    }
     if (this.karmaRunResult?.disconnected) {
       return { status: DryRunStatus.Timeout };
     } else if (this.karmaRunResult?.error) {

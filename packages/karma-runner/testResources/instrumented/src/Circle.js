@@ -46,7 +46,15 @@ function stryMutAct_9fa48(id) {
   var ns = stryNS_9fa48();
 
   function isActive(id) {
-    return ns.activeMutant === id;
+    if (ns.activeMutant === id) {
+      if (ns.hitCount !== void 0 && ++ns.hitCount > ns.hitCountLimit) {
+        throw new Error('Stryker: Hit count limit reached (' + ns.hitCount + ')');
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   stryMutAct_9fa48 = isActive;

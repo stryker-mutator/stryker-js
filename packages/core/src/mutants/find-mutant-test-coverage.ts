@@ -1,7 +1,6 @@
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, CoveragePerTestId, MutantTestCoverage, MutantCoverage } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { coreTokens } from '../di';
@@ -21,13 +20,16 @@ export function findMutantTestCoverage(
 
 function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: readonly Mutant[], logger: Logger): MutantTestCoverage[] {
   const testsByMutantId = findTestsByMutant(dryRunResult.mutantCoverage?.perTest, dryRunResult.tests, logger);
+  const hitsByMutantId = findHitsByMutantId(dryRunResult.mutantCoverage);
   const timeSpentAllTests = calculateTotalTime(dryRunResult.tests);
 
   const mutantCoverage = mutants.map((mutant): MutantTestCoverage => {
+    const hitCount = hitsByMutantId.get(mutant.id);
     if (mutant.status) {
       return {
         ...mutant,
         static: false,
+        hitCount,
         estimatedNetTime: 0,
       };
     } else if (!dryRunResult.mutantCoverage || dryRunResult.mutantCoverage.static[mutant.id] > 0) {
@@ -35,6 +37,7 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
       return {
         ...mutant,
         estimatedNetTime: timeSpentAllTests,
+        hitCount,
         coveredBy: undefined,
         static: true,
       };
@@ -45,6 +48,7 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
         return {
           ...mutant,
           estimatedNetTime: calculateTotalTime(tests),
+          hitCount,
           coveredBy: toTestIds(tests),
           static: false,
         };
@@ -53,6 +57,7 @@ function mapToMutantTestCoverage(dryRunResult: CompleteDryRunResult, mutants: re
         return {
           ...mutant,
           estimatedNetTime: 0,
+          hitCount,
           coveredBy: [],
           static: false,
         };
@@ -101,4 +106,23 @@ function toTestIds(testResults: Iterable<TestResult>): string[] {
     result.push(test.id);
   }
   return result;
+}
+
+/**
+ * Find the number of hits per mutant. This is the total amount of times the mutant was executed during the dry test run.
+ * @param coverageData The coverage data from the initial test run
+ * @returns The hits by mutant id
+ */
+function findHitsByMutantId(coverageData: MutantCoverage | undefined): Map<string, number> {
+  const hitsByMutant = new Map<string, number>();
+  if (coverageData) {
+    // We don't care about the exact tests in this case, just the total number of hits
+    const coverageResultsPerMutant = [coverageData.static, ...Object.values(coverageData.perTest)];
+    coverageResultsPerMutant.forEach((coverageByMutantId) => {
+      Object.entries(coverageByMutantId).forEach(([mutantId, count]) => {
+        hitsByMutant.set(mutantId, (hitsByMutant.get(mutantId) ?? 0) + count);
+      });
+    });
+  }
+  return hitsByMutant;
 }

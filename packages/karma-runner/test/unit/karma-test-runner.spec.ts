@@ -395,7 +395,7 @@ describe(KarmaTestRunner.name, () => {
     if (browserError) {
       StrykerReporter.instance.onBrowserError(...browserError);
     }
-    StrykerReporter.instance.onBrowserComplete(null, { mutantCoverage });
+    StrykerReporter.instance.onBrowserComplete(null, { mutantCoverage, hitCount: undefined });
     StrykerReporter.instance.onRunComplete(null, runResults);
   }
 });

@@ -1,8 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`instrumenter integration should be able to instrument a simple ts file 1`] = `
-"function stryNS_9fa48() {
-  var g = new Function(\\"return this\\")();
+// This file is generated with tasks/instrument-test-resources.js
+ function stryNS_9fa48() {
+  var g = new Function("return this")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
@@ -63,38 +61,21 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const bar: number = stryMutAct_9fa48(\\"0\\") ? 40 - 2 : (stryCov_9fa48(\\"0\\"), 40 + 2);
+function loop(n, action) {
+  if (stryMutAct_9fa48("20")) {
+    {}
+  } else {
+    stryCov_9fa48("20");
+    let goOn = stryMutAct_9fa48("21") ? false : (stryCov_9fa48("21"), true);
 
-class Person {
-  #name = stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'unknown');
-
-  get name(): string {
-    if (stryMutAct_9fa48(\\"2\\")) {
-      {}
-    } else {
-      stryCov_9fa48(\\"2\\");
-      return this.#name;
-    }
-  }
-
-  set name(value: string) {
-    if (stryMutAct_9fa48(\\"3\\")) {
-      {}
-    } else {
-      stryCov_9fa48(\\"3\\");
-
-      if (stryMutAct_9fa48(\\"7\\") ? value.length >= 2 : stryMutAct_9fa48(\\"6\\") ? value.length <= 2 : stryMutAct_9fa48(\\"5\\") ? false : stryMutAct_9fa48(\\"4\\") ? true : (stryCov_9fa48(\\"4\\", \\"5\\", \\"6\\", \\"7\\"), value.length < 2)) {
-        if (stryMutAct_9fa48(\\"8\\")) {
-          {}
-        } else {
-          stryCov_9fa48(\\"8\\");
-          throw new Error(stryMutAct_9fa48(\\"9\\") ? \\"\\" : (stryCov_9fa48(\\"9\\"), 'Name should be at least 2 characters long'));
-        }
+    while (stryMutAct_9fa48("22") ? false : (stryCov_9fa48("22"), goOn)) {
+      if (stryMutAct_9fa48("23")) {
+        {}
+      } else {
+        stryCov_9fa48("23");
+        action(n);
+        stryMutAct_9fa48("24") ? n++ : (stryCov_9fa48("24"), n--);
       }
-
-      this.#name = value;
     }
   }
-
-}"
-`;
+}

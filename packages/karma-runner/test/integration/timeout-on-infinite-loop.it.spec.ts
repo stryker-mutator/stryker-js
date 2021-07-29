@@ -10,7 +10,7 @@ describe('Infinite loop', () => {
     const karmaOptions = {
       config: {
         frameworks: ['mocha'],
-        files: [resolveTestResource('infinite-loop', 'infinite-loop.spec.js')],
+        files: [resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'), resolveTestResource('infinite-loop', 'infinite-loop.spec.js')],
       },
     };
     testInjector.options.karma = karmaOptions;
@@ -38,5 +38,22 @@ describe('Infinite loop', () => {
       assertions.expectSurvived(secondResult);
       expect(secondResult.nrOfTests).eq(1);
     }
+  });
+
+  it.only('should be able to recover using a hit counter', async () => {
+    // Time this test, this should be fairly stable because there is large margin
+    const startTime = new Date();
+
+    const result = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '24 ' }),
+        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        hitLimit: 10,
+      })
+    );
+
+    // Assert
+    assertions.expectTimeout(result);
+    expect(new Date().valueOf() - startTime.valueOf(), 'Test took longer than 3 sec to complete, was the hit counter malfunctioning?').lt(3000);
   });
 });
