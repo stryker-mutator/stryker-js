@@ -122,12 +122,22 @@ describe(KarmaTestRunner.name, () => {
       await expect(sut.init()).rejectedWith(expected);
     });
 
-    it('should reject browser errors', async () => {
+    it('should reject on browser errors', async () => {
       projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
       const expected = new Error('karma unavailable');
       const onGoingInit = sut.init();
       StrykerReporter.instance.onBrowserError(createBrowser(), expected);
       await expect(onGoingInit).rejectedWith(expected);
+    });
+
+    it('should reject when karma exists during init', async () => {
+      const exitTask = new Task<number>();
+      projectStarterMock.start.resolves({ exitPromise: exitTask.promise });
+      const onGoingInit = sut.init();
+      exitTask.resolve(1);
+      await expect(onGoingInit).rejectedWith(
+        "Karma exited prematurely with exit code 1. Please run stryker with `--logLevel trace` to see the karma logging and figure out what's wrong."
+      );
     });
   });
 

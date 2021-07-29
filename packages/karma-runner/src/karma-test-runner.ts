@@ -29,14 +29,20 @@ export class KarmaTestRunner implements TestRunner {
     const browsersReadyPromise = StrykerReporter.instance.whenBrowsersReady();
     const { exitPromise } = await this.starter.start();
     this.exitPromise = exitPromise;
-    await browsersReadyPromise;
-    // Create new run config. Older versions of karma will always parse the config again when you provide it in `karma.runner.run
-    // which results in the karma config file being executed again, which has very bad side effects (all files would be loaded twice and such)
-    this.runConfig = await karma.config.parseConfig(null, {
-      hostname: StrykerReporter.instance.karmaConfig!.hostname,
-      port: StrykerReporter.instance.karmaConfig!.port,
-      listenAddress: StrykerReporter.instance.karmaConfig!.listenAddress,
-    });
+    const maybeExitCode = await Promise.race([browsersReadyPromise, exitPromise]);
+    if (typeof maybeExitCode === 'number') {
+      throw new Error(
+        `Karma exited prematurely with exit code ${maybeExitCode}. Please run stryker with \`--logLevel trace\` to see the karma logging and figure out what's wrong.`
+      );
+    } else {
+      // Create new run config. Older versions of karma will always parse the config again when you provide it in `karma.runner.run
+      // which results in the karma config file being executed again, which has very bad side effects (all files would be loaded twice and such)
+      this.runConfig = await karma.config.parseConfig(null, {
+        hostname: StrykerReporter.instance.karmaConfig!.hostname,
+        port: StrykerReporter.instance.karmaConfig!.port,
+        listenAddress: StrykerReporter.instance.karmaConfig!.listenAddress,
+      });
+    }
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
