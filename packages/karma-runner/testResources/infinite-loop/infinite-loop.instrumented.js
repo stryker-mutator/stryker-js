@@ -1,4 +1,4 @@
-// This file is generated with tasks/instrument-test-resources.js
+// This file is generated with tasks\instrument-test-resources.js
  function stryNS_9fa48() {
   var g = new Function("return this")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
@@ -75,6 +75,7 @@ function loop(n, action) {
         stryCov_9fa48("23");
         action(n);
         stryMutAct_9fa48("24") ? n++ : (stryCov_9fa48("24"), n--);
+        goOn = stryMutAct_9fa48("28") ? n <= 0 : stryMutAct_9fa48("27") ? n >= 0 : stryMutAct_9fa48("26") ? false : stryMutAct_9fa48("25") ? true : (stryCov_9fa48("25", "26", "27", "28"), n > 0);
       }
     }
   }
