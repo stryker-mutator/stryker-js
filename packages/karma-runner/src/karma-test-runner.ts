@@ -2,6 +2,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult, toMutantRunResult } from '@stryker-mutator/api/test-runner';
+import type { Config } from 'karma';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
 
@@ -15,6 +16,7 @@ import { TestHooksMiddleware } from './karma-plugins/test-hooks-middleware';
 export class KarmaTestRunner implements TestRunner {
   private readonly starter: ProjectStarter;
   private exitPromise: Promise<number> | undefined;
+  private runConfig!: Config;
 
   public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options);
   constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions) {
@@ -28,11 +30,19 @@ export class KarmaTestRunner implements TestRunner {
     const { exitPromise } = await this.starter.start();
     this.exitPromise = exitPromise;
     await browsersReadyPromise;
+    // Create new run config. Older versions of karma will always parse the config again when you provide it in `karma.runner.run
+    // which results in the karma config file being executed again, which has very bad side effects (all files would be loaded twice and such)
+    this.runConfig = await karma.config.parseConfig(null, {
+      hostname: StrykerReporter.instance.karmaConfig!.hostname,
+      port: StrykerReporter.instance.karmaConfig!.port,
+      listenAddress: StrykerReporter.instance.karmaConfig!.listenAddress,
+    });
   }
 
-  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     TestHooksMiddleware.instance.configureCoverageAnalysis(options.coverageAnalysis);
-    return this.run();
+    const res = await this.run();
+    return res;
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -72,7 +82,7 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   private runServer(): void {
-    karma.runner.run(StrykerReporter.instance.karmaConfig, (exitCode) => {
+    karma.runner.run(this.runConfig, (exitCode) => {
       this.log.debug('karma run done with ', exitCode);
     });
   }
