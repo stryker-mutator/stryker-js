@@ -44,15 +44,7 @@ describe('angularStarter', () => {
     await sut.start(getLogger);
     expect(cliStub).calledWith({
       cliArgs: ['test', '--progress=false', `--karma-config=${require.resolve('../../../src/starters/stryker-karma.conf')}`],
-      inputStream: process.stdin,
-      outputStream: process.stdout,
     });
-  });
-
-  it('should reject if cliStub resolves with `1` (exit code)', async () => {
-    setAngularVersion();
-    cliStub.resolves(1);
-    await expect(sut.start(getLogger)).rejectedWith('`ng test` command failed with exit code 1');
   });
 
   it('should forward ngOptions', async () => {
@@ -74,8 +66,6 @@ describe('angularStarter', () => {
         '--foo=bar',
         '--foo-bar=baz',
       ],
-      inputStream: process.stdin,
-      outputStream: process.stdout,
     });
   });
 

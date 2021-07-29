@@ -1,9 +1,22 @@
-import { requireResolve } from '@stryker-mutator/util';
+import { Task } from '@stryker-mutator/util';
+import type { Config, ConfigOptions } from 'karma';
 
-export async function start(): Promise<void> {
-  // Make sure require karma from inside this function, that way it won't break if karma isn't installed and this file is required.
-  const karma: any = requireResolve('karma');
-  await new karma.Server({
-    configFile: require.resolve('./stryker-karma.conf'),
-  }).start();
+import { karma } from '../karma-wrapper';
+
+import { StartedProject } from './started-project';
+
+export async function start(): Promise<StartedProject> {
+  const configFile = require.resolve('./stryker-karma.conf');
+  let config: Config | ConfigOptions = {
+    configFile,
+  };
+  if (karma.config?.parseConfig) {
+    config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
+  }
+
+  const exitTask = new Task<number>();
+  await new karma.Server(config, exitTask.resolve).start();
+  return {
+    exitPromise: exitTask.promise,
+  };
 }

@@ -7,12 +7,13 @@ import { OutOfMemoryError } from '../child-proxy/out-of-memory-error';
 import { TestRunnerDecorator } from './test-runner-decorator';
 
 const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
+export const MAX_RETRIES = 2;
 
 /**
- * Wraps a test runner and implements the retry functionality.
+ * Implements the retry functionality whenever an internal test runner rejects a promise.
  */
-export class RetryDecorator extends TestRunnerDecorator {
-  private readonly log = getLogger(RetryDecorator.name);
+export class RetryRejectedDecorator extends TestRunnerDecorator {
+  private readonly log = getLogger(RetryRejectedDecorator.name);
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     const result = await this.run(() => super.dryRun(options));
@@ -38,7 +39,11 @@ export class RetryDecorator extends TestRunnerDecorator {
     }
   }
 
-  private async run<T extends DryRunResult | MutantRunResult>(actRun: () => Promise<T>, attemptsLeft = 2, lastError?: unknown): Promise<T | string> {
+  private async run<T extends DryRunResult | MutantRunResult>(
+    actRun: () => Promise<T>,
+    attemptsLeft = MAX_RETRIES,
+    lastError?: unknown
+  ): Promise<T | string> {
     if (attemptsLeft > 0) {
       try {
         return await actRun();
@@ -56,11 +61,5 @@ export class RetryDecorator extends TestRunnerDecorator {
       await this.recover();
       return `${ERROR_MESSAGE}${errorToString(lastError)}`;
     }
-  }
-
-  private async recover(): Promise<void> {
-    await this.dispose();
-    this.createInnerRunner();
-    return this.init();
   }
 }

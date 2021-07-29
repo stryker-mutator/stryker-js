@@ -24,6 +24,12 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
 
+  function rmSync(fileName: string) {
+    if (fs.existsSync(fileName)) {
+      fs.unlinkSync(fileName);
+    }
+  }
+
   beforeEach(async () => {
     // Make sure there is a logging server listening
     loggingServer = new LoggingServer();
@@ -39,9 +45,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       .provideValue(coreTokens.loggingContext, loggingContext)
       .injectFunction(createTestRunnerFactory);
 
-    if (fs.existsSync(CounterTestRunner.COUNTER_FILE)) {
-      await fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
-    }
+    rmSync(CounterTestRunner.COUNTER_FILE);
   });
 
   afterEach(async () => {
@@ -49,10 +53,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       await sut.dispose();
     }
     await loggingServer.dispose();
-
-    if (fs.existsSync(CounterTestRunner.COUNTER_FILE)) {
-      await fs.unlinkSync(CounterTestRunner.COUNTER_FILE);
-    }
+    rmSync(CounterTestRunner.COUNTER_FILE);
   });
 
   async function arrangeSut(name: string): Promise<void> {
@@ -65,8 +66,8 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     return sut.dryRun({ timeout, coverageAnalysis: 'all' });
   }
 
-  function actMutantRun() {
-    return sut.mutantRun(factory.mutantRunOptions());
+  function actMutantRun(options = factory.mutantRunOptions()) {
+    return sut.mutantRun(options);
   }
 
   it('should pass along the coverage result from the test runner behind', async () => {
@@ -123,6 +124,11 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   it('should reject when `init` of test runner behind rejects', async () => {
     await expect(arrangeSut('reject-init')).rejectedWith('Init was rejected');
+  });
+
+  it('should still shutdown the child process, even when test runner dispose rejects', async () => {
+    arrangeSut('errored');
+    await sut.dispose();
   });
 
   it('should change the current working directory to the sandbox directory', async () => {

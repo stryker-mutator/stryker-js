@@ -33,4 +33,14 @@ export class TestRunnerDecorator implements Required<TestRunner>, Disposable {
       return Promise.resolve();
     }
   }
+
+  /**
+   * Disposes the current test runner and creates a new one
+   * To be used in decorators that need recreation.
+   */
+  protected async recover(): Promise<void> {
+    await this.dispose();
+    this.createInnerRunner();
+    return this.init();
+  }
 }

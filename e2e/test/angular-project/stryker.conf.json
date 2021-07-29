@@ -24,7 +24,7 @@
     "event-recorder"
   ],
   "coverageAnalysis": "perTest",
-  "concurrency": 2,
+  "concurrency": 1,
   "concurrency_comment": "Recommended to use about half of your available cores when running stryker with angular",
   "timeoutMS": 60000
 }

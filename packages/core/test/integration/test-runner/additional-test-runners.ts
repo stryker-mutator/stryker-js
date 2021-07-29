@@ -41,7 +41,7 @@ class ProximityMineTestRunner implements TestRunner {
 
 export class CounterTestRunner implements TestRunner {
   private count = 0;
-  public static COUNTER_FILE = `${os.tmpdir()}/counter-file`;
+  public static COUNTER_FILE = `${os.tmpdir()}/stryker-js-test-counter-file`;
 
   public async dryRun(): Promise<DryRunResult> {
     return factory.completeDryRunResult();
@@ -92,6 +92,10 @@ class ErroredTestRunner implements TestRunner {
   }
   public async mutantRun(): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
+  }
+
+  public dispose(): Promise<void> {
+    throw new Error('Test runner exited with exit code 1');
   }
 }
 

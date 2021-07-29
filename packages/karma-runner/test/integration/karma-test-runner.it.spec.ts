@@ -8,18 +8,22 @@ import { FilePattern } from 'karma';
 
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
 
-function setOptions(
-  files: ReadonlyArray<FilePattern | string> = [
-    'testResources/sampleProject/src-instrumented/Add.js',
-    'testResources/sampleProject/test-jasmine/AddSpec.js',
-  ]
-): void {
-  testInjector.options.karma = {
+function setOptions({
+  files = ['testResources/sampleProject/src-instrumented/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js'],
+  frameworks = ['jasmine'],
+}: {
+  files?: ReadonlyArray<FilePattern | string>;
+  frameworks?: string[];
+}): void {
+  (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma = {
+    projectType: 'custom',
     config: {
       files,
       logLevel: 'off',
       reporters: [],
+      frameworks,
     },
   };
 }
@@ -45,12 +49,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
   describe('when all tests succeed', () => {
     before(() => {
-      setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js']);
+      setOptions({ files: ['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js'] });
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
 
     describe('dryRun()', () => {
@@ -77,16 +81,18 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
   describe('when some tests fail', () => {
     before(() => {
-      setOptions([
-        'testResources/sampleProject/src/Add.js',
-        'testResources/sampleProject/test-jasmine/AddSpec.js',
-        'testResources/sampleProject/test-jasmine/AddFailedSpec.js',
-      ]);
+      setOptions({
+        files: [
+          'testResources/sampleProject/src/Add.js',
+          'testResources/sampleProject/test-jasmine/AddSpec.js',
+          'testResources/sampleProject/test-jasmine/AddFailedSpec.js',
+        ],
+      });
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     describe('dryRun', () => {
       it('should report the first failed test (bail)', async () => {
@@ -109,16 +115,18 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
   describe('when an error occurs while running tests', () => {
     before(() => {
-      setOptions([
-        'testResources/sampleProject/src/Add.js',
-        'testResources/sampleProject/src/Error.js',
-        'testResources/sampleProject/test-jasmine/AddSpec.js',
-      ]);
+      setOptions({
+        files: [
+          'testResources/sampleProject/src/Add.js',
+          'testResources/sampleProject/src/Error.js',
+          'testResources/sampleProject/test-jasmine/AddSpec.js',
+        ],
+      });
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     describe('dryRun', () => {
       it('should report Error with the error message', async () => {
@@ -137,14 +145,26 @@ describe(`${KarmaTestRunner.name} integration`, () => {
     });
   });
 
+  describe('when an error occurs on startup', () => {
+    it('should reject the init promise', async () => {
+      setOptions({ frameworks: ['jasmine', 'not-exists'] });
+      sut = createSut();
+      await expect(sut.init()).rejected;
+    });
+
+    afterEach(async () => {
+      await sut.dispose();
+    });
+  });
+
   describe('when no error occurred and no test is performed', () => {
     before(() => {
-      setOptions(['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/EmptySpec.js']);
+      setOptions({ files: ['testResources/sampleProject/src/Add.js', 'testResources/sampleProject/test-jasmine/EmptySpec.js'] });
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -156,16 +176,18 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
   describe('when adding an error file with included: false', () => {
     before(() => {
-      setOptions([
-        { pattern: 'testResources/sampleProject/src/Add.js', included: true },
-        { pattern: 'testResources/sampleProject/test-jasmine/AddSpec.js', included: true },
-        { pattern: 'testResources/sampleProject/src/Error.js', included: false },
-      ]);
+      setOptions({
+        files: [
+          { pattern: 'testResources/sampleProject/src/Add.js', included: true },
+          { pattern: 'testResources/sampleProject/test-jasmine/AddSpec.js', included: true },
+          { pattern: 'testResources/sampleProject/src/Error.js', included: false },
+        ],
+      });
       sut = createSut();
       return sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
     it('should report Complete without errors', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
@@ -178,7 +200,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
 
     before(async () => {
       dummyServer = await DummyServer.create();
-      setOptions();
+      setOptions({});
       sut = createSut();
       return sut.init();
     });
@@ -187,12 +209,12 @@ describe(`${KarmaTestRunner.name} integration`, () => {
       if (dummyServer) {
         await dummyServer.dispose();
       }
-      StrykerReporter.instance.removeAllListeners();
+      await sut.dispose();
     });
 
     it('should choose different port automatically and report Complete without errors', async () => {
       const actualResult = await sut.dryRun(factory.dryRunOptions());
-      expect(sut.port).not.eq(dummyServer.port);
+      expect(StrykerReporter.instance.karmaConfig!.port).not.eq(dummyServer.port);
       assertions.expectCompleted(actualResult);
     });
   });

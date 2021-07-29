@@ -6,12 +6,12 @@ import { factory, assertions } from '@stryker-mutator/test-helpers';
 
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
-import { RetryDecorator } from '../../../src/test-runner/retry-decorator';
+import { RetryRejectedDecorator } from '../../../src/test-runner/retry-rejected-decorator';
 import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator';
 import { currentLogMock } from '../../helpers/log-mock';
 
-describe(RetryDecorator.name, () => {
-  let sut: RetryDecorator;
+describe(RetryRejectedDecorator.name, () => {
+  let sut: RetryRejectedDecorator;
   let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner>>>;
@@ -23,7 +23,7 @@ describe(RetryDecorator.name, () => {
     testRunner2 = factory.testRunner();
     logMock = currentLogMock();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new RetryDecorator(() => availableTestRunners.shift() ?? factory.testRunner());
+    sut = new RetryRejectedDecorator(() => availableTestRunners.shift() ?? factory.testRunner());
   });
 
   it('should not override `init`', () => {
@@ -58,7 +58,7 @@ describe(RetryDecorator.name, () => {
 
   function describeRun<T extends keyof RunOptionsByMethod>(
     runMethod: T,
-    act: (sut: RetryDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
+    act: (sut: RetryRejectedDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
     optionsFactory: () => RunOptionsByMethod[T],
     resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never
   ) {

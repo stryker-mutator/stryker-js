@@ -1,4 +1,5 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
 import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
@@ -16,7 +17,7 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 export class ChildProcessTestRunnerDecorator implements TestRunner {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
-  constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext) {
+  constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext, private readonly log: Logger) {
     this.worker = ChildProcessProxy.create(
       require.resolve('./child-process-test-runner-worker'),
       loggingContext,
@@ -45,7 +46,11 @@ export class ChildProcessTestRunnerDecorator implements TestRunner {
       this.worker.proxy.dispose().catch((error) => {
         // It's OK if the child process is already down.
         if (!(error instanceof ChildProcessCrashedError)) {
-          throw error;
+          // Handle error by logging it. We still want to kill the child process.
+          this.log.warn(
+            'An unexpected error occurred during test runner disposal. This might be worth looking into. Stryker will ignore this error.',
+            error
+          );
         }
       }),
 

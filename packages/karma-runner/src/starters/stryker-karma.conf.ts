@@ -4,7 +4,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
 import { noopLogger, requireResolve } from '@stryker-mutator/util';
 
-import { StrykerReporter } from '../karma-plugins/stryker-reporter';
+import { StrykerReporter, strykerReporterFactory } from '../karma-plugins/stryker-reporter';
 import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../karma-plugins/test-hooks-middleware';
 
 function setDefaultOptions(config: Config) {
@@ -15,7 +15,7 @@ function setDefaultOptions(config: Config) {
 }
 
 function setUserKarmaConfigFile(config: Config, log: Logger) {
-  if (globalSettings.karmaConfigFile && typeof globalSettings.karmaConfigFile === 'string') {
+  if (globalSettings.karmaConfigFile) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
     try {
@@ -31,7 +31,7 @@ function setUserKarmaConfigFile(config: Config, log: Logger) {
           `Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`
         );
       } else {
-        log.error(`Could not read karma configuration from ${globalSettings.karmaConfigFile}.`, error);
+        throw error; // oops
       }
     }
   }
@@ -133,7 +133,7 @@ function configureStrykerMutantCoverageAdapter(config: Config) {
 }
 
 function configureStrykerReporter(config: Config) {
-  addPlugin(config, { [`reporter:${StrykerReporter.name}`]: ['value', StrykerReporter.instance] });
+  addPlugin(config, { [`reporter:${StrykerReporter.name}`]: ['factory', strykerReporterFactory] });
   if (!config.reporters) {
     config.reporters = [];
   }

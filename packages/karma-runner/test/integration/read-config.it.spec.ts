@@ -3,20 +3,22 @@ import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('read config integration', () => {
-  afterEach(() => {
-    StrykerReporter.instance.removeAllListeners();
+  let sut: KarmaTestRunner | undefined;
+
+  after(async () => {
+    await sut?.dispose();
   });
+
   it('should not override client options in a mocha project', async () => {
     testInjector.options.karma = {
       configFile: resolveTestResource('configs', 'mocha-client-options-karma.conf.js'),
     };
-    const runner = testInjector.injector.injectClass(KarmaTestRunner);
-    await runner.init();
-    const dryRunResult = await runner.dryRun(factory.dryRunOptions());
+    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    await sut.init();
+    const dryRunResult = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(dryRunResult);
     expect(dryRunResult.tests).lengthOf(2);
     const [test1, test2] = dryRunResult.tests;
@@ -30,9 +32,9 @@ describe('read config integration', () => {
     testInjector.options.karma = {
       configFile: resolveTestResource('configs', 'jasmine-client-options-karma.conf.js'),
     };
-    const runner = testInjector.injector.injectClass(KarmaTestRunner);
-    await runner.init();
-    const dryRunResult = await runner.dryRun(factory.dryRunOptions());
+    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    await sut.init();
+    const dryRunResult = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(dryRunResult);
     expect(dryRunResult.tests).lengthOf(3);
     const [test1, test2, test3] = dryRunResult.tests;

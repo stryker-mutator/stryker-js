@@ -4,7 +4,6 @@ import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/tes
 
 import { KarmaTestRunner } from '../../src/karma-test-runner';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
-import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 function createSut() {
@@ -24,8 +23,8 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       await sut.init();
     });
 
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
 
     describe('dryRun', () => {
@@ -158,8 +157,8 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       sut = createSut();
       await sut.init();
     });
-    after(() => {
-      StrykerReporter.instance.removeAllListeners();
+    after(async () => {
+      await sut.dispose();
     });
 
     describe('dryRun', () => {
