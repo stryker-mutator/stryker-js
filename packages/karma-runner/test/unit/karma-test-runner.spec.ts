@@ -2,7 +2,7 @@ import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, assertions, factory, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import type { TestResults } from 'karma';
+import { TestResults } from 'karma';
 import sinon from 'sinon';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -99,15 +99,20 @@ describe(KarmaTestRunner.name, () => {
   describe('init', () => {
     let sut: KarmaTestRunner;
 
-    beforeEach(() => {
+    async function actInit() {
+      const initPromise = sut.init();
+      StrykerReporter.instance.onBrowsersReady();
+      await initPromise;
+    }
+
+    beforeEach(async () => {
       sut = createSut();
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
     });
 
     it('should start karma', async () => {
       projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
-      const initPromise = sut.init();
-      StrykerReporter.instance.onBrowsersReady();
-      await initPromise;
+      await actInit();
       expect(projectStarterMock.start).called;
     });
 
@@ -181,10 +186,26 @@ describe(KarmaTestRunner.name, () => {
       expect(actualResult.tests).deep.eq(expectedTests);
     });
 
-    it('should run karma', async () => {
+    it('should run karma with custom karma configuration', async () => {
+      // Arrange
+      projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
       StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+      StrykerReporter.instance.karmaConfig.hostname = 'www.localhost.com';
+      StrykerReporter.instance.karmaConfig.port = 1337;
+      StrykerReporter.instance.karmaConfig.listenAddress = 'www.localhost.com:1337';
+      const parseConfigStub = sinon.stub(karma.config, 'parseConfig');
+      const expectedRunConfig = { custom: 'config' };
+      parseConfigStub.resolves(expectedRunConfig);
+      const initPromise = sut.init();
+      StrykerReporter.instance.onBrowsersReady();
+      await initPromise;
+
+      // Act
       await actDryRun({});
-      expect(karmaRunStub).calledWith(StrykerReporter.instance.karmaConfig, sinon.match.func);
+
+      // Assert
+      expect(karmaRunStub).calledWith(expectedRunConfig, sinon.match.func);
+      expect(parseConfigStub).calledWithExactly(null, { hostname: 'www.localhost.com', port: 1337, listenAddress: 'www.localhost.com:1337' });
     });
 
     it('should log when karma run is done', async () => {
@@ -307,6 +328,10 @@ describe(KarmaTestRunner.name, () => {
   });
 
   describe('dispose', () => {
+    beforeEach(async () => {
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+    });
+
     it('should not do anything if there is no karma server', async () => {
       const sut = createSut();
       await expect(sut.dispose()).not.rejected;
