@@ -9,7 +9,7 @@ describe('Infinite loop', () => {
   beforeEach(async () => {
     const karmaOptions = {
       config: {
-        browsers: ['Chrome'],
+        browsers: ['ChromeHeadless'],
         frameworks: ['mocha', 'chai'],
         files: [resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'), resolveTestResource('infinite-loop', 'infinite-loop.spec.js')],
       },
