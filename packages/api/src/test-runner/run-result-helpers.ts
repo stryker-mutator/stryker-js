@@ -31,6 +31,7 @@ export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
     case DryRunStatus.Timeout:
       return {
         status: MutantRunStatus.Timeout,
+        reason: dryRunResult.reason,
       };
   }
 }

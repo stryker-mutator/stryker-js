@@ -23,6 +23,10 @@ export interface TimeoutDryRunResult {
    * The status of the run
    */
   status: DryRunStatus.Timeout;
+  /**
+   * An optional reason for the timeout
+   */
+  reason?: string;
 }
 
 export interface ErrorDryRunResult {

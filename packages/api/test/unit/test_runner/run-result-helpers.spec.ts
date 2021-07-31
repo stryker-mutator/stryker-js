@@ -5,8 +5,8 @@ import { TestStatus, toMutantRunResult, DryRunStatus, MutantRunResult, MutantRun
 describe('runResultHelpers', () => {
   describe(toMutantRunResult.name, () => {
     it('should convert "timeout" to "timeout"', () => {
-      const expected: MutantRunResult = { status: MutantRunStatus.Timeout };
-      expect(toMutantRunResult({ status: DryRunStatus.Timeout })).deep.eq(expected);
+      const expected: MutantRunResult = { status: MutantRunStatus.Timeout, reason: 'timeout reason' };
+      expect(toMutantRunResult({ status: DryRunStatus.Timeout, reason: 'timeout reason' })).deep.eq(expected);
     });
 
     it('should convert "error" to "error"', () => {
