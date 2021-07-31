@@ -121,7 +121,7 @@ export class StrykerReporter implements karma.Reporter {
   };
 
   public readonly onBrowserComplete = (
-    _browser: any,
+    _browser: unknown,
     result: {
       mutantCoverage: MutantCoverage | undefined;
       hitCount: number | undefined;
