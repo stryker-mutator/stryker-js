@@ -73,6 +73,7 @@ export class MutationTestReportHelper {
         return this.reportOne({
           ...mutant,
           status: MutantStatus.Timeout,
+          statusReason: result.reason,
         });
       case MutantRunStatus.Survived:
         return this.reportOne({

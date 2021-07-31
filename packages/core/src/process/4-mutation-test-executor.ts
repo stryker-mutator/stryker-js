@@ -23,6 +23,8 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
 }
 
+const HIT_LIMIT_FACTOR = 100;
+
 export class MutationTestExecutor {
   public static inject = tokens(
     commonTokens.options,
@@ -126,6 +128,7 @@ export class MutationTestExecutor {
       timeout,
       testFilter: activeMutant.coveredBy,
       sandboxFileName: this.sandbox.sandboxFileFor(activeMutant.fileName),
+      hitLimit: activeMutant.hitCount === undefined ? undefined : activeMutant.hitCount * HIT_LIMIT_FACTOR,
     };
   }
 

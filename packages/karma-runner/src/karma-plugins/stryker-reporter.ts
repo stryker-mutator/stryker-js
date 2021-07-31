@@ -152,7 +152,7 @@ export class StrykerReporter implements karma.Reporter {
 
   private collectRunResult(): DryRunResult {
     if (this.hitCount !== undefined && this.hitLimit !== undefined && this.hitCount > this.hitLimit) {
-      return { status: DryRunStatus.Timeout };
+      return { status: DryRunStatus.Timeout, reason: `Hit limit reached (${this.hitCount} > ${this.hitLimit})` };
     }
     if (this.karmaRunResult?.disconnected) {
       return { status: DryRunStatus.Timeout };
