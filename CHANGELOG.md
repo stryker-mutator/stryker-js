@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.2.3](https://github.com/stryker-mutator/stryker-js/compare/v5.2.2...v5.2.3) (2021-08-01)
+
+
+### Bug Fixes
+
+* **karma runner:** restart a browser on disconnect error ([#3020](https://github.com/stryker-mutator/stryker-js/issues/3020)) ([fc5c449](https://github.com/stryker-mutator/stryker-js/commit/fc5c449ba329d7a8b07d47193d4916cb28d47bb1))
+* **mocha-runner:** clear error when require esm ([#3015](https://github.com/stryker-mutator/stryker-js/issues/3015)) ([a835f0b](https://github.com/stryker-mutator/stryker-js/commit/a835f0b57a9084b77a175b5eb14f409651c20c69)), closes [#3014](https://github.com/stryker-mutator/stryker-js/issues/3014)
+
+
+
+
+
 ## [5.2.2](https://github.com/stryker-mutator/stryker-js/compare/v5.2.1...v5.2.2) (2021-07-13)
 
 
