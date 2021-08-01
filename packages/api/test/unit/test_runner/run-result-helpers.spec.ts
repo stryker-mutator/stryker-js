@@ -1,8 +1,26 @@
 import { expect } from 'chai';
 
-import { TestStatus, toMutantRunResult, DryRunStatus, MutantRunResult, MutantRunStatus } from '../../../src/test-runner';
+import {
+  TestStatus,
+  toMutantRunResult,
+  DryRunStatus,
+  MutantRunResult,
+  MutantRunStatus,
+  determineHitLimitReached,
+  TimeoutDryRunResult,
+} from '../../../src/test-runner';
 
 describe('runResultHelpers', () => {
+  describe(determineHitLimitReached.name, () => {
+    it('should determine a timeout result when hit count is higher than limit', () => {
+      const expected: TimeoutDryRunResult = { status: DryRunStatus.Timeout, reason: 'Hit limit reached (actual nr of hits were 10, limit was 9)' };
+      expect(determineHitLimitReached(10, 9)).deep.eq(expected);
+    });
+    it('should not determine a timeout result when hit count is less than or equal to limit', () => {
+      expect(determineHitLimitReached(10, 10)).undefined;
+    });
+  });
+
   describe(toMutantRunResult.name, () => {
     it('should convert "timeout" to "timeout"', () => {
       const expected: MutantRunResult = { status: MutantRunStatus.Timeout, reason: 'timeout reason' };

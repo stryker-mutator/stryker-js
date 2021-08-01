@@ -1,8 +1,15 @@
 import { TestStatus } from './test-status';
-import { DryRunResult } from './dry-run-result';
+import { DryRunResult, TimeoutDryRunResult } from './dry-run-result';
 import { MutantRunResult, MutantRunStatus } from './mutant-run-result';
 import { DryRunStatus } from './dry-run-status';
 import { FailedTestResult } from './test-result';
+
+export function determineHitLimitReached(hitCount: number | undefined, hitLimit: number | undefined): TimeoutDryRunResult | undefined {
+  if (hitCount !== undefined && hitLimit !== undefined && hitCount > hitLimit) {
+    return { status: DryRunStatus.Timeout, reason: `Hit limit reached (actual nr of hits were ${hitCount}, limit was ${hitLimit})` };
+  }
+  return;
+}
 
 export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
   switch (dryRunResult.status) {
