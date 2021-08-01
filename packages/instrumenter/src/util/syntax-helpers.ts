@@ -50,7 +50,7 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   var ns = ${STRYKER_NAMESPACE_HELPER}();
   function isActive(id) {
     if (ns.${ID.ACTIVE_MUTANT} === id) {
-      if (ns.${ID.HIT_COUNT} !== void 0 && ++ns.${ID.HIT_COUNT} > ns.${ID.HIT_COUNT_LIMIT}) {
+      if (ns.${ID.HIT_COUNT} !== void 0 && ++ns.${ID.HIT_COUNT} > ns.${ID.HIT_LIMIT}) {
         throw new Error('Stryker: Hit count limit reached (' + ns.${ID.HIT_COUNT} + ')');
       }
       return true;

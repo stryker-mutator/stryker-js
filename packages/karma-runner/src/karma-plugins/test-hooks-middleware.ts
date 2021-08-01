@@ -22,7 +22,7 @@ function isSupportedFramework(framework: string): framework is SupportedFramewor
  */
 const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
 
-const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID, HIT_COUNT, HIT_COUNT_LIMIT } = INSTRUMENTER_CONSTANTS;
+const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID, HIT_COUNT, HIT_LIMIT } = INSTRUMENTER_CONSTANTS;
 
 export class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
@@ -77,7 +77,7 @@ export class TestHooksMiddleware {
 
   private configureHitLimit(hitLimit: number | undefined) {
     return `window.${NAMESPACE}.${HIT_COUNT} = ${hitLimit === undefined ? undefined : 0};
-    window.${NAMESPACE}.${HIT_COUNT_LIMIT} = ${hitLimit};`;
+    window.${NAMESPACE}.${HIT_LIMIT} = ${hitLimit};`;
   }
 
   private configurePerTestCoverageAnalysis() {

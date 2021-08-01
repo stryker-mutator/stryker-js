@@ -9,7 +9,7 @@ export const INSTRUMENTER_CONSTANTS = Object.freeze({
   ACTIVE_MUTANT: identity('activeMutant'),
   CURRENT_TEST_ID: identity('currentTestId'),
   HIT_COUNT: identity('hitCount'),
-  HIT_COUNT_LIMIT: identity('hitCountLimit'),
+  HIT_LIMIT: identity('hitLimit'),
   ACTIVE_MUTANT_ENV_VARIABLE: '__STRYKER_ACTIVE_MUTANT__',
 } as const);
 
@@ -18,7 +18,7 @@ export interface InstrumenterContext {
   currentTestId?: string;
   mutantCoverage?: MutantCoverage;
   hitCount?: number;
-  hitCountLimit?: number;
+  hitLimit?: number;
 }
 
 function identity<T extends keyof InstrumenterContext>(key: T): T {

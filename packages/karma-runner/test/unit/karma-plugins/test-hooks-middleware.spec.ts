@@ -54,7 +54,7 @@ describe(TestHooksMiddleware.name, () => {
     });
   });
 
-  describe('configureActiveMutant', () => {
+  describe('configureMutantRun', () => {
     it('should set __strykerShouldReportCoverage__ to false', () => {
       sut.configureMutantRun(factory.mutantRunOptions());
       expect(sut.currentTestHooks).contains('window.__strykerShouldReportCoverage__ = false');
@@ -82,16 +82,19 @@ describe(TestHooksMiddleware.name, () => {
         .contains('jasmine.getEnv().configure({ specFilter: function(spec) {')
         .contains('return ["fooSpec","barSpec"].indexOf(spec.id) !== -1');
     });
+
     it('should use mocha\'s `grep` to filter tests if the current testFramework is "mocha"', () => {
       sut.configureTestFramework(['mocha']);
       sut.configureMutantRun(factory.mutantRunOptions({ testFilter: ['fooSpec', 'barSpec'] }));
       expect(sut.currentTestHooks).contains('mocha.grep(/(fooSpec)|(barSpec)/)');
     });
+
     it("should escape RegExp special characters while while configuring mocha's grep", () => {
       sut.configureTestFramework(['mocha']);
       sut.configureMutantRun(factory.mutantRunOptions({ testFilter: ['foo.spec', 'bar?spec'] }));
       expect(sut.currentTestHooks).contains('mocha.grep(/(foo\\.spec)|(bar\\?spec)/)');
     });
+
     it('should escape `/` in the regex literal', () => {
       sut.configureTestFramework(['mocha']);
       sut.configureMutantRun(
@@ -99,6 +102,13 @@ describe(TestHooksMiddleware.name, () => {
       );
       expect(sut.currentTestHooks).contains(
         'mocha.grep(/(MutationTestReportTotalsComponent should show N\\/A when no mutation score is available)/)'
+      );
+    });
+    
+    it('should set the hitLimit', () => {
+      sut.configureMutantRun(factory.mutantRunOptions({ hitLimit: 500 }));
+      expect(sut.currentTestHooks).contains(
+        'window.__stryker__.'
       );
     });
   });
