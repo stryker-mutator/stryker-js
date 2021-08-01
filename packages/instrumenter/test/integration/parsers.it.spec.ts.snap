@@ -403,8 +403,6 @@ export default {
                     "local": Node {
                       "end": 69,
                       "extra": undefined,
-                      "innerComments": undefined,
-                      "leadingComments": undefined,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 23,
@@ -420,7 +418,6 @@ export default {
                       "name": "pokemonService",
                       "range": undefined,
                       "start": 55,
-                      "trailingComments": undefined,
                       "type": "Identifier",
                     },
                     "range": undefined,
@@ -569,8 +566,6 @@ export default {
                             "value": Node {
                               "end": 152,
                               "extra": undefined,
-                              "innerComments": undefined,
-                              "leadingComments": undefined,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 20,
@@ -586,7 +581,6 @@ export default {
                               "name": "PokemonComponent",
                               "range": undefined,
                               "start": 136,
-                              "trailingComments": undefined,
                               "type": "Identifier",
                             },
                           },
@@ -1416,8 +1410,6 @@ export class AppComponent {
               "local": Node {
                 "end": 18,
                 "extra": undefined,
-                "innerComments": undefined,
-                "leadingComments": undefined,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 18,
@@ -1436,7 +1428,6 @@ export class AppComponent {
                   18,
                 ],
                 "start": 9,
-                "trailingComments": undefined,
                 "type": "Identifier",
               },
               "range": Array [
@@ -3193,8 +3184,6 @@ export default Badge;
                                 "value": Node {
                                   "end": 207,
                                   "extra": undefined,
-                                  "innerComments": undefined,
-                                  "leadingComments": undefined,
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 9,
@@ -3210,7 +3199,6 @@ export default Badge;
                                   "name": "color",
                                   "range": undefined,
                                   "start": 202,
-                                  "trailingComments": undefined,
                                   "type": "Identifier",
                                 },
                               },
@@ -5261,8 +5249,6 @@ export default Badge;
                                 "value": Node {
                                   "end": 207,
                                   "extra": undefined,
-                                  "innerComments": undefined,
-                                  "leadingComments": undefined,
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 9,
@@ -5278,7 +5264,6 @@ export default Badge;
                                   "name": "color",
                                   "range": undefined,
                                   "start": 202,
-                                  "trailingComments": undefined,
                                   "type": "Identifier",
                                 },
                               },
