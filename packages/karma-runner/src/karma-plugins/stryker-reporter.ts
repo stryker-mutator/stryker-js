@@ -1,4 +1,4 @@
-import { DryRunResult, DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { determineHitLimitReached, DryRunResult, DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import karma from 'karma';
 import { Task } from '@stryker-mutator/util';
@@ -151,11 +151,12 @@ export class StrykerReporter implements karma.Reporter {
   };
 
   private collectRunResult(): DryRunResult {
-    if (this.hitCount !== undefined && this.hitLimit !== undefined && this.hitCount > this.hitLimit) {
-      return { status: DryRunStatus.Timeout, reason: `Hit limit reached (${this.hitCount} > ${this.hitLimit})` };
+    const timeoutResult = determineHitLimitReached(this.hitCount, this.hitLimit);
+    if (timeoutResult) {
+      return timeoutResult;
     }
     if (this.karmaRunResult?.disconnected) {
-      return { status: DryRunStatus.Timeout };
+      return { status: DryRunStatus.Timeout, reason: `Browser disconnected during test execution. Karma error: ${this.errorMessage}` };
     } else if (this.karmaRunResult?.error) {
       return { status: DryRunStatus.Error, errorMessage: this.errorMessage ?? 'A runtime error occurred' };
     } else {

@@ -33,6 +33,7 @@ describe('Infinite loop', () => {
 
       // Assert
       assertions.expectTimeout(result);
+      expect(result.reason).contains('Browser disconnected during test execution');
 
       // Second test, should be recovered by now.
       const secondResult = await sut.mutantRun(factory.mutantRunOptions({ testFilter: ['should be able to recover and test others'] }));
@@ -56,8 +57,31 @@ describe('Infinite loop', () => {
 
     // Assert
     assertions.expectTimeout(result);
+    expect(result.reason).contains('Hit limit reached');
     expect(new Date().valueOf() - startTime.valueOf(), 'Test took longer than 3 sec to complete, was the hit counter malfunctioning?').lt(
       maxTestDurationMS
     );
+  });
+
+  it('should reset hit counter state correctly between runs', async () => {
+    const firstResult = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '24' }),
+        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        hitLimit: 10,
+      })
+    );
+    const secondResult = await sut.mutantRun(
+      factory.mutantRunOptions({
+        // 27 is a 'normal' mutant that should be killed
+        activeMutant: factory.mutant({ id: '27' }),
+        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        hitLimit: 10,
+      })
+    );
+
+    // Assert
+    assertions.expectTimeout(firstResult);
+    assertions.expectKilled(secondResult);
   });
 });

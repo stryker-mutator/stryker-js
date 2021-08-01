@@ -104,12 +104,17 @@ describe(TestHooksMiddleware.name, () => {
         'mocha.grep(/(MutationTestReportTotalsComponent should show N\\/A when no mutation score is available)/)'
       );
     });
-    
-    it('should set the hitLimit', () => {
+
+    it('should configure the hitLimit and hitCount', () => {
       sut.configureMutantRun(factory.mutantRunOptions({ hitLimit: 500 }));
-      expect(sut.currentTestHooks).contains(
-        'window.__stryker__.'
-      );
+      expect(sut.currentTestHooks).contains('window.__stryker__.hitCount = 0;');
+      expect(sut.currentTestHooks).contains('window.__stryker__.hitLimit = 500;');
+    });
+
+    it('should set hitCount to undefined when there is no hitLimit', () => {
+      sut.configureMutantRun(factory.mutantRunOptions({ hitLimit: undefined }));
+      expect(sut.currentTestHooks).contains('window.__stryker__.hitCount = undefined;');
+      expect(sut.currentTestHooks).contains('window.__stryker__.hitLimit = undefined;');
     });
   });
 
