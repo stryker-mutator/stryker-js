@@ -103,7 +103,7 @@ describe(CommandTestRunner.name, () => {
     it('should convert exit code 1 to a killed mutant', async () => {
       const result = await actMutantRun(createSut(), { exitCode: 1 });
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('all');
+      expect(result.killedBy).deep.eq(['all']);
     });
   });
 
