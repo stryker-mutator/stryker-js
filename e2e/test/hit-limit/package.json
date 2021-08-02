@@ -1,7 +1,8 @@
 {
-  "name": "infinite-loop-hit-counter",
+  "name": "hit-limit",
   "version": "1.0.0",
-  "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit imit)",
+  "private": true,
+  "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit limit)",
   "main": "index.js",
   "scripts": {
     "test:karma": "karma start",
