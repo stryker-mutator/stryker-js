@@ -6,7 +6,7 @@ import { FailedTestResult } from './test-result';
 
 export function determineHitLimitReached(hitCount: number | undefined, hitLimit: number | undefined): TimeoutDryRunResult | undefined {
   if (hitCount !== undefined && hitLimit !== undefined && hitCount > hitLimit) {
-    return { status: DryRunStatus.Timeout, reason: `Hit limit reached (actual nr of hits were ${hitCount}, limit was ${hitLimit})` };
+    return { status: DryRunStatus.Timeout, reason: `Hit limit reached (${hitCount}/${hitLimit})` };
   }
   return;
 }

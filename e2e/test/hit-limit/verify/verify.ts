@@ -9,6 +9,6 @@ describe('Limit counter', () => {
     const results = await stryker.runMutationTest();
     const timeoutResults = results.filter(res => res.status === MutantStatus.Timeout);
     expect(timeoutResults).lengthOf(3);
-    timeoutResults.forEach((result) => expect(result.statusReason).eq('Hit limit reached (501 > 500)'));
+    timeoutResults.forEach((result) => expect(result.statusReason).eq('Hit limit reached (501/500)'));
   });
 });

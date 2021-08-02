@@ -13,7 +13,7 @@ import {
 describe('runResultHelpers', () => {
   describe(determineHitLimitReached.name, () => {
     it('should determine a timeout result when hit count is higher than limit', () => {
-      const expected: TimeoutDryRunResult = { status: DryRunStatus.Timeout, reason: 'Hit limit reached (actual nr of hits were 10, limit was 9)' };
+      const expected: TimeoutDryRunResult = { status: DryRunStatus.Timeout, reason: 'Hit limit reached (10/9)' };
       expect(determineHitLimitReached(10, 9)).deep.eq(expected);
     });
     it('should not determine a timeout result when hit count is less than or equal to limit', () => {

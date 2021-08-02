@@ -348,7 +348,7 @@ describe(KarmaTestRunner.name, () => {
         hitCount: 10,
       });
       assertions.expectTimeout(result);
-      expect(result.reason).contains('Hit limit reached (actual nr of hits were 10, limit was 9)');
+      expect(result.reason).contains('Hit limit reached (10/9)');
     });
 
     it('should reset the hitLimit between runs', async () => {
