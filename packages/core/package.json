@@ -91,7 +91,7 @@
     "@types/lodash.flatmap": "~4.5.6",
     "@types/lodash.groupby": "~4.6.6",
     "@types/minimatch": "~3.0.3",
-    "@types/node": "^15.0.0",
+    "@types/node": "^16.4.12",
     "@types/progress": "~2.0.1",
     "flatted": "~3.2.0"
   }
