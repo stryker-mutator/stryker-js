@@ -32,7 +32,7 @@
   "dependencies": {
     "@babel/core": "~7.14.0",
     "@babel/generator": "~7.15.0",
-    "@babel/parser": "~7.14.1",
+    "@babel/parser": "~7.15.0",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-decorators": "~7.14.5 ",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
