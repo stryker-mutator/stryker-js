@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -35,7 +35,7 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
     - name: Install dependencies
       run: npm install || npm install # retry once, install on windows is flaky...
     - name: Build packages
