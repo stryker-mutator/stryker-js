@@ -12,7 +12,7 @@
   "sideEffects": false,
   "scripts": {
     "report-coverage": "coveralls < ./coverage/lcov.info",
-    "test-original": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
+    "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
     "test": "stryker run",
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
     "cover": "npm test -- --coverage",
@@ -52,28 +52,28 @@
   },
   "homepage": "https://github.com/reactstrap/reactstrap#readme",
   "dependencies": {
-    "react": "~16.13.1",
-    "react-dom": "~16.13.1",
-    "classnames": "~2.2.6",
+    "classnames": "~2.3.1",
     "prop-types": "~15.7.2",
-    "react-transition-group": "~4.4.1"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "react-transition-group": "~4.4.2"
   },
   "peerDependencies": {
-    "react": "~16.13.1",
-    "react-dom": "~16.13.1"
+    "react": "~17.0.2",
+    "react-dom": "~17.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "~7.10.5",
-    "@babel/core": "~7.11.4",
-    "@babel/plugin-proposal-export-default-from": "~7.10.4",
-    "@babel/plugin-proposal-export-namespace-from": "~7.10.4",
-    "@babel/plugin-proposal-object-rest-spread": "~7.11.0",
-    "@babel/plugin-transform-runtime": "~7.11.0",
-    "@babel/preset-env": "~7.11.0",
-    "@babel/preset-react": "~7.10.4",
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-export-default-from": "^7.14.5",
+    "@babel/plugin-proposal-export-namespace-from": "^7.14.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.14.7",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-react": "^7.14.5",
     "enzyme": "~3.11.0",
-    "enzyme-adapter-react-16": "~1.15.2",
-    "react-scripts": "~3.4.1"
+    "enzyme-adapter-react-16": "~1.15.6",
+    "react-scripts": "~4.0.3"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
