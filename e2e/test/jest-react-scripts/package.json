@@ -11,19 +11,8 @@
   "esnext": "src",
   "sideEffects": false,
   "scripts": {
-    "report-coverage": "coveralls < ./coverage/lcov.info",
     "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
-    "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
-    "cover": "npm test -- --coverage",
-    "start": "cross-env BABEL_ENV=webpack webpack-dev-server --config ./webpack.dev.config.js --watch",
-    "build-docs": "cross-env BABEL_ENV=webpack WEBPACK_BUILD=production webpack --config ./webpack.dev.config.js --progress --colors",
-    "build": "rollup -c",
-    "prebuild": "cross-env BABEL_ENV=lib-dir babel src --out-dir lib --ignore src/__tests__/",
-    "postbuild": "node ./scripts/postbuild.js",
-    "create-release": "npm run cover && sh ./scripts/release",
-    "publish-release": "npm run cover && sh ./scripts/publish",
-    "lint": "eslint src"
+    "test": "stryker run"
   },
   "repository": {
     "type": "git",
@@ -63,11 +52,8 @@
     "react-dom": "~17.0.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
     "@babel/core": "^7.15.0",
     "@babel/plugin-proposal-export-default-from": "^7.14.5",
-    "@babel/plugin-proposal-export-namespace-from": "^7.14.5",
-    "@babel/plugin-proposal-object-rest-spread": "^7.14.7",
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
