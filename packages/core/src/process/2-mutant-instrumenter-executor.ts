@@ -8,7 +8,7 @@ import { Sandbox } from '../sandbox/sandbox';
 import { LoggingClientContext } from '../logging';
 
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
-import { createCheckerFactory } from '../checker/checker-facade';
+import { createCheckerFactory } from '../checker';
 import { createPreprocessor } from '../sandbox';
 
 import { DryRunContext } from './3-dry-run-executor';

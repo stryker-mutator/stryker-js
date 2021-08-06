@@ -12,7 +12,7 @@ import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } 
 import { InputFileCollection } from '../../../src/input';
 import { coreTokens } from '../../../src/di';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
-import { createCheckerFactory } from '../../../src/checker/checker-facade';
+import { createCheckerFactory } from '../../../src/checker';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
 import { Pool } from '../../../src/concurrent';
 

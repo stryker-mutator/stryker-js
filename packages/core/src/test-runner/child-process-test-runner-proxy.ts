@@ -14,7 +14,7 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 /**
  * Runs the given test runner in a child process and forwards reports about test results
  */
-export class ChildProcessTestRunnerDecorator implements TestRunner {
+export class ChildProcessTestRunnerProxy implements TestRunner {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
   constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext, private readonly log: Logger) {

@@ -8,10 +8,10 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import { LoggingClientContext } from '../../../src/logging';
-import { ChildProcessTestRunnerDecorator } from '../../../src/test-runner/child-process-test-runner-decorator';
+import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
 
-describe(ChildProcessTestRunnerDecorator.name, () => {
+describe(ChildProcessTestRunnerProxy.name, () => {
   let options: StrykerOptions;
   let childProcessProxyMock: {
     proxy: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -35,8 +35,8 @@ describe(ChildProcessTestRunnerDecorator.name, () => {
     loggingContext = { port: 4200, level: LogLevel.Fatal };
   });
 
-  function createSut(): ChildProcessTestRunnerDecorator {
-    return new ChildProcessTestRunnerDecorator(options, 'a working directory', loggingContext, testInjector.logger);
+  function createSut(): ChildProcessTestRunnerProxy {
+    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, testInjector.logger);
   }
 
   it('should create the child process proxy', () => {
