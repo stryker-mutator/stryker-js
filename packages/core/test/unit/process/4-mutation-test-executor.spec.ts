@@ -147,12 +147,12 @@ describe(MutationTestExecutor.name, () => {
   it('should set the hit limit to undefined when there was no hit count', async () => {
     arrangeScenario();
     mutants.push(factory.mutantTestCoverage({ hitCount: undefined, static: true }));
+    const expected: Partial<MutantRunOptions> = { hitLimit: undefined };
 
     // Act
     await sut.execute();
 
     // Assert
-    const expected: Partial<MutantRunOptions> = { hitLimit: undefined };
     expect(testRunner.mutantRun).calledWithMatch(expected);
   });
   it('should passthrough the test filter', async () => {
