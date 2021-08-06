@@ -1,5 +1,5 @@
 {
-  "name": "jest-react",
+  "name": "jest-react-scripts",
   "version": "6.5.0",
   "description": "React Bootstrap 4 components",
   "main": "dist/reactstrap.cjs.js",
