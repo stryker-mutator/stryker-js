@@ -1,0 +1,10 @@
+pull_request_rules:
+  - name: automatic merge for Dependabot devDependencies pull requests
+    conditions:
+      - author=dependabot[bot]
+      - title~=^build\(deps-dev\)
+    actions:
+      merge:
+        method: squash
+      squash:
+        commit_message: first-commit # this should be the dependabot commit, with a nice message
