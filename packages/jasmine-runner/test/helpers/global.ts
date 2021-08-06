@@ -1,6 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare namespace NodeJS {
-  interface Global {
-    __testsInCurrentJasmineRun: string[];
-  }
+export {};
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __testsInCurrentJasmineRun: string[];
 }
