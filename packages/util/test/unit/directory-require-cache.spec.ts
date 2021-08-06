@@ -92,7 +92,7 @@ describe(DirectoryRequireCache.name, () => {
 
     // Assert
     expect(rootModule.children).lengthOf(1);
-    expect(rootModule.children[0].filename).eq(bazFileName);
+    expect(rootModule.children[0]!.filename).eq(bazFileName);
   });
 
   it('should clear recorded separate unique parents', () => {

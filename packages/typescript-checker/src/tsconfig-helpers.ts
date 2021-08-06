@@ -50,6 +50,8 @@ export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
  * @param parsedConfig The parsed config file
  * @param useBuildMode whether or not `--build` mode is used
  */
+// `any` is used in typescript lib as well
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean): string {
   const config = {
     ...parsedConfig.config,
@@ -67,6 +69,8 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
  * @param parsedConfig The parsed config file
  * @param fromDirName The directory where to resolve from
  */
+// `any` is used in typescript lib as well
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromDirName: string): string[] {
   if (Array.isArray(parsedConfig.config?.references)) {
     return parsedConfig.config?.references.map((reference: ts.ProjectReference) =>

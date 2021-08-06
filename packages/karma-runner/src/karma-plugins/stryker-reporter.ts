@@ -109,21 +109,20 @@ export class StrykerReporter implements karma.Reporter {
   public readonly onRunComplete = (_browsers: unknown, runResult: karma.TestResults): void => {
     this.karmaRunResult = runResult;
     if (!this.browserIsRestarting) {
-      this.runTask!.resolve(this.collectRunResult());
+      this.runTask?.resolve(this.collectRunResult());
     }
   };
 
   public readonly onBrowserComplete: (
-    _browser: any,
+    _browser: unknown,
     result: {
       mutantCoverage: MutantCoverage;
     }
-  ) => void = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
+  ) => void = (_browser: unknown, result: { mutantCoverage: MutantCoverage }) => {
     this.mutantCoverage = result.mutantCoverage;
   };
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public readonly onBrowserError = (browser: Browser, error: any): void => {
+  public readonly onBrowserError = (browser: Browser, error: Error | string): void => {
     if (this.initTask) {
       this.initTask.reject(error);
     } else {
@@ -133,7 +132,7 @@ export class StrykerReporter implements karma.Reporter {
         this.browserIsRestarting = true;
       }
       // Karma 2.0 has different error messages
-      if (error.message) {
+      if (typeof error === 'object' && error.message) {
         this.errorMessage = error.message;
       } else {
         this.errorMessage = error.toString();

@@ -21,7 +21,7 @@ export class EventRecorderReporter implements StrictReporter {
     this.createBaseFolderTask = cleanFolder(this.options.eventReporter.baseDir);
   }
 
-  private writeToFile(methodName: keyof Reporter, data: any) {
+  private writeToFile(methodName: keyof Reporter, data: unknown) {
     const filename = path.join(this.options.eventReporter.baseDir, `${this.format(this.index++)}-${methodName}.json`);
     this.log.debug(`Writing event ${methodName} to file ${filename}`);
     return fsPromises.writeFile(filename, JSON.stringify(data), { encoding: 'utf8' });
@@ -37,7 +37,7 @@ export class EventRecorderReporter implements StrictReporter {
     return str;
   }
 
-  private work(eventName: keyof Reporter, data: any) {
+  private work(eventName: keyof Reporter, data: unknown) {
     this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
   }
 

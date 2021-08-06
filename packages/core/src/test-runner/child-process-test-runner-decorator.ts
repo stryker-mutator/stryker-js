@@ -33,10 +33,10 @@ export class ChildProcessTestRunnerDecorator implements TestRunner {
     return this.worker.proxy.init();
   }
 
-  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     return this.worker.proxy.dryRun(options);
   }
-  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     return this.worker.proxy.mutantRun(options);
   }
 

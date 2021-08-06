@@ -27,7 +27,7 @@ export class MaxTestRunnerReuseDecorator extends TestRunnerDecorator {
     return super.mutantRun(options);
   }
 
-  public dispose(): Promise<any> {
+  public dispose(): Promise<void> {
     this.runs = 0;
     return super.dispose();
   }

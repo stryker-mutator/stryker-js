@@ -9,7 +9,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 
 class CoverageReportingTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
-    (global as any).__mutantCoverage__ = 'overridden';
+    (global as unknown as Record<string, unknown>).__mutantCoverage__ = 'overridden';
     return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
   }
   public async mutantRun(): Promise<MutantRunResult> {
@@ -56,7 +56,7 @@ export class CounterTestRunner implements TestRunner {
 
 class DirectResolvedTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
-    (global as any).__mutantCoverage__ = 'coverageObject';
+    (global as unknown as Record<string, unknown>).__mutantCoverage__ = 'coverageObject';
     return factory.completeDryRunResult();
   }
   public async mutantRun(): Promise<MutantRunResult> {
@@ -82,7 +82,7 @@ class DiscoverRegexTestRunner implements TestRunner {
 
 class ErroredTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
-    let expectedError: any = null;
+    let expectedError = null;
     try {
       throw new SyntaxError('This is invalid syntax!');
     } catch (error) {

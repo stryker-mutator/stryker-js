@@ -69,14 +69,14 @@ function setClientOptions(config: Config) {
   // Disable randomized tests with using jasmine. Stryker doesn't play nice with a random test order, since spec id's tent to move around
   // Also set failFast, so that we're not waiting on more than 1 failed test
   if (config.frameworks?.includes('jasmine')) {
-    (clientOptions as any).jasmine = {
+    (clientOptions as Record<string, unknown>).jasmine = {
       random: false,
       failFast: true,
     };
   }
 
   if (config.frameworks?.includes('mocha')) {
-    (clientOptions as any).mocha = { bail: true };
+    (clientOptions as Record<string, unknown>).mocha = { bail: true };
   }
   config.set({ client: clientOptions });
 }

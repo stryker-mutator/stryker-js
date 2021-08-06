@@ -160,7 +160,7 @@ describe(KarmaTestRunner.name, () => {
       runResults?: TestResults;
       options?: DryRunOptions;
       mutantCoverage?: MutantCoverage;
-      browserError?: [browser: Browser, error: any] | undefined;
+      browserError?: [browser: Browser, error: Error | string] | undefined;
     }) {
       const dryRunPromise = sut.dryRun(options);
       actRun({ browserError, specResults, mutantCoverage, runResults });
@@ -277,7 +277,7 @@ describe(KarmaTestRunner.name, () => {
       runResults?: TestResults;
       options?: MutantRunOptions;
       mutantCoverage?: MutantCoverage;
-      browserError?: [browser: Browser, error: any] | undefined;
+      browserError?: [browser: Browser, error: Error | string] | undefined;
     }) {
       const promise = sut.mutantRun(options);
       actRun({ specResults, runResults, mutantCoverage, browserError });
@@ -388,7 +388,7 @@ describe(KarmaTestRunner.name, () => {
     specResults: KarmaSpec[];
     runResults: TestResults;
     mutantCoverage: MutantCoverage;
-    browserError: [browser: Browser, error: any] | undefined;
+    browserError: [browser: Browser, error: Error | string] | undefined;
   }) {
     StrykerReporter.instance.onRunStart();
     specResults.forEach((spec) => StrykerReporter.instance.onSpecComplete(null, spec));

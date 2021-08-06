@@ -1,7 +1,8 @@
 import path from 'path';
 
+import { Logger } from '@stryker-mutator/api/logging';
 import { errorToString } from '@stryker-mutator/util';
-import { getLogger, Logger } from 'log4js';
+import { getLogger } from 'log4js';
 
 import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';

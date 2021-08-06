@@ -26,7 +26,7 @@ export class TestRunnerDecorator implements Required<TestRunner>, Disposable {
     return this.innerRunner.mutantRun(options);
   }
 
-  public dispose(): Promise<any> {
+  public dispose(): Promise<void> {
     if (this.innerRunner.dispose) {
       return this.innerRunner.dispose();
     } else {

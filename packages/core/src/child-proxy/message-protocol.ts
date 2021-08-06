@@ -51,6 +51,6 @@ export interface RejectionResult {
 export interface CallMessage {
   correlationId: number;
   kind: WorkerMessageKind.Call;
-  args: any[];
+  args: unknown[];
   methodName: string;
 }

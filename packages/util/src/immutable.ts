@@ -1,6 +1,6 @@
 import { Primitive } from './primitive';
 
-type ImmutablePrimitive = Primitive | ((...args: any[]) => any);
+type ImmutablePrimitive = Primitive | ((...args: unknown[]) => unknown);
 
 export type Immutable<T> = T extends ImmutablePrimitive
   ? T
@@ -21,7 +21,7 @@ export function deepFreeze<T>(target: T): Immutable<T> {
   switch (typeof target) {
     case 'object':
       if (Array.isArray(target)) {
-        return Object.freeze((target as any[]).map(deepFreeze)) as Immutable<T>;
+        return Object.freeze(target.map(deepFreeze)) as Immutable<T>;
       }
       if (target instanceof Map) {
         return Object.freeze(new Map([...target.entries()].map(([k, v]) => [deepFreeze(k), deepFreeze(v)]))) as unknown as Immutable<T>;
@@ -35,12 +35,16 @@ export function deepFreeze<T>(target: T): Immutable<T> {
       if (target instanceof Set) {
         return Object.freeze(new Set([...target.values()].map(deepFreeze))) as unknown as Immutable<T>;
       }
+
+      type MutableObject<Type> = { [K in keyof Type]: Immutable<Type[K]> };
+      type P = Partial<MutableObject<T>>; // `Partial` hack for Object.reduce
+
       return Object.freeze({
-        ...Object.entries(target).reduce<any>((result, [prop, val]) => {
-          result[prop] = deepFreeze(val);
+        ...Object.entries(target).reduce<P>((result, [prop, val]) => {
+          result[prop as keyof T] = deepFreeze(val); // : Immutable<T[K]>
           return result;
-        }, {}),
-      });
+        }, {}), // { [K in keyof T]: Immutable<T[K]> } === MutableObject<T>
+      }) as Immutable<T>; // { readonly [K in keyof T]: Immutable<T[K]> } === ImmutableObject<T>
     default:
       return target as Immutable<T>;
   }

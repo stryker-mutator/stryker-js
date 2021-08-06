@@ -1,7 +1,7 @@
 import logging from 'log4js';
 import sinon from 'sinon';
 
-import { logger, Mock } from './producers';
+import { logger, Mock, Mutable } from './producers';
 
 let log: Mock<logging.Logger>;
 
@@ -10,6 +10,6 @@ beforeEach(() => {
   sinon.stub(logging, 'getLogger').returns(log);
 });
 
-export function currentLogMock(): any {
+export function currentLogMock(): Mutable<sinon.SinonStubbedInstance<logging.Logger>> {
   return log;
 }
