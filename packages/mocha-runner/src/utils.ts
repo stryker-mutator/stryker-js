@@ -35,17 +35,17 @@ const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties
  * Filter out those config values that are actually useful to run mocha with Stryker
  * @param rawConfig The raw parsed mocha configuration
  */
-export function filterConfig(rawConfig: Record<string, any>): Partial<MochaOptions> {
-  const options: Partial<MochaOptions> = {};
+export function filterConfig(rawConfig: Record<string, unknown>): Partial<MochaOptions> {
+  const options: Partial<MochaOptions> & Record<string, unknown> = {};
   Object.keys(rawConfig)
     .filter((rawOption) => SUPPORTED_MOCHA_OPTIONS.some((supportedOption) => rawOption === supportedOption))
-    .forEach((option) => ((options as any)[option] = rawConfig[option]));
+    .forEach((option) => (options[option] = rawConfig[option]));
 
   // Config file can also contain positional arguments. They are provided under the `_` key
   // For example:
   // When mocha.opts contains "--async-only test/**/*.js", then "test/**/*.js will be the positional argument
   // We must provide it to mocha as "spec"
-  if (rawConfig._?.length) {
+  if (Array.isArray(rawConfig._) && rawConfig._.length) {
     if (!options.spec) {
       options.spec = [];
     }

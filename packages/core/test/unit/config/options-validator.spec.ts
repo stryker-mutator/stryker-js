@@ -355,10 +355,11 @@ describe(OptionsValidator.name, () => {
     expect(testInjector.logger.warn).not.called;
   }
 
-  function breakConfig(key: keyof StrykerOptions, value: any): void {
+  function breakConfig(key: keyof StrykerOptions, value: unknown): void {
     const original = testInjector.options[key];
     if (typeof original === 'object' && !Array.isArray(original)) {
-      testInjector.options[key] = { ...original, ...value };
+      const arrvalue = Array.isArray(value) ? value : [value];
+      testInjector.options[key] = { ...original, ...arrvalue };
     } else {
       testInjector.options[key] = value;
     }

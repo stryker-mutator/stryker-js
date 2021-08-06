@@ -17,12 +17,16 @@ import { ChildProcessCrashedError } from './child-process-crashed-error';
 import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
 import { OutOfMemoryError } from './out-of-memory-error';
 
-type Func<TS extends any[], R> = (...args: TS) => R;
+type Func<TS extends unknown[], R> = (...args: TS) => R;
 
-type PromisifiedFunc<TS extends any[], R> = (...args: TS) => Promise<R>;
+type PromisifiedFunc<TS extends unknown[], R> = (...args: TS) => Promise<R>;
 
 export type Promisified<T> = {
-  [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
+  [K in keyof T]: T[K] extends PromisifiedFunc<unknown[], unknown>
+    ? T[K]
+    : T[K] extends Func<infer TS, infer R>
+    ? PromisifiedFunc<TS, R>
+    : () => Promise<T[K]>;
 };
 
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
@@ -106,7 +110,7 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private forward(methodName: string) {
-    return async (...args: any[]) => {
+    return async (...args: unknown[]) => {
       if (this.currentError) {
         return Promise.reject(this.currentError);
       } else {

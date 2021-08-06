@@ -328,9 +328,9 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
 ];
 
 export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
-  const reporters = { name } as any;
+  const reporters = { name } as Record<string, unknown>;
   ALL_REPORTER_EVENTS.forEach((event) => (reporters[event] = sinon.stub()));
-  return reporters;
+  return reporters as sinon.SinonStubbedInstance<Required<Reporter>>;
 }
 
 export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({

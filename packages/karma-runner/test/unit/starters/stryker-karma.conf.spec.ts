@@ -125,7 +125,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    const clientConfig = config.client as any;
+    const clientConfig = config.client as Record<string, unknown>;
     expect(clientConfig.jasmine).deep.eq({ random: false, failFast: true });
     expect(clientConfig.mocha).undefined;
   });
@@ -139,7 +139,7 @@ describe('stryker-karma.conf.js', () => {
     sut(config);
 
     // Assert
-    const clientConfig = config.client as any;
+    const clientConfig = config.client as Record<string, unknown>;
     expect(clientConfig.jasmine).undefined;
     expect(clientConfig.mocha).deep.include({ bail: true });
   });
@@ -221,7 +221,7 @@ class KarmaConfigMock implements Config {
   public set(config: ConfigOptions) {
     for (const prop in config) {
       if (prop !== 'set') {
-        (this as any)[prop] = (config as any)[prop];
+        (this as Record<string, unknown>)[prop] = (config as Record<string, unknown>)[prop];
       }
     }
   }

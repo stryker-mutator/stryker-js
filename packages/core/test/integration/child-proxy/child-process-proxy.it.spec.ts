@@ -122,7 +122,7 @@ describe(ChildProcessProxy.name, () => {
 });
 
 function toLogLevel(level: log4js.Level) {
-  const levelName = (level as any).levelStr.toLowerCase();
+  const levelName = level.levelStr.toLowerCase();
   return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(
     (logLevel) => logLevel === levelName
   );

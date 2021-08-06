@@ -4,7 +4,7 @@
 export class Task<T = void> {
   protected _promise: Promise<T>;
   private resolveFn!: (value: PromiseLike<T> | T) => void;
-  private rejectFn!: (reason: any) => void;
+  private rejectFn!: (reason: unknown) => void;
   private _isCompleted = false;
 
   constructor() {
@@ -27,7 +27,7 @@ export class Task<T = void> {
     this.resolveFn(result);
   };
 
-  public reject: (reason: any) => void = (reason: any): void => {
+  public reject: (reason: unknown) => void = (reason: unknown): void => {
     this._isCompleted = true;
     this.rejectFn(reason);
   };

@@ -23,7 +23,7 @@ export function createCustomReporterResult(overrides?: Partial<jasmine.CustomRep
 export function createEnvStub(): sinon.SinonStubbedInstance<jasmine.Env> {
   return {
     currentSpec: { id: 'spec1' } as jasmine.Spec,
-    matchersClass: sinon.stub() as unknown as jasmine.Matchers<any>,
+    matchersClass: sinon.stub() as unknown as jasmine.Matchers<unknown>,
     version: sinon.stub(),
     versionString: sinon.stub(),
     nextSpecId: sinon.stub(),

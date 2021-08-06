@@ -37,7 +37,7 @@ describe('LogConfigurator', () => {
       const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information, allowConsoleColors);
       delete masterConfig.appenders.file;
       delete masterConfig.appenders.filteredFile;
-      (masterConfig.appenders.all as any).appenders = ['filteredConsoleLevel'];
+      (masterConfig.appenders.all as Record<string, unknown>).appenders = ['filteredConsoleLevel'];
       expect(log4jsConfigure).calledWith(masterConfig);
     });
   });

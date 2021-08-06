@@ -96,9 +96,9 @@ export class MochaTestRunner implements TestRunner {
   public async run(intercept: (mocha: Mocha) => void): Promise<DryRunResult> {
     this.requireCache.clear();
     const mocha = this.mochaAdapter.create({
-      reporter: StrykerMochaReporter as any,
+      reporter: StrykerMochaReporter as unknown,
       bail: true,
-      timeout: false as any, // Mocha 5 doesn't support `0`
+      timeout: false as unknown, // Mocha 5 doesn't support `0`
       rootHooks: this.rootHooks,
     } as Mocha.MochaOptions);
     this.configure(mocha);
@@ -109,9 +109,9 @@ export class MochaTestRunner implements TestRunner {
       // Call `requireCache.record` before `mocha.dispose`.
       // `Mocha.dispose` already deletes test files from require cache, but its important that they are recorded before that.
       this.requireCache.record();
-      if ((mocha as any).dispose) {
+      if ('dispose' in mocha) {
         // Since mocha 7.2
-        (mocha as any).dispose();
+        mocha.dispose();
       }
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {

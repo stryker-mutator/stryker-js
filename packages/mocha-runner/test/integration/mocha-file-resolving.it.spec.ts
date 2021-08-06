@@ -20,7 +20,7 @@ describe('Mocha 6 file resolving integration', () => {
     options.mochaOptions = configLoader.load(options);
     const testRunner = createTestRunner();
     testRunner.init();
-    expect((testRunner as any).testFileNames).deep.eq([
+    expect(testRunner.testFileNames).deep.eq([
       resolveTestDir('helpers/1.ts'),
       resolveTestDir('helpers/2.js'),
       resolveTestDir('specs/3.js'),

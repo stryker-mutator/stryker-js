@@ -25,8 +25,8 @@ describe(MochaTestRunner.name, () => {
     reporterMock.tests = [];
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
-    mocha = sinon.createStubInstance(Mocha) as any;
-    mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
+    mocha = sinon.createStubInstance(Mocha) as never;
+    mocha.suite = sinon.createStubInstance(Mocha.Suite) as never;
     mochaAdapterMock.create.returns(mocha as unknown as Mocha);
   });
 

@@ -34,8 +34,8 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     }
   }
 
-  private isNodeErrnoException(arg: any): arg is NodeJS.ErrnoException {
-    return arg.code !== undefined;
+  private isNodeErrnoException(arg: unknown): arg is NodeJS.ErrnoException {
+    return arg instanceof Error && 'code' in arg;
   }
 
   private createJestConfig(): Config.InitialOptions {
