@@ -1,3 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports, import/order
+const strykerPackage: { version: string; engines: { node: string } } = require('../../package.json');
+
+import semver from 'semver';
+
+guardMinimalNodeVersion();
+
 import commander from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
@@ -44,7 +51,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(require('../../package.json').version as string)
+      .version(strykerPackage.version)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -187,5 +194,14 @@ export class StrykerCli {
     } else {
       console.error('Unknown command: "%s", supported commands: [%s], or use `stryker --help`.', this.command, Object.keys(commands));
     }
+  }
+}
+
+export function guardMinimalNodeVersion(processVersion = process.version): void {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  if (!semver.satisfies(processVersion, strykerPackage.engines.node)) {
+    throw new Error(
+      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerPackage.engines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
+    );
   }
 }
