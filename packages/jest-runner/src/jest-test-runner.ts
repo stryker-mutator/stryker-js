@@ -18,7 +18,7 @@ import {
   DryRunOptions,
   BaseTestResult,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
+import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
 import { SerializableError } from '@jest/types/build/TestResult';
@@ -57,6 +57,7 @@ export const jestTestRunnerFactory = createJestTestRunnerFactory();
 
 export class JestTestRunner implements TestRunner {
   private readonly jestConfig: jest.Config.InitialOptions;
+  private readonly jestOptions: JestOptions;
   private readonly enableFindRelatedTests: boolean;
 
   public static inject = tokens(
@@ -76,13 +77,13 @@ export class JestTestRunner implements TestRunner {
     configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
-    const jestOptions = options as JestRunnerOptionsWithStrykerOptions;
+    this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, jestOptions.jest || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
-    this.enableFindRelatedTests = jestOptions.jest.enableFindRelatedTests;
+    this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
 
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
@@ -196,6 +197,17 @@ export class JestTestRunner implements TestRunner {
 
     // Force colors off: https://github.com/chalk/supports-color#info
     process.env.FORCE_COLOR = '0';
+
+    if (this.jestOptions.projectType === 'create-react-app') {
+      try {
+        requireResolve('react-scripts/config/env.js');
+      } catch (err) {
+        this.log.warn(
+          'Unable to load environment variables using "react-scripts/config/env.js". The environment variables might differ from expected. Please open an issue if you think this is a bug: https://github.com/stryker-mutator/stryker-js/issues/new/choose.'
+        );
+        this.log.debug('Inner error', err);
+      }
+    }
   }
 
   private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {

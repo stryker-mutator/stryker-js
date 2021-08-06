@@ -3,6 +3,11 @@ import { shallow, mount } from 'enzyme';
 import { Alert } from '../';
 
 describe('Alert', () => {
+
+  it('should set some test var (https://github.com/stryker-mutator/stryker-js/issues/3022)', () => {
+    expect(process.env.SOME_TEST_VAR).toEqual('true');
+  });
+
   it('should render children', () => {
     const alert = mount(<Alert>Yo!</Alert>);
     expect(alert.text()).toBe('Yo!');
