@@ -25,7 +25,6 @@ e2e/*.d.ts
 .idea
 *.iml
 *.tmp.txt
-package-lock.json
 tsconfig.*.tsbuildinfo
 packages/core/schema
 __filterSpecs.js
