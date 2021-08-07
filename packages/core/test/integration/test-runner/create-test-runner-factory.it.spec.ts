@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import log4js from 'log4js';
 import { toArray } from 'rxjs/operators';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { TestRunner, DryRunStatus } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
 import { lastValueFrom } from 'rxjs';
 
@@ -13,12 +13,13 @@ import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
 import { sleep } from '../../helpers/test-utils';
 import { coreTokens } from '../../../src/di';
+import { TestRunnerResource } from '../../../src/concurrent';
 
 import { CounterTestRunner } from './additional-test-runners';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
-  let createSut: () => Required<TestRunner>;
-  let sut: Required<TestRunner>;
+  let createSut: () => TestRunnerResource;
+  let sut: TestRunnerResource;
   let loggingContext: LoggingClientContext;
 
   let loggingServer: LoggingServer;
@@ -50,7 +51,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   afterEach(async () => {
     if (!alreadyDisposed) {
-      await sut.dispose();
+      await sut.dispose?.();
     }
     await loggingServer.dispose();
     rmSync(CounterTestRunner.COUNTER_FILE);
@@ -59,7 +60,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   async function arrangeSut(name: string): Promise<void> {
     testInjector.options.testRunner = name;
     sut = createSut();
-    await sut.init();
+    await sut.init?.();
   }
 
   function actDryRun(timeout = 4000) {
@@ -128,7 +129,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   it('should still shutdown the child process, even when test runner dispose rejects', async () => {
     arrangeSut('errored');
-    await sut.dispose();
+    await sut.dispose?.();
   });
 
   it('should change the current working directory to the sandbox directory', async () => {
@@ -156,7 +157,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     const logEvents = lastValueFrom(loggingServer.event$.pipe(toArray()));
     await arrangeSut('async-promise-rejection-handler');
     await actDryRun();
-    await sut.dispose();
+    await sut.dispose?.();
     alreadyDisposed = true;
     await loggingServer.dispose();
     const actualLogEvents = await logEvents;

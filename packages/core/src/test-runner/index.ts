@@ -9,7 +9,7 @@ import { Sandbox } from '../sandbox/sandbox';
 
 import { RetryRejectedDecorator } from './retry-rejected-decorator';
 import { TimeoutDecorator } from './timeout-decorator';
-import { ChildProcessTestRunnerDecorator } from './child-process-test-runner-decorator';
+import { ChildProcessTestRunnerProxy } from './child-process-test-runner-proxy';
 import { CommandTestRunner } from './command-test-runner';
 import { MaxTestRunnerReuseDecorator } from './max-test-runner-reuse-decorator';
 
@@ -19,7 +19,7 @@ export function createTestRunnerFactory(
   sandbox: Pick<Sandbox, 'workingDirectory'>,
   loggingContext: LoggingClientContext,
   getLogger: LoggerFactoryMethod
-): () => Required<TestRunner> {
+): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
     return () => new RetryRejectedDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
   } else {
@@ -29,13 +29,7 @@ export function createTestRunnerFactory(
           new MaxTestRunnerReuseDecorator(
             () =>
               new TimeoutDecorator(
-                () =>
-                  new ChildProcessTestRunnerDecorator(
-                    options,
-                    sandbox.workingDirectory,
-                    loggingContext,
-                    getLogger(ChildProcessTestRunnerDecorator.name)
-                  )
+                () => new ChildProcessTestRunnerProxy(options, sandbox.workingDirectory, loggingContext, getLogger(ChildProcessTestRunnerProxy.name))
               ),
             options
           )

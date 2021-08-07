@@ -9,41 +9,49 @@ import { coreTokens } from '../di';
 
 const MAX_CONCURRENT_INIT = 2;
 
-export interface Worker {
-  init?(): Promise<unknown>;
-  dispose?(): Promise<unknown>;
+/**
+ * Represents a Checker that is also a Resource (with an init and dispose)
+ */
+export type CheckerResource = Checker & Resource;
+/**
+ * Represents a TestRunner that is also a Resource (with an init and dispose)
+ */
+export type TestRunnerResource = Resource & TestRunner;
+
+export interface Resource extends Partial<Disposable> {
+  init?(): Promise<void>;
 }
 
 createTestRunnerPool.inject = tokens(coreTokens.testRunnerFactory, coreTokens.testRunnerConcurrencyTokens);
-export function createTestRunnerPool(factory: () => TestRunner, concurrencyToken$: Observable<number>): Pool<TestRunner> {
+export function createTestRunnerPool(factory: () => TestRunnerResource, concurrencyToken$: Observable<number>): Pool<TestRunner> {
   return new Pool(factory, concurrencyToken$);
 }
 
 createCheckerPool.inject = tokens(coreTokens.checkerFactory, coreTokens.checkerConcurrencyTokens);
-export function createCheckerPool(factory: () => Checker, concurrencyToken$: Observable<number>): Pool<Checker> {
+export function createCheckerPool(factory: () => CheckerResource, concurrencyToken$: Observable<number>): Pool<Checker> {
   return new Pool(factory, concurrencyToken$);
 }
 
 /**
- * Represents a pool of workers. Use `schedule` to schedule work to be executed on the workers.
- * The pool will automatically recycle the workers, but will make sure only one task is executed
- * on one worker at any one time. Creates as many workers as the concurrency tokens allow.
- * Also takes care of the initialing of the workers (with `init()`)
+ * Represents a pool of resources. Use `schedule` to schedule work to be executed on the resources.
+ * The pool will automatically recycle the resources, but will make sure only one task is executed
+ * on one resource at any one time. Creates as many resources as the concurrency tokens allow.
+ * Also takes care of the initialing of the resources (with `init()`)
  */
-export class Pool<TWorker extends Worker> implements Disposable {
-  private readonly createdWorkers: TWorker[] = [];
-  private readonly worker$: Observable<TWorker>;
+export class Pool<TResource extends Resource> implements Disposable {
+  private readonly createdResources: TResource[] = [];
+  private readonly resource$: Observable<TResource>;
 
-  constructor(factory: () => TWorker, concurrencyToken$: Observable<number>) {
-    this.worker$ = concurrencyToken$.pipe(
+  constructor(factory: () => TResource, concurrencyToken$: Observable<number>) {
+    this.resource$ = concurrencyToken$.pipe(
       mergeMap(async () => {
         if (this.isDisposed) {
           return null;
         } else {
-          const worker = factory();
-          this.createdWorkers.push(worker);
-          await worker.init?.();
-          return worker;
+          const resource = factory();
+          this.createdResources.push(resource);
+          await resource.init?.();
+          return resource;
         }
       }, MAX_CONCURRENT_INIT),
       filter(notEmpty),
@@ -54,27 +62,27 @@ export class Pool<TWorker extends Worker> implements Disposable {
   }
 
   /**
-   * Returns a promise that resolves if all concurrency tokens have resulted in initialized workers.
-   * This is optional, workers will get initialized either way.
+   * Returns a promise that resolves if all concurrency tokens have resulted in initialized resources.
+   * This is optional, resources will get initialized either way.
    */
   public async init(): Promise<void> {
-    await lastValueFrom(this.worker$);
+    await lastValueFrom(this.resource$);
   }
 
   /**
-   * Schedules a task to be executed on workers in the pool. Each input is paired with a worker, which allows async work to be done.
-   * @param input$ The inputs to pair up with a worker.
-   * @param task The task to execute on each worker
+   * Schedules a task to be executed on resources in the pool. Each input is paired with a resource, which allows async work to be done.
+   * @param input$ The inputs to pair up with a resource.
+   * @param task The task to execute on each resource
    */
-  public schedule<TIn, TOut>(input$: Observable<TIn>, task: (worker: TWorker, input: TIn) => Promise<TOut> | TOut): Observable<TOut> {
-    const recycleBin = new Subject<TWorker>();
-    const worker$ = merge(recycleBin, this.worker$);
+  public schedule<TIn, TOut>(input$: Observable<TIn>, task: (resource: TResource, input: TIn) => Promise<TOut> | TOut): Observable<TOut> {
+    const recycleBin = new Subject<TResource>();
+    const resource$ = merge(recycleBin, this.resource$);
 
-    return zip(worker$, input$).pipe(
-      mergeMap(async ([worker, input]) => {
-        const output = await task(worker, input);
-        //  Recycles a worker so its re-emitted from the `worker$` observable.
-        recycleBin.next(worker);
+    return zip(resource$, input$).pipe(
+      mergeMap(async ([resource, input]) => {
+        const output = await task(resource, input);
+        //  Recycles a resource so its re-emitted from the `resource$` observable.
+        recycleBin.next(resource);
         return output;
       }),
       tap({ complete: () => recycleBin.complete() })
@@ -88,6 +96,6 @@ export class Pool<TWorker extends Worker> implements Disposable {
    */
   public async dispose(): Promise<void> {
     this.isDisposed = true;
-    await Promise.all(this.createdWorkers.map((worker) => worker.dispose?.()));
+    await Promise.all(this.createdResources.map((resource) => resource.dispose?.()));
   }
 }

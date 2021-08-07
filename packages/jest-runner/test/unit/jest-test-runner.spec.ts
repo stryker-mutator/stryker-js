@@ -6,8 +6,7 @@ import sinon from 'sinon';
 import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test-runner';
 import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
-
-import { Task } from '@stryker-mutator/util';
+import * as util from '@stryker-mutator/util';
 
 import { JestTestAdapter } from '../../src/jest-test-adapters';
 import { JestTestRunner } from '../../src/jest-test-runner';
@@ -26,6 +25,7 @@ describe(JestTestRunner.name, () => {
   let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
   let processEnvMock: NodeJS.ProcessEnv;
   let options: JestRunnerOptionsWithStrykerOptions;
+  let requireResolveStub: sinon.SinonStubbedMember<typeof util.requireResolve>;
 
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
@@ -33,6 +33,7 @@ describe(JestTestRunner.name, () => {
     jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) }));
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
+    requireResolveStub = sinon.stub(util, 'requireResolve');
 
     options.jest = {
       enableFindRelatedTests: true,
@@ -273,6 +274,13 @@ describe(JestTestRunner.name, () => {
       expect(processEnvMock.NODE_ENV).to.equal('stryker');
     });
 
+    it('should load "react-scripts/config/env.js" when projectType = create-react-app', async () => {
+      options.jest.projectType = 'create-react-app';
+      const sut = createSut();
+      await sut.dryRun({ coverageAnalysis: 'off' });
+      expect(requireResolveStub).calledWith('react-scripts/config/env.js');
+    });
+
     it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', async () => {
       const sut = createSut();
       await sut.dryRun({ coverageAnalysis: 'off' });
@@ -292,7 +300,7 @@ describe(JestTestRunner.name, () => {
       it('should handle mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
         const sut = createSut();
-        const runTask = new Task<JestRunResult>();
+        const runTask = new util.Task<JestRunResult>();
         jestTestAdapterMock.run.returns(runTask.promise);
 
         // Act
@@ -444,7 +452,7 @@ describe(JestTestRunner.name, () => {
 
       it('should reject if coverage analysis is enabled but coverage is not reported for all files', async () => {
         // Arrange
-        const runTask = new Task<JestRunResult>();
+        const runTask = new util.Task<JestRunResult>();
         const sut = createSut();
         jestTestAdapterMock.run.returns(runTask.promise);
 
