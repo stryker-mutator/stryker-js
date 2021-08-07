@@ -20,7 +20,7 @@ export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
       if (failedTests.length > 0) {
         return {
           status: MutantRunStatus.Killed,
-          failureMessages: failedTests.map<string>((test) => test.failureMessage),
+          failureMessage: failedTests[0].failureMessage,
           killedBy: failedTests.map<string>((test) => test.id),
           nrOfTests,
         };

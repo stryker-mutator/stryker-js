@@ -283,7 +283,7 @@ export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
 export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => ({
   status: MutantRunStatus.Killed,
   killedBy: ['spec1'],
-  failureMessages: ['foo should be bar'],
+  failureMessage: 'foo should be bar',
   nrOfTests: 1,
 }));
 

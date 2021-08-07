@@ -121,7 +121,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
-      expect(runResult.failureMessages[0]).contains('Expected: 7').contains('Received: -3');
+      expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
     });
 
     it('should let mutant 11 survive', async () => {

@@ -79,7 +79,7 @@ describe('runResultHelpers', () => {
     });
 
     it("should set nrOfTests with the amount of tests that weren't `skipped`", () => {
-      const expected: MutantRunResult = { nrOfTests: 2, failureMessages: [''], killedBy: ['1'], status: MutantRunStatus.Killed };
+      const expected: MutantRunResult = { nrOfTests: 2, failureMessage: '', killedBy: ['1'], status: MutantRunStatus.Killed };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
         tests: [
