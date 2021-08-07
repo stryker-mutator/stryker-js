@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/stryker-mutator/stryker-js/compare/v5.2.3...v5.3.0) (2021-08-07)
+
+
+### Bug Fixes
+
+* **jest-runner:** load .env for create-react-app ([#3055](https://github.com/stryker-mutator/stryker-js/issues/3055)) ([12e1324](https://github.com/stryker-mutator/stryker-js/commit/12e132410637a9bc4724c4b1fd43acd70f841ce3))
+
+
+### Features
+
+* **hit limit:** infinite loop prevention in karma-runner ([#3031](https://github.com/stryker-mutator/stryker-js/issues/3031)) ([fc732fc](https://github.com/stryker-mutator/stryker-js/commit/fc732fce8838c96be2fdf37aff69b12c996d7cb0))
+
+
+
+
+
 ## [5.2.3](https://github.com/stryker-mutator/stryker-js/compare/v5.2.2...v5.2.3) (2021-08-01)
 
 **Note:** Version bump only for package @stryker-mutator/jest-runner
