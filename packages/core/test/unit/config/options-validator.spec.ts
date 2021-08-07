@@ -83,6 +83,7 @@ describe(OptionsValidator.name, () => {
         timeoutMS: 5000,
         tsconfigFile: 'tsconfig.json',
         warnings: true,
+        disableBail: false,
       };
       expect(options).deep.eq(expectedOptions);
     });

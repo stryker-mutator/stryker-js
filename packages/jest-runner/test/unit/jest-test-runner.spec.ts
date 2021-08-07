@@ -38,7 +38,6 @@ describe(JestTestRunner.name, () => {
     options.jest = {
       enableFindRelatedTests: true,
       projectType: 'custom',
-      enableBail: true,
     };
     options.basePath = basePath;
 
@@ -96,8 +95,8 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = false when enableBail is false', async () => {
-      options.jest.enableBail = false;
+    it('should set bail = false when disableBail is true', async () => {
+      options.disableBail = true;
       const sut = createSut();
       await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(

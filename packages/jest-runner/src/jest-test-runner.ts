@@ -80,7 +80,7 @@ export class JestTestRunner implements TestRunner {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, (options as JestRunnerOptionsWithStrykerOptions) || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
@@ -256,12 +256,13 @@ export class JestTestRunner implements TestRunner {
     return testResults;
   }
 
-  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestOptions): jest.Config.InitialOptions {
-    const config = (options.config ?? {}) as jest.Config.InitialOptions;
-    config.bail = options.enableBail;
+  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestRunnerOptionsWithStrykerOptions): jest.Config.InitialOptions {
+    const config = (options.jest.config ?? {}) as jest.Config.InitialOptions;
+    // when disableBail is false (by default) we tell jest to bail
+    config.bail = !options.disableBail;
     const stringify = (obj: unknown) => JSON.stringify(obj, null, 2);
     this.log.debug(
-      `Merging file-based config ${stringify(configFromFile)} 
+      `Merging file-based config ${stringify(configFromFile)}
       with custom config ${stringify(config)}
       and default (internal) stryker config ${stringify(JEST_OVERRIDE_OPTIONS)}`
     );
