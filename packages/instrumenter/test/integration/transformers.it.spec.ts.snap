@@ -3381,101 +3381,569 @@ Object {
                 "body": Object {
                   "body": Array [
                     Object {
-                      "argument": Object {
-                        "end": 989,
-                        "left": Object {
-                          "computed": false,
-                          "end": 982,
-                          "loc": Object {
-                            "end": Object {
-                              "column": 26,
-                              "line": 34,
+                      "alternate": null,
+                      "consequent": Object {
+                        "body": Array [
+                          Object {
+                            "alternate": null,
+                            "consequent": Object {
+                              "body": Array [
+                                Object {
+                                  "argument": Object {
+                                    "arguments": Array [
+                                      Object {
+                                        "end": 1137,
+                                        "left": Object {
+                                          "end": 1131,
+                                          "left": Object {
+                                            "end": 1117,
+                                            "extra": Object {
+                                              "raw": "'Stryker: Hit count limit reached ('",
+                                              "rawValue": "Stryker: Hit count limit reached (",
+                                            },
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 60,
+                                                "line": 36,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": undefined,
+                                              "start": Object {
+                                                "column": 24,
+                                                "line": 36,
+                                              },
+                                            },
+                                            "start": 1081,
+                                            "type": "StringLiteral",
+                                            "value": "Stryker: Hit count limit reached (",
+                                          },
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 74,
+                                              "line": 36,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 24,
+                                              "line": 36,
+                                            },
+                                          },
+                                          "operator": "+",
+                                          "right": Object {
+                                            "computed": false,
+                                            "end": 1131,
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 74,
+                                                "line": 36,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": undefined,
+                                              "start": Object {
+                                                "column": 63,
+                                                "line": 36,
+                                              },
+                                            },
+                                            "object": Object {
+                                              "end": 1122,
+                                              "loc": Object {
+                                                "end": Object {
+                                                  "column": 65,
+                                                  "line": 36,
+                                                },
+                                                "filename": undefined,
+                                                "identifierName": "ns",
+                                                "start": Object {
+                                                  "column": 63,
+                                                  "line": 36,
+                                                },
+                                              },
+                                              "name": "ns",
+                                              "start": 1120,
+                                              "type": "Identifier",
+                                            },
+                                            "property": Object {
+                                              "end": 1131,
+                                              "loc": Object {
+                                                "end": Object {
+                                                  "column": 74,
+                                                  "line": 36,
+                                                },
+                                                "filename": undefined,
+                                                "identifierName": "hitCount",
+                                                "start": Object {
+                                                  "column": 66,
+                                                  "line": 36,
+                                                },
+                                              },
+                                              "name": "hitCount",
+                                              "start": 1123,
+                                              "type": "Identifier",
+                                            },
+                                            "start": 1120,
+                                            "type": "MemberExpression",
+                                          },
+                                          "start": 1081,
+                                          "type": "BinaryExpression",
+                                        },
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 80,
+                                            "line": 36,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 24,
+                                            "line": 36,
+                                          },
+                                        },
+                                        "operator": "+",
+                                        "right": Object {
+                                          "end": 1137,
+                                          "extra": Object {
+                                            "raw": "')'",
+                                            "rawValue": ")",
+                                          },
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 80,
+                                              "line": 36,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 77,
+                                              "line": 36,
+                                            },
+                                          },
+                                          "start": 1134,
+                                          "type": "StringLiteral",
+                                          "value": ")",
+                                        },
+                                        "start": 1081,
+                                        "type": "BinaryExpression",
+                                      },
+                                    ],
+                                    "callee": Object {
+                                      "end": 1080,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 23,
+                                          "line": 36,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "Error",
+                                        "start": Object {
+                                          "column": 18,
+                                          "line": 36,
+                                        },
+                                      },
+                                      "name": "Error",
+                                      "start": 1075,
+                                      "type": "Identifier",
+                                    },
+                                    "end": 1138,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 81,
+                                        "line": 36,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 14,
+                                        "line": 36,
+                                      },
+                                    },
+                                    "start": 1071,
+                                    "type": "NewExpression",
+                                  },
+                                  "end": 1139,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 82,
+                                      "line": 36,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 8,
+                                      "line": 36,
+                                    },
+                                  },
+                                  "start": 1065,
+                                  "type": "ThrowStatement",
+                                },
+                              ],
+                              "directives": Array [],
+                              "end": 1147,
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 7,
+                                  "line": 37,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 65,
+                                  "line": 35,
+                                },
+                              },
+                              "start": 1055,
+                              "type": "BlockStatement",
                             },
-                            "filename": undefined,
-                            "identifierName": undefined,
-                            "start": Object {
-                              "column": 11,
-                              "line": 34,
-                            },
-                          },
-                          "object": Object {
-                            "end": 969,
+                            "end": 1147,
                             "loc": Object {
                               "end": Object {
-                                "column": 13,
-                                "line": 34,
+                                "column": 7,
+                                "line": 37,
                               },
                               "filename": undefined,
-                              "identifierName": "ns",
+                              "identifierName": undefined,
                               "start": Object {
-                                "column": 11,
-                                "line": 34,
+                                "column": 6,
+                                "line": 35,
                               },
                             },
-                            "name": "ns",
-                            "start": 967,
-                            "type": "Identifier",
+                            "start": 996,
+                            "test": Object {
+                              "end": 1053,
+                              "left": Object {
+                                "end": 1022,
+                                "left": Object {
+                                  "computed": false,
+                                  "end": 1011,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 21,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 10,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "object": Object {
+                                    "end": 1002,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 12,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "ns",
+                                      "start": Object {
+                                        "column": 10,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "ns",
+                                    "start": 1000,
+                                    "type": "Identifier",
+                                  },
+                                  "property": Object {
+                                    "end": 1011,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 21,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "hitCount",
+                                      "start": Object {
+                                        "column": 13,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "hitCount",
+                                    "start": 1003,
+                                    "type": "Identifier",
+                                  },
+                                  "start": 1000,
+                                  "type": "MemberExpression",
+                                },
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 32,
+                                    "line": 35,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Object {
+                                    "column": 10,
+                                    "line": 35,
+                                  },
+                                },
+                                "operator": "!==",
+                                "right": Object {
+                                  "argument": Object {
+                                    "end": 1022,
+                                    "extra": Object {
+                                      "raw": "0",
+                                      "rawValue": 0,
+                                    },
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 32,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 31,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "start": 1021,
+                                    "type": "NumericLiteral",
+                                    "value": 0,
+                                  },
+                                  "end": 1022,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 32,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 26,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "operator": "void",
+                                  "prefix": true,
+                                  "start": 1016,
+                                  "type": "UnaryExpression",
+                                },
+                                "start": 1000,
+                                "type": "BinaryExpression",
+                              },
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 63,
+                                  "line": 35,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 10,
+                                  "line": 35,
+                                },
+                              },
+                              "operator": "&&",
+                              "right": Object {
+                                "end": 1053,
+                                "left": Object {
+                                  "argument": Object {
+                                    "computed": false,
+                                    "end": 1039,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 49,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 38,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "object": Object {
+                                      "end": 1030,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 40,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "ns",
+                                        "start": Object {
+                                          "column": 38,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "name": "ns",
+                                      "start": 1028,
+                                      "type": "Identifier",
+                                    },
+                                    "property": Object {
+                                      "end": 1039,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 49,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "hitCount",
+                                        "start": Object {
+                                          "column": 41,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "name": "hitCount",
+                                      "start": 1031,
+                                      "type": "Identifier",
+                                    },
+                                    "start": 1028,
+                                    "type": "MemberExpression",
+                                  },
+                                  "end": 1039,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 49,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 36,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "operator": "++",
+                                  "prefix": true,
+                                  "start": 1026,
+                                  "type": "UpdateExpression",
+                                },
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 63,
+                                    "line": 35,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Object {
+                                    "column": 36,
+                                    "line": 35,
+                                  },
+                                },
+                                "operator": ">",
+                                "right": Object {
+                                  "computed": false,
+                                  "end": 1053,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 63,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 52,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "object": Object {
+                                    "end": 1044,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 54,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "ns",
+                                      "start": Object {
+                                        "column": 52,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "ns",
+                                    "start": 1042,
+                                    "type": "Identifier",
+                                  },
+                                  "property": Object {
+                                    "end": 1053,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 63,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "hitLimit",
+                                      "start": Object {
+                                        "column": 55,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "hitLimit",
+                                    "start": 1045,
+                                    "type": "Identifier",
+                                  },
+                                  "start": 1042,
+                                  "type": "MemberExpression",
+                                },
+                                "start": 1026,
+                                "type": "BinaryExpression",
+                              },
+                              "start": 1000,
+                              "type": "LogicalExpression",
+                            },
+                            "type": "IfStatement",
                           },
-                          "property": Object {
-                            "end": 982,
+                          Object {
+                            "argument": Object {
+                              "end": 1165,
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 17,
+                                  "line": 38,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 13,
+                                  "line": 38,
+                                },
+                              },
+                              "start": 1161,
+                              "type": "BooleanLiteral",
+                              "value": true,
+                            },
+                            "end": 1166,
                             "loc": Object {
                               "end": Object {
-                                "column": 26,
-                                "line": 34,
+                                "column": 18,
+                                "line": 38,
                               },
                               "filename": undefined,
-                              "identifierName": "activeMutant",
+                              "identifierName": undefined,
                               "start": Object {
-                                "column": 14,
-                                "line": 34,
+                                "column": 6,
+                                "line": 38,
                               },
                             },
-                            "name": "activeMutant",
-                            "start": 970,
-                            "type": "Identifier",
+                            "start": 1154,
+                            "type": "ReturnStatement",
                           },
-                          "start": 967,
-                          "type": "MemberExpression",
-                        },
+                        ],
+                        "directives": Array [],
+                        "end": 1172,
                         "loc": Object {
                           "end": Object {
-                            "column": 33,
-                            "line": 34,
+                            "column": 5,
+                            "line": 39,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Object {
-                            "column": 11,
+                            "column": 32,
                             "line": 34,
                           },
                         },
-                        "operator": "===",
-                        "right": Object {
-                          "end": 989,
-                          "loc": Object {
-                            "end": Object {
-                              "column": 33,
-                              "line": 34,
-                            },
-                            "filename": undefined,
-                            "identifierName": "id",
-                            "start": Object {
-                              "column": 31,
-                              "line": 34,
-                            },
-                          },
-                          "name": "id",
-                          "start": 987,
-                          "type": "Identifier",
-                        },
-                        "start": 967,
-                        "type": "BinaryExpression",
+                        "start": 988,
+                        "type": "BlockStatement",
                       },
-                      "end": 990,
+                      "end": 1172,
                       "loc": Object {
                         "end": Object {
-                          "column": 34,
-                          "line": 34,
+                          "column": 5,
+                          "line": 39,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
@@ -3485,15 +3953,140 @@ Object {
                         },
                       },
                       "start": 960,
+                      "test": Object {
+                        "end": 986,
+                        "left": Object {
+                          "computed": false,
+                          "end": 979,
+                          "loc": Object {
+                            "end": Object {
+                              "column": 23,
+                              "line": 34,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Object {
+                              "column": 8,
+                              "line": 34,
+                            },
+                          },
+                          "object": Object {
+                            "end": 966,
+                            "loc": Object {
+                              "end": Object {
+                                "column": 10,
+                                "line": 34,
+                              },
+                              "filename": undefined,
+                              "identifierName": "ns",
+                              "start": Object {
+                                "column": 8,
+                                "line": 34,
+                              },
+                            },
+                            "name": "ns",
+                            "start": 964,
+                            "type": "Identifier",
+                          },
+                          "property": Object {
+                            "end": 979,
+                            "loc": Object {
+                              "end": Object {
+                                "column": 23,
+                                "line": 34,
+                              },
+                              "filename": undefined,
+                              "identifierName": "activeMutant",
+                              "start": Object {
+                                "column": 11,
+                                "line": 34,
+                              },
+                            },
+                            "name": "activeMutant",
+                            "start": 967,
+                            "type": "Identifier",
+                          },
+                          "start": 964,
+                          "type": "MemberExpression",
+                        },
+                        "loc": Object {
+                          "end": Object {
+                            "column": 30,
+                            "line": 34,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Object {
+                            "column": 8,
+                            "line": 34,
+                          },
+                        },
+                        "operator": "===",
+                        "right": Object {
+                          "end": 986,
+                          "loc": Object {
+                            "end": Object {
+                              "column": 30,
+                              "line": 34,
+                            },
+                            "filename": undefined,
+                            "identifierName": "id",
+                            "start": Object {
+                              "column": 28,
+                              "line": 34,
+                            },
+                          },
+                          "name": "id",
+                          "start": 984,
+                          "type": "Identifier",
+                        },
+                        "start": 964,
+                        "type": "BinaryExpression",
+                      },
+                      "type": "IfStatement",
+                    },
+                    Object {
+                      "argument": Object {
+                        "end": 1189,
+                        "loc": Object {
+                          "end": Object {
+                            "column": 16,
+                            "line": 40,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Object {
+                            "column": 11,
+                            "line": 40,
+                          },
+                        },
+                        "start": 1184,
+                        "type": "BooleanLiteral",
+                        "value": false,
+                      },
+                      "end": 1190,
+                      "loc": Object {
+                        "end": Object {
+                          "column": 17,
+                          "line": 40,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Object {
+                          "column": 4,
+                          "line": 40,
+                        },
+                      },
+                      "start": 1177,
                       "type": "ReturnStatement",
                     },
                   ],
                   "directives": Array [],
-                  "end": 994,
+                  "end": 1194,
                   "loc": Object {
                     "end": Object {
                       "column": 3,
-                      "line": 35,
+                      "line": 41,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
@@ -3505,7 +4098,7 @@ Object {
                   "start": 954,
                   "type": "BlockStatement",
                 },
-                "end": 994,
+                "end": 1194,
                 "generator": false,
                 "id": Object {
                   "end": 949,
@@ -3528,7 +4121,7 @@ Object {
                 "loc": Object {
                   "end": Object {
                     "column": 3,
-                    "line": 35,
+                    "line": 41,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
@@ -3561,155 +4154,155 @@ Object {
                 "type": "FunctionDeclaration",
               },
               Object {
-                "end": 1025,
+                "end": 1225,
                 "expression": Object {
-                  "end": 1024,
+                  "end": 1224,
                   "left": Object {
-                    "end": 1013,
+                    "end": 1213,
                     "loc": Object {
                       "end": Object {
                         "column": 18,
-                        "line": 36,
+                        "line": 42,
                       },
                       "filename": undefined,
                       "identifierName": "stryMutAct_9fa48",
                       "start": Object {
                         "column": 2,
-                        "line": 36,
+                        "line": 42,
                       },
                     },
                     "name": "stryMutAct_9fa48",
-                    "start": 997,
+                    "start": 1197,
                     "type": "Identifier",
                   },
                   "loc": Object {
                     "end": Object {
                       "column": 29,
-                      "line": 36,
+                      "line": 42,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Object {
                       "column": 2,
-                      "line": 36,
+                      "line": 42,
                     },
                   },
                   "operator": "=",
                   "right": Object {
-                    "end": 1024,
+                    "end": 1224,
                     "loc": Object {
                       "end": Object {
                         "column": 29,
-                        "line": 36,
+                        "line": 42,
                       },
                       "filename": undefined,
                       "identifierName": "isActive",
                       "start": Object {
                         "column": 21,
-                        "line": 36,
+                        "line": 42,
                       },
                     },
                     "name": "isActive",
-                    "start": 1016,
+                    "start": 1216,
                     "type": "Identifier",
                   },
-                  "start": 997,
+                  "start": 1197,
                   "type": "AssignmentExpression",
                 },
                 "loc": Object {
                   "end": Object {
                     "column": 30,
-                    "line": 36,
+                    "line": 42,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Object {
                     "column": 2,
-                    "line": 36,
+                    "line": 42,
                   },
                 },
-                "start": 997,
+                "start": 1197,
                 "type": "ExpressionStatement",
               },
               Object {
                 "argument": Object {
                   "arguments": Array [
                     Object {
-                      "end": 1046,
+                      "end": 1246,
                       "loc": Object {
                         "end": Object {
                           "column": 20,
-                          "line": 37,
+                          "line": 43,
                         },
                         "filename": undefined,
                         "identifierName": "id",
                         "start": Object {
                           "column": 18,
-                          "line": 37,
+                          "line": 43,
                         },
                       },
                       "name": "id",
-                      "start": 1044,
+                      "start": 1244,
                       "type": "Identifier",
                     },
                   ],
                   "callee": Object {
-                    "end": 1043,
+                    "end": 1243,
                     "loc": Object {
                       "end": Object {
                         "column": 17,
-                        "line": 37,
+                        "line": 43,
                       },
                       "filename": undefined,
                       "identifierName": "isActive",
                       "start": Object {
                         "column": 9,
-                        "line": 37,
+                        "line": 43,
                       },
                     },
                     "name": "isActive",
-                    "start": 1035,
+                    "start": 1235,
                     "type": "Identifier",
                   },
-                  "end": 1047,
+                  "end": 1247,
                   "loc": Object {
                     "end": Object {
                       "column": 21,
-                      "line": 37,
+                      "line": 43,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Object {
                       "column": 9,
-                      "line": 37,
+                      "line": 43,
                     },
                   },
-                  "start": 1035,
+                  "start": 1235,
                   "type": "CallExpression",
                 },
-                "end": 1048,
+                "end": 1248,
                 "loc": Object {
                   "end": Object {
                     "column": 22,
-                    "line": 37,
+                    "line": 43,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Object {
                     "column": 2,
-                    "line": 37,
+                    "line": 43,
                   },
                 },
-                "start": 1028,
+                "start": 1228,
                 "type": "ReturnStatement",
               },
             ],
             "directives": Array [],
-            "end": 1050,
+            "end": 1250,
             "loc": Object {
               "end": Object {
                 "column": 1,
-                "line": 38,
+                "line": 44,
               },
               "filename": undefined,
               "identifierName": undefined,
@@ -3721,7 +4314,7 @@ Object {
             "start": 901,
             "type": "BlockStatement",
           },
-          "end": 1050,
+          "end": 1250,
           "generator": false,
           "id": Object {
             "end": 896,
@@ -3744,7 +4337,7 @@ Object {
           "loc": Object {
             "end": Object {
               "column": 1,
-              "line": 38,
+              "line": 44,
             },
             "filename": undefined,
             "identifierName": undefined,
@@ -7400,101 +7993,569 @@ Object {
                 "body": Object {
                   "body": Array [
                     Object {
-                      "argument": Object {
-                        "end": 989,
-                        "left": Object {
-                          "computed": false,
-                          "end": 982,
-                          "loc": Object {
-                            "end": Object {
-                              "column": 26,
-                              "line": 34,
+                      "alternate": null,
+                      "consequent": Object {
+                        "body": Array [
+                          Object {
+                            "alternate": null,
+                            "consequent": Object {
+                              "body": Array [
+                                Object {
+                                  "argument": Object {
+                                    "arguments": Array [
+                                      Object {
+                                        "end": 1137,
+                                        "left": Object {
+                                          "end": 1131,
+                                          "left": Object {
+                                            "end": 1117,
+                                            "extra": Object {
+                                              "raw": "'Stryker: Hit count limit reached ('",
+                                              "rawValue": "Stryker: Hit count limit reached (",
+                                            },
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 60,
+                                                "line": 36,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": undefined,
+                                              "start": Object {
+                                                "column": 24,
+                                                "line": 36,
+                                              },
+                                            },
+                                            "start": 1081,
+                                            "type": "StringLiteral",
+                                            "value": "Stryker: Hit count limit reached (",
+                                          },
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 74,
+                                              "line": 36,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 24,
+                                              "line": 36,
+                                            },
+                                          },
+                                          "operator": "+",
+                                          "right": Object {
+                                            "computed": false,
+                                            "end": 1131,
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 74,
+                                                "line": 36,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": undefined,
+                                              "start": Object {
+                                                "column": 63,
+                                                "line": 36,
+                                              },
+                                            },
+                                            "object": Object {
+                                              "end": 1122,
+                                              "loc": Object {
+                                                "end": Object {
+                                                  "column": 65,
+                                                  "line": 36,
+                                                },
+                                                "filename": undefined,
+                                                "identifierName": "ns",
+                                                "start": Object {
+                                                  "column": 63,
+                                                  "line": 36,
+                                                },
+                                              },
+                                              "name": "ns",
+                                              "start": 1120,
+                                              "type": "Identifier",
+                                            },
+                                            "property": Object {
+                                              "end": 1131,
+                                              "loc": Object {
+                                                "end": Object {
+                                                  "column": 74,
+                                                  "line": 36,
+                                                },
+                                                "filename": undefined,
+                                                "identifierName": "hitCount",
+                                                "start": Object {
+                                                  "column": 66,
+                                                  "line": 36,
+                                                },
+                                              },
+                                              "name": "hitCount",
+                                              "start": 1123,
+                                              "type": "Identifier",
+                                            },
+                                            "start": 1120,
+                                            "type": "MemberExpression",
+                                          },
+                                          "start": 1081,
+                                          "type": "BinaryExpression",
+                                        },
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 80,
+                                            "line": 36,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 24,
+                                            "line": 36,
+                                          },
+                                        },
+                                        "operator": "+",
+                                        "right": Object {
+                                          "end": 1137,
+                                          "extra": Object {
+                                            "raw": "')'",
+                                            "rawValue": ")",
+                                          },
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 80,
+                                              "line": 36,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 77,
+                                              "line": 36,
+                                            },
+                                          },
+                                          "start": 1134,
+                                          "type": "StringLiteral",
+                                          "value": ")",
+                                        },
+                                        "start": 1081,
+                                        "type": "BinaryExpression",
+                                      },
+                                    ],
+                                    "callee": Object {
+                                      "end": 1080,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 23,
+                                          "line": 36,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "Error",
+                                        "start": Object {
+                                          "column": 18,
+                                          "line": 36,
+                                        },
+                                      },
+                                      "name": "Error",
+                                      "start": 1075,
+                                      "type": "Identifier",
+                                    },
+                                    "end": 1138,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 81,
+                                        "line": 36,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 14,
+                                        "line": 36,
+                                      },
+                                    },
+                                    "start": 1071,
+                                    "type": "NewExpression",
+                                  },
+                                  "end": 1139,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 82,
+                                      "line": 36,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 8,
+                                      "line": 36,
+                                    },
+                                  },
+                                  "start": 1065,
+                                  "type": "ThrowStatement",
+                                },
+                              ],
+                              "directives": Array [],
+                              "end": 1147,
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 7,
+                                  "line": 37,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 65,
+                                  "line": 35,
+                                },
+                              },
+                              "start": 1055,
+                              "type": "BlockStatement",
                             },
-                            "filename": undefined,
-                            "identifierName": undefined,
-                            "start": Object {
-                              "column": 11,
-                              "line": 34,
-                            },
-                          },
-                          "object": Object {
-                            "end": 969,
+                            "end": 1147,
                             "loc": Object {
                               "end": Object {
-                                "column": 13,
-                                "line": 34,
+                                "column": 7,
+                                "line": 37,
                               },
                               "filename": undefined,
-                              "identifierName": "ns",
+                              "identifierName": undefined,
                               "start": Object {
-                                "column": 11,
-                                "line": 34,
+                                "column": 6,
+                                "line": 35,
                               },
                             },
-                            "name": "ns",
-                            "start": 967,
-                            "type": "Identifier",
+                            "start": 996,
+                            "test": Object {
+                              "end": 1053,
+                              "left": Object {
+                                "end": 1022,
+                                "left": Object {
+                                  "computed": false,
+                                  "end": 1011,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 21,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 10,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "object": Object {
+                                    "end": 1002,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 12,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "ns",
+                                      "start": Object {
+                                        "column": 10,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "ns",
+                                    "start": 1000,
+                                    "type": "Identifier",
+                                  },
+                                  "property": Object {
+                                    "end": 1011,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 21,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "hitCount",
+                                      "start": Object {
+                                        "column": 13,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "hitCount",
+                                    "start": 1003,
+                                    "type": "Identifier",
+                                  },
+                                  "start": 1000,
+                                  "type": "MemberExpression",
+                                },
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 32,
+                                    "line": 35,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Object {
+                                    "column": 10,
+                                    "line": 35,
+                                  },
+                                },
+                                "operator": "!==",
+                                "right": Object {
+                                  "argument": Object {
+                                    "end": 1022,
+                                    "extra": Object {
+                                      "raw": "0",
+                                      "rawValue": 0,
+                                    },
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 32,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 31,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "start": 1021,
+                                    "type": "NumericLiteral",
+                                    "value": 0,
+                                  },
+                                  "end": 1022,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 32,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 26,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "operator": "void",
+                                  "prefix": true,
+                                  "start": 1016,
+                                  "type": "UnaryExpression",
+                                },
+                                "start": 1000,
+                                "type": "BinaryExpression",
+                              },
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 63,
+                                  "line": 35,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 10,
+                                  "line": 35,
+                                },
+                              },
+                              "operator": "&&",
+                              "right": Object {
+                                "end": 1053,
+                                "left": Object {
+                                  "argument": Object {
+                                    "computed": false,
+                                    "end": 1039,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 49,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 38,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "object": Object {
+                                      "end": 1030,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 40,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "ns",
+                                        "start": Object {
+                                          "column": 38,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "name": "ns",
+                                      "start": 1028,
+                                      "type": "Identifier",
+                                    },
+                                    "property": Object {
+                                      "end": 1039,
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 49,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "hitCount",
+                                        "start": Object {
+                                          "column": 41,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "name": "hitCount",
+                                      "start": 1031,
+                                      "type": "Identifier",
+                                    },
+                                    "start": 1028,
+                                    "type": "MemberExpression",
+                                  },
+                                  "end": 1039,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 49,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 36,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "operator": "++",
+                                  "prefix": true,
+                                  "start": 1026,
+                                  "type": "UpdateExpression",
+                                },
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 63,
+                                    "line": 35,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Object {
+                                    "column": 36,
+                                    "line": 35,
+                                  },
+                                },
+                                "operator": ">",
+                                "right": Object {
+                                  "computed": false,
+                                  "end": 1053,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 63,
+                                      "line": 35,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Object {
+                                      "column": 52,
+                                      "line": 35,
+                                    },
+                                  },
+                                  "object": Object {
+                                    "end": 1044,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 54,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "ns",
+                                      "start": Object {
+                                        "column": 52,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "ns",
+                                    "start": 1042,
+                                    "type": "Identifier",
+                                  },
+                                  "property": Object {
+                                    "end": 1053,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 63,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": "hitLimit",
+                                      "start": Object {
+                                        "column": 55,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "name": "hitLimit",
+                                    "start": 1045,
+                                    "type": "Identifier",
+                                  },
+                                  "start": 1042,
+                                  "type": "MemberExpression",
+                                },
+                                "start": 1026,
+                                "type": "BinaryExpression",
+                              },
+                              "start": 1000,
+                              "type": "LogicalExpression",
+                            },
+                            "type": "IfStatement",
                           },
-                          "property": Object {
-                            "end": 982,
+                          Object {
+                            "argument": Object {
+                              "end": 1165,
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 17,
+                                  "line": 38,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 13,
+                                  "line": 38,
+                                },
+                              },
+                              "start": 1161,
+                              "type": "BooleanLiteral",
+                              "value": true,
+                            },
+                            "end": 1166,
                             "loc": Object {
                               "end": Object {
-                                "column": 26,
-                                "line": 34,
+                                "column": 18,
+                                "line": 38,
                               },
                               "filename": undefined,
-                              "identifierName": "activeMutant",
+                              "identifierName": undefined,
                               "start": Object {
-                                "column": 14,
-                                "line": 34,
+                                "column": 6,
+                                "line": 38,
                               },
                             },
-                            "name": "activeMutant",
-                            "start": 970,
-                            "type": "Identifier",
+                            "start": 1154,
+                            "type": "ReturnStatement",
                           },
-                          "start": 967,
-                          "type": "MemberExpression",
-                        },
+                        ],
+                        "directives": Array [],
+                        "end": 1172,
                         "loc": Object {
                           "end": Object {
-                            "column": 33,
-                            "line": 34,
+                            "column": 5,
+                            "line": 39,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Object {
-                            "column": 11,
+                            "column": 32,
                             "line": 34,
                           },
                         },
-                        "operator": "===",
-                        "right": Object {
-                          "end": 989,
-                          "loc": Object {
-                            "end": Object {
-                              "column": 33,
-                              "line": 34,
-                            },
-                            "filename": undefined,
-                            "identifierName": "id",
-                            "start": Object {
-                              "column": 31,
-                              "line": 34,
-                            },
-                          },
-                          "name": "id",
-                          "start": 987,
-                          "type": "Identifier",
-                        },
-                        "start": 967,
-                        "type": "BinaryExpression",
+                        "start": 988,
+                        "type": "BlockStatement",
                       },
-                      "end": 990,
+                      "end": 1172,
                       "loc": Object {
                         "end": Object {
-                          "column": 34,
-                          "line": 34,
+                          "column": 5,
+                          "line": 39,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
@@ -7504,15 +8565,140 @@ Object {
                         },
                       },
                       "start": 960,
+                      "test": Object {
+                        "end": 986,
+                        "left": Object {
+                          "computed": false,
+                          "end": 979,
+                          "loc": Object {
+                            "end": Object {
+                              "column": 23,
+                              "line": 34,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Object {
+                              "column": 8,
+                              "line": 34,
+                            },
+                          },
+                          "object": Object {
+                            "end": 966,
+                            "loc": Object {
+                              "end": Object {
+                                "column": 10,
+                                "line": 34,
+                              },
+                              "filename": undefined,
+                              "identifierName": "ns",
+                              "start": Object {
+                                "column": 8,
+                                "line": 34,
+                              },
+                            },
+                            "name": "ns",
+                            "start": 964,
+                            "type": "Identifier",
+                          },
+                          "property": Object {
+                            "end": 979,
+                            "loc": Object {
+                              "end": Object {
+                                "column": 23,
+                                "line": 34,
+                              },
+                              "filename": undefined,
+                              "identifierName": "activeMutant",
+                              "start": Object {
+                                "column": 11,
+                                "line": 34,
+                              },
+                            },
+                            "name": "activeMutant",
+                            "start": 967,
+                            "type": "Identifier",
+                          },
+                          "start": 964,
+                          "type": "MemberExpression",
+                        },
+                        "loc": Object {
+                          "end": Object {
+                            "column": 30,
+                            "line": 34,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Object {
+                            "column": 8,
+                            "line": 34,
+                          },
+                        },
+                        "operator": "===",
+                        "right": Object {
+                          "end": 986,
+                          "loc": Object {
+                            "end": Object {
+                              "column": 30,
+                              "line": 34,
+                            },
+                            "filename": undefined,
+                            "identifierName": "id",
+                            "start": Object {
+                              "column": 28,
+                              "line": 34,
+                            },
+                          },
+                          "name": "id",
+                          "start": 984,
+                          "type": "Identifier",
+                        },
+                        "start": 964,
+                        "type": "BinaryExpression",
+                      },
+                      "type": "IfStatement",
+                    },
+                    Object {
+                      "argument": Object {
+                        "end": 1189,
+                        "loc": Object {
+                          "end": Object {
+                            "column": 16,
+                            "line": 40,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Object {
+                            "column": 11,
+                            "line": 40,
+                          },
+                        },
+                        "start": 1184,
+                        "type": "BooleanLiteral",
+                        "value": false,
+                      },
+                      "end": 1190,
+                      "loc": Object {
+                        "end": Object {
+                          "column": 17,
+                          "line": 40,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Object {
+                          "column": 4,
+                          "line": 40,
+                        },
+                      },
+                      "start": 1177,
                       "type": "ReturnStatement",
                     },
                   ],
                   "directives": Array [],
-                  "end": 994,
+                  "end": 1194,
                   "loc": Object {
                     "end": Object {
                       "column": 3,
-                      "line": 35,
+                      "line": 41,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
@@ -7524,7 +8710,7 @@ Object {
                   "start": 954,
                   "type": "BlockStatement",
                 },
-                "end": 994,
+                "end": 1194,
                 "generator": false,
                 "id": Object {
                   "end": 949,
@@ -7547,7 +8733,7 @@ Object {
                 "loc": Object {
                   "end": Object {
                     "column": 3,
-                    "line": 35,
+                    "line": 41,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
@@ -7580,155 +8766,155 @@ Object {
                 "type": "FunctionDeclaration",
               },
               Object {
-                "end": 1025,
+                "end": 1225,
                 "expression": Object {
-                  "end": 1024,
+                  "end": 1224,
                   "left": Object {
-                    "end": 1013,
+                    "end": 1213,
                     "loc": Object {
                       "end": Object {
                         "column": 18,
-                        "line": 36,
+                        "line": 42,
                       },
                       "filename": undefined,
                       "identifierName": "stryMutAct_9fa48",
                       "start": Object {
                         "column": 2,
-                        "line": 36,
+                        "line": 42,
                       },
                     },
                     "name": "stryMutAct_9fa48",
-                    "start": 997,
+                    "start": 1197,
                     "type": "Identifier",
                   },
                   "loc": Object {
                     "end": Object {
                       "column": 29,
-                      "line": 36,
+                      "line": 42,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Object {
                       "column": 2,
-                      "line": 36,
+                      "line": 42,
                     },
                   },
                   "operator": "=",
                   "right": Object {
-                    "end": 1024,
+                    "end": 1224,
                     "loc": Object {
                       "end": Object {
                         "column": 29,
-                        "line": 36,
+                        "line": 42,
                       },
                       "filename": undefined,
                       "identifierName": "isActive",
                       "start": Object {
                         "column": 21,
-                        "line": 36,
+                        "line": 42,
                       },
                     },
                     "name": "isActive",
-                    "start": 1016,
+                    "start": 1216,
                     "type": "Identifier",
                   },
-                  "start": 997,
+                  "start": 1197,
                   "type": "AssignmentExpression",
                 },
                 "loc": Object {
                   "end": Object {
                     "column": 30,
-                    "line": 36,
+                    "line": 42,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Object {
                     "column": 2,
-                    "line": 36,
+                    "line": 42,
                   },
                 },
-                "start": 997,
+                "start": 1197,
                 "type": "ExpressionStatement",
               },
               Object {
                 "argument": Object {
                   "arguments": Array [
                     Object {
-                      "end": 1046,
+                      "end": 1246,
                       "loc": Object {
                         "end": Object {
                           "column": 20,
-                          "line": 37,
+                          "line": 43,
                         },
                         "filename": undefined,
                         "identifierName": "id",
                         "start": Object {
                           "column": 18,
-                          "line": 37,
+                          "line": 43,
                         },
                       },
                       "name": "id",
-                      "start": 1044,
+                      "start": 1244,
                       "type": "Identifier",
                     },
                   ],
                   "callee": Object {
-                    "end": 1043,
+                    "end": 1243,
                     "loc": Object {
                       "end": Object {
                         "column": 17,
-                        "line": 37,
+                        "line": 43,
                       },
                       "filename": undefined,
                       "identifierName": "isActive",
                       "start": Object {
                         "column": 9,
-                        "line": 37,
+                        "line": 43,
                       },
                     },
                     "name": "isActive",
-                    "start": 1035,
+                    "start": 1235,
                     "type": "Identifier",
                   },
-                  "end": 1047,
+                  "end": 1247,
                   "loc": Object {
                     "end": Object {
                       "column": 21,
-                      "line": 37,
+                      "line": 43,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Object {
                       "column": 9,
-                      "line": 37,
+                      "line": 43,
                     },
                   },
-                  "start": 1035,
+                  "start": 1235,
                   "type": "CallExpression",
                 },
-                "end": 1048,
+                "end": 1248,
                 "loc": Object {
                   "end": Object {
                     "column": 22,
-                    "line": 37,
+                    "line": 43,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Object {
                     "column": 2,
-                    "line": 37,
+                    "line": 43,
                   },
                 },
-                "start": 1028,
+                "start": 1228,
                 "type": "ReturnStatement",
               },
             ],
             "directives": Array [],
-            "end": 1050,
+            "end": 1250,
             "loc": Object {
               "end": Object {
                 "column": 1,
-                "line": 38,
+                "line": 44,
               },
               "filename": undefined,
               "identifierName": undefined,
@@ -7740,7 +8926,7 @@ Object {
             "start": 901,
             "type": "BlockStatement",
           },
-          "end": 1050,
+          "end": 1250,
           "generator": false,
           "id": Object {
             "end": 896,
@@ -7763,7 +8949,7 @@ Object {
           "loc": Object {
             "end": Object {
               "column": 1,
-              "line": 38,
+              "line": 44,
             },
             "filename": undefined,
             "identifierName": undefined,
@@ -11459,101 +12645,569 @@ Object {
                       "body": Object {
                         "body": Array [
                           Object {
-                            "argument": Object {
-                              "end": 989,
-                              "left": Object {
-                                "computed": false,
-                                "end": 982,
-                                "loc": Object {
-                                  "end": Object {
-                                    "column": 26,
-                                    "line": 34,
+                            "alternate": null,
+                            "consequent": Object {
+                              "body": Array [
+                                Object {
+                                  "alternate": null,
+                                  "consequent": Object {
+                                    "body": Array [
+                                      Object {
+                                        "argument": Object {
+                                          "arguments": Array [
+                                            Object {
+                                              "end": 1137,
+                                              "left": Object {
+                                                "end": 1131,
+                                                "left": Object {
+                                                  "end": 1117,
+                                                  "extra": Object {
+                                                    "raw": "'Stryker: Hit count limit reached ('",
+                                                    "rawValue": "Stryker: Hit count limit reached (",
+                                                  },
+                                                  "loc": Object {
+                                                    "end": Object {
+                                                      "column": 60,
+                                                      "line": 36,
+                                                    },
+                                                    "filename": undefined,
+                                                    "identifierName": undefined,
+                                                    "start": Object {
+                                                      "column": 24,
+                                                      "line": 36,
+                                                    },
+                                                  },
+                                                  "start": 1081,
+                                                  "type": "StringLiteral",
+                                                  "value": "Stryker: Hit count limit reached (",
+                                                },
+                                                "loc": Object {
+                                                  "end": Object {
+                                                    "column": 74,
+                                                    "line": 36,
+                                                  },
+                                                  "filename": undefined,
+                                                  "identifierName": undefined,
+                                                  "start": Object {
+                                                    "column": 24,
+                                                    "line": 36,
+                                                  },
+                                                },
+                                                "operator": "+",
+                                                "right": Object {
+                                                  "computed": false,
+                                                  "end": 1131,
+                                                  "loc": Object {
+                                                    "end": Object {
+                                                      "column": 74,
+                                                      "line": 36,
+                                                    },
+                                                    "filename": undefined,
+                                                    "identifierName": undefined,
+                                                    "start": Object {
+                                                      "column": 63,
+                                                      "line": 36,
+                                                    },
+                                                  },
+                                                  "object": Object {
+                                                    "end": 1122,
+                                                    "loc": Object {
+                                                      "end": Object {
+                                                        "column": 65,
+                                                        "line": 36,
+                                                      },
+                                                      "filename": undefined,
+                                                      "identifierName": "ns",
+                                                      "start": Object {
+                                                        "column": 63,
+                                                        "line": 36,
+                                                      },
+                                                    },
+                                                    "name": "ns",
+                                                    "start": 1120,
+                                                    "type": "Identifier",
+                                                  },
+                                                  "property": Object {
+                                                    "end": 1131,
+                                                    "loc": Object {
+                                                      "end": Object {
+                                                        "column": 74,
+                                                        "line": 36,
+                                                      },
+                                                      "filename": undefined,
+                                                      "identifierName": "hitCount",
+                                                      "start": Object {
+                                                        "column": 66,
+                                                        "line": 36,
+                                                      },
+                                                    },
+                                                    "name": "hitCount",
+                                                    "start": 1123,
+                                                    "type": "Identifier",
+                                                  },
+                                                  "start": 1120,
+                                                  "type": "MemberExpression",
+                                                },
+                                                "start": 1081,
+                                                "type": "BinaryExpression",
+                                              },
+                                              "loc": Object {
+                                                "end": Object {
+                                                  "column": 80,
+                                                  "line": 36,
+                                                },
+                                                "filename": undefined,
+                                                "identifierName": undefined,
+                                                "start": Object {
+                                                  "column": 24,
+                                                  "line": 36,
+                                                },
+                                              },
+                                              "operator": "+",
+                                              "right": Object {
+                                                "end": 1137,
+                                                "extra": Object {
+                                                  "raw": "')'",
+                                                  "rawValue": ")",
+                                                },
+                                                "loc": Object {
+                                                  "end": Object {
+                                                    "column": 80,
+                                                    "line": 36,
+                                                  },
+                                                  "filename": undefined,
+                                                  "identifierName": undefined,
+                                                  "start": Object {
+                                                    "column": 77,
+                                                    "line": 36,
+                                                  },
+                                                },
+                                                "start": 1134,
+                                                "type": "StringLiteral",
+                                                "value": ")",
+                                              },
+                                              "start": 1081,
+                                              "type": "BinaryExpression",
+                                            },
+                                          ],
+                                          "callee": Object {
+                                            "end": 1080,
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 23,
+                                                "line": 36,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": "Error",
+                                              "start": Object {
+                                                "column": 18,
+                                                "line": 36,
+                                              },
+                                            },
+                                            "name": "Error",
+                                            "start": 1075,
+                                            "type": "Identifier",
+                                          },
+                                          "end": 1138,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 81,
+                                              "line": 36,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 14,
+                                              "line": 36,
+                                            },
+                                          },
+                                          "start": 1071,
+                                          "type": "NewExpression",
+                                        },
+                                        "end": 1139,
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 82,
+                                            "line": 36,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 8,
+                                            "line": 36,
+                                          },
+                                        },
+                                        "start": 1065,
+                                        "type": "ThrowStatement",
+                                      },
+                                    ],
+                                    "directives": Array [],
+                                    "end": 1147,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 7,
+                                        "line": 37,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 65,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "start": 1055,
+                                    "type": "BlockStatement",
                                   },
-                                  "filename": undefined,
-                                  "identifierName": undefined,
-                                  "start": Object {
-                                    "column": 11,
-                                    "line": 34,
-                                  },
-                                },
-                                "object": Object {
-                                  "end": 969,
+                                  "end": 1147,
                                   "loc": Object {
                                     "end": Object {
-                                      "column": 13,
-                                      "line": 34,
+                                      "column": 7,
+                                      "line": 37,
                                     },
                                     "filename": undefined,
-                                    "identifierName": "ns",
+                                    "identifierName": undefined,
                                     "start": Object {
-                                      "column": 11,
-                                      "line": 34,
+                                      "column": 6,
+                                      "line": 35,
                                     },
                                   },
-                                  "name": "ns",
-                                  "start": 967,
-                                  "type": "Identifier",
+                                  "start": 996,
+                                  "test": Object {
+                                    "end": 1053,
+                                    "left": Object {
+                                      "end": 1022,
+                                      "left": Object {
+                                        "computed": false,
+                                        "end": 1011,
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 21,
+                                            "line": 35,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 10,
+                                            "line": 35,
+                                          },
+                                        },
+                                        "object": Object {
+                                          "end": 1002,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 12,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": "ns",
+                                            "start": Object {
+                                              "column": 10,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "name": "ns",
+                                          "start": 1000,
+                                          "type": "Identifier",
+                                        },
+                                        "property": Object {
+                                          "end": 1011,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 21,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": "hitCount",
+                                            "start": Object {
+                                              "column": 13,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "name": "hitCount",
+                                          "start": 1003,
+                                          "type": "Identifier",
+                                        },
+                                        "start": 1000,
+                                        "type": "MemberExpression",
+                                      },
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 32,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": undefined,
+                                        "start": Object {
+                                          "column": 10,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "operator": "!==",
+                                      "right": Object {
+                                        "argument": Object {
+                                          "end": 1022,
+                                          "extra": Object {
+                                            "raw": "0",
+                                            "rawValue": 0,
+                                          },
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 32,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 31,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "start": 1021,
+                                          "type": "NumericLiteral",
+                                          "value": 0,
+                                        },
+                                        "end": 1022,
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 32,
+                                            "line": 35,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 26,
+                                            "line": 35,
+                                          },
+                                        },
+                                        "operator": "void",
+                                        "prefix": true,
+                                        "start": 1016,
+                                        "type": "UnaryExpression",
+                                      },
+                                      "start": 1000,
+                                      "type": "BinaryExpression",
+                                    },
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 63,
+                                        "line": 35,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 10,
+                                        "line": 35,
+                                      },
+                                    },
+                                    "operator": "&&",
+                                    "right": Object {
+                                      "end": 1053,
+                                      "left": Object {
+                                        "argument": Object {
+                                          "computed": false,
+                                          "end": 1039,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 49,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": undefined,
+                                            "start": Object {
+                                              "column": 38,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "object": Object {
+                                            "end": 1030,
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 40,
+                                                "line": 35,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": "ns",
+                                              "start": Object {
+                                                "column": 38,
+                                                "line": 35,
+                                              },
+                                            },
+                                            "name": "ns",
+                                            "start": 1028,
+                                            "type": "Identifier",
+                                          },
+                                          "property": Object {
+                                            "end": 1039,
+                                            "loc": Object {
+                                              "end": Object {
+                                                "column": 49,
+                                                "line": 35,
+                                              },
+                                              "filename": undefined,
+                                              "identifierName": "hitCount",
+                                              "start": Object {
+                                                "column": 41,
+                                                "line": 35,
+                                              },
+                                            },
+                                            "name": "hitCount",
+                                            "start": 1031,
+                                            "type": "Identifier",
+                                          },
+                                          "start": 1028,
+                                          "type": "MemberExpression",
+                                        },
+                                        "end": 1039,
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 49,
+                                            "line": 35,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 36,
+                                            "line": 35,
+                                          },
+                                        },
+                                        "operator": "++",
+                                        "prefix": true,
+                                        "start": 1026,
+                                        "type": "UpdateExpression",
+                                      },
+                                      "loc": Object {
+                                        "end": Object {
+                                          "column": 63,
+                                          "line": 35,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": undefined,
+                                        "start": Object {
+                                          "column": 36,
+                                          "line": 35,
+                                        },
+                                      },
+                                      "operator": ">",
+                                      "right": Object {
+                                        "computed": false,
+                                        "end": 1053,
+                                        "loc": Object {
+                                          "end": Object {
+                                            "column": 63,
+                                            "line": 35,
+                                          },
+                                          "filename": undefined,
+                                          "identifierName": undefined,
+                                          "start": Object {
+                                            "column": 52,
+                                            "line": 35,
+                                          },
+                                        },
+                                        "object": Object {
+                                          "end": 1044,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 54,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": "ns",
+                                            "start": Object {
+                                              "column": 52,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "name": "ns",
+                                          "start": 1042,
+                                          "type": "Identifier",
+                                        },
+                                        "property": Object {
+                                          "end": 1053,
+                                          "loc": Object {
+                                            "end": Object {
+                                              "column": 63,
+                                              "line": 35,
+                                            },
+                                            "filename": undefined,
+                                            "identifierName": "hitLimit",
+                                            "start": Object {
+                                              "column": 55,
+                                              "line": 35,
+                                            },
+                                          },
+                                          "name": "hitLimit",
+                                          "start": 1045,
+                                          "type": "Identifier",
+                                        },
+                                        "start": 1042,
+                                        "type": "MemberExpression",
+                                      },
+                                      "start": 1026,
+                                      "type": "BinaryExpression",
+                                    },
+                                    "start": 1000,
+                                    "type": "LogicalExpression",
+                                  },
+                                  "type": "IfStatement",
                                 },
-                                "property": Object {
-                                  "end": 982,
+                                Object {
+                                  "argument": Object {
+                                    "end": 1165,
+                                    "loc": Object {
+                                      "end": Object {
+                                        "column": 17,
+                                        "line": 38,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Object {
+                                        "column": 13,
+                                        "line": 38,
+                                      },
+                                    },
+                                    "start": 1161,
+                                    "type": "BooleanLiteral",
+                                    "value": true,
+                                  },
+                                  "end": 1166,
                                   "loc": Object {
                                     "end": Object {
-                                      "column": 26,
-                                      "line": 34,
+                                      "column": 18,
+                                      "line": 38,
                                     },
                                     "filename": undefined,
-                                    "identifierName": "activeMutant",
+                                    "identifierName": undefined,
                                     "start": Object {
-                                      "column": 14,
-                                      "line": 34,
+                                      "column": 6,
+                                      "line": 38,
                                     },
                                   },
-                                  "name": "activeMutant",
-                                  "start": 970,
-                                  "type": "Identifier",
+                                  "start": 1154,
+                                  "type": "ReturnStatement",
                                 },
-                                "start": 967,
-                                "type": "MemberExpression",
-                              },
+                              ],
+                              "directives": Array [],
+                              "end": 1172,
                               "loc": Object {
                                 "end": Object {
-                                  "column": 33,
-                                  "line": 34,
+                                  "column": 5,
+                                  "line": 39,
                                 },
                                 "filename": undefined,
                                 "identifierName": undefined,
                                 "start": Object {
-                                  "column": 11,
+                                  "column": 32,
                                   "line": 34,
                                 },
                               },
-                              "operator": "===",
-                              "right": Object {
-                                "end": 989,
-                                "loc": Object {
-                                  "end": Object {
-                                    "column": 33,
-                                    "line": 34,
-                                  },
-                                  "filename": undefined,
-                                  "identifierName": "id",
-                                  "start": Object {
-                                    "column": 31,
-                                    "line": 34,
-                                  },
-                                },
-                                "name": "id",
-                                "start": 987,
-                                "type": "Identifier",
-                              },
-                              "start": 967,
-                              "type": "BinaryExpression",
+                              "start": 988,
+                              "type": "BlockStatement",
                             },
-                            "end": 990,
+                            "end": 1172,
                             "loc": Object {
                               "end": Object {
-                                "column": 34,
-                                "line": 34,
+                                "column": 5,
+                                "line": 39,
                               },
                               "filename": undefined,
                               "identifierName": undefined,
@@ -11563,15 +13217,140 @@ Object {
                               },
                             },
                             "start": 960,
+                            "test": Object {
+                              "end": 986,
+                              "left": Object {
+                                "computed": false,
+                                "end": 979,
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 23,
+                                    "line": 34,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Object {
+                                    "column": 8,
+                                    "line": 34,
+                                  },
+                                },
+                                "object": Object {
+                                  "end": 966,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 10,
+                                      "line": 34,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": "ns",
+                                    "start": Object {
+                                      "column": 8,
+                                      "line": 34,
+                                    },
+                                  },
+                                  "name": "ns",
+                                  "start": 964,
+                                  "type": "Identifier",
+                                },
+                                "property": Object {
+                                  "end": 979,
+                                  "loc": Object {
+                                    "end": Object {
+                                      "column": 23,
+                                      "line": 34,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": "activeMutant",
+                                    "start": Object {
+                                      "column": 11,
+                                      "line": 34,
+                                    },
+                                  },
+                                  "name": "activeMutant",
+                                  "start": 967,
+                                  "type": "Identifier",
+                                },
+                                "start": 964,
+                                "type": "MemberExpression",
+                              },
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 30,
+                                  "line": 34,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 8,
+                                  "line": 34,
+                                },
+                              },
+                              "operator": "===",
+                              "right": Object {
+                                "end": 986,
+                                "loc": Object {
+                                  "end": Object {
+                                    "column": 30,
+                                    "line": 34,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": "id",
+                                  "start": Object {
+                                    "column": 28,
+                                    "line": 34,
+                                  },
+                                },
+                                "name": "id",
+                                "start": 984,
+                                "type": "Identifier",
+                              },
+                              "start": 964,
+                              "type": "BinaryExpression",
+                            },
+                            "type": "IfStatement",
+                          },
+                          Object {
+                            "argument": Object {
+                              "end": 1189,
+                              "loc": Object {
+                                "end": Object {
+                                  "column": 16,
+                                  "line": 40,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Object {
+                                  "column": 11,
+                                  "line": 40,
+                                },
+                              },
+                              "start": 1184,
+                              "type": "BooleanLiteral",
+                              "value": false,
+                            },
+                            "end": 1190,
+                            "loc": Object {
+                              "end": Object {
+                                "column": 17,
+                                "line": 40,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Object {
+                                "column": 4,
+                                "line": 40,
+                              },
+                            },
+                            "start": 1177,
                             "type": "ReturnStatement",
                           },
                         ],
                         "directives": Array [],
-                        "end": 994,
+                        "end": 1194,
                         "loc": Object {
                           "end": Object {
                             "column": 3,
-                            "line": 35,
+                            "line": 41,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
@@ -11583,7 +13362,7 @@ Object {
                         "start": 954,
                         "type": "BlockStatement",
                       },
-                      "end": 994,
+                      "end": 1194,
                       "generator": false,
                       "id": Object {
                         "end": 949,
@@ -11606,7 +13385,7 @@ Object {
                       "loc": Object {
                         "end": Object {
                           "column": 3,
-                          "line": 35,
+                          "line": 41,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
@@ -11639,155 +13418,155 @@ Object {
                       "type": "FunctionDeclaration",
                     },
                     Object {
-                      "end": 1025,
+                      "end": 1225,
                       "expression": Object {
-                        "end": 1024,
+                        "end": 1224,
                         "left": Object {
-                          "end": 1013,
+                          "end": 1213,
                           "loc": Object {
                             "end": Object {
                               "column": 18,
-                              "line": 36,
+                              "line": 42,
                             },
                             "filename": undefined,
                             "identifierName": "stryMutAct_9fa48",
                             "start": Object {
                               "column": 2,
-                              "line": 36,
+                              "line": 42,
                             },
                           },
                           "name": "stryMutAct_9fa48",
-                          "start": 997,
+                          "start": 1197,
                           "type": "Identifier",
                         },
                         "loc": Object {
                           "end": Object {
                             "column": 29,
-                            "line": 36,
+                            "line": 42,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Object {
                             "column": 2,
-                            "line": 36,
+                            "line": 42,
                           },
                         },
                         "operator": "=",
                         "right": Object {
-                          "end": 1024,
+                          "end": 1224,
                           "loc": Object {
                             "end": Object {
                               "column": 29,
-                              "line": 36,
+                              "line": 42,
                             },
                             "filename": undefined,
                             "identifierName": "isActive",
                             "start": Object {
                               "column": 21,
-                              "line": 36,
+                              "line": 42,
                             },
                           },
                           "name": "isActive",
-                          "start": 1016,
+                          "start": 1216,
                           "type": "Identifier",
                         },
-                        "start": 997,
+                        "start": 1197,
                         "type": "AssignmentExpression",
                       },
                       "loc": Object {
                         "end": Object {
                           "column": 30,
-                          "line": 36,
+                          "line": 42,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Object {
                           "column": 2,
-                          "line": 36,
+                          "line": 42,
                         },
                       },
-                      "start": 997,
+                      "start": 1197,
                       "type": "ExpressionStatement",
                     },
                     Object {
                       "argument": Object {
                         "arguments": Array [
                           Object {
-                            "end": 1046,
+                            "end": 1246,
                             "loc": Object {
                               "end": Object {
                                 "column": 20,
-                                "line": 37,
+                                "line": 43,
                               },
                               "filename": undefined,
                               "identifierName": "id",
                               "start": Object {
                                 "column": 18,
-                                "line": 37,
+                                "line": 43,
                               },
                             },
                             "name": "id",
-                            "start": 1044,
+                            "start": 1244,
                             "type": "Identifier",
                           },
                         ],
                         "callee": Object {
-                          "end": 1043,
+                          "end": 1243,
                           "loc": Object {
                             "end": Object {
                               "column": 17,
-                              "line": 37,
+                              "line": 43,
                             },
                             "filename": undefined,
                             "identifierName": "isActive",
                             "start": Object {
                               "column": 9,
-                              "line": 37,
+                              "line": 43,
                             },
                           },
                           "name": "isActive",
-                          "start": 1035,
+                          "start": 1235,
                           "type": "Identifier",
                         },
-                        "end": 1047,
+                        "end": 1247,
                         "loc": Object {
                           "end": Object {
                             "column": 21,
-                            "line": 37,
+                            "line": 43,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Object {
                             "column": 9,
-                            "line": 37,
+                            "line": 43,
                           },
                         },
-                        "start": 1035,
+                        "start": 1235,
                         "type": "CallExpression",
                       },
-                      "end": 1048,
+                      "end": 1248,
                       "loc": Object {
                         "end": Object {
                           "column": 22,
-                          "line": 37,
+                          "line": 43,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Object {
                           "column": 2,
-                          "line": 37,
+                          "line": 43,
                         },
                       },
-                      "start": 1028,
+                      "start": 1228,
                       "type": "ReturnStatement",
                     },
                   ],
                   "directives": Array [],
-                  "end": 1050,
+                  "end": 1250,
                   "loc": Object {
                     "end": Object {
                       "column": 1,
-                      "line": 38,
+                      "line": 44,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
@@ -11799,7 +13578,7 @@ Object {
                   "start": 901,
                   "type": "BlockStatement",
                 },
-                "end": 1050,
+                "end": 1250,
                 "generator": false,
                 "id": Object {
                   "end": 896,
@@ -11822,7 +13601,7 @@ Object {
                 "loc": Object {
                   "end": Object {
                     "column": 1,
-                    "line": 38,
+                    "line": 44,
                   },
                   "filename": undefined,
                   "identifierName": undefined,

@@ -163,7 +163,7 @@ describe(KarmaTestRunner.name, () => {
       browserError?: [browser: Browser, error: any] | undefined;
     }) {
       const dryRunPromise = sut.dryRun(options);
-      actRun({ browserError, specResults, mutantCoverage, runResults });
+      actRun({ browserError, specResults, mutantCoverage, hitCount: undefined, runResults });
       return dryRunPromise;
     }
 
@@ -271,16 +271,18 @@ describe(KarmaTestRunner.name, () => {
       runResults = createKarmaTestResults(),
       options = factory.mutantRunOptions(),
       mutantCoverage = factory.mutantCoverage(),
+      hitCount = undefined,
       browserError = undefined,
     }: {
       specResults?: KarmaSpec[];
       runResults?: TestResults;
       options?: MutantRunOptions;
+      hitCount?: number;
       mutantCoverage?: MutantCoverage;
       browserError?: [browser: Browser, error: any] | undefined;
     }) {
       const promise = sut.mutantRun(options);
-      actRun({ specResults, runResults, mutantCoverage, browserError });
+      actRun({ specResults, runResults, mutantCoverage, hitCount, browserError });
       return promise;
     }
 
@@ -307,14 +309,16 @@ describe(KarmaTestRunner.name, () => {
       expect(result.nrOfTests).eq(2);
     });
 
-    it('should report a timeout when browser disconnects', async () => {
+    it('should report a timeout when the browser disconnects', async () => {
       arrangeLauncherMock();
       const onGoingRun = sut.mutantRun(factory.mutantRunOptions());
       StrykerReporter.instance.onRunStart();
       StrykerReporter.instance.onBrowserError(createBrowser({ id: '42', state: 'DISCONNECTED' }), 'disconnected');
       StrykerReporter.instance.onRunComplete(null, createKarmaTestResults({ disconnected: true }));
       StrykerReporter.instance.onBrowsersReady();
-      assertions.expectTimeout(await onGoingRun);
+      const result = await onGoingRun;
+      assertions.expectTimeout(result);
+      expect(result.reason).eq('Browser disconnected during test execution. Karma error: disconnected');
     });
 
     it('should restart the browser and wait until it is restarted when it gets disconnected (issue #2989)', async () => {
@@ -335,6 +339,31 @@ describe(KarmaTestRunner.name, () => {
       expect(runCompleted).false;
       StrykerReporter.instance.onBrowsersReady();
       await onGoingRun;
+    });
+
+    it('should report a timeout when the hitLimit was reached', async () => {
+      const result = await actMutantRun({
+        options: factory.mutantRunOptions({ hitLimit: 9 }),
+        specResults: [createKarmaSpec({ success: false })],
+        hitCount: 10,
+      });
+      assertions.expectTimeout(result);
+      expect(result.reason).contains('Hit limit reached (10/9)');
+    });
+
+    it('should reset the hitLimit between runs', async () => {
+      const firstResult = await actMutantRun({
+        options: factory.mutantRunOptions({ hitLimit: 9 }),
+        specResults: [createKarmaSpec({ success: false })],
+        hitCount: 10,
+      });
+      const secondResult = await actMutantRun({
+        options: factory.mutantRunOptions({ hitLimit: undefined }),
+        specResults: [createKarmaSpec({ success: false })],
+        hitCount: 10,
+      });
+      assertions.expectTimeout(firstResult);
+      assertions.expectKilled(secondResult);
     });
   });
 
@@ -383,11 +412,13 @@ describe(KarmaTestRunner.name, () => {
     specResults,
     runResults,
     mutantCoverage,
+    hitCount,
     browserError,
   }: {
     specResults: KarmaSpec[];
     runResults: TestResults;
     mutantCoverage: MutantCoverage;
+    hitCount: number | undefined;
     browserError: [browser: Browser, error: any] | undefined;
   }) {
     StrykerReporter.instance.onRunStart();
@@ -395,7 +426,7 @@ describe(KarmaTestRunner.name, () => {
     if (browserError) {
       StrykerReporter.instance.onBrowserError(...browserError);
     }
-    StrykerReporter.instance.onBrowserComplete(null, { mutantCoverage });
+    StrykerReporter.instance.onBrowserComplete(null, { mutantCoverage, hitCount });
     StrykerReporter.instance.onRunComplete(null, runResults);
   }
 });

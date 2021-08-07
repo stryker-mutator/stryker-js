@@ -1,8 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`instrumenter integration should be able to instrument an angular component 1`] = `
-"function stryNS_9fa48() {
-  var g = new Function(\\"return this\\")();
+// This file is generated with tasks/instrument-test-resources.js
+ function stryNS_9fa48() {
+  var g = new Function("return this")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
@@ -63,13 +61,22 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-import { Component } from '@angular/core';
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
-})
-export class AppComponent {
-  title = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'angular-app');
-}"
-`;
+function loop(n, action) {
+  if (stryMutAct_9fa48("20")) {
+    {}
+  } else {
+    stryCov_9fa48("20");
+    let goOn = stryMutAct_9fa48("21") ? false : (stryCov_9fa48("21"), true);
+
+    while (stryMutAct_9fa48("22") ? false : (stryCov_9fa48("22"), goOn)) {
+      if (stryMutAct_9fa48("23")) {
+        {}
+      } else {
+        stryCov_9fa48("23");
+        action(n);
+        stryMutAct_9fa48("24") ? n++ : (stryCov_9fa48("24"), n--);
+        goOn = stryMutAct_9fa48("28") ? n <= 0 : stryMutAct_9fa48("27") ? n >= 0 : stryMutAct_9fa48("26") ? false : stryMutAct_9fa48("25") ? true : (stryCov_9fa48("25", "26", "27", "28"), n > 0);
+      }
+    }
+  }
+}

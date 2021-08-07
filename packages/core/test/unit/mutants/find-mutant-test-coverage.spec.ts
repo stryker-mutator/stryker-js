@@ -31,7 +31,7 @@ describe(sut.name, () => {
     const result = act(dryRunResult, [mutant]);
 
     // Assert
-    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: false }];
+    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: false, hitCount: 2 }];
     expect(result).deep.eq(expected);
   });
 
@@ -43,7 +43,7 @@ describe(sut.name, () => {
     const result = act(dryRunResult, [mutant]);
 
     // Assert
-    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: false, coveredBy: [] }];
+    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: false, coveredBy: [], hitCount: undefined }];
     expect(result).deep.eq(expected);
   });
 
@@ -60,8 +60,8 @@ describe(sut.name, () => {
 
       // Assert
       const expected: MutantTestCoverage[] = [
-        { ...mutant1, estimatedNetTime: 0, coveredBy: undefined, static: true },
-        { ...mutant2, estimatedNetTime: 0, coveredBy: undefined, static: true },
+        { ...mutant1, estimatedNetTime: 0, coveredBy: undefined, static: true, hitCount: undefined },
+        { ...mutant2, estimatedNetTime: 0, coveredBy: undefined, static: true, hitCount: undefined },
       ];
       expect(result).deep.eq(expected);
     });
@@ -118,6 +118,7 @@ describe(sut.name, () => {
           static: true,
           estimatedNetTime: 42,
           location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
+          hitCount: undefined,
         }),
         factory.mutantTestCoverage({
           id: '2',
@@ -127,6 +128,7 @@ describe(sut.name, () => {
           static: true,
           estimatedNetTime: 42,
           location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
+          hitCount: undefined,
         }),
       ]);
     });
@@ -146,8 +148,24 @@ describe(sut.name, () => {
       const result = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: true, coveredBy: undefined }];
+      const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: true, coveredBy: undefined, hitCount: 1 }];
       expect(result).deep.eq(expected);
+    });
+
+    it('should calculate the hitCount based on total hits (perTest and static)', () => {
+      // Arrange
+      const mutant = factory.mutant({ id: '1' });
+      const mutants = [mutant];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })],
+        mutantCoverage: { static: { 1: 1 }, perTest: { 1: { 1: 2, 2: 100 }, 2: { 2: 100 }, 3: { 1: 3 } } },
+      });
+
+      // Act
+      const result = act(dryRunResult, mutants);
+
+      // Assert
+      expect(result[0].hitCount).deep.eq(6);
     });
 
     it('should calculate estimatedNetTime as the sum of all tests', () => {
@@ -208,8 +226,8 @@ describe(sut.name, () => {
 
       // Assert
       const expected: MutantTestCoverage[] = [
-        { ...mutant1, estimatedNetTime: 0, coveredBy: ['spec1'], static: false },
-        { ...mutant2, estimatedNetTime: 0, coveredBy: ['spec2'], static: false },
+        { ...mutant1, estimatedNetTime: 0, coveredBy: ['spec1'], static: false, hitCount: 1 },
+        { ...mutant2, estimatedNetTime: 0, coveredBy: ['spec2'], static: false, hitCount: 1 },
       ];
       expect(result).deep.eq(expected);
     });
