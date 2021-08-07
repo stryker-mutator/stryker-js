@@ -33,7 +33,7 @@ describe(TimeoutDecorator.name, () => {
 
   afterEach(() => sandbox.restore());
 
-  function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
+  function itShouldProxyRequests<T>(action: () => Promise<T>, methodName: 'dryRun' | 'mutantRun') {
     it('should proxy the request', () => {
       testRunner1[methodName].resolves();
       const promise = action();
@@ -54,18 +54,6 @@ describe(TimeoutDecorator.name, () => {
       return expect(promise).to.be.rejectedWith('some error');
     });
   }
-
-  function itShouldProxyRequestsForMethod(methodName: 'dispose' | 'init') {
-    itShouldProxyRequests(() => sut[methodName](), methodName);
-  }
-
-  describe('init', () => {
-    itShouldProxyRequestsForMethod('init');
-  });
-
-  describe('dispose', () => {
-    itShouldProxyRequestsForMethod('dispose');
-  });
 
   describe('dryRun', () => {
     itShouldProxyRequests(() => sut.dryRun({ coverageAnalysis: 'all', timeout: 20 }), 'dryRun');

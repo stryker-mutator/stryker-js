@@ -14,7 +14,7 @@ describe('TestRunnerDecorator', () => {
     sut = new TestRunnerDecorator(() => testRunner);
   });
 
-  function actArrangeAssert(methodName: 'dispose' | 'dryRun' | 'init' | 'mutantRun') {
+  function actArrangeAssert(methodName: 'dryRun' | 'mutantRun') {
     describe(methodName, () => {
       it('should pass through resolved results', () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -29,8 +29,6 @@ describe('TestRunnerDecorator', () => {
     });
   }
 
-  actArrangeAssert('init');
-  actArrangeAssert('dispose');
   actArrangeAssert('dryRun');
   actArrangeAssert('mutantRun');
 });

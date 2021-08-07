@@ -48,8 +48,6 @@ export class TimeoutDecorator extends TestRunnerDecorator {
 
   private async handleTimeout(): Promise<void> {
     this.log.debug('Timeout expired, restarting the process and reporting timeout');
-    await this.dispose();
-    this.createInnerRunner();
-    await this.init();
+    await this.recover();
   }
 }

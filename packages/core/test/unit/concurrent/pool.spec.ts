@@ -5,15 +5,15 @@ import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
 import { lastValueFrom, range, ReplaySubject } from 'rxjs';
 
-import { Pool, Worker } from '../../../src/concurrent';
+import { Pool, Resource } from '../../../src/concurrent';
 
 describe(Pool.name, () => {
-  let worker1: sinon.SinonStubbedInstance<Required<Worker>>;
-  let worker2: sinon.SinonStubbedInstance<Required<Worker>>;
-  let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Worker>>;
+  let worker1: sinon.SinonStubbedInstance<Required<Resource>>;
+  let worker2: sinon.SinonStubbedInstance<Required<Resource>>;
+  let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Resource>>;
   let createWorkerStub: sinon.SinonStub;
   let concurrencyToken$: ReplaySubject<number>;
-  let sut: Pool<Required<Worker>>;
+  let sut: Pool<Required<Resource>>;
 
   beforeEach(() => {
     concurrencyToken$ = new ReplaySubject();
@@ -33,7 +33,7 @@ describe(Pool.name, () => {
   }
 
   function createSut() {
-    return new Pool<Required<Worker>>(createWorkerStub, concurrencyToken$);
+    return new Pool<Required<Resource>>(createWorkerStub, concurrencyToken$);
   }
 
   function setConcurrency(n: number) {
@@ -52,7 +52,7 @@ describe(Pool.name, () => {
       worker2.init.returns(initWorker2Task.promise);
       genericWorkerForAllSubsequentCreates.init.returns(initWorker3Task.promise);
       sut = createSut();
-      const actualWorkers: Array<Required<Worker>> = [];
+      const actualWorkers: Array<Required<Resource>> = [];
 
       // Act
       const onGoingTask = lastValueFrom(sut.schedule(range(0, 3), async (worker) => actualWorkers.push(worker)));
@@ -117,7 +117,7 @@ describe(Pool.name, () => {
       // Arrange
       arrangeWorkers();
       setConcurrency(2);
-      const actualScheduledWork: Array<[number, Required<Worker>]> = [];
+      const actualScheduledWork: Array<[number, Required<Resource>]> = [];
       sut = createSut();
       const onGoingWork = lastValueFrom(
         sut
@@ -186,7 +186,7 @@ describe(Pool.name, () => {
       // Arrange
       arrangeWorkers();
       setConcurrency(2);
-      const actualWorkers: Array<Required<Worker>> = [];
+      const actualWorkers: Array<Required<Resource>> = [];
       sut = createSut();
       const onGoingScheduledWork = lastValueFrom(sut.schedule(range(0, 2), (worker) => actualWorkers.push(worker)));
 
@@ -279,7 +279,7 @@ describe(Pool.name, () => {
     });
   });
 
-  async function captureWorkers(suite: Pool<Required<Worker>>, inputCount: number) {
+  async function captureWorkers(suite: Pool<Required<Resource>>, inputCount: number) {
     // Eagerly get all test runners
     const createAllPromise = lastValueFrom(
       suite
