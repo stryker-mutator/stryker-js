@@ -27,10 +27,10 @@ async function main() {
     './packages/jest-runner/testResources/jasmine2-node/src/Add.js': './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Add.js',
     './packages/jest-runner/testResources/jasmine2-node/src/Circle.js': './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Circle.js',
   },  '__stryker2__')
-  await instrument([
-    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Add.js',
-    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Multiply.js',
-  ], './packages/jest-runner/testResources/jasmine2-node-no-mocks-instrumented/src',  '__stryker2__')
+  await instrument({
+    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Add.js': './packages/jest-runner/testResources/jasmine2-node-no-mocks-instrumented/src/Add.js',
+    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Multiply.js': './packages/jest-runner/testResources/jasmine2-node-no-mocks-instrumented/src/Multiply.js',
+  }, '__stryker2__')
   await instrument({
     './packages/cucumber-runner/testResources/example/src/calculator.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator.js',
     './packages/cucumber-runner/testResources/example/src/calculator-static.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator-static.js',
