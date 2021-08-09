@@ -171,3 +171,38 @@ FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap o
 **Solution**:
 
 To solve that, you need to limit the number of workers. In the example about, 11 workers were created in total (6 checker processes and 5 test runner processes). In order to solve this issue, you may try to set `--concurrency` setting in your stryker config. In case of the sample issue, adding `"concurrency": 4` to `stryker.conf.json` solved the problem.
+
+
+### Babel decorator Error: `Cannot use the decorators and decorators-legacy plugin together`
+**Example**:
+```
+    at validatePlugins (okay_all in src\node_modules\@babel\parser\lib\index.js:10194:13)
+    at getParser (okay_all in src\node_modules\@babel\parser\lib\index.js:14528:5)
+    at parse (okay_all in src\node_modules\@babel\parser\lib\index.js:14511:12)
+    at parser (okay_all in src\node_modules\@babel\core\lib\parser\index.js:52:34)
+    at parser.next (<anonymous>)
+    at Object.parse (okay_all in src\node_modules\@babel\core\lib\parse.js:31:37)
+    at parse.next (<anonymous>)
+    at step (okay_all in src\node_modules\gensync\index.js:261:32)
+    at okay_all in src\node_modules\gensync\index.js:273:13
+    at async.call.result.err.err (okay_all in src\node_modules\gensync\index.js:223:11)
+```
+
+**Solution**:
+
+In order to solve this, you need to make sure your project have babel and the decorator-legacy plugin setting. For example,
+```
+    plugins: [
+      ["@babel/plugin-proposal-decorators", { legacy: true }],
+      ["@babel/plugin-proposal-class-properties", { loose: true }],
+    ],
+```
+See [here](https://babeljs.io/docs/en/babel-plugin-proposal-decorators) for babel decorators.
+You also have to let Stryker notice the plugins. Put this code in your stryker.conf.json.
+```
+{
+  "mutator": {
+    "plugins": []
+  }
+}
+```
