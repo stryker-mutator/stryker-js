@@ -140,7 +140,7 @@ export class JestTestRunner implements TestRunner {
         jestConfig: this.configForMutantRun(fileNameUnderTest),
         testNamePattern,
       });
-      return toMutantRunResult(dryRunResult);
+      return toMutantRunResult(dryRunResult, true);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
     }

@@ -61,7 +61,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
       const sut = createSut({ command: 'npm run mutant' });
       const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }) });
       assertions.expectKilled(result);
-      expect(result.killedBy).deep.eq(['all']);
+      expect(result.killedBy).eq('all');
     });
   });
 
