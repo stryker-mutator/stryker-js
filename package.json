@@ -17,7 +17,7 @@
     "@types/sinon-chai": "~3.2.4",
     "@types/source-map-support": "~0.5.3",
     "@typescript-eslint/eslint-plugin": "4.29.0",
-    "@typescript-eslint/parser": "4.29.0",
+    "@typescript-eslint/parser": "4.29.1",
     "chai": "~4.3.0",
     "chai-as-promised": "~7.1.1",
     "concurrently": "~6.2.0",
