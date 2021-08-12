@@ -169,6 +169,42 @@ describe('babel-transformer', () => {
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
+
+    it('should skip nodes that are lead with a disable comment', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
+    it('should skip nodes that are lead with a disable comment in the middle of a function call', () => {
+      const ast = createTSAst({
+        rawContent: `
+      console.log(
+        // Stryker disable-next-line plus
+        1 + 1
+       );
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
+    it('should skip nodes with specific mutation disables', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line plus
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+      expect(mutantCollector.mutants.some((mutant) => mutant.mutatorName === 'plus')).to.be.false;
+    });
   });
 
   describe('with mutationRanges', () => {

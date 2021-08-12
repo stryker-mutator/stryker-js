@@ -20,6 +20,10 @@ interface MutantsPlacement<TNode extends types.Node> {
 
 type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 
+const DISABLE_ALL_MUTANTS = 'ALL';
+
+type DisabledMutantMap = Map<number, string[] | typeof DISABLE_ALL_MUTANTS>;
+
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
@@ -37,6 +41,8 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // Create a placementMap for the mutation switching bookkeeping
   const placementMap: PlacementMap = new Map();
 
+  const disabledMutationMap: DisabledMutantMap = new Map();
+
   // Now start the actual traversing of the AST
   //
   // On the way down:
@@ -52,6 +58,8 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
+      addCommentsToMutantDisableMap(path.node.loc, path.node.leadingComments);
+
       if (shouldSkip(path)) {
         path.skip();
       } else {
@@ -82,6 +90,40 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       ];
     }
     root.program.body.unshift(...header);
+  }
+
+  /**
+   * Takes the leading comments of a location and adds if they're a mutation disable comment then adds them
+   * to the mutantDisableMap
+   */
+  function addCommentsToMutantDisableMap(location: types.SourceLocation | null, comments: readonly types.Comment[] | null): void {
+    if (!comments || !location) {
+      return;
+    }
+
+    comments
+      .filter((comment) => comment.value.trim().startsWith('Stryker disable-next-line'))
+      .forEach((comment) => {
+        const [_, _disableType, mutations] = comment.value.trim().split(' ');
+        const disabledMutants: string[] | typeof DISABLE_ALL_MUTANTS = (mutations as string | undefined)?.split(',') ?? DISABLE_ALL_MUTANTS;
+
+        const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
+        if (disabledMutationsForLine === undefined) {
+          disabledMutationMap.set(location.start.line, disabledMutants);
+          return;
+        }
+
+        if (disabledMutationsForLine === DISABLE_ALL_MUTANTS) {
+          return;
+        }
+
+        if (disabledMutants === DISABLE_ALL_MUTANTS) {
+          disabledMutationMap.set(location.start.line, disabledMutants);
+          return;
+        }
+
+        disabledMutationMap.set(location.start.line, [...disabledMutationsForLine, ...disabledMutants]);
+      });
   }
 
   /**
@@ -119,6 +161,18 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     );
   }
 
+  function isMutantInDisabledMap(location: types.SourceLocation | null, mutant: Mutable): boolean {
+    const line = location?.start.line;
+    if (!line) return false;
+
+    const disabledMutantsForLine = disabledMutationMap.get(line);
+    if (!disabledMutantsForLine) {
+      return false;
+    }
+
+    return disabledMutantsForLine === DISABLE_ALL_MUTANTS || disabledMutantsForLine.includes(mutant.mutatorName);
+  }
+
   /**
    * Place mutants that are assigned to the current node path (on exit)
    */
@@ -139,6 +193,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
+      .filter((mutant) => !isMutantInDisabledMap(path.node.loc, mutant))
       .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
       .filter((mutant) => !mutant.ignoreReason);
   }
