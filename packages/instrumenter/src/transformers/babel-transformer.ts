@@ -20,7 +20,7 @@ interface MutantsPlacement<TNode extends types.Node> {
 
 type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 
-const DISABLE_ALL_MUTANTS = 'ALL';
+const DISABLE_ALL_MUTANTS = 'all';
 
 type DisabledMutantMap = Map<number, string[] | typeof DISABLE_ALL_MUTANTS>;
 
@@ -170,7 +170,11 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       return false;
     }
 
-    return disabledMutantsForLine === DISABLE_ALL_MUTANTS || disabledMutantsForLine.includes(mutant.mutatorName);
+    return (
+      disabledMutantsForLine === DISABLE_ALL_MUTANTS ||
+      disabledMutantsForLine.includes(DISABLE_ALL_MUTANTS) ||
+      disabledMutantsForLine.includes(mutant.mutatorName)
+    );
   }
 
   /**

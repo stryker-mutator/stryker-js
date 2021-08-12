@@ -194,7 +194,7 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
-    it('should skip nodes with specific mutation disables', () => {
+    it('should skip nodes with a specific mutation disabled', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line plus
@@ -204,6 +204,40 @@ describe('babel-transformer', () => {
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
       expect(mutantCollector.mutants.some((mutant) => mutant.mutatorName === 'plus')).to.be.false;
+    });
+
+    it('should skip nodes with multiple specific mutations disabled', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line plus,foo
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
+    it('should skip nodes with multiple specific mutations disabled over multiple lines', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line plus
+        // Stryker disable-next-line foo
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
+    it('should skip nodes with all mutations disabled', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line all
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
     });
   });
 
