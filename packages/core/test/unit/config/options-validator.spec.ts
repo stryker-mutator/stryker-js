@@ -164,6 +164,14 @@ describe(OptionsValidator.name, () => {
     actValidationErrors('Config option "dryRunTimeoutMinutes" must be >= 0, was -1.');
   });
 
+  it('should report a deprecation warning for jest.enableBail', () => {
+    testInjector.options.jest = { enableBail: true };
+    sut.validate(testInjector.options);
+    expect(testInjector.logger.warn).calledWith(
+      'DEPRECATED. Use of "enableBail" inside jest options is deprecated, please use "enableBail" in the stryker configuration. See https://stryker-mutator.io/docs/stryker-js/configuration#commandrunner-object'
+    );
+  });
+
   describe('plugins', () => {
     it('should be invalid with non-array plugins', () => {
       breakConfig('plugins', '@stryker-mutator/typescript');
