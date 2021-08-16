@@ -21,3 +21,7 @@ export interface MutantRunOptions extends RunOptions {
   sandboxFileName: string;
   disableBail: boolean;
 }
+
+export interface MutantRunOptionsWithDisableBail extends MutantRunOptions {
+  disableBail: boolean;
+}
