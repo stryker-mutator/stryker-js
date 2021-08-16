@@ -80,7 +80,7 @@ export class JestTestRunner implements TestRunner {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get jest configuration from stryker options and assign it to jestConfig
     const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, (options as JestRunnerOptionsWithStrykerOptions) || {});
+    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
 
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
@@ -106,7 +106,7 @@ export class JestTestRunner implements TestRunner {
     }
     try {
       const { dryRunResult, jestResult } = await this.run({
-        jestConfig: withCoverageAnalysis(this.jestConfig, coverageAnalysis),
+        jestConfig: withCoverageAnalysis({ ...this.jestConfig, bail: true }, coverageAnalysis),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -126,7 +126,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async mutantRun({ activeMutant, sandboxFileName, testFilter }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
     const fileNameUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
@@ -134,10 +134,11 @@ export class JestTestRunner implements TestRunner {
       testNamePattern = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
     }
     process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
+
     try {
       const { dryRunResult } = await this.run({
         fileNameUnderTest,
-        jestConfig: this.configForMutantRun(fileNameUnderTest),
+        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail),
         testNamePattern,
       });
       return toMutantRunResult(dryRunResult, true);
@@ -146,15 +147,21 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
+  private configForMutantRun(fileNameUnderTest: string | undefined, disableBail: boolean): jest.Config.InitialOptions {
+    let config: jest.Config.InitialOptions;
+
     if (fileNameUnderTest && this.jestConfig.roots) {
       // Make sure the file under test lives inside one of the roots
-      return {
+      config = {
         ...this.jestConfig,
         roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
       };
+    } else {
+      config = this.jestConfig;
     }
-    return this.jestConfig;
+
+    config.bail = !disableBail;
+    return config;
   }
 
   private async run(settings: RunSettings): Promise<{ dryRunResult: DryRunResult; jestResult: jestTestResult.AggregatedResult }> {
@@ -256,10 +263,8 @@ export class JestTestRunner implements TestRunner {
     return testResults;
   }
 
-  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestRunnerOptionsWithStrykerOptions): jest.Config.InitialOptions {
-    const config = (options.jest.config ?? {}) as jest.Config.InitialOptions;
-    // when disableBail is false (by default) we tell jest to bail
-    config.bail = !options.disableBail;
+  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestOptions): jest.Config.InitialOptions {
+    const config = (options.config ?? {}) as jest.Config.InitialOptions;
     const stringify = (obj: unknown) => JSON.stringify(obj, null, 2);
     this.log.debug(
       `Merging file-based config ${stringify(configFromFile)}

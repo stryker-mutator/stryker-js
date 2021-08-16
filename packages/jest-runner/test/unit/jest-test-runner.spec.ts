@@ -95,19 +95,6 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = false when disableBail is true', async () => {
-      options.disableBail = true;
-      const sut = createSut();
-      await sut.dryRun({ coverageAnalysis: 'off' });
-      expect(jestTestAdapterMock.run).calledWithMatch(
-        sinon.match({
-          jestConfig: sinon.match({
-            bail: false,
-          }),
-        })
-      );
-    });
-
     it('should trace log a message when jest is invoked', async () => {
       const sut = createSut();
       testInjector.logger.isTraceEnabled.returns(true);
@@ -556,6 +543,18 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           testNamePattern: '(foo should be bar/z)|(baz should be ba\\\\\\.z)',
+        })
+      );
+    });
+
+    it('should set bail if disableBail is passed', async () => {
+      const sut = createSut();
+      await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          jestConfig: sinon.match({
+            bail: false,
+          }),
         })
       );
     });

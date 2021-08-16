@@ -19,4 +19,5 @@ export interface MutantRunOptions extends RunOptions {
   hitLimit?: number;
   activeMutant: Mutant;
   sandboxFileName: string;
+  disableBail: boolean;
 }
