@@ -178,7 +178,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Assert
       assertions.expectKilled(result);
-      expect((result.killedBy as string[]).sort()).deep.eq([
+      expect((result.killedBy as string[]).sort((a, b) => (a > b ? 1 : -1))).deep.eq([
         'Add should be able to add two numbers',
         'Multiply should be able to multiply two numbers',
       ]);
