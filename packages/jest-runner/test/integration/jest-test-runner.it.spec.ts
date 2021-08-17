@@ -161,7 +161,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectSurvived(secondResult);
     });
 
-    it('should be able to collect tests that kill a mutant and bail by default', async () => {
+    it.skip('should be able to collect tests that kill a mutant and bail by default', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
       process.chdir(exampleProjectRoot);
