@@ -5,8 +5,6 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
-
 import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestOptions } from '../../src-generated/jest-runner-options';
@@ -27,11 +25,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
     'Circle should have a circumference of 2PI when the radius is 1',
   ]);
 
-  function createSut(jestOverrides?: Partial<JestOptions>, strykerOverrides?: Partial<StrykerOptions>) {
+  function createSut(overrides?: Partial<JestOptions>) {
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
-      jest: createJestOptions(jestOverrides),
-      ...strykerOverrides,
+      jest: createJestOptions(overrides),
     });
+
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
@@ -163,11 +161,11 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectSurvived(secondResult);
     });
 
-    it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
+    it('should be able to collect tests that kill a mutant and bail by default', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
       process.chdir(exampleProjectRoot);
-      const jestTestRunner = createSut({}, { disableBail: true });
+      const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
@@ -178,10 +176,26 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Assert
       assertions.expectKilled(result);
-      expect((result.killedBy as string[]).sort((a, b) => (a > b ? 1 : -1))).deep.eq([
-        'Add should be able to add two numbers',
-        'Multiply should be able to multiply two numbers',
-      ]);
+      expect(result.killedBy as string[]).to.have.length(1);
+    });
+
+    it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
+      // Arrange
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
+      process.chdir(exampleProjectRoot);
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = '1';
+      mutantRunOptions.disableBail = true;
+
+      // Act
+      const result = await jestTestRunner.mutantRun(mutantRunOptions);
+
+      // Assert
+      assertions.expectKilled(result);
+      expect(result.killedBy as string[]).to.have.length(2);
     });
   });
 });
