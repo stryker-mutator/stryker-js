@@ -168,7 +168,7 @@ describe(OptionsValidator.name, () => {
     testInjector.options.jest = { enableBail: true };
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
-      'DEPRECATED. Use of "enableBail" inside jest options is deprecated, please use "enableBail" in the stryker configuration. See https://stryker-mutator.io/docs/stryker-js/configuration#commandrunner-object'
+      'DEPRECATED. Use of "enableBail" inside jest options is deprecated, please use "disableBail" in the stryker configuration. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
     );
   });
 
