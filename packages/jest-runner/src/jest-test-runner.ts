@@ -8,7 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
-  MutantRunOptionsWithDisableBail,
+  MutantRunOptions,
   DryRunResult,
   MutantRunResult,
   toMutantRunResult,
@@ -126,7 +126,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail }: MutantRunOptionsWithDisableBail): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
     const fileNameUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
@@ -138,7 +138,7 @@ export class JestTestRunner implements TestRunner {
     try {
       const { dryRunResult } = await this.run({
         fileNameUnderTest,
-        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail),
+        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail ?? false),
         testNamePattern,
       });
       return toMutantRunResult(dryRunResult, true);
