@@ -1,4 +1,4 @@
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { expect } from 'chai';
 import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
@@ -34,7 +34,7 @@ async function main() {
   async function doDryRun(n = 40) {
     if (n > 0) {
       console.log(`Iterator count ${n}`);
-      const result = await mochaRunner.dryRun({ coverageAnalysis: 'off', timeout: 3000 });
+      const result = await mochaRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', timeout: 3000 }));
       if (result.status === DryRunStatus.Complete) {
         expect(result.tests).lengthOf(1);
         expect(result.tests[0].status).eq(TestStatus.Success);

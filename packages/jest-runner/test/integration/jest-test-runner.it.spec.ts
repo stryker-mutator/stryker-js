@@ -42,7 +42,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(resolveTestResource('jasmine2-node'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       const result = runResult.tests.find((test) => test.id === 'Add should be able to add two numbers');
@@ -55,7 +55,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(resolveTestResource('jasmine2-node'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -66,7 +66,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -77,7 +77,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
       const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
       const jestTestRunner = createSut();
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'perTest' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
       assertions.expectCompleted(runResult);
       expectTestResults(runResult, [
         {

@@ -41,13 +41,13 @@ describe('JestTestRunner coverage analysis integration', () => {
 
       describe('dryRun', () => {
         it('should not provide coverage analysis if coverageAnalysis is "off"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'off' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).undefined;
         });
 
         it('should provide static coverage when coverageAnalysis is "all"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'all' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).not.undefined;
           expect(result.mutantCoverage!.perTest).deep.eq({});
@@ -57,7 +57,7 @@ describe('JestTestRunner coverage analysis integration', () => {
         });
 
         it('should provide perTest coverage when coverageAnalysis is "perTest"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'perTest' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).not.undefined;
           expect(result.mutantCoverage!.static).deep.eq({});
@@ -135,13 +135,13 @@ describe('JestTestRunner coverage analysis integration', () => {
 
       describe('dryRun', () => {
         it('should not provide coverage analysis if coverageAnalysis is "off"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'off' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).undefined;
         });
 
         it('should provide static coverage when coverageAnalysis is "all"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'all' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).not.undefined;
           expect(result.mutantCoverage!.perTest).deep.eq({});
@@ -175,7 +175,7 @@ describe('JestTestRunner coverage analysis integration', () => {
         });
 
         it('should provide perTest coverage when coverageAnalysis is "perTest"', async () => {
-          const result = await sut.dryRun({ coverageAnalysis: 'perTest' });
+          const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).not.undefined;
           expect(result.mutantCoverage!.static).deep.eq({ 22: 1, 30: 1 });
