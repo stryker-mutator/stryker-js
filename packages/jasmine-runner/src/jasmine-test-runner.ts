@@ -54,23 +54,23 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(undefined, options.coverageAnalysis);
+    return this.run(undefined, options.coverageAnalysis, options.disableBail);
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
-    const runResult = await this.run(options.testFilter);
-    return toMutantRunResult(runResult);
+    const runResult = await this.run(options.testFilter, undefined, options.disableBail);
+    return toMutantRunResult(runResult, true);
   }
 
   public async dispose(): Promise<void> {
     this.requireCache.clear();
   }
 
-  private async run(testFilter?: string[], coverageAnalysis?: CoverageAnalysis): Promise<DryRunResult> {
+  private async run(testFilter: string[] | undefined, coverageAnalysis: CoverageAnalysis | undefined, disableBail: boolean): Promise<DryRunResult> {
     this.requireCache.clear();
     try {
-      const jasmine = this.createJasmineRunner(testFilter);
+      const jasmine = this.createJasmineRunner(testFilter, disableBail);
       const self = this;
       const tests: TestResult[] = [];
       const runTask = new Task<DryRunResult>();
@@ -117,7 +117,7 @@ export class JasmineTestRunner implements TestRunner {
     }
   }
 
-  private createJasmineRunner(testFilter: string[] | undefined) {
+  private createJasmineRunner(testFilter: string[] | undefined, disableBail: boolean) {
     let specFilter: ((spec: jasmine.Spec) => boolean) | undefined = undefined;
     if (testFilter) {
       specFilter = (spec) => testFilter.includes(spec.id.toString());
@@ -126,7 +126,7 @@ export class JasmineTestRunner implements TestRunner {
     // The `loadConfigFile` will fallback on the default
     jasmine.loadConfigFile(this.jasmineConfigFile);
     jasmine.env.configure({
-      failFast: true,
+      failFast: !disableBail,
       oneFailurePerSpec: true,
       specFilter,
     });

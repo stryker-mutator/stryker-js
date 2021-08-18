@@ -18,6 +18,11 @@ describe('disableBail', () => {
     execStryker('stryker run --testRunner karma');
     await assertBailWasDisabled();
   });
+
+  it('should be supported in the jasmine runner', async () => {
+    execStryker('stryker run --testRunner jasmine');
+    await assertBailWasDisabled();
+  });
 });
 
 async function assertBailWasDisabled() {
