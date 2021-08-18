@@ -260,6 +260,7 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
   coverageAnalysis: 'off',
   timeout: 2000,
+  disableBail: false,
 }));
 
 export const completeDryRunResult = factoryMethod<CompleteDryRunResult>(() => ({

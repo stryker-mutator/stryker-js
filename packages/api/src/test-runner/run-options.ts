@@ -8,7 +8,7 @@ export interface RunOptions {
   /**
    * Filled from disableBail in config
    */
-  disableBail?: boolean;
+  disableBail: boolean;
 }
 
 export interface DryRunOptions extends RunOptions {
