@@ -22,7 +22,12 @@ export class KarmaTestRunner implements TestRunner {
   constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions) {
     const setup = this.loadSetup(options);
     this.starter = new ProjectStarter(getLogger, setup);
-    this.setGlobals(setup, getLogger);
+    strykerKarmaConf.setGlobals({
+      getLogger,
+      karmaConfig: setup.config,
+      karmaConfigFile: setup.configFile,
+      disableBail: options.disableBail,
+    });
   }
 
   public async init(): Promise<void> {
@@ -47,15 +52,14 @@ export class KarmaTestRunner implements TestRunner {
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     TestHooksMiddleware.instance.configureCoverageAnalysis(options.coverageAnalysis);
-    const res = await this.run();
-    return res;
+    return await this.run();
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     TestHooksMiddleware.instance.configureMutantRun(options);
     StrykerReporter.instance.configureHitLimit(options.hitLimit);
     const dryRunResult = await this.run();
-    return toMutantRunResult(dryRunResult);
+    return toMutantRunResult(dryRunResult, true);
   }
 
   private run(): Promise<DryRunResult> {
@@ -78,14 +82,6 @@ export class KarmaTestRunner implements TestRunner {
       projectType: 'custom',
     };
     return Object.assign(defaultKarmaConfig, (options as KarmaRunnerOptionsWithStrykerOptions).karma);
-  }
-
-  private setGlobals(setup: StrykerKarmaSetup, getLogger: LoggerFactoryMethod) {
-    strykerKarmaConf.setGlobals({
-      getLogger,
-      karmaConfig: setup.config,
-      karmaConfigFile: setup.configFile,
-    });
   }
 
   private runServer(): void {

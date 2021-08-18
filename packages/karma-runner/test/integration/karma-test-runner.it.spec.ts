@@ -1,7 +1,7 @@
 import { promisify } from 'util';
 import http from 'http';
 
-import { DryRunStatus, TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test-runner';
+import { TestStatus, CompleteDryRunResult, TestResult, FailedTestResult } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
@@ -80,7 +80,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
   });
 
   describe('when some tests fail', () => {
-    before(() => {
+    beforeEach(() => {
       setOptions({
         files: [
           'testResources/sampleProject/src/Add.js',
@@ -88,26 +88,68 @@ describe(`${KarmaTestRunner.name} integration`, () => {
           'testResources/sampleProject/test-jasmine/AddFailedSpec.js',
         ],
       });
-      sut = createSut();
-      return sut.init();
     });
-    after(async () => {
+    afterEach(async () => {
       await sut.dispose();
     });
     describe('dryRun', () => {
       it('should report the first failed test (bail)', async () => {
+        // Arrange
+        sut = createSut();
+        await sut.init();
+
+        // Act
         const runResult = await sut.dryRun(factory.dryRunOptions());
+
+        // Assert
         assertions.expectCompleted(runResult);
         expectToHaveSuccessfulTests(runResult, 5);
         expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.']);
-        expect(runResult.status).to.be.eq(DryRunStatus.Complete);
+      });
+
+      it('should report all failing tests when disableBail is true', async () => {
+        // Arrange
+        testInjector.options.disableBail = true;
+        sut = createSut();
+        await sut.init();
+
+        // Act
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+
+        // Assert
+        assertions.expectCompleted(runResult);
+        expectToHaveSuccessfulTests(runResult, 5);
+        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
       });
     });
+
     describe('runMutant()', () => {
       it('should report the mutant as killed', async () => {
+        // Arrange
+        sut = createSut();
+        await sut.init();
+
+        // Act
         const mutantResult = await sut.mutantRun(factory.mutantRunOptions());
+
+        // Assert
         assertions.expectKilled(mutantResult);
-        expect(mutantResult.killedBy).eq('spec5');
+        expect(mutantResult.killedBy).deep.eq(['spec5']);
+        expect(mutantResult.failureMessage.split('\n')[0]).eq('Error: Expected 7 to be 8.');
+      });
+
+      it('should report all failed tests when disableBail is true', async () => {
+        // Arrange
+        testInjector.options.disableBail = true;
+        sut = createSut();
+        await sut.init();
+
+        // Act
+        const mutantResult = await sut.mutantRun(factory.mutantRunOptions());
+
+        // Assert
+        assertions.expectKilled(mutantResult);
+        expect(mutantResult.killedBy).deep.eq(['spec5', 'spec6']);
         expect(mutantResult.failureMessage.split('\n')[0]).eq('Error: Expected 7 to be 8.');
       });
     });
