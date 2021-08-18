@@ -83,13 +83,25 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = true', async () => {
+    it('should set bail = true by default', async () => {
       const sut = createSut();
       await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({
             bail: true,
+          }),
+        })
+      );
+    });
+
+    it('should set bail = false when disableBail', async () => {
+      const sut = createSut();
+      await sut.dryRun({ coverageAnalysis: 'off', disableBail: true });
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          jestConfig: sinon.match({
+            bail: false,
           }),
         })
       );

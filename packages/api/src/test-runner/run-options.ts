@@ -5,6 +5,10 @@ export interface RunOptions {
    * The amount of time (in milliseconds) the TestRunner has to complete the test run before a timeout occurs.
    */
   timeout: number;
+  /**
+   * Filled from disableBail in config
+   */
+  disableBail?: boolean;
 }
 
 export interface DryRunOptions extends RunOptions {
@@ -19,5 +23,4 @@ export interface MutantRunOptions extends RunOptions {
   hitLimit?: number;
   activeMutant: Mutant;
   sandboxFileName: string;
-  disableBail?: boolean;
 }

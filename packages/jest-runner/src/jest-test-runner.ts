@@ -94,7 +94,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({ coverageAnalysis }: Pick<DryRunOptions, 'coverageAnalysis'>): Promise<DryRunResult> {
+  public async dryRun({ coverageAnalysis, disableBail }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];
@@ -106,7 +106,7 @@ export class JestTestRunner implements TestRunner {
     }
     try {
       const { dryRunResult, jestResult } = await this.run({
-        jestConfig: withCoverageAnalysis({ ...this.jestConfig, bail: true }, coverageAnalysis),
+        jestConfig: withCoverageAnalysis({ ...this.jestConfig, bail: !disableBail }, coverageAnalysis),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
