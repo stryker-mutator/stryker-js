@@ -1,10 +1,21 @@
+import fs from 'fs';
+
 import { readMutationTestingJsonResult, execStryker} from '../../../helpers';
 import { expect } from 'chai';
 
 describe('disableBail', () => {
 
+  beforeEach(async () => {
+    await fs.promises.rm('reports', { recursive: true, force: true })
+  })
+
   it('should be supported in the jest runner', async () => {
-    execStryker('stryker run --disableBail --testRunner jest --reporters json --concurrency 1');
+    execStryker('stryker run --testRunner jest');
+    await assertBailWasDisabled();
+  });
+
+  it('should be supported in the karma runner', async () => {
+    execStryker('stryker run --testRunner karma');
     await assertBailWasDisabled();
   });
 });
