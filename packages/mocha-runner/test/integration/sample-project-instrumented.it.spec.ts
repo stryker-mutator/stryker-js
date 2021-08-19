@@ -111,14 +111,25 @@ describe('Running an instrumented project', () => {
     it('should be able to kill a mutant', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('MyMath should be able to add two numbers');
+      expect(result.killedBy).deep.eq(['MyMath should be able to add two numbers']);
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 
     it('should bail after the first failed test', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '8' }) }));
       assertions.expectKilled(result);
-      expect(result.nrOfTests).eq(1);
+      expect(result.killedBy).deep.eq(['MyMath should be able to recognize a negative number']);
+      expect(result.nrOfTests).eq(4); // 5th test shouldn't have run
+    });
+
+    it('should report all killedBy tests when bail is disabled', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '8' }), disableBail: true }));
+      assertions.expectKilled(result);
+      expect(result.killedBy).deep.eq([
+        'MyMath should be able to recognize a negative number',
+        'MyMath should be able to recognize that 0 is not a negative number',
+      ]);
+      expect(result.nrOfTests).eq(5);
     });
 
     it('should be able to kill a mutant with filtered test', async () => {
@@ -126,7 +137,7 @@ describe('Running an instrumented project', () => {
         factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }), testFilter: ['MyMath should be able to add two numbers'] })
       );
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('MyMath should be able to add two numbers');
+      expect(result.killedBy).deep.eq(['MyMath should be able to add two numbers']);
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 

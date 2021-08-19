@@ -23,6 +23,11 @@ describe('disableBail', () => {
     execStryker('stryker run --testRunner jasmine');
     await assertBailWasDisabled();
   });
+
+  it('should be supported in the mocha runner', async () => {
+    execStryker('stryker run --testRunner mocha');
+    await assertBailWasDisabled();
+  });
 });
 
 async function assertBailWasDisabled() {
