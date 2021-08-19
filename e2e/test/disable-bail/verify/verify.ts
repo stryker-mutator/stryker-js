@@ -28,13 +28,18 @@ describe('disableBail', () => {
     execStryker('stryker run --testRunner mocha');
     await assertBailWasDisabled();
   });
+
+  it('should be supported in the cucumber runner', async () => {
+    execStryker('stryker run --testRunner cucumber');
+    await assertBailWasDisabled(['Feature: Add -- Scenario: Add 40 and 2', 'Feature: Add -- Scenario: Add 41 and 1']);
+  });
 });
 
-async function assertBailWasDisabled() {
+async function assertBailWasDisabled([killedByName1, killedByName2] = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1']) {
   const result = await readMutationTestingJsonResult();
   const theMutant = result.systemUnderTestMetrics.childResults[0].file.mutants.find(mutant => mutant.replacement === 'a - b');
   expect(theMutant.killedByTests).lengthOf(2);
-  expect(theMutant.killedByTests[0].name).eq('add should result in 42 for 40 and 2');
-  expect(theMutant.killedByTests[1].name).eq('add should result in 42 for 41 and 1');
+  expect(theMutant.killedByTests[0].name).eq(killedByName1);
+  expect(theMutant.killedByTests[1].name).eq(killedByName2);
 }
 
