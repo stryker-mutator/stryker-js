@@ -22,7 +22,7 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 
 const DISABLE_ALL_MUTANTS = 'all';
 
-type DisabledMutantMap = Map<number, string[] | typeof DISABLE_ALL_MUTANTS>;
+type DisabledMutantMap = Map<number, Record<string, string>>;
 
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
@@ -104,25 +104,24 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     comments
       .filter((comment) => comment.value.trim().startsWith('Stryker disable-next-line'))
       .forEach((comment) => {
-        const [_, _disableType, mutations] = comment.value.trim().split(' ');
-        const disabledMutants: string[] | typeof DISABLE_ALL_MUTANTS = (mutations as string | undefined)?.split(',') ?? DISABLE_ALL_MUTANTS;
+        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
+        let mutations;
+        if (!/^\[.*?]$/.test(mutationChecks)) {
+          ignoreReasons.unshift(mutationChecks);
+          mutations = '';
+        } else {
+          mutations = /^\[(.*?)]$/.exec(mutationChecks)![1];
+        }
+        const ignoreReason = ignoreReasons.join(' ');
+
+        const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS).split(',');
+        const disabledReasonMap: Record<string, string> = disabledMutants.reduce(
+          (reducedMap, mutator) => ({ ...reducedMap, [mutator]: ignoreReason || 'Ignored by user comment' }),
+          {}
+        );
 
         const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
-        if (disabledMutationsForLine === undefined) {
-          disabledMutationMap.set(location.start.line, disabledMutants);
-          return;
-        }
-
-        if (disabledMutationsForLine === DISABLE_ALL_MUTANTS) {
-          return;
-        }
-
-        if (disabledMutants === DISABLE_ALL_MUTANTS) {
-          disabledMutationMap.set(location.start.line, disabledMutants);
-          return;
-        }
-
-        disabledMutationMap.set(location.start.line, [...disabledMutationsForLine, ...disabledMutants]);
+        disabledMutationMap.set(location.start.line, { ...disabledMutationsForLine, ...disabledReasonMap });
       });
   }
 
@@ -161,20 +160,16 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     );
   }
 
-  function isMutantInDisabledMap(location: types.SourceLocation | null, mutant: Mutable): boolean {
+  function getDisabledMutationReason(location: types.SourceLocation | null, mutatorName: string): string | undefined {
     const line = location?.start.line;
-    if (!line) return false;
+    if (!line) return undefined;
 
     const disabledMutantsForLine = disabledMutationMap.get(line);
     if (!disabledMutantsForLine) {
-      return false;
+      return undefined;
     }
 
-    return (
-      disabledMutantsForLine === DISABLE_ALL_MUTANTS ||
-      disabledMutantsForLine.includes(DISABLE_ALL_MUTANTS) ||
-      disabledMutantsForLine.includes(mutant.mutatorName)
-    );
+    return disabledMutantsForLine[mutatorName] ?? disabledMutantsForLine[DISABLE_ALL_MUTANTS];
   }
 
   /**
@@ -197,7 +192,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
-      .filter((mutant) => !isMutantInDisabledMap(path.node.loc, mutant))
       .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
       .filter((mutant) => !mutant.ignoreReason);
   }
@@ -208,7 +202,11 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   function* mutate(node: NodePath): Iterable<Mutable> {
     for (const mutator of mutators) {
       for (const replacement of mutator.mutate(node)) {
-        yield { replacement, mutatorName: mutator.name, ignoreReason: formatIgnoreReason(mutator.name) };
+        yield {
+          replacement,
+          mutatorName: mutator.name,
+          ignoreReason: getDisabledMutationReason(node.node.loc, mutator.name) ?? formatIgnoreReason(mutator.name),
+        };
       }
     }
 

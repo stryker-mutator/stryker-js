@@ -178,66 +178,105 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(0);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
     });
 
     it('should skip nodes that are lead with a disable comment in the middle of a function call', () => {
       const ast = createTSAst({
         rawContent: `
       console.log(
-        // Stryker disable-next-line plus
+        // Stryker disable-next-line [plus]
         1 + 1
        );
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(0);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
     });
 
     it('should skip nodes with a specific mutation disabled', () => {
       const ast = createTSAst({
         rawContent: `
-        // Stryker disable-next-line plus
+        // Stryker disable-next-line [plus]
       const foo = 1 + 1;
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(1);
-      expect(mutantCollector.mutants.some((mutant) => mutant.mutatorName === 'plus')).to.be.false;
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason).some((mutant) => mutant.mutatorName === 'plus')).to.be.false;
     });
 
     it('should skip nodes with multiple specific mutations disabled', () => {
       const ast = createTSAst({
         rawContent: `
-        // Stryker disable-next-line plus,foo
+        // Stryker disable-next-line [plus,foo]
       const foo = 1 + 1;
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(0);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
     });
 
     it('should skip nodes with multiple specific mutations disabled over multiple lines', () => {
       const ast = createTSAst({
         rawContent: `
-        // Stryker disable-next-line plus
-        // Stryker disable-next-line foo
+        // Stryker disable-next-line [plus]
+        // Stryker disable-next-line [foo]
       const foo = 1 + 1;
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(0);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
     });
 
     it('should skip nodes with all mutations disabled', () => {
       const ast = createTSAst({
         rawContent: `
-        // Stryker disable-next-line all
+        // Stryker disable-next-line [all]
       const foo = 1 + 1;
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants).lengthOf(0);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+    });
+
+    it('should allow user added comments', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line [foo] I don't like foo
+      const foo = "bar";
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants[0].ignoreReason).to.equal("I don't like foo");
+    });
+
+    it('should allow multiple user comments for one line', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line [foo] I don't like foo
+        // Stryker disable-next-line [plus] I also don't like plus
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like foo");
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
+    });
+
+    it('should use the [all] disable as a fallback', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable-next-line I don't like anything
+        // Stryker disable-next-line [plus] I don't like plus for a specific reason
+      const foo = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like anything");
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal(
+        "I don't like plus for a specific reason"
+      );
     });
   });
 

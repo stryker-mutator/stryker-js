@@ -4,7 +4,7 @@ describe('After running stryker on jest-react project', () => {
   it('should report expected scores', async () => {
     await expectMetrics({
       killed: 8,
-      ignored: 13,
+      ignored: 18,
       mutationScore: 66.67,
     });
     /*
