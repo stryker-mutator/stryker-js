@@ -278,6 +278,85 @@ describe('babel-transformer', () => {
         "I don't like plus for a specific reason"
       );
     });
+
+    it('should allow skipping blocks of code', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+    });
+
+    it('should allow enabling stryker after a block disable', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;
+        // Stryker restore
+        
+        const foo = 'a';
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+    });
+
+    it('should allow per-mutation ignore reasons when ignoring in blocks', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable Disable everything
+        // Stryker disable [foo] But have a reason for disabling foo
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;       
+        const foo = 'a';
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(
+        mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
+      ).to.be.true;
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal('But have a reason for disabling foo');
+    });
+
+    it('should restore specific mutants in disable blocks', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable [foo,plus]
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;
+        // Stryker restore [foo]
+        const foo = 'a';
+        const d = 1 + 1;
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+    });
+
+    it('should restore all mutators even when block disabled manually', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable [foo,plus]
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;
+        // Stryker restore
+        const foo = 'a';
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+    });
   });
 
   describe('with mutationRanges', () => {

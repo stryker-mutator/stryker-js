@@ -23,6 +23,7 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 const DISABLE_ALL_MUTANTS = 'all';
 
 type DisabledMutantMap = Map<number, Record<string, string>>;
+type BlockDisabledMutantMap = Map<string, string>;
 
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
@@ -42,6 +43,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   const placementMap: PlacementMap = new Map();
 
   const disabledMutationMap: DisabledMutantMap = new Map();
+  const blockDisabledMutationsMap: BlockDisabledMutantMap = new Map();
 
   // Now start the actual traversing of the AST
   //
@@ -58,7 +60,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
-      addCommentsToMutantDisableMap(path.node.loc, path.node.leadingComments);
+      processDisabledMutationsForLocation(path.node.loc, path.node.leadingComments);
 
       if (shouldSkip(path)) {
         path.skip();
@@ -96,33 +98,61 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    * Takes the leading comments of a location and adds if they're a mutation disable comment then adds them
    * to the mutantDisableMap
    */
-  function addCommentsToMutantDisableMap(location: types.SourceLocation | null, comments: readonly types.Comment[] | null): void {
-    if (!comments || !location) {
+  function processDisabledMutationsForLocation(location: types.SourceLocation | null, comments: readonly types.Comment[] | null): void {
+    if (!location) {
       return;
     }
 
     comments
-      .filter((comment) => comment.value.trim().startsWith('Stryker disable-next-line'))
+      ?.filter((comment) => /^Stryker disable(?:\s.*?)?$/.test(comment.value.trim()))
       .forEach((comment) => {
         const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
-        let mutations;
-        if (!/^\[.*?]$/.test(mutationChecks)) {
-          ignoreReasons.unshift(mutationChecks);
-          mutations = '';
-        } else {
-          mutations = /^\[(.*?)]$/.exec(mutationChecks)![1];
-        }
-        const ignoreReason = ignoreReasons.join(' ');
 
-        const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS).split(',');
-        const disabledReasonMap: Record<string, string> = disabledMutants.reduce(
-          (reducedMap, mutator) => ({ ...reducedMap, [mutator]: ignoreReason || 'Ignored by user comment' }),
-          {}
+        Object.entries(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach(([mutator, ignoreReason]) =>
+          blockDisabledMutationsMap.set(mutator, ignoreReason)
         );
+      });
+
+    comments
+      ?.filter((comment) => /^Stryker restore(?:\s.*?)?$/.test(comment.value.trim()))
+      .forEach((comment) => {
+        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
+
+        Object.keys(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach((mutator) =>
+          mutator === DISABLE_ALL_MUTANTS ? blockDisabledMutationsMap.clear() : blockDisabledMutationsMap.delete(mutator)
+        );
+      });
+
+    blockDisabledMutationsMap.forEach((ignoreReasons, mutator) => {
+      const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
+      disabledMutationMap.set(location.start.line, {
+        ...disabledMutationsForLine,
+        ...getMutationIgnoreMap(`[${mutator}]`, ignoreReasons.split(' ')),
+      });
+    });
+
+    comments
+      ?.filter((comment) => /^Stryker disable-next-line(?:\s.*?)?$/.test(comment.value.trim()))
+      .forEach((comment) => {
+        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
 
         const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
-        disabledMutationMap.set(location.start.line, { ...disabledMutationsForLine, ...disabledReasonMap });
+        disabledMutationMap.set(location.start.line, { ...disabledMutationsForLine, ...getMutationIgnoreMap(mutationChecks, ignoreReasons) });
       });
+  }
+
+  function getMutationIgnoreMap(mutationChecks: string, ignoreReasons: string[]): Record<string, string> {
+    let mutations;
+    if (!/^\[.*?]$/.test(mutationChecks)) {
+      ignoreReasons.unshift(mutationChecks);
+      mutations = '';
+    } else {
+      mutations = /^\[(.*?)]$/.exec(mutationChecks)![1];
+    }
+    const ignoreReason = ignoreReasons.join(' ');
+
+    const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS).split(',');
+    return disabledMutants.reduce((reducedMap, mutator) => ({ ...reducedMap, [mutator]: ignoreReason || 'Ignored by user comment' }), {});
   }
 
   /**

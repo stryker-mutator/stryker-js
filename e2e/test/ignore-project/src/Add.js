@@ -20,6 +20,12 @@ module.exports.userIgnored = function (number) {
   return number > 10;
 };
 
+// Stryker disable
+module.exports.blockUserIgnored = function (number) {
+  return number > 10;
+};
+// Stryker restore
+
 module.exports.isNegativeNumber = function (number) {
   var isNegative = false;
   if (number < 0) {
