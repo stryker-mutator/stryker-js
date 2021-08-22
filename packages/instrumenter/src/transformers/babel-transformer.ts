@@ -118,16 +118,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       .forEach((comment) => {
         const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
 
-        Object.keys(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach((mutator) =>
-          mutator === DISABLE_ALL_MUTANTS ? blockDisabledMutationsMap.clear() : blockDisabledMutationsMap.delete(mutator)
-        );
+        Object.keys(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach((mutator) => blockDisabledMutationsMap.delete(mutator));
       });
 
     blockDisabledMutationsMap.forEach((ignoreReasons, mutator) => {
       const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
       disabledMutationMap.set(location.start.line, {
-        ...disabledMutationsForLine,
         ...getMutationIgnoreMap(`[${mutator}]`, ignoreReasons.split(' ')),
+        ...disabledMutationsForLine,
       });
     });
 
@@ -137,7 +135,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
 
         const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
-        disabledMutationMap.set(location.start.line, { ...disabledMutationsForLine, ...getMutationIgnoreMap(mutationChecks, ignoreReasons) });
+        disabledMutationMap.set(location.start.line, { ...getMutationIgnoreMap(mutationChecks, ignoreReasons), ...disabledMutationsForLine });
       });
   }
 
@@ -151,7 +149,11 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     }
     const ignoreReason = ignoreReasons.join(' ');
 
-    const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS).split(',');
+    const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS)
+      .split(',')
+      .map((mutant) => (mutant !== DISABLE_ALL_MUTANTS ? mutant : mutators.map((mutator) => mutator.name)))
+      .flat();
+
     return disabledMutants.reduce((reducedMap, mutator) => ({ ...reducedMap, [mutator]: ignoreReason || 'Ignored by user comment' }), {});
   }
 
@@ -199,7 +201,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       return undefined;
     }
 
-    return disabledMutantsForLine[mutatorName] ?? disabledMutantsForLine[DISABLE_ALL_MUTANTS];
+    return disabledMutantsForLine[mutatorName];
   }
 
   /**

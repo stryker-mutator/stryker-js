@@ -264,21 +264,6 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
     });
 
-    it('should use the [all] disable as a fallback', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line I don't like anything
-        // Stryker disable-next-line [plus] I don't like plus for a specific reason
-      const foo = 1 + 1;
-      `,
-      });
-      act(ast);
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like anything");
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal(
-        "I don't like plus for a specific reason"
-      );
-    });
-
     it('should allow skipping blocks of code', () => {
       const ast = createTSAst({
         rawContent: `
@@ -352,6 +337,22 @@ describe('babel-transformer', () => {
         const c = 1 + 1;
         // Stryker restore
         const foo = 'a';
+      `,
+      });
+      act(ast);
+      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+    });
+
+    it('should restore specific mutators when all have been disabled', () => {
+      const ast = createTSAst({
+        rawContent: `
+        // Stryker disable [all]
+        const a = 1 + 1;
+        const b = 1 + 1;
+        const c = 1 + 1;
+        // Stryker restore [foo]
+        const foo = 'a';
+        const d = 1 + 1;
       `,
       });
       act(ast);
