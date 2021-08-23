@@ -36,7 +36,7 @@
     "lerna": "~4.0.0",
     "link-parent-bin": "~2.0.0",
     "minimatch": "~3.0.4",
-    "mocha": "~9.0.0",
+    "mocha": "~9.1.0",
     "nyc": "~15.1.0",
     "prettier": "2.3.2",
     "rimraf": "~3.0.0",
