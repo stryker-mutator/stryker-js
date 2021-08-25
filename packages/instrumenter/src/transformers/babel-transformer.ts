@@ -11,6 +11,8 @@ import { ScriptFormat } from '../syntax';
 import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers';
 import { Mutable, Mutant } from '../mutant';
 
+import { DirectiveBookkeeper } from './directive-bookkeeper';
+
 import { AstTransformer } from '.';
 
 interface MutantsPlacement<TNode extends types.Node> {
@@ -19,11 +21,6 @@ interface MutantsPlacement<TNode extends types.Node> {
 }
 
 type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
-
-const DISABLE_ALL_MUTANTS = 'all';
-
-type DisabledMutantMap = Map<number, Record<string, string>>;
-type BlockDisabledMutantMap = Map<string, string>;
 
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
@@ -42,8 +39,8 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // Create a placementMap for the mutation switching bookkeeping
   const placementMap: PlacementMap = new Map();
 
-  const disabledMutationMap: DisabledMutantMap = new Map();
-  const blockDisabledMutationsMap: BlockDisabledMutantMap = new Map();
+  // Create the bookkeeper responsible for the // Stryker ... directives
+  const directiveBookkeeper = new DirectiveBookkeeper();
 
   // Now start the actual traversing of the AST
   //
@@ -60,7 +57,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
-      processDisabledMutationsForLocation(path.node.loc, path.node.leadingComments);
+      directiveBookkeeper.processStrykerDirectives(path.node);
 
       if (shouldSkip(path)) {
         path.skip();
@@ -92,69 +89,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       ];
     }
     root.program.body.unshift(...header);
-  }
-
-  /**
-   * Takes the leading comments of a location and adds if they're a mutation disable comment then adds them
-   * to the mutantDisableMap
-   */
-  function processDisabledMutationsForLocation(location: types.SourceLocation | null, comments: readonly types.Comment[] | null): void {
-    if (!location) {
-      return;
-    }
-
-    comments
-      ?.filter((comment) => /^Stryker disable(?:\s.*?)?$/.test(comment.value.trim()))
-      .forEach((comment) => {
-        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
-
-        Object.entries(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach(([mutator, ignoreReason]) =>
-          blockDisabledMutationsMap.set(mutator, ignoreReason)
-        );
-      });
-
-    comments
-      ?.filter((comment) => /^Stryker restore(?:\s.*?)?$/.test(comment.value.trim()))
-      .forEach((comment) => {
-        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
-
-        Object.keys(getMutationIgnoreMap(mutationChecks, ignoreReasons)).forEach((mutator) => blockDisabledMutationsMap.delete(mutator));
-      });
-
-    blockDisabledMutationsMap.forEach((ignoreReasons, mutator) => {
-      const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
-      disabledMutationMap.set(location.start.line, {
-        ...getMutationIgnoreMap(`[${mutator}]`, ignoreReasons.split(' ')),
-        ...disabledMutationsForLine,
-      });
-    });
-
-    comments
-      ?.filter((comment) => /^Stryker disable-next-line(?:\s.*?)?$/.test(comment.value.trim()))
-      .forEach((comment) => {
-        const [_, _disableType, mutationChecks, ...ignoreReasons] = comment.value.trim().split(' ');
-
-        const disabledMutationsForLine = disabledMutationMap.get(location.start.line);
-        disabledMutationMap.set(location.start.line, { ...getMutationIgnoreMap(mutationChecks, ignoreReasons), ...disabledMutationsForLine });
-      });
-  }
-
-  function getMutationIgnoreMap(mutationChecks: string, ignoreReasons: string[]): Record<string, string> {
-    let mutations;
-    if (!/^\[.*?]$/.test(mutationChecks)) {
-      ignoreReasons.unshift(mutationChecks);
-      mutations = '';
-    } else {
-      mutations = /^\[(.*?)]$/.exec(mutationChecks)![1];
-    }
-    const ignoreReason = ignoreReasons.join(' ');
-
-    const disabledMutants: string[] = (mutations || DISABLE_ALL_MUTANTS)
-      .split(',')
-      .map((mutant) => (mutant !== DISABLE_ALL_MUTANTS ? mutant : mutators.map((mutator) => mutator.name)))
-      .flat();
-
-    return disabledMutants.reduce((reducedMap, mutator) => ({ ...reducedMap, [mutator]: ignoreReason || 'Ignored by user comment' }), {});
   }
 
   /**
@@ -192,18 +126,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     );
   }
 
-  function getDisabledMutationReason(location: types.SourceLocation | null, mutatorName: string): string | undefined {
-    const line = location?.start.line;
-    if (!line) return undefined;
-
-    const disabledMutantsForLine = disabledMutationMap.get(line);
-    if (!disabledMutantsForLine) {
-      return undefined;
-    }
-
-    return disabledMutantsForLine[mutatorName];
-  }
-
   /**
    * Place mutants that are assigned to the current node path (on exit)
    */
@@ -237,7 +159,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         yield {
           replacement,
           mutatorName: mutator.name,
-          ignoreReason: getDisabledMutationReason(node.node.loc, mutator.name) ?? formatIgnoreReason(mutator.name),
+          ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? formatIgnoreReason(mutator.name),
         };
       }
     }
