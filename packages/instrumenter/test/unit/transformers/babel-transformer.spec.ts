@@ -20,7 +20,7 @@ import { createJSAst, createTSAst } from '../../helpers/factories';
  * Instead, we create some test doubles that we inject (mutators and mutant placers).
  * It works out quite nice in the end and we feel the test cases are quite robust.
  */
-describe('babel-transformer', () => {
+describe.only('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
   let mutators: NodeMutator[];
   let mutantPlacers: MutantPlacer[];
@@ -169,8 +169,17 @@ describe('babel-transformer', () => {
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
+  });
 
-    it('should skip nodes that are lead with a disable comment', () => {
+  describe('with disable comment', () => {
+    function notIgnoredMutants() {
+      return mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason);
+    }
+    function ignoredMutants() {
+      return mutantCollector.mutants.filter((mutant) => Boolean(mutant.ignoreReason));
+    }
+
+    it('should ignore all mutants with a leading "disable-next-line" comment is used', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line
@@ -178,10 +187,10 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(notIgnoredMutants()).lengthOf(0);
     });
 
-    it('should skip nodes that are lead with a disable comment in the middle of a function call', () => {
+    it('should ignore mutant that are lead with a "disable-next-line" comment in the middle of a function call', () => {
       const ast = createTSAst({
         rawContent: `
       console.log(
@@ -191,10 +200,10 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(notIgnoredMutants()).lengthOf(0);
     });
 
-    it('should skip nodes with a specific mutation disabled', () => {
+    it('should ignore a mutant when lead with a "disable-next-line [mutator]" comment targeting that mutant', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line [plus]
@@ -202,11 +211,13 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason).some((mutant) => mutant.mutatorName === 'plus')).to.be.false;
+      expect(notIgnoredMutants()).lengthOf(1);
+      expect(ignoredMutants()).lengthOf(1);
+      const ignoredMutant = ignoredMutants()[0];
+      expect(ignoredMutant.mutatorName).eq('plus');
     });
 
-    it('should skip nodes with multiple specific mutations disabled', () => {
+    it('should ignore mutants when lead with a "disable-next-line [mutator]" comment targeting with multiple mutators', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line [plus,foo]
@@ -214,10 +225,10 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(ignoredMutants()).lengthOf(2);
     });
 
-    it('should skip nodes with multiple specific mutations disabled over multiple lines', () => {
+    it('should ignore mutants when lead with multiple "disable-next-line [mutator]" comments spread over multiple lines', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line [plus]
@@ -226,10 +237,10 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(ignoredMutants()).lengthOf(2);
     });
 
-    it('should skip nodes with all mutations disabled', () => {
+    it('should ignore mutants when lead with a "disable-next-line [all]" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line [all]
@@ -237,10 +248,10 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(ignoredMutants()).lengthOf(2);
     });
 
-    it('should allow user added comments', () => {
+    it('should allow users to add an ignore reasons', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable-next-line [foo] I don't like foo
@@ -264,7 +275,7 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
     });
 
-    it('should allow skipping blocks of code', () => {
+    it('should ignore all mutants following a "Stryker disable" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable
@@ -274,10 +285,11 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(notIgnoredMutants()).lengthOf(0);
+      expect(ignoredMutants()).lengthOf(3);
     });
 
-    it('should allow enabling stryker after a block disable', () => {
+    it('should not ignore all mutants following a "Stryker restore" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable
@@ -290,10 +302,13 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+      expect(ignoredMutants()).lengthOf(3);
+      expect(notIgnoredMutants()).lengthOf(1);
+      const notIgnoredMutant = notIgnoredMutants()[0];
+      expect(notIgnoredMutant.mutatorName).eq('foo');
     });
 
-    it('should allow per-mutation ignore reasons when ignoring in blocks', () => {
+    it('should allow an ignore reason for a "Stryker disable" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable Disable everything
@@ -305,14 +320,14 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(0);
+      expect(notIgnoredMutants()).lengthOf(0);
       expect(
         mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
       ).to.be.true;
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal('But have a reason for disabling foo');
+      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
     });
 
-    it('should restore specific mutants in disable blocks', () => {
+    it('should be able to restore a specific mutant with with a "Stryker restore [mutator]" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable [foo,plus]
@@ -325,10 +340,11 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+      expect(notIgnoredMutants()).lengthOf(1);
+      expect(notIgnoredMutants()[0].mutatorName).eq('foo');
     });
 
-    it('should restore all mutators even when block disabled manually', () => {
+    it('should restore all mutators following a "Stryker restore" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable [foo,plus]
@@ -340,10 +356,11 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+      expect(notIgnoredMutants()).lengthOf(1);
+      expect(notIgnoredMutants()[0].original.loc!.start.line).eq(7);
     });
 
-    it('should restore specific mutators when all have been disabled', () => {
+    it('should restore a specific mutators when using a "Stryker restore [mutant]" comment', () => {
       const ast = createTSAst({
         rawContent: `
         // Stryker disable [all]
@@ -356,7 +373,7 @@ describe('babel-transformer', () => {
       `,
       });
       act(ast);
-      expect(mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason)).lengthOf(1);
+      expect(notIgnoredMutants()).lengthOf(1);
     });
   });
 
