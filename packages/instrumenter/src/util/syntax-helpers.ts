@@ -49,7 +49,13 @@ function ${COVER_MUTANT_HELPER}() {
 function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   var ns = ${STRYKER_NAMESPACE_HELPER}();
   function isActive(id) {
-    return ns.${ID.ACTIVE_MUTANT} === id;
+    if (ns.${ID.ACTIVE_MUTANT} === id) {
+      if (ns.${ID.HIT_COUNT} !== void 0 && ++ns.${ID.HIT_COUNT} > ns.${ID.HIT_LIMIT}) {
+        throw new Error('Stryker: Hit count limit reached (' + ns.${ID.HIT_COUNT} + ')');
+      }
+      return true;
+    }
+    return false;
   }
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);

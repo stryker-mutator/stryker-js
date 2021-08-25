@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.3.0](https://github.com/stryker-mutator/stryker-js/compare/v5.2.3...v5.3.0) (2021-08-07)
+
+
+### Bug Fixes
+
+* **checker:** retry on process crash ([#3059](https://github.com/stryker-mutator/stryker-js/issues/3059)) ([8880643](https://github.com/stryker-mutator/stryker-js/commit/888064313763d907d5f621103955bbc1a788afaf))
+* **node 12:** clear error message for node <12.17 ([#3056](https://github.com/stryker-mutator/stryker-js/issues/3056)) ([9630fc3](https://github.com/stryker-mutator/stryker-js/commit/9630fc3d838adb2c3f47e312239b4ab37cc7b87a))
+
+
+### Features
+
+* **hit limit:** infinite loop prevention in karma-runner ([#3031](https://github.com/stryker-mutator/stryker-js/issues/3031)) ([fc732fc](https://github.com/stryker-mutator/stryker-js/commit/fc732fce8838c96be2fdf37aff69b12c996d7cb0))
+* **report:** show status reason in the html report. ([d777e49](https://github.com/stryker-mutator/stryker-js/commit/d777e49639a2161abc9f9708157409163603874a))
+
+
+
+
+
+## [5.2.3](https://github.com/stryker-mutator/stryker-js/compare/v5.2.2...v5.2.3) (2021-08-01)
+
+
+### Bug Fixes
+
+* **karma runner:** restart a browser on disconnect error ([#3020](https://github.com/stryker-mutator/stryker-js/issues/3020)) ([fc5c449](https://github.com/stryker-mutator/stryker-js/commit/fc5c449ba329d7a8b07d47193d4916cb28d47bb1))
+
+
+
+
+
 ## [5.2.2](https://github.com/stryker-mutator/stryker-js/compare/v5.2.1...v5.2.2) (2021-07-13)
 
 

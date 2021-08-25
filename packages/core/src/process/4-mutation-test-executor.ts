@@ -23,6 +23,15 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.mutantsWithTestCoverage]: MutantTestCoverage[];
 }
 
+/**
+ * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
+ * This is intentionally a high value to prevent false positives.
+ *
+ * For example, a property testing library might execute a failing scenario multiple times to determine the smallest possible counterexample.
+ * @see https://jsverify.github.io/#minimal-counterexample
+ */
+const HIT_LIMIT_FACTOR = 100;
+
 export class MutationTestExecutor {
   public static inject = tokens(
     commonTokens.options,
@@ -121,11 +130,13 @@ export class MutationTestExecutor {
 
   private createMutantRunOptions(activeMutant: MutantTestCoverage): MutantRunOptions {
     const timeout = this.options.timeoutFactor * activeMutant.estimatedNetTime + this.options.timeoutMS + this.timeOverheadMS;
+    const hitLimit = activeMutant.hitCount === undefined ? undefined : activeMutant.hitCount * HIT_LIMIT_FACTOR;
     return {
       activeMutant,
       timeout,
       testFilter: activeMutant.coveredBy,
       sandboxFileName: this.sandbox.sandboxFileFor(activeMutant.fileName),
+      hitLimit,
     };
   }
 

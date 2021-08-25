@@ -28,6 +28,7 @@ export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'm
 export type MutantTestCoverage = Mutant &
   Pick<schema.MutantResult, 'coveredBy' | 'static'> & {
     estimatedNetTime: number;
+    hitCount?: number;
   };
 
 /**

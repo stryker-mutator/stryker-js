@@ -22,7 +22,7 @@ function isSupportedFramework(framework: string): framework is SupportedFramewor
  */
 const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
 
-const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID } = INSTRUMENTER_CONSTANTS;
+const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID, HIT_COUNT, HIT_LIMIT } = INSTRUMENTER_CONSTANTS;
 
 export class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
@@ -54,10 +54,11 @@ export class TestHooksMiddleware {
     }
   }
 
-  public configureMutantRun({ activeMutant, testFilter }: MutantRunOptions): void {
+  public configureMutantRun({ activeMutant, testFilter, hitLimit }: MutantRunOptions): void {
     this.configureCoverageAnalysis('off');
-    this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};
-    window.${NAMESPACE}.${ACTIVE_MUTANT} = "${activeMutant.id}";`;
+    this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};`;
+    this.currentTestHooks += this.configureHitLimit(hitLimit);
+    this.currentTestHooks += `window.${NAMESPACE}.${ACTIVE_MUTANT} = "${activeMutant.id}";`;
     if (testFilter) {
       switch (this.testFramework) {
         case 'jasmine':
@@ -72,6 +73,11 @@ export class TestHooksMiddleware {
         default:
       }
     }
+  }
+
+  private configureHitLimit(hitLimit: number | undefined) {
+    return `window.${NAMESPACE}.${HIT_COUNT} = ${hitLimit === undefined ? undefined : 0};
+    window.${NAMESPACE}.${HIT_LIMIT} = ${hitLimit};`;
   }
 
   private configurePerTestCoverageAnalysis() {

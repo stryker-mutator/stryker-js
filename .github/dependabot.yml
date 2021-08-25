@@ -1,0 +1,26 @@
+version: 2
+updates:
+- package-ecosystem: github-actions
+  directory: '/'
+  schedule:
+    interval: daily
+  commit-message:
+    prefix: 'chore'
+    prefix-development: 'chore'
+    include: 'scope'
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "03:00"
+  open-pull-requests-limit: 10
+  target-branch: master
+  commit-message:
+    prefix: 'build'
+    prefix-development: 'build'
+    include: 'scope'
+  ignore:
+  - dependency-name: log4js
+    versions:
+    - "< 4"
+    - ">= 3.a"

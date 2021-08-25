@@ -9,6 +9,10 @@ export type MutantRunResult = ErrorMutantRunResult | KilledMutantRunResult | Sur
 
 export interface TimeoutMutantRunResult {
   status: MutantRunStatus.Timeout;
+  /**
+   * An optional reason for the timeout
+   */
+  reason?: string;
 }
 
 export interface KilledMutantRunResult {

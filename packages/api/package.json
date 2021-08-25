@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "5.2.2",
+  "version": "5.3.0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "repository": {
     "type": "git",
@@ -39,7 +39,7 @@
     "node": ">=12"
   },
   "dependencies": {
-    "mutation-testing-metrics": "1.7.4",
+    "mutation-testing-metrics": "1.7.5",
     "mutation-testing-report-schema": "1.7.4",
     "tslib": "~2.3.0"
   },

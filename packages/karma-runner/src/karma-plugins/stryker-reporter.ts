@@ -1,4 +1,4 @@
-import { DryRunResult, DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { determineHitLimitReached, DryRunResult, DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import karma from 'karma';
 import { Task } from '@stryker-mutator/util';
@@ -41,6 +41,8 @@ export class StrykerReporter implements karma.Reporter {
   private testResults: TestResult[] = [];
   private errorMessage: string | undefined;
   private mutantCoverage: MutantCoverage | undefined;
+  private hitCount: number | undefined;
+  private hitLimit: number | undefined;
   private initTask: Task | undefined;
   private runTask: Task<DryRunResult> | undefined;
   private karmaRunResult: karma.TestResults | undefined;
@@ -55,6 +57,11 @@ export class StrykerReporter implements karma.Reporter {
     this.initTask?.resolve();
     this.runTask?.resolve(this.collectRunResult());
   };
+
+  public configureHitLimit(hitLimit: number | undefined): void {
+    this.hitLimit = hitLimit;
+    this.hitCount = undefined;
+  }
 
   public whenBrowsersReady(): Promise<void> {
     this.initTask = new Task();
@@ -113,13 +120,15 @@ export class StrykerReporter implements karma.Reporter {
     }
   };
 
-  public readonly onBrowserComplete: (
-    _browser: any,
+  public readonly onBrowserComplete = (
+    _browser: unknown,
     result: {
-      mutantCoverage: MutantCoverage;
+      mutantCoverage: MutantCoverage | undefined;
+      hitCount: number | undefined;
     }
-  ) => void = (_browser: any, result: { mutantCoverage: MutantCoverage }) => {
+  ): void => {
     this.mutantCoverage = result.mutantCoverage;
+    this.hitCount = result.hitCount;
   };
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -142,8 +151,12 @@ export class StrykerReporter implements karma.Reporter {
   };
 
   private collectRunResult(): DryRunResult {
+    const timeoutResult = determineHitLimitReached(this.hitCount, this.hitLimit);
+    if (timeoutResult) {
+      return timeoutResult;
+    }
     if (this.karmaRunResult?.disconnected) {
-      return { status: DryRunStatus.Timeout };
+      return { status: DryRunStatus.Timeout, reason: `Browser disconnected during test execution. Karma error: ${this.errorMessage}` };
     } else if (this.karmaRunResult?.error) {
       return { status: DryRunStatus.Error, errorMessage: this.errorMessage ?? 'A runtime error occurred' };
     } else {

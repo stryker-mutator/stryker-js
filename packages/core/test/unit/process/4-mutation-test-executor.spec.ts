@@ -132,6 +132,29 @@ describe(MutationTestExecutor.name, () => {
     expect(testRunner.mutantRun).calledWithMatch(expected);
   });
 
+  it('should calculate the hit limit correctly', async () => {
+    arrangeScenario();
+    mutants.push(factory.mutantTestCoverage({ hitCount: 7, static: true }));
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    const expected: Partial<MutantRunOptions> = { hitLimit: 700 }; // 7 * 100
+    expect(testRunner.mutantRun).calledWithMatch(expected);
+  });
+
+  it('should set the hit limit to undefined when there was no hit count', async () => {
+    arrangeScenario();
+    mutants.push(factory.mutantTestCoverage({ hitCount: undefined, static: true }));
+    const expected: Partial<MutantRunOptions> = { hitLimit: undefined };
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    expect(testRunner.mutantRun).calledWithMatch(expected);
+  });
   it('should passthrough the test filter', async () => {
     // Arrange
     arrangeScenario();
