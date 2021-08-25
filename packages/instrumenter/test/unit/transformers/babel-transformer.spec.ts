@@ -20,7 +20,7 @@ import { createJSAst, createTSAst } from '../../helpers/factories';
  * Instead, we create some test doubles that we inject (mutators and mutant placers).
  * It works out quite nice in the end and we feel the test cases are quite robust.
  */
-describe.only('babel-transformer', () => {
+describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
   let mutators: NodeMutator[];
   let mutantPlacers: MutantPlacer[];
