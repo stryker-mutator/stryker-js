@@ -57,10 +57,8 @@ export class DirectiveBookkeeper {
     }
 
     const ignoreReason = this.currentlyDisabled.get(mutatorName) ?? this.currentlyDisabled.get(ALL);
-    if (ignoreReason) {
-      if (!this.currentlyRestored.has(mutatorName) && !this.currentlyRestored.has(ALL)) {
-        return ignoreReason;
-      }
+    if (!this.currentlyRestored.has(mutatorName) && !this.currentlyRestored.has(ALL)) {
+      return ignoreReason;
     }
     return undefined;
   }

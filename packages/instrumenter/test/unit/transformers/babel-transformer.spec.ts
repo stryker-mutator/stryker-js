@@ -171,7 +171,7 @@ describe('babel-transformer', () => {
     });
   });
 
-  describe('with disable comment', () => {
+  describe('with directive', () => {
     function notIgnoredMutants() {
       return mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason);
     }
@@ -179,201 +179,264 @@ describe('babel-transformer', () => {
       return mutantCollector.mutants.filter((mutant) => Boolean(mutant.ignoreReason));
     }
 
-    it('should ignore all mutants with a leading "disable-next-line" comment is used', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line
-      const foo = 1 + 1;
-      `,
+    describe('"Stryker disable-next-line"', () => {
+      it('should ignore all mutants with the leading comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
       });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(0);
+
+      it('should ignore mutants that spawn multiple lines', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line
+        const foo = 1 +
+         1;
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
+      });
+
+      it('should be supported in the middle of a function call', () => {
+        const ast = createTSAst({
+          rawContent: `
+        console.log(
+          // Stryker disable-next-line [plus]
+          1 + 1
+         );
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
+      });
+
+      it('should only ignore a single line', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line
+          let foo = 1 + 1;
+          foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(ignoredMutants()).lengthOf(2);
+        expect(ignoredMutants().map((mutant) => mutant.original.loc!.start.line)).deep.eq([3, 3]);
+        expect(notIgnoredMutants()).lengthOf(2);
+        expect(notIgnoredMutants().map((mutant) => mutant.original.loc!.start.line)).deep.eq([4, 4]);
+      });
+
+      it('should ignore a mutant when lead with a "Stryker disable-next-line [mutator]" comment targeting that mutant', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [plus]
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(ignoredMutants()).lengthOf(1);
+        const ignoredMutant = ignoredMutants()[0];
+        expect(ignoredMutant.mutatorName).eq('plus');
+      });
+
+      it('should ignore mutants when lead with a "Stryker disable-next-line [mutator]" comment targeting with multiple mutators', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [plus,foo]
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(ignoredMutants()).lengthOf(2);
+      });
+
+      it('should ignore mutants when lead with multiple "Stryker disable-next-line [mutator]" comments spread over multiple lines', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [plus]
+          // Stryker disable-next-line [foo]
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(ignoredMutants()).lengthOf(2);
+      });
+
+      it('should ignore mutants when lead with a "Stryker disable-next-line [all]" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [all]
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(ignoredMutants()).lengthOf(2);
+      });
+
+      it('should allow users to add an ignore reasons', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [foo] I don't like foo
+        const foo = "bar";
+        `,
+        });
+        act(ast);
+        expect(mutantCollector.mutants[0].ignoreReason).to.equal("I don't like foo");
+      });
+
+      it('should allow multiple user comments for one line', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable-next-line [foo] I don't like foo
+          // Stryker disable-next-line [plus] I also don't like plus
+        const foo = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like foo");
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
+      });
     });
 
-    it('should ignore mutant that are lead with a "disable-next-line" comment in the middle of a function call', () => {
-      const ast = createTSAst({
-        rawContent: `
-      console.log(
-        // Stryker disable-next-line [plus]
-        1 + 1
-       );
-      `,
+    describe('"Stryker disable"', () => {
+      it('should ignore all following mutants', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable
+          const a = 1 + 1;
+          const b = 1 + 1;
+          const c = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
+        expect(ignoredMutants()).lengthOf(3);
       });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(0);
-    });
 
-    it('should ignore a mutant when lead with a "disable-next-line [mutator]" comment targeting that mutant', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [plus]
-      const foo = 1 + 1;
-      `,
+      it('should not ignore all mutants following a "Stryker restore" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;
+              // Stryker restore
+              
+              const foo = 'a';
+            `,
+        });
+        act(ast);
+        expect(ignoredMutants()).lengthOf(3);
+        expect(notIgnoredMutants()).lengthOf(1);
+        const notIgnoredMutant = notIgnoredMutants()[0];
+        expect(notIgnoredMutant.mutatorName).eq('foo');
       });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(1);
-      expect(ignoredMutants()).lengthOf(1);
-      const ignoredMutant = ignoredMutants()[0];
-      expect(ignoredMutant.mutatorName).eq('plus');
-    });
 
-    it('should ignore mutants when lead with a "disable-next-line [mutator]" comment targeting with multiple mutators', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [plus,foo]
-      const foo = 1 + 1;
-      `,
+      it('should ignore all mutants, even if some where explicitly disabled with a "Stryker disable-next-line" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+          // Stryker disable
+          a = 1 + 1;
+          // Stryker disable-next-line [foo] with a custom reason
+          foo = 1 + 1;
+          c = 1 + 1;
+        `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
+        expect(ignoredMutants()).lengthOf(4);
       });
-      act(ast);
-      expect(ignoredMutants()).lengthOf(2);
-    });
 
-    it('should ignore mutants when lead with multiple "disable-next-line [mutator]" comments spread over multiple lines', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [plus]
-        // Stryker disable-next-line [foo]
-      const foo = 1 + 1;
-      `,
+      it('should allow an ignore reason', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable Disable everything
+              // Stryker disable [foo] But have a reason for disabling foo
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;       
+              const foo = 'a';
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(0);
+        expect(
+          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
+        ).to.be.true;
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
       });
-      act(ast);
-      expect(ignoredMutants()).lengthOf(2);
-    });
 
-    it('should ignore mutants when lead with a "disable-next-line [all]" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [all]
-      const foo = 1 + 1;
-      `,
+      it('should be able to restore a specific mutator that was previously explicitly disabled', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable [foo,plus]
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;
+              // Stryker restore [foo]
+              const foo = 'a';
+              const d = 1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(notIgnoredMutants()[0].mutatorName).eq('foo');
       });
-      act(ast);
-      expect(ignoredMutants()).lengthOf(2);
-    });
 
-    it('should allow users to add an ignore reasons', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [foo] I don't like foo
-      const foo = "bar";
-      `,
+      it('should be able to restore a specific mutator after all mutators were disabled', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;
+              // Stryker restore [foo]
+              const foo = 'a';
+              const d = 1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(notIgnoredMutants()[0].mutatorName).eq('foo');
       });
-      act(ast);
-      expect(mutantCollector.mutants[0].ignoreReason).to.equal("I don't like foo");
-    });
 
-    it('should allow multiple user comments for one line', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable-next-line [foo] I don't like foo
-        // Stryker disable-next-line [plus] I also don't like plus
-      const foo = 1 + 1;
-      `,
+      it('should restore all mutators following a "Stryker restore" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable [foo,plus]
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;
+              // Stryker restore
+              const foo = 'a';
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(notIgnoredMutants()[0].original.loc!.start.line).eq(7);
       });
-      act(ast);
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like foo");
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
-    });
 
-    it('should ignore all mutants following a "Stryker disable" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;
-      `,
+      it('should restore a specific mutators when using a "Stryker restore [mutant]" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable [all]
+              const a = 1 + 1;
+              const b = 1 + 1;
+              const c = 1 + 1;
+              // Stryker restore [foo]
+              const foo = 'a';
+              const d = 1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
       });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(0);
-      expect(ignoredMutants()).lengthOf(3);
-    });
-
-    it('should not ignore all mutants following a "Stryker restore" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;
-        // Stryker restore
-        
-        const foo = 'a';
-      `,
-      });
-      act(ast);
-      expect(ignoredMutants()).lengthOf(3);
-      expect(notIgnoredMutants()).lengthOf(1);
-      const notIgnoredMutant = notIgnoredMutants()[0];
-      expect(notIgnoredMutant.mutatorName).eq('foo');
-    });
-
-    it('should allow an ignore reason for a "Stryker disable" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable Disable everything
-        // Stryker disable [foo] But have a reason for disabling foo
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;       
-        const foo = 'a';
-      `,
-      });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(0);
-      expect(
-        mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
-      ).to.be.true;
-      expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
-    });
-
-    it('should be able to restore a specific mutant with with a "Stryker restore [mutator]" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable [foo,plus]
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;
-        // Stryker restore [foo]
-        const foo = 'a';
-        const d = 1 + 1;
-      `,
-      });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(1);
-      expect(notIgnoredMutants()[0].mutatorName).eq('foo');
-    });
-
-    it('should restore all mutators following a "Stryker restore" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable [foo,plus]
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;
-        // Stryker restore
-        const foo = 'a';
-      `,
-      });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(1);
-      expect(notIgnoredMutants()[0].original.loc!.start.line).eq(7);
-    });
-
-    it('should restore a specific mutators when using a "Stryker restore [mutant]" comment', () => {
-      const ast = createTSAst({
-        rawContent: `
-        // Stryker disable [all]
-        const a = 1 + 1;
-        const b = 1 + 1;
-        const c = 1 + 1;
-        // Stryker restore [foo]
-        const foo = 'a';
-        const d = 1 + 1;
-      `,
-      });
-      act(ast);
-      expect(notIgnoredMutants()).lengthOf(1);
     });
   });
 
