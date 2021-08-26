@@ -56,10 +56,9 @@ export class DirectiveBookkeeper {
       }
     }
 
-    const ignoreReason = this.currentlyDisabled.get(mutatorName) ?? this.currentlyDisabled.get(ALL);
     if (!this.currentlyRestored.has(mutatorName) && !this.currentlyRestored.has(ALL)) {
-      return ignoreReason;
+      return this.currentlyDisabled.get(mutatorName) ?? this.currentlyDisabled.get(ALL);
     }
-    return undefined;
+    return;
   }
 }
