@@ -194,7 +194,7 @@ export class InputFileResolver {
       this.reportSourceFilesRead(file);
       return file;
     } catch (error) {
-      if ((isErrnoException(error as unknown) && error.code === 'ENOENT') || error.code === 'EISDIR') {
+      if (isErrnoException(error) && (error.code === 'ENOENT' || error.code === 'EISDIR')) {
         return null; // file is deleted or a directory.
       } else {
         // Rethrow
