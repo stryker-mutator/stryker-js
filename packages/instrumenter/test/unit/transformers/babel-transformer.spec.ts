@@ -27,7 +27,7 @@ describe('babel-transformer', () => {
   let mutantCollector: MutantCollector;
 
   const fooMutator: NodeMutator = {
-    name: 'foo',
+    name: 'Foo',
     *mutate(path) {
       if (path.isIdentifier() && path.node.name === 'foo') {
         yield types.identifier('bar');
@@ -35,7 +35,7 @@ describe('babel-transformer', () => {
     },
   };
   const plusMutator: NodeMutator = {
-    name: 'plus',
+    name: 'Plus',
     *mutate(path) {
       if (path.isBinaryExpression() && path.node.operator === '+') {
         yield types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true));
@@ -68,9 +68,9 @@ describe('babel-transformer', () => {
       act(ast);
       expect(mutantCollector.mutants).lengthOf(2);
       expect(mutantCollector.mutants[0].replacementCode).eq('bar');
-      expect(mutantCollector.mutants[0].mutatorName).eq('foo');
+      expect(mutantCollector.mutants[0].mutatorName).eq('Foo');
       expect(mutantCollector.mutants[1].replacementCode).eq('bar - baz');
-      expect(mutantCollector.mutants[1].mutatorName).eq('plus');
+      expect(mutantCollector.mutants[1].mutatorName).eq('Plus');
       expect(normalizeWhitespaces(generator(ast.root).code)).contains('{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }');
     });
 
@@ -99,31 +99,31 @@ describe('babel-transformer', () => {
       const ast = createJSAst({ rawContent: 'foo("bar")' });
 
       // Act
-      expect(() => act(ast)).throws('example.js:1:0 brokenPlacer could not place mutants with type(s): "foo".');
+      expect(() => act(ast)).throws('example.js:1:0 brokenPlacer could not place mutants with type(s): "Foo".');
     });
   });
 
   describe('excluded mutations', () => {
     it('should not place mutants that are ignored', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
-      context.options.excludedMutations = ['foo'];
+      context.options.excludedMutations = ['Foo'];
       act(ast);
       const result = normalizeWhitespaces(generator(ast.root).code);
       expect(result).not.include('bar = bar + baz;');
     });
     it('should still place other mutants', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
-      context.options.excludedMutations = ['foo'];
+      context.options.excludedMutations = ['Foo'];
       act(ast);
       const result = normalizeWhitespaces(generator(ast.root).code);
       expect(result).include('foo = bar - baz');
     });
     it('should collect ignored mutants with correct ignore message', () => {
       const ast = createJSAst({ rawContent: 'foo' });
-      context.options.excludedMutations = ['foo'];
+      context.options.excludedMutations = ['Foo'];
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
-      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because of excluded mutation "foo"');
+      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because of excluded mutation "Foo"');
     });
   });
 
@@ -242,7 +242,7 @@ describe('babel-transformer', () => {
         expect(notIgnoredMutants()).lengthOf(1);
         expect(ignoredMutants()).lengthOf(1);
         const ignoredMutant = ignoredMutants()[0];
-        expect(ignoredMutant.mutatorName).eq('plus');
+        expect(ignoredMutant.mutatorName).eq('Plus');
       });
 
       it('should ignore mutants when lead with a "Stryker disable-next-line [mutator]" comment targeting with multiple mutators', () => {
@@ -299,8 +299,8 @@ describe('babel-transformer', () => {
         `,
         });
         act(ast);
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')?.ignoreReason).to.equal("I don't like foo");
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'plus')?.ignoreReason).to.equal("I also don't like plus");
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')?.ignoreReason).to.equal("I don't like foo");
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Plus')?.ignoreReason).to.equal("I also don't like plus");
       });
     });
 
@@ -335,7 +335,7 @@ describe('babel-transformer', () => {
         expect(ignoredMutants()).lengthOf(3);
         expect(notIgnoredMutants()).lengthOf(1);
         const notIgnoredMutant = notIgnoredMutants()[0];
-        expect(notIgnoredMutant.mutatorName).eq('foo');
+        expect(notIgnoredMutant.mutatorName).eq('Foo');
       });
 
       it('should ignore all mutants, even if some where explicitly disabled with a "Stryker disable-next-line" comment', () => {
@@ -343,7 +343,7 @@ describe('babel-transformer', () => {
           rawContent: `
           // Stryker disable all
           a = 1 + 1;
-          // Stryker disable next-line foo: with a custom reason
+          // Stryker disable next-line Foo: with a custom reason
           foo = 1 + 1;
           c = 1 + 1;
         `,
@@ -367,9 +367,9 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(0);
         expect(
-          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
+          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
         ).to.be.true;
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
+        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
       });
 
       it('should be able to restore a specific mutator that was previously explicitly disabled', () => {
@@ -386,7 +386,7 @@ describe('babel-transformer', () => {
         });
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
-        expect(notIgnoredMutants()[0].mutatorName).eq('foo');
+        expect(notIgnoredMutants()[0].mutatorName).eq('Foo');
       });
 
       it('should be able to restore a specific mutator after all mutators were disabled', () => {
@@ -403,7 +403,7 @@ describe('babel-transformer', () => {
         });
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
-        expect(notIgnoredMutants()[0].mutatorName).eq('foo');
+        expect(notIgnoredMutants()[0].mutatorName).eq('Foo');
       });
 
       it('should restore all mutators following a "Stryker restore" comment', () => {

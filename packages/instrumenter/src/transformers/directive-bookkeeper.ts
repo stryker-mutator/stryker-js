@@ -8,8 +8,8 @@ const DEFAULT_REASON = 'Ignored using a comment';
  * Responsible for the bookkeeping of "// Stryker" directives like "disable", "restore" and "disable-next-line".
  */
 export class DirectiveBookkeeper {
-  // https://regex101.com/r/SZKLFn/1
-  private readonly strykerCommentDirectiveRegex = /^\s?Stryker (disable|restore)(?: (next-line))? ([a-zA-Z, ]+)(?::(.+)?)?$/;
+  // https://regex101.com/r/nWLLLm/1
+  private readonly strykerCommentDirectiveRegex = /^\s?Stryker (disable|restore)(?: (next-line))? ([a-zA-Z, ]+)(?::(.+)?)?/;
 
   private readonly linesDisabled: Map<number, Map<string, string>> = new Map();
   private readonly currentlyDisabled: Map<string, string> = new Map();
@@ -25,7 +25,7 @@ export class DirectiveBookkeeper {
       )
       .filter(notEmpty)
       .forEach(([, directiveType, scope, mutators, optionalReason]) => {
-        const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase()) ?? [ALL];
+        const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':
@@ -62,6 +62,7 @@ export class DirectiveBookkeeper {
   }
 
   public findIgnoreReason(line: number, mutatorName: string): string | undefined {
+    mutatorName = mutatorName.toLowerCase();
     const mutatorsDisabledForThisLine = this.linesDisabled.get(line);
     if (mutatorsDisabledForThisLine) {
       const ignoreReason = mutatorsDisabledForThisLine.get(mutatorName) ?? mutatorsDisabledForThisLine.get(ALL);
