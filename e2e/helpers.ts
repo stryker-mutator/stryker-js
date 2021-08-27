@@ -54,7 +54,7 @@ export async function readMutationTestResult(eventResultDirectory = path.resolve
   return metricsResult;
 }
 
-async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
+export async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
   const mutationTestReportContent = await fsPromises.readFile(jsonReportFile, 'utf8');
   const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
   const metricsResult = calculateMetrics(report.files);
@@ -99,7 +99,7 @@ export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
   expectActualMetrics(expectedMetrics, actualMetricsResult);
 }
 
-function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
+export function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
   const actualMetrics: Partial<Metrics> = {};
   Object.entries(expectedMetrics).forEach(([key]) => {
     if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {
