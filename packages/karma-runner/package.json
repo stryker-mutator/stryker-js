@@ -41,7 +41,7 @@
     "karma": "~6.3.0",
     "karma-chai": "~0.1.0",
     "karma-chrome-launcher": "~3.1.0",
-    "karma-jasmine": "~3.0.1",
+    "karma-jasmine": "~4.0.1",
     "karma-mocha": "~2.0.0"
   },
   "peerDependencies": {
