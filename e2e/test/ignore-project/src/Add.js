@@ -15,7 +15,7 @@ module.exports.notCovered = function (number) {
   return number > 10;
 };
 
-module.exports.userIgnored = function (number) {
+module.exports.userNextLineIgnored = function (number) {
   // Stryker disable next-line all: Ignoring this on purpose
   return number > 10;
 };
@@ -25,6 +25,12 @@ module.exports.blockUserIgnored = function (number) {
   return number > 10;
 };
 // Stryker restore all
+
+module.exports.userNextLineSpecificMutator = function (number) {
+  // Stryker disable next-line BooleanLiteral, ConditionalExpression: Ignore boolean and conditions
+  return true && number > 10;
+};
+
 
 module.exports.isNegativeNumber = function (number) {
   var isNegative = false;
