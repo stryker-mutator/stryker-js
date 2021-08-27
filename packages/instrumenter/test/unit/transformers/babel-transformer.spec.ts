@@ -231,7 +231,7 @@ describe('babel-transformer', () => {
         expect(notIgnoredMutants().map((mutant) => mutant.original.loc!.start.line)).deep.eq([4, 4]);
       });
 
-      it('should ignore a mutant when lead with a "Stryker disable-next-line [mutator]" comment targeting that mutant', () => {
+      it('should ignore a mutant when lead with a "Stryker disable next-line mutator" comment targeting that mutant', () => {
         const ast = createTSAst({
           rawContent: `
           // Stryker disable next-line plus
@@ -245,7 +245,7 @@ describe('babel-transformer', () => {
         expect(ignoredMutant.mutatorName).eq('Plus');
       });
 
-      it('should ignore mutants when lead with a "Stryker disable-next-line [mutator]" comment targeting with multiple mutators', () => {
+      it('should ignore mutants when lead with a "Stryker disable next-line mutator" comment targeting with multiple mutators', () => {
         const ast = createTSAst({
           rawContent: `
           // Stryker disable next-line plus,foo
@@ -256,7 +256,7 @@ describe('babel-transformer', () => {
         expect(ignoredMutants()).lengthOf(2);
       });
 
-      it('should ignore mutants when lead with multiple "Stryker disable-next-line [mutator]" comments spread over multiple lines', () => {
+      it('should ignore mutants when lead with multiple "Stryker disable next-line mutator" comments spread over multiple lines', () => {
         const ast = createTSAst({
           rawContent: `
           // Stryker disable next-line plus
@@ -268,7 +268,7 @@ describe('babel-transformer', () => {
         expect(ignoredMutants()).lengthOf(2);
       });
 
-      it('should ignore mutants when lead with a "Stryker disable-next-line [all]" comment', () => {
+      it('should ignore mutants when lead with a "Stryker disable next-line all" comment', () => {
         const ast = createTSAst({
           rawContent: `
           // Stryker disable next-line all
@@ -338,7 +338,7 @@ describe('babel-transformer', () => {
         expect(notIgnoredMutant.mutatorName).eq('Foo');
       });
 
-      it('should ignore all mutants, even if some where explicitly disabled with a "Stryker disable-next-line" comment', () => {
+      it('should ignore all mutants, even if some where explicitly disabled with a "Stryker disable next-line" comment', () => {
         const ast = createTSAst({
           rawContent: `
           // Stryker disable all
@@ -422,7 +422,7 @@ describe('babel-transformer', () => {
         expect(notIgnoredMutants()[0].original.loc!.start.line).eq(7);
       });
 
-      it('should restore a specific mutators when using a "Stryker restore [mutant]" comment', () => {
+      it('should restore a specific mutators when using a "Stryker restore mutant" comment', () => {
         const ast = createTSAst({
           rawContent: `
               // Stryker disable all
@@ -436,6 +436,66 @@ describe('babel-transformer', () => {
         });
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
+      });
+
+      it('should allow to restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable all
+              1 + 1;
+              // Stryker restore next-line plus
+              1 + foo;
+              1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(ignoredMutants()).lengthOf(3);
+        const actualNotIgnoredMutant = notIgnoredMutants()[0];
+        expect(actualNotIgnoredMutant.mutatorName).eq('Plus');
+        expect(actualNotIgnoredMutant.original.loc!.start.line).eq(5);
+      });
+
+      it('should allow multiple restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable all
+              1 + 1;
+              // Stryker restore next-line plus
+              // Stryker restore next-line foo
+              1 + foo;
+              1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(2);
+        expect(ignoredMutants()).lengthOf(2);
+        const [actualRestoredMutantPlus, actualRestoredMutantFoo] = notIgnoredMutants();
+        expect(actualRestoredMutantPlus.mutatorName).eq('Plus');
+        expect(actualRestoredMutantPlus.original.loc!.start.line).eq(6);
+        expect(actualRestoredMutantFoo.mutatorName).eq('Foo');
+        expect(actualRestoredMutantFoo.original.loc!.start.line).eq(6);
+      });
+
+      it('should allow to restore for next-line using a "Stryker restore next-line all" comment', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable all
+              1 + 1;
+              // Stryker restore next-line all
+              1 + foo;
+              1 + 1;
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(2);
+        expect(ignoredMutants()).lengthOf(2);
+        const actualNotIgnoredPlusMutant = notIgnoredMutants()[0];
+        const actualNotIgnoredFooMutant = notIgnoredMutants()[1];
+        expect(actualNotIgnoredPlusMutant.mutatorName).eq('Plus');
+        expect(actualNotIgnoredPlusMutant.original.loc!.start.line).eq(5);
+        expect(actualNotIgnoredFooMutant.mutatorName).eq('Foo');
+        expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
       });
     });
   });
