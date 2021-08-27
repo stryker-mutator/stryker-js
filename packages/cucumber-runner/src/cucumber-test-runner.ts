@@ -112,7 +112,7 @@ export class CucumberTestRunner implements TestRunner {
     }
     try {
       await cli.run();
-    } catch (err) {
+    } catch (err: any) {
       return {
         status: DryRunStatus.Error,
         errorMessage: err.stack,
