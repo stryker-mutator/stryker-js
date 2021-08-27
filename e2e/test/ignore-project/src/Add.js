@@ -16,15 +16,15 @@ module.exports.notCovered = function (number) {
 };
 
 module.exports.userIgnored = function (number) {
-  // Stryker disable-next-line Ignoring this on purpose
+  // Stryker disable next-line all: Ignoring this on purpose
   return number > 10;
 };
 
-// Stryker disable
+// Stryker disable all
 module.exports.blockUserIgnored = function (number) {
   return number > 10;
 };
-// Stryker restore
+// Stryker restore all
 
 module.exports.isNegativeNumber = function (number) {
   var isNegative = false;

@@ -179,11 +179,11 @@ describe('babel-transformer', () => {
       return mutantCollector.mutants.filter((mutant) => Boolean(mutant.ignoreReason));
     }
 
-    describe('"Stryker disable-next-line"', () => {
+    describe('"Stryker disable next-line"', () => {
       it('should ignore all mutants with the leading comment', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line
+          // Stryker disable next-line all
         const foo = 1 + 1;
         `,
         });
@@ -194,7 +194,7 @@ describe('babel-transformer', () => {
       it('should ignore mutants that spawn multiple lines', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line
+          // Stryker disable next-line all
         const foo = 1 +
          1;
         `,
@@ -207,7 +207,7 @@ describe('babel-transformer', () => {
         const ast = createTSAst({
           rawContent: `
         console.log(
-          // Stryker disable-next-line [plus]
+          // Stryker disable next-line plus
           1 + 1
          );
         `,
@@ -219,7 +219,7 @@ describe('babel-transformer', () => {
       it('should only ignore a single line', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line
+          // Stryker disable next-line all
           let foo = 1 + 1;
           foo = 1 + 1;
         `,
@@ -234,7 +234,7 @@ describe('babel-transformer', () => {
       it('should ignore a mutant when lead with a "Stryker disable-next-line [mutator]" comment targeting that mutant', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [plus]
+          // Stryker disable next-line plus
         const foo = 1 + 1;
         `,
         });
@@ -248,7 +248,7 @@ describe('babel-transformer', () => {
       it('should ignore mutants when lead with a "Stryker disable-next-line [mutator]" comment targeting with multiple mutators', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [plus,foo]
+          // Stryker disable next-line plus,foo
         const foo = 1 + 1;
         `,
         });
@@ -259,8 +259,8 @@ describe('babel-transformer', () => {
       it('should ignore mutants when lead with multiple "Stryker disable-next-line [mutator]" comments spread over multiple lines', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [plus]
-          // Stryker disable-next-line [foo]
+          // Stryker disable next-line plus
+          // Stryker disable next-line foo
         const foo = 1 + 1;
         `,
         });
@@ -271,7 +271,7 @@ describe('babel-transformer', () => {
       it('should ignore mutants when lead with a "Stryker disable-next-line [all]" comment', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [all]
+          // Stryker disable next-line all
         const foo = 1 + 1;
         `,
         });
@@ -282,7 +282,7 @@ describe('babel-transformer', () => {
       it('should allow users to add an ignore reasons', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [foo] I don't like foo
+          // Stryker disable next-line foo: I don't like foo
         const foo = "bar";
         `,
         });
@@ -293,8 +293,8 @@ describe('babel-transformer', () => {
       it('should allow multiple user comments for one line', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable-next-line [foo] I don't like foo
-          // Stryker disable-next-line [plus] I also don't like plus
+          // Stryker disable next-line foo: I don't like foo
+          // Stryker disable next-line plus: I also don't like plus
         const foo = 1 + 1;
         `,
         });
@@ -308,7 +308,7 @@ describe('babel-transformer', () => {
       it('should ignore all following mutants', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable
+          // Stryker disable all
           const a = 1 + 1;
           const b = 1 + 1;
           const c = 1 + 1;
@@ -322,11 +322,11 @@ describe('babel-transformer', () => {
       it('should not ignore all mutants following a "Stryker restore" comment', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable
+              // Stryker disable all
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;
-              // Stryker restore
+              // Stryker restore all
               
               const foo = 'a';
             `,
@@ -341,9 +341,9 @@ describe('babel-transformer', () => {
       it('should ignore all mutants, even if some where explicitly disabled with a "Stryker disable-next-line" comment', () => {
         const ast = createTSAst({
           rawContent: `
-          // Stryker disable
+          // Stryker disable all
           a = 1 + 1;
-          // Stryker disable-next-line [foo] with a custom reason
+          // Stryker disable next-line foo: with a custom reason
           foo = 1 + 1;
           c = 1 + 1;
         `,
@@ -356,8 +356,8 @@ describe('babel-transformer', () => {
       it('should allow an ignore reason', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable Disable everything
-              // Stryker disable [foo] But have a reason for disabling foo
+              // Stryker disable all: Disable everything
+              // Stryker disable foo: But have a reason for disabling foo
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;       
@@ -375,11 +375,11 @@ describe('babel-transformer', () => {
       it('should be able to restore a specific mutator that was previously explicitly disabled', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable [foo,plus]
+              // Stryker disable foo,plus
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;
-              // Stryker restore [foo]
+              // Stryker restore foo
               const foo = 'a';
               const d = 1 + 1;
             `,
@@ -392,11 +392,11 @@ describe('babel-transformer', () => {
       it('should be able to restore a specific mutator after all mutators were disabled', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable
+              // Stryker disable all
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;
-              // Stryker restore [foo]
+              // Stryker restore foo
               const foo = 'a';
               const d = 1 + 1;
             `,
@@ -409,11 +409,11 @@ describe('babel-transformer', () => {
       it('should restore all mutators following a "Stryker restore" comment', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable [foo,plus]
+              // Stryker disable foo,plus
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;
-              // Stryker restore
+              // Stryker restore all
               const foo = 'a';
             `,
         });
@@ -425,11 +425,11 @@ describe('babel-transformer', () => {
       it('should restore a specific mutators when using a "Stryker restore [mutant]" comment', () => {
         const ast = createTSAst({
           rawContent: `
-              // Stryker disable [all]
+              // Stryker disable all
               const a = 1 + 1;
               const b = 1 + 1;
               const c = 1 + 1;
-              // Stryker restore [foo]
+              // Stryker restore foo
               const foo = 'a';
               const d = 1 + 1;
             `,
