@@ -60,10 +60,10 @@ export class MochaTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+  public async dryRun({ coverageAnalysis, disableBail }: DryRunOptions): Promise<DryRunResult> {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     let interceptor: (mocha: Mocha) => void = () => {};
-    if (options.coverageAnalysis === 'perTest') {
+    if (coverageAnalysis === 'perTest') {
       interceptor = (mocha) => {
         const self = this;
         mocha.suite.beforeEach('StrykerIntercept', function () {
@@ -71,14 +71,14 @@ export class MochaTestRunner implements TestRunner {
         });
       };
     }
-    const runResult = await this.run(interceptor);
-    if (runResult.status === DryRunStatus.Complete && options.coverageAnalysis !== 'off') {
+    const runResult = await this.run(interceptor, disableBail);
+    if (runResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
       runResult.mutantCoverage = this.instrumenterContext.mutantCoverage;
     }
     return runResult;
   }
 
-  public async mutantRun({ activeMutant, testFilter }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = activeMutant.id;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     let intercept: (mocha: Mocha) => void = () => {};
@@ -89,15 +89,15 @@ export class MochaTestRunner implements TestRunner {
         mocha.grep(regex);
       };
     }
-    const dryRunResult = await this.run(intercept);
-    return toMutantRunResult(dryRunResult);
+    const dryRunResult = await this.run(intercept, disableBail);
+    return toMutantRunResult(dryRunResult, true);
   }
 
-  public async run(intercept: (mocha: Mocha) => void): Promise<DryRunResult> {
+  public async run(intercept: (mocha: Mocha) => void, disableBail: boolean): Promise<DryRunResult> {
     this.requireCache.clear();
     const mocha = this.mochaAdapter.create({
       reporter: StrykerMochaReporter as any,
-      bail: true,
+      bail: !disableBail,
       timeout: false as any, // Mocha 5 doesn't support `0`
       rootHooks: this.rootHooks,
     } as Mocha.MochaOptions);

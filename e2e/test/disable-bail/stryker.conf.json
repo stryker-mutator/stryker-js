@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "concurrency": 1,
+  "reporters": ["json"],
+  "disableBail": true,
+  "karma": {
+    "configFile": "karma.conf.js"
+  }
+}

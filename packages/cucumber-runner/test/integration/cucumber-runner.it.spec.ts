@@ -79,9 +79,9 @@ describe('Running in an example project', () => {
     testInjector.logger.isDebugEnabled.returns(true);
     await sut.dryRun(factory.dryRunOptions());
     expect(testInjector.logger.debug).calledWith(
-      `${process.cwd()} "node" "cucumber-js" "--fail-fast" "--retry" "0" "--parallel" "0" "--format" "${require.resolve(
+      `${process.cwd()} "node" "cucumber-js" "--retry" "0" "--parallel" "0" "--format" "${require.resolve(
         '../../src/stryker-formatter'
-      )}"`
+      )}" "--fail-fast"`
     );
   });
 

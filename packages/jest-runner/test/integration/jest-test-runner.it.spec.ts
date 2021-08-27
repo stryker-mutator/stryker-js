@@ -29,6 +29,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
     const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
       jest: createJestOptions(overrides),
     });
+
     return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
   }
 
@@ -41,18 +42,20 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(resolveTestResource('jasmine2-node'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
-      expect(runResult.tests[0].name).to.equal('Add should be able to add two numbers');
-      expect(runResult.tests[0].timeSpentMs).to.be.above(-1);
+      const result = runResult.tests.find((test) => test.id === 'Add should be able to add two numbers');
+      expect(result).to.not.be.null;
+      expect(result!.name).to.equal('Add should be able to add two numbers');
+      expect(result!.timeSpentMs).to.be.above(-1);
     });
 
     it('should run tests on the example custom project using package.json', async () => {
       process.chdir(resolveTestResource('jasmine2-node'));
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -63,7 +66,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       const jestTestRunner = createSut();
 
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'off' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -74,7 +77,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
       const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
       const jestTestRunner = createSut();
-      const runResult = await jestTestRunner.dryRun({ coverageAnalysis: 'perTest' });
+      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
       assertions.expectCompleted(runResult);
       expectTestResults(runResult, [
         {
@@ -120,7 +123,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).eq('Add should be able to add two numbers');
+      expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
       expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
     });
 
@@ -156,6 +159,43 @@ describe(`${JestTestRunner.name} integration test`, () => {
       // Assert
       assertions.expectKilled(firstResult);
       assertions.expectSurvived(secondResult);
+    });
+
+    it.skip('should be able to collect tests that kill a mutant and bail by default', async () => {
+      // Arrange
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
+      process.chdir(exampleProjectRoot);
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = '1';
+
+      // Act
+      const result = await jestTestRunner.mutantRun(mutantRunOptions);
+
+      // Assert
+      assertions.expectKilled(result);
+      expect(result.killedBy as string[]).to.have.length(1);
+    });
+
+    it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
+      // Arrange
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
+      process.chdir(exampleProjectRoot);
+      const jestTestRunner = createSut();
+      const mutantRunOptions = factory.mutantRunOptions({
+        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+      });
+      mutantRunOptions.activeMutant.id = '1';
+      mutantRunOptions.disableBail = true;
+
+      // Act
+      const result = await jestTestRunner.mutantRun(mutantRunOptions);
+
+      // Assert
+      assertions.expectKilled(result);
+      expect(result.killedBy as string[]).to.have.length(2);
     });
   });
 });

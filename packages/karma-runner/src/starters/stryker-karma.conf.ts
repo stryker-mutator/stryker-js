@@ -71,12 +71,12 @@ function setClientOptions(config: Config) {
   if (config.frameworks?.includes('jasmine')) {
     (clientOptions as any).jasmine = {
       random: false,
-      failFast: true,
+      failFast: !globalSettings.disableBail,
     };
   }
 
   if (config.frameworks?.includes('mocha')) {
-    (clientOptions as any).mocha = { bail: true };
+    (clientOptions as any).mocha = { bail: !globalSettings.disableBail };
   }
   config.set({ client: clientOptions });
 }
@@ -140,14 +140,18 @@ function configureStrykerReporter(config: Config) {
   config.reporters.push(StrykerReporter.name);
 }
 
-const globalSettings: {
+interface GlobalSettings {
   karmaConfig?: ConfigOptions;
   karmaConfigFile?: string;
   getLogger: LoggerFactoryMethod;
-} = {
+  disableBail: boolean;
+}
+
+const globalSettings: GlobalSettings = {
   getLogger() {
     return noopLogger;
   },
+  disableBail: false,
 };
 
 function configureKarma(config: Config): void {
@@ -168,10 +172,11 @@ function configureKarma(config: Config): void {
  * This is the only way we can pass through any values between the `KarmaTestRunner` and the stryker-karma.conf file.
  * (not counting environment variables)
  */
-configureKarma.setGlobals = (globals: { karmaConfig?: ConfigOptions; karmaConfigFile?: string; getLogger?: LoggerFactoryMethod }) => {
+configureKarma.setGlobals = (globals: Partial<GlobalSettings>) => {
   globalSettings.karmaConfig = globals.karmaConfig;
   globalSettings.karmaConfigFile = globals.karmaConfigFile;
   globalSettings.getLogger = globals.getLogger ?? (() => noopLogger);
+  globalSettings.disableBail = globals.disableBail ?? false;
 };
 
 export = configureKarma;

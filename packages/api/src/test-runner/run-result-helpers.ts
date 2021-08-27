@@ -11,16 +11,17 @@ export function determineHitLimitReached(hitCount: number | undefined, hitLimit:
   return;
 }
 
-export function toMutantRunResult(dryRunResult: DryRunResult): MutantRunResult {
+export function toMutantRunResult(dryRunResult: DryRunResult, reportAllKillers = false): MutantRunResult {
   switch (dryRunResult.status) {
     case DryRunStatus.Complete: {
-      const killedBy = dryRunResult.tests.find<FailedTestResult>((test): test is FailedTestResult => test.status === TestStatus.Failed);
+      const failedTests = dryRunResult.tests.filter<FailedTestResult>((test): test is FailedTestResult => test.status === TestStatus.Failed);
       const nrOfTests = dryRunResult.tests.filter((test) => test.status !== TestStatus.Skipped).length;
-      if (killedBy) {
+
+      if (failedTests.length > 0) {
         return {
           status: MutantRunStatus.Killed,
-          failureMessage: killedBy.failureMessage,
-          killedBy: killedBy.id,
+          failureMessage: failedTests[0].failureMessage,
+          killedBy: reportAllKillers ? failedTests.map<string>((test) => test.id) : failedTests[0].id,
           nrOfTests,
         };
       } else {

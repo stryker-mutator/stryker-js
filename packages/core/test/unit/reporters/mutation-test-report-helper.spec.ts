@@ -527,6 +527,27 @@ describe(MutationTestReportHelper.name, () => {
         expect(actual).deep.include(expected);
       });
 
+      it('should report a killed mutant when called with a KilledMutantRunResult with KilledBy as array', () => {
+        // Arrange
+        dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+        const sut = createSut();
+
+        // Act
+        const actual = sut.reportMutantRunResult(
+          factory.mutantTestCoverage({ fileName: 'add.js' }),
+          factory.killedMutantRunResult({ killedBy: ['1', '2'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' })
+        );
+
+        // Assert
+        const expected: Partial<MutantResult> = {
+          status: MutantStatus.Killed,
+          killedBy: ['1', '2'],
+          testsCompleted: 42,
+          statusReason: 'foo should have been bar at line 1',
+        };
+        expect(actual).deep.include(expected);
+      });
+
       it('should report a runtime error when called with an ErrorMutantRunResult', () => {
         // Arrange
         const sut = createSut();

@@ -27,3 +27,8 @@ Feature: Failure examples
    When a failed step
    Then an ambiguous step
    Then a pending step
+
+  @failed2
+  Scenario: Second failed step
+    Given a success step
+    When a failed step

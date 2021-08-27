@@ -84,6 +84,31 @@ describe(DryRunExecutor.name, () => {
     });
   });
 
+  describe('disable bail', () => {
+    let runResult: CompleteDryRunResult;
+
+    beforeEach(() => {
+      runResult = factory.completeDryRunResult();
+      testRunnerMock.dryRun.resolves(runResult);
+      runResult.tests.push(factory.successTestResult());
+    });
+
+    it('should bail by default', async () => {
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        disableBail: false,
+      });
+    });
+
+    it('should bail when given the option', async () => {
+      testInjector.options.disableBail = true;
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        disableBail: true,
+      });
+    });
+  });
+
   describe('when the dryRun completes', () => {
     let runResult: CompleteDryRunResult;
 

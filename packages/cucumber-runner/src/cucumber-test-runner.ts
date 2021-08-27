@@ -68,7 +68,7 @@ export class CucumberTestRunner implements TestRunner {
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     StrykerFormatter.coverageAnalysis = options.coverageAnalysis;
-    const result = await this.run();
+    const result = await this.run(options.disableBail);
     if (
       result.status === DryRunStatus.Complete &&
       options.coverageAnalysis !== 'off'
@@ -79,23 +79,30 @@ export class CucumberTestRunner implements TestRunner {
   }
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
-    return toMutantRunResult(await this.run(options.testFilter));
+    return toMutantRunResult(
+      await this.run(options.disableBail, options.testFilter),
+      true
+    );
   }
 
-  private async run(testFilter?: string[]): Promise<DryRunResult> {
+  private async run(
+    disableBail: boolean,
+    testFilter?: string[]
+  ): Promise<DryRunResult> {
     const testFilterArgs = this.determineFilterArgs(testFilter);
     const tagsArgs = this.determineTagsArgs();
     const profileArgs = this.determineProfileArgs();
+    const bailArgs = disableBail ? [] : ['--fail-fast'];
     const argv = [
       'node',
       'cucumber-js',
-      '--fail-fast',
       '--retry',
       '0',
       '--parallel',
       '0',
       '--format',
       require.resolve('./stryker-formatter'),
+      ...bailArgs,
       ...tagsArgs,
       ...profileArgs,
       ...testFilterArgs,

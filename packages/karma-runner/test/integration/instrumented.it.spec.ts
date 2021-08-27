@@ -109,7 +109,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       it('should be able to kill a mutant', async () => {
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
         assertions.expectKilled(result);
-        expect(result.killedBy).eq('spec0');
+        expect(result.killedBy).deep.eq(['spec0']);
         expect(result.failureMessage.split('\n')[0]).eq('Error: Expected undefined to be 7.');
       });
 
@@ -133,7 +133,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
         const expected = factory.killedMutantRunResult({
-          killedBy: 'spec1',
+          killedBy: ['spec1'],
           status: MutantRunStatus.Killed,
           failureMessage: 'Error: Expected undefined to be 3.',
           nrOfTests: 1,
@@ -237,7 +237,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       it('should be able to kill a mutant', async () => {
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
         assertions.expectKilled(result);
-        expect(result.killedBy).eq('Add should be able to add two numbers');
+        expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
         expect(result.failureMessage.split('\n')[0]).eq('AssertionError: expected undefined to equal 7');
       });
 
@@ -270,7 +270,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
         const expected: KilledMutantRunResult = {
-          killedBy: 'Add should be able 1 to a number',
+          killedBy: ['Add should be able 1 to a number'],
           status: MutantRunStatus.Killed,
           failureMessage: 'AssertionError: expected undefined to equal 3',
           nrOfTests: 1,

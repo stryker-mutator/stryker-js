@@ -102,8 +102,26 @@ describe('Running in an instrumented example project', () => {
       );
 
       assertions.expectKilled(actual);
-      expect(actual.killedBy).eq(`${simpleMathFileName}:19`);
+      expect(actual.killedBy).deep.eq([`${simpleMathFileName}:19`]);
       expect(actual.nrOfTests).eq(2);
+    });
+
+    it('should report all killedBy tests when disableBail is true', async () => {
+      const sut = createSut();
+      const actual = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '2' }),
+          disableBail: true,
+        })
+      );
+
+      assertions.expectKilled(actual);
+      expect(actual.killedBy).deep.eq([
+        `${simpleMathFileName}:19`,
+        `${simpleMathFileName}:20`,
+        `${simpleMathFileName}:22`,
+      ]);
+      expect(actual.nrOfTests).eq(4); // all tests ran
     });
 
     it('should be able to survive if the filtered tests are not killing', async () => {
@@ -135,7 +153,7 @@ describe('Running in an instrumented example project', () => {
       );
 
       assertions.expectKilled(actual);
-      expect(actual.killedBy).eq(`${simpleMathFileName}:19`);
+      expect(actual.killedBy).deep.eq([`${simpleMathFileName}:19`]);
       expect(actual.nrOfTests).eq(1);
     });
 

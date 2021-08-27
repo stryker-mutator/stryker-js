@@ -24,7 +24,7 @@ import { karma } from '../../src/karma-wrapper';
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<projectStarter.ProjectStarter>;
-  let setGlobalsStub: sinon.SinonStub;
+  let setGlobalsStub: sinon.SinonStubbedMember<typeof strykerKarmaConf.setGlobals>;
   let karmaRunStub: sinon.SinonStubbedMember<typeof karma.runner.run>;
   let getLogger: LoggerFactoryMethod;
   let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
@@ -49,6 +49,7 @@ describe(KarmaTestRunner.name, () => {
       getLogger,
       karmaConfig: undefined,
       karmaConfigFile: undefined,
+      disableBail: false,
     });
   });
 
@@ -61,11 +62,13 @@ describe(KarmaTestRunner.name, () => {
       projectType: 'angular-cli',
     };
     testInjector.options.karma = expectedSetup;
+    testInjector.options.disableBail = true;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile,
+      disableBail: true,
     });
 
     expect(testInjector.logger.warn).not.called;
@@ -86,11 +89,13 @@ describe(KarmaTestRunner.name, () => {
       projectType: 'angular-cli',
     };
     testInjector.options.karma = expectedSetup;
+    testInjector.options.disableBail = true;
     createSut();
     expect(setGlobalsStub).calledWith({
       getLogger,
       karmaConfig: expectedSetup.config,
       karmaConfigFile: expectedSetup.configFile,
+      disableBail: true,
     });
     expect(testInjector.logger.warn).not.called;
     expect(projectStarter.ProjectStarter).calledWith(sinon.match.func, expectedSetup);

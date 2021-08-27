@@ -13,7 +13,6 @@ export const createJestRunnerOptionsWithStrykerOptions = (overrides?: Partial<Je
 
 export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
   return {
-    enableBail: true,
     enableFindRelatedTests: true,
     projectType: 'custom',
     ...overrides,

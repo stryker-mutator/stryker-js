@@ -456,6 +456,11 @@
         }
       ],
       "description": "Enable or disable certain warnings"
+    },
+    "disableBail": {
+      "description": "Disables the default of bailing after first failing test. When true runs all tests covering a mutant. Useful when the subject under test is not completely isolated by mocks and you want to know which tests are killing the mutants. This will impact performance.",
+      "type": "boolean",
+      "default": false
     }
   }
 }

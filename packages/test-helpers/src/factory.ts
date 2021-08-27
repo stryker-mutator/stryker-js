@@ -254,11 +254,13 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
   activeMutant: mutant(),
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
+  disableBail: false,
 }));
 
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
   coverageAnalysis: 'off',
   timeout: 2000,
+  disableBail: false,
 }));
 
 export const completeDryRunResult = factoryMethod<CompleteDryRunResult>(() => ({
@@ -282,7 +284,7 @@ export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
 
 export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => ({
   status: MutantRunStatus.Killed,
-  killedBy: 'spec1',
+  killedBy: ['spec1'],
   failureMessage: 'foo should be bar',
   nrOfTests: 1,
 }));

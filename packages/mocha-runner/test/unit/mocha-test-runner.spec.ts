@@ -135,9 +135,14 @@ describe(MochaTestRunner.name, () => {
       expect(mochaAdapterMock.create).calledWithMatch({ timeout: false });
     });
 
-    it('should force bail', async () => {
-      await actDryRun();
+    it('should set bail to true when disableBail is false', async () => {
+      await actDryRun(factory.dryRunOptions({ disableBail: false }));
       expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
+    });
+
+    it('should set bail to false when disableBail is true', async () => {
+      await actDryRun(factory.dryRunOptions({ disableBail: true }));
+      expect(mochaAdapterMock.create).calledWithMatch({ bail: false });
     });
 
     it("should don't set asyncOnly if asyncOnly is false", async () => {
@@ -247,9 +252,19 @@ describe(MochaTestRunner.name, () => {
       StrykerMochaReporter.currentInstance = reporterMock;
     });
 
-    it('should active the given mutant', async () => {
+    it('should activate the given mutant', async () => {
       await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
       expect(global.__stryker2__?.activeMutant).eq('42');
+    });
+
+    it('should set bail to false when disableBail is true', async () => {
+      await actMutantRun(factory.mutantRunOptions({ disableBail: true }));
+      expect(mochaAdapterMock.create).calledWithMatch({ bail: false });
+    });
+
+    it('should set bail to true when disableBail is false', async () => {
+      await actMutantRun(factory.mutantRunOptions({ disableBail: false }));
+      expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
     });
 
     it('should use `grep` to when the test filter is specified', async () => {
@@ -267,7 +282,7 @@ describe(MochaTestRunner.name, () => {
       const result = await actMutantRun();
       const expectedResult: KilledMutantRunResult = {
         failureMessage: 'foo was baz',
-        killedBy: 'foo should be bar',
+        killedBy: ['foo should be bar'],
         status: MutantRunStatus.Killed,
         nrOfTests: 2,
       };

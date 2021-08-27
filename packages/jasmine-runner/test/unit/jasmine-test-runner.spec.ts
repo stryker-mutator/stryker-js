@@ -82,7 +82,7 @@ describe(JasmineTestRunner.name, () => {
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
       jasmineStub.execute.callsFake(async () => customReporter.jasmineDone!(createRunDetails()));
-      return sut.mutantRun({ activeMutant, testFilter, timeout: 2000, sandboxFileName });
+      return sut.mutantRun(factory.mutantRunOptions({ activeMutant, testFilter, timeout: 2000, sandboxFileName }));
     }
   });
 

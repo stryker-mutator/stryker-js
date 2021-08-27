@@ -103,7 +103,7 @@ describe('JasmineRunner integration', () => {
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
 
-    it('should complete with one test failure', async () => {
+    it('should complete with first test failure (bail)', async () => {
       const result = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
@@ -112,6 +112,25 @@ describe('JasmineRunner integration', () => {
           status: TestStatus.Failed,
           failureMessage: "Expected 'bar' to be 'baz'.",
           name: 'foo should be baz',
+        },
+      ]);
+    });
+
+    it('should report all failing tests when disableBail is true', async () => {
+      const result = await sut.dryRun(factory.dryRunOptions({ disableBail: true }));
+      assertions.expectCompleted(result);
+      expectTestResultsToEqual(result.tests, [
+        {
+          id: 'spec0',
+          status: TestStatus.Failed,
+          failureMessage: "Expected 'bar' to be 'baz'.",
+          name: 'foo should be baz',
+        },
+        {
+          id: 'spec1',
+          status: TestStatus.Failed,
+          failureMessage: "Expected 'bar' to be 'qux'.",
+          name: 'foo should be qux',
         },
       ]);
     });

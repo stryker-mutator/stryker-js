@@ -28,15 +28,19 @@ async function main() {
     './packages/jest-runner/testResources/jasmine2-node/src/Circle.js': './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Circle.js',
   },  '__stryker2__')
   await instrument({
+    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Add.js': './packages/jest-runner/testResources/jasmine2-node-no-mocks-instrumented/src/Add.js',
+    './packages/jest-runner/testResources/jasmine2-node-no-mocks/src/Multiply.js': './packages/jest-runner/testResources/jasmine2-node-no-mocks-instrumented/src/Multiply.js',
+  }, '__stryker2__')
+  await instrument({
     './packages/cucumber-runner/testResources/example/src/calculator.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator.js',
     './packages/cucumber-runner/testResources/example/src/calculator-static.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator-static.js',
   },  '__stryker2__')
 }
 
 /**
- * 
- * @param {object} fromTo 
- * @param {'__stryker__' | '__stryker2__'} globalNamespace 
+ *
+ * @param {object} fromTo
+ * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
   const files = Object.keys(fromTo).map(fileName => new File(fileName, fs.readFileSync(fileName)));
@@ -44,7 +48,7 @@ async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMES
   out.files.forEach(file => {
     const toFileName = fromTo[file.name];
     fs.writeFileSync(toFileName, `// This file is generated with ${path.relative(process.cwd(), __filename)}\n ${file.textContent.replace(new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'), globalNamespace)}`);
-    
+
     console.log(`✅ ${toFileName}`);
   });
 }

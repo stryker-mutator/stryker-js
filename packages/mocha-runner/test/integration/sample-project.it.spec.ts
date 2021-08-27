@@ -67,10 +67,16 @@ describe('Running a sample project', () => {
       return sut.init();
     });
 
-    it('should only report the first failure', async () => {
+    it('should only report the first failure (bail)', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(countFailed(runResult)).to.be.eq(1);
+    });
+
+    it('should report all failures with disableBail = true', async () => {
+      const runResult = await sut.dryRun(factory.dryRunOptions({ disableBail: true }));
+      assertions.expectCompleted(runResult);
+      expect(countFailed(runResult)).to.be.eq(2);
     });
   });
 

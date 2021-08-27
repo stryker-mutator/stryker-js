@@ -26,11 +26,6 @@
           "description": "Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will only run tests related to the mutated file per test. (See [_--findRelatedTests_](https://jestjs.io/docs/en/cli.html#findrelatedtests-spaceseparatedlistofsourcefiles)",
           "type": "boolean",
           "default": true
-        },
-        "enableBail": {
-          "description": "Whether to run jest with the `--bail` flag. When `true`, Jest stop testing after the first failing test, which boosts performance. (See [_--bail_](https://jestjs.io/docs/en/cli#--bail)",
-          "type": "boolean",
-          "default": true
         }
       },
       "additionalProperties": false

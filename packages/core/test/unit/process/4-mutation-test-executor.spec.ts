@@ -189,6 +189,20 @@ describe(MutationTestExecutor.name, () => {
     expect(sandboxMock.sandboxFileFor).calledWithExactly('src/foo.js');
   });
 
+  it('should pass disableBail to test runner', async () => {
+    // Arrange
+    arrangeScenario();
+    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: ['1'] }));
+    testInjector.options.disableBail = true;
+
+    // Act
+    await sut.execute();
+
+    // Assert
+    const expected: Partial<MutantRunOptions> = { disableBail: true };
+    expect(testRunner.mutantRun).calledWithMatch(expected);
+  });
+
   it('should not run mutants that are uncovered by tests', async () => {
     // Arrange
     arrangeScenario();

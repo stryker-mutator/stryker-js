@@ -56,7 +56,7 @@ describe(TimeoutDecorator.name, () => {
   }
 
   describe('dryRun', () => {
-    itShouldProxyRequests(() => sut.dryRun({ coverageAnalysis: 'all', timeout: 20 }), 'dryRun');
+    itShouldProxyRequests(() => sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all', timeout: 20 })), 'dryRun');
 
     it('should not handle timeouts premature', () => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function

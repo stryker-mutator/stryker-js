@@ -64,7 +64,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   }
 
   function actDryRun(timeout = 4000) {
-    return sut.dryRun({ timeout, coverageAnalysis: 'all' });
+    return sut.dryRun(factory.dryRunOptions({ timeout, coverageAnalysis: 'all' }));
   }
 
   function actMutantRun(options = factory.mutantRunOptions()) {

@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit/integration tests",
+      "name": "🟣 Unit/integration tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "--no-timeout",

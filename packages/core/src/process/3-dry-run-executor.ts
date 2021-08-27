@@ -128,7 +128,11 @@ export class DryRunExecutor {
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
     );
     this.log.debug(`Using timeout of ${dryRunTimeout} ms.`);
-    const dryRunResult = await testRunner.dryRun({ timeout: dryRunTimeout, coverageAnalysis: this.options.coverageAnalysis });
+    const dryRunResult = await testRunner.dryRun({
+      timeout: dryRunTimeout,
+      coverageAnalysis: this.options.coverageAnalysis,
+      disableBail: this.options.disableBail,
+    });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
     this.validateResultCompleted(dryRunResult);

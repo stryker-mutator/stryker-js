@@ -18,11 +18,11 @@ export interface TimeoutMutantRunResult {
 export interface KilledMutantRunResult {
   status: MutantRunStatus.Killed;
   /**
-   * The id of the test that killed this mutant
+   * An array with the ids of the tests that killed this mutant
    */
-  killedBy: string;
+  killedBy: string[] | string;
   /**
-   * The failure message that was reported by the test
+   * The failure message that was reported by first the test
    */
   failureMessage: string;
   /**
