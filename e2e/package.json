@@ -13,7 +13,7 @@
     "@types/node": "^10.12.18",
     "@types/semver": "~6.2.0",
     "ajv": "~7.0.2",
-    "axios": "~0.20.0",
+    "axios": "~0.21.1",
     "chai": "~4.2.0",
     "chai-as-promised": "~7.1.1",
     "cross-env": "~5.2.0",
