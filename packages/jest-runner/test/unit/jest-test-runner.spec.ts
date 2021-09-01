@@ -83,14 +83,12 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = true by default', async () => {
+    it('should always set bail = false (see https://github.com/facebook/jest/issues/11766)', async () => {
       const sut = createSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
-          jestConfig: sinon.match({
-            bail: true,
-          }),
+          jestConfig: sinon.match({ bail: false }),
         })
       );
     });
@@ -285,7 +283,7 @@ describe(JestTestRunner.name, () => {
 
       expect(jestTestAdapterMock.run).calledWithMatch({
         jestConfig: sinon.match({
-          bail: true,
+          bail: false,
           collectCoverage: false,
           notify: false,
           testResultsProcessor: undefined,
