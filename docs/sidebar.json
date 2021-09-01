@@ -4,6 +4,7 @@
   "stryker-js/usage",
   "stryker-js/config-file",
   "stryker-js/configuration",
+  "stryker-js/disable-mutants",
   "stryker-js/plugins",
   "stryker-js/cucumber-runner",
   "stryker-js/jasmine-runner",
