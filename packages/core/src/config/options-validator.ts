@@ -93,6 +93,8 @@ export class OptionsValidator {
         'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
       );
       // @ts-expect-error jest.enableBail
+      rawOptions.disableBail = !rawOptions.jest?.enableBail;
+      // @ts-expect-error jest.enableBail
       delete rawOptions.jest.enableBail;
     }
   }
