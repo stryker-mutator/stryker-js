@@ -101,7 +101,7 @@ export class PluginLoader implements PluginResolver {
       if (this.hasValidationSchemaContribution(module)) {
         this.contributedValidationSchemas.push(module.strykerValidationSchema);
       }
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
       } else {

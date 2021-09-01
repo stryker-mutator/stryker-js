@@ -128,7 +128,7 @@ export class MochaTestRunner implements TestRunner {
           errorMessage,
         };
       }
-    } catch (errorMessage) {
+    } catch (errorMessage: any) {
       return {
         errorMessage,
         status: DryRunStatus.Error,
