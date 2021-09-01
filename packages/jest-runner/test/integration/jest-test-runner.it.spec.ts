@@ -123,7 +123,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
+      expect(runResult.killedBy).eq('Add should be able to add two numbers');
       expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
     });
 
@@ -161,7 +161,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectSurvived(secondResult);
     });
 
-    it.skip('should be able to collect tests that kill a mutant and bail by default', async () => {
+    it('should only report the first failing test in `killedBy` when disableBail = false', async () => {
       // Arrange
       const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
       process.chdir(exampleProjectRoot);
@@ -176,7 +176,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Assert
       assertions.expectKilled(result);
-      expect(result.killedBy as string[]).to.have.length(1);
+      expect(result.killedBy).eq('Add should be able to add two numbers');
     });
 
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {

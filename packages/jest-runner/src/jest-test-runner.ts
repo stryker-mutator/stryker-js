@@ -138,10 +138,10 @@ export class JestTestRunner implements TestRunner {
     try {
       const { dryRunResult } = await this.run({
         fileNameUnderTest,
-        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail ?? false),
+        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail),
         testNamePattern,
       });
-      return toMutantRunResult(dryRunResult, true);
+      return toMutantRunResult(dryRunResult, disableBail);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
     }
