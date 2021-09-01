@@ -45,8 +45,11 @@ describe('instrumenter integration', () => {
   it('should be able to instrument js files with a shebang in them', async () => {
     await arrangeAndActAssert('shebang.js');
   });
-  it('should not place ignored mutants', async () => {
-    await arrangeAndActAssert('ignore.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
+  it('should not place excluded mutations', async () => {
+    await arrangeAndActAssert('excluded-mutations.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
+  });
+  it('should not place disabled mutants', async () => {
+    await arrangeAndActAssert('disabled.js');
   });
   it('should be able to instrument switch case statements (using the switchCaseMutantPlacer)', async () => {
     await arrangeAndActAssert('switch-case.js');

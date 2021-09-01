@@ -99,7 +99,7 @@ export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
   expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
 }
 
-function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
+export function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
   const actualMetrics: Partial<Metrics> = {};
   Object.entries(expectedMetrics).forEach(([key]) => {
     if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {

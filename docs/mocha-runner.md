@@ -35,9 +35,9 @@ You can configure the mocha test runner in the `stryker.conf.json` (or `stryker.
     "package": "path/to/custom/package/package.json",
     "opts": "path/to/custom/mocha.opts",
     "ui": "bdd",
-    "require": [ /*'babel-register' */],
+    "require": [ "babel-register" ],
     "async-only": false,
-    "grep": /.*/
+    "grep": ".*"
   }
 }
 ```
