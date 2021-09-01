@@ -51,9 +51,25 @@ describe('JestTestRunner coverage analysis integration', () => {
           assertions.expectCompleted(result);
           expect(result.mutantCoverage).not.undefined;
           expect(result.mutantCoverage!.perTest).deep.eq({});
-          for (let i = 0; i < 17; i++) {
-            expect(result.mutantCoverage!.static[i]).eq(1);
-          }
+          expect(result.mutantCoverage!.static).deep.eq({
+            '0': 2,
+            '1': 2,
+            '2': 1,
+            '3': 1,
+            '4': 1,
+            '5': 1,
+            '6': 1,
+            '7': 1,
+            '8': 1,
+            '9': 1,
+            '10': 1,
+            '11': 1,
+            '12': 1,
+            '13': 1,
+            '14': 1,
+            '15': 1,
+            '16': 1,
+          });
         });
 
         it('should provide perTest coverage when coverageAnalysis is "perTest"', async () => {
@@ -65,6 +81,10 @@ describe('JestTestRunner coverage analysis integration', () => {
             'Add should be able negate a number': {
               4: 1,
               5: 1,
+            },
+            'Add should be able to subtract using a negative number': {
+              '0': 1,
+              '1': 1,
             },
             'Add should be able to add one to a number': {
               2: 1,

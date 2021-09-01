@@ -163,13 +163,13 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should only report the first failing test in `killedBy` when disableBail = false', async () => {
       // Arrange
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        activeMutant: factory.mutant({ id: '0' }),
       });
-      mutantRunOptions.activeMutant.id = '1';
 
       // Act
       const result = await jestTestRunner.mutantRun(mutantRunOptions);
@@ -181,21 +181,21 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
       // Arrange
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-no-mocks-instrumented');
+      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        activeMutant: factory.mutant({ id: '0' }),
+        disableBail: true,
       });
-      mutantRunOptions.activeMutant.id = '1';
-      mutantRunOptions.disableBail = true;
 
       // Act
       const result = await jestTestRunner.mutantRun(mutantRunOptions);
 
       // Assert
       assertions.expectKilled(result);
-      expect(result.killedBy as string[]).to.have.length(2);
+      expect(result.killedBy).to.have.length(2);
     });
   });
 });
