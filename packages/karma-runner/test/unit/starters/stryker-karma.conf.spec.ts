@@ -189,7 +189,7 @@ describe('stryker-karma.conf.js', () => {
   });
 
   it('should set basePath to location of karma.conf.js', () => {
-    sut.setGlobals({ karmaConfigFile: '../foobar.conf.js' });
+    sut.setGlobals({ karmaConfigFile: '../foobar.conf.js', disableBail: false });
     requireModuleStub.returns(() => {
       /* noop */
     });

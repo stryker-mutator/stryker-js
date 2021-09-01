@@ -7,27 +7,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "🥒 Unit tests",
-      "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
-      "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/dist/test/helpers/**/*.js",
-        "${workspaceFolder}/dist/test/unit/**/*.js"
-      ],
-      "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/dist/**/*.js",
-        "${workspaceFolder}/../test-helpers/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "🥒 Integration tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [

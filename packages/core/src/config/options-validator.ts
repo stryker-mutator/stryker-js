@@ -87,6 +87,16 @@ export class OptionsValidator {
       const existingIgnorePatterns = Array.isArray(rawOptions[ignorePatternsName]) ? (rawOptions[ignorePatternsName] as unknown[]) : [];
       rawOptions[ignorePatternsName] = [...newIgnorePatterns, ...existingIgnorePatterns];
     }
+    // @ts-expect-error jest.enableBail
+    if (rawOptions.jest?.enableBail !== undefined) {
+      this.log.warn(
+        'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+      );
+      // @ts-expect-error jest.enableBail
+      rawOptions.disableBail = !rawOptions.jest?.enableBail;
+      // @ts-expect-error jest.enableBail
+      delete rawOptions.jest.enableBail;
+    }
   }
 
   private additionalValidation(options: StrykerOptions) {

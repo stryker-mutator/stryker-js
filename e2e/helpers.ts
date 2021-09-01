@@ -3,7 +3,7 @@ import { promises as fsPromises } from 'fs';
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import { expect } from 'chai';
 import path from 'path';
-import { calculateMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
+import { calculateMutationTestMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
 import { execSync, ExecException } from 'child_process';
 
 interface PipedStdioSyncExecException extends ExecException {
@@ -50,14 +50,14 @@ export async function readMutationTestResult(eventResultDirectory = path.resolve
   expect(mutationTestReportFile).ok;
   const mutationTestReportContent = await fsPromises.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
   const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
-  const metricsResult = calculateMetrics(report.files);
+  const metricsResult = calculateMutationTestMetrics(report);
   return metricsResult;
 }
 
 export async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
   const mutationTestReportContent = await fsPromises.readFile(jsonReportFile, 'utf8');
   const report = JSON.parse(mutationTestReportContent) as mutationTestReportSchema.MutationTestResult;
-  const metricsResult = calculateMetrics(report.files);
+  const metricsResult = calculateMutationTestMetrics(report);
   return metricsResult;
 }
 
@@ -73,7 +73,7 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   const actualMetricsResult = await readMutationTestResult();
   const actualSnippet: Partial<WritableMetricsResult> = {};
   for (const key in expectedMetricsResult) {
-    actualSnippet[key as keyof MetricsResult] = actualMetricsResult[key as keyof MetricsResult] as any;
+    actualSnippet[key as keyof MetricsResult] = actualMetricsResult.systemUnderTestMetrics[key as keyof MetricsResult] as any;
   }
   if (actualSnippet.metrics) {
     if (typeof actualSnippet.metrics.mutationScore === 'number') {
@@ -88,7 +88,7 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
 
 export async function expectMetricsJson(expectedMetrics: Partial<Metrics>) {
   const actualMetricsResult = await readMutationTestingJsonResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult);
+  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
 }
 
 /**
@@ -96,7 +96,7 @@ export async function expectMetricsJson(expectedMetrics: Partial<Metrics>) {
  */
 export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
   const actualMetricsResult = await readMutationTestResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult);
+  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
 }
 
 export function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {

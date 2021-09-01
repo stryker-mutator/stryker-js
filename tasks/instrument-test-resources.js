@@ -34,9 +34,9 @@ async function main() {
 }
 
 /**
- * 
- * @param {object} fromTo 
- * @param {'__stryker__' | '__stryker2__'} globalNamespace 
+ *
+ * @param {object} fromTo
+ * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
   const files = Object.keys(fromTo).map(fileName => new File(fileName, fs.readFileSync(fileName)));
@@ -44,7 +44,7 @@ async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMES
   out.files.forEach(file => {
     const toFileName = fromTo[file.name];
     fs.writeFileSync(toFileName, `// This file is generated with ${path.relative(process.cwd(), __filename)}\n ${file.textContent.replace(new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'), globalNamespace)}`);
-    
+
     console.log(`✅ ${toFileName}`);
   });
 }

@@ -31,6 +31,7 @@ describe(StrykerCli.name, () => {
       [['--ignorePatterns', 'foo.js,bar.js'], { ignorePatterns: ['foo.js', 'bar.js'] }],
       [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
       [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
+      [['--disableBail'], { disableBail: true }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],

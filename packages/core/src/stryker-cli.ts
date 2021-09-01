@@ -67,7 +67,7 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        'A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        '[DEPRECATED, please use `--ignorePatterns` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
         list
       )
       .option(
@@ -110,6 +110,7 @@ export class StrykerCli {
         'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
         parseInt
       )
+      .option('--disableBail', 'Force the test runner to keep running tests, even when a mutant is already killed.')
       .option(
         '--maxTestRunnerReuse <n>',
         'Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.',

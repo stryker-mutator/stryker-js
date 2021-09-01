@@ -45,7 +45,7 @@ describe('JasmineRunner integration with code instrumentation', () => {
     it('should be able to kill a mutant', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }) }));
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('spec0');
+      expect(result.killedBy).deep.eq(['spec0']);
       expect(result.failureMessage).eq('Expected Player({ currentlyPlayingSong: Song({  }), isPlaying: false }) to be playing Song({  }).');
     });
 
@@ -58,10 +58,21 @@ describe('JasmineRunner integration with code instrumentation', () => {
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '12' }) }));
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }) }));
       const expected = factory.killedMutantRunResult({
-        killedBy: 'spec1',
+        killedBy: ['spec1'],
         status: MutantRunStatus.Killed,
         failureMessage: 'Expected true to be falsy.',
         nrOfTests: 2, // spec0 and spec1
+      });
+      expect(result).deep.eq(expected);
+    });
+
+    it('should report all killed mutants when disableBail is true', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), disableBail: true }));
+      const expected = factory.killedMutantRunResult({
+        killedBy: ['spec1', 'spec2'],
+        status: MutantRunStatus.Killed,
+        failureMessage: 'Expected true to be falsy.',
+        nrOfTests: 5, // all
       });
       expect(result).deep.eq(expected);
     });
