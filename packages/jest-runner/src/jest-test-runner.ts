@@ -1,6 +1,3 @@
-// monkey patch exit first!!
-import './utils/monkey-patch-exit';
-
 import path from 'path';
 
 import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
@@ -106,7 +103,7 @@ export class JestTestRunner implements TestRunner {
     }
     try {
       const { dryRunResult, jestResult } = await this.run({
-        jestConfig: withCoverageAnalysis({ ...this.jestConfig, bail: !disableBail }, coverageAnalysis),
+        jestConfig: withCoverageAnalysis({ ...this.jestConfig }, coverageAnalysis),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -138,7 +135,7 @@ export class JestTestRunner implements TestRunner {
     try {
       const { dryRunResult } = await this.run({
         fileNameUnderTest,
-        jestConfig: this.configForMutantRun(fileNameUnderTest, disableBail),
+        jestConfig: this.configForMutantRun(fileNameUnderTest),
         testNamePattern,
       });
       return toMutantRunResult(dryRunResult, disableBail);
@@ -147,7 +144,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  private configForMutantRun(fileNameUnderTest: string | undefined, disableBail: boolean): jest.Config.InitialOptions {
+  private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
     let config: jest.Config.InitialOptions;
 
     if (fileNameUnderTest && this.jestConfig.roots) {
@@ -159,8 +156,6 @@ export class JestTestRunner implements TestRunner {
     } else {
       config = this.jestConfig;
     }
-
-    config.bail = !disableBail;
     return config;
   }
 

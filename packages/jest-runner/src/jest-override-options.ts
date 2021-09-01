@@ -15,6 +15,10 @@ export const JEST_OVERRIDE_OPTIONS: Readonly<Config.InitialOptions> = Object.fre
   // the results each time Stryker runs the tests
   notify: false,
 
+  // Bail isn't supported programmatically in jest
+  // see https://github.com/facebook/jest/issues/11766
+  bail: false,
+
   /**
    * Disable reporters, they only way us down.
    */
