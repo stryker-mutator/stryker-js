@@ -497,6 +497,46 @@ describe('babel-transformer', () => {
         expect(actualNotIgnoredFooMutant.mutatorName).eq('Foo');
         expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
       });
+
+      it('should allow disable, restore mutator, disable all', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable all
+              1 + 1;
+              // Stryker restore plus
+              1 + 1;
+              // Stryker disable all
+              1 + 1;
+            `,
+        });
+        act(ast);
+
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(ignoredMutants()).lengthOf(2);
+        const actualNotIgnoredFooMutant = notIgnoredMutants()[0];
+        expect(actualNotIgnoredFooMutant.mutatorName).eq('Plus');
+        expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
+      });
+
+      it('should allow disable mutator, restore all, disable mutator', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable plus
+              1 + 1;
+              // Stryker restore all
+              1 + 1;
+              // Stryker disable plus
+              1 + 1;
+            `,
+        });
+        act(ast);
+
+        expect(notIgnoredMutants()).lengthOf(1);
+        expect(ignoredMutants()).lengthOf(2);
+        const actualNotIgnoredFooMutant = notIgnoredMutants()[0];
+        expect(actualNotIgnoredFooMutant.mutatorName).eq('Plus');
+        expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
+      });
     });
   });
 
