@@ -98,6 +98,39 @@ Config file:
 
 Settings for the `dashboard` [reporter](#reporters-string). See the [dashboard documentation](../General/dashboard.md) for more info.
 
+### `disableBail` [`boolean`]
+
+_Since v5.4_
+
+Default: `false`<br />
+Command: `--disableBail`<br />
+Config file: `"disableBail": true`
+
+Configure the test runner to report all failing tests when a mutant is killed instead of bailing after the first failing test. Bailing brings better performance, but you might be interested in the full report instead. This might be useful when using the "Tests" view to hunt for tests that don't kill a single mutant.
+
+See the difference of bail vs no bail on StrykerJS's utils package (with `--concurrency 4`):
+
+<table>
+<tbody>
+<tr>
+ <td>
+ <figure>
+  <img alt="With bail" src="./images/configuration-with-bail.png" />
+  <figcaption>With bail, in 2min 33s.</figcaption>
+</figure>
+ </td>
+ <td>
+  <figure>
+  <img alt="Disable bail" src="./images/configuration-disable-bail.png" />
+  <figcaption>Disable bail, in 2 min 45s.</figcaption>
+</figure>
+</td>
+</tr>
+</tbody>
+</table>
+
+As you can see, when you disable bail, a lot more tests get the "Killing" status, meaning that they killed at least 1 mutant. This does come with a performance penalty of 12s in this example.
+
 ### `disableTypeChecks` [`false | string`]
 
 Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
