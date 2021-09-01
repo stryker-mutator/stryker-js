@@ -29,7 +29,7 @@ class IgnoreRule implements Rule {
 
 class RestoreRule extends IgnoreRule {
   constructor(mutatorNames: string[], line: number | undefined, previousRule: Rule) {
-    super(mutatorNames, undefined, line, previousRule);
+    super(mutatorNames, line, undefined, previousRule);
   }
 }
 
