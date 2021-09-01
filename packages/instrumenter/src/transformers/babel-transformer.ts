@@ -11,6 +11,8 @@ import { ScriptFormat } from '../syntax';
 import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers';
 import { Mutable, Mutant } from '../mutant';
 
+import { DirectiveBookkeeper } from './directive-bookkeeper';
+
 import { AstTransformer } from '.';
 
 interface MutantsPlacement<TNode extends types.Node> {
@@ -37,6 +39,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // Create a placementMap for the mutation switching bookkeeping
   const placementMap: PlacementMap = new Map();
 
+  // Create the bookkeeper responsible for the // Stryker ... directives
+  const directiveBookkeeper = new DirectiveBookkeeper();
+
   // Now start the actual traversing of the AST
   //
   // On the way down:
@@ -52,6 +57,8 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
+      directiveBookkeeper.processStrykerDirectives(path.node);
+
       if (shouldSkip(path)) {
         path.skip();
       } else {
@@ -149,7 +156,11 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   function* mutate(node: NodePath): Iterable<Mutable> {
     for (const mutator of mutators) {
       for (const replacement of mutator.mutate(node)) {
-        yield { replacement, mutatorName: mutator.name, ignoreReason: formatIgnoreReason(mutator.name) };
+        yield {
+          replacement,
+          mutatorName: mutator.name,
+          ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? formatIgnoreReason(mutator.name),
+        };
       }
     }
 
