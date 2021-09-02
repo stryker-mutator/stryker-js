@@ -100,7 +100,7 @@ After running Stryker again, the report looks like this:
 
 ![disable all](./images/disable-mutants-disable-all.png)
 
-This works, but is not exactly what we want. As you can see, all mutants on line 4 are not disabled. 
+This works, but is not exactly what we want. As you can see, all mutants on line 4 are now disabled. 
 
 We can do better by specifying which mutator we want to ignore:
 
