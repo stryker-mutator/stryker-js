@@ -3,7 +3,7 @@ title: Disable mutants
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/disable-mutants.md
 ---
 
-During mutation testing, you might run into [equivalent mutants](../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
+During mutation testing, you might run into [equivalent mutants](../../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
 
 ## An example
 
@@ -35,7 +35,7 @@ function max(a, b) {
 -  return a < b ? b : a;
 +  return true ? b : a; // 👽 1
 +  return false ? b : a; // 👽 2
-+  return a >= b ? b : a; // 👽 3
++  return a <= b ? b : a; // 👽 3
 }
 ```
 
