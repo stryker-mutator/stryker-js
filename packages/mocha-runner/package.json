@@ -45,7 +45,7 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "5.4.0",
     "@types/glob": "~7.1.3",
-    "@types/node": "^15.0.0"
+    "@types/node": "^16.7.13"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~5.4.0",
