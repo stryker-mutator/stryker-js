@@ -46,4 +46,4 @@ A checker plugin can _check_ a mutant before it is mutation tested. The check ca
 
 ## &lt;Your plugin here&gt;
 
-You can write your plugins for Stryker. Interested? Have a look at our [create a plugin guide](./guides/create-a-plugin).
+You can write your plugins for Stryker. Interested? Have a look at our [create a plugin guide](./guides/create-a-plugin.md).
