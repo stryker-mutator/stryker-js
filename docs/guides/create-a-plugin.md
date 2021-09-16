@@ -81,15 +81,15 @@ import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 const createFooTestRunner = createFooTestRunnerFactory();
 
 export function createFooTestRunnerFactory() {
-  createFooTestRunner.inject = tokens(commonTokens.injector);
-  function createFooTestRunner(injector: Injector<PluginContext>): FooTestRunner {
+  fooTestRunnerFactory.inject = tokens(commonTokens.injector);
+  function fooTestRunnerFactory(injector: Injector<PluginContext>): FooTestRunner {
     return injector
       .provideValue(processEnvToken, process.env)
       .provideValue(fooTestRunnerVersionToken, require('fooTestRunner/package.json').version as string)
       .provideClass(configLoaderToken, FooTestRunnerConfigFileLoader)
       .injectClass(FooTestRunner);
   }
-  return createFooTestRunner;
+  return fooTestRunnerFactory;
 }
 
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'foo', createFooTestRunner)];
