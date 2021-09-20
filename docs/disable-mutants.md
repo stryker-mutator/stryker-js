@@ -3,7 +3,7 @@ title: Disable mutants
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/disable-mutants.md
 ---
 
-During mutation testing, you might run into [equivalent mutants](../../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
+During mutation testing, you might run into [equivalent mutants](../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
 
 ## An example
 
