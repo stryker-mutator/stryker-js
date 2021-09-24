@@ -26,7 +26,7 @@ assignees: ''
 
 **Stryker environment**
 
-<!-- Please list your stryker plugins + versions here (output of `npm ls | grep stryker`) -->
+<!-- Please list your stryker plugins + versions here (output of `npm ls | grep stryker` or `npm ls | findstr "stryker"` on Windows) -->
 
 ```
 +-- @stryker-mutator/core@x.x.x
