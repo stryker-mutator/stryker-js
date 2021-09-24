@@ -39,7 +39,7 @@
   "dependencies": {
     "@stryker-mutator/api": "5.4.0",
     "@stryker-mutator/util": "5.4.0",
-    "glob": "~7.1.6",
+    "glob": "~7.2.0",
     "tslib": "~2.3.0"
   },
   "devDependencies": {
