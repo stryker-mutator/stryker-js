@@ -94,6 +94,16 @@ describe(ProgressBarReporter.name, () => {
       progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
       expect(progressBar.tick).calledWithMatch(progressBarTickTokens);
     });
+
+    it('should not render the ProgressBar if all mutants have status "NoCoverage" or are static', () => {
+      const noCoverageResult = { coveredBy: undefined, static: false };
+      mutants = [factory.mutantTestCoverage(noCoverageResult), factory.mutantTestCoverage({ static: true })];
+      sut.onAllMutantsMatchedWithTests(mutants);
+
+      sut.onMutantTested(factory.mutantResult(noCoverageResult));
+
+      expect(progressBar.render).to.not.have.been.called;
+    });
   });
 
   describe('ProgressBar estimated time for 3 mutants', () => {

@@ -38,6 +38,8 @@ export class ProgressBarReporter extends ProgressKeeper {
   }
 
   private render(renderObj: Record<string, unknown>): void {
-    this.progressBar?.render(renderObj);
+    if (this.progressBar?.total) {
+      this.progressBar.render(renderObj);
+    }
   }
 }
