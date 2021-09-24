@@ -60,7 +60,7 @@ function isMemberOrCallExpression(path: NodePath) {
 }
 
 function isMemberExpression(path: NodePath): path is NodePath<types.MemberExpression | types.OptionalMemberExpression> {
-  return path.isMemberExpression() || path.isOptionalMemberExpression();
+  return path.isMemberExpression() || path.isOptionalMemberExpression() || path.isTSNonNullExpression();
 }
 
 function isCallExpression(path: NodePath): path is NodePath<types.CallExpression | types.OptionalCallExpression> {

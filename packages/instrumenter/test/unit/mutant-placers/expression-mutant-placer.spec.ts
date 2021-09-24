@@ -4,7 +4,7 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 import generate from '@babel/generator';
 
 import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
+import { findNodePath, parseJS, parseTS } from '../../helpers/syntax-test-helpers';
 import { Mutant } from '../../../src/mutant';
 import { createMutant } from '../../helpers/factories';
 
@@ -75,10 +75,11 @@ describe(expressionMutantPlacer.name, () => {
         ['foo?.bar()', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
         ['foo.bar?.baz', (p) => p.isMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
         ['foo?.bar.baz', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
+        ['foo?.bar!.baz', (p) => p.isTSNonNullExpression()],
       ];
       falsePointers.forEach(([js, query]) => {
         it(`should not allow placing in \`bar\` of \`${js}\``, () => {
-          const path = findNodePath(parseJS(js), query);
+          const path = findNodePath(parseTS(js), query);
           expect(expressionMutantPlacer.canPlace(path)).false;
         });
       });
