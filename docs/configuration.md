@@ -7,7 +7,7 @@ This page describes the available configuration options in Stryker's core packag
 
 All configuration options can either be set via the command line or via a config file.
 
-The [`files`](#files-string) and [`mutate`](#mutate-string) options (and some others) support globbing expressions using [node glob](https://github.com/isaacs/node-glob). See [the config file documentation](./config-file.md#glob-patterns) for more information.
+The [`ignorePatterns`](#ignorepatterns-string) and [`mutate`](#mutate-string) options (and some others) support globbing expressions using [node glob](https://github.com/isaacs/node-glob). See [the config file documentation](./config-file.md#glob-patterns) for more information.
 
 ### `allowConsoleColors` [`boolean`]
 
@@ -157,7 +157,7 @@ Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
-### `files` [`string[]`]
+### `files` (DEPRECATED)
 
 Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
