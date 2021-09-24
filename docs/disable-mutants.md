@@ -166,7 +166,7 @@ Disable all mutators for an entire file, but restore the EqualityOperator for 1 
 ```js
 // Stryker disable all
 function max(a, b) {
-  // Stryker restore EqualityOperator
+  // Stryker restore next-line EqualityOperator
   return a < b ? b : a;
 }
 ```
