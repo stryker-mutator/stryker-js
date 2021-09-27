@@ -32,7 +32,7 @@ Default: `true`<br />
 Command line: `--cleanTempDir false`<br />
 Config file: `"cleanTempDir": false`
 
-Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run. 
+Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run.
 The temp dir will never be removed when the run failed for some reason (for debugging purposes).
 
 ### `concurrency` [`number`]
@@ -46,7 +46,7 @@ Set the concurrency of workers. Stryker will always run checkers and test runner
 ### `commandRunner` [`object`]
 
 Default: `{ command: 'npm test' }`<br />
-Command line: *none*<br />
+Command line: _none_<br />
 Config file: `"commandRunner": { "command": "npm run mocha" }`
 
 With `commandRunner`, you can specify the command to execute for running tests.
@@ -59,39 +59,40 @@ Config file: `"coverageAnalysis": "perTest"`
 
 _Note:_ The default changed from `"off"` to `"perTest"` in Stryker v5.
 
-With `coverageAnalysis` you specify which coverage analysis strategy you want to use. 
+With `coverageAnalysis` you specify which coverage analysis strategy you want to use.
 
 Stryker can analyze mutant coverage results. Doing this can speed up mutation testing because Stryker then decides to run only the exact tests covering the mutant it is testing (instead of running them all).
-This performance optimization does *not* influence the resulting mutation testing score but does allow Stryker to distinguish between "Survived" and "NoCoverage". 
+This performance optimization does _not_ influence the resulting mutation testing score but does allow Stryker to distinguish between "Survived" and "NoCoverage".
 
 All official test runner plugins (`@stryker-mutator/mocha-runner`, `@stryker-mutator/jasmine-runner`, `@stryker-mutator/karma-runner` and `@stryker-mutator/jest-runner`)
 support coverage analysis, except for the `command` test runner, since Stryker will just run your command has no way of knowing more about your tests.
 
 The possible values are:
 
-* **off**: Stryker does no optimization. All tests are executed for each mutant.
-* **all**: Stryker will determine the mutants covered by your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and will not be tested. This requires your test runner plugin to report code coverage back to Stryker.
-* **perTest**: Stryker will determine which tests cover which mutant during the initial test run phase. Only the tests that cover a specific mutant are executed for each mutant. Your tests should be _able to run independently of each other and in random order_. Stryker will determine which mutants are _static_ and will run all tests for them during mutation testing. A mutant is 'static' when it is executed during the loading of the file rather than during a test. 
+- **off**: Stryker does no optimization. All tests are executed for each mutant.
+- **all**: Stryker will determine the mutants covered by your tests during the initial test run phase. Mutants without code coverage will be reported with `NoCoverage` and will not be tested. This requires your test runner plugin to report code coverage back to Stryker.
+- **perTest**: Stryker will determine which tests cover which mutant during the initial test run phase. Only the tests that cover a specific mutant are executed for each mutant. Your tests should be _able to run independently of each other and in random order_. Stryker will determine which mutants are _static_ and will run all tests for them during mutation testing. A mutant is 'static' when it is executed during the loading of the file rather than during a test.
 
 ### `dashboard` [`DashboardOptions`]
 
 Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'mutationScore' }`<br />
 Command line:
-* `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag`
-* `--dashboard.module my-module`
-* `--dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports`
-* `--dashboard.reportType full`
 
-Config file: 
+- `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag`
+- `--dashboard.module my-module`
+- `--dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports`
+- `--dashboard.reportType full`
+
+Config file:
 
 ```json
 {
-  "dasboard": { 
-    "project": "github.com/my-org/my-project", 
-    "version": "branch-or-tag", 
-    "module": "my-module", 
-    "baseUrl": "https://dashboard.stryker-mutator.io/api/reports", 
-    "reportType": "full" 
+  "dasboard": {
+    "project": "github.com/my-org/my-project",
+    "version": "branch-or-tag",
+    "module": "my-module",
+    "baseUrl": "https://dashboard.stryker-mutator.io/api/reports",
+    "reportType": "full"
   }
 }
 ```
@@ -110,33 +111,18 @@ Configure the test runner to report all failing tests when a mutant is killed in
 
 See the difference of bail vs no bail on StrykerJS's utils package (with `--concurrency 4`):
 
-<table>
-<tbody>
-<tr>
- <td>
- <figure>
-  <img alt="With bail" src="./images/configuration-with-bail.png" />
-  <figcaption>With bail, in 2min 33s.</figcaption>
-</figure>
- </td>
- <td>
-  <figure>
-  <img alt="Disable bail" src="./images/configuration-disable-bail.png" />
-  <figcaption>Disable bail, in 2 min 45s.</figcaption>
-</figure>
-</td>
-</tr>
-</tbody>
-</table>
+| With bail (in 2m 33s)                              | Disable bail (in 2 m 45s)                                |
+| -------------------------------------------------- | -------------------------------------------------------- |
+| ![with bail](./images/configuration-with-bail.png) | ![Disable bail](./images/configuration-disable-bail.png) |
 
 As you can see, when you disable bail, a lot more tests get the "Killing" status, meaning that they killed at least 1 mutant. This does come with a performance penalty of 12s in this example.
 
-_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature._ 
+_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature._
 
 ### `disableTypeChecks` [`false | string`]
 
 Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
-Command: *none*<br />
+Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
 Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.
@@ -163,7 +149,7 @@ Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead. 
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead.
 
 ### `ignorePatterns` [`string[]`]
 
@@ -171,7 +157,7 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,coverage`<br />
 Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
-Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format). 
+Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
 
 These patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
@@ -185,7 +171,7 @@ Default: `false`<br />
 Command line: `--inPlace`<br />
 Config file: `"inPlace": true`<br />
 
-Determines whether or not Stryker should mutate your files in place. 
+Determines whether or not Stryker should mutate your files in place.
 Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like "app-root-path" for example).
 
 When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.
@@ -200,12 +186,12 @@ Config file: `"logLevel": "info"`
 
 Set the log level that Stryker uses to write to the console. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
 
-*Note*: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.
+_Note_: Test runners are run as child processes of the Stryker Node process. All output (stdout) of the `testRunner` is logged as `trace`.
 Thus, to see logging output from the test runner set the `logLevel` to `all` or `trace`.
 
 ### `maxConcurrentTestRunners` (DEPRECATED)
 
-**DEPRECATED**. Please use [concurrency](#concurrency-number) instead. 
+**DEPRECATED**. Please use [concurrency](#concurrency-number) instead.
 
 ### `maxTestRunnerReuse` [`number`]
 
@@ -224,26 +210,27 @@ Config file: `"mutate": ["src/**/*.js", "a.js"]`
 With `mutate` you configure the subset of files to be mutated. These should be your _production code files_, and definitely not your test files.
 The default will try to guess your production code files based on sane defaults. It reads like this:
 
-* Include all js-like files inside the `src` or `lib` dir
-  * Except files inside `__tests__` directories and file names ending with `test` or `spec`.
+- Include all js-like files inside the `src` or `lib` dir
+  - Except files inside `__tests__` directories and file names ending with `test` or `spec`.
 
 It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Some examples:
-* `"src/app.js:1-11"` will mutate lines 1 through 11 inside app.js.
-* `"src/app.js:5:4-6:4"` will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
-* `"src/app.js:5-6:4"` will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
 
-*Note:* It is not possible to combine mutation range with a globbing expression in the same line.
+- `"src/app.js:1-11"` will mutate lines 1 through 11 inside app.js.
+- `"src/app.js:5:4-6:4"` will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
+- `"src/app.js:5-6:4"` will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
+
+_Note:_ It is not possible to combine mutation range with a globbing expression in the same line.
 
 ### `mutator` [`MutatorDescriptor`]
 
 Default: `{}`<br />
-Command line: *none*<br />
-Config file:  `"mutator": { "plugins": ["classProperties"], "excludedMutations": ["StringLiteral"] }`
+Command line: _none_<br />
+Config file: `"mutator": { "plugins": ["classProperties"], "excludedMutations": ["StringLiteral"] }`
 
-* `plugins`: allows you to override the default [babel plugins](https://babeljs.io/docs/en/plugins) to use for JavaScript files.
-By default, Stryker uses [a default list of babel plugins to parse your JS file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/instrumenter/src/parsers/js-parser.ts#L8-L32). It also loads any plugins or presets you might have configured yourself with `.babelrc` or `babel.config.js` files.
-In the rare situation where the plugins Stryker loads conflict with your own local plugins (for example, when using the decorators and decorators-legacy plugins together), you can override the `plugins` here to `[]`.
-* `excludedMutations`: allow you to specify a [list of mutator names](https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md#supported-mutators) to be excluded (`ignored`) from the test run. See [Disable mutants](./disable-mutants) for more options of how to disable specific mutants.
+- `plugins`: allows you to override the default [babel plugins](https://babeljs.io/docs/en/plugins) to use for JavaScript files.
+  By default, Stryker uses [a default list of babel plugins to parse your JS file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/instrumenter/src/parsers/js-parser.ts#L8-L32). It also loads any plugins or presets you might have configured yourself with `.babelrc` or `babel.config.js` files.
+  In the rare situation where the plugins Stryker loads conflict with your own local plugins (for example, when using the decorators and decorators-legacy plugins together), you can override the `plugins` here to `[]`.
+- `excludedMutations`: allow you to specify a [list of mutator names](https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md#supported-mutators) to be excluded (`ignored`) from the test run. See [Disable mutants](./disable-mutants) for more options of how to disable specific mutants.
 
 _Note: prior to Stryker version 4, the mutator also needed a `name` (or be defined as `string`). This is removed in version 4. Stryker now supports mutating of JavaScript and friend files out of the box, without the need for a mutator plugin._
 
@@ -274,16 +261,17 @@ The `html` reporter allows you to specify an output folder. This defaults to `re
 The `json` reporter allows specifying an output file name (may also contain a path). The config for your config file is: `jsonReporter: { fileName: 'mypath/reports/mutation.json' }`
 
 The `clear-text` reporter supports three additional config options:
-* `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
-* `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
-* `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
 
-The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.*](#dashboard-dashboardoptions) configuration options.
+- `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
+- `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
+- `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
+
+The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.\*](#dashboard-dashboardoptions) configuration options.
 
 ### `symlinkNodeModules` [`boolean`]
 
 Default: `true`<br />
-Command line: *none*<br />
+Command line: _none_<br />
 Config file: `"symlinkNodeModules": true`
 
 The `symlinkNodeModules` value indicates whether Stryker should create a [symbolic link](https://nodejs.org/api/fs.html#fs_fs_symlink_target_path_type_callback)
@@ -339,16 +327,16 @@ Configure arguments to be passed as exec arguments to the test runner child proc
 ### `thresholds` [`object`]
 
 Default: `{ high: 80, low: 60, break: null }`<br />
-Command line: *none*<br />
+Command line: _none_<br />
 Config file: `"thresholds": { "high": 80, "low": 60, "break": null }`
 
 Description
 Specify the thresholds for mutation score.
 
-* `mutation score >= high`: Awesome! Reporters should color this green and happy.
-* `high > mutation score >= low`: Warning! Reporters should color this orange/yellow. Watch yourself!
-* `mutation score < low`: Danger! Reporters should color this in red. You're in danger!
-* `mutation score < break`: Error! Stryker will exit with exit code 1, indicating a build failure. No consequence for reporters, though.
+- `mutation score >= high`: Awesome! Reporters should color this green and happy.
+- `high > mutation score >= low`: Warning! Reporters should color this orange/yellow. Watch yourself!
+- `mutation score < low`: Danger! Reporters should color this in red. You're in danger!
+- `mutation score < break`: Error! Stryker will exit with exit code 1, indicating a build failure. No consequence for reporters, though.
 
 It is not allowed to only supply one value of the values (it's all or nothing). However, `high` and `low` values can be the same, making sure colors are either red or green. Set `break` to `null` (default) to never let your build fail.
 
@@ -365,7 +353,6 @@ See [Timeout in milliseconds](#timeoutms-number).
 Default: `5000`<br />
 Command line: `--timeoutMS 5000`<br />
 Config file: `"timeoutMS": 5000`
-
 
 When Stryker is mutating code, it cannot determine indefinitely whether a code mutation results in an infinite loop (see [Halting problem](https://en.wikipedia.org/wiki/Halting_problem)).
 In order to battle infinite loops, a test run gets killed after a certain period of time. This period is configurable with two settings: `timeoutMS` and `timeoutFactor`.
