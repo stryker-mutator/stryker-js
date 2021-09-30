@@ -59,8 +59,8 @@ function isMemberOrCallExpression(path: NodePath) {
   return isCallExpression(path) || isMemberExpression(path);
 }
 
-function isMemberExpression(path: NodePath): path is NodePath<types.MemberExpression | types.OptionalMemberExpression> {
-  return path.isMemberExpression() || path.isOptionalMemberExpression();
+function isMemberExpression(path: NodePath): path is NodePath<types.MemberExpression | types.OptionalMemberExpression | types.TSNonNullExpression> {
+  return path.isMemberExpression() || path.isOptionalMemberExpression() || path.isTSNonNullExpression();
 }
 
 function isCallExpression(path: NodePath): path is NodePath<types.CallExpression | types.OptionalCallExpression> {
