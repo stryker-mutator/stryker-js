@@ -7,7 +7,7 @@ import { switchCaseMutantPlacer as sut } from '../../../src/mutant-placers/switc
 import { createMutant } from '../../helpers/factories';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 
-describe(sut.name, () => {
+describe('switchCaseMutantPlacer', () => {
   it('should have the correct name', () => {
     expect(sut.name).eq('switchCaseMutantPlacer');
   });

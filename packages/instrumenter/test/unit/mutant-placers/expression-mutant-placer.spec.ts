@@ -8,7 +8,7 @@ import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
 import { Mutant } from '../../../src/mutant';
 import { createMutant } from '../../helpers/factories';
 
-describe(expressionMutantPlacer.name, () => {
+describe('expressionMutantPlacer', () => {
   it('should have the correct name', () => {
     expect(expressionMutantPlacer.name).eq('expressionMutantPlacer');
   });
