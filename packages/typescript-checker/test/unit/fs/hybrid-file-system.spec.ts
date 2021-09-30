@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { HybridFileSystem } from '../../../src/fs';
 
@@ -106,8 +106,14 @@ describe('fs', () => {
         expect(helper.readFileStub).calledWith('test/foo/a.js');
       });
 
-      it("should throw if file doesn't exist", () => {
-        expect(() => sut.watchFile('not-exists.js', sinon.stub())).throws('Cannot find file not-exists.js for watching');
+      it("should not throw if file isn't loaded", () => {
+        // Should ignore the file watch
+        const watchCallback = sinon.stub();
+        sut.watchFile('node_modules/chai/package.json', watchCallback);
+
+        // If it was successfully ignored, than `mutate` should throw
+        expect(() => sut.mutate(factory.mutant({ fileName: 'node_modules/chai/package.json' }))).throws();
+        expect(watchCallback).not.called;
       });
 
       it('should log that the file is watched', () => {

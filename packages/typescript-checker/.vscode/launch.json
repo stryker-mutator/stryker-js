@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit / Integration tests",
+      "name": "💙 Unit / Integration tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
