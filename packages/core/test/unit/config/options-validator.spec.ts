@@ -35,6 +35,7 @@ describe(OptionsValidator.name, () => {
         cleanTempDir: true,
         inPlace: false,
         ignorePatterns: [],
+        checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,
           logTests: true,
