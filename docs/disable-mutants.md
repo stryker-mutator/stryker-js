@@ -3,7 +3,7 @@ title: Disable mutants
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/disable-mutants.md
 ---
 
-During mutation testing, you might run into [equivalent mutants](../../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
+During mutation testing, you might run into [equivalent mutants](../mutation-testing-elements/equivalent-mutants.md) or simply mutants that you are not interested in.
 
 ## An example
 
@@ -178,4 +178,3 @@ The syntax looks like this:
 ```
 
 The comment always starts with `// Stryker`, followed by either `disable` or `restore`. Next, you can specify whether or not this comment targets the `next-line`, or all lines from this point on (by not specifying `next-line`). As for the mutator list, this is either a comma separated list of mutators, or `all` to signal this comment targets all mutators. Last is an optional custom reason text, which follows the `:` colon.
-
