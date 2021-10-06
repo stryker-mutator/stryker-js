@@ -60,7 +60,7 @@ export class JasmineTestRunner implements TestRunner {
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
     const runResult = await this.run(options.testFilter, undefined, options.disableBail);
-    return toMutantRunResult(runResult, true);
+    return toMutantRunResult(runResult);
   }
 
   public async dispose(): Promise<void> {

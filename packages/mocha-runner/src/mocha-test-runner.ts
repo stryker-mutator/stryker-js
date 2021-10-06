@@ -90,7 +90,7 @@ export class MochaTestRunner implements TestRunner {
       };
     }
     const dryRunResult = await this.run(intercept, disableBail);
-    return toMutantRunResult(dryRunResult, true);
+    return toMutantRunResult(dryRunResult);
   }
 
   public async run(intercept: (mocha: Mocha) => void, disableBail: boolean): Promise<DryRunResult> {

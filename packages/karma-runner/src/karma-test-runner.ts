@@ -59,7 +59,7 @@ export class KarmaTestRunner implements TestRunner {
     TestHooksMiddleware.instance.configureMutantRun(options);
     StrykerReporter.instance.configureHitLimit(options.hitLimit);
     const dryRunResult = await this.run();
-    return toMutantRunResult(dryRunResult, true);
+    return toMutantRunResult(dryRunResult);
   }
 
   private run(): Promise<DryRunResult> {

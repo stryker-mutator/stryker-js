@@ -80,8 +80,7 @@ export class CucumberTestRunner implements TestRunner {
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
     return toMutantRunResult(
-      await this.run(options.disableBail, options.testFilter),
-      true
+      await this.run(options.disableBail, options.testFilter)
     );
   }
 
