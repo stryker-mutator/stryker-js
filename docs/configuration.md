@@ -117,7 +117,7 @@ See the difference of bail vs no bail on StrykerJS's utils package (with `--conc
 
 As you can see, when you disable bail, a lot more tests get the "Killing" status, meaning that they killed at least 1 mutant. This does come with a performance penalty of 12s in this example.
 
-_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature._
+_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature except for Jest. Jest always runs without --bail (see [#11766](https://github.com/facebook/jest/issues/11766)) inside Stryker, however it will report only the first failing test when disableBail=false and all failing tests when disableBail=true_
 
 ### `disableTypeChecks` [`false | string`]
 
