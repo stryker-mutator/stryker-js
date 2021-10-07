@@ -12,6 +12,7 @@ import {
   DryRunStatus,
   toMutantRunResult,
   CompleteDryRunResult,
+  determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
@@ -78,8 +79,9 @@ export class MochaTestRunner implements TestRunner {
     return runResult;
   }
 
-  public async mutantRun({ activeMutant, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = activeMutant.id;
+    this.instrumenterContext.hitLimit = hitLimit;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     let intercept: (mocha: Mocha) => void = () => {};
     if (testFilter) {
@@ -115,6 +117,10 @@ export class MochaTestRunner implements TestRunner {
       }
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
+        const timeoutResult = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit);
+        if (timeoutResult) {
+          return timeoutResult;
+        }
         const result: CompleteDryRunResult = {
           status: DryRunStatus.Complete,
           tests: reporter.tests,
