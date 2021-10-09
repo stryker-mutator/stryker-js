@@ -346,7 +346,7 @@ describe(KarmaTestRunner.name, () => {
       await onGoingRun;
     });
 
-    it.only('should report a timeout when the hitLimit was reached', async () => {
+    it('should report a timeout when the hitLimit was reached', async () => {
       const result = await actMutantRun({
         options: factory.mutantRunOptions({ hitLimit: 9 }),
         specResults: [createKarmaSpec({ success: false })],
