@@ -82,6 +82,7 @@ export class MochaTestRunner implements TestRunner {
   public async mutantRun({ activeMutant, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = activeMutant.id;
     this.instrumenterContext.hitLimit = hitLimit;
+    this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     let intercept: (mocha: Mocha) => void = () => {};
     if (testFilter) {
