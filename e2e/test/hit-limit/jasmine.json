@@ -1,0 +1,4 @@
+{
+  "spec_dir": "test",
+  "spec_files": ["**/*.jasmine.spec.js"]
+}
