@@ -9,6 +9,5 @@
     "configFile": "karma.conf.js",
     "config": {}
   },
-  "jasmineConfigFile": "jasmine.json",
   "concurrency": 1
 }
