@@ -24,8 +24,8 @@ export const assignmentOperatorMutator: NodeMutator = {
   name: 'AssignmentOperator',
 
   *mutate(path) {
-    if (path.isAssignmentExpression() && isSupported(path.node)) {
-      const mutatedOperator = AssignmentOperators[path.node.operator];
+    if (path.isAssignmentExpression() && isSupportedAssignmentOperator(path.node.operator) && isSupported(path.node)) {
+      const mutatedOperator = AssignmentOperators[path.node.operator];   // AssignmentOperators[path.node.operator];
       const replacement = types.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
       yield replacement;
@@ -33,16 +33,14 @@ export const assignmentOperatorMutator: NodeMutator = {
   },
 };
 
-function isSupportedAssignmentOperator(operator: string): boolean {
+function isSupportedAssignmentOperator(operator: string): operator is keyof typeof AssignmentOperators {
   return Object.keys(AssignmentOperators).includes(operator);
 }
 
 function isSupported(node: types.AssignmentExpression): boolean {
-  if (isSupportedAssignmentOperator(node.operator)) {
-    return false;
-  }
-
-  if (stringTypes.includes(node.right.type) && !stringAssignmentTypes.includes(node.operator)) {
+  // Excludes assignment operators that apply to strings.
+  if (stringTypes.includes(node.right.type) && !stringAssignmentTypes.includes(node.operator))
+  {
     return false;
   }
 
