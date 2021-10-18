@@ -12,6 +12,7 @@ import {
   toMutantRunResult,
   ErrorDryRunResult,
   DryRunOptions,
+  determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
@@ -59,6 +60,8 @@ export class JasmineTestRunner implements TestRunner {
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
+    this.instrumenterContext.hitLimit = options.hitLimit;
+    this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     const runResult = await this.run(options.testFilter, undefined, options.disableBail);
     return toMutantRunResult(runResult, true);
   }
@@ -90,6 +93,11 @@ export class JasmineTestRunner implements TestRunner {
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
             mutantCoverage = self.instrumenterContext.mutantCoverage;
+          }
+          const timeoutResult = determineHitLimitReached(self.instrumenterContext.hitCount, self.instrumenterContext.hitLimit);
+          if (timeoutResult) {
+            runTask.resolve(timeoutResult);
+            return;
           }
           runTask.resolve({
             status: DryRunStatus.Complete,

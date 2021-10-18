@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test:mocha": "mocha",
+    "test:jasmine": "jasmine",
     "test:karma": "karma start",
     "test": "mocha --no-package --timeout 60000 --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
   },
