@@ -17,11 +17,14 @@ enum AssignmentOperators {
   '??=' = '&&=',
 }
 
+const stringTypes = Object.freeze(['StringLiteral', 'TemplateLiteral']);
+const stringAssignmentTypes = Object.freeze(['&&=', '||=', '??=']);
+
 export const assignmentOperatorMutator: NodeMutator = {
   name: 'AssignmentOperator',
 
   *mutate(path) {
-    if (path.isAssignmentExpression() && isSupported(path.node.operator, path.node)) {
+    if (path.isAssignmentExpression() && isSupported(path.node)) {
       const mutatedOperator = AssignmentOperators[path.node.operator];
       const replacement = types.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
@@ -30,16 +33,16 @@ export const assignmentOperatorMutator: NodeMutator = {
   },
 };
 
-function isSupported(operator: string, node: types.AssignmentExpression): operator is keyof typeof AssignmentOperators {
-  if (!Object.keys(AssignmentOperators).includes(operator)) {
+function isSupportedAssignmentOperator(operator: string): boolean {
+  return Object.keys(AssignmentOperators).includes(operator);
+}
+
+function isSupported(node: types.AssignmentExpression): boolean {
+  if (isSupportedAssignmentOperator(node.operator)) {
     return false;
   }
 
-  const stringTypes = ['StringLiteral', 'TemplateLiteral'];
-
-  const stringAssignmentTypes = ['&&=', '||=', '??=']
-
-  if (stringTypes.includes(node.right.type) && !stringAssignmentTypes.includes(operator)) {
+  if (stringTypes.includes(node.right.type) && !stringAssignmentTypes.includes(node.operator)) {
     return false;
   }
 
