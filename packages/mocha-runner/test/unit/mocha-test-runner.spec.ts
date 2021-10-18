@@ -295,9 +295,27 @@ describe(MochaTestRunner.name, () => {
       assertions.expectSurvived(result);
     });
 
-    async function actMutantRun(options = factory.mutantRunOptions()) {
+    it('should report a timeout when the hitLimit was reached', async () => {
+      reporterMock.tests = [factory.failedTestResult()];
+      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      assertions.expectTimeout(result);
+      expect(result.reason).contains('Hit limit reached (10/9)');
+    });
+
+    it('should reset the hitLimit between runs', async () => {
+      reporterMock.tests = [factory.failedTestResult()];
+      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      reporterMock.tests = [factory.failedTestResult()];
+      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      assertions.expectTimeout(firstResult);
+      assertions.expectKilled(secondResult);
+    });
+
+    async function actMutantRun(options = factory.mutantRunOptions(), hitCount?: number) {
       mocha.run.callsArg(0);
-      return sut.mutantRun(options);
+      const result = sut.mutantRun(options);
+      global.__stryker2__!.hitCount = hitCount;
+      return result;
     }
   });
 });
