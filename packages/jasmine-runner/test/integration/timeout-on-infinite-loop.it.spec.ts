@@ -42,7 +42,7 @@ describe('Infinite loop', () => {
     );
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
-        // 27 is a 'normal' mutant that should be killed
+        // 22 is a 'normal' mutant that should be killed
         activeMutant: factory.mutant({ id: '22' }),
         testFilter: ['spec2'],
         hitLimit: 10,
