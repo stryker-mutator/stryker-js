@@ -62,7 +62,7 @@ describe(StrykerInitializer.name, () => {
 
   describe('initialize()', () => {
     beforeEach(() => {
-      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
+      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner', '@stryker-mutator/jest-runner');
       stubMutators('@stryker-mutator/typescript', '@stryker-mutator/javascript-mutator');
       stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
       stubPackageClient({
@@ -77,6 +77,7 @@ describe(StrykerInitializer.name, () => {
           files: [],
           someOtherSetting: 'enabled',
         },
+        '@stryker-mutator/jest-runner': null,
       });
       fsWriteFile.resolves();
       presets.push(presetMock);
@@ -91,20 +92,24 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(5);
-      const [promptPreset, promptTestRunner, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] = [
-        inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0],
-        inquirerPrompt.getCall(3).args[0],
-        inquirerPrompt.getCall(4).args[0],
-      ];
+      expect(inquirerPrompt).callCount(6);
+      const [promptPreset, promptTestRunner, promptBuildCommand, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] =
+        [
+          inquirerPrompt.getCall(0).args[0],
+          inquirerPrompt.getCall(1).args[0],
+          inquirerPrompt.getCall(2).args[0],
+          inquirerPrompt.getCall(3).args[0],
+          inquirerPrompt.getCall(4).args[0],
+          inquirerPrompt.getCall(5).args[0],
+        ];
+
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
       expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
-      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
+      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', 'jest', new inquirer.Separator(), 'command']);
+      expect(promptBuildCommand.name).to.eq('buildCommand');
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
@@ -247,6 +252,47 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"someOtherSetting": "enabled"'));
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
+    });
+
+    it('should not prompt for buildCommand if test runner is jest', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars', 'progress'],
+        testRunner: 'jest',
+        configType: 'JSON',
+        buildCommand: 'none',
+      });
+
+      await sut.initialize();
+
+      const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => call.args[0].name === 'buildCommand');
+      expect(promptBuildCommand.length === 1);
+      expect(promptBuildCommand[0].args[0].when).to.be.false;
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": ""'));
+    });
+
+    it('should save empty build command if none entered', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+        buildCommand: 'none',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": ""'));
+    });
+
+    it('should save entered build command', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+        buildCommand: 'npm run build',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": "npm run build"'));
     });
 
     it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
