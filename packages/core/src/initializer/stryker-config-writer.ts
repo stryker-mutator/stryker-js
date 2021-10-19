@@ -38,12 +38,14 @@ export class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: PromptOption,
+    buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
+      buildCommand: buildCommand.name,
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
