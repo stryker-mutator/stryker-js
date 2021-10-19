@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
+
+
+### Bug Fixes
+
+* **instrumenter:** don't break optional chains([#3156](https://github.com/stryker-mutator/stryker-js/issues/3156)) ([95e6b69](https://github.com/stryker-mutator/stryker-js/commit/95e6b69d3267bbda9fdd1ef60350993e05a7dbe7))
+
+
+
+
+
 # [5.4.0](https://github.com/stryker-mutator/stryker-js/compare/v5.3.0...v5.4.0) (2021-09-01)
 
 

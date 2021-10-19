@@ -3,7 +3,7 @@ title: Disable mutants
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/disable-mutants.md
 ---
 
-During mutation testing, you might run into [equivalent mutants](../mutation-testing-elements/equivalent-mutants) or simply mutants that you are not interested in.
+During mutation testing, you might run into [equivalent mutants](../mutation-testing-elements/equivalent-mutants.md) or simply mutants that you are not interested in.
 
 ## An example
 
@@ -166,7 +166,7 @@ Disable all mutators for an entire file, but restore the EqualityOperator for 1 
 ```js
 // Stryker disable all
 function max(a, b) {
-  // Stryker restore EqualityOperator
+  // Stryker restore next-line EqualityOperator
   return a < b ? b : a;
 }
 ```
@@ -177,5 +177,4 @@ The syntax looks like this:
 // Stryker [disable|restore] [next-line] *mutatorList*[: custom reason]
 ```
 
-The comment always starts with `// Stryker`, followed by either `disable` or `restore`. Next, you can specify whether or not this comment targets the `next-line`, or all lines from this point on. The next part is the mutator list. This is either a comma separated list of mutators, or the "all" text signaling this comment targets all mutators. Last is an optional custom reason text, which follows the colon.
-
+The comment always starts with `// Stryker`, followed by either `disable` or `restore`. Next, you can specify whether or not this comment targets the `next-line`, or all lines from this point on (by not specifying `next-line`). As for the mutator list, this is either a comma separated list of mutators, or `all` to signal this comment targets all mutators. Last is an optional custom reason text, which follows the `:` colon.

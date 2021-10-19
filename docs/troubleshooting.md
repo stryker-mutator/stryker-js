@@ -42,7 +42,7 @@ The initial test run might fail when you're using ts-jest or ts-node. The reason
 }
 ```
 
-Another cause might be that you're using TypeScript v3.7 or lower. In that case, you should update TypeScript to at least v3.7 or higher. Alternatively you can try to switch to another transpiler, like [babel](https://babeljs.io/docs/en/babel-preset-typescript), but, honestly, updating TypeScript should be the first solution.
+Another cause might be that you're using TypeScript lower then v3.7. In that case, you should update TypeScript to at least v3.7 or higher. Alternatively you can try to switch to another transpiler, like [babel](https://babeljs.io/docs/en/babel-preset-typescript), but honestly, updating TypeScript should be your first choice.
 
 ### No tests executed - Jest runner
 
@@ -192,7 +192,7 @@ Example:
 
 **Solution**:
 
-Stryker JS uses [babel](https://babeljs.io/docs/en/) to parse and mutate your files. When parsing your your `.js` files, it reads in the `.babelrc` and `babel.config.js` files you have, but applies its own default plugins first. In rare circumstances, those default plugins are incompatible with your babel configuration.
+Stryker JS uses [babel](https://babeljs.io/docs/en/) to parse and mutate your files. It does so by readingthe `.babelrc` and `babel.config.js` files you have, but applies its own default plugins first. In rare circumstances, those default plugins are incompatible with your babel configuration.
   
 Override the default babel plugins to solve this issue. For example, leaving it empty allows your own babel plugins to be used, without defaults from StrykerJS conflicting with it:
   

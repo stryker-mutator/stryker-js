@@ -47,11 +47,10 @@ export class HybridFileSystem {
 
   public watchFile(fileName: string, watcher: ts.FileWatcherCallback): void {
     const file = this.getFile(fileName);
-    if (!file) {
-      throw new Error(`Cannot find file ${fileName} for watching`);
+    if (file) {
+      this.log.trace('Registering watcher for file "%s"', fileName);
+      file.watcher = watcher;
     }
-    this.log.trace('Registering watcher for file "%s"', fileName);
-    file.watcher = watcher;
   }
 
   public getFile(fileName: string): ScriptFile | undefined {

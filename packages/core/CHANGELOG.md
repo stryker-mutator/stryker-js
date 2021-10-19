@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
+
+
+### Bug Fixes
+
+* **ProgressReporter:** don't render when there are no valid mutants to render ([#3155](https://github.com/stryker-mutator/stryker-js/issues/3155)) ([41c4177](https://github.com/stryker-mutator/stryker-js/commit/41c4177cdec23a8d054e9b287618889eed3db15e))
+
+
+
+
+
 # [5.4.0](https://github.com/stryker-mutator/stryker-js/compare/v5.3.0...v5.4.0) (2021-09-01)
 
 

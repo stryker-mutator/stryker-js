@@ -13,8 +13,8 @@
   ],
   "coverageAnalysis": "off",
   "reporters": [
-    "event-recorder",
     "progress",
-    "html"
+    "html",
+    "json"
   ]
 }

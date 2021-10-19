@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/instrumenter",
-  "version": "5.4.0",
+  "version": "5.4.1",
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
@@ -30,21 +30,21 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.14.0",
+    "@babel/core": "~7.15.5",
     "@babel/generator": "~7.15.0",
     "@babel/parser": "~7.15.0",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "~7.14.5 ",
+    "@babel/plugin-proposal-decorators": "~7.15.4 ",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
     "@babel/preset-typescript": "~7.15.0 ",
-    "@stryker-mutator/api": "5.4.0",
-    "@stryker-mutator/util": "5.4.0",
+    "@stryker-mutator/api": "5.4.1",
+    "@stryker-mutator/util": "5.4.1",
     "angular-html-parser": "~1.8.0",
     "weapon-regex": "~0.6.0"
   },
   "devDependencies": {
     "@babel/preset-react": "~7.14.5",
-    "@stryker-mutator/test-helpers": "5.4.0",
+    "@stryker-mutator/test-helpers": "5.4.1",
     "@types/babel__core": "~7.1.10",
     "@types/babel__generator": "~7.6.2",
     "@types/babel__parser": "~7.1.1",

@@ -1,16 +1,15 @@
-import { expectMetrics } from '../../../helpers';
+import { expectMetricsJson } from '../../../helpers';
 
 describe('Verify stryker has ran correctly', () => {
-
   it('should report correct score', async () => {
-    await expectMetrics({
+    await expectMetricsJson({
       ignored: 0,
       killed: 17,
-      mutationScore: 56.67,
+      mutationScore: 62.96,
       noCoverage: 0,
-      survived: 13,
+      survived: 10,
       timeout: 0,
-      compileErrors: 32
+      compileErrors: 35,
     });
   });
 });

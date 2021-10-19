@@ -1,9 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`instrumenter integration should be able to instrument optional chains 1`] = `
-"function stryNS_9fa48() {
-  var g = new Function(\\"return this\\")();
-  var ns = g.__stryker__ || (g.__stryker__ = {});
+// This file is generated with tasks/instrument-test-resources.js
+ function stryNS_9fa48() {
+  var g = new Function("return this")();
+  var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
@@ -63,8 +61,24 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const baz = stryMutAct_9fa48(\\"0\\") ? foo?.bar?.()?.[1] && 'qux' : (stryCov_9fa48(\\"0\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar?.()?.[1] : stryMutAct_9fa48(\\"2\\") ? foo?.bar()?.[1] : stryMutAct_9fa48(\\"1\\") ? foo?.bar?.()[1] : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), foo?.bar?.()?.[1])) ?? (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'qux')));
-stryMutAct_9fa48(\\"5\\") ? qux().map() : (stryCov_9fa48(\\"5\\"), qux()?.map());
-const directiveRanges = stryMutAct_9fa48(\\"6\\") ? comments.map(tryParseTSDirective) : (stryCov_9fa48(\\"6\\"), comments?.map(tryParseTSDirective));
-const qux = quux(stryMutAct_9fa48(\\"7\\") ? corge.cov() : (stryCov_9fa48(\\"7\\"), corge?.cov()));"
-`;
+function loop(n, action) {
+  if (stryMutAct_9fa48("15")) {
+    {}
+  } else {
+    stryCov_9fa48("15");
+    let goOn = stryMutAct_9fa48("16") ? false : (stryCov_9fa48("16"), true);
+
+    while (stryMutAct_9fa48("17") ? false : (stryCov_9fa48("17"), goOn)) {
+      if (stryMutAct_9fa48("18")) {
+        {}
+      } else {
+        stryCov_9fa48("18");
+        action(n);
+        stryMutAct_9fa48("19") ? n++ : (stryCov_9fa48("19"), n--);
+        goOn = stryMutAct_9fa48("23") ? n <= 0 : stryMutAct_9fa48("22") ? n >= 0 : stryMutAct_9fa48("21") ? false : stryMutAct_9fa48("20") ? true : (stryCov_9fa48("20", "21", "22", "23"), n > 0);
+      }
+    }
+  }
+}
+
+module.exports = loop;
