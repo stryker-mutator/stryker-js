@@ -11,7 +11,7 @@
     "@types/minimatch": "~3.0.3",
     "@types/mkdirp": "~1.0.1",
     "@types/mocha": "~9.0.0",
-    "@types/node": "^15.0.0",
+    "@types/node": "^16.11.1",
     "@types/rimraf": "~3.0.0",
     "@types/sinon": "^10.0.0",
     "@types/sinon-chai": "~3.2.4",

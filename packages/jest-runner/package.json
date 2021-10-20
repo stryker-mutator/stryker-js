@@ -45,7 +45,7 @@
     "@stryker-mutator/test-helpers": "5.4.1",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^12.0.0",
-    "@types/node": "^15.6.1",
+    "@types/node": "^16.11.1",
     "@types/semver": "~7.3.6",
     "jest": "~27.3.0",
     "jest-circus": "~27.3.0",
