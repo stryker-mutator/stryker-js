@@ -61,7 +61,7 @@
     "@stryker-mutator/util": "5.4.1",
     "ajv": "~8.6.0",
     "chalk": "~4.1.0",
-    "commander": "~8.1.0",
+    "commander": "~8.2.0",
     "execa": "~5.1.1",
     "file-url": "~3.0.0",
     "get-port": "~5.1.1",
