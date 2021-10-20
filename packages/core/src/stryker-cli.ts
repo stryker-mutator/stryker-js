@@ -163,6 +163,7 @@ export class StrykerCli {
         `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
+      .showSuggestionAfterError()
       .parse(this.argv);
 
     // Earliest opportunity to configure the log level based on the logLevel argument
