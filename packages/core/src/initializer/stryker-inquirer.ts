@@ -45,7 +45,8 @@ export class StrykerInquirer {
 
   public async promptBuildCommand(skip: boolean): Promise<PromptOption> {
     const { buildCommand } = await inquirer.prompt<{ buildCommand: string }>({
-      message: 'What build command should be executed just before running your tests? For example: "npm run build" or "tsc -b". (leave when this is not needed)',
+      message:
+        'What build command should be executed just before running your tests? For example: "npm run build" or "tsc -b". (leave when this is not needed)',
       name: 'buildCommand',
       default: 'none',
       when: !skip,

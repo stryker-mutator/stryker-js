@@ -268,10 +268,13 @@ describe(StrykerInitializer.name, () => {
       const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => call.args[0].name === 'buildCommand');
       expect(promptBuildCommand.length === 1);
       expect(promptBuildCommand[0].args[0].when).to.be.false;
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": ""'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match((val) => !val.includes('"buildCommand": '))
+      );
     });
 
-    it('should save empty build command if none entered', async () => {
+    it('should not write "buildCommand" config option if empty buildCommand entered', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: [],
@@ -280,7 +283,10 @@ describe(StrykerInitializer.name, () => {
         buildCommand: 'none',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": ""'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match((val) => !val.includes('"buildCommand": '))
+      );
     });
 
     it('should save entered build command', async () => {

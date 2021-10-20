@@ -45,12 +45,14 @@ export class StrykerConfigWriter {
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> = {
-      buildCommand: buildCommand.name,
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
+
+    // Only write buildCommand to config file if non-empty
+    if (buildCommand.name) configObject.buildCommand = buildCommand.name;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
