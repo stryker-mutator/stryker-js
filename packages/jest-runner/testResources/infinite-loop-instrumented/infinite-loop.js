@@ -61,15 +61,24 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-function incrementBy(calc, n) {
-  if (stryMutAct_9fa48("6")) {
+function loop(n, action) {
+  if (stryMutAct_9fa48("20")) {
     {}
   } else {
-    stryCov_9fa48("6");
-    calc.incrementBy(n);
+    stryCov_9fa48("20");
+    let goOn = stryMutAct_9fa48("21") ? false : (stryCov_9fa48("21"), true);
+
+    while (stryMutAct_9fa48("22") ? false : (stryCov_9fa48("22"), goOn)) {
+      if (stryMutAct_9fa48("23")) {
+        {}
+      } else {
+        stryCov_9fa48("23");
+        action(n);
+        stryMutAct_9fa48("24") ? n++ : (stryCov_9fa48("24"), n--);
+        goOn = stryMutAct_9fa48("28") ? n <= 0 : stryMutAct_9fa48("27") ? n >= 0 : stryMutAct_9fa48("26") ? false : stryMutAct_9fa48("25") ? true : (stryCov_9fa48("25", "26", "27", "28"), n > 0);
+      }
+    }
   }
 }
 
-module.exports = stryMutAct_9fa48("7") ? {} : (stryCov_9fa48("7"), {
-  incrementBy
-});
+module.exports = loop;

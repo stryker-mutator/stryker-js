@@ -1,4 +1,4 @@
-// This file is generated with tasks/instrument-test-resources.js
+// This file is generated with tasks\instrument-test-resources.js
  'use strict';
 
 function stryNS_9fa48() {

@@ -1,8 +1,8 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
+import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
+import { expect } from 'chai';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('Infinite loop', () => {
@@ -21,7 +21,7 @@ describe('Infinite loop', () => {
   it('should be able to recover using a hit counter', async () => {
     // Arrange
     const options = factory.mutantRunOptions({
-      activeMutant: factory.mutant({ id: '20' }),
+      activeMutant: factory.mutant({ id: '24' }),
       testFilter: ['should be able to break out of an infinite loop with a hit counter'],
       hitLimit: 10,
     });

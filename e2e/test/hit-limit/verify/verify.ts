@@ -1,6 +1,6 @@
-import { expect } from 'chai';
-import { Stryker } from '@stryker-mutator/core';
 import { MutantStatus } from 'mutation-testing-report-schema/api';
+import { Stryker } from '@stryker-mutator/core';
+import { expect } from 'chai';
 
 describe('Limit counter', () => {
   it('should limit infinite loops in the karma-runner', async () => {
@@ -27,8 +27,8 @@ describe('Limit counter', () => {
     timeoutResults.forEach((result) => expect(result.statusReason).eq('Hit limit reached (501/500)'));
   });
 
-  it('should be supported in the cucumber runner', async () => {
-    const stryker = new Stryker({ testRunner: 'cucumber' });
+  it('should limit infinite loops in the jest-runner', async () => {
+    const stryker = new Stryker({ testRunner: 'jest' });
     const results = await stryker.runMutationTest();
     const timeoutResults = results.filter((res) => res.status === MutantStatus.Timeout);
     expect(timeoutResults).lengthOf(3);

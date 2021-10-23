@@ -1,22 +1,22 @@
-import path from 'path';
-
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
-import sinon from 'sinon';
-import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test-runner';
-import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
-import { Config } from '@jest/types';
+import * as pluginTokens from '../../src/plugin-tokens';
+import * as producers from '../helpers/producers';
 import * as util from '@stryker-mutator/util';
 
+import { CompleteDryRunResult, DryRunStatus, ErrorDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+
+import { Config } from '@jest/types';
+import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader';
+import { JestRunResult } from '../../src/jest-run-result';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
 import { JestTestAdapter } from '../../src/jest-test-adapters';
 import { JestTestRunner } from '../../src/jest-test-runner';
-import * as producers from '../helpers/producers';
-import * as pluginTokens from '../../src/plugin-tokens';
-import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import { JestRunResult } from '../../src/jest-run-result';
-import { state } from '../../src/messaging';
+import { expect } from 'chai';
 import { jestWrapper } from '../../src/utils';
+import path from 'path';
+import sinon from 'sinon';
+import { state } from '../../src/messaging';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
@@ -568,6 +568,19 @@ describe(JestTestRunner.name, () => {
         })
       );
     });
+
+    it('should report a timeout when the hitLimit was reached', async () => {
+      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      assertions.expectTimeout(result);
+      expect(result.reason).contains('Hit limit reached (10/9)');
+    });
+
+    it('should reset the hitLimit between runs', async () => {
+      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      assertions.expectTimeout(firstResult);
+      assertions.expectSurvived(secondResult);
+    });
   });
 
   function createSut() {
@@ -577,5 +590,12 @@ describe(JestTestRunner.name, () => {
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JestTestRunner);
+  }
+
+  function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
+    const sut = createSut();
+    const result = sut.mutantRun(option);
+    global.__stryker2__!.hitCount = hitCount;
+    return result;
   }
 });

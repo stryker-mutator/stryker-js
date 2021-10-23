@@ -1,44 +1,44 @@
-import path from 'path';
-
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
-import {
-  TestRunner,
-  MutantRunOptions,
-  DryRunResult,
-  MutantRunResult,
-  toMutantRunResult,
-  DryRunStatus,
-  TestResult,
-  TestStatus,
-  DryRunOptions,
-  BaseTestResult,
-} from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
-import { SerializableError } from '@jest/types/build/TestResult';
-
-import { JestOptions } from '../src-generated/jest-runner-options';
-
-import { jestTestAdapterFactory } from './jest-test-adapters';
-import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
-import { JestConfigLoader } from './config-loaders/jest-config-loader';
-import { withCoverageAnalysis } from './jest-plugins';
 import * as pluginTokens from './plugin-tokens';
-import { configLoaderFactory } from './config-loaders';
-import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
-import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
+
+import {
+  BaseTestResult,
+  DryRunOptions,
+  DryRunResult,
+  DryRunStatus,
+  MutantRunOptions,
+  MutantRunResult,
+  TestResult,
+  TestRunner,
+  TestStatus,
+  determineHitLimitReached,
+  toMutantRunResult,
+} from '@stryker-mutator/api/test-runner';
+import { INSTRUMENTER_CONSTANTS, InstrumenterContext, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import { Injector, PluginContext, commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
+import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import { jestWrapper, mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
+
+import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
+import { JestConfigLoader } from './config-loaders/jest-config-loader';
+import { JestOptions } from '../src-generated/jest-runner-options';
+import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
+import { Logger } from '@stryker-mutator/api/logging';
+import { SerializableError } from '@jest/types/build/TestResult';
+import { configLoaderFactory } from './config-loaders';
+import { jestTestAdapterFactory } from './jest-test-adapters';
+import path from 'path';
 import { state } from './messaging';
+import { withCoverageAnalysis } from './jest-plugins';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;
   inject: ['$injector'];
 } {
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
-  function jestTestRunnerFactory(injector: Injector<PluginContext>) {
+  function jestTestRunnerFactory(injector: Injector<PluginContext>): JestTestRunner {
     return injector
       .provideValue(pluginTokens.processEnv, process.env)
       .provideValue(pluginTokens.jestVersion, jestWrapper.getVersion())
@@ -56,6 +56,7 @@ export class JestTestRunner implements TestRunner {
   private readonly jestConfig: jest.Config.InitialOptions;
   private readonly jestOptions: JestOptions;
   private readonly enableFindRelatedTests: boolean;
+  private readonly instrumenterContext: InstrumenterContext;
 
   public static inject = tokens(
     commonTokens.logger,
@@ -89,6 +90,7 @@ export class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
+    this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
   public async dryRun({ coverageAnalysis, disableBail }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail'>): Promise<DryRunResult> {
@@ -123,13 +125,18 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
     const fileNameUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
     if (testFilter) {
       testNamePattern = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
     }
+
+    this.instrumenterContext.activeMutant = activeMutant.id;
+    this.instrumenterContext.hitLimit = hitLimit;
+    this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
+
     process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
 
     try {
@@ -169,6 +176,11 @@ export class JestTestRunner implements TestRunner {
   }
 
   private collectRunResult(results: jestTestResult.AggregatedResult): DryRunResult {
+    const timeoutResult = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit);
+    if (timeoutResult) {
+      return timeoutResult;
+    }
+
     if (results.numRuntimeErrorTestSuites) {
       const errorMessage = results.testResults
         .map((testSuite) => this.collectSerializableErrorText(testSuite.testExecError))
