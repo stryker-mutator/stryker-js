@@ -98,12 +98,14 @@ export class StrykerInitializer {
 
   private async initiateCustom(configWriter: StrykerConfigWriter) {
     const selectedTestRunner = await this.selectTestRunner();
+    const buildCommand = await this.getBuildCommand(selectedTestRunner);
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
     const isJsonSelected = await this.selectJsonConfigType();
     const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner].concat(selectedReporters));
     const configFileName = await configWriter.write(
       selectedTestRunner,
+      buildCommand,
       selectedReporters,
       selectedPackageManager,
       await this.fetchAdditionalConfig(npmDependencies),
@@ -120,6 +122,11 @@ export class StrykerInitializer {
     const testRunnerOptions = await this.client.getTestRunnerOptions();
     this.log.debug(`Found test runners: ${JSON.stringify(testRunnerOptions)}`);
     return this.inquirer.promptTestRunners(testRunnerOptions);
+  }
+
+  private async getBuildCommand(selectedTestRunner: PromptOption): Promise<PromptOption> {
+    const shouldSkipQuestion = selectedTestRunner.name === 'jest';
+    return this.inquirer.promptBuildCommand(shouldSkipQuestion);
   }
 
   private async selectReporters(): Promise<PromptOption[]> {

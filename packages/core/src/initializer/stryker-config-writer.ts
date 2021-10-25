@@ -38,6 +38,7 @@ export class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: PromptOption,
+    buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
@@ -49,6 +50,9 @@ export class StrykerConfigWriter {
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
+
+    // Only write buildCommand to config file if non-empty
+    if (buildCommand.name) configObject.buildCommand = buildCommand.name;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
