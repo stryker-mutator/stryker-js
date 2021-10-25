@@ -23,9 +23,9 @@ export class DirectoryRequireCache {
     if (!this.cache) {
       const cache = (this.cache = new Set());
       const cwd = process.cwd();
-      const startsWithCI = (filename: string, prefix: string) => filename.toLowerCase().startsWith(prefix.toLowerCase());
-      const startsWithCS = (filename: string, prefix: string) => filename.startsWith(prefix);
-      const startsWith = caseSensitiveFs() ? startsWithCS : startsWithCI;
+      const startsWithCaseInsensitive = (filename: string, prefix: string) => filename.toLowerCase().startsWith(prefix.toLowerCase());
+      const startsWithCaseSensitive = (filename: string, prefix: string) => filename.startsWith(prefix);
+      const startsWith = caseSensitiveFs() ? startsWithCaseSensitive : startsWithCaseInsensitive;
       Object.keys(require.cache)
         .filter((fileName) => startsWith(fileName, `${cwd}${path.sep}`) && !startsWith(fileName, path.join(cwd, 'node_modules')))
         .forEach((file) => cache.add(file));
