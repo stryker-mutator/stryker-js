@@ -63,4 +63,13 @@ describe(`${createCheckerFactory.name} integration`, () => {
     const expected: CheckResult = { status: CheckStatus.Passed };
     expect(actual).deep.eq(expected);
   });
+
+  it('should provide the nodeArgs', async () => {
+    testInjector.options.checkerNodeArgs = ['--title=shouldProvideNodeArgs'];
+    await arrangeSut('verify-title');
+    const passed = await sut.check(factory.mutant({ fileName: 'shouldProvideNodeArgs' }));
+    const failed = await sut.check(factory.mutant({ fileName: 'somethingElse' }));
+    expect(passed).deep.eq(factory.checkResult({ status: CheckStatus.Passed }));
+    expect(failed).deep.eq(factory.checkResult({ status: CheckStatus.CompileError }));
+  });
 });

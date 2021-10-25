@@ -31,6 +31,10 @@ describe(StrykerCli.name, () => {
       [['--ignorePatterns', 'foo.js,bar.js'], { ignorePatterns: ['foo.js', 'bar.js'] }],
       [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
       [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
+      [['--checkers', 'foo,bar'], { checkers: ['foo', 'bar'] }],
+      [['--checkers', 'foo'], { checkers: ['foo'] }],
+      [['--checkers', ''], { checkers: [] }],
+      [['--checkerNodeArgs', '--inspect=1337 --gc'], { checkerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--disableBail'], { disableBail: true }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
@@ -51,7 +55,7 @@ describe(StrykerCli.name, () => {
       [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
     ];
     testCases.forEach(([args, expected]) => {
-      it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {
+      it(`should parse option "${args.map((arg) => (arg === '' ? "''" : arg)).join(' ')}" as ${JSON.stringify(expected)}"`, () => {
         arrangeActAssertConfigOption(args, expected);
       });
     });
