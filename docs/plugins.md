@@ -14,6 +14,7 @@ Don't worry about plugins if you're just getting started. The needed plugins wil
 A test runner plugin can hook into your test runner support coverage analysis or improve performance. If your test runner isn't listed here, you can probably still use the
 [command test runner](./configuration#testrunner-string).
 
+- [cucumber](./cucumber-runner.md) ([@stryker-mutator/cucumber-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/cucumber-runner))
 - [Jasmine](./jasmine-runner.md) ([@stryker-mutator/jasmine-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jasmine-runner))
 - [Jest](./jest-runner.md) ([@stryker-mutator/jest-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jest-runner))
 - [Karma](./karma-runner.md) ([@stryker-mutator/karma-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/karma-runner))
