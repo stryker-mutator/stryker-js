@@ -192,7 +192,7 @@ Example:
 
 **Solution**:
 
-Stryker JS uses [babel](https://babeljs.io/docs/en/) to parse and mutate your files. It does so by readingthe `.babelrc` and `babel.config.js` files you have, but applies its own default plugins first. In rare circumstances, those default plugins are incompatible with your babel configuration.
+Stryker JS uses [babel](https://babeljs.io/docs/en/) to parse and mutate your files. It does so by reading the `.babelrc` and `babel.config.js` files you have, but applies its own default plugins first. In rare circumstances, those default plugins are incompatible with your babel configuration.
   
 Override the default babel plugins to solve this issue. For example, leaving it empty allows your own babel plugins to be used, without defaults from StrykerJS conflicting with it:
   
