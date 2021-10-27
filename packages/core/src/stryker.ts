@@ -56,10 +56,12 @@ export class Stryker {
         log.error(cause.message);
       } else {
         log.error('Unexpected error occurred while running Stryker', error);
-        log.error('We maintain a troubleshooting guide for common issues.');
-        log.error('You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/');
+        log.info('This might be a known problem with a solution documented in our troubleshooting guide.');
+        log.info('You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/');
         if (!log.isTraceEnabled()) {
-          log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+          log.info(
+            'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.'
+          );
         }
       }
       throw cause;
