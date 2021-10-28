@@ -153,9 +153,11 @@ describe(Stryker.name, () => {
       loggerMock.isTraceEnabled.returns(false);
       dryRunExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
-      expect(loggerMock.info).calledWith(
-        'Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.'
-      );
+      [
+        'This might be a known problem with a solution documented in our troubleshooting guide.',
+        'You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/',
+        'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.',
+      ].forEach((m) => expect(loggerMock.info).calledWith(m));
     });
 
     it('should not log a help message when log level "trace" is enabled', async () => {
@@ -163,7 +165,10 @@ describe(Stryker.name, () => {
       loggerMock.isTraceEnabled.returns(true);
       dryRunExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
-      expect(loggerMock.info).not.called;
+      [
+        'This might be a known problem with a solution documented in our troubleshooting guide.',
+        'You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/',
+      ].forEach((m) => expect(loggerMock.info).calledWith(m));
     });
 
     it('should dispose the injector', async () => {
