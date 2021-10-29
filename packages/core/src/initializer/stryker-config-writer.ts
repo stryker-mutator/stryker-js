@@ -44,7 +44,9 @@ export class StrykerConfigWriter {
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
-    const configObject: Partial<StrykerOptions> = {
+    const configObject: Partial<StrykerOptions> & { _comment: string } = {
+      _comment:
+        "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
