@@ -28,6 +28,7 @@ async function main() {
   await instrument({
     './packages/jest-runner/testResources/jasmine2-node/src/Add.js': './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Add.js',
     './packages/jest-runner/testResources/jasmine2-node/src/Circle.js': './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Circle.js',
+    './packages/jest-runner/testResources/infinite-loop/infinite-loop.js': './packages/jest-runner/testResources/infinite-loop-instrumented/infinite-loop.js',
   },  '__stryker2__')
   await instrument({
     './packages/cucumber-runner/testResources/example/src/calculator.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator.js',

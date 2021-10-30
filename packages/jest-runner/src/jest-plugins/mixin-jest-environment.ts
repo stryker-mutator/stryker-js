@@ -39,13 +39,24 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
         if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
           const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
           ns.currentTestId = fullName(event.test);
+          ns.hitCount = state.hitCount;
+          ns.hitLimit = state.hitLimit;
         }
       };
 
       public async teardown() {
         const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
+        state.hitCount = this.global[this.global.__strykerGlobalNamespace__]?.hitCount;
+        state.hitLimit = this.global[this.global.__strykerGlobalNamespace__]?.hitLimit;
         state.handleMutantCoverage(this.fileName, mutantCoverage);
         await super.teardown();
+      }
+
+      public async setup() {
+        await super.setup();
+        const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
+        ns.hitCount = state.hitCount;
+        ns.hitLimit = state.hitLimit;
       }
     }
     return StrykerJestEnvironment;
