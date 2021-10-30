@@ -10,6 +10,8 @@ class State {
   public coverageAnalysis: CoverageAnalysis = 'off';
   public jestEnvironment = 'jest-runner/circus';
   private mutantCoverageHandler?: MutantCoverageHandler;
+  public hitCount: number | undefined;
+  public hitLimit: number | undefined;
 
   public setMutantCoverageHandler(handler: MutantCoverageHandler) {
     this.mutantCoverageHandler = handler;
