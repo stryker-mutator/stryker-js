@@ -41,7 +41,7 @@ describe('Infinite Loop', () => {
         sut = createSut(testCase.jestConfig);
       });
 
-      it.only('should be able to recover using a hit counter with coverageAnalysis in mutantOption', async () => {
+      it('should be able to recover using a hit counter with coverageAnalysis in mutantOption', async () => {
         const mutantRunOptions = factory.mutantRunOptions({
           sandboxFileName: resolveTestCase('infinite-loop.js'),
           activeMutant: factory.mutant({ id: '24' }),
@@ -56,7 +56,7 @@ describe('Infinite Loop', () => {
         expect(result.reason).contains('Hit limit reached');
       });
 
-      it.skip('should reset hit counter state correctly between runs', async () => {
+      it('should reset hit counter state correctly between runs', async () => {
         const firstResult = await sut.mutantRun(
           factory.mutantRunOptions({
             sandboxFileName: resolveTestCase('infinite-loop.js'),
@@ -73,7 +73,6 @@ describe('Infinite Loop', () => {
             hitLimit: 10,
           })
         );
-
         assertions.expectTimeout(firstResult);
         assertions.expectKilled(secondResult);
       });
