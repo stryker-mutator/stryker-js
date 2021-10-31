@@ -130,5 +130,17 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       // Assert
       expect(superTearDownSpy).called;
     });
+
+    it('should call setup', async () => {
+      // Arrange
+      const superSetupSpy = sinon.spy(JestEnvironmentNode.prototype, 'setup');
+      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+
+      // Act
+      await sut.setup();
+
+      // Assert
+      expect(superSetupSpy).called;
+    });
   });
 });
