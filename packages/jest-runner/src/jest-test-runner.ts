@@ -145,6 +145,9 @@ export class JestTestRunner implements TestRunner {
       return toMutantRunResult(dryRunResult, disableBail);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
+      delete this.jestConfig.testEnvironment;
+      state.hitCount = 0;
+      state.hitLimit = 0;
     }
   }
 
