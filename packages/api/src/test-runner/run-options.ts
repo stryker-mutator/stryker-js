@@ -16,6 +16,10 @@ export interface DryRunOptions extends RunOptions {
    * Indicates whether or not mutant coverage should be collected.
    */
   coverageAnalysis: CoverageAnalysis;
+  /**
+   * Files to run tests for.
+   */
+  files?: string[];
 }
 
 export interface MutantRunOptions extends RunOptions {
