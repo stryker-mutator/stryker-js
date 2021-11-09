@@ -27,6 +27,7 @@ import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent';
 import { FileMatcher } from '../config';
+import { InputFileCollection } from '../input/input-file-collection';
 
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
@@ -38,6 +39,7 @@ export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.mutants]: readonly Mutant[];
   [coreTokens.checkerPool]: I<Pool<Checker>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
+  [coreTokens.inputFiles]: InputFileCollection;
 }
 
 /**
@@ -123,6 +125,8 @@ export class DryRunExecutor {
 
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
+    const inputFiles = this.injector.resolve(coreTokens.inputFiles);
+    const dryRunFiles = inputFiles.filesToMutate.map((file) => this.sandbox.sandboxFileFor(file.name));
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
@@ -132,6 +136,7 @@ export class DryRunExecutor {
       timeout: dryRunTimeout,
       coverageAnalysis: this.options.coverageAnalysis,
       disableBail: this.options.disableBail,
+      files: dryRunFiles,
     });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);

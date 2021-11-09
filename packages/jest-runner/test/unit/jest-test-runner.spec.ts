@@ -292,6 +292,28 @@ describe(JestTestRunner.name, () => {
       });
     });
 
+    it('should use correct fileNamesUnderTest if findRelatedTests = true', async () => {
+      options.jest.enableFindRelatedTests = true;
+      const sut = createSut();
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', files: ['.stryker-tmp/sandbox2/foo.js'] }));
+      expect(jestTestAdapterMock.run).calledWithExactly(
+        sinon.match({
+          fileNamesUnderTest: ['.stryker-tmp/sandbox2/foo.js'],
+        })
+      );
+    });
+
+    it('should not set fileNamesUnderTest if findRelatedTests = false', async () => {
+      options.jest.enableFindRelatedTests = false;
+      const sut = createSut();
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', files: ['.stryker-tmp/sandbox2/foo.js'] }));
+      expect(jestTestAdapterMock.run).calledWithExactly(
+        sinon.match({
+          fileNamesUnderTest: undefined,
+        })
+      );
+    });
+
     describe('coverage analysis', () => {
       it('should handle mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
@@ -476,7 +498,7 @@ describe(JestTestRunner.name, () => {
   });
 
   describe('mutantRun', () => {
-    it('should use correct fileUnderTest if findRelatedTests = true', async () => {
+    it('should use correct fileNamesUnderTest if findRelatedTests = true', async () => {
       options.jest.enableFindRelatedTests = true;
       const sut = createSut();
       await sut.mutantRun(
@@ -486,12 +508,12 @@ describe(JestTestRunner.name, () => {
         sinon.match({
           jestConfig: sinon.match.object,
           testNamePattern: undefined,
-          fileNameUnderTest: '.stryker-tmp/sandbox2/foo.js',
+          fileNamesUnderTest: ['.stryker-tmp/sandbox2/foo.js'],
         })
       );
     });
 
-    it('should not set fileUnderTest if findRelatedTests = false', async () => {
+    it('should not set fileNamesUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = createSut();
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant() }));
@@ -499,7 +521,7 @@ describe(JestTestRunner.name, () => {
         sinon.match({
           jestConfig: sinon.match.object,
           testNamePattern: undefined,
-          fileNameUnderTest: undefined,
+          fileNamesUnderTest: undefined,
         })
       );
     });

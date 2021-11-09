@@ -5,7 +5,7 @@ import { JestRunResult } from '../jest-run-result';
 export interface RunSettings {
   jestConfig: Config.InitialOptions;
   testNamePattern?: string;
-  fileNameUnderTest?: string;
+  fileNamesUnderTest?: string[];
   testLocationInResults?: boolean;
 }
 
