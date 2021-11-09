@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage, CoverageAnalysis } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -93,7 +93,11 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({ coverageAnalysis, disableBail }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail'>): Promise<DryRunResult> {
+  public async dryRun({
+    coverageAnalysis,
+    disableBail,
+    files,
+  }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];
@@ -103,9 +107,11 @@ export class JestTestRunner implements TestRunner {
         fileNamesWithMutantCoverage.push(fileName);
       });
     }
+    const fileNamesUnderTest = this.enableFindRelatedTests ? files : undefined;
     try {
       const { dryRunResult, jestResult } = await this.run({
-        jestConfig: withCoverageAnalysis({ ...this.jestConfig }, coverageAnalysis),
+        fileNamesUnderTest,
+        jestConfig: this.configForDryRun(fileNamesUnderTest, coverageAnalysis),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -138,7 +144,7 @@ export class JestTestRunner implements TestRunner {
 
     try {
       const { dryRunResult } = await this.run({
-        fileNameUnderTest,
+        fileNamesUnderTest: fileNameUnderTest ? [fileNameUnderTest] : undefined,
         jestConfig: this.configForMutantRun(fileNameUnderTest),
         testNamePattern,
       });
@@ -151,14 +157,22 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
+  private configForDryRun(fileNamesUnderTest: string[] | undefined, coverageAnalysis: CoverageAnalysis): jest.Config.InitialOptions {
+    return withCoverageAnalysis(this.configWithRoots(fileNamesUnderTest), coverageAnalysis);
+  }
+
   private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
+    return this.configWithRoots(fileNameUnderTest ? [fileNameUnderTest] : undefined);
+  }
+
+  private configWithRoots(fileNamesUnderTest: string[] | undefined): jest.Config.InitialOptions {
     let config: jest.Config.InitialOptions;
 
-    if (fileNameUnderTest && this.jestConfig.roots) {
+    if (fileNamesUnderTest && this.jestConfig.roots) {
       // Make sure the file under test lives inside one of the roots
       config = {
         ...this.jestConfig,
-        roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
+        roots: [...this.jestConfig.roots, ...new Set(fileNamesUnderTest.map((file) => path.dirname(file)))],
       };
     } else {
       config = this.jestConfig;

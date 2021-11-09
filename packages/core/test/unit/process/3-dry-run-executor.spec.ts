@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 import { I } from '@stryker-mutator/util';
+import { File } from '@stryker-mutator/api/core';
 
 import { Timer } from '../../../src/utils/timer';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
@@ -17,6 +18,7 @@ import { ConfigError } from '../../../src/errors';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
 import { createTestRunnerPoolMock } from '../../helpers/producers';
 import { Sandbox } from '../../../src/sandbox';
+import { InputFileCollection } from '../../../src/input/input-file-collection';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
@@ -26,6 +28,7 @@ describe(DryRunExecutor.name, () => {
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandbox: sinon.SinonStubbedInstance<Sandbox>;
+  let inputFiles: InputFileCollection;
 
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
@@ -41,6 +44,8 @@ describe(DryRunExecutor.name, () => {
     injectorMock = factory.injector();
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
+    inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);
+    injectorMock.resolve.withArgs(coreTokens.inputFiles).returns(inputFiles);
     sut = new DryRunExecutor(
       injectorMock as Injector<DryRunContext>,
       testInjector.logger,
@@ -105,6 +110,26 @@ describe(DryRunExecutor.name, () => {
       await sut.execute();
       expect(testRunnerMock.dryRun).calledWithMatch({
         disableBail: true,
+      });
+    });
+  });
+
+  describe('files', () => {
+    const dryRunFileName = '.sandbox/bar.js';
+    let runResult: CompleteDryRunResult;
+
+    beforeEach(() => {
+      sandbox.sandboxFileFor.withArgs(inputFiles.filesToMutate[0].name).returns(dryRunFileName);
+
+      runResult = factory.completeDryRunResult();
+      testRunnerMock.dryRun.resolves(runResult);
+      runResult.tests.push(factory.successTestResult());
+    });
+
+    it('should test only for files to mutate', async () => {
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        files: [dryRunFileName],
       });
     });
   });
