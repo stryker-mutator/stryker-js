@@ -39,7 +39,6 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
         if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
           const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
           ns.currentTestId = fullName(event.test);
-          ns.hitCount = state.hitCount;
           ns.hitLimit = state.hitLimit;
         }
       };
@@ -55,7 +54,7 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
       public async setup() {
         await super.setup();
         const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
-        ns.hitCount = state.hitCount;
+        ns.hitCount = 0;
         ns.hitLimit = state.hitLimit;
       }
     }
