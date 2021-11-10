@@ -177,7 +177,9 @@ export class JestTestRunner implements TestRunner {
     } else {
       config = this.jestConfig;
     }
-    overrideEnvironment(config, config);
+    if (state.hitLimit) {
+      overrideEnvironment(config, config);
+    }
     return config;
   }
 
