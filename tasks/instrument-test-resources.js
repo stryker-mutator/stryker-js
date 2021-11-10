@@ -32,6 +32,7 @@ async function main() {
   await instrument({
     './packages/cucumber-runner/testResources/example/src/calculator.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator.js',
     './packages/cucumber-runner/testResources/example/src/calculator-static.js': './packages/cucumber-runner/testResources/example-instrumented/src/calculator-static.js',
+    './packages/cucumber-runner/testResources/infinite-loop/src/infinite-loop.js': './packages/cucumber-runner/testResources/infinite-loop-instrumented/src/infinite-loop.js',
   },  '__stryker2__')
 }
 

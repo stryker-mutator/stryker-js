@@ -1,24 +1,15 @@
-import { expectMetricsResult, produceMetrics } from '../../../helpers';
+import { expectMetricsJson } from '../../../helpers';
 
 describe('Verify stryker has ran correctly', () => {
-
   it('should report expected score', async () => {
     // File       | % score | # killed | # timeout | # survived | # no cov | # error |
-    // All files  |   58.54 |       24 |         0 |         17 |        0 |       1 |
-    await expectMetricsResult({
-      metrics: produceMetrics({
-        killed: 24,
-        mutationScore: 55.81,
-        mutationScoreBasedOnCoveredCode: 55.81,
-        runtimeErrors: 1,
-        survived: 19,
-        totalCovered: 43,
-        totalDetected: 24,
-        totalInvalid: 1,
-        totalMutants: 44,
-        totalUndetected: 19,
-        totalValid: 43
-      })
+    // All files  |   57.45 |       27 |         0 |         20 |        0 |       1 |
+    await expectMetricsJson({
+      killed: 27,
+      mutationScore: 57.45,
+      runtimeErrors: 1,
+      survived: 20,
+      noCoverage: 0,
     });
   });
 });

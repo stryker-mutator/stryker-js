@@ -253,6 +253,14 @@
       },
       "default": []
     },
+    "checkerNodeArgs": {
+      "description": "Configure arguments to be passed as exec arguments to the checker child process(es). For example, running Stryker with `--concurrency 1 --checkerNodeArgs --inspect-brk` will allow you to debug the checker child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "concurrency": {
       "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
       "type": "number"

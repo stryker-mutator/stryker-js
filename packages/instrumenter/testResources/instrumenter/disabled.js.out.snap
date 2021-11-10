@@ -75,7 +75,7 @@ function factorial(num) {
 
     while (stryMutAct_9fa48(\\"13\\") ? i > num : stryMutAct_9fa48(\\"12\\") ? i < num : stryMutAct_9fa48(\\"11\\") ? false : (stryCov_9fa48(\\"11\\", \\"12\\", \\"13\\"), i <= num)) {
       // Stryker disable next-line UpdateOperator: Infinite loop
-      o *= i++;
+      stryMutAct_9fa48(\\"15\\") ? o /= i++ : (stryCov_9fa48(\\"15\\"), o *= i++);
     }
 
     return o;
