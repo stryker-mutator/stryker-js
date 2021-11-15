@@ -167,7 +167,7 @@ Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead.
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) and/or [mutate](#mutate-string) instead. 
 
 ### `ignorePatterns` [`string[]`]
 
