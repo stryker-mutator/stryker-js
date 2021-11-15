@@ -10,7 +10,7 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "reporters": [
-    "event-recorder",
+    "json",
     "progress",
     "clear-text",
     "html"

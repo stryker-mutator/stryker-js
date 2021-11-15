@@ -8,10 +8,11 @@ import { minLevel } from './log-utils';
 
 const enum AppenderName {
   File = 'file',
-  FilteredFile = 'filteredFile',
+  FilterLevelFile = 'filterLevelFile',
+  FilterLog4jsCategoryFile = 'filterLog4jsCategoryFile',
   Console = 'console',
-  FilteredConsoleLevel = 'filteredConsoleLevel',
-  FilteredConsoleCategory = 'filteredConsoleCategory',
+  FilterLevelConsole = 'filterLevelConsole',
+  FilterLog4jsCategoryConsole = 'filterLog4jsCategoryConsole',
   All = 'all',
   Server = 'server',
 }
@@ -27,34 +28,44 @@ const layouts: { color: log4js.PatternLayout; noColor: log4js.PatternLayout } = 
   },
 };
 
-type AppendersConfiguration = Record<string, log4js.Appender>;
+type AppendersConfiguration = Partial<Record<AppenderName, log4js.Appender>>;
 
 const LOG_FILE_NAME = 'stryker.log';
 export class LogConfigurator {
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
-    const multiAppender = { type: require.resolve('./multi-appender'), appenders: [AppenderName.FilteredConsoleLevel] };
+    const multiAppender = { type: require.resolve('./multi-appender'), appenders: [AppenderName.FilterLevelConsole] };
 
     const consoleLayout = allowConsoleColors ? layouts.color : layouts.noColor;
 
     let allAppenders: AppendersConfiguration = {
       [AppenderName.Console]: { type: 'stdout', layout: consoleLayout },
       // Exclude messages like: "ERROR log4js A worker log process hung up unexpectedly" #1245
-      [AppenderName.FilteredConsoleCategory]: { type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
-      [AppenderName.FilteredConsoleLevel]: { type: 'logLevelFilter', appender: AppenderName.FilteredConsoleCategory, level: consoleLogLevel },
+      [AppenderName.FilterLog4jsCategoryConsole]: { type: 'categoryFilter', appender: AppenderName.Console, exclude: 'log4js' },
+      [AppenderName.FilterLevelConsole]: { type: 'logLevelFilter', appender: AppenderName.FilterLog4jsCategoryConsole, level: consoleLogLevel },
       [AppenderName.All]: multiAppender,
     };
 
     // only add file if it is needed. Otherwise log4js will create the file directly, pretty annoying.
     if (fileLogLevel.toUpperCase() !== LogLevel.Off.toUpperCase()) {
       const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
-      const filteredFileAppender: log4js.LogLevelFilterAppender = { type: 'logLevelFilter', appender: 'file', level: fileLogLevel };
+      const filterLog4sCategory: log4js.CategoryFilterAppender = { type: 'categoryFilter', appender: AppenderName.File, exclude: 'log4js' };
+      const filterFileAppender: log4js.LogLevelFilterAppender = {
+        type: 'logLevelFilter',
+        appender: AppenderName.FilterLog4jsCategoryFile,
+        level: fileLogLevel,
+      };
 
       // Don't simply add the appenders, instead actually make sure they are ordinal "before" the others.
       // See https://github.com/log4js-node/log4js-node/issues/746
-      allAppenders = Object.assign({ [AppenderName.File]: fileAppender, [AppenderName.FilteredFile]: filteredFileAppender }, allAppenders);
+      allAppenders = {
+        ...allAppenders,
+        [AppenderName.File]: fileAppender,
+        [AppenderName.FilterLog4jsCategoryFile]: filterLog4sCategory,
+        [AppenderName.FilterLevelFile]: filterFileAppender,
+      };
 
-      multiAppender.appenders.push(AppenderName.FilteredFile);
+      multiAppender.appenders.push(AppenderName.FilterLevelFile);
     }
 
     return allAppenders;
