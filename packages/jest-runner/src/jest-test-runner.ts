@@ -152,8 +152,8 @@ export class JestTestRunner implements TestRunner {
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
       delete this.jestConfig.testEnvironment;
-      state.hitCount = 0;
-      state.hitLimit = 0;
+      delete state.hitCount;
+      delete state.hitLimit;
     }
   }
 
