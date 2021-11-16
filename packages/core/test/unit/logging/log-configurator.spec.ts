@@ -36,8 +36,9 @@ describe('LogConfigurator', () => {
       sut.configureMainProcess(LogLevel.Information, LogLevel.Off, allowConsoleColors);
       const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information, allowConsoleColors);
       delete masterConfig.appenders.file;
-      delete masterConfig.appenders.filteredFile;
-      (masterConfig.appenders.all as any).appenders = ['filteredConsoleLevel'];
+      delete masterConfig.appenders.filterLevelFile;
+      delete masterConfig.appenders.filterLog4jsCategoryFile;
+      (masterConfig.appenders.all as any).appenders = ['filterLevelConsole'];
       expect(log4jsConfigure).calledWith(masterConfig);
     });
   });
@@ -122,12 +123,13 @@ describe('LogConfigurator', () => {
     const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
     return {
       appenders: {
-        all: { type: require.resolve('../../../src/logging/multi-appender'), appenders: ['filteredConsoleLevel', 'filteredFile'] },
+        all: { type: require.resolve('../../../src/logging/multi-appender'), appenders: ['filterLevelConsole', 'filterLevelFile'] },
         console: { type: 'stdout', layout: consoleLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
-        filteredConsoleCategory: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
-        filteredConsoleLevel: { type: 'logLevelFilter', appender: 'filteredConsoleCategory', level: consoleLevel },
-        filteredFile: { type: 'logLevelFilter', appender: 'file', level: fileLevel },
+        filterLog4jsCategoryConsole: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
+        filterLog4jsCategoryFile: { type: 'categoryFilter', appender: 'file', exclude: 'log4js' },
+        filterLevelConsole: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryConsole', level: consoleLevel },
+        filterLevelFile: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryFile', level: fileLevel },
       },
       categories: {
         default: { level: defaultLevel, appenders: ['all'] },

@@ -1,7 +1,6 @@
 import Stryker from '@stryker-mutator/core';
 
 new Stryker({
-  coverageAnalysis: 'off',
-  mutate: [],
-  testRunner: 'mocha'
+  testRunner: 'mocha',
+  concurrency: 1
 }).runMutationTest().then(() => console.log('done'));
