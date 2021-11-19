@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "lit-element": "~2.3.1",
-    "mutation-testing-metrics": "1.7.5",
-    "mutation-testing-report-schema": "1.7.4"
+    "mutation-testing-metrics": "1.7.6",
+    "mutation-testing-report-schema": "1.7.6"
   },
   "devDependencies": {
     "@types/webpack-env": "~1.15.2"

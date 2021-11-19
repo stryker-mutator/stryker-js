@@ -3,6 +3,7 @@
   "coverageAnalysis": "perTest",
   "testRunner": "mocha",
   "reporters": [
+    "json",
     "progress",
     "html",
     "dashboard"
