@@ -6,15 +6,15 @@ import { StrykerError } from '@stryker-mutator/util';
 import { PluginCreator } from '../di';
 
 export class CheckerWorker implements Checker {
-  private readonly innerCheckers: Array<{ name: string; checker: Checker }> = [];
+  private readonly innerCheckers: Record<string, Checker> = {};
 
   public static inject = tokens(commonTokens.options, commonTokens.injector);
   constructor(options: StrykerOptions, injector: Injector<PluginContext>) {
     const pluginCreator = injector.injectFunction(PluginCreator.createFactory(PluginKind.Checker));
-    this.innerCheckers = options.checkers.map((name) => ({ name, checker: pluginCreator.create(name) }));
+    options.checkers.forEach((name) => (this.innerCheckers[name] = pluginCreator.create(name)));
   }
   public async init(): Promise<void> {
-    for await (const { name, checker } of this.innerCheckers) {
+    for await (const [name, checker] of Object.entries(this.innerCheckers)) {
       try {
         await checker.init();
       } catch (error: unknown) {
@@ -23,12 +23,15 @@ export class CheckerWorker implements Checker {
     }
   }
   public async check(mutant: Mutant): Promise<CheckResult> {
-    for await (const { checker } of this.innerCheckers) {
-      const result = await checker.check(mutant);
-      if (result.status !== CheckStatus.Passed) {
-        return result;
-      }
-    }
-    return { status: CheckStatus.Passed };
+    // todo: fix this
+    return this.innerCheckers['typescript-group'].check(mutant);
+  }
+
+  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+    return (await this.innerCheckers['typescript-group'].checkGroup?.(mutants)) ?? [];
+  }
+
+  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    return this.innerCheckers['typescript-group'].createGroups?.(mutants);
   }
 }

@@ -30,4 +30,12 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
       }
     }
   }
+
+  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+    return this.innerResource.checkGroup?.(mutants) ?? [];
+  }
+
+  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    return this.innerResource.createGroups?.(mutants);
+  }
 }

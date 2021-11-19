@@ -5,6 +5,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "command": "cd packages/cucumber-runner && npm run stryker",
+      "name": "Run npm start",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Port",

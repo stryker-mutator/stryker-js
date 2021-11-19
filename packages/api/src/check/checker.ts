@@ -6,4 +6,7 @@ export interface Checker {
   init(): Promise<void>;
 
   check(mutant: Mutant): Promise<CheckResult>;
+
+  checkGroup?(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>>;
+  createGroups?(mutants: Mutant[]): Promise<Mutant[][] | undefined>;
 }

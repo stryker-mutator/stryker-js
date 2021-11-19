@@ -39,4 +39,12 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
       status: CheckStatus.Passed,
     };
   }
+
+  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+    return this.childProcess.proxy.checkGroup(mutants);
+  }
+
+  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    return this.childProcess.proxy.createGroups(mutants);
+  }
 }

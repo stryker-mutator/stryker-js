@@ -21,9 +21,13 @@ export class ConcurrencyTokenProvider implements Disposable {
     const cpuCount = os.cpus().length;
     const concurrency = options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
     if (options.checkers.length > 0) {
-      this.concurrencyCheckers = Math.max(Math.ceil(concurrency / 2), 1);
+      // this.concurrencyCheckers = Math.max(Math.ceil(concurrency / 2), 1);
+      // this.checkerToken$ = range(this.concurrencyCheckers);
+      // this.concurrencyTestRunners = Math.max(Math.floor(concurrency / 2), 1);
+
+      this.concurrencyCheckers = 6;
       this.checkerToken$ = range(this.concurrencyCheckers);
-      this.concurrencyTestRunners = Math.max(Math.floor(concurrency / 2), 1);
+      this.concurrencyTestRunners = 1;
       log.info('Creating %s checker process(es) and %s test runner process(es).', this.concurrencyCheckers, this.concurrencyTestRunners);
     } else {
       this.concurrencyCheckers = 0;

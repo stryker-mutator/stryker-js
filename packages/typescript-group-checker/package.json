@@ -1,0 +1,49 @@
+{
+  "name": "@stryker-mutator/typescript-group-checker",
+  "version": "5.4.1",
+  "description": "",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "test": "nyc npm run test:all",
+    "mocha": "mocha",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
+    "test:integration": "mocha 'dist/test/integration/**/*.js'",
+    "stryker": "node ../core/bin/stryker run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/typescript-group-checker"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Danny Berkelaar <dannyberkelaar@gmail.com>",
+  "contributors": [
+    "Danny Berkelaar <dannyberkelaar@gmail.com>",
+    "Thierry Rietveld <thierry.rietveld0505@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/typescript-group-checker",
+  "dependencies": {
+    "@stryker-mutator/api": "5.4.1",
+    "@stryker-mutator/util": "5.4.1",
+    "precinct": "^8.2.0",
+    "semver": "~7.3.2",
+    "typescript": "^4.4.3"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "5.4.1",
+    "@types/semver": "~7.3.3"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "~5.4.0"
+  }
+}
