@@ -10,6 +10,8 @@ export type Immutable<T> = T extends ImmutablePrimitive
   ? ImmutableMap<K, V>
   : T extends Set<infer M>
   ? ImmutableSet<M>
+  : T extends RegExp
+  ? Readonly<RegExp>
   : ImmutableObject<T>;
 
 export type ImmutableArray<T> = ReadonlyArray<Immutable<T>>;
