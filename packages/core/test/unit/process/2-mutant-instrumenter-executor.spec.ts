@@ -48,7 +48,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     };
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
-    injectorMock = factory.injector();
+    injectorMock = factory.injector() as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);

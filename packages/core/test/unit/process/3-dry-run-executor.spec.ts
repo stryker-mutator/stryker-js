@@ -41,7 +41,7 @@ describe(DryRunExecutor.name, () => {
       >
     ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
-    injectorMock = factory.injector();
+    injectorMock = factory.injector() as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
     inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);

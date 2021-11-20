@@ -51,7 +51,7 @@ export class ChildProcessProxyWorker {
     this.log = getLogger(ChildProcessProxyWorker.name);
     this.handlePromiseRejections();
     let injector = buildChildProcessInjector(message.options);
-    const locals = message.additionalInjectableValues as Record<string, unknown>;
+    const locals = message.additionalInjectableValues as Record<string, any>;
     for (const token in locals) {
       injector = injector.provideValue(token, locals[token]);
     }

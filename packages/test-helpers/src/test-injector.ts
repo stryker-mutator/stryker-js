@@ -20,7 +20,7 @@ class TestInjector {
       .provideValue(commonTokens.getLogger, () => this.logger)
       .provideValue(commonTokens.logger, this.logger)
       .provideValue(commonTokens.options, this.options)
-      .provideValue(commonTokens.pluginResolver, this.pluginResolver);
+      .provideValue(commonTokens.pluginResolver, this.pluginResolver as PluginResolver);
   }
 }
 
