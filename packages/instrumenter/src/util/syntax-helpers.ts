@@ -132,7 +132,7 @@ export function isTypeNode(path: NodePath): boolean {
     flowTypeAnnotationNodeTypes.includes(path.node.type) ||
     tsTypeAnnotationNodeTypes.includes(path.node.type) ||
     isDeclareVariableStatement(path) ||
-    isModuleNameAsStringLiteral(path)
+    isDeclareModule(path)
   );
 }
 
@@ -150,8 +150,8 @@ function isDeclareVariableStatement(path: NodePath): boolean {
  * @example
  * declare module "express" {};
  */
-function isModuleNameAsStringLiteral(path: NodePath): boolean {
-  return path.isStringLiteral() && path.parentPath.isTSModuleDeclaration();
+function isDeclareModule(path: NodePath): boolean {
+  return path.isTSModuleDeclaration() && (path.node.declare ?? false);
 }
 
 const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([

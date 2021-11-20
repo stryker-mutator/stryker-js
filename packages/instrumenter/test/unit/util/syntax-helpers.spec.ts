@@ -32,7 +32,12 @@ describe('syntax-helpers', () => {
       expect(syntaxHelpers.isTypeNode(input)).true;
     });
 
-    it('should be false for module declarations', () => {
+    it('should identify TS module declarations', () => {
+      const input = findNodePath(parseTS('declare module "express" {}'), (p) => p.isTSModuleDeclaration());
+      expect(syntaxHelpers.isTypeNode(input)).true;
+    });
+
+    it('should be false for module (without `declare`)', () => {
       const input = findNodePath(parseTS('namespace A { }'), (p) => p.isTSModuleDeclaration());
       expect(syntaxHelpers.isTypeNode(input)).false;
     });
@@ -54,11 +59,6 @@ describe('syntax-helpers', () => {
 
     it('should identify TS generic type parameters declarations', () => {
       const input = findNodePath(parseTS('function foo<bar extends `${position} ${color}`>() { }'), (p) => p.isTSTypeParameterDeclaration());
-      expect(syntaxHelpers.isTypeNode(input)).true;
-    });
-
-    it('should identify TS module name string literals', () => {
-      const input = findNodePath(parseTS('declare module "express" {}'), (p) => p.isStringLiteral());
       expect(syntaxHelpers.isTypeNode(input)).true;
     });
   });
