@@ -149,10 +149,10 @@ const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.free
   'TSInterfaceDeclaration',
   'TSTypeAnnotation',
   'TSTypeAliasDeclaration',
-  'TSModuleDeclaration',
   'TSEnumDeclaration',
   'TSDeclareFunction',
   'TSTypeParameterInstantiation',
+  'TSTypeParameterDeclaration',
 ]);
 
 const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
