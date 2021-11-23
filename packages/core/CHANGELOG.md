@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
+
+
+### Bug Fixes
+
+* **logging:** don't log log4js category to file as well ([31609a5](https://github.com/stryker-mutator/stryker-js/commit/31609a52d255eb3f174f196f31c13f159c10f774))
+
+
+### Features
+
+* **checkers:** allow custom checker node args ([#3179](https://github.com/stryker-mutator/stryker-js/issues/3179)) ([82c4435](https://github.com/stryker-mutator/stryker-js/commit/82c4435e77b5b13aee5a4117a119b4f5dde68c2b))
+* **cli:** display suggestions on error ([#3216](https://github.com/stryker-mutator/stryker-js/issues/3216)) ([9ed98e8](https://github.com/stryker-mutator/stryker-js/commit/9ed98e82e5e895ed34afb3f0247cfa29940247a0))
+* **config:** Add link to docs when generating a custom config ([#3235](https://github.com/stryker-mutator/stryker-js/issues/3235)) ([7c999b8](https://github.com/stryker-mutator/stryker-js/commit/7c999b8fa5689bb7ed0e299b531add67ee101dc6))
+* **html:** new diff-view when selecting mutants ([#3263](https://github.com/stryker-mutator/stryker-js/issues/3263)) ([8b253ee](https://github.com/stryker-mutator/stryker-js/commit/8b253ee8ed92d447b5f854e4250f8e1fd064cd13))
+* **init:** add buildCommand question when running ([#3213](https://github.com/stryker-mutator/stryker-js/issues/3213)) ([b9d5980](https://github.com/stryker-mutator/stryker-js/commit/b9d5980fbbc69ace8acab404793418a134b2f62f))
+* **jest-runner:** support `--findRelatedTests` in dry run ([#3234](https://github.com/stryker-mutator/stryker-js/issues/3234)) ([b2e4584](https://github.com/stryker-mutator/stryker-js/commit/b2e458432483353dd0ea0471b623326ff58c92bc))
+
+
+
+
+
 ## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
 
 
