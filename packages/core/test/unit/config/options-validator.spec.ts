@@ -35,6 +35,7 @@ describe(OptionsValidator.name, () => {
         cleanTempDir: true,
         inPlace: false,
         ignorePatterns: [],
+        ignoreStatic: false,
         checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,
@@ -333,6 +334,14 @@ describe(OptionsValidator.name, () => {
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
       'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+    );
+  });
+
+  it('should be invalid when combining --ignoreStatic with something else then "perTest" coverage analysis', () => {
+    testInjector.options.ignoreStatic = true;
+    testInjector.options.coverageAnalysis = 'all';
+    actValidationErrors(
+      'Config option "ignoreStatic" is not with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".'
     );
   });
 

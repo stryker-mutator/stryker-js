@@ -6,7 +6,7 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantResult, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
@@ -24,7 +24,7 @@ describe(MutationTestExecutor.name, () => {
   let sut: MutationTestExecutor;
   let mutants: MutantTestCoverage[];
   let checker: sinon.SinonStubbedInstance<Checker>;
-  let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
+  let mutationTestReportHelperMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
@@ -32,7 +32,7 @@ describe(MutationTestExecutor.name, () => {
 
   beforeEach(() => {
     reporterMock = factory.reporter();
-    mutationTestReportCalculatorMock = sinon.createStubInstance(MutationTestReportHelper);
+    mutationTestReportHelperMock = sinon.createStubInstance(MutationTestReportHelper);
     timerMock = sinon.createStubInstance(Timer);
     testRunner = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
@@ -60,7 +60,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
-      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportHelperMock)
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
@@ -71,6 +71,10 @@ describe(MutationTestExecutor.name, () => {
   function arrangeScenario(overrides?: { checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
     checker.check.resolves(overrides?.checkResult ?? factory.checkResult());
     testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
+    mutationTestReportHelperMock.reportMutantStatus.returnsArg(0);
+    mutationTestReportHelperMock.reportCheckFailed.returnsArg(0);
+    mutationTestReportHelperMock.reportMutantRunResult.returnsArg(0);
+    mutationTestReportHelperMock.reportAll.returnsArg(0);
   }
 
   it('should schedule mutants to be tested', async () => {
@@ -100,6 +104,37 @@ describe(MutationTestExecutor.name, () => {
     expect(testRunner.mutantRun).not.called;
     expect(checker.check).not.called;
     expect(actualResults).lengthOf(2);
+  });
+
+  it('should ignore static mutants without coverage when ignoreStatic is enabled', async () => {
+    // Arrange
+    arrangeScenario();
+    testInjector.options.ignoreStatic = true;
+    mutants.push(
+      // static w/o coverage => should be ignored
+      factory.mutantTestCoverage({ id: '1', static: true, coveredBy: undefined }),
+      // static w/o coverage but already has a status
+      factory.mutantTestCoverage({ id: '2', static: true, status: MutantStatus.Ignored }),
+      // static, but also has coverage (can happen)
+      factory.mutantTestCoverage({ id: '3', static: true, coveredBy: ['1'] }),
+      // Not static
+      factory.mutantTestCoverage({ id: '4', static: false, coveredBy: ['2'] })
+    );
+
+    // Act
+    const actualResults = await sut.execute();
+
+    // Assert
+    const expected: Pick<MutantResult, 'status' | 'statusReason'> = {
+      status: MutantStatus.Ignored,
+      statusReason: 'Static mutant without coverage (and "ignoreStatic" was enabled)',
+    };
+    expect(testRunner.mutantRun).calledTwice;
+    expect(actualResults.find((m) => m.id === '1')).contains(expected);
+    expect(actualResults.find((m) => m.id === '2')!.status).eq(MutantStatus.Ignored);
+    expect(actualResults.find((m) => m.id === '2')!.statusReason).undefined;
+    expect(actualResults.find((m) => m.id === '3')!.status).undefined;
+    expect(actualResults.find((m) => m.id === '4')!.status).undefined;
   });
 
   it('should check the mutants before running them', async () => {
@@ -224,7 +259,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
+    expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
   });
 
   it('should report an uncovered mutant with `NoCoverage`', async () => {
@@ -236,7 +271,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
+    expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
   });
 
   it('should report non-passed check results as "checkFailed"', async () => {
@@ -250,7 +285,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
+    expect(mutationTestReportHelperMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
   });
 
   it('should free checker resources after checking stage is complete', async () => {
@@ -282,7 +317,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantRunResult).calledWithExactly(mutant, mutantRunResult);
+    expect(mutationTestReportHelperMock.reportMutantRunResult).calledWithExactly(mutant, mutantRunResult);
   });
 
   it('should log a done message when it is done', async () => {

@@ -117,6 +117,15 @@ export class OptionsValidator {
         );
       }
     }
+    if (options.ignoreStatic && options.coverageAnalysis !== 'perTest') {
+      additionalErrors.push(
+        `Config option "${propertyPath<StrykerOptions>('ignoreStatic')}" is not with coverage analysis "${
+          options.coverageAnalysis
+        }". Either turn off "${propertyPath<StrykerOptions>('ignoreStatic')}", or configure "${propertyPath<StrykerOptions>(
+          'coverageAnalysis'
+        )}" to be "perTest".`
+      );
+    }
     options.mutate.forEach((mutateString, index) => {
       const match = MUTATION_RANGE_REGEX.exec(mutateString);
       if (match) {

@@ -75,6 +75,7 @@ export class StrykerCli {
         'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
+      .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
       .option(
         '-m, --mutate <filesToMutate>',
         'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
