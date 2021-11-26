@@ -7,6 +7,8 @@ import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
+import { I } from '@stryker-mutator/util';
+
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
 
 export type Mutable<T> = {
@@ -33,7 +35,7 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   maxTestsToLog: 3,
 }));
 
-export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<ConcurrencyTokenProvider> & {
+export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<I<ConcurrencyTokenProvider>> & {
   testRunnerToken$: ReplaySubject<number>;
   checkerToken$: ReplaySubject<number>;
 };
@@ -47,19 +49,19 @@ export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMo
   };
 }
 
-export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<Pool<TestRunner>> {
+export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<TestRunner>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
-    schedule: sinon.stub(),
+    schedule: sinon.stub<any>(),
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<Checker>> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Checker>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
-    schedule: sinon.stub(),
+    schedule: sinon.stub<any>(),
   };
 }
 

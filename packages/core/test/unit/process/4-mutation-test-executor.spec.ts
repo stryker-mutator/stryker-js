@@ -19,8 +19,8 @@ import { Sandbox } from '../../../src/sandbox';
 
 describe(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;
-  let testRunnerPoolMock: sinon.SinonStubbedInstance<Pool<TestRunner>>;
-  let checkerPoolMock: sinon.SinonStubbedInstance<Pool<Checker>>;
+  let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<Checker>>>;
   let sut: MutationTestExecutor;
   let mutants: MutantTestCoverage[];
   let checker: sinon.SinonStubbedInstance<Checker>;

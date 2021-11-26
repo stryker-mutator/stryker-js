@@ -35,7 +35,7 @@ describe(PrepareExecutor.name, () => {
     inputFileResolverMock = sinon.createStubInstance(InputFileResolver);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
-    injectorMock = factory.injector() as sinon.SinonStubbedInstance<Injector<buildMainInjectorModule.MainContext>>;
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<buildMainInjectorModule.MainContext>>;
     sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock as Injector<buildMainInjectorModule.MainContext>);
     injectorMock.resolve
       .withArgs(commonTokens.options)
