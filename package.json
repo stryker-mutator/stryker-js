@@ -51,7 +51,7 @@
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx",
     "lint:log": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx -f compact -o lint.log",
     "lint:fix": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx --fix",
-    "clean": "rimraf \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist}\" \"packages/core/schema/stryker-schema.json\"",
+    "clean": "rimraf \"packages/*/{package-lock.json,.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
     "prebuild": "npm run generate",
     "build": "tsc -b && lerna run build",
