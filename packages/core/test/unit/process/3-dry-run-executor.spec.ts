@@ -22,7 +22,7 @@ import { InputFileCollection } from '../../../src/input/input-file-collection';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
-  let testRunnerPoolMock: sinon.SinonStubbedInstance<Pool<TestRunner>>;
+  let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -41,7 +41,7 @@ describe(DryRunExecutor.name, () => {
       >
     ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
-    injectorMock = factory.injector() as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
     inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);

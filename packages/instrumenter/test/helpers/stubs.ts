@@ -8,7 +8,7 @@ import { createTransformerOptions } from './factories';
 
 export function parserContextStub(): sinon.SinonStubbedInstance<ParserContext> {
   return {
-    parse: sinon.stub(),
+    parse: sinon.stub<any>(),
   };
 }
 

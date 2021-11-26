@@ -24,7 +24,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerPoolMock: sinon.SinonStubbedInstance<Pool<Checker>>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<Checker>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let mutatedFile: File;
   let originalFile: File;
@@ -48,7 +48,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     };
     sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
-    injectorMock = factory.injector() as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
     injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
