@@ -26,8 +26,8 @@ export class ChildProcessProxyWorker {
       process.send(str);
     }
   }
-  private handleMessage(serializedMessage: string) {
-    const message = deserialize<WorkerMessage>(serializedMessage);
+  private handleMessage(serializedMessage: unknown) {
+    const message = deserialize<WorkerMessage>(String(serializedMessage));
     switch (message.kind) {
       case WorkerMessageKind.Init:
         this.handleInit(message);
