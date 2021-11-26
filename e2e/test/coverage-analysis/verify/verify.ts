@@ -14,6 +14,7 @@ describe('Coverage analysis', () => {
         coverageAnalysis: 'off',
         testRunner: 'jasmine',
         reporters: ['coverageAnalysis', 'html'],
+        timeoutMS: 60000,
         concurrency: 2,
         plugins: ['@stryker-mutator/jasmine-runner', require.resolve('./coverage-analysis-reporter')],
         jasmineConfigFile: 'jasmine-spec/support/jasmine.json',
