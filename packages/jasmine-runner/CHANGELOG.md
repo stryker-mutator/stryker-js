@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
+
+
+### Features
+
+* **hit limit:** infinite loop prevention in jasmine-runner ([#3199](https://github.com/stryker-mutator/stryker-js/issues/3199)) ([bc792e0](https://github.com/stryker-mutator/stryker-js/commit/bc792e087225641256c95f18a6d70fefdca507b5))
+
+
+
+
+
 ## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
 
 **Note:** Version bump only for package @stryker-mutator/jasmine-runner

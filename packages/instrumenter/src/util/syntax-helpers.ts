@@ -131,7 +131,8 @@ export function isTypeNode(path: NodePath): boolean {
     path.isTypeAnnotation() ||
     flowTypeAnnotationNodeTypes.includes(path.node.type) ||
     tsTypeAnnotationNodeTypes.includes(path.node.type) ||
-    isDeclareVariableStatement(path)
+    isDeclareVariableStatement(path) ||
+    isDeclareModule(path)
   );
 }
 
@@ -144,15 +145,24 @@ function isDeclareVariableStatement(path: NodePath): boolean {
   return path.isVariableDeclaration() && path.node.declare === true;
 }
 
+/**
+ * Determines whether or not a node is a string literal that is the name of a module.
+ * @example
+ * declare module "express" {};
+ */
+function isDeclareModule(path: NodePath): boolean {
+  return path.isTSModuleDeclaration() && (path.node.declare ?? false);
+}
+
 const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
   'TSAsExpression',
   'TSInterfaceDeclaration',
   'TSTypeAnnotation',
   'TSTypeAliasDeclaration',
-  'TSModuleDeclaration',
   'TSEnumDeclaration',
   'TSDeclareFunction',
   'TSTypeParameterInstantiation',
+  'TSTypeParameterDeclaration',
 ]);
 
 const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
