@@ -1,7 +1,7 @@
 import { expectMetricsJson } from '../../../helpers';
 
 describe('After running stryker on jest-react-ts project', () => {
-  it('should report expected scores', async () => {
+  it.skip('should report expected scores', async () => {
     await expectMetricsJson({
       killed: 63,
       noCoverage: 19,
