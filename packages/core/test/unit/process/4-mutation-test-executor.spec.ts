@@ -6,7 +6,7 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantResult, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
@@ -106,37 +106,6 @@ describe(MutationTestExecutor.name, () => {
     expect(actualResults).lengthOf(2);
   });
 
-  it('should ignore static mutants without coverage when ignoreStatic is enabled', async () => {
-    // Arrange
-    arrangeScenario();
-    testInjector.options.ignoreStatic = true;
-    mutants.push(
-      // static w/o coverage => should be ignored
-      factory.mutantTestCoverage({ id: '1', static: true, coveredBy: undefined }),
-      // static w/o coverage but already has a status
-      factory.mutantTestCoverage({ id: '2', static: true, status: MutantStatus.Ignored }),
-      // static, but also has coverage (can happen)
-      factory.mutantTestCoverage({ id: '3', static: true, coveredBy: ['1'] }),
-      // Not static
-      factory.mutantTestCoverage({ id: '4', static: false, coveredBy: ['2'] })
-    );
-
-    // Act
-    const actualResults = await sut.execute();
-
-    // Assert
-    const expected: Pick<MutantResult, 'status' | 'statusReason'> = {
-      status: MutantStatus.Ignored,
-      statusReason: 'Static mutant without coverage (and "ignoreStatic" was enabled)',
-    };
-    expect(testRunner.mutantRun).calledTwice;
-    expect(actualResults.find((m) => m.id === '1')).contains(expected);
-    expect(actualResults.find((m) => m.id === '2')!.status).eq(MutantStatus.Ignored);
-    expect(actualResults.find((m) => m.id === '2')!.statusReason).undefined;
-    expect(actualResults.find((m) => m.id === '3')!.status).undefined;
-    expect(actualResults.find((m) => m.id === '4')!.status).undefined;
-  });
-
   it('should check the mutants before running them', async () => {
     // Arrange
     arrangeScenario();
@@ -194,7 +163,7 @@ describe(MutationTestExecutor.name, () => {
     // Arrange
     arrangeScenario();
     const expectedTestFilter = ['spec1', 'foo', 'bar'];
-    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter }));
+    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter, testFilter: expectedTestFilter }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 

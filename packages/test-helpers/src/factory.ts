@@ -342,6 +342,7 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   mutatorName: '',
   static: false,
   replacement: '',
+  testFilter: undefined,
   location: location(),
   estimatedNetTime: 42,
 }));

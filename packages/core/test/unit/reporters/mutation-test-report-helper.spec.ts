@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { File, Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
+import { File, Location, MutantResult, MutantStatus, MutantTestCoverage, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import * as strykerUtil from '@stryker-mutator/util';
@@ -14,6 +14,8 @@ import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-r
 import * as objectUtils from '../../../src/utils/object-utils';
 
 describe(MutationTestReportHelper.name, () => {
+  const bookkeepingFields: Array<keyof MutantTestCoverage> = ['hitCount', 'estimatedNetTime', 'testFilter'];
+
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let inputFiles: InputFileCollection;
   let files: File[];
@@ -433,7 +435,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Act
         const actual = sut.reportCheckFailed(
-          factory.mutant({
+          factory.mutantTestCoverage({
             id: '32',
             fileName: 'add.js',
             location,
@@ -454,13 +456,26 @@ describe(MutationTestReportHelper.name, () => {
         expect(actual).include(expected);
       });
 
+      it('should prune bookkeeping fields', () => {
+        // Arrange
+        const sut = createSut();
+
+        // Act
+        const actual = sut.reportCheckFailed(factory.mutantTestCoverage(), factory.failedCheckResult());
+
+        // Assert
+        bookkeepingFields.forEach((field) => {
+          expect(actual).not.haveOwnProperty(field);
+        });
+      });
+
       it('should report statusReason', () => {
         // Arrange
         const sut = createSut();
 
         // Act
         const actual = sut.reportCheckFailed(
-          factory.mutant({ fileName: 'add.js' }),
+          factory.mutantTestCoverage({ fileName: 'add.js' }),
           factory.failedCheckResult({ status: CheckStatus.CompileError, reason: 'cannot call foo of undefined' })
         );
 
@@ -502,6 +517,19 @@ describe(MutationTestReportHelper.name, () => {
           static: false,
         };
         expect(actual).deep.include(expected);
+      });
+
+      it('should prune bookkeeping fields', () => {
+        // Arrange
+        const sut = createSut();
+
+        // Act
+        const actual = sut.reportMutantStatus(factory.mutantTestCoverage(), MutantStatus.NoCoverage);
+
+        // Assert
+        bookkeepingFields.forEach((field) => {
+          expect(actual).not.haveOwnProperty(field);
+        });
       });
     });
 
@@ -617,6 +645,19 @@ describe(MutationTestReportHelper.name, () => {
           coveredBy: undefined,
         };
         expect(actual).deep.include(expected);
+      });
+
+      it('should prune bookkeeping fields', () => {
+        // Arrange
+        const sut = createSut();
+
+        // Act
+        const actual = sut.reportMutantRunResult(factory.mutantTestCoverage(), factory.timeoutMutantRunResult());
+
+        // Assert
+        bookkeepingFields.forEach((field) => {
+          expect(actual).not.haveOwnProperty(field);
+        });
       });
     });
   });

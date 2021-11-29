@@ -74,10 +74,7 @@ export class MutationTestExecutor {
   }
 
   private executeIgnore(input$: Observable<MutantTestCoverage>) {
-    const [ignoredMutant$, notIgnoredMutant$] = partition(
-      input$.pipe(tap(this.ignoreStatic.bind(this)), shareReplay()),
-      (mutant) => mutant.status === MutantStatus.Ignored
-    );
+    const [ignoredMutant$, notIgnoredMutant$] = partition(input$.pipe(shareReplay()), (mutant) => mutant.status === MutantStatus.Ignored);
     const ignoredResult$ = ignoredMutant$.pipe(map((mutant) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.Ignored)));
     return { ignoredResult$, notIgnoredMutant$ };
   }
@@ -137,7 +134,7 @@ export class MutationTestExecutor {
     return {
       activeMutant,
       timeout,
-      testFilter: activeMutant.coveredBy,
+      testFilter: activeMutant.testFilter,
       sandboxFileName: this.sandbox.sandboxFileFor(activeMutant.fileName),
       hitLimit,
       disableBail: this.options.disableBail,
@@ -146,13 +143,5 @@ export class MutationTestExecutor {
 
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
-  }
-
-  private ignoreStatic(mutant: MutantTestCoverage) {
-    if (!mutant.status && mutant.static && !mutant.coveredBy && this.options.ignoreStatic) {
-      this.log.info('Ignoring %s because it was static', mutant.id);
-      mutant.status = MutantStatus.Ignored;
-      mutant.statusReason = 'Static mutant without coverage (and "ignoreStatic" was enabled)';
-    }
   }
 }
