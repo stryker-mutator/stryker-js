@@ -78,26 +78,27 @@ export class TypescriptChecker implements Checker {
 
     const notMatchedErrors = this.getNotMatchedErrors(mutants, errors);
     const mutantsWithoutErrors = this.getMutantsWithoutErrors(mutants, errors);
+    const unsureMutants: Mutant[] = [];
 
     notMatchedErrors.forEach((error) => {
-      const errorFileName = error.file?.fileName ?? '';
       if (!this.graph) return;
+
+      const errorFileName = error.file?.fileName ?? '';
+
       if (errorFileName in this.graph) {
-        if (this.graph.nodes[errorFileName]) {
-          this.graph.nodes[errorFileName].imports
-        }
-      }
-
-      let possibleMutant
-
-      function searchNode(dependencyNode: DependencyNode) {
-        const importFileNames = dependencyNode.imports.map((importNode) => importNode.fileName);
-        mutantsWithoutErrors.forEach((mutant) => {
-          if (importFileNames.includes(mutant.fileName))
-
+        const allImports = this.graph.nodes[errorFileName].getAllImports().map((importDependency) => importDependency.fileName);
+        mutantsWithoutErrors.forEach((mutantWithoutErrors) => {
+          if (allImports.includes(mutantWithoutErrors.fileName)) {
+            unsureMutants.push(mutantWithoutErrors);
+          }
         });
       }
     });
+
+    const newLocal = 0;
+    for (let i = newLocal; i < unsureMutants.length; i++) {
+      this.check([unsureMutants[i]]);
+    }
 
     const { matchedErrors, unMatchedErrors } = this.matchErrorsWithMutant(mutants, errors);
     mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.reset());

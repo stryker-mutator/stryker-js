@@ -18,4 +18,19 @@ export class DependencyNode {
 
     return dependencies;
   }
+
+  public getAllImports(nodesSeen: DependencyNode[] = []): DependencyNode[] {
+    if (nodesSeen.includes(this)) return [];
+    nodesSeen.push(this);
+
+    let imports: DependencyNode[] = [...this.imports];
+
+    this.imports
+      .filter((i) => !nodesSeen.includes(i))
+      .forEach((i) => {
+        imports = [...imports, ...i.getAllDependencies(nodesSeen)];
+      });
+
+    return imports;
+  }
 }
