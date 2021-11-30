@@ -48,7 +48,7 @@
     "@types/node": "^16.11.10",
     "@types/semver": "~7.3.6",
     "jest": "~27.4.0",
-    "jest-circus": "~27.3.0",
+    "jest-circus": "~27.4.1",
     "jest-environment-jsdom-sixteen": "^2.0.0"
   },
   "peerDependencies": {
