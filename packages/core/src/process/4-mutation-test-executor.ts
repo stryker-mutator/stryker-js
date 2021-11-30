@@ -1,5 +1,5 @@
 import { from, partition, merge, Observable, lastValueFrom, of, take, firstValueFrom, Subject, ReplaySubject, zip } from 'rxjs';
-import { toArray, map, tap, shareReplay } from 'rxjs/operators';
+import { toArray, map, tap, shareReplay, mergeAll } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantTestCoverage, MutantResult, StrykerOptions, MutantStatus, Mutant } from '@stryker-mutator/api/core';
 import { MutantRunOptions, TestRunner } from '@stryker-mutator/api/test-runner';
@@ -59,13 +59,13 @@ export class MutationTestExecutor {
     private readonly log: Logger,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
-  ) {}
+  ) { }
 
   public async execute(): Promise<MutantResult[]> {
     const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
-    const { passedMutant$, checkResult$ } = await this.executeCheck(from(notIgnoredMutant$));
-    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
-    const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
+    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(notIgnoredMutant$);
+    const { passedMutant$, checkResult$ } = await this.executeCheck(from(coveredMutant$));
+    const testRunnerResult$ = this.executeRunInTestRunner(passedMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
@@ -93,6 +93,13 @@ export class MutationTestExecutor {
   private async executeCheck(input$: Observable<MutantTestCoverage>) {
     // have to wait for all the mutants...
     const mutants = await lastValueFrom(merge(input$).pipe(toArray()));
+    // const groups = await firstValueFrom(
+    //   this.checkerPool.schedule(of(0), async (checker) => {
+    //     const group = await checker.createGroups?.(mutants);
+    //     return group ?? mutants.map((m) => [m]);
+    //   })
+    // );
+
     const results: Array<{
       mutant: MutantTestCoverage;
       checkResult: CheckResult;
@@ -100,42 +107,28 @@ export class MutationTestExecutor {
 
     for await (const checkerType of this.options.checkers) {
       const groups = await firstValueFrom(
-        this.checkerPool.schedule(of(1), async (checker, input) => {
+        this.checkerPool.schedule(of(0), async (checker) => {
           const group = await checker.createGroups?.(mutants);
-          return group ?? mutants;
+          return group ?? mutants.map((m) => [m]);
         })
       );
-
-      let counter = 0;
 
       const tempResults = await lastValueFrom(
         this.checkerPool
           .schedule(from(groups), async (checker, mutantGroup) => {
-            counter++;
-            // this.log.info(`Running ${counter} of ${groups.length}`);
-
-            if (Array.isArray(mutantGroup)) {
-              const result = await checker.checkGroup?.(mutantGroup);
-              return result;
-            } else {
-              return {
-                checkResult: await checker.check(mutantGroup),
-                mutant: mutantGroup,
-              };
-            }
+            return checker.check(mutantGroup);
           })
           .pipe(toArray())
       );
 
       tempResults.forEach((res) => {
-        if (Array.isArray(res))
-          res.forEach((r) =>
-            results.push({
-              mutant: r.mutant as MutantTestCoverage,
-              checkResult: r.checkResult,
-            })
-          );
-        else if (res) results.push(res);
+        res.forEach((r) =>
+          results.push({
+            // as mutantTestCoverage is dangerous
+            mutant: r.mutant as MutantTestCoverage,
+            checkResult: r.checkResult,
+          })
+        );
       });
     }
 
@@ -155,12 +148,9 @@ export class MutationTestExecutor {
     };
 
     // const checkTask$ = this.checkerPool
-    //   .schedule(input$, async (checker, mutant) => {
+    //   .schedule(from(groups), async (checker, mutant) => {
     //     const checkResult = await checker.check(mutant);
-    //     return {
-    //       checkResult,
-    //       mutant,
-    //     };
+    //     return checkResult;
     //   })
     //   .pipe(
     //     // Dispose when all checks are completed.
@@ -171,15 +161,18 @@ export class MutationTestExecutor {
     //         this.concurrencyTokenProvider.freeCheckers();
     //       },
     //     }),
-    //     shareReplay()
+    //     shareReplay(),
+    //     mergeAll()
     //   );
-    // const [passedCheckResult$, failedCheckResult$] = partition(checkTask$, ({ checkResult }) => CheckStatus.Passed === CheckStatus.Passed);
+    // const [passedCheckResult$, failedCheckResult$] = partition(checkTask$, ({ checkResult }) => checkResult.status === CheckStatus.Passed);
     // const checkResult$ = failedCheckResult$.pipe(
     //   map((failedMutant) =>
     //     this.mutationTestReportHelper.reportCheckFailed(failedMutant.mutant, failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>)
     //   )
     // );
-    // const passedMutant$ = passedCheckResult$.pipe(map(({ mutant }) => mutant));
+
+    // // TODO: as mutantTestCoverage isn't true maybe
+    // const passedMutant$ = passedCheckResult$.pipe(map(({ mutant }) => mutant as MutantTestCoverage));
     // return { checkResult$, passedMutant$ };
   }
 

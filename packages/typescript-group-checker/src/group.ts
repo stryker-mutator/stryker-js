@@ -5,15 +5,26 @@ import { Mutant } from '@stryker-mutator/api/core';
 // @ts-expect-error
 import precinct from 'precinct';
 
+import ts from 'typescript';
+
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 import { MemoryFileSystem } from './fs/memory-filesystem';
+import { DependencyGraph } from './graph/dependency-graph';
+
+export function createGroups(graph: DependencyGraph): Mutant[][] {
+  return [];
+}
+
+export function matchErrorsWithMutant(graph: DependencyGraph, mutants: Mutant[], error: ts.Diagnostic): Mutant[] {
+  return [];
+}
 
 export class GroupBuilder {
   private readonly tree: Record<string, { dependencies: string[]; imports: string[]; mutants: Mutant[] }> = {};
   private readonly filesSeen: string[] = [];
 
-  constructor(private readonly fs: MemoryFileSystem) { }
+  constructor(private readonly fs: MemoryFileSystem) {}
 
   public matchErrorWithGroup(mutantsGroup: Mutant[], errorFileName: string, nodeSeen: string[] = []): Mutant[] {
     this.createTreeFromMutants(mutantsGroup);

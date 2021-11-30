@@ -210,6 +210,7 @@ export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
 
 export function checker(): sinon.SinonStubbedInstance<Checker> {
   return {
+    createGroups: sinon.stub(),
     check: sinon.stub(),
     init: sinon.stub(),
   };

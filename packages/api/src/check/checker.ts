@@ -5,8 +5,7 @@ import { CheckResult } from './check-result';
 export interface Checker {
   init(): Promise<void>;
 
-  check(mutant: Mutant): Promise<CheckResult>;
+  check(mutant: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>>;
 
-  checkGroup?(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>>;
   createGroups?(mutants: Mutant[]): Promise<Mutant[][] | undefined>;
 }

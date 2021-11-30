@@ -10,11 +10,12 @@ import ts from 'typescript';
 
 import { flatMap } from '@stryker-mutator/util';
 
-import { TypescriptCompiler } from './typescript-compiler';
 import * as pluginTokens from './plugin-tokens';
 import { MemoryFileSystem } from './fs/memory-filesystem';
-import { GroupBuilder } from './group-builder';
+import { GroupBuilder, createGroups } from './group';
 import { toPosixFileName } from './fs/tsconfig-helpers';
+import { CompilerWithWatch } from './compilers/compiler-with-watch';
+import { DependencyGraph } from './graph/dependency-graph';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -35,7 +36,7 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
   return injector
     .provideFactory(commonTokens.logger, typescriptCheckerLoggerFactory, Scope.Transient)
     .provideClass(pluginTokens.mfs, MemoryFileSystem)
-    .provideClass(pluginTokens.tsCompiler, TypescriptCompiler)
+    .provideClass(pluginTokens.tsCompiler, CompilerWithWatch)
     .injectClass(TypescriptChecker);
 }
 
@@ -46,9 +47,11 @@ export class TypescriptChecker implements Checker {
   public static inject = tokens(commonTokens.logger, pluginTokens.tsCompiler, pluginTokens.mfs, commonTokens.options);
   private readonly groupBuilder: GroupBuilder;
 
+  private graph: DependencyGraph | undefined;
+
   constructor(
     private readonly logger: Logger,
-    private readonly tsCompiler: TypescriptCompiler,
+    private readonly tsCompiler: CompilerWithWatch,
     private readonly mfs: MemoryFileSystem,
     options: StrykerOptions
   ) {
@@ -57,20 +60,16 @@ export class TypescriptChecker implements Checker {
   }
 
   public async init(): Promise<void> {
-    const errors = await this.tsCompiler.check();
+    const { dependencyFiles, errors } = await this.tsCompiler.init();
 
     if (errors.length) {
-      throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
+      throw new Error('Dry run error');
     }
+
+    this.graph = new DependencyGraph(dependencyFiles);
   }
 
-  public async check(mutant: Mutant): Promise<CheckResult> {
-    return {
-      status: CheckStatus.Passed,
-    };
-  }
-
-  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
     this.groupBuilder.createTreeFromMutants(mutants);
     mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.mutate(mutant));
     const errors = await this.tsCompiler.check();
@@ -146,6 +145,10 @@ export class TypescriptChecker implements Checker {
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
     this.logger.info('Creating groups!');
-    return this.groupBuilder.getGroups(mutants);
+    if (this.graph) {
+      return createGroups(this.graph);
+    }
+
+    throw new Error('Graph not created');
   }
 }

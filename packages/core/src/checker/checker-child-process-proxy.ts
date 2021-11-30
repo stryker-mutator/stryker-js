@@ -31,17 +31,16 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
     await this.childProcess?.proxy.init();
   }
 
-  public async check(mutant: Mutant): Promise<CheckResult> {
+  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
     if (this.childProcess) {
-      return this.childProcess.proxy.check(mutant);
+      return this.childProcess.proxy.check(mutants);
     }
-    return {
-      status: CheckStatus.Passed,
-    };
-  }
-
-  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
-    return this.childProcess.proxy.checkGroup(mutants);
+    return mutants.map((mutant) => ({
+      mutant,
+      checkResult: {
+        status: CheckStatus.Passed,
+      },
+    }));
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {

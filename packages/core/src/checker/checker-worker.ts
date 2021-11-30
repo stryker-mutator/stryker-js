@@ -22,13 +22,10 @@ export class CheckerWorker implements Checker {
       }
     }
   }
-  public async check(mutant: Mutant): Promise<CheckResult> {
-    // todo: fix this
-    return this.innerCheckers['typescript-group'].check(mutant);
-  }
 
-  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
-    return (await this.innerCheckers['typescript-group'].checkGroup?.(mutants)) ?? [];
+  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+    // todo: fix this
+    return this.innerCheckers['typescript-group'].check(mutants);
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {

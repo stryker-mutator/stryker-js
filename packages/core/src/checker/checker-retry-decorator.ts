@@ -13,9 +13,9 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
     super(producer);
   }
 
-  public async check(mutant: Mutant): Promise<CheckResult> {
+  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
     try {
-      return await this.innerResource.check(mutant);
+      return await this.innerResource.check(mutants);
     } catch (error) {
       if (error instanceof ChildProcessCrashedError) {
         if (error instanceof OutOfMemoryError) {
@@ -24,15 +24,11 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
           this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
         }
         await this.recover();
-        return this.innerResource.check(mutant);
+        return this.innerResource.check(mutants);
       } else {
         throw error; //oops
       }
     }
-  }
-
-  public async checkGroup(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
-    return this.innerResource.checkGroup?.(mutants) ?? [];
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
