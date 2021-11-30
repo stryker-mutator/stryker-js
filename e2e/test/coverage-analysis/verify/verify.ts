@@ -21,11 +21,7 @@ describe('Coverage analysis', () => {
       };
     });
 
-    describeTests({
-      off: 18,
-      all: 12,
-      perTest: 6,
-    });
+    describeTests();
   });
 
   describe('with the cucumber-runner', () => {
@@ -45,11 +41,7 @@ describe('Coverage analysis', () => {
       };
     });
 
-    describeTests({
-      off: 18,
-      all: 12,
-      perTest: 6,
-    });
+    describeTests();
   });
 
   describe('with the jest-runner', () => {
@@ -67,9 +59,9 @@ describe('Coverage analysis', () => {
     });
 
     describeTests({
-      off: 14,
-      all: 10,
-      perTest: 6,
+      off: 22,
+      all: 18,
+      perTest: 10,
     });
   });
 
@@ -85,11 +77,7 @@ describe('Coverage analysis', () => {
       };
     });
 
-    describeTests({
-      off: 18,
-      all: 12,
-      perTest: 6,
-    });
+    describeTests();
   });
 
   describe('with karma-runner', () => {
@@ -114,11 +102,12 @@ describe('Coverage analysis', () => {
       beforeEach(() => {
         karmaConfigOverrides.frameworks = ['chai', 'mocha'];
       });
-      
+
       describeTests({
-        off: 18,
-        all: 12,
-        perTest: 6,
+        off: 30,
+        all: 22,
+        perTest: 10,
+        ignoreStatic: 8,
       });
     });
 
@@ -126,16 +115,31 @@ describe('Coverage analysis', () => {
       beforeEach(() => {
         karmaConfigOverrides.frameworks = ['chai', 'jasmine'];
       });
-      
+
       describeTests({
-        off: 18,
-        all: 12,
-        perTest: 12, // Should be 6, see https://github.com/karma-runner/karma-jasmine/pull/290
+        off: 30,
+        all: 22,
+        perTest: 22, // Should be 12, see https://github.com/karma-runner/karma-jasmine/pull/290
+        ignoreStatic: 20,
       });
     });
   });
 
-  function describeTests(expectedTestCount: Readonly<{ off: number; all: number; perTest: number }>) {
+  interface TestCount {
+    readonly off: number;
+    readonly all: number;
+    readonly perTest: number;
+    readonly ignoreStatic: number;
+  }
+
+  function describeTests(overrides?: Partial<TestCount>) {
+    const expectedTestCount: TestCount = {
+      off: 30,
+      all: 22,
+      perTest: 10,
+      ignoreStatic: 8,
+      ...overrides,
+    };
     it('should provide the expected with --coverageAnalysis off', async () => {
       // Arrange
       strykerOptions.coverageAnalysis = 'off';
@@ -149,8 +153,8 @@ describe('Coverage analysis', () => {
       const expectedMetricsResult: Partial<Metrics> = {
         noCoverage: 0,
         survived: 3,
-        killed: 5,
-        mutationScore: 62.5,
+        killed: 8,
+        mutationScore: 72.72727272727273,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.off);
@@ -169,8 +173,8 @@ describe('Coverage analysis', () => {
       const expectedMetricsResult: Partial<Metrics> = {
         noCoverage: 2,
         survived: 1,
-        killed: 5,
-        mutationScore: 62.5,
+        killed: 8,
+        mutationScore: 72.72727272727273,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.all);
@@ -190,11 +194,34 @@ describe('Coverage analysis', () => {
       const expectedMetricsResult: Partial<Metrics> = {
         noCoverage: 2,
         survived: 1,
-        killed: 5,
-        mutationScore: 62.5,
+        killed: 8,
+        mutationScore: 72.72727272727273,
       };
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.perTest);
+    });
+
+    it('should provide the expected --ignoreStatic', async () => {
+      // Arrange
+      strykerOptions.coverageAnalysis = 'perTest';
+      strykerOptions.ignoreStatic = true;
+      const stryker = new Stryker(strykerOptions);
+
+      // Act
+      const result = await stryker.runMutationTest();
+
+      // Assert
+      const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
+      const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+      const expectedMetricsResult: Partial<Metrics> = {
+        ignored: 13,
+        noCoverage: 2,
+        survived: 1,
+        killed: 7,
+        mutationScore: 70,
+      };
+      expect(metricsResult.metrics).deep.include(expectedMetricsResult);
+      expect(testsRan).eq(expectedTestCount.ignoreStatic);
     });
   }
 });

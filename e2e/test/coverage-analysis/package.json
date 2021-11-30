@@ -2,6 +2,7 @@
   "name": "coverage-analysis",
   "description": "A e2e test for --coverageAnalysis",
   "scripts": {
+    "test:unit:cucumber": "cucumber-js",
     "test:unit:jasmine": "jasmine",
     "test:unit:mocha": "mocha",
     "test:unit:karma": "karma start",
