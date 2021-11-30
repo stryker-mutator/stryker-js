@@ -74,7 +74,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
       this.sourceFiles = program.getSourceFiles().map((f: any) => {
         const file: { fileName: string; imports: Array<{ text: string }> } = f;
 
-        // todo: add dependencies
         const result = {
           fileName: this.resolveFilename(file.fileName),
           imports: file.imports
