@@ -11,9 +11,39 @@ import { toPosixFileName } from './fs/tsconfig-helpers';
 
 import { MemoryFileSystem } from './fs/memory-filesystem';
 import { DependencyGraph } from './graph/dependency-graph';
+import { DependencyNode } from './graph/dependency-node';
 
-export function createGroups(graph: DependencyGraph): Mutant[][] {
-  return [];
+// node mag niet in negeerlijst staan
+// dependencies van node mogen niet in de groep staan
+
+export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[][] {
+  let leftOverMutants = [...mutants];
+  let groups: Mutant[][] = [];
+
+  while (leftOverMutants.length) {
+    const firstMutant = leftOverMutants[0];
+    const firstNode = graph.nodes[toPosixFileName(firstMutant.fileName)];
+    const group: Array<{ node: DependencyNode; mutant: Mutant }> = [{ node: firstNode, mutant: firstMutant }];
+    const ignoreList = [firstNode, ...firstNode.getAllDependencies()];
+
+    // start with 1 because we already took the first mutant
+    for (let index = 1; index < leftOverMutants.length; index++) {
+      const activeMutant = leftOverMutants[index];
+      const activeNode = graph.nodes[toPosixFileName(activeMutant.fileName)];
+
+      if (
+        !ignoreList.includes(activeNode) && // node mag niet in negeerlijst staan
+        !group.some((g) => activeNode.getAllDependencies().includes(g.node)) // dependencies van node mogen niet in de groep staan
+      ) {
+        group.push({ node: activeNode, mutant: activeMutant });
+      }
+    }
+
+    leftOverMutants = leftOverMutants.filter((m) => group.findIndex((g) => g.mutant.id === m.id) === -1);
+    groups = [...groups, group.map((g) => g.mutant)];
+  }
+
+  return groups;
 }
 
 export function matchErrorsWithMutant(graph: DependencyGraph, mutants: Mutant[], error: ts.Diagnostic): Mutant[] {
@@ -24,7 +54,7 @@ export class GroupBuilder {
   private readonly tree: Record<string, { dependencies: string[]; imports: string[]; mutants: Mutant[] }> = {};
   private readonly filesSeen: string[] = [];
 
-  constructor(private readonly fs: MemoryFileSystem) {}
+  constructor(private readonly fs: MemoryFileSystem) { }
 
   public matchErrorWithGroup(mutantsGroup: Mutant[], errorFileName: string, nodeSeen: string[] = []): Mutant[] {
     this.createTreeFromMutants(mutantsGroup);
