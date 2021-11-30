@@ -16,6 +16,7 @@ import { GroupBuilder, createGroups } from './group';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { DependencyGraph } from './graph/dependency-graph';
+import { DependencyNode } from './graph/dependency-node';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -74,6 +75,30 @@ export class TypescriptChecker implements Checker {
     mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.mutate(mutant));
     const errors = await this.tsCompiler.check();
     this.logger.info(`Checking ${mutants.length} mutations: found ${errors.length} errors`);
+
+    const notMatchedErrors = this.getNotMatchedErrors(mutants, errors);
+    const mutantsWithoutErrors = this.getMutantsWithoutErrors(mutants, errors);
+
+    notMatchedErrors.forEach((error) => {
+      const errorFileName = error.file?.fileName ?? '';
+      if (!this.graph) return;
+      if (errorFileName in this.graph) {
+        if (this.graph.nodes[errorFileName]) {
+          this.graph.nodes[errorFileName].imports
+        }
+      }
+
+      let possibleMutant
+
+      function searchNode(dependencyNode: DependencyNode) {
+        const importFileNames = dependencyNode.imports.map((importNode) => importNode.fileName);
+        mutantsWithoutErrors.forEach((mutant) => {
+          if (importFileNames.includes(mutant.fileName))
+
+        });
+      }
+    });
+
     const { matchedErrors, unMatchedErrors } = this.matchErrorsWithMutant(mutants, errors);
     mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.reset());
     // if (unMatchedErrors.length) throw new Error('Could not match error');
@@ -82,6 +107,21 @@ export class TypescriptChecker implements Checker {
       mutant,
       checkResult: this.getResult(flatMap(matchedErrors.filter((e) => e.mutant.id === mutant.id).map((e) => e.errors))),
     }));
+  }
+
+  private getMutantsWithoutErrors(mutants: Mutant[], errors: ts.Diagnostic[]) {
+    const errorFiles = errors.map((error) => error.file?.fileName ?? '');
+    return mutants.filter((mutant) => {
+      return errorFiles.includes(mutant.fileName);
+    });
+  }
+
+  private getNotMatchedErrors(mutants: Mutant[], errors: ts.Diagnostic[]): ts.Diagnostic[] {
+    const mutantFiles = mutants.map((mutant) => mutant.fileName);
+    return errors.filter((error) => {
+      const errorFileName = error.file?.fileName ?? '';
+      return mutantFiles.includes(errorFileName);
+    });
   }
 
   private matchErrorsWithMutant(
