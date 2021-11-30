@@ -119,7 +119,7 @@ export class OptionsValidator {
     }
     if (options.ignoreStatic && options.coverageAnalysis !== 'perTest') {
       additionalErrors.push(
-        `Config option "${propertyPath<StrykerOptions>('ignoreStatic')}" is not with coverage analysis "${
+        `Config option "${propertyPath<StrykerOptions>('ignoreStatic')}" is not supported with coverage analysis "${
           options.coverageAnalysis
         }". Either turn off "${propertyPath<StrykerOptions>('ignoreStatic')}", or configure "${propertyPath<StrykerOptions>(
           'coverageAnalysis'

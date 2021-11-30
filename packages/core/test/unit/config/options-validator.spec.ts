@@ -341,7 +341,7 @@ describe(OptionsValidator.name, () => {
     testInjector.options.ignoreStatic = true;
     testInjector.options.coverageAnalysis = 'all';
     actValidationErrors(
-      'Config option "ignoreStatic" is not with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".'
+      'Config option "ignoreStatic" is not supported with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".'
     );
   });
 
