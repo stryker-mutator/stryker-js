@@ -183,6 +183,27 @@ If a glob pattern starts with `/`, the pattern is relative to the current workin
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
 
+### `ignoreStatic` [`boolean`]
+
+Default: `false`<br />
+Command line: `--ignoreStatic`<br />
+Config file: `"ignoreStatic": true`<br />
+
+Static mutants are mutants which are only executed during the loading of a file. Testing these mutants come with a big performance penalty. Therefore, it might make sense to ignore static mutants altogether.
+
+For example:
+
+```js
+const hi = '👋'; // Mutant 👽 StringLiteral
+
+export function greet(name) {
+  return `${hi} ${name}`
+}
+```
+
+In this example, `hi` on line 1 would be mutated. However, the mutant is only executed _the first time_ the file is loaded, making it a static mutant. For this mutant, it is impossible to measure the exact code coverage per test. Therefore, it defaults to running all tests.
+
+_Note:_ Enabling `--ignoreStatic` requires `"coverageAnalysis": "perTest"`, because detecting which mutant is static is done during the initial test run and needs per test coverage analysis.
 ### `inPlace` [`boolean`]
 
 Default: `false`<br />
