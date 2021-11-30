@@ -3,7 +3,7 @@ import { DependencyFile } from '../compiler';
 import { DependencyNode } from './dependency-node';
 
 export class DependencyGraph {
-  private readonly nodes: Record<string, DependencyNode> = {};
+  public readonly nodes: Record<string, DependencyNode> = {};
 
   constructor(dependencyFiles: DependencyFile[]) {
     dependencyFiles = dependencyFiles.filter((f) => !f.fileName.includes('node_modules')).filter((f) => !f.fileName.includes('spec.ts'));

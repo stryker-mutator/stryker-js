@@ -6,7 +6,7 @@
   "configurations": [
     {
       "command": "cd packages/cucumber-runner && npm run stryker",
-      "name": "Run npm start",
+      "name": "Run npm start on cucumber",
       "request": "launch",
       "type": "node-terminal"
     },

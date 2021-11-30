@@ -106,12 +106,13 @@ export class MutationTestExecutor {
     }> = [];
 
     for await (const checkerType of this.options.checkers) {
-      const groups = await firstValueFrom(
-        this.checkerPool.schedule(of(0), async (checker) => {
-          const group = await checker.createGroups?.(mutants);
-          return group ?? mutants.map((m) => [m]);
-        })
-      );
+      // const groups = await firstValueFrom(
+      //   this.checkerPool.schedule(of(0), async (checker) => {
+      //     const group = await checker.createGroups?.(mutants);
+      //     return group ?? mutants.map((m) => [m]);
+      //   })
+      // );
+      const groups = mutants.map((m) => [m]);
 
       const tempResults = await lastValueFrom(
         this.checkerPool
