@@ -201,9 +201,10 @@ export function greet(name) {
 }
 ```
 
-In this example, `hi` on line 1 would be mutated. However, the mutant is only executed _the first time_ the file is loaded, making it a static mutant. For this mutant, it is impossible to measure the exact code coverage per test. Therefore, it defaults to running all tests.
+In this example, `'👋'` on line 1 would be mutated to an empty string by the StringLiteral mutator. However, the mutant is only executed _when the file is loaded_, making it a static mutant. It is impossible to measure the exact code coverage per test for the mutant. Therefore, Stryker would default to running all tests.
 
 _Note:_ Enabling `--ignoreStatic` requires `"coverageAnalysis": "perTest"`, because detecting which mutant is static is done during the initial test run and needs per test coverage analysis.
+
 ### `inPlace` [`boolean`]
 
 Default: `false`<br />
