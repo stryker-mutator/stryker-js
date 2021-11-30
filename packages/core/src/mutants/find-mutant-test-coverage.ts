@@ -67,7 +67,7 @@ function mapToMutantTestCoverage(
           static: isStatic,
           estimatedNetTime: 0,
           hitCount,
-          testFilter: undefined, // since we're ignoring static, use the coveredBy as test filter.
+          testFilter: undefined,
           coveredBy,
         };
       } else {

@@ -17,17 +17,17 @@ describe('Coverage analysis', () => {
         timeoutMS: 60000,
         concurrency: 2,
         plugins: ['@stryker-mutator/jasmine-runner', require.resolve('./coverage-analysis-reporter')],
-        jasmineConfigFile: 'jasmine-spec/support/jasmine.json',
+        jasmineConfigFile: 'jasmine.json',
       };
     });
-    
+
     describeTests({
       off: 18,
       all: 12,
       perTest: 6,
     });
   });
-  
+
   describe('with the cucumber-runner', () => {
     beforeEach(() => {
       strykerOptions = {
@@ -37,14 +37,14 @@ describe('Coverage analysis', () => {
         concurrency: 1,
         cucumber: {
           profile: 'stryker',
-          features: ['cucumber-features/*.feature']
+          features: ['cucumber-features/*.feature'],
         },
         plugins: ['@stryker-mutator/cucumber-runner', require.resolve('./coverage-analysis-reporter')],
         // testRunnerNodeArgs: ['--inspect-brk'],
-        timeoutMS: 99999
+        timeoutMS: 99999,
       };
     });
-    
+
     describeTests({
       off: 18,
       all: 12,
@@ -61,7 +61,7 @@ describe('Coverage analysis', () => {
         concurrency: 2,
         plugins: ['@stryker-mutator/jest-runner', require.resolve('./coverage-analysis-reporter')],
         jest: {
-          configFile: 'jest-spec/jest.config.json',
+          configFile: 'jest.config.json',
         },
       };
     });
@@ -70,6 +70,68 @@ describe('Coverage analysis', () => {
       off: 14,
       all: 10,
       perTest: 6,
+    });
+  });
+
+  describe('with mocha-runner', () => {
+    beforeEach(() => {
+      strykerOptions = {
+        coverageAnalysis: 'off',
+        testRunner: 'mocha',
+        reporters: ['coverageAnalysis', 'html'],
+        timeoutMS: 60000,
+        concurrency: 2,
+        plugins: ['@stryker-mutator/mocha-runner', require.resolve('./coverage-analysis-reporter')],
+      };
+    });
+
+    describeTests({
+      off: 18,
+      all: 12,
+      perTest: 6,
+    });
+  });
+
+  describe('with karma-runner', () => {
+    let karmaConfigOverrides: { frameworks?: string[] };
+    beforeEach(() => {
+      karmaConfigOverrides = {};
+      strykerOptions = {
+        coverageAnalysis: 'off',
+        testRunner: 'karma',
+        reporters: ['coverageAnalysis', 'html'],
+        timeoutMS: 60000,
+        concurrency: 1,
+        plugins: ['@stryker-mutator/karma-runner', require.resolve('./coverage-analysis-reporter')],
+        karma: {
+          configFile: 'karma.conf.js',
+          config: karmaConfigOverrides,
+        },
+      };
+    });
+
+    describe('with mocha test framework', () => {
+      beforeEach(() => {
+        karmaConfigOverrides.frameworks = ['chai', 'mocha'];
+      });
+      
+      describeTests({
+        off: 18,
+        all: 12,
+        perTest: 6,
+      });
+    });
+
+    describe('with jasmine test framework', () => {
+      beforeEach(() => {
+        karmaConfigOverrides.frameworks = ['chai', 'jasmine'];
+      });
+      
+      describeTests({
+        off: 18,
+        all: 12,
+        perTest: 12, // Should be 6, see https://github.com/karma-runner/karma-jasmine/pull/290
+      });
     });
   });
 
@@ -121,7 +183,7 @@ describe('Coverage analysis', () => {
 
       // Act
       const result = await stryker.runMutationTest();
-      
+
       // Assert
       const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
