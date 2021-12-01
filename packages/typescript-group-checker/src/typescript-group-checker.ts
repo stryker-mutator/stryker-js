@@ -153,10 +153,6 @@ export class TypescriptChecker implements Checker {
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
     this.logger.info('Creating groups!');
-    if (this.graph) {
-      return createGroups(this.graph, mutants);
-    }
-
-    throw new Error('Graph not created');
+    return createGroups(this.graph, mutants);
   }
 }

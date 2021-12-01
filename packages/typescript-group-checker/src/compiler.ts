@@ -2,7 +2,7 @@ import ts from 'typescript';
 
 export interface DependencyFile {
   fileName: string;
-  imports: string[];
+  imports: Set<string>;
 }
 
 export interface TypescriptCompiler {

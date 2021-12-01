@@ -1,6 +1,6 @@
 import path from 'path';
 
-import ts from 'typescript';
+import ts, { textChangeRangeIsUnchanged } from 'typescript';
 import { Task } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
@@ -19,7 +19,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
   private readonly tsconfigFile: string;
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
-  private sourceFiles: DependencyFile[] | undefined;
+  private readonly sourceFiles: DependencyFile[] = [];
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: MemoryFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
@@ -69,28 +69,39 @@ export class CompilerWithWatch implements TypescriptCompiler {
     );
 
     host.afterProgramEmitAndDiagnostics = (program) => {
-      if (this.sourceFiles) return;
-
-      this.sourceFiles = program.getSourceFiles().map((f: any) => {
+      const sourceFiles = program.getSourceFiles().map((f: any) => {
         const file: { fileName: string; imports: Array<{ text: string }> } = f;
 
         const result = {
           fileName: this.resolveFilename(file.fileName),
-          imports: file.imports
-            .filter((i) => {
-              if (i.text) {
-                return true;
-              } else {
-                return false;
-              }
-            })
-            .filter((i) => i.text.startsWith('.'))
-            .map((i) => ts.resolveModuleName(i.text, file.fileName, {}, host).resolvedModule?.resolvedFileName ?? `${i.text}-not_resolved`)
-            .map((i) => this.resolveFilename(i)),
+          imports: new Set(
+            file.imports
+              .filter((i) => {
+                if (i.text) {
+                  return true;
+                } else {
+                  return false;
+                }
+              })
+              .filter((i) => i.text.startsWith('.'))
+              .map((i) => ts.resolveModuleName(i.text, file.fileName, {}, host).resolvedModule?.resolvedFileName ?? `${i.text}-not_resolved`)
+              .map((i) => this.resolveFilename(i))
+          ),
         };
 
         return result;
       });
+
+      for (const sourceFile of sourceFiles) {
+        const indexInSourceFileArray = this.sourceFiles.findIndex((sourceFileThis) => sourceFileThis.fileName === sourceFile.fileName);
+        if (indexInSourceFileArray >= 0) {
+          sourceFile.imports.forEach((sourceFileImport) => this.sourceFiles[indexInSourceFileArray].imports.add(sourceFileImport));
+        } else {
+          this.sourceFiles.push(sourceFile);
+        }
+      }
+
+      debugger;
     };
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});

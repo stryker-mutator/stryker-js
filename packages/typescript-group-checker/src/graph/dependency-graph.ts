@@ -13,7 +13,7 @@ export class DependencyGraph {
     });
 
     dependencyFiles.forEach((df) => {
-      this.nodes[df.fileName].imports = df.imports.filter((importName) => this.nodes[importName]).map((importName) => this.nodes[importName]);
+      this.nodes[df.fileName].imports = [...df.imports].filter((importName) => this.nodes[importName]).map((importName) => this.nodes[importName]);
     });
 
     // set dependencies
