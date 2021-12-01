@@ -12,7 +12,7 @@ import { errorToString, flatMap } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens';
 import { MemoryFileSystem } from './fs/memory-filesystem';
-import { GroupBuilder, createGroups } from './group';
+import { createGroups } from './group';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { DependencyGraph } from './graph/dependency-graph';
@@ -46,7 +46,6 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
  */
 export class TypescriptChecker implements Checker {
   public static inject = tokens(commonTokens.logger, pluginTokens.tsCompiler, pluginTokens.mfs, commonTokens.options);
-  private readonly groupBuilder: GroupBuilder;
 
   private graph: DependencyGraph = new DependencyGraph([]);
 
@@ -56,7 +55,6 @@ export class TypescriptChecker implements Checker {
     private readonly mfs: MemoryFileSystem,
     options: StrykerOptions
   ) {
-    this.groupBuilder = new GroupBuilder(mfs);
     this.logger.info('Typescript group check');
   }
 

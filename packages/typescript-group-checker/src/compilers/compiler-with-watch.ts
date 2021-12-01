@@ -100,8 +100,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
           this.sourceFiles.push(sourceFile);
         }
       }
-
-      debugger;
     };
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
