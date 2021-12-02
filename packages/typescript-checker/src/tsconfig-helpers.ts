@@ -17,6 +17,7 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
   composite: false,
   declaration: false,
+  declarationMap: false,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
