@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
 
-import { TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor';
+import { TSConfig, TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor';
 
 describe(TSConfigPreprocessor.name, () => {
   let files: File[];
@@ -83,6 +83,50 @@ describe(TSConfigPreprocessor.name, () => {
     ]);
   });
 
+  it('should rewrite "include" array items located outside of the sandbox', async () => {
+    // See https://github.com/stryker-mutator/stryker-js/issues/3281
+    files.push(
+      tsconfigFile('tsconfig.json', {
+        include: ['./**/*', '../../../node_modules/self-service-server/lib/main/shared/@types/**/*.d.ts'],
+      })
+    );
+    const output = await sut.preprocess(files);
+    assertions.expectTextFilesEqual(output, [
+      tsconfigFile('tsconfig.json', {
+        include: ['./**/*', '../../../../../node_modules/self-service-server/lib/main/shared/@types/**/*.d.ts'],
+      }),
+    ]);
+  });
+
+  it('should rewrite "exclude" array items located outside of the sandbox', async () => {
+    files.push(
+      tsconfigFile('tsconfig.json', {
+        exclude: ['./**/*', '../foo.ts'],
+      })
+    );
+    const output = await sut.preprocess(files);
+    assertions.expectTextFilesEqual(output, [
+      tsconfigFile('tsconfig.json', {
+        exclude: ['./**/*', '../../../foo.ts'],
+      }),
+    ]);
+  });
+
+  it('should rewrite "files" array items located outside of the sandbox', async () => {
+    // See https://github.com/stryker-mutator/stryker-js/issues/3281
+    files.push(
+      tsconfigFile('tsconfig.json', {
+        files: ['foo/bar.ts', '../global.d.ts'],
+      })
+    );
+    const output = await sut.preprocess(files);
+    assertions.expectTextFilesEqual(output, [
+      tsconfigFile('tsconfig.json', {
+        files: ['foo/bar.ts', '../../../global.d.ts'],
+      }),
+    ]);
+  });
+
   it('should be able to rewrite a monorepo style project', async () => {
     // Arrange
     files.push(
@@ -115,11 +159,5 @@ describe(TSConfigPreprocessor.name, () => {
 
   function tsconfigFile(fileName: string, content: TSConfig) {
     return new File(path.resolve(fileName), JSON.stringify(content, null, 2));
-  }
-
-  interface TSConfig {
-    extends?: string;
-    references?: Array<{ path: string }>;
-    [key: string]: unknown;
   }
 });
