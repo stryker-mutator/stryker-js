@@ -9,8 +9,15 @@ import { ResourceDecorator } from '../concurrent';
 import { CheckerResource } from './checker-resource';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
+  private activeChecker = '';
+
   constructor(producer: () => CheckerResource, private readonly log: Logger) {
     super(producer);
+  }
+
+  public async setActiveChecker(checker: string): Promise<void> {
+    this.activeChecker = checker;
+    await this.innerResource.setActiveChecker(checker);
   }
 
   public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
@@ -24,6 +31,7 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
           this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
         }
         await this.recover();
+        this.innerResource.setActiveChecker(this.activeChecker);
         return this.innerResource.check(mutants);
       } else {
         throw error; //oops

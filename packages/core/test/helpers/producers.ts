@@ -7,7 +7,7 @@ import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
+import { Pool, ConcurrencyTokenProvider, CheckerResource } from '../../src/concurrent';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -52,14 +52,16 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<Pool<Test
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub(),
+    runOnAll: sinon.stub(),
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<Checker>> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<CheckerResource>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub(),
+    runOnAll: sinon.stub(),
   };
 }
 
