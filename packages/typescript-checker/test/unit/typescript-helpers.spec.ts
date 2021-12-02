@@ -54,6 +54,7 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
+        declarationMap: false,
       });
       expect(
         JSON.parse(
@@ -65,6 +66,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
+                  declarationMap: false,
                 },
               },
             },
@@ -76,6 +78,7 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
+        declarationMap: false,
       });
     });
 
