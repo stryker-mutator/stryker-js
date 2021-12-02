@@ -1,4 +1,4 @@
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { ActiveChecker, Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
@@ -8,7 +8,7 @@ import { Resource } from '../concurrent/pool';
 
 import { CheckerWorker } from './checker-worker';
 
-export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
+export class CheckerChildProcessProxy implements Checker, Disposable, Resource, ActiveChecker {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
   constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
@@ -21,6 +21,10 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
       CheckerWorker,
       options.checkerNodeArgs
     );
+  }
+
+  public async setActiveChecker(checker: string): Promise<void> {
+    await this.childProcess.proxy.setActiveChecker(checker);
   }
 
   public async dispose(): Promise<void> {

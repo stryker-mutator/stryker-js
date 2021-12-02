@@ -11,7 +11,7 @@ import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { Timer } from '../utils/timer';
-import { Pool, ConcurrencyTokenProvider } from '../concurrent';
+import { Pool, ConcurrencyTokenProvider, CheckerResource } from '../concurrent';
 import { Sandbox } from '../sandbox';
 
 import { DryRunContext } from './3-dry-run-executor';
@@ -50,7 +50,7 @@ export class MutationTestExecutor {
   constructor(
     private readonly options: StrykerOptions,
     private readonly reporter: StrictReporter,
-    private readonly checkerPool: I<Pool<Checker>>,
+    private readonly checkerPool: I<Pool<CheckerResource>>,
     private readonly testRunnerPool: I<Pool<TestRunner>>,
     private readonly timeOverheadMS: number,
     private readonly matchedMutants: readonly MutantTestCoverage[],
@@ -106,6 +106,10 @@ export class MutationTestExecutor {
     }> = [];
 
     for await (const checkerType of this.options.checkers) {
+      // Set the active checker on all checkerWorkers
+      await this.checkerPool.runOnAll(async (checkerResource) => {
+        await checkerResource.setActiveChecker(checkerType);
+      });
       const groups = await firstValueFrom(
         this.checkerPool.schedule(of(0), async (checker) => {
           const group = await checker.createGroups?.(mutants);

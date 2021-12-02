@@ -25,7 +25,7 @@ import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
-import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent';
+import { ConcurrencyTokenProvider, Pool, createTestRunnerPool, CheckerResource } from '../concurrent';
 import { FileMatcher } from '../config';
 import { InputFileCollection } from '../input/input-file-collection';
 
@@ -37,7 +37,7 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
-  [coreTokens.checkerPool]: I<Pool<Checker>>;
+  [coreTokens.checkerPool]: I<Pool<CheckerResource>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
   [coreTokens.inputFiles]: InputFileCollection;
 }
