@@ -103,6 +103,7 @@ export class MutationTestExecutor {
 
     lastValueFrom(tempPassedMutant$).then(() => {
       this.log.info('Free the checkers! 🦅🕊');
+      passedMutant$.complete();
       this.checkerPool.dispose();
       this.concurrencyTokenProvider.freeCheckers();
     });
@@ -149,7 +150,6 @@ export class MutationTestExecutor {
       })
     );
 
-    passedMutant$.complete();
     checkResult$.complete();
   }
 
