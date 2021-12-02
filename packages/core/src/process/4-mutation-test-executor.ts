@@ -105,18 +105,19 @@ export class MutationTestExecutor {
       checkResult: CheckResult;
     }> = [];
 
+    // Loop through each checker and run them back to back
     for await (const checkerType of this.options.checkers) {
       // Set the active checker on all checkerWorkers
       await this.checkerPool.runOnAll(async (checkerResource) => {
         await checkerResource.setActiveChecker(checkerType);
       });
+
       const groups = await firstValueFrom(
         this.checkerPool.schedule(of(0), async (checker) => {
           const group = await checker.createGroups?.(mutants);
           return group ?? mutants.map((m) => [m]);
         })
       );
-      // const groups = mutants.map((m) => [m]);
 
       const tempResults = await lastValueFrom(
         this.checkerPool
