@@ -16,7 +16,6 @@ import {
   ErrorDryRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { lastValueFrom, of } from 'rxjs';
-import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
 import { Sandbox } from '../sandbox/sandbox';

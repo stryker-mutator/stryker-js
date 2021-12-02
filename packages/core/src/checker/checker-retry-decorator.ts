@@ -9,6 +9,7 @@ import { ResourceDecorator } from '../concurrent';
 import { CheckerResource } from './checker-resource';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
+  // Save activeChecker for if a new checker has to spawn
   private activeChecker = '';
 
   constructor(producer: () => CheckerResource, private readonly log: Logger) {
@@ -31,7 +32,7 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
           this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
         }
         await this.recover();
-        this.innerResource.setActiveChecker(this.activeChecker);
+        await this.innerResource.setActiveChecker(this.activeChecker);
         return this.innerResource.check(mutants);
       } else {
         throw error; //oops
