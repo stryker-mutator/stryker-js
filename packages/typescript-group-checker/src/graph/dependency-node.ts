@@ -28,7 +28,7 @@ export class DependencyNode {
     this.imports
       .filter((i) => !nodesSeen.includes(i))
       .forEach((i) => {
-        imports = [...imports, ...i.getAllDependencies(nodesSeen)];
+        imports = [...imports, ...i.getAllImports(nodesSeen)];
       });
 
     return imports;

@@ -63,9 +63,9 @@ export class MutationTestExecutor {
 
   public async execute(): Promise<MutantResult[]> {
     const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
-    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(notIgnoredMutant$);
-    const { passedMutant$, checkResult$ } = await this.executeCheck(from(coveredMutant$));
-    const testRunnerResult$ = this.executeRunInTestRunner(passedMutant$);
+    const { passedMutant$, checkResult$ } = await this.executeCheck(from(notIgnoredMutant$));
+    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
+    const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
@@ -93,6 +93,7 @@ export class MutationTestExecutor {
   private async executeCheck(input$: Observable<MutantTestCoverage>) {
     // have to wait for all the mutants...
     const mutants = await lastValueFrom(merge(input$).pipe(toArray()));
+    this.log.info(`Checking ${mutants.length}`);
     // const groups = await firstValueFrom(
     //   this.checkerPool.schedule(of(0), async (checker) => {
     //     const group = await checker.createGroups?.(mutants);
@@ -118,6 +119,8 @@ export class MutationTestExecutor {
           return group ?? mutants.map((m) => [m]);
         })
       );
+
+      this.log.info(`Created ${groups.length} groups`);
 
       const tempResults = await lastValueFrom(
         this.checkerPool
