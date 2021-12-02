@@ -11,6 +11,12 @@
       "type": "node-terminal"
     },
     {
+      "command": "cd ../stryker5-4-1/packages/core && node ../../../group-mutants/packages/core/bin/stryker run",
+      "name": "Run npm start on Stryker5-4-1",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Port",
