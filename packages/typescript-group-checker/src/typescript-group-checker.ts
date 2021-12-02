@@ -8,15 +8,12 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 import ts from 'typescript';
 
-import { errorToString, flatMap } from '@stryker-mutator/util';
-
 import * as pluginTokens from './plugin-tokens';
 import { MemoryFileSystem } from './fs/memory-filesystem';
 import { createGroups } from './group';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { DependencyGraph } from './graph/dependency-graph';
-import { DependencyNode } from './graph/dependency-node';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -151,6 +148,6 @@ export class TypescriptChecker implements Checker {
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
     this.logger.info('Creating groups!');
-    return createGroups(this.graph, mutants);
+    return createGroups(this.graph, mutants).sort((a, b) => b.length - a.length);
   }
 }

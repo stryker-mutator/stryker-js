@@ -1,20 +1,11 @@
-import path from 'path';
-
 import { Mutant } from '@stryker-mutator/api/core';
-
-// @ts-expect-error
-import precinct from 'precinct';
 
 import ts from 'typescript';
 
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
-import { MemoryFileSystem } from './fs/memory-filesystem';
 import { DependencyGraph } from './graph/dependency-graph';
 import { DependencyNode } from './graph/dependency-node';
-
-// node mag niet in negeerlijst staan
-// dependencies van node mogen niet in de groep staan
 
 export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[][] {
   let leftOverMutants = [...mutants];
@@ -31,10 +22,7 @@ export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[
       const activeMutant = leftOverMutants[index];
       const activeNode = graph.nodes[toPosixFileName(activeMutant.fileName)];
 
-      if (
-        !ignoreList.includes(activeNode) && // node mag niet in negeerlijst staan
-        !dependencyInGroup(activeNode.getAllDependencies(), group)
-      ) {
+      if (!ignoreList.includes(activeNode) && !dependencyInGroup(activeNode?.getAllDependencies(), group)) {
         group.push({ node: activeNode, mutant: activeMutant });
         ignoreList = [...ignoreList, activeNode, ...activeNode.getAllDependencies()];
       }
@@ -50,7 +38,9 @@ export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[
 function dependencyInGroup(dependencies: DependencyNode[], group: Array<{ node: DependencyNode; mutant: Mutant }>): boolean {
   for (const dependency of dependencies) {
     for (const node of group) {
-      if (node.node === dependency) return true;
+      if (node.node === dependency) {
+        return true;
+      }
     }
   }
 
