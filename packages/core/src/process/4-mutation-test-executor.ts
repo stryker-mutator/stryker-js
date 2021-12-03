@@ -101,9 +101,9 @@ export class MutationTestExecutor {
       passedMutants$ = new Subject<MutantTestCoverage>();
     }
 
-    lastValueFrom(previousPassedMutants$).then(() => {
-      this.log.info('Free the checkers! 🦅🕊');
-      failedMutants$.complete();
+    lastValueFrom(failedMutants$).then(() => {
+      this.log.info('Free the checkers!');
+      (previousPassedMutants$ as Subject<MutantTestCoverage>).complete();
       this.checkerPool.dispose();
       this.concurrencyTokenProvider.freeCheckers();
     });
@@ -150,6 +150,7 @@ export class MutationTestExecutor {
       })
     );
 
+    this.log.info(`${checkerType} completed his runs`);
     checkResult$.complete();
   }
 
