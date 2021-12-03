@@ -59,7 +59,7 @@ export class TypescriptChecker implements Checker {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
 
     if (errors.length) {
-      throw new Error('Dry run error');
+      throw new Error(`Dry run error(s): ${this.formatErrors(errors)}`);
     }
 
     this.graph = new DependencyGraph(dependencyFiles);
