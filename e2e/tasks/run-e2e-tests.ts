@@ -76,7 +76,7 @@ function satisfiesNodeVersion(testDir: string): boolean {
 
 async function runTest(testDir: string) {
   if (satisfiesNodeVersion(testDir)) {
-    await execNpm('test', testDir, true);
+    await execNpm('test', testDir, false);
   }
   return testDir;
 }
