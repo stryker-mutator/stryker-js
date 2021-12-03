@@ -95,10 +95,14 @@ export class MutationTestExecutor {
     let passedMutants$ = new Subject<MutantTestCoverage>();
     let previousPassedMutants$ = input$;
 
-    for (const checkerType of this.options.checkers) {
-      this.executeChecker(checkerType, previousPassedMutants$, failedMutants$, passedMutants$);
-      previousPassedMutants$ = passedMutants$;
-      passedMutants$ = new Subject<MutantTestCoverage>();
+    if (this.options.checkers.length) {
+      for (const checkerType of this.options.checkers) {
+        this.executeChecker(checkerType, previousPassedMutants$, failedMutants$, passedMutants$);
+        previousPassedMutants$ = passedMutants$;
+        passedMutants$ = new Subject<MutantTestCoverage>();
+      }
+    } else {
+      failedMutants$.complete();
     }
 
     lastValueFrom(failedMutants$).then(() => {
