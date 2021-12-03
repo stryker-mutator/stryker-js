@@ -135,13 +135,9 @@ export class MutationTestExecutor {
     );
 
     this.log.info(`${checkerType} created ${groups.length} groups`);
-    let counter = 0;
 
     await lastValueFrom(
       this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
-        counter += mutantGroup.length;
-        this.log.info(`Checker is at ${counter} | ${checkerType}`);
-
         const results = await checker.check(mutantGroup);
         results.forEach((result) => {
           if (result.checkResult.status === CheckStatus.Passed) {
@@ -160,7 +156,6 @@ export class MutationTestExecutor {
 
   private executeRunInTestRunner(input$: Observable<MutantTestCoverage>): Observable<MutantResult> {
     return this.testRunnerPool.schedule(input$, async (testRunner, mutant) => {
-      this.log.info(`Testrunner is at ${mutant.id}`);
       const mutantRunOptions = this.createMutantRunOptions(mutant);
       const result = await testRunner.mutantRun(mutantRunOptions);
       return this.mutationTestReportHelper.reportMutantRunResult(mutant, result);
