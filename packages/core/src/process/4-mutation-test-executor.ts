@@ -91,25 +91,25 @@ export class MutationTestExecutor {
   }
 
   private executeCheck(mutants: Observable<MutantTestCoverage>) {
-    const failedMutant$ = new Subject<MutantResult>();
+    const failedMutants$ = new Subject<MutantResult>();
     let passedMutant$ = new Subject<MutantTestCoverage>();
     let tempPassedMutant$ = mutants;
 
     for (const checkerType of this.options.checkers) {
-      this.executeChecker(checkerType, tempPassedMutant$, failedMutant$, passedMutant$);
+      this.executeChecker(checkerType, tempPassedMutant$, failedMutants$, passedMutant$);
       tempPassedMutant$ = passedMutant$;
       passedMutant$ = new Subject<MutantTestCoverage>();
     }
 
     lastValueFrom(tempPassedMutant$).then(() => {
       this.log.info('Free the checkers! 🦅🕊');
-      passedMutant$.complete();
+      failedMutants$.complete();
       this.checkerPool.dispose();
       this.concurrencyTokenProvider.freeCheckers();
     });
 
     return {
-      checkResult$: failedMutant$,
+      checkResult$: failedMutants$,
       passedMutant$: tempPassedMutant$,
     };
   }
