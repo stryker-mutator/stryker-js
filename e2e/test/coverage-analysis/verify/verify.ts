@@ -56,6 +56,7 @@ describe('Coverage analysis', () => {
       strykerOptions.jest = {
         configFile: 'jest-spec/jest.config.json',
       };
+      strykerOptions.tempDirName = 'stryker-tmp';
     });
 
     describeTests({
