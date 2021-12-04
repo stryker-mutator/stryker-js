@@ -13,8 +13,5 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@stryker-mutator/karma-runner": "^5.2.2"
-  }
+  "license": "ISC"
 }

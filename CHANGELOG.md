@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **ts checker:** always disable `declarationMap` ([#3294](https://github.com/stryker-mutator/stryker-js/issues/3294)) ([990ecdc](https://github.com/stryker-mutator/stryker-js/commit/990ecdcf75ace7ad4553fd7c362d29d9bfa423ce))
+* **tsconfig:** rewrite "include" patterns ([#3293](https://github.com/stryker-mutator/stryker-js/issues/3293)) ([37ead22](https://github.com/stryker-mutator/stryker-js/commit/37ead22ff84925418ca7682b3e3a5d2271e7e97f)), closes [#3281](https://github.com/stryker-mutator/stryker-js/issues/3281)
+
+
+
+
+
 # [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
 
 

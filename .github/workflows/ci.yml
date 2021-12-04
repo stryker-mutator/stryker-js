@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2.4.0
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2.4.1
+      uses: actions/setup-node@v2.5.0
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -34,8 +34,13 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
     steps:
+    # https://github.com/ryanclark/karma-webpack/issues/494
+    - name: Windows temp dir fix
+      run: |
+        echo TEMP="D:\Temp" >> $env:GITHUB_ENV
+        echo TMP="D:\Temp" >> $env:GITHUB_ENV
     - uses: actions/checkout@v2.4.0
-    - uses: actions/setup-node@v2.4.1
+    - uses: actions/setup-node@v2.5.0
       with:
         node-version: lts/*
         cache: 'npm'
