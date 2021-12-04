@@ -176,7 +176,7 @@ describe('Coverage analysis', () => {
       expect(testsRan).eq(expectedTestCount.perTest);
     });
 
-    it('should provide the expected --ignoreStatic', async () => {
+    it('should provide the expected with --ignoreStatic', async () => {
       // Arrange
       strykerOptions.coverageAnalysis = 'perTest';
       strykerOptions.ignoreStatic = true;
