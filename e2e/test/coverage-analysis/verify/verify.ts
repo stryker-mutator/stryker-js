@@ -22,7 +22,7 @@ describe('Coverage analysis', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'jasmine';
       strykerOptions.plugins!.push('@stryker-mutator/jasmine-runner');
-      strykerOptions.jasmineConfigFile = 'jasmine-spec/support/jasmine.json';
+      strykerOptions.jasmineConfigFile = 'jasmine.json';
     });
 
     describeTests();
@@ -46,7 +46,7 @@ describe('Coverage analysis', () => {
       strykerOptions.testRunner = 'jest';
       strykerOptions.plugins!.push('@stryker-mutator/jest-runner');
       strykerOptions.jest = {
-        configFile: 'jest-spec/jest.config.json',
+        configFile: 'jest.config.json',
       };
       strykerOptions.tempDirName = 'stryker-tmp';
     });
