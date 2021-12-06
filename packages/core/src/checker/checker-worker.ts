@@ -31,10 +31,18 @@ export class CheckerWorker implements Checker, ActiveChecker {
   }
 
   public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+    if (this.activeChecker === '') {
+      throw new Error('No checker set.');
+    }
+
     return this.innerCheckers[this.activeChecker].check(mutants);
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    if (this.activeChecker === '') {
+      throw new Error('No checker set.');
+    }
+
     return this.innerCheckers[this.activeChecker].createGroups?.(mutants);
   }
 }
