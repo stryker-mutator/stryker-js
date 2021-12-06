@@ -9,7 +9,7 @@ import { ResourceDecorator } from '../concurrent';
 import { CheckerResource } from './checker-resource';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
-  // Save activeChecker for if a new checker has to spawn
+  // Save the activeChecker in case a new checker has to spawn
   private activeChecker = '';
 
   constructor(producer: () => CheckerResource, private readonly log: Logger) {

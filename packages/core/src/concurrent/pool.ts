@@ -89,7 +89,11 @@ export class Pool<TResource extends Resource> implements Disposable {
     );
   }
 
-  public async runOnAll(task: (resource: TResource) => Promise<void>): Promise<void> {
+  /**
+   * Runs a task on all individual resources
+   * @param task The task to execute on each resource
+   */
+  public async runOnAllResources(task: (resource: TResource) => Promise<void>): Promise<void> {
     await Promise.all(this.createdResources.map((resource) => task(resource)));
   }
 

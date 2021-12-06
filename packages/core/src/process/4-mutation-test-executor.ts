@@ -127,7 +127,7 @@ export class MutationTestExecutor {
     const mutants = await lastValueFrom(merge(previousPassedMutants$).pipe(toArray()));
 
     // Set the active checker on all checkerWorkers
-    await this.checkerPool.runOnAll(async (checkerResource) => {
+    await this.checkerPool.runOnAllResources(async (checkerResource) => {
       await checkerResource.setActiveChecker(checkerType);
     });
 
