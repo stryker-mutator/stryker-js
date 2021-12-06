@@ -51,9 +51,7 @@ export class TypescriptChecker implements Checker {
     private readonly tsCompiler: CompilerWithWatch,
     private readonly mfs: MemoryFileSystem,
     options: StrykerOptions
-  ) {
-    this.logger.info('Typescript group check');
-  }
+  ) {}
 
   public async init(): Promise<void> {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
@@ -145,7 +143,6 @@ export class TypescriptChecker implements Checker {
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
-    this.logger.info('Creating groups!');
     return createGroups(this.graph, mutants);
   }
 }

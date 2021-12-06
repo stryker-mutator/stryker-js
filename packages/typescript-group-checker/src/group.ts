@@ -1,7 +1,5 @@
 import { Mutant } from '@stryker-mutator/api/core';
 
-import ts from 'typescript';
-
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 import { DependencyGraph } from './graph/dependency-graph';
@@ -45,8 +43,4 @@ function dependencyInGroup(dependencies: DependencyNode[], group: Array<{ node: 
   }
 
   return false;
-}
-
-export function matchErrorsWithMutant(graph: DependencyGraph, mutants: Mutant[], error: ts.Diagnostic): Mutant[] {
-  return [];
 }

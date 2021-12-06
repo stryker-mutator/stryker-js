@@ -59,7 +59,7 @@ export class MutationTestExecutor {
     private readonly log: Logger,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
-  ) { }
+  ) {}
 
   public async execute(): Promise<MutantResult[]> {
     const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
@@ -91,29 +91,28 @@ export class MutationTestExecutor {
   }
 
   private executeCheck(input$: Observable<MutantTestCoverage>) {
-    const failedMutants$ = new Subject<MutantResult>();
-    let passedMutants$ = new Subject<MutantTestCoverage>();
+    const checkResult$ = new Subject<MutantResult>();
     let previousPassedMutants$ = input$;
 
     if (this.options.checkers.length) {
       for (const checkerType of this.options.checkers) {
-        this.executeChecker(checkerType, previousPassedMutants$, failedMutants$, passedMutants$);
+        const passedMutants$ = new Subject<MutantTestCoverage>();
+        this.executeChecker(checkerType, previousPassedMutants$, checkResult$, passedMutants$);
         previousPassedMutants$ = passedMutants$;
-        passedMutants$ = new Subject<MutantTestCoverage>();
       }
     } else {
-      failedMutants$.complete();
+      checkResult$.complete();
     }
 
-    lastValueFrom(failedMutants$).then(() => {
-      this.log.info('Free the checkers!');
+    lastValueFrom(checkResult$).then(() => {
+      this.log.info('Checker(s) finished.');
       (previousPassedMutants$ as Subject<MutantTestCoverage>).complete();
       this.checkerPool.dispose();
       this.concurrencyTokenProvider.freeCheckers();
     });
 
     return {
-      checkResult$: failedMutants$,
+      checkResult$: checkResult$.asObservable(),
       passedMutant$: previousPassedMutants$,
     };
   }
@@ -138,23 +137,19 @@ export class MutationTestExecutor {
       })
     );
 
-    this.log.info(`${checkerType} created ${groups.length} groups`);
+    const run = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
+      const results = await checker.check(mutantGroup);
+      results.forEach((result) => {
+        if (result.checkResult.status === CheckStatus.Passed) {
+          // todo: check types
+          passedMutant$.next(result.mutant as MutantTestCoverage);
+        } else {
+          checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(result.mutant, result.checkResult));
+        }
+      });
+    });
 
-    await lastValueFrom(
-      this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
-        const results = await checker.check(mutantGroup);
-        results.forEach((result) => {
-          if (result.checkResult.status === CheckStatus.Passed) {
-            // todo: check types
-            passedMutant$.next(result.mutant as MutantTestCoverage);
-          } else {
-            checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(result.mutant, result.checkResult));
-          }
-        });
-      })
-    );
-
-    this.log.info(`${checkerType} completed his runs`);
+    await lastValueFrom(run);
     checkResult$.complete();
   }
 
