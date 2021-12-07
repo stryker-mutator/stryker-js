@@ -10,10 +10,10 @@ import ts from 'typescript';
 
 import * as pluginTokens from './plugin-tokens';
 import { MemoryFileSystem } from './fs/memory-filesystem';
-import { createGroups } from './group';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { DependencyGraph } from './graph/dependency-graph';
+import { createGroups, createImage } from './group';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -51,7 +51,7 @@ export class TypescriptChecker implements Checker {
     private readonly tsCompiler: CompilerWithWatch,
     private readonly mfs: MemoryFileSystem,
     options: StrykerOptions
-  ) {}
+  ) { }
 
   public async init(): Promise<void> {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
@@ -97,6 +97,9 @@ export class TypescriptChecker implements Checker {
 
       mutantResult.errors = mutantErrors;
     }
+
+    createImage(`${mutants.length}(${mutants.map((m) => m.id)})__errors(${errors.length})`, this.graph, mutants, errors);
+
 
     return mutantResults.map((mutantResult) => {
       if (mutantResult.errors.length) {

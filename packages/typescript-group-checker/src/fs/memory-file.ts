@@ -3,12 +3,11 @@ import ts from 'typescript';
 
 export class File {
   private sourceFile: ts.SourceFile | undefined;
-  public mutant: Mutant | undefined;
+  public mutant: Pick<Mutant, 'location' | 'replacement'> | undefined;
   private readonly originalContent: string;
-  public modifiedTime = new Date();
   public watcher: ts.FileWatcherCallback | undefined;
 
-  constructor(public fileName: string, public content: string) {
+  constructor(public fileName: string, public content: string, public modifiedTime = new Date()) {
     this.originalContent = content;
   }
 
@@ -18,7 +17,8 @@ export class File {
     this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 
-  public mutate(mutant: Mutant): void {
+  public mutate(mutant: Pick<Mutant, 'location' | 'replacement'>): void {
+    this.guardMutationIsWatched();
     this.modifiedTime = new Date();
     this.mutant = mutant;
     const start = this.getOffset(mutant.location.start);
@@ -29,9 +29,18 @@ export class File {
   }
 
   public reset(): void {
+    this.guardMutationIsWatched();
     this.modifiedTime = new Date();
     this.content = this.originalContent;
     this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
+  }
+
+  private guardMutationIsWatched() {
+    if (!this.watcher) {
+      throw new Error(
+        `Tried to check file "${this.fileName}" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project.`
+      );
+    }
   }
 
   private getOffset(pos: Position): number {

@@ -1,9 +1,16 @@
+import { existsSync, mkdirSync, unlinkSync } from 'fs';
+
+import { EOL } from 'os';
+
 import { Mutant } from '@stryker-mutator/api/core';
+
+import graphviz from 'graphviz';
 
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 import { DependencyGraph } from './graph/dependency-graph';
 import { DependencyNode } from './graph/dependency-node';
+import ts from 'typescript';
 
 export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[][] {
   let leftOverMutants = [...mutants];
@@ -44,3 +51,55 @@ function dependencyInGroup(dependencies: DependencyNode[], group: Array<{ node: 
 
   return false;
 }
+
+export function createImage(imageName: string, graph: DependencyGraph, mutants: Mutant[], errors: ts.Diagnostic[]): void {
+  const treeGraphviz = graphviz.digraph('G');
+
+  for (const nodeName in graph.nodes) {
+    const node = graph.nodes[nodeName];
+    const graphvizNode = treeGraphviz.addNode(node.fileName, {
+      color: 'whitesmoke',
+      style: 'filled,bold',
+      shape: 'rect',
+      fontname: 'Arial',
+      nodesep: '5',
+      fillcolor: 'whitesmoke',
+    });
+
+    const errorsWithNode = errors.filter((e) => node.fileName === e.file?.fileName);
+    if (errorsWithNode.length) {
+      graphvizNode.set('color', 'orange');
+      graphvizNode.set('fillcolor', 'orange');
+      graphvizNode.set('tooltip', ts.formatDiagnostics(errorsWithNode, diagnosticsHost));
+    }
+
+    const mutant = mutants.find((m) => toPosixFileName(m.fileName) === node.fileName);
+    if (mutant) {
+      graphvizNode.set('fillcolor', 'cyan');
+      graphvizNode.set('label', `${toPosixFileName(mutant.fileName)} (${mutant.id})`);
+    }
+  }
+
+  for (const nodeName in graph.nodes) {
+    const node = graph.nodes[nodeName];
+    node.dependencies.forEach((dependency) => {
+      treeGraphviz.addEdge(dependency.fileName, node.fileName, { color: 'black' });
+    });
+  }
+
+  if (!existsSync(`${process.cwd()}/graphs/`)) mkdirSync(`${process.cwd()}/graphs/`);
+  const imagePath = `${process.cwd()}/graphs/${imageName}.svg`;
+
+  try {
+    if (existsSync(imagePath)) unlinkSync(imagePath);
+    treeGraphviz.output('svg', imagePath);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+const diagnosticsHost: ts.FormatDiagnosticsHost = {
+  getCanonicalFileName: (fileName) => fileName,
+  getCurrentDirectory: process.cwd,
+  getNewLine: () => EOL,
+};

@@ -6,8 +6,6 @@ export class DependencyGraph {
   public readonly nodes: Record<string, DependencyNode> = {};
 
   constructor(dependencyFiles: DependencyFile[]) {
-    dependencyFiles = dependencyFiles.filter((f) => !f.fileName.includes('node_modules')).filter((f) => !f.fileName.includes('spec.ts'));
-
     dependencyFiles.forEach((df) => {
       this.nodes[df.fileName] = new DependencyNode(df.fileName);
     });
