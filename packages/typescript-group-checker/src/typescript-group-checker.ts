@@ -13,7 +13,7 @@ import { MemoryFileSystem } from './fs/memory-filesystem';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { DependencyGraph } from './graph/dependency-graph';
-import { createGroups, createImage } from './group';
+import { createGroups } from './group';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -97,9 +97,6 @@ export class TypescriptChecker implements Checker {
 
       mutantResult.errors = mutantErrors;
     }
-
-    createImage(`${mutants.length}(${mutants.map((m) => m.id)})__errors(${errors.length})`, this.graph, mutants, errors);
-
 
     return mutantResults.map((mutantResult) => {
       if (mutantResult.errors.length) {
