@@ -10,11 +10,9 @@ export class DependencyNode {
 
     let dependencies: DependencyNode[] = [...this.dependencies];
 
-    this.dependencies
-      .filter((d) => !nodesSeen.includes(d))
-      .forEach((d) => {
-        dependencies = [...dependencies, ...d.getAllDependencies(nodesSeen)];
-      });
+    this.dependencies.forEach((d) => {
+      dependencies = [...dependencies, ...d.getAllDependencies(nodesSeen)];
+    });
 
     return dependencies;
   }
@@ -25,11 +23,9 @@ export class DependencyNode {
 
     let imports: DependencyNode[] = [...this.imports];
 
-    this.imports
-      .filter((i) => !nodesSeen.includes(i))
-      .forEach((i) => {
-        imports = [...imports, ...i.getAllImports(nodesSeen)];
-      });
+    this.imports.forEach((i) => {
+      imports = [...imports, ...i.getAllImports(nodesSeen)];
+    });
 
     return imports;
   }

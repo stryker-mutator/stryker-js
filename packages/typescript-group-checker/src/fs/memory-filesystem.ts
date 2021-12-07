@@ -6,7 +6,7 @@ import { toPosixFileName } from './tsconfig-helpers';
 export class MemoryFileSystem {
   public files: Record<string, File> = {};
 
-  public getFile(fileName: string): File | null {
+  public getFile(fileName: string): File | undefined {
     if (this.files[toPosixFileName(fileName)]) {
       return this.files[toPosixFileName(fileName)];
     }
@@ -14,13 +14,17 @@ export class MemoryFileSystem {
     return this.getNewFile(toPosixFileName(fileName));
   }
 
-  private getNewFile(fileName: string): File | null {
+  private getNewFile(fileName: string): File | undefined {
     const content = ts.sys.readFile(fileName);
-    if (!content) return null;
 
-    const file = new File(fileName, content ?? '');
-    this.files[fileName] = file;
-    return file;
+    if (typeof content === 'string') {
+      const modifiedTime = ts.sys.getModifiedTime!(fileName)!;
+      this.files[fileName] = new File(fileName, content, modifiedTime);
+    } else {
+      this.files[fileName] = new File(fileName, '');
+    }
+
+    return this.files[fileName];
   }
 
   public writeFile(fileName: string, content: string): File {
@@ -28,31 +32,5 @@ export class MemoryFileSystem {
     const file = new File(fileName, content);
     this.files[fileName] = file;
     return file;
-  }
-
-  public deleteFile(filename: string): void {
-    filename = toPosixFileName(filename);
-    delete this.files[filename];
-  }
-
-  public readDirectory(
-    pathName: string,
-    extensions?: readonly string[],
-    exclude?: readonly string[],
-    include?: readonly string[],
-    depth?: number
-  ): string[] {
-    const content = ts.sys.readDirectory(pathName, extensions, exclude, include, depth);
-    pathName = toPosixFileName(pathName);
-
-    Object.keys(this.files).forEach((fileName) => {
-      const posFileName = toPosixFileName(fileName);
-      // misschien een apart object bijhouden voor mutated files voor performance
-      if (this.files[fileName].mutant && RegExp(pathName).exec(posFileName)) {
-        content.push(fileName);
-      }
-    });
-
-    return content;
   }
 }

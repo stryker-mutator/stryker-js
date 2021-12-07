@@ -36,7 +36,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
           }
           return content;
         },
-        readDirectory: this.fs.readDirectory.bind(this.fs),
         getModifiedTime: (pathName: string) => {
           return this.fs.getFile(pathName)?.modifiedTime;
         },

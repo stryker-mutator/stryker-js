@@ -20,7 +20,7 @@ export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[
       const activeMutant = leftOverMutants[index];
       const activeNode = graph.nodes[toPosixFileName(activeMutant.fileName)];
 
-      if (!ignoreList.includes(activeNode) && !dependencyInGroup(activeNode?.getAllDependencies(), group)) {
+      if (!ignoreList.includes(activeNode) && !dependencyInGroup(activeNode.getAllDependencies(), group)) {
         group.push({ node: activeNode, mutant: activeMutant });
         ignoreList = [...ignoreList, activeNode, ...activeNode.getAllDependencies()];
       }

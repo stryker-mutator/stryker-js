@@ -133,13 +133,9 @@ export class MutationTestExecutor {
     const groups = await firstValueFrom(
       this.checkerPool.schedule(of(0), async (checker) => {
         const group = await checker.createGroups?.(mutants);
-        this.log.info(group ? 'created groups self' : 'couldnt create group');
-
         return group ?? mutants.map((m) => [m]);
       })
     );
-
-    this.log.info(`${checkerType} created ${groups.length} groups of ${mutants.length} mutants`);
 
     const run = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
       const results = await checker.check(mutantGroup);

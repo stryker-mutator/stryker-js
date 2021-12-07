@@ -36,5 +36,19 @@ describe('group', () => {
 
       expect(result).to.have.lengthOf(1);
     });
+
+    it('group should be divided if mutants have same dependencies', () => {
+      const result = createGroups(
+        new DependencyGraph([
+          { fileName: 'a.ts', imports: new Set(['b.ts', 'd.ts']) },
+          { fileName: 'b.ts', imports: new Set(['c.ts']) },
+          { fileName: 'c.ts', imports: new Set([]) },
+          { fileName: 'd.ts', imports: new Set([]) },
+        ]),
+        [factory.mutant({ id: '5', fileName: 'd.ts' }), factory.mutant({ id: '4', fileName: 'c.ts' }), factory.mutant({ id: '3', fileName: 'b.ts' })]
+      );
+
+      expect(result).to.have.lengthOf(2);
+    });
   });
 });
