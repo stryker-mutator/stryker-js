@@ -29,29 +29,29 @@ describe('Typescript checker on a project with project references', () => {
     return sut.init();
   });
 
-  // it('should not write output to disk', () => {
-  //   expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
-  // });
+  it('should not write output to disk', () => {
+    expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
+  });
 
-  // it('should be able to validate a mutant', async () => {
-  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
-  //   const expectedResult: CheckResult = {
-  //     status: CheckStatus.Passed,
-  //   };
-  //   const actualResult = await sut.check([mutant]);
-  //   expect(actualResult).to.have.lengthOf(1);
-  //   expect(actualResult[0].checkResult).deep.eq(expectedResult);
-  // });
+  it('should be able to validate a mutant', async () => {
+    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
+    const expectedResult: CheckResult = {
+      status: CheckStatus.Passed,
+    };
+    const actualResult = await sut.check([mutant]);
+    expect(actualResult).to.have.lengthOf(1);
+    expect(actualResult[0].checkResult).deep.eq(expectedResult);
+  });
 
-  // it('should allow unused local variables (override options)', async () => {
-  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
-  //   const expectedResult: CheckResult = {
-  //     status: CheckStatus.Passed,
-  //   };
-  //   const actual = await sut.check([mutant]);
-  //   expect(actual).to.have.lengthOf(1);
-  //   expect(actual[0].checkResult).deep.eq(expectedResult);
-  // });
+  it('should allow unused local variables (override options)', async () => {
+    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+    const expectedResult: CheckResult = {
+      status: CheckStatus.Passed,
+    };
+    const actual = await sut.check([mutant]);
+    expect(actual).to.have.lengthOf(1);
+    expect(actual[0].checkResult).deep.eq(expectedResult);
+  });
 });
 
 const fileContents = Object.freeze({
@@ -60,7 +60,7 @@ const fileContents = Object.freeze({
 });
 
 function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, offset = 0): Mutant {
-  const lines = fileContents[fileName].split(os.EOL);
+  const lines = fileContents[fileName].split('\n');
   const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);
@@ -71,7 +71,7 @@ function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: s
     end: { line: lineNumber, column: textColumn + findText.length },
   };
   return factory.mutant({
-    fileName: resolveTestResource('src', fileName),
+    fileName: resolveTestResource(fileName),
     mutatorName: 'foo-mutator',
     location,
     replacement,

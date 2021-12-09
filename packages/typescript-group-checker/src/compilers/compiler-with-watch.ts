@@ -1,7 +1,7 @@
 import path from 'path';
 
 import ts, { textChangeRangeIsUnchanged } from 'typescript';
-import { Task } from '@stryker-mutator/util';
+import { propertyPath, Task } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -9,7 +9,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { DependencyFile, TypescriptCompiler } from '../compiler';
 
 import { MemoryFileSystem } from '../fs/memory-filesystem';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, toPosixFileName } from '../fs/tsconfig-helpers';
+import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from '../fs/tsconfig-helpers';
 import * as pluginTokens from '../plugin-tokens';
 
 export class CompilerWithWatch implements TypescriptCompiler {
@@ -24,6 +24,11 @@ export class CompilerWithWatch implements TypescriptCompiler {
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: MemoryFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
+  }
+
+  public async init(): Promise<{ dependencyFiles: DependencyFile[]; errors: ts.Diagnostic[] }> {
+    guardTSVersion();
+    this.guardTSConfigFileExists();
     const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
 
     const host = ts.createSolutionBuilderWithWatchHost(
@@ -82,7 +87,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
                   return false;
                 }
               })
-              .filter((i) => i.text.startsWith('.'))
               .map((i) => ts.resolveModuleName(i.text, file.fileName, {}, host).resolvedModule?.resolvedFileName ?? `${i.text}-not_resolved`)
               .map((i) => this.resolveFilename(i))
           ),
@@ -104,13 +108,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
 
     compiler.build();
-  }
 
-  private resolveFilename(text: string) {
-    return text.replace('.d.ts', '.ts').replace('dist/', '');
-  }
-
-  public async init(): Promise<{ dependencyFiles: DependencyFile[]; errors: ts.Diagnostic[] }> {
     const errors = await this.check();
 
     if (!this.sourceFiles) {
@@ -128,6 +126,10 @@ export class CompilerWithWatch implements TypescriptCompiler {
     return errors;
   }
 
+  private resolveFilename(text: string) {
+    return text.replace('.d.ts', '.ts').replace('dist/', '');
+  }
+
   private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {
     const parsedConfig = ts.parseConfigFileTextToJson(fileName, content);
     if (parsedConfig.error) {
@@ -137,6 +139,16 @@ export class CompilerWithWatch implements TypescriptCompiler {
         this.allTSConfigFiles.add(referencedProject);
       }
       return overrideOptions(parsedConfig, buildModeEnabled);
+    }
+  }
+
+  private guardTSConfigFileExists() {
+    if (!ts.sys.fileExists(this.tsconfigFile)) {
+      throw new Error(
+        `The tsconfig file does not exist at: "${path.resolve(
+          this.tsconfigFile
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>('tsconfigFile')}"`
+      );
     }
   }
 }

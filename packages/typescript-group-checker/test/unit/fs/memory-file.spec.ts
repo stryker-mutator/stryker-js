@@ -57,10 +57,10 @@ describe('fs', () => {
         expect(sut.modifiedTime).deep.eq(now);
       });
 
-      // it('should notify the file system watcher', () => {
-      //   sut.mutate({ location: { start: { line: 0, column: 1 }, end: { line: 0, column: 2 } }, replacement: '' });
-      //   expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
-      // });
+      it('should notify the file system watcher', () => {
+        sut.mutate({ location: { start: { line: 0, column: 1 }, end: { line: 0, column: 2 } }, replacement: '' });
+        expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
+      });
     });
 
     describe(File.prototype.reset.name, () => {
@@ -94,10 +94,10 @@ describe('fs', () => {
         expect(sut.content).eq('add(a, b) { return a + b };');
       });
 
-      // it('should notify the file system watcher', () => {
-      //   sut.reset();
-      //   expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
-      // });
+      it('should notify the file system watcher', () => {
+        sut.reset();
+        expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
+      });
 
       it('should update the modified date', () => {
         // Arrange
@@ -124,11 +124,11 @@ describe('fs', () => {
         expect(sut.content).eq('overridden');
       });
 
-      // it('should inform the fs watcher', () => {
-      //   sut.watcher = sinon.stub();
-      //   sut.write('overridden');
-      //   expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
-      // });
+      it('should inform the fs watcher', () => {
+        sut.watcher = sinon.stub();
+        sut.write('overridden');
+        expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
+      });
 
       it('should update the modified date', () => {
         // Arrange

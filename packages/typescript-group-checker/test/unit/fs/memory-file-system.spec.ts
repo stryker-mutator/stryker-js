@@ -14,9 +14,7 @@ describe('fs', () => {
     let sut: MemoryFileSystem;
     let helper: Helper;
     beforeEach(() => {
-      if (!helper) {
-        helper = new Helper();
-      }
+      helper = new Helper();
       sut = testInjector.injector.injectClass(MemoryFileSystem);
     });
 
@@ -45,31 +43,32 @@ describe('fs', () => {
     });
 
     describe(MemoryFileSystem.prototype.getFile.name, () => {
-      // it("should read the file from disk if it wasn't loaded yet", () => {
-      //   // Arrange
-      //   const modifiedTime = new Date(2010, 1, 1);
-      //   helper.readFileStub.returns('content from disk');
-      //   helper.getModifiedTimeStub.returns(modifiedTime);
+      it("should read the file from disk if it wasn't loaded yet", () => {
+        // Arrange
+        const modifiedTime = new Date(2010, 1, 1);
+        helper.readFileStub.returns('content from disk');
+        helper.getModifiedTimeStub.returns(modifiedTime);
 
-      //   // Act
-      //   const actual = sut.getFile('foo.js');
+        // Act
+        const actual = sut.getFile('foo.js');
 
-      //   // Assert
-      //   expect(helper.readFileStub).calledWith('foo.js');
-      //   expect(helper.getModifiedTimeStub).calledWith('foo.js');
-      //   expect(actual).ok;
-      //   expect(actual!.fileName).eq('foo.js');
-      //   expect(actual!.content).eq('content from disk');
-      //   expect(actual!.modifiedTime).eq(modifiedTime);
-      // });
+        // Assert
+        expect(helper.readFileStub).calledWith('foo.js');
+        expect(helper.getModifiedTimeStub).calledWith('foo.js');
+        expect(actual).ok;
+        expect(actual!.fileName).eq('foo.js');
+        expect(actual!.content).eq('content from disk');
+        expect(actual!.modifiedTime).eq(modifiedTime);
+      });
 
-      // it('should convert path separator to forward slashes', () => {
-      //   helper.readFileStub.returns('content from disk');
-      //   helper.getModifiedTimeStub.returns(new Date(2010, 1, 1));
-      //   sut.getFile('test\\foo\\a.js');
-      //   expect(helper.readFileStub).calledWith('test/foo/a.js');
-      //   expect(helper.getModifiedTimeStub).calledWith('test/foo/a.js');
-      // });
+      it('should convert path separator to forward slashes', () => {
+        helper.readFileStub.returns('content from disk');
+        helper.getModifiedTimeStub.returns(new Date(2010, 1, 1));
+        sut.getFile('test\\foo\\a.js');
+        expect(helper.readFileStub).calledOnce;
+        expect(helper.readFileStub).calledWith('test/foo/a.js');
+        expect(helper.getModifiedTimeStub).calledWith('test/foo/a.js');
+      });
 
       it('should support empty files', () => {
         helper.readFileStub.returns('');
@@ -80,11 +79,11 @@ describe('fs', () => {
         expect(actual!.content).eq('');
       });
 
-      // it("should cache a file that doesn't exists", () => {
-      //   sut.getFile('not-exists.js');
-      //   sut.getFile('not-exists.js');
-      //   expect(helper.readFileStub).calledOnce;
-      // });
+      it("should cache a file that doesn't exists", () => {
+        sut.getFile('not-exists.js');
+        sut.getFile('not-exists.js');
+        expect(helper.readFileStub).calledOnce;
+      });
     });
   });
 });
