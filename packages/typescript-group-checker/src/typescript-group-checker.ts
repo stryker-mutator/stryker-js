@@ -57,7 +57,7 @@ export class TypescriptChecker implements Checker {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
 
     if (errors.length) {
-      throw new Error(`Dry run error(s): ${this.formatErrors(errors)}`);
+      throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
     }
 
     this.graph = new DependencyGraph(dependencyFiles);
@@ -143,6 +143,6 @@ export class TypescriptChecker implements Checker {
   }
 
   public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
-    return createGroups(this.graph, mutants);
+    return createGroups(this.graph, mutants).sort((a, b) => b.length - a.length);
   }
 }
