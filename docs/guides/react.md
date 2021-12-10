@@ -23,7 +23,7 @@ You may have to change some paths like the [mutate](../configuration.md#mutate-s
 {
   "testRunner": "jest",
   "jest": {
-    "projectType": "create-react-app",
+    "projectType": "create-react-app"
   }
 }
 ```
@@ -40,7 +40,7 @@ Configuration:
 {
   "testRunner": "jest",
   "jest": {
-    "projectType": "create-react-app",
+    "projectType": "create-react-app"
   },
   "checkers": ["typescript"],
   "tsconfigFile": "tsconfig.json"
