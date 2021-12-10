@@ -19,7 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "ajv": "~8.8.2",
-    "mutation-testing-metrics": "1.7.6",
+    "mutation-testing-metrics": "1.7.8",
     "rxjs": "~7.4.0"
   },
   "devDependencies": {
