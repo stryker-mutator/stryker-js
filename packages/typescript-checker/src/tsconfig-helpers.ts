@@ -61,7 +61,7 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
     },
   };
   
-  if (useBuildMode && config.declarationDir) {
+  if (!useBuildMode && config.declarationDir) {
     // because composite and/or declaration was disabled, we have to disable declarationDir as well
     // otherwise, error TS5069: Option 'declarationDir' cannot be specified without specifying option 'declaration' or option 'composite'.
     delete config.declarationDir
