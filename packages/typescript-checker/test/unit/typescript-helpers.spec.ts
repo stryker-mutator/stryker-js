@@ -81,7 +81,7 @@ describe('typescript-helpers', () => {
         declarationMap: false,
       });
     });
-    
+
     it('should remove --declarationDir options when `--build` mode is off', () => {
       expect(
         JSON.parse(
@@ -94,7 +94,7 @@ describe('typescript-helpers', () => {
                   composite: true,
                   declaration: true,
                   declarationMap: false,
-                  declarationDir: ".",
+                  declarationDir: '.',
                 },
               },
             },
@@ -119,7 +119,7 @@ describe('typescript-helpers', () => {
                   composite: true,
                   declaration: true,
                   declarationMap: false,
-                  declarationDir: "",
+                  declarationDir: '',
                 },
               },
             },
