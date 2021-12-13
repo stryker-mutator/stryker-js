@@ -81,6 +81,34 @@ describe('typescript-helpers', () => {
         declarationMap: false,
       });
     });
+    
+    it('should remove --declarationDir options when `--build` mode is off', () => {
+      expect(
+        JSON.parse(
+          overrideOptions(
+            {
+              config: {
+                compilerOptions: {
+                  noEmit: false,
+                  incremental: true,
+                  composite: true,
+                  declaration: true,
+                  declarationMap: false,
+                  declarationDir: ".",
+                },
+              },
+            },
+            false
+          )
+        ).compilerOptions
+      ).deep.include({
+        noEmit: true,
+        incremental: false,
+        composite: false,
+        declaration: false,
+        declarationMap: false,
+      });
+    });
 
     it('should set --emitDeclarationOnly options when `--build` mode is on', () => {
       expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
