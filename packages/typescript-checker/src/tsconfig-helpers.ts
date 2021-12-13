@@ -60,11 +60,11 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
       ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
     },
   };
-  
+
   if (!useBuildMode && config.declarationDir !== undefined && config.declarationDir !== null) {
     // because composite and/or declaration was disabled in non-build mode, we have to disable declarationDir as well
     // otherwise, error TS5069: Option 'declarationDir' cannot be specified without specifying option 'declaration' or option 'composite'.
-    delete config.declarationDir
+    delete config.declarationDir;
   }
 
   return JSON.stringify(config);
