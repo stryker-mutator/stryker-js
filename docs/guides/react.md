@@ -7,7 +7,7 @@ Stryker supports React projects using Jest with both JSX and TSX code.
 
 ## JSX project
 
-Recommended stryker packages: `npm i -D @stryker-mutator/core @stryker-mutator/jest-runner @stryker-mutator/javascript-mutator @stryker-mutator/html-reporter`
+Recommended stryker packages: `npm i -D @stryker-mutator/core @stryker-mutator/jest-runner`
 
 Recommended other packages:
 
@@ -15,38 +15,36 @@ Recommended other packages:
 
 ### Configuration
 
-After installing the recommended packages, create the `stryker.conf.js` file in your repository.
+After installing the recommended packages, create the `stryker.conf.json` file in your repository.
 The configuration below contains a good starting point for React projects.
-You may have to change some paths like the mutate array.
+You may have to change some paths like the [mutate](../configuration.md#mutate-string) array.
 
-Coverage analysis is unfortunately not supported as of right now.
-
-```js
-module.exports = function (config) {
-  config.set({
-    mutate: ['src/**/*.js?(x)', '!src/**/*@(.test|.spec|Spec).js?(x)'],
-    mutator: 'javascript',
-    testRunner: 'jest',
-    reporter: ['progress', 'clear-text', 'html'],
-    coverageAnalysis: 'off',
-    jest: {
-      project: 'react',
-    },
-  });
-};
+```json
+{
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "create-react-app"
+  }
+}
 ```
 
 ## TSX projects
 
 For projects using TypeScript and TSX, you can follow the JSX guide but with a few differences:
 
-Recommended stryker packages: `npm i -D @stryker-mutator/core @stryker-mutator/jest-runner @stryker-mutator/typescript @stryker-mutator/html-reporter`
+Recommended stryker packages: `npm i -D @stryker-mutator/core @stryker-mutator/jest-runner @stryker-mutator/typescript-checker`
 
 Configuration:
 
-```js
-mutate: ['src/**/*.ts?(x)', '!src/**/*@(.test|.spec|Spec).ts?(x)'],
-mutator: 'typescript',
+```json
+{
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "create-react-app"
+  },
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.json"
+}
 ```
 
 ## Troubleshooting

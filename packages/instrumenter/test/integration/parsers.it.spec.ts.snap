@@ -1121,6 +1121,7 @@ export class AppComponent {
           "specifiers": Array [
             Node {
               "end": 18,
+              "importKind": "value",
               "imported": Node {
                 "end": 18,
                 "loc": SourceLocation {

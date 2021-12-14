@@ -4,6 +4,7 @@ import fs from 'fs';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { Mutant } from '@stryker-mutator/api/core';
 import { declareClassPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { factory } from '@stryker-mutator/test-helpers';
 
 class HealthyChecker implements Checker {
   public async init(): Promise<void> {
@@ -44,8 +45,23 @@ export class TwoTimesTheCharm implements Checker {
   }
 }
 
+export class VerifyTitle implements Checker {
+  public async init(): Promise<void> {
+    // Init
+  }
+
+  public async check(mutant: Mutant): Promise<CheckResult> {
+    if (mutant.fileName === process.title) {
+      return factory.checkResult({ status: CheckStatus.Passed });
+    } else {
+      return factory.checkResult({ status: CheckStatus.CompileError });
+    }
+  }
+}
+
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Checker, 'healthy', HealthyChecker),
   declareClassPlugin(PluginKind.Checker, 'crashing', CrashingChecker),
   declareClassPlugin(PluginKind.Checker, 'two-times-the-charm', TwoTimesTheCharm),
+  declareClassPlugin(PluginKind.Checker, 'verify-title', VerifyTitle),
 ];

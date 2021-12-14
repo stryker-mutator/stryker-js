@@ -11,7 +11,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
   let sut: JestGreaterThan25TestAdapter;
   let runCLIStub: sinon.SinonStub;
 
-  const fileNameUnderTest = '/path/to/file';
+  const fileNamesUnderTest = ['/path/to/file'];
   let jestConfig: Config.InitialOptions;
 
   beforeEach(() => {
@@ -37,12 +37,12 @@ describe(JestGreaterThan25TestAdapter.name, () => {
   });
 
   it('should call the runCLI method with the --findRelatedTests flag when provided', async () => {
-    await sut.run({ jestConfig, fileNameUnderTest });
+    await sut.run({ jestConfig, fileNamesUnderTest });
 
     expect(runCLIStub).calledWith(
       sinon.match({
         $0: 'stryker',
-        _: [fileNameUnderTest],
+        _: fileNamesUnderTest,
         config: JSON.stringify(jestConfig),
         findRelatedTests: true,
         runInBand: true,
@@ -96,7 +96,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
   });
 
   it('should call the runCLI method and return the test result when run with --findRelatedTests flag', async () => {
-    const result = await sut.run({ jestConfig, fileNameUnderTest });
+    const result = await sut.run({ jestConfig, fileNamesUnderTest });
 
     expect(result).to.deep.equal({
       config: jestConfig,

@@ -3,7 +3,7 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
     files: [
       'src/*.js',
-      'test/*.karma.spec.js'
+      'test/*.spec.js'
     ],
     reporters: ['progress'],
     colors: true,

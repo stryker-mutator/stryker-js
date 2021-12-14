@@ -26,6 +26,24 @@ Config file: `"buildCommand": 'npm run build'`
 Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.
 Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.
 
+### `checkers` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--checkers typescript`<br />
+Config file: `"checkers": ["typescript"]`
+
+Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error.
+
+See [typescript-checker](./typescript-checker.md) for an example of a checker plugin.
+
+### `checkerNodeArgs` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--checkerNodeArgs "--inspect-brk --cpu-prof"`<br />
+Config file: `"checkerNodeArgs": ["--inspect-brk", "--cpu-prof"]`
+
+Configure arguments to be passed as exec arguments to the checker child process. For example, running Stryker with `--concurrency 1 --checkerNodeArgs "--inspect-brk"` will allow you to debug the checker child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
+
 ### `cleanTempDir` [`boolean`]
 
 Default: `true`<br />
@@ -117,7 +135,7 @@ See the difference of bail vs no bail on StrykerJS's utils package (with `--conc
 
 As you can see, when you disable bail, a lot more tests get the "Killing" status, meaning that they killed at least 1 mutant. This does come with a performance penalty of 12s in this example.
 
-_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature._
+_Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature except for Jest. Jest always runs without --bail (see [#11766](https://github.com/facebook/jest/issues/11766)) inside Stryker, however it will report only the first failing test when disableBail=false and all failing tests when disableBail=true_
 
 ### `disableTypeChecks` [`false | string`]
 
@@ -149,8 +167,8 @@ Default: `undefined`<br />
 Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
 Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead.
-
+**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead, or use [mutate](#mutate-string) to select which files to mutate. 
+ 
 ### `ignorePatterns` [`string[]`]
 
 Default: `[]`<br />

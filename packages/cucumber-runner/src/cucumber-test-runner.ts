@@ -6,6 +6,7 @@ import {
   tokens,
 } from '@stryker-mutator/api/plugin';
 import {
+  determineHitLimitReached,
   DryRunOptions,
   DryRunResult,
   DryRunStatus,
@@ -79,6 +80,8 @@ export class CucumberTestRunner implements TestRunner {
   }
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.activeMutant = options.activeMutant.id;
+    this.instrumenterContext.hitLimit = options.hitLimit;
+    this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     return toMutantRunResult(
       await this.run(options.disableBail, options.testFilter),
       true
@@ -127,6 +130,13 @@ export class CucumberTestRunner implements TestRunner {
     } finally {
       this.directoryRequireCache.record();
       this.directoryRequireCache.clear();
+    }
+    const timeoutResult = determineHitLimitReached(
+      this.instrumenterContext.hitCount,
+      this.instrumenterContext.hitLimit
+    );
+    if (timeoutResult) {
+      return timeoutResult;
     }
     const tests = StrykerFormatter.instance!.reportedTestResults;
     const failedTest: FailedTestResult | undefined = tests.find(hasFailed);

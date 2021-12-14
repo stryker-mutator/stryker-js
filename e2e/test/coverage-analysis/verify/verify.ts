@@ -8,16 +8,21 @@ import { describe } from 'mocha';
 describe('Coverage analysis', () => {
   let strykerOptions: PartialStrykerOptions;
 
+  beforeEach(() => {
+    strykerOptions = {
+      coverageAnalysis: 'off', // changed each test
+      reporters: ['coverageAnalysis', 'html'],
+      timeoutMS: 60000,
+      concurrency: 1,
+      plugins: [require.resolve('./coverage-analysis-reporter')]
+    }
+  });
+
   describe('with the jasmine-runner', () => {
     beforeEach(() => {
-      strykerOptions = {
-        coverageAnalysis: 'off',
-        testRunner: 'jasmine',
-        reporters: ['coverageAnalysis', 'html'],
-        concurrency: 2,
-        plugins: ['@stryker-mutator/jasmine-runner', require.resolve('./coverage-analysis-reporter')],
-        jasmineConfigFile: 'jasmine-spec/support/jasmine.json',
-      };
+      strykerOptions.testRunner = 'jasmine';
+      strykerOptions.plugins!.push('@stryker-mutator/jasmine-runner');
+      strykerOptions.jasmineConfigFile = 'jasmine-spec/support/jasmine.json';
     });
     
     describeTests({
@@ -29,21 +34,14 @@ describe('Coverage analysis', () => {
   
   describe('with the cucumber-runner', () => {
     beforeEach(() => {
-      strykerOptions = {
-        coverageAnalysis: 'off',
-        testRunner: 'cucumber',
-        reporters: ['coverageAnalysis', 'html'],
-        concurrency: 1,
-        cucumber: {
-          profile: 'stryker',
-          features: ['cucumber-features/*.feature']
-        },
-        plugins: ['@stryker-mutator/cucumber-runner', require.resolve('./coverage-analysis-reporter')],
-        // testRunnerNodeArgs: ['--inspect-brk'],
-        timeoutMS: 99999
+      strykerOptions.testRunner = 'cucumber';
+      strykerOptions.plugins!.push('@stryker-mutator/cucumber-runner');
+      strykerOptions.cucumber = {
+        profile: 'stryker',
+        features: ['cucumber-features/*.feature']
       };
     });
-    
+
     describeTests({
       off: 18,
       all: 12,
@@ -53,16 +51,12 @@ describe('Coverage analysis', () => {
 
   describe('with the jest-runner', () => {
     beforeEach(() => {
-      strykerOptions = {
-        testRunner: 'jest',
-        tempDirName: 'stryker-tmp',
-        reporters: ['coverageAnalysis'],
-        concurrency: 2,
-        plugins: ['@stryker-mutator/jest-runner', require.resolve('./coverage-analysis-reporter')],
-        jest: {
-          configFile: 'jest-spec/jest.config.json',
-        },
+      strykerOptions.testRunner = 'jest';
+      strykerOptions.plugins!.push('@stryker-mutator/jest-runner');
+      strykerOptions.jest = {
+        configFile: 'jest-spec/jest.config.json',
       };
+      strykerOptions.tempDirName = 'stryker-tmp';
     });
 
     describeTests({

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+**Note:** Version bump only for package @stryker-mutator/instrumenter
+
+
+
+
+
+# [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
+
+
+### Bug Fixes
+
+* **instrumenter:** don't mutate TS generics ([#3268](https://github.com/stryker-mutator/stryker-js/issues/3268)) ([88d6eaf](https://github.com/stryker-mutator/stryker-js/commit/88d6eaff7b9ffab7f45c76e8f348a131798f7671))
+
+
+### Features
+
+* **mutators:** Implement missing AssignmentOperatorMutator  ([#3203](https://github.com/stryker-mutator/stryker-js/issues/3203)) ([95b694b](https://github.com/stryker-mutator/stryker-js/commit/95b694b89430af58ec085bea07883372976fbb02))
+
+
+
+
+
 ## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
 
 

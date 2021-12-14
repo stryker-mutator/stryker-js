@@ -38,17 +38,23 @@ export class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: PromptOption,
+    buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
-    const configObject: Partial<StrykerOptions> = {
+    const configObject: Partial<StrykerOptions> & { _comment: string } = {
+      _comment:
+        "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
+
+    // Only write buildCommand to config file if non-empty
+    if (buildCommand.name) configObject.buildCommand = buildCommand.name;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);

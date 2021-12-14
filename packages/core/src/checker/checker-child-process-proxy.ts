@@ -12,7 +12,15 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
   constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
-    this.childProcess = ChildProcessProxy.create(require.resolve('./checker-worker'), loggingContext, options, {}, process.cwd(), CheckerWorker, []);
+    this.childProcess = ChildProcessProxy.create(
+      require.resolve('./checker-worker'),
+      loggingContext,
+      options,
+      {},
+      process.cwd(),
+      CheckerWorker,
+      options.checkerNodeArgs
+    );
   }
 
   public async dispose(): Promise<void> {

@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { notEmpty } from './not-empty';
+import { caseSensitiveFs } from './platform';
 
 /**
  * A helper class that can be used by test runners.
@@ -22,8 +23,11 @@ export class DirectoryRequireCache {
     if (!this.cache) {
       const cache = (this.cache = new Set());
       const cwd = process.cwd();
+      const startsWithCaseInsensitive = (filename: string, prefix: string) => filename.toLowerCase().startsWith(prefix.toLowerCase());
+      const startsWithCaseSensitive = (filename: string, prefix: string) => filename.startsWith(prefix);
+      const startsWith = caseSensitiveFs() ? startsWithCaseSensitive : startsWithCaseInsensitive;
       Object.keys(require.cache)
-        .filter((fileName) => fileName.startsWith(`${cwd}${path.sep}`) && !fileName.startsWith(path.join(cwd, 'node_modules')))
+        .filter((fileName) => startsWith(fileName, `${cwd}${path.sep}`) && !startsWith(fileName, path.join(cwd, 'node_modules')))
         .forEach((file) => cache.add(file));
 
       this.parents = new Set(

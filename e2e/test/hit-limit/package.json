@@ -5,13 +5,13 @@
   "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit limit)",
   "main": "index.js",
   "scripts": {
+    "test:cucumber": "cucumber-js",
+    "test:mocha": "mocha",
+    "test:jasmine": "jasmine",
     "test:karma": "karma start",
     "test": "mocha --no-package --timeout 60000 --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@stryker-mutator/karma-runner": "^5.2.2"
-  }
+  "license": "ISC"
 }

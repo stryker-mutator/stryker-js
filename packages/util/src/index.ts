@@ -13,3 +13,4 @@ export * from './directory-require-cache';
 export * from './require-resolve';
 export * from './deep-merge';
 export * from './find-unserializables';
+export * from './platform';
