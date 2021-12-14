@@ -33,25 +33,25 @@ describe('Typescript checker on a project with project references', () => {
     expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
   });
 
-  it('should be able to validate a mutant', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
-    const actualResult = await sut.check([mutant]);
-    expect(actualResult).to.have.lengthOf(1);
-    expect(actualResult[0].checkResult).deep.eq(expectedResult);
-  });
+  // it('should be able to validate a mutant', async () => {
+  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
+  //   const expectedResult: CheckResult = {
+  //     status: CheckStatus.Passed,
+  //   };
+  //   const actualResult = await sut.check([mutant]);
+  //   expect(actualResult).to.have.lengthOf(1);
+  //   expect(actualResult[0].checkResult).deep.eq(expectedResult);
+  // });
 
-  it('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
-    const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
-  });
+  // it('should allow unused local variables (override options)', async () => {
+  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+  //   const expectedResult: CheckResult = {
+  //     status: CheckStatus.Passed,
+  //   };
+  //   const actual = await sut.check([mutant]);
+  //   expect(actual).to.have.lengthOf(1);
+  //   expect(actual[0].checkResult).deep.eq(expectedResult);
+  // });
 });
 
 const fileContents = Object.freeze({

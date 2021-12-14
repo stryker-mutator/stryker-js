@@ -4,7 +4,6 @@ import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
-import { Checker } from '@stryker-mutator/api/check';
 
 import { I } from '@stryker-mutator/util';
 

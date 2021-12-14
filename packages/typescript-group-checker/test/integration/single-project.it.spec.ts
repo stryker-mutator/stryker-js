@@ -32,59 +32,59 @@ describe('Typescript checker on a single project', () => {
     expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
   });
 
-  it('should be able to validate a mutant that does not result in an error', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
-    const expectedResult: CheckResult = { status: CheckStatus.Passed };
-    const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
-  });
+  // it('should be able to validate a mutant that does not result in an error', async () => {
+  //   const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
+  //   const expectedResult: CheckResult = { status: CheckStatus.Passed };
+  //   const actual = await sut.check([mutant]);
+  //   expect(actual).to.have.lengthOf(1);
+  //   expect(actual[0].checkResult).deep.eq(expectedResult);
+  // });
 
-  it('should be able invalidate a mutant that does result in a compile error', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
-    const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    assertions.expectCompileError(actual[0].checkResult);
-    expect(actual[0].checkResult.reason).has.string('todo.ts(15,9): error TS2322');
-  });
+  // it('should be able invalidate a mutant that does result in a compile error', async () => {
+  //   const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
+  //   const actual = await sut.check([mutant]);
+  //   expect(actual).to.have.lengthOf(1);
+  //   assertions.expectCompileError(actual[0].checkResult);
+  //   expect(actual[0].checkResult.reason).has.string('todo.ts(15,9): error TS2322');
+  // });
 
-  it('should be able validate a mutant that does not result in a compile error after a compile error', async () => {
-    // Arrange
-    const mutantCompileError = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
-    const mutantWithoutError = createMutant('todo.ts', 'return TodoList.allTodos', '[]', 7);
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
+  // it('should be able validate a mutant that does not result in a compile error after a compile error', async () => {
+  //   // Arrange
+  //   const mutantCompileError = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
+  //   const mutantWithoutError = createMutant('todo.ts', 'return TodoList.allTodos', '[]', 7);
+  //   const expectedResult: CheckResult = {
+  //     status: CheckStatus.Passed,
+  //   };
 
-    // Act
-    await sut.check([mutantCompileError]);
-    const actual = await sut.check([mutantWithoutError]);
+  //   // Act
+  //   await sut.check([mutantCompileError]);
+  //   const actual = await sut.check([mutantWithoutError]);
 
-    // Assert
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
-  });
+  //   // Assert
+  //   expect(actual).to.have.lengthOf(1);
+  //   expect(actual[0].checkResult).deep.eq(expectedResult);
+  // });
 
-  it('should be able to invalidate a mutant that results in an error in a different file', async () => {
-    const actual = await sut.check([createMutant('todo.ts', 'return totalCount;', '')]);
-    assertions.expectCompileError(actual[0].checkResult);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult.reason).has.string('todo.spec.ts(4,7): error TS2322');
-  });
+  // it('should be able to invalidate a mutant that results in an error in a different file', async () => {
+  //   const actual = await sut.check([createMutant('todo.ts', 'return totalCount;', '')]);
+  //   assertions.expectCompileError(actual[0].checkResult);
+  //   expect(actual).to.have.lengthOf(1);
+  //   expect(actual[0].checkResult.reason).has.string('todo.spec.ts(4,7): error TS2322');
+  // });
 
-  it('should be able to validate a mutant after a mutant in a different file resulted in a transpile error', async () => {
-    // Act
-    await sut.check([createMutant('todo.ts', 'return totalCount;', '')]);
-    const result = await sut.check([createMutant('todo.spec.ts', "'Mow lawn'", "'this is valid, right?'")]);
+  // it('should be able to validate a mutant after a mutant in a different file resulted in a transpile error', async () => {
+  //   // Act
+  //   await sut.check([createMutant('todo.ts', 'return totalCount;', '')]);
+  //   const result = await sut.check([createMutant('todo.spec.ts', "'Mow lawn'", "'this is valid, right?'")]);
 
-    // Assert
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
+  //   // Assert
+  //   const expectedResult: CheckResult = {
+  //     status: CheckStatus.Passed,
+  //   };
 
-    expect(result).to.have.lengthOf(1);
-    expect(result[0].checkResult).deep.eq(expectedResult);
-  });
+  //   expect(result).to.have.lengthOf(1);
+  //   expect(result[0].checkResult).deep.eq(expectedResult);
+  // });
 
   // it('should be allow mutations in unrelated files', async () => {
   //   // Act
@@ -99,16 +99,16 @@ describe('Typescript checker on a single project', () => {
   //   expect(result[0]).deep.eq(expectedResult);
   // });
 
-  it('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
-    const actual = await sut.check([mutant]);
+  // it('should allow unused local variables (override options)', async () => {
+  //   const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+  //   const expectedResult: CheckResult = {
+  //     status: CheckStatus.Passed,
+  //   };
+  //   const actual = await sut.check([mutant]);
 
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
-  });
+  //   expect(actual).to.have.lengthOf(1);
+  //   expect(actual[0].checkResult).deep.eq(expectedResult);
+  // });
 });
 
 const fileContents = Object.freeze({
