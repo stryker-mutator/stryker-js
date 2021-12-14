@@ -119,18 +119,18 @@ export class TypescriptChecker implements Checker {
   private matchMutantsFromError(mutants: Mutant[], error: ts.Diagnostic): Mutant[] {
     const errorFileName = error.file?.fileName ?? '';
 
-    const index = mutants.findIndex((mutant) => toPosixFileName(mutant.fileName) === errorFileName);
-    if (index != -1) {
-      return [mutants[index]];
-    }
+    const singleMutant = mutants.find((m) => toPosixFileName(m.fileName) === errorFileName);
+    if (singleMutant) return [singleMutant];
 
     const imports = this.graph.nodes[errorFileName].getAllImports();
 
     const posibleMutants: Mutant[] = [];
 
-    imports.forEach((importFile) => {
-      mutants.forEach((mutant) => {
-        if (toPosixFileName(mutant.fileName) === importFile.fileName) {
+    mutants.forEach((mutant) => {
+      const mutantFileName = toPosixFileName(mutant.fileName);
+
+      imports.forEach((importFile) => {
+        if (mutantFileName === importFile.fileName) {
           posibleMutants.push(mutant);
         }
       });

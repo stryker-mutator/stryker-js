@@ -105,6 +105,8 @@ export class CompilerWithWatch implements TypescriptCompiler {
 
     const errors = await this.check();
 
+    host.afterProgramEmitAndDiagnostics = undefined;
+
     if (!this.sourceFiles.length) {
       throw new Error('Sourcefiles not set');
     }
