@@ -1,18 +1,18 @@
-import { Mutant } from '@stryker-mutator/api/core';
+import { Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
 
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 import { DependencyGraph } from './graph/dependency-graph';
 import { DependencyNode } from './graph/dependency-node';
 
-export function createGroups(graph: DependencyGraph, mutants: Mutant[]): Mutant[][] {
+export function createGroups(graph: DependencyGraph, mutants: MutantTestCoverage[]): MutantTestCoverage[][] {
   let leftOverMutants = [...mutants];
-  let groups: Mutant[][] = [];
+  let groups: MutantTestCoverage[][] = [];
 
   while (leftOverMutants.length) {
     const firstMutant = leftOverMutants[0];
     const firstNode = graph.nodes[toPosixFileName(firstMutant.fileName)];
-    const group: Array<{ node: DependencyNode; mutant: Mutant }> = [{ node: firstNode, mutant: firstMutant }];
+    const group: Array<{ node: DependencyNode; mutant: MutantTestCoverage }> = [{ node: firstNode, mutant: firstMutant }];
     let ignoreList = [firstNode, ...firstNode.getAllDependencies()];
 
     // start with 1 because we already took the first mutant

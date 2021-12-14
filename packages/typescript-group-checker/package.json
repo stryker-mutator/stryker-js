@@ -35,9 +35,8 @@
   "dependencies": {
     "@stryker-mutator/api": "5.4.1",
     "@stryker-mutator/util": "5.4.1",
-    "precinct": "^8.2.0",
     "semver": "~7.3.2",
-    "typescript": "^4.4.3"
+    "typescript": ">=3.6"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "5.4.1",

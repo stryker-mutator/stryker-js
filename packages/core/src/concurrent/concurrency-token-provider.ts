@@ -24,10 +24,6 @@ export class ConcurrencyTokenProvider implements Disposable {
       this.concurrencyCheckers = Math.max(Math.ceil(concurrency / 2), 1);
       this.checkerToken$ = range(this.concurrencyCheckers);
       this.concurrencyTestRunners = Math.max(Math.floor(concurrency / 2), 1);
-
-      this.concurrencyCheckers = 5;
-      this.checkerToken$ = range(this.concurrencyCheckers);
-      this.concurrencyTestRunners = 2;
       log.info('Creating %s checker process(es) and %s test runner process(es).', this.concurrencyCheckers, this.concurrencyTestRunners);
     } else {
       this.concurrencyCheckers = 0;

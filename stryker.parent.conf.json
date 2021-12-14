@@ -2,7 +2,6 @@
   "$schema": "./packages/core/schema/stryker-schema.json",
   "coverageAnalysis": "perTest",
   "testRunner": "mocha",
-  "concurrency": 1,
   "reporters": [
     "progress",
     "html",

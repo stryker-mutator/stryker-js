@@ -5,7 +5,6 @@ import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-import { Checker } from '@stryker-mutator/api/check';
 
 import { Pool, ConcurrencyTokenProvider, CheckerResource } from '../../src/concurrent';
 

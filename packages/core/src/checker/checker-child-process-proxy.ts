@@ -1,5 +1,5 @@
 import { ActiveChecker, Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantTestCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy';
@@ -35,7 +35,7 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource, 
     await this.childProcess?.proxy.init();
   }
 
-  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
     if (this.childProcess) {
       return this.childProcess.proxy.check(mutants);
     }
@@ -47,7 +47,7 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource, 
     }));
   }
 
-  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
     return this.childProcess.proxy.createGroups(mutants);
   }
 }

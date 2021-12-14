@@ -7,11 +7,12 @@ export class MemoryFileSystem {
   public files: Record<string, File> = {};
 
   public getFile(fileName: string): File | undefined {
-    if (this.files[toPosixFileName(fileName)]) {
-      return this.files[toPosixFileName(fileName)];
+    fileName = toPosixFileName(fileName);
+    if (this.files[fileName]) {
+      return this.files[fileName];
     }
 
-    return this.getNewFile(toPosixFileName(fileName));
+    return this.getNewFile(fileName);
   }
 
   private getNewFile(fileName: string): File | undefined {

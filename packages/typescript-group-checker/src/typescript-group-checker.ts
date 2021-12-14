@@ -3,7 +3,7 @@ import { EOL } from 'os';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { Mutant, MutantTestCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 import ts from 'typescript';
@@ -63,8 +63,8 @@ export class TypescriptChecker implements Checker {
     this.graph = new DependencyGraph(dependencyFiles);
   }
 
-  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
-    const mutantResults: Array<{ mutant: Mutant; errors: ts.Diagnostic[] }> = mutants.map((mutant) => {
+  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+    const mutantResults: Array<{ mutant: MutantTestCoverage; errors: ts.Diagnostic[] }> = mutants.map((mutant) => {
       return {
         mutant,
         errors: [],
@@ -84,7 +84,7 @@ export class TypescriptChecker implements Checker {
       } else if (possibleMutants.length > 1) {
         possibleMutants.forEach((mutant) => possibleMoreErrors.add(mutant));
       } else if (possibleMutants.length === 0) {
-        throw new Error('Big Error! No mutants can be found');
+        throw new Error('Error could not be matched to mutant');
       }
     });
 
@@ -142,7 +142,7 @@ export class TypescriptChecker implements Checker {
     return ts.formatDiagnostics(errors, diagnosticsHost);
   }
 
-  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
     return createGroups(this.graph, mutants).sort((a, b) => b.length - a.length);
   }
 }

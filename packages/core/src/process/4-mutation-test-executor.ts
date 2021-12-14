@@ -91,22 +91,31 @@ export class MutationTestExecutor {
   }
 
   private executeCheck(input$: Observable<MutantTestCoverage>) {
+    if (!this.options.checkers.length) {
+      const checkResult$ = new Subject<MutantResult>();
+      checkResult$.complete();
+      return {
+        checkResult$: checkResult$.asObservable(),
+        passedMutant$: input$,
+      };
+    }
+
     const checkResult$ = new Subject<MutantResult>();
     let previousPassedMutants$ = input$;
 
-    if (this.options.checkers.length) {
-      for (const checkerType of this.options.checkers) {
-        const passedMutants$ = new Subject<MutantTestCoverage>();
-        this.executeChecker(checkerType, previousPassedMutants$, checkResult$, passedMutants$);
-        previousPassedMutants$ = passedMutants$;
-      }
-    } else {
-      checkResult$.complete();
+    for (const checkerType of this.options.checkers) {
+      const passedMutants$ = new Subject<MutantTestCoverage>();
+      this.executeChecker(checkerType, previousPassedMutants$, checkResult$, passedMutants$);
+      previousPassedMutants$ = passedMutants$;
     }
 
     lastValueFrom(checkResult$).then(() => {
-      this.log.info('Checker(s) finished.');
-      (previousPassedMutants$ as Subject<MutantTestCoverage>).complete();
+      this.log.debug('Checker(s) finished.');
+
+      if (previousPassedMutants$ instanceof Subject) {
+        previousPassedMutants$.complete();
+      }
+
       this.checkerPool.dispose();
       this.concurrencyTokenProvider.freeCheckers();
     });
@@ -141,8 +150,7 @@ export class MutationTestExecutor {
       const results = await checker.check(mutantGroup);
       results.forEach((result) => {
         if (result.checkResult.status === CheckStatus.Passed) {
-          // todo: check types
-          passedMutant$.next(result.mutant as MutantTestCoverage);
+          passedMutant$.next(result.mutant);
         } else {
           checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(result.mutant, result.checkResult));
         }

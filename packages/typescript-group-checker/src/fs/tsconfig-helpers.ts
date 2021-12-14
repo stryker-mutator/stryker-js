@@ -28,7 +28,7 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
 
 export function guardTSVersion(): void {
   if (!semver.satisfies(ts.version, '>=3.6')) {
-    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
+    throw new Error(`@stryker-mutator/typescript-group-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
   }
 }
 

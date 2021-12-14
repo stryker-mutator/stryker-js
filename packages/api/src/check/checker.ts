@@ -1,11 +1,11 @@
-import { Mutant } from '../core';
+import { MutantTestCoverage } from '../core';
 
 import { CheckResult } from './check-result';
 
 export interface Checker {
   init(): Promise<void>;
 
-  check(mutant: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>>;
+  check(mutant: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>>;
 
-  createGroups?(mutants: Mutant[]): Promise<Mutant[][] | undefined>;
+  createGroups?(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined>;
 }

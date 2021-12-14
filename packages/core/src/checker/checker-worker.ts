@@ -1,5 +1,5 @@
 import { Checker, CheckResult, ActiveChecker } from '@stryker-mutator/api/check';
-import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { PluginKind, tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
@@ -30,7 +30,7 @@ export class CheckerWorker implements Checker, ActiveChecker {
     }
   }
 
-  public async check(mutants: Mutant[]): Promise<Array<{ mutant: Mutant; checkResult: CheckResult }>> {
+  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
     if (this.activeChecker === '') {
       throw new Error('No checker set.');
     }
@@ -38,7 +38,7 @@ export class CheckerWorker implements Checker, ActiveChecker {
     return this.innerCheckers[this.activeChecker].check(mutants);
   }
 
-  public async createGroups(mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
     if (this.activeChecker === '') {
       throw new Error('No checker set.');
     }

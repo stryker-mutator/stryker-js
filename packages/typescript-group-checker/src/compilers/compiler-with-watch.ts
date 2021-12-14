@@ -1,9 +1,9 @@
 import path from 'path';
 
-import ts, { textChangeRangeIsUnchanged } from 'typescript';
+import ts from 'typescript';
 import { propertyPath, Task } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
+import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { DependencyFile, TypescriptCompiler } from '../compiler';
@@ -80,13 +80,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
           fileName: this.resolveFilename(file.fileName),
           imports: new Set(
             file.imports
-              .filter((i) => {
-                if (i.text) {
-                  return true;
-                } else {
-                  return false;
-                }
-              })
+              .filter((i) => i.text)
               .map((i) => ts.resolveModuleName(i.text, file.fileName, {}, host).resolvedModule?.resolvedFileName ?? `${i.text}-not_resolved`)
               .map((i) => this.resolveFilename(i))
           ),
@@ -96,9 +90,9 @@ export class CompilerWithWatch implements TypescriptCompiler {
       });
 
       for (const sourceFile of sourceFiles) {
-        const indexInSourceFileArray = this.sourceFiles.findIndex((sourceFileThis) => sourceFileThis.fileName === sourceFile.fileName);
-        if (indexInSourceFileArray >= 0) {
-          sourceFile.imports.forEach((sourceFileImport) => this.sourceFiles[indexInSourceFileArray].imports.add(sourceFileImport));
+        const indexInSourceFileArray = this.sourceFiles.find((sourceFileThis) => sourceFileThis.fileName === sourceFile.fileName);
+        if (indexInSourceFileArray) {
+          sourceFile.imports.forEach((sourceFileImport) => indexInSourceFileArray.imports.add(sourceFileImport));
         } else {
           this.sourceFiles.push(sourceFile);
         }
@@ -111,7 +105,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
 
     const errors = await this.check();
 
-    if (!this.sourceFiles) {
+    if (!this.sourceFiles.length) {
       throw new Error('Sourcefiles not set');
     }
 
