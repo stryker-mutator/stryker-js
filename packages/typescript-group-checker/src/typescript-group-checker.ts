@@ -12,8 +12,8 @@ import * as pluginTokens from './plugin-tokens';
 import { MemoryFileSystem } from './fs/memory-filesystem';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
-import { DependencyGraph } from './graph/dependency-graph';
 import { createGroups } from './group';
+import { SourceFiles } from './compiler';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -44,7 +44,7 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
 export class TypescriptChecker implements Checker {
   public static inject = tokens(commonTokens.logger, pluginTokens.tsCompiler, pluginTokens.mfs, commonTokens.options);
 
-  private graph: DependencyGraph = new DependencyGraph([]);
+  private sourceFiles: SourceFiles = {};
 
   constructor(
     private readonly logger: Logger,
@@ -60,7 +60,7 @@ export class TypescriptChecker implements Checker {
       throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
     }
 
-    this.graph = new DependencyGraph(dependencyFiles);
+    this.sourceFiles = dependencyFiles;
   }
 
   public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
@@ -89,7 +89,9 @@ export class TypescriptChecker implements Checker {
     });
 
     for (const mutant of possibleMoreErrors.values()) {
-      const mutantResult = mutantResults[mutantResults.findIndex((mr) => mr.mutant.id === mutant.id)];
+      const mutantResult = mutantResults.find((mr) => mr.mutant.id === mutant.id);
+      if (!mutantResult) throw new Error('Could not find mutant in mutant result');
+
       if (mutantResult.errors.length > 0) continue;
       this.mfs.getFile(mutant.fileName)?.mutate(mutant);
       const mutantErrors = await this.tsCompiler.check();
@@ -122,7 +124,7 @@ export class TypescriptChecker implements Checker {
     const singleMutant = mutants.find((m) => toPosixFileName(m.fileName) === errorFileName);
     if (singleMutant) return [singleMutant];
 
-    const imports = this.graph.nodes[errorFileName].getAllImports();
+    const imports = this.sourceFiles[errorFileName].imports;
 
     const posibleMutants: Mutant[] = [];
 
@@ -130,7 +132,7 @@ export class TypescriptChecker implements Checker {
       const mutantFileName = toPosixFileName(mutant.fileName);
 
       imports.forEach((importFile) => {
-        if (mutantFileName === importFile.fileName) {
+        if (mutantFileName === importFile) {
           posibleMutants.push(mutant);
         }
       });
@@ -143,6 +145,6 @@ export class TypescriptChecker implements Checker {
   }
 
   public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
-    return createGroups(this.graph, mutants).sort((a, b) => b.length - a.length);
+    return createGroups(this.sourceFiles, mutants).sort((a, b) => b.length - a.length);
   }
 }

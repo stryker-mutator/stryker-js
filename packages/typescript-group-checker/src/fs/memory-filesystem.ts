@@ -30,8 +30,15 @@ export class MemoryFileSystem {
 
   public writeFile(fileName: string, content: string): File {
     fileName = toPosixFileName(fileName);
-    const file = new File(fileName, content);
-    this.files[fileName] = file;
-    return file;
+    const existingFile = this.files[fileName];
+    if (existingFile) {
+      existingFile.write(content);
+      return existingFile;
+    } else {
+      // this.log.trace('Writing to file "%s"', fileName);
+      const newFile = new File(fileName, content);
+      this.files[fileName] = newFile;
+      return newFile;
+    }
   }
 }

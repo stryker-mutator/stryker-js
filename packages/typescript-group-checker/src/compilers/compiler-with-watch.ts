@@ -6,7 +6,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { DependencyFile, TypescriptCompiler } from '../compiler';
+import { SourceFiles, TypescriptCompiler } from '../compiler';
 
 import { MemoryFileSystem } from '../fs/memory-filesystem';
 import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from '../fs/tsconfig-helpers';
@@ -19,14 +19,14 @@ export class CompilerWithWatch implements TypescriptCompiler {
   private readonly tsconfigFile: string;
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
-  private readonly sourceFiles: DependencyFile[] = [];
+  private sourceFiles: SourceFiles = {};
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: MemoryFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
 
-  public async init(): Promise<{ dependencyFiles: DependencyFile[]; errors: ts.Diagnostic[] }> {
+  public async init(): Promise<{ dependencyFiles: SourceFiles; errors: ts.Diagnostic[] }> {
     guardTSVersion();
     this.guardTSConfigFileExists();
     const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
@@ -72,42 +72,17 @@ export class CompilerWithWatch implements TypescriptCompiler {
       }
     );
 
-    host.afterProgramEmitAndDiagnostics = (program) => {
-      const sourceFiles = program.getSourceFiles().map((f: any) => {
-        const file: { fileName: string; imports: Array<{ text: string }> } = f;
-
-        const result = {
-          fileName: this.resolveFilename(file.fileName),
-          imports: new Set(
-            file.imports
-              .filter((i) => i.text)
-              .map((i) => ts.resolveModuleName(i.text, file.fileName, {}, host).resolvedModule?.resolvedFileName ?? `${i.text}-not_resolved`)
-              .map((i) => this.resolveFilename(i))
-          ),
-        };
-
-        return result;
-      });
-
-      for (const sourceFile of sourceFiles) {
-        const indexInSourceFileArray = this.sourceFiles.find((sourceFileThis) => sourceFileThis.fileName === sourceFile.fileName);
-        if (indexInSourceFileArray) {
-          sourceFile.imports.forEach((sourceFileImport) => indexInSourceFileArray.imports.add(sourceFileImport));
-        } else {
-          this.sourceFiles.push(sourceFile);
-        }
-      }
-    };
+    host.afterProgramEmitAndDiagnostics = this.afterProgramEmitAndDiagnostics.bind(this);
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
 
     compiler.build();
 
     const errors = await this.check();
-
     host.afterProgramEmitAndDiagnostics = undefined;
+    this.setSourceFilesDependencies();
 
-    if (!this.sourceFiles.length) {
+    if (Object.keys(this.sourceFiles).length === 0) {
       throw new Error('Sourcefiles not set');
     }
 
@@ -122,8 +97,46 @@ export class CompilerWithWatch implements TypescriptCompiler {
     return errors;
   }
 
-  private resolveFilename(text: string) {
-    return text.replace('.d.ts', '.ts').replace('dist/', '');
+  private afterProgramEmitAndDiagnostics(program: ts.EmitAndSemanticDiagnosticsBuilderProgram) {
+    const currDir = toPosixFileName(program.getCurrentDirectory());
+    const outDir = (program.getCompilerOptions().outDir ?? '').replace(currDir, '');
+
+    program
+      .getSourceFiles()
+      .filter(this.filterDependency.bind(this)) // todo: maybe remove filter node_modules
+      .forEach((file) => {
+        this.sourceFiles[file.fileName] = {
+          imports: new Set(
+            program
+              .getAllDependencies(file)
+              .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
+              .map((importFile) => this.resolveFilename(importFile, outDir))
+          ),
+          dependencies: new Set([]),
+        };
+      });
+  }
+
+  private filterDependency(file: ts.SourceFile) {
+    if (file.fileName in this.sourceFiles) return false;
+    if (file.fileName.includes('.d.ts')) return false;
+    if (file.fileName.includes('node_modules')) return false;
+
+    return true;
+  }
+
+  private setSourceFilesDependencies() {
+    for (const file in this.sourceFiles) {
+      const imports = this.sourceFiles[file].imports;
+
+      for (const importFile of imports) {
+        this.sourceFiles[importFile]?.dependencies.add(file);
+      }
+    }
+  }
+
+  private resolveFilename(text: string, outDir: string) {
+    return text.replace('.d.ts', '.ts').replace(outDir, '');
   }
 
   private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {

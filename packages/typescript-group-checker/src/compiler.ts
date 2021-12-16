@@ -1,11 +1,14 @@
 import ts from 'typescript';
 
-export interface DependencyFile {
-  fileName: string;
-  imports: Set<string>;
-}
+export type SourceFiles = Record<
+  string,
+  {
+    imports: Set<string>;
+    dependencies: Set<string>;
+  }
+>;
 
 export interface TypescriptCompiler {
-  init(): Promise<{ dependencyFiles: DependencyFile[]; errors: ts.Diagnostic[] }>;
+  init(): Promise<{ dependencyFiles: SourceFiles; errors: ts.Diagnostic[] }>;
   check(): Promise<readonly ts.Diagnostic[]>;
 }
