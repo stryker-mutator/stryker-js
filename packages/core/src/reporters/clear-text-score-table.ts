@@ -59,12 +59,16 @@ class Column {
 
 class MutationScoreColumn extends Column {
   constructor(rows: MetricsResult, private readonly thresholds: MutationScoreThresholds) {
-    super('% score', (row) => row.metrics.mutationScore.toFixed(2), rows);
+    super('% score', (row) => (isNaN(row.metrics.mutationScore) ? 'n/a' : row.metrics.mutationScore.toFixed(2)), rows);
   }
   protected color(metricsResult: MetricsResult) {
-    if (metricsResult.metrics.mutationScore >= this.thresholds.high) {
+    const { mutationScore: score } = metricsResult.metrics;
+
+    if (isNaN(score)) return chalk.grey;
+
+    if (score >= this.thresholds.high) {
       return chalk.green;
-    } else if (metricsResult.metrics.mutationScore >= this.thresholds.low) {
+    } else if (score >= this.thresholds.low) {
       return chalk.yellow;
     } else {
       return chalk.red;
