@@ -59,13 +59,13 @@ export class MutationTestExecutor {
     private readonly log: Logger,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
-  ) { }
+  ) {}
 
   public async execute(): Promise<MutantResult[]> {
     const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
-    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(notIgnoredMutant$);
-    const { passedMutant$, checkResult$ } = this.executeCheck(coveredMutant$);
-    const testRunnerResult$ = this.executeRunInTestRunner(passedMutant$);
+    const { passedMutant$, checkResult$ } = this.executeCheck(notIgnoredMutant$);
+    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
+    const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
