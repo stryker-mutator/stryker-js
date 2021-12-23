@@ -45,6 +45,7 @@ export class TypescriptChecker implements Checker {
   public static inject = tokens(commonTokens.logger, pluginTokens.tsCompiler, pluginTokens.mfs, commonTokens.options);
 
   private sourceFiles: SourceFiles = {};
+  private previousFilesChanged: string[] = [];
 
   constructor(
     private readonly logger: Logger,
@@ -71,9 +72,10 @@ export class TypescriptChecker implements Checker {
       };
     });
 
+    this.previousFilesChanged.forEach((file) => this.mfs.getFile(file)?.reset());
     mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.mutate(mutant));
     const errors = await this.tsCompiler.check();
-    mutants.forEach((mutant) => this.mfs.getFile(mutant.fileName)?.reset());
+    this.previousFilesChanged = mutants.map((mutant) => mutant.fileName);
 
     const possibleMoreErrors = new Set<Mutant>();
 
@@ -93,9 +95,11 @@ export class TypescriptChecker implements Checker {
       if (!mutantResult) throw new Error('Could not find mutant in mutant result');
 
       if (mutantResult.errors.length > 0) continue;
+
+      this.previousFilesChanged.forEach((file) => this.mfs.getFile(file)?.reset());
       this.mfs.getFile(mutant.fileName)?.mutate(mutant);
       const mutantErrors = await this.tsCompiler.check();
-      this.mfs.getFile(mutant.fileName)?.reset();
+      this.previousFilesChanged = [mutant.fileName];
 
       mutantResult.errors = mutantErrors;
     }
