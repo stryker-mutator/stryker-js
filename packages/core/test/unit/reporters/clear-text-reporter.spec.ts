@@ -57,6 +57,89 @@ describe(ClearTextReporter.name, () => {
       ]);
     });
 
+    it('should report the clear text table with full n/a values', () => {
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Ignored,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+
+      expect(rows).to.deep.eq([
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        `All files |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        '',
+      ]);
+    });
+    it('should report the clear text table with some n/a values', () => {
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Ignored,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+          'src/file2.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Killed,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+
+      expect(rows).to.deep.eq([
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
+        ` file2.js |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
+        '----------|---------|----------|-----------|------------|----------|---------|',
+        '',
+      ]);
+    });
+
     it('should not color score if `allowConsoleColors` config is false', () => {
       testInjector.options.allowConsoleColors = false;
       chalk.level = 1;
