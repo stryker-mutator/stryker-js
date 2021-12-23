@@ -126,18 +126,18 @@ export class TypescriptChecker implements Checker {
 
     const imports = this.sourceFiles[errorFileName].imports;
 
-    const posibleMutants: Mutant[] = [];
+    const possibleMutants: Mutant[] = [];
 
     mutants.forEach((mutant) => {
       const mutantFileName = toPosixFileName(mutant.fileName);
 
       imports.forEach((importFile) => {
         if (mutantFileName === importFile) {
-          posibleMutants.push(mutant);
+          possibleMutants.push(mutant);
         }
       });
     });
-    return posibleMutants;
+    return possibleMutants;
   }
 
   private formatErrors(errors: readonly ts.Diagnostic[]): string {
