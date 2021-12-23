@@ -66,9 +66,7 @@ class MutationScoreColumn extends Column {
 
     if (isNaN(score)) {
       return chalk.grey;
-    }
-
-    if (score >= this.thresholds.high) {
+    } else if (score >= this.thresholds.high) {
       return chalk.green;
     } else if (score >= this.thresholds.low) {
       return chalk.yellow;
