@@ -133,7 +133,6 @@ export class MutationTestExecutor {
     passedMutant$: Subject<MutantTestCoverage>
   ) {
     const mutants = await lastValueFrom(merge(previousPassedMutants$).pipe(toArray()));
-    this.log.info(`got ${mutants.length} mutants`);
 
     // Set the active checker on all checkerWorkers
     await this.checkerPool.runOnAllResources(async (checkerResource) => {
