@@ -6,14 +6,14 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { SourceFiles, TypescriptCompiler } from '../compiler';
-
 import { MemoryFileSystem } from '../fs/memory-filesystem';
 import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from '../fs/tsconfig-helpers';
 import * as pluginTokens from '../plugin-tokens';
 
+import { SourceFiles, TypescriptCompiler } from './compiler';
+
 export class CompilerWithWatch implements TypescriptCompiler {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.mfs);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
 
   private readonly allTSConfigFiles: Set<string>;
   private readonly tsconfigFile: string;
@@ -67,7 +67,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
       (status) => {
         this.log.debug(status.messageText.toString());
       },
-      (summary) => {
+      () => {
         this.currentTask.resolve();
       }
     );
@@ -79,11 +79,13 @@ export class CompilerWithWatch implements TypescriptCompiler {
     compiler.build();
 
     const errors = await this.check();
+
+    // Function should not be called after the first check is done
     host.afterProgramEmitAndDiagnostics = undefined;
     this.setSourceFilesDependencies();
 
     if (Object.keys(this.sourceFiles).length === 0) {
-      throw new Error('SourceFiles not set');
+      throw new Error('SourceFiles not set.');
     }
 
     return { dependencyFiles: this.sourceFiles, errors };
@@ -98,14 +100,15 @@ export class CompilerWithWatch implements TypescriptCompiler {
   }
 
   private afterProgramEmitAndDiagnostics(program: ts.EmitAndSemanticDiagnosticsBuilderProgram) {
-    const currDir = toPosixFileName(program.getCurrentDirectory());
-    const outDir = (program.getCompilerOptions().outDir ?? '').replace(currDir, '');
+    const currentDirectory = toPosixFileName(program.getCurrentDirectory());
+    const outDir = (program.getCompilerOptions().outDir ?? '').replace(currentDirectory, '');
 
     program
       .getSourceFiles()
-      .filter(this.filterDependency.bind(this)) // todo: maybe remove filter node_modules
+      .filter(this.filterDependency.bind(this))
       .forEach((file) => {
         this.sourceFiles[file.fileName] = {
+          fileName: toPosixFileName(file.fileName),
           imports: new Set(
             program
               .getAllDependencies(file)

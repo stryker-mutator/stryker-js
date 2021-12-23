@@ -3,6 +3,7 @@ import ts from 'typescript';
 export type SourceFiles = Record<
   string,
   {
+    fileName: string;
     imports: Set<string>;
     dependencies: Set<string>;
   }

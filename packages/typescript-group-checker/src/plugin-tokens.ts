@@ -1,2 +1,2 @@
 export const tsCompiler = 'tsCompiler';
-export const mfs = 'mfs';
+export const fs = 'memoryFileSystem';

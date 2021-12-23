@@ -146,7 +146,9 @@ export class MutationTestExecutor {
       })
     );
 
-    const run = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
+    this.log.debug(`${checkerType} created ${groups.length} groups.`);
+
+    const run$ = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
       const results = await checker.check(mutantGroup);
       results.forEach((result) => {
         if (result.checkResult.status === CheckStatus.Passed) {
@@ -157,7 +159,7 @@ export class MutationTestExecutor {
       });
     });
 
-    await lastValueFrom(run);
+    await lastValueFrom(run$);
     checkResult$.complete();
   }
 

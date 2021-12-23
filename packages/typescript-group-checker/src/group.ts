@@ -1,35 +1,34 @@
 import { Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
 
-import { SourceFiles } from './compiler';
+import { SourceFiles } from './compilers/compiler';
 
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCoverage[]): MutantTestCoverage[][] {
-  let leftOverMutants = [...mutants];
+  let mutantsWithoutGroup = [...mutants];
   let groups: MutantTestCoverage[][] = [];
 
-  while (leftOverMutants.length) {
-    const firstMutant = leftOverMutants[0];
-    const mutantFileName = toPosixFileName(firstMutant.fileName);
-    const firstNode = sourceFiles[mutantFileName];
-    const group: Array<{ fileName: string; mutant: MutantTestCoverage }> = [{ fileName: mutantFileName, mutant: firstMutant }];
-    let ignoreList = [mutantFileName, ...firstNode.dependencies];
+  while (mutantsWithoutGroup.length) {
+    const firstMutant = mutantsWithoutGroup[0];
+    const firstSourceFile = sourceFiles[toPosixFileName(firstMutant.fileName)];
+
+    const group: Array<{ fileName: string; mutant: MutantTestCoverage }> = [{ fileName: firstSourceFile.fileName, mutant: firstMutant }];
+    let ignoreList = [firstSourceFile.fileName, ...firstSourceFile.dependencies];
 
     // start with 1 because we already took the first mutant
-    for (let index = 1; index < leftOverMutants.length; index++) {
-      const activeMutant = leftOverMutants[index];
-      const activeMutantFileName = toPosixFileName(activeMutant.fileName);
-      const activeNode = sourceFiles[activeMutantFileName];
+    for (let index = 1; index < mutantsWithoutGroup.length; index++) {
+      const activeMutant = mutantsWithoutGroup[index];
+      const activeSourceFile = sourceFiles[toPosixFileName(activeMutant.fileName)];
 
-      if (activeMutantFileName === group[index - 1]?.fileName) continue;
+      if (activeSourceFile.fileName === group[index - 1]?.fileName) continue;
 
-      if (!ignoreList.includes(activeMutantFileName) && !dependencyInGroup([...activeNode.dependencies], group)) {
-        group.push({ fileName: activeMutantFileName, mutant: activeMutant });
-        ignoreList = [...ignoreList, activeMutantFileName, ...activeNode.dependencies];
+      if (!ignoreList.includes(activeSourceFile.fileName) && !dependencyInGroup([...activeSourceFile.dependencies], group)) {
+        group.push({ fileName: activeSourceFile.fileName, mutant: activeMutant });
+        ignoreList = [...ignoreList, activeSourceFile.fileName, ...activeSourceFile.dependencies];
       }
     }
 
-    leftOverMutants = leftOverMutants.filter((m) => group.findIndex((g) => g.mutant.id === m.id) === -1);
+    mutantsWithoutGroup = mutantsWithoutGroup.filter((m) => !group.find((g) => g.mutant.id === m.id));
     groups = [...groups, group.map((g) => g.mutant)];
   }
 
@@ -38,8 +37,8 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
 
 function dependencyInGroup(dependencies: string[], group: Array<{ fileName: string; mutant: Mutant }>): boolean {
   for (const dependency of dependencies) {
-    for (const node of group) {
-      if (node.fileName === dependency) {
+    for (const mutant of group) {
+      if (mutant.fileName === dependency) {
         return true;
       }
     }

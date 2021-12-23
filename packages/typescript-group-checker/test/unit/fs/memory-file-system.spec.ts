@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { MemoryFileSystem } from '../../../src/fs/memory-filesystem';
 
