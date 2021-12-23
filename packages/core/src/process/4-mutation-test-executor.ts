@@ -63,9 +63,9 @@ export class MutationTestExecutor {
 
   public async execute(): Promise<MutantResult[]> {
     const { ignoredResult$, notIgnoredMutant$ } = this.executeIgnore(from(this.matchedMutants));
-    const { passedMutant$, checkResult$ } = this.executeCheck(notIgnoredMutant$);
-    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
-    const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
+    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(notIgnoredMutant$);
+    const { passedMutant$, checkResult$ } = this.executeCheck(coveredMutant$);
+    const testRunnerResult$ = this.executeRunInTestRunner(passedMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
     this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
@@ -133,6 +133,7 @@ export class MutationTestExecutor {
     passedMutant$: Subject<MutantTestCoverage>
   ) {
     const mutants = await lastValueFrom(merge(previousPassedMutants$).pipe(toArray()));
+    this.log.info(`got ${mutants.length} mutants`);
 
     // Set the active checker on all checkerWorkers
     await this.checkerPool.runOnAllResources(async (checkerResource) => {
