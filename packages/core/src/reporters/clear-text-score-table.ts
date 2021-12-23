@@ -64,7 +64,9 @@ class MutationScoreColumn extends Column {
   protected color(metricsResult: MetricsResult) {
     const { mutationScore: score } = metricsResult.metrics;
 
-    if (isNaN(score)) return chalk.grey;
+    if (isNaN(score)) {
+      return chalk.grey;
+    }
 
     if (score >= this.thresholds.high) {
       return chalk.green;
