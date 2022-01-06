@@ -84,10 +84,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
     host.afterProgramEmitAndDiagnostics = undefined;
     this.setSourceFilesDependencies();
 
-    if (Object.keys(this.sourceFiles).length === 0) {
-      throw new Error('SourceFiles not set.');
-    }
-
     return { dependencyFiles: this.sourceFiles, errors };
   }
 

@@ -45,6 +45,10 @@ export class TypescriptChecker implements Checker {
       throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
     }
 
+    if (Object.keys(dependencyFiles).length === 0) {
+      throw new Error('No sourcefiles were loaded in the compiler.');
+    }
+
     this.sourceFiles = dependencyFiles;
   }
 
