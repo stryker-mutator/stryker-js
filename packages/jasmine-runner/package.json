@@ -38,7 +38,7 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/jasmine-runner",
   "peerDependencies": {
     "@stryker-mutator/core": "~5.5.0",
-    "jasmine": ">=2"
+    "jasmine": ">=2 <4"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "5.5.1",
