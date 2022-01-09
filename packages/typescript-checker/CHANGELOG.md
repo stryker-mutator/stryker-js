@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **tsconfig:** force declarationDir false for non-build projects ([#3313](https://github.com/stryker-mutator/stryker-js/issues/3313)) ([461f39c](https://github.com/stryker-mutator/stryker-js/commit/461f39cc0808dbab2ad405a96193aa4586f7f699))
+
+
+
+
+
 ## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
 
 

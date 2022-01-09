@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **report:** dramatically improve rendering performance of HTML report ([ad38c82](https://github.com/stryker-mutator/stryker-js/commit/ad38c8219ab5cd6dc477b67bf3416c9afdfba972))
+
+
+### Features
+
+* **clear-text reporter:** show n/a instead of NaN  ([68c5c51](https://github.com/stryker-mutator/stryker-js/commit/68c5c5183c04ea2cf6b5943996972f4e411e32a9))
+
+
+
+
+
 ## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
 
 

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **jasmine:** correct peer dependency for jasmine ([#3341](https://github.com/stryker-mutator/stryker-js/issues/3341)) ([07b50a9](https://github.com/stryker-mutator/stryker-js/commit/07b50a922b50fea64c978ab7023f8ea0486d9392))
+* **report:** dramatically improve rendering performance of HTML report ([ad38c82](https://github.com/stryker-mutator/stryker-js/commit/ad38c8219ab5cd6dc477b67bf3416c9afdfba972))
+* **tsconfig:** force declarationDir false for non-build projects ([#3313](https://github.com/stryker-mutator/stryker-js/issues/3313)) ([461f39c](https://github.com/stryker-mutator/stryker-js/commit/461f39cc0808dbab2ad405a96193aa4586f7f699))
+
+
+### Features
+
+* **clear-text reporter:** show n/a instead of NaN  ([68c5c51](https://github.com/stryker-mutator/stryker-js/commit/68c5c5183c04ea2cf6b5943996972f4e411e32a9))
+
+
+
+
+
 ## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
 
 
