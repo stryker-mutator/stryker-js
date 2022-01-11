@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **jasmine:** correct peer dependency for jasmine ([#3341](https://github.com/stryker-mutator/stryker-js/issues/3341)) ([07b50a9](https://github.com/stryker-mutator/stryker-js/commit/07b50a922b50fea64c978ab7023f8ea0486d9392))
+* **report:** dramatically improve rendering performance of HTML report ([ad38c82](https://github.com/stryker-mutator/stryker-js/commit/ad38c8219ab5cd6dc477b67bf3416c9afdfba972))
+* **tsconfig:** force declarationDir false for non-build projects ([#3313](https://github.com/stryker-mutator/stryker-js/issues/3313)) ([461f39c](https://github.com/stryker-mutator/stryker-js/commit/461f39cc0808dbab2ad405a96193aa4586f7f699))
+
+
+### Features
+
+* **clear-text reporter:** show n/a instead of NaN  ([68c5c51](https://github.com/stryker-mutator/stryker-js/commit/68c5c5183c04ea2cf6b5943996972f4e411e32a9))
+
+
+
+
+
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **ts checker:** always disable `declarationMap` ([#3294](https://github.com/stryker-mutator/stryker-js/issues/3294)) ([990ecdc](https://github.com/stryker-mutator/stryker-js/commit/990ecdcf75ace7ad4553fd7c362d29d9bfa423ce))
+* **tsconfig:** rewrite "include" patterns ([#3293](https://github.com/stryker-mutator/stryker-js/issues/3293)) ([37ead22](https://github.com/stryker-mutator/stryker-js/commit/37ead22ff84925418ca7682b3e3a5d2271e7e97f)), closes [#3281](https://github.com/stryker-mutator/stryker-js/issues/3281)
+
+
+
+
+
+# [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
+
+
+### Bug Fixes
+
+* **instrumenter:** don't mutate TS generics ([#3268](https://github.com/stryker-mutator/stryker-js/issues/3268)) ([88d6eaf](https://github.com/stryker-mutator/stryker-js/commit/88d6eaff7b9ffab7f45c76e8f348a131798f7671))
+* **logging:** don't log log4js category to file as well ([31609a5](https://github.com/stryker-mutator/stryker-js/commit/31609a52d255eb3f174f196f31c13f159c10f774))
+* **util:** clear require.cache behavior on case-insensitive file systems ([#3194](https://github.com/stryker-mutator/stryker-js/issues/3194)) ([39e3d86](https://github.com/stryker-mutator/stryker-js/commit/39e3d86238b29e5326b4f741f882cf3665200d1a))
+
+
+### Features
+
+* **checkers:** allow custom checker node args ([#3179](https://github.com/stryker-mutator/stryker-js/issues/3179)) ([82c4435](https://github.com/stryker-mutator/stryker-js/commit/82c4435e77b5b13aee5a4117a119b4f5dde68c2b))
+* **cli:** display suggestions on error ([#3216](https://github.com/stryker-mutator/stryker-js/issues/3216)) ([9ed98e8](https://github.com/stryker-mutator/stryker-js/commit/9ed98e82e5e895ed34afb3f0247cfa29940247a0))
+* **config:** Add link to docs when generating a custom config ([#3235](https://github.com/stryker-mutator/stryker-js/issues/3235)) ([7c999b8](https://github.com/stryker-mutator/stryker-js/commit/7c999b8fa5689bb7ed0e299b531add67ee101dc6))
+* **hit limit:** infinite loop prevention in jasmine-runner ([#3199](https://github.com/stryker-mutator/stryker-js/issues/3199)) ([bc792e0](https://github.com/stryker-mutator/stryker-js/commit/bc792e087225641256c95f18a6d70fefdca507b5))
+* **hit limit:** infinite loop prevention in mocha-runner  ([f5a7d1d](https://github.com/stryker-mutator/stryker-js/commit/f5a7d1d18ec45364743e5aceb71f0f1bbbf3bafa))
+* **html:** new diff-view when selecting mutants ([#3263](https://github.com/stryker-mutator/stryker-js/issues/3263)) ([8b253ee](https://github.com/stryker-mutator/stryker-js/commit/8b253ee8ed92d447b5f854e4250f8e1fd064cd13))
+* **init:** add buildCommand question when running ([#3213](https://github.com/stryker-mutator/stryker-js/issues/3213)) ([b9d5980](https://github.com/stryker-mutator/stryker-js/commit/b9d5980fbbc69ace8acab404793418a134b2f62f))
+* **jest-runner:** support `--findRelatedTests` in dry run ([#3234](https://github.com/stryker-mutator/stryker-js/issues/3234)) ([b2e4584](https://github.com/stryker-mutator/stryker-js/commit/b2e458432483353dd0ea0471b623326ff58c92bc))
+* **mutators:** Implement missing AssignmentOperatorMutator  ([#3203](https://github.com/stryker-mutator/stryker-js/issues/3203)) ([95b694b](https://github.com/stryker-mutator/stryker-js/commit/95b694b89430af58ec085bea07883372976fbb02))
+
+
+
+
+
 ## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
 
 

@@ -70,8 +70,8 @@ export const location = factoryMethod<Location>(() => ({ start: { line: 0, colum
 
 export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
   return {
-    resolve: sinon.stub(),
-    resolveAll: sinon.stub(),
+    resolve: sinon.stub<any>(),
+    resolveAll: sinon.stub<any>(),
     resolveValidationSchemaContributions: sinon.stub(),
   };
 }
@@ -350,11 +350,11 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
 export function injector(): sinon.SinonStubbedInstance<Injector> {
   const injectorMock: sinon.SinonStubbedInstance<Injector> = {
     dispose: sinon.stub(),
-    injectClass: sinon.stub(),
-    injectFunction: sinon.stub(),
-    provideClass: sinon.stub(),
-    provideFactory: sinon.stub(),
-    provideValue: sinon.stub(),
+    injectClass: sinon.stub<any>(),
+    injectFunction: sinon.stub<any>(),
+    provideClass: sinon.stub<any>(),
+    provideFactory: sinon.stub<any>(),
+    provideValue: sinon.stub<any>(),
     resolve: sinon.stub(),
   };
   injectorMock.provideClass.returnsThis();

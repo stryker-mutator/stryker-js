@@ -29,7 +29,7 @@ describe(Stryker.name, () => {
   let mutationTestExecutorMock: sinon.SinonStubbedInstance<MutationTestExecutor>;
 
   beforeEach(() => {
-    injectorMock = factory.injector();
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext>>;
     loggerMock = factory.logger();
     getLoggerStub = sinon.stub();
     mutantResults = [];

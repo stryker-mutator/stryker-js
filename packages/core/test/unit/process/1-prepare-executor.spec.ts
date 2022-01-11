@@ -35,7 +35,7 @@ describe(PrepareExecutor.name, () => {
     inputFileResolverMock = sinon.createStubInstance(InputFileResolver);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
-    injectorMock = factory.injector();
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<buildMainInjectorModule.MainContext>>;
     sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock as Injector<buildMainInjectorModule.MainContext>);
     injectorMock.resolve
       .withArgs(commonTokens.options)
@@ -46,7 +46,12 @@ describe(PrepareExecutor.name, () => {
       .returns(temporaryDirectoryMock);
     injectorMock.injectClass.withArgs(InputFileResolver).returns(inputFileResolverMock);
     inputFileResolverMock.resolve.resolves(inputFiles);
-    sut = new PrepareExecutor(cliOptions, injectorMock as Injector<buildMainInjectorModule.MainContext>);
+    sut = new PrepareExecutor(
+      cliOptions,
+      injectorMock as unknown as Injector<
+        Pick<buildMainInjectorModule.MainContext, 'getLogger' | 'logger'> & { [coreTokens.cliOptions]: PartialStrykerOptions }
+      >
+    );
   });
 
   it('should configure logging for the main process', async () => {
