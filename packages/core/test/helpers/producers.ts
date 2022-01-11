@@ -8,7 +8,7 @@ import { TestRunner } from '@stryker-mutator/api/test-runner';
 
 import { I } from '@stryker-mutator/util';
 
-import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
+import { Pool, ConcurrencyTokenProvider, CheckerResource } from '../../src/concurrent';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -57,7 +57,7 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Te
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Checker>>> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<CheckerResource>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
