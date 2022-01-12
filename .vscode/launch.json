@@ -25,6 +25,21 @@
       "skipFiles": [
         "<node_internals>/**"
       ]
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha Tests Mytest integration",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+          "-u",
+          "tdd",
+          "--timeout",
+          "999999",
+          "--colors",
+          "${workspaceFolder}\\packages\\typescript-group-checker\\test\\integration"
+      ],
+      "internalConsoleOptions": "openOnSessionStart"
+  },
   ]
 }

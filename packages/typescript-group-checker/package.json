@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/typescript-group-checker",
-  "version": "5.4.1",
+  "version": "5.6.0",
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
@@ -33,16 +33,16 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/typescript-group-checker",
   "dependencies": {
-    "@stryker-mutator/api": "5.4.1",
-    "@stryker-mutator/util": "5.4.1",
+    "@stryker-mutator/api": "5.6.0",
+    "@stryker-mutator/util": "5.6.0",
     "semver": "~7.3.2",
     "typescript": ">=3.6"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "5.4.1",
+    "@stryker-mutator/test-helpers": "5.6.0",
     "@types/semver": "~7.3.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~5.4.0"
+    "@stryker-mutator/core": "~5.6.0"
   }
 }

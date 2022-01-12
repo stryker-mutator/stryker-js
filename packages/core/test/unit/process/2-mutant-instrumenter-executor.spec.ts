@@ -24,7 +24,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerPoolMock: sinon.SinonStubbedInstance<Pool<CheckerResource>>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<CheckerResource>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let mutatedFile: File;
   let originalFile: File;
