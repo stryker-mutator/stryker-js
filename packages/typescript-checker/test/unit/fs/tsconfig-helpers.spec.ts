@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
 
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../../src/fs/tsconfig-helpers';
 
 describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {
@@ -139,7 +139,7 @@ describe('typescript-helpers', () => {
       expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
       });
       expect(
         JSON.parse(
@@ -159,7 +159,7 @@ describe('typescript-helpers', () => {
       ).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
       });
     });
   });

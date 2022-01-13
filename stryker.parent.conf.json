@@ -10,9 +10,9 @@
   ],  
   "plugins": [
     "../mocha-runner",
-    "../typescript-group-checker"
+    "../typescript-checker"
   ],
-  "checkers": ["typescript-group"],
+  "checkers": ["typescript"],
   "dashboard": {},
   "timeoutMS": 10000,
   "buildCommand": "tsc -b",

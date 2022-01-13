@@ -1,5 +1,5 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
+import { expect } from 'chai';
 import ts from 'typescript';
 
 import { ScriptFile } from '../../../src/fs/script-file';
@@ -12,7 +12,7 @@ describe('fs', () => {
     describe('constructor', () => {
       it('should reflect content, name and modified date', () => {
         const modifiedTime = new Date(2010, 1, 1, 2, 3, 4, 4);
-        const sut = new ScriptFile('foo()', 'foo.js', modifiedTime);
+        const sut = new ScriptFile('foo.js', 'foo()', modifiedTime);
         expect(sut.fileName).eq('foo.js');
         expect(sut.content).eq('foo()');
         expect(sut.modifiedTime).eq(modifiedTime);
@@ -29,7 +29,7 @@ describe('fs', () => {
     describe(ScriptFile.prototype.mutate.name, () => {
       let sut: ScriptFile;
       beforeEach(() => {
-        sut = new ScriptFile('add(a, b) { return a + b };', 'add.js', new Date(2010, 1, 1));
+        sut = new ScriptFile('add.js', 'add(a, b) { return a + b };', new Date(2010, 1, 1));
         sut.watcher = sinon.stub();
       });
 
@@ -63,23 +63,23 @@ describe('fs', () => {
       });
     });
 
-    describe(ScriptFile.prototype.resetMutant.name, () => {
+    describe(ScriptFile.prototype.reset.name, () => {
       let sut: ScriptFile;
 
       beforeEach(() => {
-        sut = new ScriptFile('add(a, b) { return a + b };', 'add.js', new Date(2010, 1, 1));
+        sut = new ScriptFile('add.js', 'add(a, b) { return a + b };', new Date(2010, 1, 1));
         sut.watcher = sinon.stub();
       });
 
       it('should reset the content after a mutation', () => {
         sut.mutate({ replacement: 'replaces', location: { start: { line: 0, column: 1 }, end: { line: 0, column: sut.content.length } } });
-        sut.resetMutant();
+        sut.reset();
         expect(sut.content).eq('add(a, b) { return a + b };');
       });
 
       it('should throw when no watcher is registered', () => {
         sut.watcher = undefined;
-        expect(() => sut.resetMutant()).throws(
+        expect(() => sut.reset()).throws(
           'ried to check file "add.js" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project'
         );
       });
@@ -90,12 +90,12 @@ describe('fs', () => {
           replacement: 'replaced a second time',
           location: { start: { line: 0, column: 1 }, end: { line: 0, column: sut.content.length } },
         });
-        sut.resetMutant();
+        sut.reset();
         expect(sut.content).eq('add(a, b) { return a + b };');
       });
 
       it('should notify the file system watcher', () => {
-        sut.resetMutant();
+        sut.reset();
         expect(sut.watcher).calledWith('add.js', ts.FileWatcherEventKind.Changed);
       });
 
@@ -105,7 +105,7 @@ describe('fs', () => {
         sinon.clock.setSystemTime(now);
 
         // Act
-        sut.resetMutant();
+        sut.reset();
 
         // Assert
         expect(sut.modifiedTime).deep.eq(now);
@@ -116,7 +116,7 @@ describe('fs', () => {
       let sut: ScriptFile;
 
       beforeEach(() => {
-        sut = new ScriptFile('add(a, b) { return a + b };', 'add.js', new Date(2010, 1, 1));
+        sut = new ScriptFile('add.js', 'add(a, b) { return a + b };', new Date(2010, 1, 1));
       });
 
       it('should write to the content', () => {

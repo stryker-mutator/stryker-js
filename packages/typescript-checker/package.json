@@ -25,7 +25,9 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "contributors": [
     "Simon de Lang <simondelang@gmail.com>",
-    "Nico Jansen <jansennico@gmail.com>"
+    "Nico Jansen <jansennico@gmail.com>",
+    "Danny Berkelaar <dannyberkelaar@gmail.com>",
+    "Thierry Rietveld <thierry.rietveld0505@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {

@@ -10,8 +10,7 @@
     { "path": "packages/karma-runner" },
     { "path": "packages/mocha-runner" },
     { "path": "packages/cucumber-runner" },
-    // { "path": "packages/typescript-checker" },
-    { "path": "packages/typescript-group-checker" },
+    { "path": "packages/typescript-checker" },
     { "path": "packages/test-helpers" }
   ]
 }

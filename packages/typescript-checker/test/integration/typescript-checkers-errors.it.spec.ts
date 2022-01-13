@@ -20,7 +20,7 @@ describe('Typescript checker errors', () => {
     testInjector.options.tsconfigFile = resolveTestResource('compile-error', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
-      'TypeScript error(s) found in dry run compilation: testResources/errors/compile-error/add.ts(2,3): error TS2322:'
+      "TypeScript error(s) found in dry run compilation: testResources/errors/compile-error/add.ts(2,3): error TS2322: Type 'number' is not assignable to type 'string'."
     );
   });
 

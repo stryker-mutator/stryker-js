@@ -1,4 +1,3 @@
-import { Mutant } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 

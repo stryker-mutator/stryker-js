@@ -1,16 +1,18 @@
 import { EOL } from 'os';
-import path from 'path';
+
+import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
+
+import { Mutant, MutantTestCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 
 import ts from 'typescript';
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Task, propertyPath } from '@stryker-mutator/util';
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { HybridFileSystem } from './fs';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers';
 import * as pluginTokens from './plugin-tokens';
+import { HybridFileSystem } from './fs/hybrid-filesystem';
+import { toPosixFileName } from './fs/tsconfig-helpers';
+import { CompilerWithWatch } from './compilers/compiler-with-watch';
+import { createGroups } from './group';
+import { SourceFiles } from './compilers/compiler';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -18,21 +20,11 @@ const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getNewLine: () => EOL,
 };
 
-const FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE = 6032;
-
-typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-// eslint-disable-next-line @typescript-eslint/ban-types
-function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
-  const targetName = target?.name ?? TypescriptChecker.name;
-  const category = targetName === TypescriptChecker.name ? TypescriptChecker.name : `${TypescriptChecker.name}.${targetName}`;
-  return loggerFactory(category);
-}
-
 create.inject = tokens(commonTokens.injector);
 export function create(injector: Injector<PluginContext>): TypescriptChecker {
   return injector
-    .provideFactory(commonTokens.logger, typescriptCheckerLoggerFactory, Scope.Transient)
     .provideClass(pluginTokens.fs, HybridFileSystem)
+    .provideClass(pluginTokens.tsCompiler, CompilerWithWatch)
     .injectClass(TypescriptChecker);
 }
 
@@ -40,162 +32,109 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
  * An in-memory type checker implementation which validates type errors of mutants.
  */
 export class TypescriptChecker implements Checker {
-  private currentTask: Task<CheckResult> = new Task();
-  private readonly currentErrors: ts.Diagnostic[] = [];
-  /**
-   * Keep track of all tsconfig files which are read during compilation (for project references)
-   */
-  private readonly allTSConfigFiles: Set<string>;
+  public static inject = tokens(pluginTokens.tsCompiler, pluginTokens.fs, commonTokens.options);
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
-  private readonly tsconfigFile: string;
+  private sourceFiles: SourceFiles = {};
 
-  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly fs: HybridFileSystem) {
-    this.tsconfigFile = toPosixFileName(options.tsconfigFile);
-    this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
-  }
+  constructor(private readonly tsCompiler: CompilerWithWatch, private readonly fs: HybridFileSystem, options: StrykerOptions) {}
 
-  /**
-   * Starts the typescript compiler and does a dry run
-   */
   public async init(): Promise<void> {
-    guardTSVersion();
-    this.guardTSConfigFileExists();
-    this.currentTask = new Task();
-    const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
-    const compiler = ts.createSolutionBuilderWithWatch(
-      ts.createSolutionBuilderWithWatchHost(
-        {
-          ...ts.sys,
-          readFile: (fileName) => {
-            const content = this.fs.getFile(fileName)?.content;
-            if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
-              return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
-            }
-            return content;
-          },
-          watchFile: (filePath: string, callback: ts.FileWatcherCallback) => {
-            this.fs.watchFile(filePath, callback);
-            return {
-              close: () => {
-                delete this.fs.getFile(filePath)!.watcher;
-              },
-            };
-          },
-          writeFile: (filePath, data) => {
-            this.fs.writeFile(filePath, data);
-          },
-          createDirectory: () => {
-            // Idle, no need to create directories in the hybrid fs
-          },
-          clearScreen() {
-            // idle, never clear the screen
-          },
-          getModifiedTime: (fileName) => {
-            return this.fs.getFile(fileName)!.modifiedTime;
-          },
-          watchDirectory: (): ts.FileWatcher => {
-            // this is used to see if new files are added to a directory. Can safely be ignored for mutation testing.
-            return {
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              close() {},
-            };
-          },
-        },
-        undefined,
-        (error) => this.currentErrors.push(error),
-        (status) => this.logDiagnostic('status')(status),
-        (summary) => {
-          this.logDiagnostic('summary')(summary);
-          summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE && this.resolveCheckResult();
-        }
-      ),
-      [this.tsconfigFile],
-      {}
-    );
-    compiler.build();
-    const result = await this.currentTask.promise;
-    if (result.status === CheckStatus.CompileError) {
-      throw new Error(`TypeScript error(s) found in dry run compilation: ${result.reason}`);
+    const { dependencyFiles, errors } = await this.tsCompiler.init();
+
+    if (errors.length) {
+      throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
     }
+
+    if (Object.keys(dependencyFiles).length === 0) {
+      throw new Error('No sourcefiles were loaded in the compiler.');
+    }
+
+    this.sourceFiles = dependencyFiles;
   }
 
-  private guardTSConfigFileExists() {
-    if (!ts.sys.fileExists(this.tsconfigFile)) {
-      throw new Error(
-        `The tsconfig file does not exist at: "${path.resolve(
-          this.tsconfigFile
-        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>('tsconfigFile')}"`
-      );
-    }
-  }
-
-  /**
-   * Checks whether or not a mutant results in a compile error.
-   * Will simply pass through if the file mutated isn't part of the typescript project
-   * @param mutant The mutant to check
-   */
-  public async check(mutant: Mutant): Promise<CheckResult> {
-    if (this.fs.existsInMemory(mutant.fileName)) {
-      this.clearCheckState();
-      this.fs.mutate(mutant);
-      return this.currentTask.promise;
-    } else {
-      // We allow people to mutate files that are not included in this ts project
+  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+    const mutantResults: Array<{ mutant: MutantTestCoverage; errors: ts.Diagnostic[] }> = mutants.map((mutant) => {
       return {
-        status: CheckStatus.Passed,
+        mutant,
+        errors: [],
       };
-    }
-  }
+    });
 
-  /**
-   * Post processes the content of a tsconfig file. Adjusts some options for speed and alters quality options.
-   * @param fileName The tsconfig file name
-   * @param content The tsconfig content
-   * @param buildModeEnabled Whether or not `--build` mode is used
-   */
-  private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {
-    const parsedConfig = ts.parseConfigFileTextToJson(fileName, content);
-    if (parsedConfig.error) {
-      return content; // let the ts compiler deal with this error
-    } else {
-      for (const referencedProject of retrieveReferencedProjects(parsedConfig, path.dirname(fileName))) {
-        this.allTSConfigFiles.add(referencedProject);
+    const errors = await this.typeCheckMutants(mutants);
+    const mutantsToTestIndividual = new Set<Mutant>();
+
+    errors.forEach((error) => {
+      const possibleMutants = this.matchMutantsFromError(mutants, error);
+      if (possibleMutants.length === 1) {
+        mutantResults[mutantResults.findIndex((mutantResult) => mutantResult.mutant.id === possibleMutants[0].id)].errors.push(error);
+      } else if (possibleMutants.length > 1) {
+        possibleMutants.forEach((mutant) => mutantsToTestIndividual.add(mutant));
+      } else if (possibleMutants.length === 0) {
+        throw new Error('Error could not be matched to mutant.');
       }
-      return overrideOptions(parsedConfig, buildModeEnabled);
+    });
+
+    for (const mutant of mutantsToTestIndividual.values()) {
+      const mutantResult = mutantResults.find((mr) => mr.mutant.id === mutant.id);
+      if (!mutantResult) throw new Error('Could not find mutant in mutant result');
+
+      if (mutantResult.errors.length > 0) continue;
+
+      mutantResult.errors = await this.typeCheckMutants([mutant]);
     }
+
+    return mutantResults.map((mutantResult) => {
+      if (mutantResult.errors.length) {
+        return {
+          mutant: mutantResult.mutant,
+          checkResult: {
+            status: CheckStatus.CompileError,
+            reason: this.formatErrors(mutantResult.errors),
+          },
+        };
+      }
+
+      return {
+        mutant: mutantResult.mutant,
+        checkResult: { status: CheckStatus.Passed },
+      };
+    });
   }
 
-  /**
-   * Resolves the task that is currently running. Will report back the check result.
-   */
-  private resolveCheckResult(): void {
-    if (this.currentErrors.length) {
-      const errorText = ts.formatDiagnostics(this.currentErrors, {
-        getCanonicalFileName: (fileName) => fileName,
-        getCurrentDirectory: process.cwd,
-        getNewLine: () => EOL,
-      });
-      this.currentTask.resolve({
-        status: CheckStatus.CompileError,
-        reason: errorText,
-      });
-    }
-    this.currentTask.resolve({ status: CheckStatus.Passed });
+  private async typeCheckMutants(mutants: Mutant[]) {
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).mutate(mutant));
+    const errors = await this.tsCompiler.check();
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).reset());
+    return errors;
   }
 
-  /**
-   * Clear state between checks
-   */
-  private clearCheckState() {
-    while (this.currentErrors.pop()) {
-      // Idle
-    }
-    this.currentTask = new Task();
+  private matchMutantsFromError(mutants: Mutant[], error: ts.Diagnostic): Mutant[] {
+    const errorFileName = error.file?.fileName ?? '';
+
+    const singleMutant = mutants.find((m) => toPosixFileName(m.fileName) === errorFileName);
+    if (singleMutant) return [singleMutant];
+
+    const imports = this.sourceFiles[errorFileName].imports;
+
+    const possibleMutants: Mutant[] = [];
+
+    mutants.forEach((mutant) => {
+      const mutantFileName = toPosixFileName(mutant.fileName);
+
+      imports.forEach((importFile) => {
+        if (mutantFileName === importFile) {
+          possibleMutants.push(mutant);
+        }
+      });
+    });
+    return possibleMutants;
   }
-  private readonly logDiagnostic = (label: string) => {
-    return (d: ts.Diagnostic) => {
-      this.logger.trace(`${label} ${ts.formatDiagnostics([d], diagnosticsHost)}`);
-    };
-  };
+
+  private formatErrors(errors: readonly ts.Diagnostic[]): string {
+    return ts.formatDiagnostics(errors, diagnosticsHost);
+  }
+
+  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
+    return createGroups(this.sourceFiles, mutants).sort((a, b) => b.length - a.length);
+  }
 }

@@ -1,14 +1,12 @@
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 
 import { expect } from 'chai';
-import { Location, Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
-import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { Location, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src';
-import { TypescriptChecker } from '../../src/typescript-group-checker';
+import { TypescriptChecker } from '../../src/typescript-checker';
 import { SourceFiles } from '../../src/compilers/compiler';
 
 const resolveTestResource = path.resolve.bind(

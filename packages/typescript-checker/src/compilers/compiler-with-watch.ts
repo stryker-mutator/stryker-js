@@ -6,7 +6,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { MemoryFileSystem } from '../fs/memory-filesystem';
+import { HybridFileSystem } from '../fs/hybrid-filesystem';
 import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from '../fs/tsconfig-helpers';
 import * as pluginTokens from '../plugin-tokens';
 
@@ -20,7 +20,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
 
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: MemoryFileSystem) {
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
@@ -34,7 +34,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
       {
         ...ts.sys,
         readFile: (fileName) => {
-          const content = this.fs.getFile(fileName)?.content;
+          const content = this.fs.getFile(fileName).content;
           if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
             return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
           }
