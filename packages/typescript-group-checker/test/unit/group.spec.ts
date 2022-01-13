@@ -17,12 +17,12 @@ describe('group', () => {
       const groups: SourceFiles = {
         'a.ts': {
           fileName: 'a.ts',
-          dependencies: new Set(),
+          dependents: new Set(),
           imports: new Set(['b.ts']),
         },
         'b.ts': {
           fileName: 'b.ts',
-          dependencies: new Set(['a.ts']),
+          dependents: new Set(['a.ts']),
           imports: new Set(),
         },
       };
@@ -39,17 +39,17 @@ describe('group', () => {
       const groups: SourceFiles = {
         'a.ts': {
           fileName: 'a.ts',
-          dependencies: new Set(),
+          dependents: new Set(),
           imports: new Set(['b.ts', 'c.ts']),
         },
         'b.ts': {
           fileName: 'b.ts',
-          dependencies: new Set(['a.ts']),
+          dependents: new Set(['a.ts']),
           imports: new Set(),
         },
         'c.ts': {
           fileName: 'c.ts',
-          dependencies: new Set(['a.ts']),
+          dependents: new Set(['a.ts']),
           imports: new Set(),
         },
       };
@@ -66,22 +66,22 @@ describe('group', () => {
       const groups: SourceFiles = {
         'a.ts': {
           fileName: 'a.ts',
-          dependencies: new Set(),
+          dependents: new Set(),
           imports: new Set(['b.ts', 'd.ts']),
         },
         'b.ts': {
           fileName: 'b.ts',
-          dependencies: new Set(['a.ts']),
+          dependents: new Set(['a.ts']),
           imports: new Set('c.ts'),
         },
         'c.ts': {
           fileName: 'c.ts',
-          dependencies: new Set(['b.ts']),
+          dependents: new Set(['b.ts']),
           imports: new Set(),
         },
         'd.ts': {
           fileName: 'c.ts',
-          dependencies: new Set(['a.ts']),
+          dependents: new Set(['a.ts']),
           imports: new Set(),
         },
       };

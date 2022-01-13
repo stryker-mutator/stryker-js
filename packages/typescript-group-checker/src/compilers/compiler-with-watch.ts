@@ -19,7 +19,6 @@ export class CompilerWithWatch implements TypescriptCompiler {
   private readonly tsconfigFile: string;
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
-  private sourceFiles: SourceFiles = {};
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: MemoryFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
@@ -72,7 +71,25 @@ export class CompilerWithWatch implements TypescriptCompiler {
       }
     );
 
-    host.afterProgramEmitAndDiagnostics = this.afterProgramEmitAndDiagnostics.bind(this);
+    const dependencyFiles: SourceFiles = {};
+
+    host.afterProgramEmitAndDiagnostics = (program: ts.EmitAndSemanticDiagnosticsBuilderProgram) => {
+      program
+        .getSourceFiles()
+        .filter(filterDependency)
+        .forEach((file) => {
+          dependencyFiles[file.fileName] = {
+            fileName: toPosixFileName(file.fileName),
+            imports: new Set(
+              program
+                .getAllDependencies(file)
+                .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
+                .map((importFile) => this.resolveFilename(importFile))
+            ),
+            dependents: new Set(),
+          };
+        });
+    };
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
 
@@ -82,9 +99,22 @@ export class CompilerWithWatch implements TypescriptCompiler {
 
     // Function should not be called after the first check is done
     host.afterProgramEmitAndDiagnostics = undefined;
-    this.setSourceFilesDependencies();
 
-    return { dependencyFiles: this.sourceFiles, errors };
+    for (const file in dependencyFiles) {
+      const imports = dependencyFiles[file].imports;
+
+      for (const importFile of imports) {
+        dependencyFiles[importFile]?.dependents.add(file);
+      }
+    }
+
+    function filterDependency(file: ts.SourceFile) {
+      if (file.fileName.includes('.d.ts')) return false;
+      if (file.fileName.includes('node_modules')) return false;
+      return true;
+    }
+
+    return { dependencyFiles, errors };
   }
 
   public async check(): Promise<ts.Diagnostic[]> {
@@ -95,47 +125,27 @@ export class CompilerWithWatch implements TypescriptCompiler {
     return errors;
   }
 
-  private afterProgramEmitAndDiagnostics(program: ts.EmitAndSemanticDiagnosticsBuilderProgram) {
-    const currentDirectory = toPosixFileName(program.getCurrentDirectory());
-    const outDir = (program.getCompilerOptions().outDir ?? '').replace(currentDirectory, '');
+  private resolveFilename(fileName: string) {
+    if (!fileName.includes('.d.ts')) return fileName;
 
-    program
-      .getSourceFiles()
-      .filter(this.filterDependency.bind(this))
-      .forEach((file) => {
-        this.sourceFiles[file.fileName] = {
-          fileName: toPosixFileName(file.fileName),
-          imports: new Set(
-            program
-              .getAllDependencies(file)
-              .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
-              .map((importFile) => this.resolveFilename(importFile, outDir))
-          ),
-          dependencies: new Set([]),
-        };
-      });
+    const file = this.fs.getFile(fileName);
+
+    const sourceMappingURL = this.getSourceMappingURL(file.content);
+
+    if (!sourceMappingURL) return fileName;
+
+    const sourceMap = this.fs.getFile(path.resolve(fileName, '..', sourceMappingURL));
+
+    const content = JSON.parse(sourceMap.content);
+
+    const source: string = content.sources[0];
+
+    const realPath = path.resolve(sourceMappingURL, '..', source);
+    return toPosixFileName(realPath);
   }
 
-  private filterDependency(file: ts.SourceFile) {
-    if (file.fileName in this.sourceFiles) return false;
-    if (file.fileName.includes('.d.ts')) return false;
-    if (file.fileName.includes('node_modules')) return false;
-
-    return true;
-  }
-
-  private setSourceFilesDependencies() {
-    for (const file in this.sourceFiles) {
-      const imports = this.sourceFiles[file].imports;
-
-      for (const importFile of imports) {
-        this.sourceFiles[importFile]?.dependencies.add(file);
-      }
-    }
-  }
-
-  private resolveFilename(text: string, outDir: string) {
-    return text.replace('.d.ts', '.ts').replace(outDir, '');
+  private getSourceMappingURL(content: string): string | undefined {
+    return /\/\/# sourceMappingURL=(.+)$/.exec(content)?.[1];
   }
 
   private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {

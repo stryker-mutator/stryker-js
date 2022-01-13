@@ -13,7 +13,7 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
     const firstSourceFile = sourceFiles[toPosixFileName(firstMutant.fileName)];
 
     const group: Array<{ fileName: string; mutant: MutantTestCoverage }> = [{ fileName: firstSourceFile.fileName, mutant: firstMutant }];
-    let ignoreList = [firstSourceFile.fileName, ...firstSourceFile.dependencies];
+    let ignoreList = [firstSourceFile.fileName, ...firstSourceFile.dependents];
 
     // start with 1 because we already took the first mutant.
     for (let index = 1; index < mutantsWithoutGroup.length; index++) {
@@ -23,9 +23,9 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
       // If the mutant is in the same file as the previous, skip it because it will never fit.
       if (activeSourceFile.fileName === group[index - 1]?.fileName) continue;
 
-      if (!ignoreList.includes(activeSourceFile.fileName) && !dependencyInGroup([...activeSourceFile.dependencies], group)) {
+      if (!ignoreList.includes(activeSourceFile.fileName) && !dependencyInGroup([...activeSourceFile.dependents], group)) {
         group.push({ fileName: activeSourceFile.fileName, mutant: activeMutant });
-        ignoreList = [...ignoreList, activeSourceFile.fileName, ...activeSourceFile.dependencies];
+        ignoreList = [...ignoreList, activeSourceFile.fileName, ...activeSourceFile.dependents];
       }
     }
 
