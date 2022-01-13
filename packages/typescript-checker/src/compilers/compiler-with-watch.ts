@@ -86,7 +86,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
                 .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
                 .flatMap((importFile) => this.resolveFilename(importFile))
             ),
-            dependents: new Set(),
+            importedBy: new Set(),
           };
         });
     };
@@ -104,7 +104,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
       const imports = dependencyFiles[file].imports;
 
       for (const importFile of imports) {
-        dependencyFiles[importFile]?.dependents.add(file);
+        dependencyFiles[importFile]?.importedBy.add(file);
       }
     }
 

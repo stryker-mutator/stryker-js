@@ -5,7 +5,7 @@ export type SourceFiles = Record<
   {
     fileName: string;
     imports: Set<string>;
-    dependents: Set<string>;
+    importedBy: Set<string>;
   }
 >;
 
