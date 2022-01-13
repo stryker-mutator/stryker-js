@@ -102,9 +102,9 @@ export class TypescriptChecker implements Checker {
   }
 
   private async typeCheckMutants(mutants: Mutant[]) {
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.mutate(mutant));
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).mutate(mutant));
     const errors = await this.tsCompiler.check();
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.reset());
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).reset());
     return errors;
   }
 

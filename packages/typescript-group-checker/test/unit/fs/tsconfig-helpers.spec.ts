@@ -135,33 +135,33 @@ describe('typescript-helpers', () => {
       });
     });
 
-    it('should set --emitDeclarationOnly options when `--build` mode is on', () => {
-      expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
-        emitDeclarationOnly: true,
-        noEmit: false,
-        declarationMap: false,
-      });
-      expect(
-        JSON.parse(
-          overrideOptions(
-            {
-              config: {
-                compilerOptions: {
-                  emitDeclarationOnly: false,
-                  noEmit: true,
-                  declarationMap: true,
-                },
-              },
-            },
-            true
-          )
-        ).compilerOptions
-      ).deep.include({
-        emitDeclarationOnly: true,
-        noEmit: false,
-        declarationMap: false,
-      });
-    });
+  //   it('should set --emitDeclarationOnly options when `--build` mode is on', () => {
+  //     expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
+  //       emitDeclarationOnly: true,
+  //       noEmit: false,
+  //       declarationMap: false,
+  //     });
+  //     expect(
+  //       JSON.parse(
+  //         overrideOptions(
+  //           {
+  //             config: {
+  //               compilerOptions: {
+  //                 emitDeclarationOnly: false,
+  //                 noEmit: true,
+  //                 declarationMap: true,
+  //               },
+  //             },
+  //           },
+  //           true
+  //         )
+  //       ).compilerOptions
+  //     ).deep.include({
+  //       emitDeclarationOnly: true,
+  //       noEmit: false,
+  //       declarationMap: false,
+  //     });
+  //   });
   });
 
   describe(retrieveReferencedProjects.name, () => {
