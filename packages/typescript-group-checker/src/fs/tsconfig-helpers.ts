@@ -17,6 +17,7 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
   composite: false,
   declaration: false,
+  declarationMap: false,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
@@ -28,7 +29,7 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
 
 export function guardTSVersion(): void {
   if (!semver.satisfies(ts.version, '>=3.6')) {
-    throw new Error(`@stryker-mutator/typescript-group-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
+    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
   }
 }
 
@@ -59,6 +60,13 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
       ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
     },
   };
+
+  if (!useBuildMode && config.declarationDir !== undefined && config.declarationDir !== null) {
+    // because composite and/or declaration was disabled in non-build mode, we have to disable declarationDir as well
+    // otherwise, error TS5069: Option 'declarationDir' cannot be specified without specifying option 'declaration' or option 'composite'.
+    delete config.declarationDir;
+  }
+
   return JSON.stringify(config);
 }
 
