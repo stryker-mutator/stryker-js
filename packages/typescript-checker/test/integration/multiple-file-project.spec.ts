@@ -42,15 +42,34 @@ describe('Typescript checker on a project with multiple files', () => {
 
   it('should validate two mutants with compile error in wrong file', async () => {
     const mutants = [
-      createMutantTestCoverage('src/item.ts', 'private name: string', 'private name:  number', '1'),
       createMutantTestCoverage('src/todo.ts', 'this.description;', '""', '2'),
+      createMutantTestCoverage('src/item.ts', 'private name: string) {', 'private name:  number) {""-""', '1'),
     ];
 
     const result = await sut.check(mutants);
 
     expect(result).to.have.lengthOf(2);
-    expect(result?.[0].checkResult.status).to.equal('compileError');
-    expect(result?.[1].checkResult.status).to.equal('passed');
+    expect(result?.[0].checkResult.status).to.equal('passed');
+
+    expect(result?.[1].checkResult.status).to.equal('compileError');
+    if (result?.[1].checkResult.status === 'compileError') {
+      expect(result?.[1].checkResult.reason).to.equal(
+        "testResources/multiple-file-project/src/item.ts(3,39): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\ntestResources/multiple-file-project/src/item.ts(3,42): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\n"
+      );
+    }
+  });
+
+  it('should not check multiple times when it already has an error', async () => {
+    const mutants = [
+      createMutantTestCoverage('src/todo.ts', 'this.description;', '""', '2'),
+      createMutantTestCoverage('src/item.ts', 'private name: string', 'private name:  number', '1'),
+    ];
+
+    const result = await sut.check(mutants);
+
+    expect(result).to.have.lengthOf(2);
+    expect(result?.[0].checkResult.status).to.equal('passed');
+    expect(result?.[1].checkResult.status).to.equal('compileError');
   });
 
   it('should create a valid group', async () => {
