@@ -9,6 +9,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-group-checker';
+import { SourceFiles } from '../../src/compilers/compiler';
 
 const resolveTestResource = path.resolve.bind(
   path,
@@ -17,10 +18,10 @@ const resolveTestResource = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-  'multiple-file-project'
+  'out-file-project'
 ) as unknown as typeof path.resolve;
 
-describe('Typescript checker on a project with multiple files', () => {
+describe('Typescript checker with project outfile enabled', () => {
   let sut: TypescriptChecker;
 
   before(() => {
@@ -29,53 +30,36 @@ describe('Typescript checker on a project with multiple files', () => {
     return sut.init();
   });
 
-  it('should create groups in order of size', async () => {
+  it('should create groups of size one', async () => {
     const mutants = [
-      createMutantTestCoverage('src/todo-list.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43', '2'),
-      createMutantTestCoverage('src/item.ts', 'return this.name;', '', '3'),
-      createMutantTestCoverage('src/todo.ts', 'this.description;', 'sdfsdf', '1'),
+      createMutantTestCoverage('src/index.ts', 'console.log(', '', '1'),
+      createMutantTestCoverage('src/item.ts', 'console.log(', '', '2'),
+      createMutantTestCoverage('src/todo.ts', 'console.log(', '', '3'),
     ];
 
     const groups = await sut.createGroups(mutants);
-    expect(groups).to.have.lengthOf(2);
-    expect(groups?.[0]).to.have.lengthOf(2);
-    expect(groups?.[1]).to.have.lengthOf(1);
+    expect(groups).to.have.lengthOf(3);
   });
 
-  it('should validate two mutants with compile error in wrong file', async () => {
-    const mutants = [
-      createMutantTestCoverage('src/item.ts', 'private name: string', 'private name:  number', '1'),
-      createMutantTestCoverage('src/todo.ts', 'this.description;', '""', '2'),
-    ];
+  it('should create a correct dependency graph', async () => {
+    const dependencyFiles: SourceFiles = (sut as any).sourceFiles;
 
-    const result = await sut.check(mutants);
-
-    expect(result).to.have.lengthOf(2);
-    expect(result?.[0].checkResult.status).to.equal('compileError');
-    expect(result?.[1].checkResult.status).to.equal('passed');
-  });
-
-  it('should create a valid group', async () => {
-    const mutants = [
-      createMutantTestCoverage('src/item.ts', 'return this.name;', '', '3'),
-      createMutantTestCoverage('src/todo.ts', 'this.description;', 'sdfsdf', '1'),
-      createMutantTestCoverage('src/todo-list.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43', '2'),
-    ];
-
-    const groups = await sut.createGroups(mutants);
-
-    expect(groups).to.have.lengthOf(2);
+    for (const file of Object.keys(dependencyFiles)) {
+      if (file.includes('spec')) {
+        expect(dependencyFiles[file].imports.size).to.equal(3);
+      }
+    }
   });
 });
 
 const fileContents = Object.freeze({
-  ['src/todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
-  ['src/todo-list.ts']: fs.readFileSync(resolveTestResource('src', 'todo-list.ts'), 'utf8'),
+  ['src/index.ts']: fs.readFileSync(resolveTestResource('src', 'index.ts'), 'utf8'),
   ['src/item.ts']: fs.readFileSync(resolveTestResource('src', 'item.ts'), 'utf8'),
+  ['src/todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
 });
 
 function createMutantTestCoverage(
-  fileName: 'src/item.ts' | 'src/todo-list.ts' | 'src/todo.ts',
+  fileName: 'src/index.ts' | 'src/item.ts' | 'src/todo.ts',
   findText: string,
   replacement: string,
   id = '1',

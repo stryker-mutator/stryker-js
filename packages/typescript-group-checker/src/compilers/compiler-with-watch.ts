@@ -84,7 +84,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
               program
                 .getAllDependencies(file)
                 .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
-                .map((importFile) => this.resolveFilename(importFile))
+                .flatMap((importFile) => this.resolveFilename(importFile))
             ),
             dependents: new Set(),
           };
@@ -125,23 +125,18 @@ export class CompilerWithWatch implements TypescriptCompiler {
     return errors;
   }
 
-  private resolveFilename(fileName: string) {
-    if (!fileName.includes('.d.ts')) return fileName;
+  private resolveFilename(fileName: string): string[] {
+    if (!fileName.includes('.d.ts')) return [fileName];
 
     const file = this.fs.getFile(fileName);
-
     const sourceMappingURL = this.getSourceMappingURL(file.content);
 
-    if (!sourceMappingURL) return fileName;
+    if (!sourceMappingURL) return [fileName];
 
     const sourceMap = this.fs.getFile(path.resolve(fileName, '..', sourceMappingURL));
-
     const content = JSON.parse(sourceMap.content);
 
-    const source: string = content.sources[0];
-
-    const realPath = path.resolve(sourceMappingURL, '..', source);
-    return toPosixFileName(realPath);
+    return content.sources.map((sourcePath: string) => toPosixFileName(path.resolve(sourceMappingURL, '..', sourcePath)));
   }
 
   private getSourceMappingURL(content: string): string | undefined {

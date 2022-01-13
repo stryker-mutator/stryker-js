@@ -1,0 +1,6 @@
+{
+  "extends": "../tsconfig.settings",
+  "compilerOptions": {
+    "outFile": "../dist/src/build.js"
+  }
+}

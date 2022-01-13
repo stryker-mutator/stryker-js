@@ -14,6 +14,7 @@
   ],
   "checkers": ["typescript-group"],
   "dashboard": {},
+  "timeoutMS": 10000,
   "buildCommand": "tsc -b",
   "mochaOptions": {
     "spec": ["dist/test/unit/**/*.js"]
