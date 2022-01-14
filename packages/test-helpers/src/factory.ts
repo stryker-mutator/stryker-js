@@ -38,7 +38,8 @@ import {
   TestStatus,
   TestResult,
 } from '@stryker-mutator/api/test-runner';
-import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
+import { CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
+import { CheckerResource } from '@stryker-mutator/core/src/checker/checker-resource';
 
 const ajv = new Ajv({ useDefaults: true, strict: false });
 
@@ -208,11 +209,12 @@ export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
   };
 }
 
-export function checker(): sinon.SinonStubbedInstance<Checker> {
+export function checker(): sinon.SinonStubbedInstance<CheckerResource> {
   return {
     createGroups: sinon.stub(),
     check: sinon.stub(),
     init: sinon.stub(),
+    setActiveChecker: sinon.stub(),
   };
 }
 
