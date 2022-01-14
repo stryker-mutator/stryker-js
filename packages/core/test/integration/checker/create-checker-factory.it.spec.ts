@@ -65,7 +65,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
     const mutant = factory.mutantTestCoverage();
     const actual = await sut.check([mutant]);
     const expected = { mutant, checkResult: { status: CheckStatus.Passed } };
-    expect(actual).deep.eq(expected);
+    expect(actual[0]).deep.eq(expected);
   });
 
   it('should provide the nodeArgs', async () => {

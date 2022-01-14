@@ -12,7 +12,7 @@ import { HybridFileSystem } from './fs/hybrid-filesystem';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 import { CompilerWithWatch } from './compilers/compiler-with-watch';
 import { createGroups } from './group';
-import { SourceFiles } from './compilers/compiler';
+import { SourceFiles, TypescriptCompiler } from './compilers/compiler';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -36,7 +36,7 @@ export class TypescriptChecker implements Checker {
 
   private sourceFiles: SourceFiles = {};
 
-  constructor(private readonly tsCompiler: CompilerWithWatch, private readonly fs: HybridFileSystem, options: StrykerOptions) {}
+  constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) {}
 
   public async init(): Promise<void> {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
@@ -69,14 +69,13 @@ export class TypescriptChecker implements Checker {
         mutantResults[mutantResults.findIndex((mutantResult) => mutantResult.mutant.id === possibleMutants[0].id)].errors.push(error);
       } else if (possibleMutants.length > 1) {
         possibleMutants.forEach((mutant) => mutantsToTestIndividual.add(mutant));
-      } else if (possibleMutants.length === 0) {
+      } else {
         throw new Error('Error could not be matched to mutant.');
       }
     });
 
     for (const mutant of mutantsToTestIndividual.values()) {
-      const mutantResult = mutantResults.find((mr) => mr.mutant.id === mutant.id);
-      if (!mutantResult) throw new Error('Could not find mutant in mutant result');
+      const mutantResult = mutantResults.find((mr) => mr.mutant.id === mutant.id)!;
 
       if (mutantResult.errors.length > 0) continue;
 

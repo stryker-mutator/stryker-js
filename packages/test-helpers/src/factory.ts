@@ -339,7 +339,6 @@ export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Requi
 }
 
 export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
-  coveredBy: undefined,
   fileName: '',
   id: '1',
   mutatorName: '',

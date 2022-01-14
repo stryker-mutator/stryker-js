@@ -119,6 +119,7 @@ describe(sut.name, () => {
           estimatedNetTime: 42,
           location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
           hitCount: undefined,
+          coveredBy: undefined,
         }),
         factory.mutantTestCoverage({
           id: '2',
@@ -129,6 +130,7 @@ describe(sut.name, () => {
           estimatedNetTime: 42,
           location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
           hitCount: undefined,
+          coveredBy: undefined,
         }),
       ]);
     });

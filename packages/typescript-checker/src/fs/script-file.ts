@@ -22,14 +22,14 @@ export class ScriptFile {
     const start = this.getOffset(mutant.location.start);
     const end = this.getOffset(mutant.location.end);
     this.content = `${this.originalContent.substr(0, start)}${mutant.replacement}${this.originalContent.substr(end)}`;
-    this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
+    this.watcher!(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 
   public reset(): void {
     this.guardMutationIsWatched();
     this.modifiedTime = new Date();
     this.content = this.originalContent;
-    this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
+    this.watcher!(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 
   private guardMutationIsWatched() {

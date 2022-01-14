@@ -49,9 +49,9 @@ export class TwoTimesTheCharm implements Checker {
           checkResult: { status: CheckStatus.Passed },
           mutant,
         });
+      } else {
+        process.exit(count);
       }
-
-      process.exit(count);
     }
 
     return result;

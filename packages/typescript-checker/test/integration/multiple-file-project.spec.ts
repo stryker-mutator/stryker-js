@@ -21,9 +21,10 @@ const resolveTestResource = path.resolve.bind(
 describe('Typescript checker on a project with multiple files', () => {
   let sut: TypescriptChecker;
 
-  before(() => {
+  before(async () => {
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.root.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
+
     return sut.init();
   });
 
@@ -82,6 +83,18 @@ describe('Typescript checker on a project with multiple files', () => {
     const groups = await sut.createGroups(mutants);
 
     expect(groups).to.have.lengthOf(2);
+  });
+
+  it('should throw an error when there are no possible mutants that can created the error ', async () => {
+    const mutants = [
+      createMutantTestCoverage('src/item.ts', 'return this.name;', '', '3'),
+      createMutantTestCoverage('src/todo.ts', 'this.description;', 'sdfsdf', '1'),
+      createMutantTestCoverage('src/todo-list.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43', '2'),
+    ];
+
+    (sut as any).matchMutantsFromError = () => [];
+
+    expect(sut.check(mutants)).rejectedWith(new Error('Error could not be matched to mutant.'));
   });
 });
 

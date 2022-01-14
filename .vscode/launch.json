@@ -41,7 +41,7 @@
         "internalConsoleOptions": "openOnSessionStart"
     },
     {
-      "command": "cd packages/typescript-group-checker && npm run test:integration",
+      "command": "cd packages/typescript-checker && npm run test:integration",
       "name": "Run npm test:integration",
       "request": "launch",
       "type": "node-terminal"

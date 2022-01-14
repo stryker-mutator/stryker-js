@@ -11,5 +11,5 @@ export type SourceFiles = Record<
 
 export interface TypescriptCompiler {
   init(): Promise<{ dependencyFiles: SourceFiles; errors: ts.Diagnostic[] }>;
-  check(): Promise<readonly ts.Diagnostic[]>;
+  check(): Promise<ts.Diagnostic[]>;
 }

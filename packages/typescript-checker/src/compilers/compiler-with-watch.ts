@@ -45,9 +45,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
         },
         watchFile: (filePath: string, callback: ts.FileWatcherCallback) => {
           const file = this.fs.getFile(filePath);
-          if (file) {
-            file.watcher = callback;
-          }
+          file.watcher = callback;
 
           return {
             close: () => {
@@ -57,6 +55,13 @@ export class CompilerWithWatch implements TypescriptCompiler {
         },
         writeFile: (fileName, data) => {
           this.fs.writeFile(fileName, data);
+        },
+        watchDirectory: (): ts.FileWatcher => {
+          // this is used to see if new files are added to a directory. Can safely be ignored for mutation testing.
+          return {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            close() {},
+          };
         },
       },
       undefined,
