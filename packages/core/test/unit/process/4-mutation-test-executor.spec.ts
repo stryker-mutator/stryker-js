@@ -24,7 +24,7 @@ describe(MutationTestExecutor.name, () => {
   let sut: MutationTestExecutor;
   let mutants: MutantTestCoverage[];
   let checker: sinon.SinonStubbedInstance<Checker>;
-  let mutationTestReportCalculatorMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
+  let mutationTestReportHelperMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
@@ -32,7 +32,7 @@ describe(MutationTestExecutor.name, () => {
 
   beforeEach(() => {
     reporterMock = factory.reporter();
-    mutationTestReportCalculatorMock = sinon.createStubInstance(MutationTestReportHelper);
+    mutationTestReportHelperMock = sinon.createStubInstance(MutationTestReportHelper);
     timerMock = sinon.createStubInstance(Timer);
     testRunner = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
@@ -60,7 +60,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
-      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportHelperMock)
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
@@ -71,6 +71,10 @@ describe(MutationTestExecutor.name, () => {
   function arrangeScenario(overrides?: { checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
     checker.check.resolves(overrides?.checkResult ?? factory.checkResult());
     testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
+    mutationTestReportHelperMock.reportMutantStatus.returnsArg(0);
+    mutationTestReportHelperMock.reportCheckFailed.returnsArg(0);
+    mutationTestReportHelperMock.reportMutantRunResult.returnsArg(0);
+    mutationTestReportHelperMock.reportAll.returnsArg(0);
   }
 
   it('should schedule mutants to be tested', async () => {
@@ -159,7 +163,7 @@ describe(MutationTestExecutor.name, () => {
     // Arrange
     arrangeScenario();
     const expectedTestFilter = ['spec1', 'foo', 'bar'];
-    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter }));
+    mutants.push(factory.mutantTestCoverage({ coveredBy: expectedTestFilter, testFilter: expectedTestFilter }));
     testInjector.options.timeoutFactor = 1.5;
     testInjector.options.timeoutMS = 27;
 
@@ -206,7 +210,7 @@ describe(MutationTestExecutor.name, () => {
   it('should not run mutants that are uncovered by tests', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, static: false }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', testFilter: [] }));
 
     // Act
     await sut.execute();
@@ -224,19 +228,19 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
+    expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.Ignored);
   });
 
   it('should report an uncovered mutant with `NoCoverage`', async () => {
     // Arrange
     arrangeScenario();
-    mutants.push(factory.mutantTestCoverage({ id: '1', coveredBy: undefined, status: MutantStatus.NoCoverage }));
+    mutants.push(factory.mutantTestCoverage({ id: '1', testFilter: [] }));
 
     // Act
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
+    expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
   });
 
   it('should report non-passed check results as "checkFailed"', async () => {
@@ -250,7 +254,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
+    expect(mutationTestReportHelperMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
   });
 
   it('should free checker resources after checking stage is complete', async () => {
@@ -282,7 +286,7 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(mutationTestReportCalculatorMock.reportMutantRunResult).calledWithExactly(mutant, mutantRunResult);
+    expect(mutationTestReportHelperMock.reportMutantRunResult).calledWithExactly(mutant, mutantRunResult);
   });
 
   it('should log a done message when it is done', async () => {

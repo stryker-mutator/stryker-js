@@ -80,10 +80,7 @@ export class MutationTestExecutor {
   }
 
   private executeNoCoverage(input$: Observable<MutantTestCoverage>) {
-    const [noCoverageMatchedMutant$, coveredMutant$] = partition(
-      input$.pipe(shareReplay()),
-      (mutant) => !mutant.static && (mutant.coveredBy?.length ?? 0) === 0
-    );
+    const [noCoverageMatchedMutant$, coveredMutant$] = partition(input$.pipe(shareReplay()), (mutant) => mutant.testFilter?.length === 0);
     const noCoverageResult$ = noCoverageMatchedMutant$.pipe(
       map((mutant) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.NoCoverage))
     );
@@ -134,7 +131,7 @@ export class MutationTestExecutor {
     return {
       activeMutant,
       timeout,
-      testFilter: activeMutant.coveredBy,
+      testFilter: activeMutant.testFilter,
       sandboxFileName: this.sandbox.sandboxFileFor(activeMutant.fileName),
       hitLimit,
       disableBail: this.options.disableBail,

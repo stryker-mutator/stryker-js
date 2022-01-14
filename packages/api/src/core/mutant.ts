@@ -29,6 +29,7 @@ export type MutantTestCoverage = Mutant &
   Pick<schema.MutantResult, 'coveredBy' | 'static'> & {
     estimatedNetTime: number;
     hitCount?: number;
+    testFilter: string[] | undefined;
   };
 
 /**

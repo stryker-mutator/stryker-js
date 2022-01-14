@@ -49,6 +49,7 @@ describe(StrykerCli.name, () => {
       [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--inPlace'], { inPlace: true }],
+      [['--ignoreStatic'], { ignoreStatic: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],

@@ -12,6 +12,7 @@
     "../mocha-runner",
     "../typescript-checker"
   ],
+  "ignoreStatic": true,
   "checkers": ["typescript"],
   "dashboard": {},
   "buildCommand": "tsc -b",

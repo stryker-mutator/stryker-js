@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Location, Position, StrykerOptions, Mutant, MutantTestCoverage, MutantResult, schema, MutantStatus } from '@stryker-mutator/api/core';
+import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, schema, MutantStatus } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
@@ -38,9 +38,9 @@ export class MutationTestReportHelper {
     private readonly dryRunResult: CompleteDryRunResult
   ) {}
 
-  public reportCheckFailed(mutant: Mutant, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
+  public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
     return this.reportOne({
-      ...mutant,
+      ...pruneBookkeepingFields(mutant),
       status: this.checkStatusToResultStatus(checkResult.status),
       statusReason: checkResult.reason,
     });
@@ -48,12 +48,14 @@ export class MutationTestReportHelper {
 
   public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
     return this.reportOne({
-      ...mutant,
+      ...pruneBookkeepingFields(mutant),
       status,
     });
   }
 
-  public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
+  public reportMutantRunResult(mutantTestCoverage: MutantTestCoverage, result: MutantRunResult): MutantResult {
+    // Prune fields used for Stryker bookkeeping
+    const mutant = pruneBookkeepingFields(mutantTestCoverage);
     switch (result.status) {
       case MutantRunStatus.Error:
         return this.reportOne({
@@ -284,4 +286,12 @@ export class MutationTestReportHelper {
       return acc;
     }, {});
   }
+}
+
+/**
+ * Create a new mutant based on the MutantTestCoverage, but without the bookkeeping fields.
+ */
+function pruneBookkeepingFields(mutantTestCoverage: MutantTestCoverage) {
+  const { estimatedNetTime, testFilter, hitCount, ...mutant } = mutantTestCoverage;
+  return mutant;
 }
