@@ -4,42 +4,54 @@ import fs from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner, DryRunResult, DryRunStatus, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunResult,
+  DryRunStatus,
+  MutantRunResult,
+  DryRunOptions,
+  MutantRunOptions,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
-class CoverageReportingTestRunner implements TestRunner {
-  public async dryRun(): Promise<DryRunResult> {
-    (global as any).__mutantCoverage__ = 'overridden';
-    return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
+abstract class NotImplementedTestRunner implements TestRunner {
+  public capabilities(): Promise<TestRunnerCapabilities> {
+    throw new Error('Method not implemented.');
   }
-  public async mutantRun(): Promise<MutantRunResult> {
+  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    throw new Error('Method not implemented.');
+  }
+  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
   }
 }
 
-class TimeBombTestRunner implements TestRunner {
+class CoverageReportingTestRunner extends NotImplementedTestRunner {
+  public async dryRun(): Promise<DryRunResult> {
+    (global as any).__mutantCoverage__ = 'overridden';
+    return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
+  }
+}
+
+class TimeBombTestRunner extends NotImplementedTestRunner {
   constructor() {
+    super();
     // Setting a time bomb after 100 ms
     setTimeout(() => process.exit(), 500);
   }
   public async dryRun(): Promise<DryRunResult> {
     return factory.completeDryRunResult();
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class ProximityMineTestRunner implements TestRunner {
+class ProximityMineTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
     process.exit(42);
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-export class CounterTestRunner implements TestRunner {
+export class CounterTestRunner extends NotImplementedTestRunner {
   private count = 0;
   public static COUNTER_FILE = `${os.tmpdir()}/stryker-js-test-counter-file`;
 
@@ -54,19 +66,18 @@ export class CounterTestRunner implements TestRunner {
   }
 }
 
-class DirectResolvedTestRunner implements TestRunner {
+class DirectResolvedTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'coverageObject';
     return factory.completeDryRunResult();
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class DiscoverRegexTestRunner implements TestRunner {
+class DiscoverRegexTestRunner extends NotImplementedTestRunner {
   public static inject = tokens(commonTokens.options);
-  constructor(private readonly options: StrykerOptions) {}
+  constructor(private readonly options: StrykerOptions) {
+    super();
+  }
 
   public async dryRun(): Promise<DryRunResult> {
     if (types.isRegExp(this.options.someRegex)) {
@@ -75,12 +86,9 @@ class DiscoverRegexTestRunner implements TestRunner {
       return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
     }
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class ErroredTestRunner implements TestRunner {
+class ErroredTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
     let expectedError: any = null;
     try {
@@ -90,16 +98,13 @@ class ErroredTestRunner implements TestRunner {
     }
     return factory.errorDryRunResult({ errorMessage: expectedError });
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 
   public dispose(): Promise<void> {
     throw new Error('Test runner exited with exit code 1');
   }
 }
 
-class RejectInitRunner implements TestRunner {
+class RejectInitRunner extends NotImplementedTestRunner {
   public init() {
     return Promise.reject(new Error('Init was rejected'));
   }
@@ -107,22 +112,16 @@ class RejectInitRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     throw new Error();
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class NeverResolvedTestRunner implements TestRunner {
+class NeverResolvedTestRunner extends NotImplementedTestRunner {
   public dryRun(): Promise<DryRunResult> {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     return new Promise<DryRunResult>(() => {});
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class SlowInitAndDisposeTestRunner implements TestRunner {
+class SlowInitAndDisposeTestRunner extends NotImplementedTestRunner {
   public inInit = false;
 
   public init() {
@@ -142,15 +141,11 @@ class SlowInitAndDisposeTestRunner implements TestRunner {
     return factory.completeDryRunResult();
   }
 
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
-
   public dispose() {
     return this.init();
   }
 }
-class VerifyWorkingFolderTestRunner implements TestRunner {
+class VerifyWorkingFolderTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
     if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
       return factory.completeDryRunResult();
@@ -158,12 +153,9 @@ class VerifyWorkingFolderTestRunner implements TestRunner {
       throw new Error(`Expected ${process.cwd()} to be ${__dirname}`);
     }
   }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
-  }
 }
 
-class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
+class AsynchronousPromiseRejectionHandlerTestRunner extends NotImplementedTestRunner {
   public promise?: Promise<void>;
 
   public async init() {
@@ -173,9 +165,6 @@ class AsyncronousPromiseRejectionHandlerTestRunner implements TestRunner {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.promise!.catch(() => {});
     return factory.completeDryRunResult();
-  }
-  public async mutantRun(): Promise<MutantRunResult> {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -190,6 +179,6 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'counter', CounterTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsyncronousPromiseRejectionHandlerTestRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsynchronousPromiseRejectionHandlerTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
 ];

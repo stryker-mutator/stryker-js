@@ -1,6 +1,6 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
+import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error';
@@ -31,6 +31,10 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
 
   public init(): Promise<void> {
     return this.worker.proxy.init();
+  }
+
+  public capabilities(): Promise<TestRunnerCapabilities> {
+    return this.worker.proxy.capabilities();
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {

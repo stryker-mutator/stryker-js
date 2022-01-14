@@ -14,6 +14,7 @@ import {
   TestStatus,
   DryRunOptions,
   BaseTestResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
@@ -89,6 +90,10 @@ export class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
+  }
+
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return { reloadEnvironment: true };
   }
 
   public async dryRun({

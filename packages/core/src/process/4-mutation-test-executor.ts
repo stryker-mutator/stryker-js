@@ -135,6 +135,7 @@ export class MutationTestExecutor {
       sandboxFileName: this.sandbox.sandboxFileFor(activeMutant.fileName),
       hitLimit,
       disableBail: this.options.disableBail,
+      reloadEnvironment: false,
     };
   }
 

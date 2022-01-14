@@ -8,6 +8,7 @@ import {
   DryRunResult,
   DryRunStatus,
   MutantRunStatus,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 
 import { errorToString } from '@stryker-mutator/util';
@@ -20,6 +21,9 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
   public static inject = tokens(commonTokens.options, commonTokens.injector);
   constructor({ testRunner }: StrykerOptions, injector: Injector<PluginContext>) {
     this.underlyingTestRunner = injector.injectFunction(PluginCreator.createFactory(PluginKind.TestRunner)).create(testRunner);
+  }
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return this.underlyingTestRunner.capabilities();
   }
 
   public async init(): Promise<void> {

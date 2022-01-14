@@ -13,6 +13,7 @@ import {
   toMutantRunResult,
   CompleteDryRunResult,
   determineHitLimitReached,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
@@ -48,6 +49,14 @@ export class MochaTestRunner implements TestRunner {
     StrykerMochaReporter.log = log;
     this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
+
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return {
+      // Mocha directly uses `import`, so reloading files once they are loaded is impossible
+      reloadEnvironment: false,
+    };
+  }
+
   public async init(): Promise<void> {
     this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
     this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);

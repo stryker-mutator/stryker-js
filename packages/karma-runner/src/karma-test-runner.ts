@@ -1,7 +1,15 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult, toMutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunOptions,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+  toMutantRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import type { Config } from 'karma';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options';
@@ -28,6 +36,10 @@ export class KarmaTestRunner implements TestRunner {
       karmaConfigFile: setup.configFile,
       disableBail: options.disableBail,
     });
+  }
+
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return { reloadEnvironment: true };
   }
 
   public async init(): Promise<void> {

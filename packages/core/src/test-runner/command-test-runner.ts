@@ -12,6 +12,7 @@ import {
   ErrorDryRunResult,
   CompleteDryRunResult,
   toMutantRunResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
 
@@ -44,6 +45,10 @@ export class CommandTestRunner implements TestRunner {
 
   constructor(private readonly workingDir: string, options: StrykerOptions) {
     this.settings = options.commandRunner;
+  }
+
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return { reloadEnvironment: true };
   }
 
   public async dryRun(): Promise<DryRunResult> {

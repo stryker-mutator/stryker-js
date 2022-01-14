@@ -15,6 +15,7 @@ import {
   MutantRunResult,
   TestResult,
   TestRunner,
+  TestRunnerCapabilities,
   TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
@@ -63,6 +64,10 @@ export class CucumberTestRunner implements TestRunner {
     this.instrumenterContext =
       global[globalNamespace] ?? (global[globalNamespace] = {});
     StrykerFormatter.instrumenterContext = this.instrumenterContext;
+  }
+
+  public async capabilities(): Promise<TestRunnerCapabilities> {
+    return { reloadEnvironment: false };
   }
 
   private readonly directoryRequireCache = new DirectoryRequireCache();

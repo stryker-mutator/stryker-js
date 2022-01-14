@@ -202,6 +202,7 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
 export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
   return {
     init: sinon.stub(),
+    capabilities: sinon.stub(),
     dryRun: sinon.stub(),
     mutantRun: sinon.stub(),
     dispose: sinon.stub(),
@@ -255,6 +256,7 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
   disableBail: false,
+  reloadEnvironment: false,
 }));
 
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
