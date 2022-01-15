@@ -28,16 +28,6 @@ describe('QUnit sample', () => {
       'Math should be able to recognize a negative number',
       'Math should be able to recognize that 0 is not a negative number',
     ]);
-  });
-
-  it('should not run tests when not configured with "qunit" ui', async () => {
-    testInjector.options.mochaOptions = createMochaOptions({
-      files: [resolveTestResource('qunit-sample', 'MyMathSpec.js')],
-    });
-    const sut = createSut();
-    await sut.init();
-    const actualResult = await sut.dryRun(factory.dryRunOptions());
-    assertions.expectCompleted(actualResult);
-    expect(actualResult.tests).lengthOf(0);
+    await sut.dispose();
   });
 });

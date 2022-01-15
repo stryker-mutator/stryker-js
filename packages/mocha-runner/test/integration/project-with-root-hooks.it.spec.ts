@@ -7,10 +7,14 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 describe('Running a project with root hooks', () => {
   let sut: MochaTestRunner;
 
-  beforeEach(async () => {
+  before(async () => {
     process.chdir(resolveTestResource('parallel-with-root-hooks-sample'));
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
     await sut.init();
+  });
+
+  after(async () => {
+    await sut.dispose();
   });
 
   it('should have run the root hooks', async () => {

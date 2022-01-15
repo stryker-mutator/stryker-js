@@ -5,6 +5,8 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { PropertyPathBuilder } from '@stryker-mutator/util';
 
+import { RootHookObject } from 'mocha';
+
 import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
 
 import { LibWrapper } from './lib-wrapper';
@@ -37,7 +39,7 @@ export class MochaAdapter {
     }
   }
 
-  public async handleRequires(requires: string[]): Promise<unknown> {
+  public async handleRequires(requires: string[]): Promise<RootHookObject | undefined> {
     this.log.trace('Resolving requires %s', requires);
     if (LibWrapper.handleRequires) {
       this.log.trace('Using `handleRequires`');
@@ -47,7 +49,7 @@ export class MochaAdapter {
           // `loadRootHooks` made a brief appearance in mocha 8, removed in mocha 8.2
           return await LibWrapper.loadRootHooks(rawRootHooks);
         } else {
-          return rawRootHooks.rootHooks;
+          return (rawRootHooks as { rootHooks: RootHookObject }).rootHooks;
         }
       }
     } else {

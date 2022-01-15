@@ -2,16 +2,21 @@ import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaTestRunnerFactory } from '../../src';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
 import { resolveTestResource } from '../helpers/resolve-test-resource';
 
 describe('regression integration tests', () => {
   let options: MochaRunnerWithStrykerOptions;
+  let sut: MochaTestRunner;
 
   beforeEach(() => {
     options = testInjector.options as MochaRunnerWithStrykerOptions;
     options.mochaOptions = { 'no-config': true };
+  });
+
+  afterEach(async () => {
+    await sut.dispose();
   });
 
   describe('issue #2720', () => {
@@ -22,7 +27,7 @@ describe('regression integration tests', () => {
     it('should have report correct failing test when "beforeEach" fails', async () => {
       // Arrange
       options.mochaOptions.spec = ['failing-before-each'];
-      const sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
       await sut.init();
 
       // Act
@@ -42,7 +47,7 @@ describe('regression integration tests', () => {
     it('should have report correct failing test when "afterEach" fails', async () => {
       // Arrange
       options.mochaOptions.spec = ['failing-after-each'];
-      const sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
       await sut.init();
 
       // Act

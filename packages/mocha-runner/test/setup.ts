@@ -22,6 +22,11 @@ export const mochaHooks = {
     StrykerMochaReporter.currentInstance = undefined;
     delete global.__stryker2__?.activeMutant;
     delete global.__stryker2__?.currentTestId;
-    delete global.__stryker2__?.mutantCoverage;
+    if (global.__stryker2__?.mutantCoverage?.perTest) {
+      global.__stryker2__.mutantCoverage.perTest = {};
+    }
+    if (global.__stryker2__?.mutantCoverage?.static) {
+      global.__stryker2__.mutantCoverage.static = {};
+    }
   },
 };

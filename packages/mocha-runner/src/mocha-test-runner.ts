@@ -1,7 +1,7 @@
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { I, escapeRegExp, DirectoryRequireCache } from '@stryker-mutator/util';
+import { I, escapeRegExp } from '@stryker-mutator/util';
 
 import {
   TestRunner,
@@ -16,7 +16,7 @@ import {
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { Context, RootHookObject, Suite } from 'mocha';
 
 import { StrykerMochaReporter } from './stryker-mocha-reporter';
 import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
@@ -25,17 +25,16 @@ import { MochaOptionsLoader } from './mocha-options-loader';
 import { MochaAdapter } from './mocha-adapter';
 
 export class MochaTestRunner implements TestRunner {
-  public testFileNames?: string[];
-  public rootHooks: any;
-  public mochaOptions!: MochaOptions;
+  private mocha!: Mocha;
   private readonly instrumenterContext: InstrumenterContext;
+  private originalGrep?: string;
+  public beforeEach?: (context: Context) => void;
 
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
     pluginTokens.loader,
     pluginTokens.mochaAdapter,
-    pluginTokens.directoryRequireCache,
     pluginTokens.globalNamespace
   );
   constructor(
@@ -43,7 +42,6 @@ export class MochaTestRunner implements TestRunner {
     private readonly options: StrykerOptions,
     private readonly loader: I<MochaOptionsLoader>,
     private readonly mochaAdapter: I<MochaAdapter>,
-    private readonly requireCache: I<DirectoryRequireCache>,
     globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     StrykerMochaReporter.log = log;
@@ -58,33 +56,55 @@ export class MochaTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    this.mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
-    this.testFileNames = this.mochaAdapter.collectFiles(this.mochaOptions);
-    if (this.mochaOptions.require) {
-      if (this.mochaOptions.require.includes('esm')) {
+    const mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
+    const testFileNames = this.mochaAdapter.collectFiles(mochaOptions);
+    let rootHooks: RootHookObject | undefined;
+    if (mochaOptions.require) {
+      if (mochaOptions.require.includes('esm')) {
         throw new Error(
           'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
         );
       }
-      this.rootHooks = await this.mochaAdapter.handleRequires(this.mochaOptions.require);
+      rootHooks = await this.mochaAdapter.handleRequires(mochaOptions.require);
+    }
+    this.mocha = this.mochaAdapter.create({
+      reporter: StrykerMochaReporter as any,
+      timeout: false as any, // Mocha 5 doesn't support `0`
+      rootHooks,
+    });
+    // @ts-expect-error
+    this.mocha.cleanReferencesAfterRun(false);
+    testFileNames.forEach((fileName) => this.mocha.addFile(fileName));
+
+    this.setIfDefined(mochaOptions['async-only'], (asyncOnly) => asyncOnly && this.mocha.asyncOnly());
+    this.setIfDefined(mochaOptions.ui, this.mocha.ui);
+    this.setIfDefined(mochaOptions.grep, this.mocha.grep);
+    this.originalGrep = mochaOptions.grep;
+
+    // Bind beforeEach, so we can use that for per code coverage in dry run
+    const self = this;
+    this.mocha.suite.beforeEach(function (this: Context) {
+      self.beforeEach?.(this);
+    });
+  }
+
+  private setIfDefined<T>(value: T | undefined, operation: (input: T) => void) {
+    if (typeof value !== 'undefined') {
+      operation.apply(this.mocha, [value]);
     }
   }
 
   public async dryRun({ coverageAnalysis, disableBail }: DryRunOptions): Promise<DryRunResult> {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    let interceptor: (mocha: Mocha) => void = () => {};
     if (coverageAnalysis === 'perTest') {
-      interceptor = (mocha) => {
-        const self = this;
-        mocha.suite.beforeEach('StrykerIntercept', function () {
-          self.instrumenterContext.currentTestId = this.currentTest?.fullTitle();
-        });
+      this.beforeEach = (context) => {
+        this.instrumenterContext.currentTestId = context.currentTest?.fullTitle();
       };
     }
-    const runResult = await this.run(interceptor, disableBail);
+    const runResult = await this.run(disableBail);
     if (runResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
       runResult.mutantCoverage = this.instrumenterContext.mutantCoverage;
     }
+    delete this.beforeEach;
     return runResult;
   }
 
@@ -92,39 +112,21 @@ export class MochaTestRunner implements TestRunner {
     this.instrumenterContext.activeMutant = activeMutant.id;
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    let intercept: (mocha: Mocha) => void = () => {};
     if (testFilter) {
       const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
       const regex = new RegExp(metaRegExp);
-      intercept = (mocha) => {
-        mocha.grep(regex);
-      };
+      this.mocha.grep(regex);
+    } else {
+      this.setIfDefined(this.originalGrep, this.mocha.grep);
     }
-    const dryRunResult = await this.run(intercept, disableBail);
+    const dryRunResult = await this.run(disableBail);
     return toMutantRunResult(dryRunResult, true);
   }
 
-  public async run(intercept: (mocha: Mocha) => void, disableBail: boolean): Promise<DryRunResult> {
-    this.requireCache.clear();
-    const mocha = this.mochaAdapter.create({
-      reporter: StrykerMochaReporter as any,
-      bail: !disableBail,
-      timeout: false as any, // Mocha 5 doesn't support `0`
-      rootHooks: this.rootHooks,
-    } as Mocha.MochaOptions);
-    this.configure(mocha);
-    intercept(mocha);
-    this.addFiles(mocha);
+  public async run(disableBail: boolean): Promise<DryRunResult> {
+    setBail(!disableBail, this.mocha.suite);
     try {
-      await this.runMocha(mocha);
-      // Call `requireCache.record` before `mocha.dispose`.
-      // `Mocha.dispose` already deletes test files from require cache, but its important that they are recorded before that.
-      this.requireCache.record();
-      if ((mocha as any).dispose) {
-        // Since mocha 7.2
-        (mocha as any).dispose();
-      }
+      await this.runMocha();
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
         const timeoutResult = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit);
@@ -150,31 +152,20 @@ export class MochaTestRunner implements TestRunner {
         status: DryRunStatus.Error,
       };
     }
-  }
 
-  private runMocha(mocha: Mocha): Promise<void> {
-    return new Promise<void>((res) => {
-      mocha.run(() => res());
-    });
-  }
-
-  private addFiles(mocha: Mocha) {
-    this.testFileNames?.forEach((fileName) => {
-      mocha.addFile(fileName);
-    });
-  }
-
-  private configure(mocha: Mocha) {
-    const options = this.mochaOptions;
-
-    function setIfDefined<T>(value: T | undefined, operation: (input: T) => void) {
-      if (typeof value !== 'undefined') {
-        operation.apply(mocha, [value]);
-      }
+    function setBail(bail: boolean, suite: Suite) {
+      suite.bail(bail);
+      suite.suites.forEach((childSuite) => setBail(bail, childSuite));
     }
+  }
 
-    setIfDefined(options['async-only'], (asyncOnly) => asyncOnly && mocha.asyncOnly());
-    setIfDefined(options.ui, mocha.ui);
-    setIfDefined(options.grep, mocha.grep);
+  public async dispose(): Promise<void> {
+    this.mocha?.dispose();
+  }
+
+  private runMocha(): Promise<void> {
+    return new Promise<void>((res) => {
+      this.mocha.run(() => res());
+    });
   }
 }

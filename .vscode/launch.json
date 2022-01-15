@@ -5,6 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "🚀 Run current file",
+      "program": "${file}",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "cwd": "${fileDirname}",
+      "outputCapture": "std",
+      "type": "pwa-node"
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Port",

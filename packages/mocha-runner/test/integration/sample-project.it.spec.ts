@@ -13,20 +13,22 @@ const countFailed = (runResult: CompleteDryRunResult) => countTests(runResult, (
 
 describe('Running a sample project', () => {
   let sut: MochaTestRunner;
-  let spec: string[];
 
   function createSut() {
     return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
   }
 
   describe('when tests pass', () => {
-    beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
+    before(async () => {
+      const spec = [resolveTestResource('sample-project', 'MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
-      return sut.init();
+      await sut.init();
     });
 
+    after(async () => {
+      await sut.dispose();
+    });
     it('should report completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
@@ -43,28 +45,15 @@ describe('Running a sample project', () => {
     });
   });
 
-  describe('with an error in an un-included input file', () => {
-    beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
-      testInjector.options.mochaOptions = createMochaOptions({
-        files: spec,
-      });
-      sut = createSut();
-      return sut.init();
-    });
-
-    it('should report completed tests without errors', async () => {
-      const runResult = await sut.dryRun(factory.dryRunOptions());
-      assertions.expectCompleted(runResult);
-    });
-  });
-
   describe('with multiple failed tests', () => {
     before(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathFailedSpec.js')];
+      const spec = [resolveTestResource('sample-project', 'MyMathFailedSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
+    });
+    after(async () => {
+      await sut.dispose();
     });
 
     it('should only report the first failure (bail)', async () => {
@@ -82,12 +71,15 @@ describe('Running a sample project', () => {
 
   describe('when no tests are executed', () => {
     beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js')];
+      const spec = [resolveTestResource('sample-project', 'MyMath.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
     });
 
+    after(async () => {
+      await sut.dispose();
+    });
     it('should report no completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);

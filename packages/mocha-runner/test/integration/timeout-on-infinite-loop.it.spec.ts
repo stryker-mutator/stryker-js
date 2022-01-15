@@ -8,7 +8,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
 describe('Infinite loop', () => {
   let sut: MochaTestRunner;
 
-  beforeEach(async () => {
+  before(async () => {
     const spec = [
       resolveTestResource('infinite-loop-instrumented', 'infinite-loop.spec.js'),
       resolveTestResource('infinite-loop', 'infinite-loop.spec.js'),
@@ -16,6 +16,10 @@ describe('Infinite loop', () => {
     testInjector.options.mochaOptions = createMochaOptions({ spec });
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
     await sut.init();
+  });
+
+  after(async () => {
+    await sut.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {
