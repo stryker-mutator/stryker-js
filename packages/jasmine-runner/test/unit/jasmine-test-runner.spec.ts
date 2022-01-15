@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, DryRunStatus } from '@stryker-mutator/api/test-runner';
+import { TestStatus, CompleteDryRunResult, DryRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import Jasmine from 'jasmine';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
@@ -34,6 +34,13 @@ describe(JasmineTestRunner.name, () => {
       .provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JasmineTestRunner);
+  });
+
+  describe('capabilities', () => {
+    it('should communicate reloadEnvironment=false', async () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+      expect(await sut.capabilities()).deep.eq(expectedCapabilities);
+    });
   });
 
   describe('mutantRun', () => {
