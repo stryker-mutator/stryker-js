@@ -2,8 +2,7 @@
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "testRunner": "mocha",
   "concurrency": 1,
-  "coverageAnalysis": "off",
-  "reporters": ["clear-text", "html", "event-recorder"],
+  "reporters": ["clear-text", "html", "json"],
   "mochaOptions": {
     "spec": ["test/**/*.js"]
   },
