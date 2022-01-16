@@ -98,7 +98,9 @@ describe('Running in an instrumented example project', () => {
     it('should be able to kill a mutant', async () => {
       const sut = createSut();
       const actual = await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }) })
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
+        })
       );
 
       assertions.expectKilled(actual);
@@ -110,7 +112,7 @@ describe('Running in an instrumented example project', () => {
       const sut = createSut();
       const actual = await sut.mutantRun(
         factory.mutantRunOptions({
-          activeMutant: factory.mutant({ id: '2' }),
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
           disableBail: true,
         })
       );
@@ -128,7 +130,7 @@ describe('Running in an instrumented example project', () => {
       const sut = createSut();
       const actual = await sut.mutantRun(
         factory.mutantRunOptions({
-          activeMutant: factory.mutant({ id: '2' }),
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
           testFilter: [`${simpleMathFileName}:7`],
         })
       );
@@ -141,13 +143,13 @@ describe('Running in an instrumented example project', () => {
       const sut = createSut();
       await sut.mutantRun(
         factory.mutantRunOptions({
-          activeMutant: factory.mutant({ id: '2' }),
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
           testFilter: [`${simpleMathFileName}:7`],
         })
       );
       const actual = await sut.mutantRun(
         factory.mutantRunOptions({
-          activeMutant: factory.mutant({ id: '2' }),
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
           testFilter: [`${simpleMathFileName}:19`],
         })
       );
@@ -164,7 +166,7 @@ describe('Running in an instrumented example project', () => {
           // Mutant 5 clears the exported object
           // module.exports = stryMutAct_9fa48("5") ? {} : (stryCov_9fa48("5"), { Calculator });
           // This will result a sync error during test setup
-          activeMutant: factory.mutant({ id: '5' }),
+          activeMutant: factory.mutantTestCoverage({ id: '5' }),
         })
       );
       assertions.expectErrored(actual);
@@ -180,7 +182,7 @@ describe('Running in an instrumented example project', () => {
           // Mutant 7 clears the exported object
           // module.exports = stryMutAct_9fa48("7") ? {} : (stryCov_9fa48("7"), { incrementBy });
           // This will result an error during step execution
-          activeMutant: factory.mutant({ id: '7' }),
+          activeMutant: factory.mutantTestCoverage({ id: '7' }),
         })
       );
       assertions.expectErrored(actual);

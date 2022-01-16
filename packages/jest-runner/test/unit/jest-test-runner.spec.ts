@@ -502,7 +502,10 @@ describe(JestTestRunner.name, () => {
       options.jest.enableFindRelatedTests = true;
       const sut = createSut();
       await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' })
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ fileName: 'foo.js' }),
+          sandboxFileName: '.stryker-tmp/sandbox2/foo.js',
+        })
       );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
@@ -516,7 +519,7 @@ describe(JestTestRunner.name, () => {
     it('should not set fileNamesUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant() }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage() }));
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
@@ -528,20 +531,20 @@ describe(JestTestRunner.name, () => {
 
     it('should set the active mutant in environment variable', async () => {
       const sut = createSut();
-      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '25' }) }));
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
       await onGoingWork;
     });
 
     it('should reset the active mutant in environment variable', async () => {
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '25' }) }));
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
     });
 
     it('should set the __strykerGlobalNamespace__ in globals', async () => {
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '25' }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {
@@ -559,7 +562,7 @@ describe(JestTestRunner.name, () => {
       };
       options.jest.config = customConfig;
       const sut = createSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '25' }) }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {

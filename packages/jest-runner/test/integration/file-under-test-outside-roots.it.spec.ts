@@ -20,7 +20,9 @@ describe('jest with fileUnderTest outside of roots', () => {
   it('should still be able perform a mutant run', async () => {
     process.chdir(resolveTestResource('file-under-test-outside-roots'));
     const sut = createSut({ enableFindRelatedTests: true });
-    const actual = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), sandboxFileName: 'src/foo.js' }));
+    const actual = await sut.mutantRun(
+      factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), sandboxFileName: 'src/foo.js' })
+    );
     assertions.expectKilled(actual);
     expect(actual.killedBy).eq('foo should be 42');
   });

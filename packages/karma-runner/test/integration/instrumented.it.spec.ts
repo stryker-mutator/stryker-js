@@ -107,7 +107,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('mutantRun', () => {
       it('should be able to kill a mutant', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }) }));
         assertions.expectKilled(result);
         expect(result.killedBy).deep.eq(['spec0']);
         expect(result.failureMessage.split('\n')[0]).eq('Error: Expected undefined to be 7.');
@@ -116,7 +116,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       it('should survive if the filtered tests do not kill the mutant', async () => {
         const result = await sut.mutantRun(
           factory.mutantRunOptions({
-            activeMutant: factory.mutant({ id: '2' }),
+            activeMutant: factory.mutantTestCoverage({ id: '2' }),
             testFilter: [
               'spec0',
               //'spec1' => would kill the mutant
@@ -128,8 +128,10 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to kill again after a mutant survived', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['spec1'] }));
+        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '11' }) }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: ['spec1'] })
+        );
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
         const expected = factory.killedMutantRunResult({
@@ -142,8 +144,10 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to clear the test filter', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['spec1'] }));
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: undefined }));
+        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: ['spec1'] }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter: undefined })
+        );
         assertions.expectKilled(result);
       });
     });
@@ -235,14 +239,14 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('mutantRun', () => {
       it('should be able to kill a mutant', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }) }));
         assertions.expectKilled(result);
         expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
         expect(result.failureMessage.split('\n')[0]).eq('AssertionError: expected undefined to equal 7');
       });
 
       it('should bail after first failing test', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }) }));
         assertions.expectKilled(result);
         expect(result.nrOfTests).eq(1);
       });
@@ -250,7 +254,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       it('should survive if the filtered tests do not kill the mutant', async () => {
         const result = await sut.mutantRun(
           factory.mutantRunOptions({
-            activeMutant: factory.mutant({ id: '2' }),
+            activeMutant: factory.mutantTestCoverage({ id: '2' }),
             testFilter: [
               'Add should be able to add two numbers',
               //'Add should be able 1 to a number' => would kill the mutant
@@ -263,9 +267,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to kill again after a mutant survived', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
+        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '11' }) }));
         const result = await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
+          factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
         );
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
@@ -280,9 +284,11 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
       it('should be able to clear the test filter', async () => {
         await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
+          factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
         );
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: undefined }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter: undefined })
+        );
         assertions.expectKilled(result);
       });
     });

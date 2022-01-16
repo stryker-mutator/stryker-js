@@ -118,7 +118,7 @@ describe('JestTestRunner coverage analysis integration', () => {
           const result = await sut.mutantRun(
             factory.mutantRunOptions({
               testFilter: ['Add should be able to recognize a negative number'],
-              activeMutant: factory.mutant({ id: '6' }),
+              activeMutant: factory.mutantTestCoverage({ id: '6' }),
               sandboxFileName: resolveTestCase('src', 'Add.js'),
             })
           );
@@ -131,7 +131,7 @@ describe('JestTestRunner coverage analysis integration', () => {
           const result = await sut.mutantRun(
             factory.mutantRunOptions({
               testFilter: ['Add should be able to add two numbers', 'Circle should have a circumference of 2PI when the radius is 1'],
-              activeMutant: factory.mutant({ id: '6' }), // mutant inside the "isNegativeNumber" function
+              activeMutant: factory.mutantTestCoverage({ id: '6' }), // mutant inside the "isNegativeNumber" function
               sandboxFileName: resolveTestCase('src', 'Add.js'),
             })
           );
@@ -257,7 +257,7 @@ describe('JestTestRunner coverage analysis integration', () => {
           const result = await sut.mutantRun(
             factory.mutantRunOptions({
               testFilter: ['Add should be able to recognize a negative number'],
-              activeMutant: factory.mutant({ id: '21' }),
+              activeMutant: factory.mutantTestCoverage({ id: '21' }),
               sandboxFileName: resolveTestCase('src', 'Add.js'),
             })
           );
@@ -270,7 +270,7 @@ describe('JestTestRunner coverage analysis integration', () => {
           const result = await sut.mutantRun(
             factory.mutantRunOptions({
               testFilter: ['Add should be able to add two numbers', 'Circle should have a circumference of 2PI when the radius is 1'],
-              activeMutant: factory.mutant({ id: '11' }), // mutant inside the "negate" function
+              activeMutant: factory.mutantTestCoverage({ id: '11' }), // mutant inside the "negate" function
               sandboxFileName: resolveTestCase('src', 'Add.js'),
             })
           );

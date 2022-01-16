@@ -115,7 +115,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(exampleProjectRoot);
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        activeMutant: factory.mutant({ id: '1' }),
+        activeMutant: factory.mutantTestCoverage({ id: '1' }),
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
       });
       mutantRunOptions.activeMutant.id = '1';
@@ -168,7 +168,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
-        activeMutant: factory.mutant({ id: '0' }),
+        activeMutant: factory.mutantTestCoverage({ id: '0' }),
       });
 
       // Act
@@ -186,7 +186,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
-        activeMutant: factory.mutant({ id: '0' }),
+        activeMutant: factory.mutantTestCoverage({ id: '0' }),
         disableBail: true,
       });
 
