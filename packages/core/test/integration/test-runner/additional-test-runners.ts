@@ -17,12 +17,12 @@ import { factory } from '@stryker-mutator/test-helpers';
 
 abstract class NotImplementedTestRunner implements TestRunner {
   public capabilities(): Promise<TestRunnerCapabilities> {
+    return Promise.resolve({ reloadEnvironment: true });
+  }
+  public dryRun(_options: DryRunOptions): Promise<DryRunResult> {
     throw new Error('Method not implemented.');
   }
-  public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    throw new Error('Method not implemented.');
-  }
-  public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+  public mutantRun(_options: MutantRunOptions): Promise<MutantRunResult> {
     throw new Error('Method not implemented.');
   }
 }
@@ -168,6 +168,23 @@ class AsynchronousPromiseRejectionHandlerTestRunner extends NotImplementedTestRu
   }
 }
 
+class StaticMutantTestRunner extends NotImplementedTestRunner {
+  public override async capabilities(): Promise<TestRunnerCapabilities> {
+    return { reloadEnvironment: false };
+  }
+  public override async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    // Set the env variable and then load the active-mutant.js file, which reads it on load.
+    // If it was the second run, it would result in survived
+    process.env.activeMutant = options.activeMutant.id;
+    const { activeMutant } = await import('./active-mutant.js');
+    if (activeMutant === options.activeMutant.id) {
+      return factory.killedMutantRunResult();
+    } else {
+      return factory.survivedMutantRunResult();
+    }
+  }
+}
+
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
@@ -181,4 +198,5 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'counter', CounterTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsynchronousPromiseRejectionHandlerTestRunner),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
+  declareClassPlugin(PluginKind.TestRunner, 'static', StaticMutantTestRunner),
 ];

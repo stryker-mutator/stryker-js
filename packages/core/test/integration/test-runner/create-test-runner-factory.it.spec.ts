@@ -1,13 +1,11 @@
 import fs from 'fs';
 
-import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import log4js from 'log4js';
-import { toArray } from 'rxjs/operators';
+import { lastValueFrom, toArray } from 'rxjs';
+import { LogLevel } from '@stryker-mutator/api/core';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
-
-import { lastValueFrom } from 'rxjs';
 
 import { LoggingClientContext } from '../../../src/logging';
 import { createTestRunnerFactory } from '../../../src/test-runner';
@@ -17,7 +15,7 @@ import { TestRunnerResource } from '../../../src/concurrent';
 
 import { CounterTestRunner } from './additional-test-runners';
 
-describe(`${createTestRunnerFactory.name} integration`, () => {
+describe.only(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
   let sut: TestRunnerResource;
   let loggingContext: LoggingClientContext;
@@ -185,5 +183,25 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
     await actMutantRun();
     expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
+  });
+
+  describe('running static mutants', () => {
+    beforeEach(async () => {
+      await arrangeSut('static');
+    });
+
+    it('should not reload environment for a non-static mutant', async () => {
+      const testFilter = ['1'];
+      const result1 = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter }));
+      const result2 = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter }));
+      assertions.expectKilled(result1);
+      assertions.expectSurvived(result2);
+    });
+
+    it('should reload environment for a static mutant', async () => {
+      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter: ['1'] }));
+      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: undefined }));
+      assertions.expectKilled(result);
+    });
   });
 });

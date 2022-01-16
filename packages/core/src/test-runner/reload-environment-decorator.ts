@@ -2,9 +2,15 @@ import { MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stry
 
 import { TestRunnerDecorator } from './test-runner-decorator';
 
+enum TestEnvironmentState {
+  Pristine,
+  Loaded,
+  LoadedStaticMutant,
+}
+
 export class ReloadEnvironmentDecorator extends TestRunnerDecorator {
   private _capabilities?: TestRunnerCapabilities;
-  private loadedStaticMutant = false;
+  private testEnvironment = TestEnvironmentState.Pristine;
 
   public override async capabilities(): Promise<TestRunnerCapabilities> {
     if (!this._capabilities) {
@@ -14,18 +20,31 @@ export class ReloadEnvironmentDecorator extends TestRunnerDecorator {
   }
 
   public override async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    if (!options.testFilter) {
-      if (!(await this.capabilities()).reloadEnvironment) {
+    let newState: TestEnvironmentState;
+    if (options.testFilter) {
+      // Mutant is not static
+      newState = TestEnvironmentState.Loaded;
+      if (this.testEnvironment === TestEnvironmentState.LoadedStaticMutant) {
+        // loaded a static mutant in previous run, need to reload first
         await this.recover();
-        this.loadedStaticMutant = true;
-      } else {
-        options.reloadEnvironment = true;
       }
-    } else if (this.loadedStaticMutant) {
-      // loaded static mutant in previous run
-      await this.recover();
-      this.loadedStaticMutant = false;
+    } else {
+      // Mutant is static
+      newState = TestEnvironmentState.LoadedStaticMutant;
+      if (await this.innerTestRunnerCanReload()) {
+        // Test runner is capable of reloading by itself (i.e. jest or karma)
+        options.reloadEnvironment = this.testEnvironment !== TestEnvironmentState.Pristine;
+      } else if (this.testEnvironment !== TestEnvironmentState.Pristine) {
+        // Test runner needs to restart, since the environment isn't pristine
+        await this.recover();
+      }
     }
-    return super.mutantRun(options);
+    const result = await super.mutantRun(options);
+    this.testEnvironment = newState;
+    return result;
+  }
+
+  private async innerTestRunnerCanReload() {
+    return (await this.capabilities()).reloadEnvironment;
   }
 }

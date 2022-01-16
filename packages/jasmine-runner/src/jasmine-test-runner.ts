@@ -56,10 +56,7 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public async capabilities(): Promise<TestRunnerCapabilities> {
-    return {
-      // Jasmine directly uses `import`, so reloading files once they are loaded is impossible
-      reloadEnvironment: false,
-    };
+    return { reloadEnvironment: true };
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {

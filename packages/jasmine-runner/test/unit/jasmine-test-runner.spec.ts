@@ -38,7 +38,7 @@ describe(JasmineTestRunner.name, () => {
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=false', async () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
       expect(await sut.capabilities()).deep.eq(expectedCapabilities);
     });
   });
