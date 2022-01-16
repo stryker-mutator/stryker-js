@@ -1,4 +1,4 @@
-import { MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import { DryRunOptions, DryRunResult, MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
 import { TestRunnerDecorator } from './test-runner-decorator';
 
@@ -17,6 +17,11 @@ export class ReloadEnvironmentDecorator extends TestRunnerDecorator {
       this._capabilities = await super.capabilities();
     }
     return this._capabilities;
+  }
+
+  public override async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    this.testEnvironment = TestEnvironmentState.Loaded;
+    return super.dryRun(options);
   }
 
   public override async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {

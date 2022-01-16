@@ -62,6 +62,13 @@ describe(ReloadEnvironmentDecorator.name, () => {
       expect(testRunnerFactory).calledTwice;
     });
 
+    it('should recreate the test runner for a static mutant a dry run was ran before', async () => {
+      testRunner.capabilities.resolves({ reloadEnvironment: false });
+      await sut.dryRun(factory.dryRunOptions());
+      await sut.mutantRun(factory.mutantRunOptions({ testFilter: undefined }));
+      expect(testRunnerFactory).calledTwice;
+    });
+
     it('should recreate the test runner after running a static mutant', async () => {
       testRunner.capabilities.resolves({ reloadEnvironment: false });
       await sut.mutantRun(factory.mutantRunOptions({ testFilter: undefined }));
