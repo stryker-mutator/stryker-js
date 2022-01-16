@@ -160,7 +160,14 @@ export class MochaTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-    this.mocha?.dispose();
+    try {
+      this.mocha?.dispose();
+    } catch (err: any) {
+      if (err?.code !== 'ERR_MOCHA_INSTANCE_ALREADY_RUNNING') {
+        // Oops, didn't mean to catch this one
+        throw err;
+      }
+    }
   }
 
   private runMocha(): Promise<void> {
