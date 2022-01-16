@@ -54,12 +54,12 @@ describe(`${CommandTestRunner.name} integration`, () => {
   describe(CommandTestRunner.prototype.mutantRun.name, () => {
     it('should report mutant as survived if the process exits with 0', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '41' }) });
+      const result = await sut.mutantRun({ activeMutant: factory.mutantTestCoverage({ id: '41' }) });
       assertions.expectSurvived(result);
     });
     it('should report mutant as killed if the process exits with 1', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }) });
+      const result = await sut.mutantRun({ activeMutant: factory.mutantTestCoverage({ id: '42' /* 42 should fail */ }) });
       assertions.expectKilled(result);
       expect(result.killedBy).eq('all');
     });

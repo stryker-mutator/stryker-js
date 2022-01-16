@@ -252,7 +252,7 @@ export const skippedTestResult = factoryMethod<SkippedTestResult>(() => ({
 }));
 
 export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
-  activeMutant: mutant(),
+  activeMutant: mutantTestCoverage(),
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
   disableBail: false,

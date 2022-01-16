@@ -25,7 +25,7 @@ describe('Infinite loop', () => {
   it('should be able to recover using a hit counter', async () => {
     // Arrange
     const options = factory.mutantRunOptions({
-      activeMutant: factory.mutant({ id: '20' }),
+      activeMutant: factory.mutantTestCoverage({ id: '20' }),
       testFilter: ['should be able to break out of an infinite loop with a hit counter'],
       hitLimit: 10,
     });
@@ -41,7 +41,7 @@ describe('Infinite loop', () => {
   it('should reset hit counter state correctly between runs', async () => {
     const firstResult = await sut.mutantRun(
       factory.mutantRunOptions({
-        activeMutant: factory.mutant({ id: '20' }),
+        activeMutant: factory.mutantTestCoverage({ id: '20' }),
         testFilter: ['should be able to break out of an infinite loop with a hit counter'],
         hitLimit: 10,
       })
@@ -49,7 +49,7 @@ describe('Infinite loop', () => {
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
         // 23 is a 'normal' mutant that should be killed
-        activeMutant: factory.mutant({ id: '23' }),
+        activeMutant: factory.mutantTestCoverage({ id: '23' }),
         testFilter: ['should be able to break out of an infinite loop with a hit counter'],
         hitLimit: 10,
       })

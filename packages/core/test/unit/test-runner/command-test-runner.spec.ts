@@ -139,7 +139,7 @@ describe(CommandTestRunner.name, () => {
   }
 
   async function actMutantRun(sut: CommandTestRunner = createSut(), { exitCode = 0, activeMutantId = '0' }) {
-    const resultPromise = sut.mutantRun({ activeMutant: factory.mutant({ id: activeMutantId }) });
+    const resultPromise = sut.mutantRun({ activeMutant: factory.mutantTestCoverage({ id: activeMutantId }) });
     await actTestProcessEnds(exitCode);
     return resultPromise;
   }

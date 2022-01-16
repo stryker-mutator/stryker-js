@@ -248,7 +248,7 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should activate the given mutant', async () => {
-      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
+      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }) }));
       expect(global.__stryker2__?.activeMutant).eq('42');
     });
 

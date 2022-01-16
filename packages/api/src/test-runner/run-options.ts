@@ -1,4 +1,4 @@
-import { Mutant, CoverageAnalysis } from '../core';
+import { CoverageAnalysis, MutantTestCoverage } from '../core';
 
 export interface RunOptions {
   /**
@@ -25,7 +25,7 @@ export interface DryRunOptions extends RunOptions {
 export interface MutantRunOptions extends RunOptions {
   testFilter?: string[];
   hitLimit?: number;
-  activeMutant: Mutant;
+  activeMutant: MutantTestCoverage;
   sandboxFileName: string;
   /**
    * Determines wether or not the test environment should be reloaded.
