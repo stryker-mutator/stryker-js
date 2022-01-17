@@ -1,13 +1,13 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
-import { CheckResult } from '@stryker-mutator/api/check';
+import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
-import { I } from '@stryker-mutator/util';
+import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process';
 import { coreTokens } from '../../../src/di';
@@ -55,6 +55,7 @@ describe(MutationTestExecutor.name, () => {
     ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
 
     mutants = [];
+
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.checkerPool, checkerPoolMock as I<Pool<CheckerResource>>)
@@ -230,47 +231,75 @@ describe(MutationTestExecutor.name, () => {
     expect(mutationTestReportCalculatorMock.reportMutantStatus).calledWithExactly(mutants[0], MutantStatus.NoCoverage);
   });
 
-  // it('should report non-passed check results as "checkFailed"', async () => {
-  //   // Arrange
-  //   const mutant = factory.mutantTestCoverage({ id: '1' });
-  //   const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
-  //   checker.check.resolves([
-  //     {
-  //       mutant,
-  //       checkResult: failedCheckResult,
-  //     },
-  //   ]);
-  //   mutants.push(mutant);
+  it('should report non-passed check results as "checkFailed"', async () => {
+    // Arrange
+    testInjector.options.checkers = ['test'];
+    sut = testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .provideValue(coreTokens.checkerPool, checkerPoolMock as I<Pool<CheckerResource>>)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
+      .provideValue(coreTokens.timeOverheadMS, 42)
+      .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.sandbox, sandboxMock)
+      .provideValue(coreTokens.timer, timerMock)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
+      .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
+      .injectClass(MutationTestExecutor);
 
-  //   // Act
-  //   await sut.execute();
+    const mutant = factory.mutantTestCoverage({ id: '1' });
+    const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
+    checker.check.resolves([
+      {
+        mutant,
+        checkResult: failedCheckResult,
+      },
+    ]);
+    mutants.push(mutant);
 
-  //   // Assert
-  //   expect(mutationTestReportCalculatorMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
-  // });
+    // Act
+    await sut.execute();
 
-  // it('should free checker resources after checking stage is complete', async () => {
-  //   // Arrange
-  //   mutants.push(factory.mutantTestCoverage({ id: '1' }));
-  //   const checkTask = new Task<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>>();
-  //   const testRunnerTask = new Task<MutantRunResult>();
-  //   testRunner.mutantRun.returns(testRunnerTask.promise);
-  //   checker.check.returns(checkTask.promise);
+    // Assert
+    expect(mutationTestReportCalculatorMock.reportCheckFailed).calledWithExactly(mutant, failedCheckResult);
+  });
 
-  //   // Act & assert
-  //   const executePromise = sut.execute();
-  //   checkTask.resolve([
-  //     {
-  //       mutant: factory.mutantTestCoverage(),
-  //       checkResult: factory.checkResult(),
-  //     },
-  //   ]);
-  //   await tick(2);
-  //   expect(checkerPoolMock.dispose).called;
-  //   expect(concurrencyTokenProviderMock.freeCheckers).called;
-  //   testRunnerTask.resolve(factory.killedMutantRunResult());
-  //   await executePromise;
-  // });
+  it('should free checker resources after checking stage is complete', async () => {
+    // Arrange
+    testInjector.options.checkers = ['test'];
+    sut = testInjector.injector
+      .provideValue(coreTokens.reporter, reporterMock)
+      .provideValue(coreTokens.checkerPool, checkerPoolMock as I<Pool<CheckerResource>>)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
+      .provideValue(coreTokens.timeOverheadMS, 42)
+      .provideValue(coreTokens.mutantsWithTestCoverage, mutants)
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportCalculatorMock)
+      .provideValue(coreTokens.sandbox, sandboxMock)
+      .provideValue(coreTokens.timer, timerMock)
+      .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
+      .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
+      .injectClass(MutationTestExecutor);
+
+    mutants.push(factory.mutantTestCoverage({ id: '1' }));
+    const checkTask = new Task<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>>();
+    const testRunnerTask = new Task<MutantRunResult>();
+    testRunner.mutantRun.returns(testRunnerTask.promise);
+    checker.check.returns(checkTask.promise);
+
+    // Act & assert
+    checkTask.resolve([
+      {
+        mutant: factory.mutantTestCoverage(),
+        checkResult: factory.checkResult(),
+      },
+    ]);
+    const executePromise = await sut.execute();
+    await tick(10);
+    expect(checkerPoolMock.dispose).called;
+    expect(concurrencyTokenProviderMock.freeCheckers).called;
+    testRunnerTask.resolve(factory.killedMutantRunResult());
+    await executePromise;
+  });
 
   it('should report mutant run results', async () => {
     // Arrange
