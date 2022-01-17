@@ -53,9 +53,9 @@ export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
  */
 export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean): string {
   const compilerOptions = {
-      ...parsedConfig.config?.compilerOptions,
-      ...COMPILER_OPTIONS_OVERRIDES,
-      ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
+    ...parsedConfig.config?.compilerOptions,
+    ...COMPILER_OPTIONS_OVERRIDES,
+    ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
   };
 
   if (!useBuildMode && compilerOptions.declarationDir !== undefined && compilerOptions.declarationDir !== null) {
