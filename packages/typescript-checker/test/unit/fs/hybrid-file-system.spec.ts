@@ -23,22 +23,22 @@ describe('fs', () => {
         sut.writeFile('add.js', 'a + b');
         const file = sut.getFile('add.js');
         expect(file).ok;
-        expect(file.content).eq('a + b');
-        expect(file.fileName).eq('add.js');
+        expect(file!.content).eq('a + b');
+        expect(file!.fileName).eq('add.js');
       });
 
       it('should override an existing file', () => {
         sut.writeFile('add.js', 'a + b');
         sut.writeFile('add.js', 'a - b');
         const file = sut.getFile('add.js');
-        expect(file.content).eq('a - b');
+        expect(file!.content).eq('a - b');
       });
 
       it('should convert path separator to forward slashes', () => {
         sut.writeFile('test\\foo\\a.js', 'a');
         const actual = sut.getFile('test/foo/a.js');
         expect(actual).ok;
-        expect(actual.content).eq('a');
+        expect(actual!.content).eq('a');
       });
     });
 
@@ -56,9 +56,9 @@ describe('fs', () => {
         expect(helper.readFileStub).calledWith('foo.js');
         expect(helper.getModifiedTimeStub).calledWith('foo.js');
         expect(actual).ok;
-        expect(actual.fileName).eq('foo.js');
-        expect(actual.content).eq('content from disk');
-        expect(actual.modifiedTime).eq(modifiedTime);
+        expect(actual!.fileName).eq('foo.js');
+        expect(actual!.content).eq('content from disk');
+        expect(actual!.modifiedTime).eq(modifiedTime);
       });
 
       it('should convert path separator to forward slashes', () => {
@@ -75,8 +75,8 @@ describe('fs', () => {
         helper.getModifiedTimeStub.returns(new Date(2010, 1, 1));
         const actual = sut.getFile('foo.js');
         expect(actual).ok;
-        expect(actual.fileName).eq('foo.js');
-        expect(actual.content).eq('');
+        expect(actual!.fileName).eq('foo.js');
+        expect(actual!.content).eq('');
       });
 
       it("should cache a file that doesn't exists", () => {

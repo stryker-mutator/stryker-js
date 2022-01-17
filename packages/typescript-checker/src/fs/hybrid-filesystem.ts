@@ -4,41 +4,45 @@ import { ScriptFile } from './script-file';
 import { toPosixFileName } from './tsconfig-helpers';
 
 export class HybridFileSystem {
-  public files: Record<string, ScriptFile> = {};
+  private readonly files = new Map<string, ScriptFile | undefined>();
 
-  public getFile(fileName: string): ScriptFile {
+  public getFile(fileName: string): ScriptFile | undefined {
     fileName = toPosixFileName(fileName);
-    if (this.files[fileName]) {
-      return this.files[fileName];
+    if (!this.files.has(fileName)) {
+      return this.getNewFile(fileName);
     }
 
-    return this.getNewFile(fileName);
+    return this.files.get(fileName);
   }
 
-  private getNewFile(fileName: string): ScriptFile {
+  private getNewFile(fileName: string): ScriptFile | undefined {
     const content = ts.sys.readFile(fileName);
 
     if (typeof content === 'string') {
       const modifiedTime = ts.sys.getModifiedTime!(fileName)!;
-      this.files[fileName] = new ScriptFile(fileName, content, modifiedTime);
+      this.files.set(fileName, new ScriptFile(fileName, content, modifiedTime));
     } else {
-      this.files[fileName] = new ScriptFile(fileName, '');
+      this.files.set(fileName, undefined);
     }
 
-    return this.files[fileName];
+    return this.files.get(fileName);
   }
 
   public writeFile(fileName: string, content: string): ScriptFile {
     fileName = toPosixFileName(fileName);
-    const existingFile = this.files[fileName];
+    const existingFile = this.files.get(fileName);
     if (existingFile) {
       existingFile.write(content);
       return existingFile;
     } else {
       // this.log.trace('Writing to file "%s"', fileName);
       const newFile = new ScriptFile(fileName, content);
-      this.files[fileName] = newFile;
+      this.files.set(fileName, newFile);
       return newFile;
     }
+  }
+
+  public existsInMemory(fileName: string): boolean {
+    return !!this.files.get(toPosixFileName(fileName));
   }
 }
