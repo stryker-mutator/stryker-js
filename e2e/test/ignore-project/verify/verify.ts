@@ -6,17 +6,17 @@ describe('After running stryker on jest-react project', () => {
   it('should report expected scores', async () => {
     await expectMetricsJson({
       killed: 8,
-      ignored: 29,
+      ignored: 28,
       mutationScore: 53.33,
     });
   });
-  
+
   /*
   -----------|---------|----------|-----------|------------|----------|---------|
   File       | % score | # killed | # timeout | # survived | # no cov | # error |
   -----------|---------|----------|-----------|------------|----------|---------|
   All files  |   53.33 |        8 |         0 |          0 |        7 |       0 |*/
-    
+
 
   it('should report mutants that are disabled by a comment with correct ignore reason', async () => {
     const actualMetricsResult = await readMutationTestingJsonResult();
@@ -33,7 +33,7 @@ describe('After running stryker on jest-react project', () => {
       expect(conditionalMutant.status).eq(MutantStatus.Ignored);
       expect(conditionalMutant.statusReason).eq('Ignore boolean and conditions');
     });
-    
+
     equalityOperatorMutants.forEach((equalityMutant) => {
       expect(equalityMutant.status).eq(MutantStatus.NoCoverage);
     });

@@ -70,6 +70,50 @@ describe(sut.name, () => {
     );
   });
 
+  it('should not mutate (a || b) condition to (a || true)', () => {
+    expectJSMutation(
+      sut,
+      'if (b === 5 || c === 3) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if (false || c === 3) { a++ }',
+      'if (b === 5 || false) { a++ }'
+    );
+  });
+
+  it('should not mutate (a && b) condition to (a && false)', () => {
+    expectJSMutation(
+      sut,
+      'if (b === 5 && c === 3) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if (true && c === 3) { a++ }',
+      'if (b === 5 && true) { a++ }'
+    );
+  });
+
+  it('should mutate ((c1 && c2) || (c3 && c4))', () => {
+    expectJSMutation(
+      sut,
+      'if ((c1 && c2) || (c3 && c4)) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if ((false) || (c3 && c4)) { a++ }',
+      'if ((c1 && c2) || (false)) { a++ }'
+    );
+  });
+
+  it('should mutate ((c1 || c2) && (c3 || c4))', () => {
+    expectJSMutation(
+      sut,
+      'if ((c1 || c2) && (c3 || c4)) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if ((true) && (c3 || c4)) { a++ }',
+      'if ((c1 || c2) && (true)) { a++ }'
+    );
+  });
+
   it('should mutate an expression to `true` and `false`', () => {
     expectJSMutation(sut, 'if (something) { a++ }', 'if (true) { a++ }', 'if (false) { a++ }');
   });
