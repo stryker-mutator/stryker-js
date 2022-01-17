@@ -52,6 +52,10 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
       }
     },
   });
-  expect(mutants).lengthOf(expectedReplacements.length);
-  expectedReplacements.forEach((expected) => expect(mutants, `was: ${mutants.join(',')}`).to.include(expected));
+  /* eslint-disable @typescript-eslint/require-array-sort-compare */
+  /* because we know mutants and expectedReplacements are strings */
+  mutants.sort();
+  expectedReplacements.sort();
+  /* eslint-enable @typescript-eslint/require-array-sort-compare */
+  expect(mutants).to.deep.equal(expectedReplacements);
 }
