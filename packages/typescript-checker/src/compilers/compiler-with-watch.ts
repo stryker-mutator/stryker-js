@@ -34,7 +34,7 @@ export class CompilerWithWatch implements TypescriptCompiler {
       {
         ...ts.sys,
         readFile: (fileName) => {
-          const content = this.fs.getFile(fileName).content;
+          const content = this.fs.getFile(fileName)?.content;
           if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
             return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
           }
@@ -45,7 +45,8 @@ export class CompilerWithWatch implements TypescriptCompiler {
         },
         watchFile: (filePath: string, callback: ts.FileWatcherCallback) => {
           const file = this.fs.getFile(filePath);
-          file.watcher = callback;
+
+          if (file) file.watcher = callback;
 
           return {
             close: () => {
@@ -134,11 +135,15 @@ export class CompilerWithWatch implements TypescriptCompiler {
     if (!fileName.includes('.d.ts')) return [fileName];
 
     const file = this.fs.getFile(fileName);
+    if (!file) throw new Error(`Could not find ${fileName}`);
     const sourceMappingURL = this.getSourceMappingURL(file.content);
 
     if (!sourceMappingURL) return [fileName];
 
-    const sourceMap = this.fs.getFile(path.resolve(fileName, '..', sourceMappingURL));
+    const sourceMapFileName = path.resolve(fileName, '..', sourceMappingURL);
+    const sourceMap = this.fs.getFile(sourceMapFileName);
+    if (!sourceMap) throw new Error(`Could not find ${sourceMapFileName}`);
+
     const content = JSON.parse(sourceMap.content);
 
     return content.sources.map((sourcePath: string) => toPosixFileName(path.resolve(sourceMappingURL, '..', sourcePath)));
