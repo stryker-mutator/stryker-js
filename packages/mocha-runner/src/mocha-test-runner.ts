@@ -37,6 +37,7 @@ export class MochaTestRunner implements TestRunner {
     pluginTokens.mochaAdapter,
     pluginTokens.globalNamespace
   );
+  private loadedEnv = false;
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
@@ -170,7 +171,13 @@ export class MochaTestRunner implements TestRunner {
     }
   }
 
-  private runMocha(): Promise<void> {
+  private async runMocha(): Promise<void> {
+    if (!this.loadedEnv) {
+      // Loading files Async is needed to support native esm modules
+      // See https://mochajs.org/api/mocha#loadFilesAsync
+      await this.mocha.loadFilesAsync();
+      this.loadedEnv = true;
+    }
     return new Promise<void>((res) => {
       this.mocha.run(() => res());
     });
