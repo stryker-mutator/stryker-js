@@ -7,7 +7,7 @@ import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
 import { deserialize, serialize } from '../utils/string-utils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
+import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 
 export class ChildProcessProxyWorker {
   private log?: Logger;
@@ -26,8 +26,8 @@ export class ChildProcessProxyWorker {
       process.send(str);
     }
   }
-  private handleMessage(serializedMessage: string) {
-    const message = deserialize<WorkerMessage>(serializedMessage);
+  private handleMessage(serializedMessage: unknown) {
+    const message = deserialize<WorkerMessage>(String(serializedMessage));
     switch (message.kind) {
       case WorkerMessageKind.Init:
         this.handleInit(message);
@@ -51,7 +51,7 @@ export class ChildProcessProxyWorker {
     this.log = getLogger(ChildProcessProxyWorker.name);
     this.handlePromiseRejections();
     let injector = buildChildProcessInjector(message.options);
-    const locals = message.additionalInjectableValues as Record<string, unknown>;
+    const locals = message.additionalInjectableValues as Record<string, any>;
     for (const token in locals) {
       injector = injector.provideValue(token, locals[token]);
     }
@@ -131,6 +131,8 @@ export class ChildProcessProxyWorker {
 
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
-if (process.argv.includes(autoStart)) {
+// Stryker disable all
+if (require.main === module) {
   new ChildProcessProxyWorker();
 }
+// Stryker restore all

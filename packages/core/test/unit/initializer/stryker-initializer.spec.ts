@@ -254,6 +254,22 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
+    it('should configure the additional settings from the plugins', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match(
+          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information"'
+        )
+      );
+    });
+
     it('should not prompt for buildCommand if test runner is jest', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',

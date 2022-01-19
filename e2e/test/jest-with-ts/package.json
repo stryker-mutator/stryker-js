@@ -7,10 +7,10 @@
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/verify.ts"
   },
   "dependencies": {
-    "azure-storage": "~2.10.3"
+    "azure-storage": "^2.10.4"
   },
   "devDependencies": {
-    "@types/jest": "~25.2.1",
-    "@types/node": "^14.0.27"
+    "@types/jest": "~27.0.3",
+    "@types/node": "^16.11.11"
   }
 }

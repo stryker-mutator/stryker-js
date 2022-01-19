@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
+import { I, normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox';
 import { coreTokens } from '../../../src/di';
@@ -22,8 +22,8 @@ describe(Sandbox.name, () => {
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesListStub: sinon.SinonStub;
-  let execaMock: sinon.SinonStubbedInstance<typeof execa>;
-  let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
+  let execaMock: sinon.SinonStubbedInstance<I<typeof execa>>;
+  let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<I<UnexpectedExitHandler>>;
   let readFile: sinon.SinonStub;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   const SANDBOX_WORKING_DIR = path.resolve('.stryker-tmp/sandbox-123');
@@ -39,10 +39,10 @@ describe(Sandbox.name, () => {
     moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
     readFile = sinon.stub(fsPromises, 'readFile');
     execaMock = {
-      command: sinon.stub(),
-      commandSync: sinon.stub(),
-      node: sinon.stub(),
-      sync: sinon.stub(),
+      command: sinon.stub<any>(),
+      commandSync: sinon.stub<any>(),
+      node: sinon.stub<any>(),
+      sync: sinon.stub<any>(),
     };
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),

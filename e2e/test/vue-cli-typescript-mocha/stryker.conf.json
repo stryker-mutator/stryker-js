@@ -6,7 +6,7 @@
   "coverageAnalysis": "perTest",
   "symlinkNodeModules": false,
   "reporters": ["progress", "clear-text", "event-recorder"],
-  "buildCommand": "webpack --config webpack.test.config.js",
+  "buildCommand": "node webpack-run.js",
   "mochaOptions": {
     "package": "package.json",
     "require": [
