@@ -101,13 +101,7 @@ describe('typescript-helpers', () => {
             false
           )
         ).compilerOptions
-      ).deep.include({
-        noEmit: true,
-        incremental: false,
-        composite: false,
-        declaration: false,
-        declarationMap: false,
-      });
+      ).not.hasOwnProperty('declarationDir');
       expect(
         JSON.parse(
           overrideOptions(
@@ -126,13 +120,7 @@ describe('typescript-helpers', () => {
             false
           )
         ).compilerOptions
-      ).deep.include({
-        noEmit: true,
-        incremental: false,
-        composite: false,
-        declaration: false,
-        declarationMap: false,
-      });
+      ).not.hasOwnProperty('declarationDir');
     });
 
     it('should set --emitDeclarationOnly options when `--build` mode is on', () => {

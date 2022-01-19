@@ -14,7 +14,7 @@ import { StringBuilder } from '../utils/string-builder';
 import { deserialize, padLeft, serialize } from '../utils/string-utils';
 
 import { ChildProcessCrashedError } from './child-process-crashed-error';
-import { autoStart, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
+import { ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
 import { OutOfMemoryError } from './out-of-memory-error';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
@@ -51,7 +51,7 @@ export class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string,
     execArgv: string[]
   ) {
-    this.worker = childProcess.fork(require.resolve('./child-process-proxy-worker'), [autoStart], { silent: true, execArgv });
+    this.worker = childProcess.fork(require.resolve('./child-process-proxy-worker'), { silent: true, execArgv });
     this.initTask = new Task();
     this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({
