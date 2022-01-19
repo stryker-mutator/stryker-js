@@ -109,15 +109,15 @@ export class MutationTestExecutor {
       previousPassedMutants$ = passedMutants$;
     }
 
-    lastValueFrom(checkResult$).then(() => {
-      this.log.debug('Checker(s) finished.');
+    previousPassedMutants$.subscribe({
+      complete: () => {
+        this.log.debug('Checker(s) finished.');
 
-      if (previousPassedMutants$ instanceof Subject) {
-        previousPassedMutants$.complete();
-      }
+        checkResult$.complete();
 
-      this.checkerPool.dispose();
-      this.concurrencyTokenProvider.freeCheckers();
+        this.checkerPool.dispose();
+        this.concurrencyTokenProvider.freeCheckers();
+      },
     });
 
     return {
@@ -160,7 +160,7 @@ export class MutationTestExecutor {
     });
 
     await lastValueFrom(run$);
-    checkResult$.complete();
+    passedMutant$.complete();
   }
 
   private executeRunInTestRunner(input$: Observable<MutantTestCoverage>): Observable<MutantResult> {

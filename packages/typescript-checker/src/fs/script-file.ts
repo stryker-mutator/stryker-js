@@ -17,27 +17,28 @@ export class ScriptFile {
   }
 
   public mutate(mutant: Pick<Mutant, 'location' | 'replacement'>): void {
-    this.guardMutationIsWatched();
+    const watcher = this.guardMutationIsWatched(this.watcher);
     this.modifiedTime = new Date();
     const start = this.getOffset(mutant.location.start);
     const end = this.getOffset(mutant.location.end);
     this.content = `${this.originalContent.substr(0, start)}${mutant.replacement}${this.originalContent.substr(end)}`;
-    this.watcher!(this.fileName, ts.FileWatcherEventKind.Changed);
+    watcher(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 
   public reset(): void {
-    this.guardMutationIsWatched();
+    const watcher = this.guardMutationIsWatched(this.watcher);
     this.modifiedTime = new Date();
     this.content = this.originalContent;
-    this.watcher!(this.fileName, ts.FileWatcherEventKind.Changed);
+    watcher(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 
-  private guardMutationIsWatched() {
-    if (!this.watcher) {
+  private guardMutationIsWatched(watcher: ts.FileWatcherCallback | undefined): ts.FileWatcherCallback {
+    if (!watcher) {
       throw new Error(
         `Tried to check file "${this.fileName}" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project.`
       );
     }
+    return watcher;
   }
 
   private getOffset(pos: Position): number {
