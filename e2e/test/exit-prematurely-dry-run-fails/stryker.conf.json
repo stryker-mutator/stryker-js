@@ -4,7 +4,7 @@
   "concurrency": 2,
   "coverageAnalysis": "off",
   "fileLogLevel": "info",
-  "reporters": ["clear-text", "html", "event-recorder"],
+  "reporters": ["clear-text", "html", "event-recorder", "json"],
   "plugins": [
     "@stryker-mutator/mocha-runner"
   ]

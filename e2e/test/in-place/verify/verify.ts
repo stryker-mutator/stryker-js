@@ -1,4 +1,4 @@
-import { expectMetrics } from '../../../helpers';
+import { expectMetricsJsonToMatchSnapshot } from '../../../helpers';
 import { promises as fsPromises } from 'fs';
 import chai from 'chai';
 import execa from 'execa';
@@ -42,7 +42,7 @@ describe('in place', () => {
 
   it('should report correct score', async () => {
     execa.sync('stryker', ['run']);
-    await expectMetrics({ mutationScore: 73.68 });
+    await expectMetricsJsonToMatchSnapshot();
   });
 
   it('should also reset the files if Stryker exits unexpectedly', async () => {

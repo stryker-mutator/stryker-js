@@ -5,7 +5,7 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "symlinkNodeModules": false,
-  "reporters": ["progress", "clear-text", "event-recorder"],
+  "reporters": ["json", "progress", "clear-text", "event-recorder"],
   "buildCommand": "node webpack-run.js",
   "mochaOptions": {
     "package": "package.json",

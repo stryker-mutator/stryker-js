@@ -4,6 +4,7 @@
   ],
   "testRunner": "karma",
   "reporters": [
+    "json",
     "clear-text",
     "html",
     "event-recorder"

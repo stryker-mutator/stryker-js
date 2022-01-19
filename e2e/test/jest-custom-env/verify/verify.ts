@@ -1,13 +1,8 @@
 
-import { expectMetrics } from '../../../helpers';
+import { expectMetricsJsonToMatchSnapshot } from '../../../helpers';
 
 describe('After running stryker with test runner jest on test environment "node"', () => {
   it('should report 75% mutation score', async () => {
-    await expectMetrics({
-      killed: 24,
-      mutationScore: 75,
-      noCoverage: 3,
-      survived: 5,
-    });
+    await expectMetricsJsonToMatchSnapshot();
   });
 });

@@ -1,10 +1,22 @@
 import { promises as fsPromises } from 'fs';
 
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { expect } from 'chai';
+import chai from 'chai';
 import path from 'path';
 import { calculateMutationTestMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
 import { execSync, ExecException } from 'child_process';
+import chaiJestSnapshot from "chai-jest-snapshot";
+const { expect } = chai;
+
+chai.use(chaiJestSnapshot);
+
+before(function() {
+  chaiJestSnapshot.resetSnapshotRegistry();
+});
+
+beforeEach(function() {
+  chaiJestSnapshot.configureUsingMochaContext(this);
+});
 
 interface PipedStdioSyncExecException extends ExecException {
   stdout: Uint8Array;
@@ -86,29 +98,9 @@ export async function expectMetricsResult(expectedMetricsResult: Partial<Metrics
   expect(actualSnippet).deep.eq(expectedMetricsResult);
 }
 
-export async function expectMetricsJson(expectedMetrics: Partial<Metrics>) {
+export async function expectMetricsJsonToMatchSnapshot() {
   const actualMetricsResult = await readMutationTestingJsonResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
-}
-
-/**
- * @deprecated please use expectMetricsJson instead (and activate the json reporter)
- */
-export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
-  const actualMetricsResult = await readMutationTestResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
-}
-
-export function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
-  const actualMetrics: Partial<Metrics> = {};
-  Object.entries(expectedMetrics).forEach(([key]) => {
-    if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {
-      actualMetrics[key] = parseFloat(actualMetricsResult.metrics[key].toFixed(2));
-    } else {
-      actualMetrics[key as keyof Metrics] = actualMetricsResult.metrics[key as keyof Metrics];
-    }
-  });
-  expect(actualMetrics).deep.eq(expectedMetrics);
+  expect(actualMetricsResult.systemUnderTestMetrics.metrics).to.matchSnapshot();
 }
 
 export function produceMetrics(metrics: Partial<Metrics>): Metrics {
