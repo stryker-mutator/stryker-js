@@ -36,7 +36,7 @@ export class TypescriptChecker implements Checker {
 
   private sourceFiles: SourceFiles = {};
 
-  constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) {}
+  constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) { }
 
   public async init(): Promise<void> {
     const { dependencyFiles, errors } = await this.tsCompiler.init();
@@ -59,6 +59,9 @@ export class TypescriptChecker implements Checker {
         errors: [],
       };
     });
+
+    // We allow people to mutate files that are not included in this ts project
+    mutants = mutants.filter((mutant) => this.fs.existsInMemory(mutant.fileName));
 
     const errors = await this.typeCheckMutants(mutants);
     const mutantsToTestIndividual = new Set<Mutant>();
@@ -100,10 +103,12 @@ export class TypescriptChecker implements Checker {
     });
   }
 
-  private async typeCheckMutants(mutants: Mutant[]) {
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).mutate(mutant));
+  private async typeCheckMutants(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
+    if (mutants.length === 0) return [];
+
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.mutate(mutant));
     const errors = await this.tsCompiler.check();
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName).reset());
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.reset());
     return errors;
   }
 
