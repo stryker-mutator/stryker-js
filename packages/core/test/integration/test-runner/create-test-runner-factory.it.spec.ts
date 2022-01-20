@@ -15,7 +15,7 @@ import { TestRunnerResource } from '../../../src/concurrent';
 
 import { CounterTestRunner } from './additional-test-runners';
 
-describe.only(`${createTestRunnerFactory.name} integration`, () => {
+describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
   let sut: TestRunnerResource;
   let loggingContext: LoggingClientContext;
@@ -190,17 +190,22 @@ describe.only(`${createTestRunnerFactory.name} integration`, () => {
       await arrangeSut('static');
     });
 
-    it('should not reload environment for a non-static mutant', async () => {
-      const testFilter = ['1'];
-      const result1 = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter }));
-      const result2 = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter }));
-      assertions.expectKilled(result1);
-      assertions.expectSurvived(result2);
+    it('should not reload environment when reloadEnvironment = false', async () => {
+      const result1 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      const result2 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      assertions.expectKilled(result1); // killed means it was the first run in the environment
+      assertions.expectSurvived(result2); // survived means it was the second run in the environment
     });
 
-    it('should reload environment for a static mutant', async () => {
-      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '1' }), testFilter: ['1'] }));
-      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), testFilter: undefined }));
+    it('should reload environment when reloadEnvironment is true', async () => {
+      await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
+      assertions.expectKilled(result);
+    });
+
+    it('should reload environment when reloadEnvironment is true and dry run came before', async () => {
+      await actDryRun();
+      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
       assertions.expectKilled(result);
     });
   });

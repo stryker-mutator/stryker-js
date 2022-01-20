@@ -12,6 +12,7 @@ import {
   DryRunOptions,
   MutantRunOptions,
   TestRunnerCapabilities,
+  toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -169,19 +170,21 @@ class AsynchronousPromiseRejectionHandlerTestRunner extends NotImplementedTestRu
 }
 
 class StaticMutantTestRunner extends NotImplementedTestRunner {
+  private count = 0;
+
   public override async capabilities(): Promise<TestRunnerCapabilities> {
     return { reloadEnvironment: false };
   }
-  public override async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    // Set the env variable and then load the active-mutant.js file, which reads it on load.
-    // If it was the second run, it would result in survived
-    process.env.activeMutant = options.activeMutant.id;
-    const { activeMutant } = await import('./active-mutant.js');
-    if (activeMutant === options.activeMutant.id) {
-      return factory.killedMutantRunResult();
+  public override async dryRun(): Promise<DryRunResult> {
+    this.count++;
+    if (this.count === 1) {
+      return factory.completeDryRunResult({ tests: [factory.failedTestResult()] });
     } else {
-      return factory.survivedMutantRunResult();
+      return factory.completeDryRunResult({ tests: [factory.successTestResult()] });
     }
+  }
+  public override async mutantRun(): Promise<MutantRunResult> {
+    return toMutantRunResult(await this.dryRun());
   }
 }
 
