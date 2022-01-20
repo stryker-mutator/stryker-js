@@ -13,6 +13,7 @@ import {
   ErrorDryRunResult,
   DryRunOptions,
   determineHitLimitReached,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
 
@@ -52,6 +53,10 @@ export class JasmineTestRunner implements TestRunner {
   ) {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
     this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
+  }
+
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {

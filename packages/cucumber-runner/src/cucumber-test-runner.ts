@@ -15,6 +15,7 @@ import {
   MutantRunResult,
   TestResult,
   TestRunner,
+  TestRunnerCapabilities,
   TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
@@ -66,6 +67,10 @@ export class CucumberTestRunner implements TestRunner {
   }
 
   private readonly directoryRequireCache = new DirectoryRequireCache();
+
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
+  }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     StrykerFormatter.coverageAnalysis = options.coverageAnalysis;

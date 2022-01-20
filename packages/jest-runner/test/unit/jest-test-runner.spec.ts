@@ -3,7 +3,7 @@ import path from 'path';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 import * as util from '@stryker-mutator/util';
@@ -63,6 +63,13 @@ describe(JestTestRunner.name, () => {
     });
   });
 
+  describe('capabilities', () => {
+    it('should communicate reloadEnvironment=true', () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      expect(createSut().capabilities()).deep.eq(expectedCapabilities);
+    });
+  });
+
   describe('dryRun', () => {
     it('should call the run function with the provided config and the projectRoot', async () => {
       const sut = createSut();
@@ -93,9 +100,9 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = false when disableBail', async () => {
+    it("should set bail = false (process is exited if we don't)", async () => {
       const sut = createSut();
-      await sut.dryRun({ coverageAnalysis: 'off', disableBail: true });
+      await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({

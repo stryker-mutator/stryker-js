@@ -8,7 +8,7 @@ import sinon from 'sinon';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import { Task } from '@stryker-mutator/util';
 
-import { DryRunOptions, MutantRunOptions, TestStatus } from '@stryker-mutator/api/test-runner';
+import { DryRunOptions, MutantRunOptions, TestRunnerCapabilities, TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
@@ -42,6 +42,13 @@ describe(KarmaTestRunner.name, () => {
   function createSut() {
     return testInjector.injector.injectClass(KarmaTestRunner);
   }
+
+  describe('capabilities', () => {
+    it('should communicate reloadEnvironment=true', () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      expect(createSut().capabilities()).deep.eq(expectedCapabilities);
+    });
+  });
 
   it('should load default setup', () => {
     createSut();

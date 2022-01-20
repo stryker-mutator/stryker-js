@@ -6,3 +6,4 @@ export * from './run-options';
 export * from './mutant-run-result';
 export * from './dry-run-status';
 export * from './run-result-helpers';
+export * from './test-runner-capabilities';

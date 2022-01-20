@@ -40,7 +40,7 @@ export class MutationTestReportHelper {
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
     return this.reportOne({
-      ...pruneBookkeepingFields(mutant),
+      ...mutant,
       status: this.checkStatusToResultStatus(checkResult.status),
       statusReason: checkResult.reason,
     });
@@ -48,14 +48,13 @@ export class MutationTestReportHelper {
 
   public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
     return this.reportOne({
-      ...pruneBookkeepingFields(mutant),
+      ...mutant,
       status,
     });
   }
 
-  public reportMutantRunResult(mutantTestCoverage: MutantTestCoverage, result: MutantRunResult): MutantResult {
+  public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
     // Prune fields used for Stryker bookkeeping
-    const mutant = pruneBookkeepingFields(mutantTestCoverage);
     switch (result.status) {
       case MutantRunStatus.Error:
         return this.reportOne({
@@ -286,12 +285,4 @@ export class MutationTestReportHelper {
       return acc;
     }, {});
   }
-}
-
-/**
- * Create a new mutant based on the MutantTestCoverage, but without the bookkeeping fields.
- */
-function pruneBookkeepingFields(mutantTestCoverage: MutantTestCoverage) {
-  const { estimatedNetTime, testFilter, hitCount, ...mutant } = mutantTestCoverage;
-  return mutant;
 }
