@@ -8,6 +8,7 @@ import { Resource } from '../concurrent/pool';
 
 import { CheckerWorker } from './checker-worker';
 
+/* not documented should have a better documentation */
 export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
