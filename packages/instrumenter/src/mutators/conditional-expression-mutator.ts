@@ -14,6 +14,22 @@ export const conditionalExpressionMutator: NodeMutator = {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
     } else if (isBooleanExpression(path)) {
+      if (path.parent?.type === 'LogicalExpression') {
+        // For (x || y), do not generate the (true || y) mutation as it
+        // has the same behavior as the (true) mutator, handled in the
+        // isTestOfCondition branch above
+        if (path.parent.operator === '||') {
+          yield types.booleanLiteral(false);
+          return;
+        }
+        // For (x && y), do not generate the (false && y) mutation as it
+        // has the same behavior as the (false) mutator, handled in the
+        // isTestOfCondition branch above
+        if (path.parent.operator === '&&') {
+          yield types.booleanLiteral(true);
+          return;
+        }
+      }
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
     } else if (path.isForStatement() && !path.node.test) {
