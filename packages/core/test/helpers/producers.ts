@@ -67,6 +67,7 @@ export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Check
 
 export const logger = (): Mock<Logger> => {
   return {
+    category: 'foo-category',
     _log: sinon.stub(),
     addContext: sinon.stub(),
     clearContext: sinon.stub(),
