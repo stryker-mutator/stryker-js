@@ -4,7 +4,7 @@
   "testRunner": "mocha",
   "concurrency": 1,
   "coverageAnalysis": "perTest",
-  "reporters": ["json", "event-recorder", "html", "progress", "clear-text"],
+  "reporters": ["json", "html", "progress", "clear-text"],
   "checkers": ["typescript"],
   "tsconfigFile": "tsconfig.json",
   "buildCommand": "npm run build",
