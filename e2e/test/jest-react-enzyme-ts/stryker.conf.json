@@ -6,6 +6,7 @@
   "concurrency": 2,
   "coverageAnalysis": "off",
   "reporters": [
+    "json",
     "event-recorder",
     "progress",
     "clear-text",
