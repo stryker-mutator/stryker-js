@@ -3,18 +3,18 @@ import { promises as fsPromises } from 'fs';
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
 import chai from 'chai';
 import path from 'path';
-import { calculateMutationTestMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
+import { calculateMutationTestMetrics, Metrics } from 'mutation-testing-metrics';
 import { execSync, ExecException } from 'child_process';
-import chaiJestSnapshot from "chai-jest-snapshot";
+import chaiJestSnapshot from 'chai-jest-snapshot';
 const { expect } = chai;
 
 chai.use(chaiJestSnapshot);
 
-before(function() {
+before(function () {
   chaiJestSnapshot.resetSnapshotRegistry();
 });
 
-beforeEach(function() {
+beforeEach(function () {
   chaiJestSnapshot.configureUsingMochaContext(this);
 });
 
