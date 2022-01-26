@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+
+### Bug Fixes
+
+* **typescript cheker:** prevent unintentional declarationDir error ([#3358](https://github.com/stryker-mutator/stryker-js/issues/3358)) ([3b510e2](https://github.com/stryker-mutator/stryker-js/commit/3b510e2b28515d325d3583d500743064f5b156a7))
+
+
+
+
+
 # [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
 
 

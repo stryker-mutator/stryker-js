@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+
+### Bug Fixes
+
+* **deps:** remove vulnerability by updating log4js ([#3372](https://github.com/stryker-mutator/stryker-js/issues/3372)) ([69290f2](https://github.com/stryker-mutator/stryker-js/commit/69290f287f30eee9fac96dc32bd1df2f24180b07)), closes [/github.com/log4js-node/log4js-node/blob/master/CHANGELOG.md#640](https://github.com//github.com/log4js-node/log4js-node/blob/master/CHANGELOG.md/issues/640)
+* **mutators:** avoid creating some unnecessary mutations ([#3346](https://github.com/stryker-mutator/stryker-js/issues/3346)) ([0f60ecf](https://github.com/stryker-mutator/stryker-js/commit/0f60ecf2159490d6fa411ea3fa0c3a091fcdd8fa))
+* **typescript cheker:** prevent unintentional declarationDir error ([#3358](https://github.com/stryker-mutator/stryker-js/issues/3358)) ([3b510e2](https://github.com/stryker-mutator/stryker-js/commit/3b510e2b28515d325d3583d500743064f5b156a7))
+
+
+
+
+
 # [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
 
 
