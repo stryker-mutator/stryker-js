@@ -87,6 +87,7 @@ export function createMutantEarlyResultPlan(overrides?: Partial<MutantEarlyResul
 
 export const logger = (): Mock<Logger> => {
   return {
+    category: 'foo-category',
     _log: sinon.stub(),
     addContext: sinon.stub(),
     clearContext: sinon.stub(),

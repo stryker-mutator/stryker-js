@@ -4,6 +4,7 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "reporters": [
+    "json",
     "clear-text",
     "html",
     "event-recorder"
