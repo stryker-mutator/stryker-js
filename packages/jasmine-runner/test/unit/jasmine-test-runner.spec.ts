@@ -12,7 +12,7 @@ import { JasmineTestRunner } from '../../src';
 import { expectTestResultsToEqual } from '../helpers/assertions';
 import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult } from '../helpers/mock-factories';
 
-describe.only(JasmineTestRunner.name, () => {
+describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
   let jasmineStub: sinon.SinonStubbedInstance<jasmine>;
   let jasmineEnvStub: sinon.SinonStubbedInstance<jasmine.Env>;
@@ -273,8 +273,19 @@ describe.only(JasmineTestRunner.name, () => {
       const result = await sut.dryRun(factory.dryRunOptions());
       assertions.expectErrored(result);
       expect(result.errorMessage)
-        .matches(/An error occurred while loading your jasmine specs.*/)
+        .matches(/An error occurred.*/)
         .and.matches(/.*Error: foobar.*/);
+    });
+
+    it('should throw when the reporter doesn\'t report "jasmineDone"', async () => {
+      jasmineStub.execute.resolves(createJasmineDoneInfo());
+
+      // Act
+      const actualResult = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
+      assertions.expectErrored(actualResult);
+      expect(actualResult.errorMessage).contains('Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen');
     });
   });
 });

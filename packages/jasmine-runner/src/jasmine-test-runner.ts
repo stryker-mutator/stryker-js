@@ -108,7 +108,7 @@ export class JasmineTestRunner implements TestRunner {
       return result;
     } catch (error) {
       const errorResult: ErrorDryRunResult = {
-        errorMessage: `An error occurred while loading your jasmine specs${EOL}${errorToString(error)}`,
+        errorMessage: `An error occurred${EOL}${errorToString(error)}`,
         status: DryRunStatus.Error,
       };
       return errorResult;

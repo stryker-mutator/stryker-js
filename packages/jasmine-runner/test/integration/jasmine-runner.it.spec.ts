@@ -54,7 +54,7 @@ describe('JasmineRunner integration', () => {
       const result = await sut.dryRun(factory.dryRunOptions());
       assertions.expectErrored(result);
       expect(result.errorMessage)
-        .matches(/^An error occurred while loading your jasmine specs.*/)
+        .matches(/^An error occurred.*/)
         .matches(/.*SyntaxError: Unexpected identifier.*/);
     });
   });
