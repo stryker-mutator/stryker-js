@@ -15,11 +15,12 @@ import {
   determineHitLimitReached,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
-import { errorToString, Task, DirectoryRequireCache, I } from '@stryker-mutator/util';
+import { errorToString } from '@stryker-mutator/util';
+import jasmine from 'jasmine';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
 
-import { Jasmine, toStrykerTestResult } from './helpers';
+import { createJasmine, toStrykerTestResult } from './helpers';
 import * as pluginTokens from './plugin-tokens';
 
 export function createJasmineTestRunnerFactory(
@@ -30,10 +31,7 @@ export function createJasmineTestRunnerFactory(
 } {
   createJasmineTestRunner.inject = tokens(commonTokens.injector);
   function createJasmineTestRunner(injector: Injector<PluginContext>) {
-    return injector
-      .provideClass(pluginTokens.directoryRequireCache, DirectoryRequireCache)
-      .provideValue(pluginTokens.globalNamespace, namespace)
-      .injectClass(JasmineTestRunner);
+    return injector.provideValue(pluginTokens.globalNamespace, namespace).injectClass(JasmineTestRunner);
   }
   return createJasmineTestRunner;
 }
@@ -45,18 +43,15 @@ export class JasmineTestRunner implements TestRunner {
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
   private readonly instrumenterContext: InstrumenterContext;
 
-  public static inject = tokens(commonTokens.options, pluginTokens.directoryRequireCache, pluginTokens.globalNamespace);
-  constructor(
-    options: StrykerOptions,
-    private readonly requireCache: I<DirectoryRequireCache>,
-    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
-  ) {
+  public static inject = tokens(commonTokens.options, pluginTokens.globalNamespace);
+  constructor(options: StrykerOptions, globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__') {
     this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
     this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
   public capabilities(): TestRunnerCapabilities {
-    return { reloadEnvironment: true };
+    // Jasmine uses `import` to load the files. We can't unload them after.
+    return { reloadEnvironment: false };
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -71,18 +66,17 @@ export class JasmineTestRunner implements TestRunner {
     return toMutantRunResult(runResult, true);
   }
 
-  public async dispose(): Promise<void> {
-    this.requireCache.clear();
-  }
-
   private async run(testFilter: string[] | undefined, coverageAnalysis: CoverageAnalysis | undefined, disableBail: boolean): Promise<DryRunResult> {
-    this.requireCache.clear();
     try {
-      const jasmine = this.createJasmineRunner(testFilter, disableBail);
+      if (!this.jasmine) {
+        this.jasmine = await this.createAndConfigureJasmineRunner(disableBail);
+      }
+      const jasmineInstance: jasmine = this.jasmine;
+      this.specIdsFilter = testFilter;
       const self = this;
       const tests: TestResult[] = [];
-      const runTask = new Task<DryRunResult>();
       let startTimeCurrentSpec = 0;
+      let result: DryRunResult | undefined;
       const reporter: jasmine.CustomReporter = {
         specStarted(spec) {
           if (coverageAnalysis && coverageAnalysis === 'perTest') {
@@ -90,36 +84,27 @@ export class JasmineTestRunner implements TestRunner {
           }
           startTimeCurrentSpec = new self.Date().getTime();
         },
-        specDone(result: jasmine.CustomReporterResult) {
-          tests.push(toStrykerTestResult(result, new self.Date().getTime() - startTimeCurrentSpec));
+        specDone(specResult: jasmine.SpecResult) {
+          tests.push(toStrykerTestResult(specResult, new self.Date().getTime() - startTimeCurrentSpec));
         },
         jasmineDone() {
-          self.requireCache.record();
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
             mutantCoverage = self.instrumenterContext.mutantCoverage;
           }
-          const timeoutResult = determineHitLimitReached(self.instrumenterContext.hitCount, self.instrumenterContext.hitLimit);
-          if (timeoutResult) {
-            runTask.resolve(timeoutResult);
-            return;
-          }
-          runTask.resolve({
+          result = determineHitLimitReached(self.instrumenterContext.hitCount, self.instrumenterContext.hitLimit) ?? {
             status: DryRunStatus.Complete,
             tests,
             mutantCoverage,
-          });
+          };
         },
       };
-
-      jasmine.env.addReporter(reporter);
-      const maybePromise = jasmine.execute();
-      if (maybePromise) {
-        maybePromise.catch((err) => {
-          runTask.reject(err);
-        });
+      jasmineInstance.env.clearReporters();
+      jasmineInstance.env.addReporter(reporter);
+      await jasmineInstance.execute();
+      if (!result) {
+        throw new Error('Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen');
       }
-      const result = await runTask.promise;
       return result;
     } catch (error) {
       const errorResult: ErrorDryRunResult = {
@@ -130,24 +115,31 @@ export class JasmineTestRunner implements TestRunner {
     }
   }
 
-  private createJasmineRunner(testFilter: string[] | undefined, disableBail: boolean) {
-    let specFilter: ((spec: jasmine.Spec) => boolean) | undefined = undefined;
-    if (testFilter) {
-      specFilter = (spec) => testFilter.includes(spec.id.toString());
-    }
-    const jasmine = new Jasmine({ projectBaseDir: process.cwd() });
+  private jasmine?: jasmine;
+  private specIdsFilter?: string[];
+
+  private async createAndConfigureJasmineRunner(disableBail: boolean): Promise<jasmine> {
+    const specFilter = (spec: jasmine.Spec): boolean => {
+      return this.specIdsFilter?.includes(spec.id.toString()) ?? true;
+    };
+    const jasmineInstance = createJasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default
-    jasmine.loadConfigFile(this.jasmineConfigFile);
-    jasmine.env.configure({
+    await jasmineInstance.loadConfigFile(this.jasmineConfigFile);
+    jasmineInstance.env.configure({
+      // from jasmine 4
+      stopOnSpecFailure: !disableBail,
+      stopSpecOnExpectationFailure: true,
+
+      // jasmine 3
       failFast: !disableBail,
       oneFailurePerSpec: true,
+
+      // Always
+      random: false,
+      autoCleanClosures: false,
       specFilter,
     });
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    jasmine.exit = () => {};
-    jasmine.env.clearReporters();
-    jasmine.randomizeTests(false);
-    return jasmine;
+    jasmineInstance.exitOnCompletion = false;
+    return jasmineInstance;
   }
 }

@@ -13,7 +13,6 @@ export const mochaHooks = {
     delete global.__stryker2__?.activeMutant;
     delete global.__stryker2__?.currentTestId;
     delete global.__stryker2__?.mutantCoverage;
-    global.__testsInCurrentJasmineRun = [];
 
     sinon.restore();
     testInjector.reset();
