@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { factory, assertions, testInjector, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
@@ -16,7 +14,6 @@ describe('JasmineRunner integration', () => {
 
   afterEach(async () => {
     process.chdir(resolveFromRoot());
-    await fs.promises.rm(tmpDir, { recursive: true });
   });
 
   describe('using the jasmine-init project', () => {

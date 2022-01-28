@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { factory, testInjector, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
@@ -17,10 +15,6 @@ describe('JasmineRunner integration with code instrumentation', () => {
     await fsPromisesCp(resolveTestResource('jasmine-init-instrumented'), tmpDir, { recursive: true });
     process.chdir(tmpDir);
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-  });
-
-  afterEach(async () => {
-    await fs.promises.rm(tmpDir, { recursive: true });
   });
 
   describe('dryRun', () => {

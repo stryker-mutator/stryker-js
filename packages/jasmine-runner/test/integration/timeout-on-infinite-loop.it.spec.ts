@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -18,7 +16,6 @@ describe('Infinite loop', () => {
   });
   afterEach(async () => {
     process.chdir(resolveFromRoot());
-    await fs.promises.rm(tmpDir, { recursive: true });
   });
 
   it('should be able to recover using a hit counter', async () => {
