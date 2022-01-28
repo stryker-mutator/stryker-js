@@ -39,8 +39,8 @@
     "node": ">=12"
   },
   "dependencies": {
-    "mutation-testing-metrics": "1.7.8",
-    "mutation-testing-report-schema": "1.7.8",
+    "mutation-testing-metrics": "1.7.10",
+    "mutation-testing-report-schema": "1.7.10",
     "tslib": "~2.3.0"
   },
   "devDependencies": {
