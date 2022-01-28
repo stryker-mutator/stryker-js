@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`esm should be supported in the mocha runner 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 5,
+  "mutationScore": 55.55555555555556,
+  "mutationScoreBasedOnCoveredCode": 71.42857142857143,
+  "noCoverage": 2,
+  "runtimeErrors": 0,
+  "survived": 2,
+  "timeout": 0,
+  "totalCovered": 7,
+  "totalDetected": 5,
+  "totalInvalid": 0,
+  "totalMutants": 9,
+  "totalUndetected": 4,
+  "totalValid": 9,
+}
+`;

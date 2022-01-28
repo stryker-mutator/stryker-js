@@ -55,9 +55,9 @@ export class MochaOptionsLoader {
 
   private loadMocha6Options(overrides: MochaOptions) {
     const args = serializeMochaLoadOptionsArguments(overrides);
-    const rawConfig = LibWrapper.loadOptions!(args) ?? {};
+    const rawConfig = LibWrapper.loadOptions(args) ?? {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${LibWrapper.loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     return options;

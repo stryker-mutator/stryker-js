@@ -13,6 +13,10 @@ describe('Running a project with root hooks', () => {
     await sut.init();
   });
 
+  afterEach(async () => {
+    await sut.dispose();
+  });
+
   it('should have run the root hooks', async () => {
     const result = await sut.dryRun(factory.dryRunOptions({}));
     assertions.expectCompleted(result);

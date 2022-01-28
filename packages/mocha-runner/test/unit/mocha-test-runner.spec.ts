@@ -18,6 +18,7 @@ describe(MochaTestRunner.name, () => {
   let mochaAdapterMock: sinon.SinonStubbedInstance<MochaAdapter>;
   let mochaOptionsLoaderMock: sinon.SinonStubbedInstance<MochaOptionsLoader>;
   let reporterMock: sinon.SinonStubbedInstance<StrykerMochaReporter>;
+  let testFileNames: string[];
 
   beforeEach(() => {
     reporterMock = sinon.createStubInstance(StrykerMochaReporter);
@@ -27,7 +28,10 @@ describe(MochaTestRunner.name, () => {
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
     mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
+    mocha.suite.suites = [];
     mochaAdapterMock.create.returns(mocha as unknown as Mocha);
+    testFileNames = [];
+    mochaAdapterMock.collectFiles.returns(testFileNames);
   });
 
   afterEach(() => {
@@ -52,9 +56,9 @@ describe(MochaTestRunner.name, () => {
   });
 
   describe('capabilities', () => {
-    it('should communicate reloadEnvironment=true', () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
-      expect(createSut().capabilities()).deep.eq(expectedCapabilities);
+    it('should communicate reloadEnvironment=false', async () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+      expect(await createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
 
@@ -71,15 +75,16 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should collect the files', async () => {
-      const expectedTestFileNames = ['foo.js', 'foo.spec.js'];
+      testFileNames.push('foo.js', 'foo.spec.js');
       const mochaOptions = Object.freeze(createMochaOptions());
       mochaOptionsLoaderMock.load.returns(mochaOptions);
-      mochaAdapterMock.collectFiles.returns(expectedTestFileNames);
 
       await sut.init();
 
       expect(mochaAdapterMock.collectFiles).calledWithExactly(mochaOptions);
-      expect(sut.testFileNames).eq(expectedTestFileNames);
+      testFileNames.forEach((fileName) => {
+        expect(mocha.addFile).calledWith(fileName);
+      });
     });
 
     it('should not handle requires when there are no `requires`', async () => {
@@ -97,7 +102,8 @@ describe(MochaTestRunner.name, () => {
 
       await sut.init();
 
-      expect(sut.rootHooks).eq(expectedRootHooks);
+      const expectedMochaOptions: Mocha.MochaOptions = { rootHooks: expectedRootHooks };
+      expect(mochaAdapterMock.create).calledWith(sinon.match(expectedMochaOptions));
     });
 
     it('should reject when requires contains "esm" (see #3014)', async () => {
@@ -107,29 +113,22 @@ describe(MochaTestRunner.name, () => {
         'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
       );
     });
-  });
-
-  describe(MochaTestRunner.prototype.dryRun.name, () => {
-    let sut: MochaTestRunner;
-    let testFileNames: string[];
-    beforeEach(() => {
-      testFileNames = [];
-      sut = createSut();
-      sut.testFileNames = testFileNames;
-      sut.mochaOptions = {};
-    });
 
     it('should pass along supported options to mocha', async () => {
       // Arrange
-      testFileNames.push('foo.js', 'bar.js', 'foo2.js');
-      sut.mochaOptions['async-only'] = true;
-      sut.mochaOptions.grep = 'grepme';
-      sut.mochaOptions.opts = 'opts';
-      sut.mochaOptions.require = [];
-      sut.mochaOptions.ui = 'exports';
+      const mochaOptions = Object.freeze(
+        createMochaOptions({
+          'async-only': true,
+          grep: 'grepme',
+          opts: 'opts',
+          require: [],
+          ui: 'exports',
+        })
+      );
+      mochaOptionsLoaderMock.load.returns(mochaOptions);
 
       // Act
-      await actDryRun();
+      await sut.init();
 
       // Assert
       expect(mocha.asyncOnly).called;
@@ -138,59 +137,81 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should force timeout off', async () => {
+      mochaOptionsLoaderMock.load.returns({});
+      await sut.init();
+      expect(mochaAdapterMock.create).calledWithMatch({ timeout: 0 });
+    });
+
+    it('should not set asyncOnly if asyncOnly is false', async () => {
+      // Arrange
+      const mochaOptions = Object.freeze(
+        createMochaOptions({
+          'async-only': false,
+        })
+      );
+      mochaOptionsLoaderMock.load.returns(mochaOptions);
+
+      // Act
+      await sut.init();
+      expect(mocha.asyncOnly).not.called;
+    });
+  });
+
+  describe(MochaTestRunner.prototype.dryRun.name, () => {
+    let sut: MochaTestRunner;
+    beforeEach(async () => {
+      mochaOptionsLoaderMock.load.returns({});
+      sut = createSut();
+      await sut.init();
+    });
+
+    it('should load files the first time', async () => {
       await actDryRun();
-      expect(mochaAdapterMock.create).calledWithMatch({ timeout: false });
+      expect(mocha.loadFilesAsync).calledOnceWithExactly();
+      expect(mocha.loadFilesAsync).calledBefore(mocha.run);
+    });
+
+    it('should not load files again the second time', async () => {
+      await actDryRun();
+      await actDryRun();
+      expect(mocha.loadFilesAsync).calledOnceWithExactly();
     });
 
     it('should set bail to true when disableBail is false', async () => {
+      const childSuite = sinon.createStubInstance(Mocha.Suite);
+      mocha.suite.suites.push(childSuite);
+      childSuite.suites = [];
       await actDryRun(factory.dryRunOptions({ disableBail: false }));
-      expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
+      expect(mocha.suite.bail).calledWith(true);
+      expect(childSuite.bail).calledWith(true);
     });
 
     it('should set bail to false when disableBail is true', async () => {
+      const childSuite = sinon.createStubInstance(Mocha.Suite);
+      mocha.suite.suites.push(childSuite);
+      childSuite.suites = [];
       await actDryRun(factory.dryRunOptions({ disableBail: true }));
-      expect(mochaAdapterMock.create).calledWithMatch({ bail: false });
-    });
-
-    it("should don't set asyncOnly if asyncOnly is false", async () => {
-      sut.mochaOptions['async-only'] = false;
-      await actDryRun();
-      expect(mocha.asyncOnly).not.called;
-    });
-
-    it('should pass rootHooks to the mocha instance', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const rootHooks = { beforeEach() {} };
-      sut.rootHooks = rootHooks;
-      await actDryRun();
-      expect(mochaAdapterMock.create).calledWithMatch({ rootHooks });
-    });
-
-    it('should add collected files ', async () => {
-      sut.testFileNames!.push('foo.js', 'bar.js', 'foo2.js');
-      await actDryRun();
-      expect(mocha.addFile).calledThrice;
-      expect(mocha.addFile).calledWith('foo.js');
-      expect(mocha.addFile).calledWith('foo2.js');
-      expect(mocha.addFile).calledWith('bar.js');
+      expect(mocha.suite.bail).calledWith(false);
+      expect(childSuite.bail).calledWith(false);
     });
 
     it('should add a beforeEach hook if coverage analysis is "perTest"', async () => {
-      testFileNames.push('');
-      await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-      expect(mocha.suite.beforeEach).calledWithMatch('StrykerIntercept', sinon.match.func);
-      mocha.suite.beforeEach.callArgOnWith(1, { currentTest: { fullTitle: () => 'foo should be bar' } });
+      const runPromise = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+      sut.beforeEach!({ currentTest: { fullTitle: () => 'foo should be bar' } } as Mocha.Context);
+      mocha.run.callsArg(0);
+      await runPromise;
+      expect(sut.beforeEach).undefined;
       expect(global.__stryker2__?.currentTestId).eq('foo should be bar');
     });
 
     it('should not add a beforeEach hook if coverage analysis isn\'t "perTest"', async () => {
-      testFileNames.push('');
-      await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
-      expect(mocha.suite.beforeEach).not.called;
+      const runPromise = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      expect(sut.beforeEach).undefined;
+      mocha.run.callsArg(0);
+      await runPromise;
     });
 
     it('should collect mutant coverage', async () => {
-      testFileNames.push('');
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
       global.__stryker2__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
@@ -200,7 +221,6 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should not collect mutant coverage if coverageAnalysis is "off"', async () => {
-      testFileNames.push('');
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
       global.__stryker2__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
@@ -210,7 +230,6 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should result in the reported tests', async () => {
-      testFileNames.push('');
       const expectedTests = [factory.successTestResult(), factory.failedTestResult()];
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = expectedTests;
@@ -220,58 +239,47 @@ describe(MochaTestRunner.name, () => {
     });
 
     it("should result an error if the StrykerMochaReporter isn't set correctly", async () => {
-      testFileNames.push('');
       const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
       assertions.expectErrored(result);
       expect(result.errorMessage).eq("Mocha didn't instantiate the StrykerMochaReporter correctly. Test result cannot be reported.");
     });
 
-    it('should collect and purge the requireCache between runs', async () => {
-      // Arrange
-      testFileNames.push('');
-
-      // Act
-      await actDryRun(factory.dryRunOptions());
-
-      // Assert
-      expect(directoryRequireCacheMock.clear).called;
-      expect(directoryRequireCacheMock.record).called;
-      expect(directoryRequireCacheMock.clear).calledBefore(directoryRequireCacheMock.record);
-    });
-
-    it('should dispose of mocha when it supports it', async () => {
-      await actDryRun();
-      expect(mocha.dispose).called;
-    });
-
     async function actDryRun(options = factory.dryRunOptions()) {
-      mocha.run.onFirstCall().callsArg(0);
+      mocha.run.callsArg(0);
       return sut.dryRun(options);
     }
   });
 
   describe(MochaTestRunner.prototype.mutantRun.name, () => {
     let sut: MochaTestRunner;
-    beforeEach(() => {
+    beforeEach(async () => {
+      mochaOptionsLoaderMock.load.returns({});
       sut = createSut();
-      sut.testFileNames = [];
-      sut.mochaOptions = {};
+      await sut.init();
       StrykerMochaReporter.currentInstance = reporterMock;
     });
 
     it('should activate the given mutant', async () => {
-      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '42' }) }));
+      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }) }));
       expect(global.__stryker2__?.activeMutant).eq('42');
     });
 
-    it('should set bail to false when disableBail is true', async () => {
-      await actMutantRun(factory.mutantRunOptions({ disableBail: true }));
-      expect(mochaAdapterMock.create).calledWithMatch({ bail: false });
+    it('should set bail to true when disableBail is false', async () => {
+      const childSuite = sinon.createStubInstance(Mocha.Suite);
+      mocha.suite.suites.push(childSuite);
+      childSuite.suites = [];
+      await actMutantRun(factory.mutantRunOptions({ disableBail: false }));
+      expect(mocha.suite.bail).calledWith(true);
+      expect(childSuite.bail).calledWith(true);
     });
 
-    it('should set bail to true when disableBail is false', async () => {
-      await actMutantRun(factory.mutantRunOptions({ disableBail: false }));
-      expect(mochaAdapterMock.create).calledWithMatch({ bail: true });
+    it('should set bail to false when disableBail is true', async () => {
+      const childSuite = sinon.createStubInstance(Mocha.Suite);
+      mocha.suite.suites.push(childSuite);
+      childSuite.suites = [];
+      await actMutantRun(factory.mutantRunOptions({ disableBail: true }));
+      expect(mocha.suite.bail).calledWith(false);
+      expect(childSuite.bail).calledWith(false);
     });
 
     it('should use `grep` to when the test filter is specified', async () => {
@@ -324,5 +332,19 @@ describe(MochaTestRunner.name, () => {
       global.__stryker2__!.hitCount = hitCount;
       return result;
     }
+  });
+
+  describe(MochaTestRunner.prototype.dispose.name, () => {
+    let sut: MochaTestRunner;
+    beforeEach(async () => {
+      mochaOptionsLoaderMock.load.returns({});
+      sut = createSut();
+      await sut.init();
+    });
+
+    it('should dispose of mocha', async () => {
+      await sut.dispose();
+      expect(mocha.dispose).called;
+    });
   });
 });
