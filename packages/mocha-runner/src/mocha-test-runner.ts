@@ -70,7 +70,7 @@ export class MochaTestRunner implements TestRunner {
     }
     this.mocha = this.mochaAdapter.create({
       reporter: StrykerMochaReporter as any,
-      timeout: false as any, // Mocha 5 doesn't support `0`
+      timeout: 0,
       rootHooks,
     });
     this.mocha.cleanReferencesAfterRun(false);

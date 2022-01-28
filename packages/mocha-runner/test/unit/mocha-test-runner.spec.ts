@@ -139,7 +139,7 @@ describe(MochaTestRunner.name, () => {
     it('should force timeout off', async () => {
       mochaOptionsLoaderMock.load.returns({});
       await sut.init();
-      expect(mochaAdapterMock.create).calledWithMatch({ timeout: false });
+      expect(mochaAdapterMock.create).calledWithMatch({ timeout: 0 });
     });
 
     it('should not set asyncOnly if asyncOnly is false', async () => {
