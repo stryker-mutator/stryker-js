@@ -1,6 +1,6 @@
 import path from 'path';
 
-import Mocha from 'mocha';
+import Mocha, { type RootHookObject } from 'mocha';
 import glob from 'glob';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options';
@@ -9,7 +9,7 @@ const mochaRoot = path.dirname(require.resolve('mocha/package.json'));
 
 let loadOptions: ((argv?: string[] | string) => Record<string, any> | undefined) | undefined;
 let collectFiles: ((options: MochaOptions) => string[]) | undefined;
-let handleRequires: ((requires?: string[]) => Promise<any>) | undefined;
+let handleRequires: ((requires?: string[]) => Promise<RootHookObject>) | undefined;
 let loadRootHooks: ((rootHooks: any) => Promise<any>) | undefined;
 
 try {

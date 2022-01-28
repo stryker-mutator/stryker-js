@@ -15,6 +15,7 @@ stryker-tmp
 src-generated
 dist
 dist-test
+packages/*/testResources/tmp
 packages/report.*.json # Ignore heap dumps
 e2e/module/*.js
 e2e/module/*.map
