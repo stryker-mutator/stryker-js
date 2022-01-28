@@ -5,14 +5,21 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import { findMutantTestCoverage as sut } from '../../../src/mutants/find-mutant-test-coverage';
+import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner';
 import { coreTokens } from '../../../src/di';
+import { Sandbox } from '../../../src/sandbox';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants';
 
-describe(sut.name, () => {
+const TIME_OVERHEAD_MS = 501;
+
+describe(MutantTestPlanner.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
+  let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
+    sandboxMock = sinon.createStubInstance(Sandbox);
+    sandboxMock.sandboxFileFor.returns('sandbox/foo.js');
   });
 
   function act(dryRunResult: CompleteDryRunResult, mutants: Mutant[]) {
@@ -20,10 +27,13 @@ describe(sut.name, () => {
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideValue(coreTokens.mutants, mutants)
-      .injectFunction(sut);
+      .provideValue(coreTokens.sandbox, sandboxMock)
+      .provideValue(coreTokens.timeOverheadMS, TIME_OVERHEAD_MS)
+      .injectClass(MutantTestPlanner)
+      .makePlan(mutants);
   }
 
-  it('should not find coverage for ignored mutants', () => {
+  it('should make an early result plan for an ignored mutant', () => {
     const mutant = factory.mutant({ id: '2', status: MutantStatus.Ignored, statusReason: 'foo should ignore' });
     const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
 
@@ -31,20 +41,52 @@ describe(sut.name, () => {
     const result = act(dryRunResult, [mutant]);
 
     // Assert
-    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, testFilter: undefined, static: false, hitCount: 2 }];
+    const expected: MutantEarlyResultPlan[] = [
+      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored, coveredBy: undefined } },
+    ];
     expect(result).deep.eq(expected);
   });
 
-  it('should find an empty testFilter and coveredBy when there is coverage data, but none for the specific mutant', () => {
+  it('should make a plan with an empty test filter for a mutant without coverage', () => {
+    // Arrange
     const mutant = factory.mutant({ id: '3' });
     const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
 
     // Act
-    const result = act(dryRunResult, [mutant]);
+    const [result] = act(dryRunResult, [mutant]);
 
     // Assert
-    const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: false, coveredBy: [], testFilter: [], hitCount: undefined }];
-    expect(result).deep.eq(expected);
+    assertIsRunPlan(result);
+    expect(result.mutant.coveredBy).lengthOf(0);
+    expect(result.runOptions.testFilter).lengthOf(0);
+    expect(result.mutant.static).false;
+  });
+
+  it('should provide the sandboxFileName', async () => {
+    // Arrange
+    const mutant = factory.mutant({ id: '3', fileName: 'file.js' });
+    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
+
+    // Act
+    const [result] = act(dryRunResult, [mutant]);
+
+    // Assert
+    assertIsRunPlan(result);
+    expect(result.runOptions.sandboxFileName).eq('sandbox/foo.js');
+    expect(sandboxMock.sandboxFileFor).calledWith('file.js');
+  });
+
+  it('should pass disableBail in the runOptions', async () => {
+    const mutant = factory.mutant({ id: '3', fileName: 'file.js' });
+    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
+    testInjector.options.disableBail = true;
+
+    // Act
+    const [result] = act(dryRunResult, [mutant]);
+
+    // Assert
+    assertIsRunPlan(result);
+    expect(result.runOptions.disableBail).true;
   });
 
   describe('without mutant coverage data', () => {
@@ -56,17 +98,33 @@ describe(sut.name, () => {
       const dryRunResult = factory.completeDryRunResult({ mutantCoverage: undefined });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [plan1, plan2] = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [
-        { ...mutant1, estimatedNetTime: 0, coveredBy: undefined, static: undefined, testFilter: undefined, hitCount: undefined },
-        { ...mutant2, estimatedNetTime: 0, coveredBy: undefined, static: undefined, testFilter: undefined, hitCount: undefined },
-      ];
-      expect(result).deep.eq(expected);
+      assertIsRunPlan(plan1);
+      assertIsRunPlan(plan2);
+      expect(plan1.runOptions.testFilter).undefined;
+      expect(plan1.mutant.coveredBy).undefined;
+      expect(plan1.mutant.static).undefined;
+      expect(plan2.runOptions.testFilter).undefined;
+      expect(plan2.mutant.coveredBy).undefined;
+      expect(plan2.mutant.static).undefined;
     });
 
-    it('should calculate estimatedNetTime as the sum of all tests', () => {
+    it('should disable the hitLimit', () => {
+      // Arrange
+      const mutants = [factory.mutant({ id: '1' })];
+      const dryRunResult = factory.completeDryRunResult({ mutantCoverage: undefined });
+
+      // Act
+      const [result] = act(dryRunResult, mutants);
+
+      // Assert
+      assertIsRunPlan(result);
+      expect(result.runOptions.hitLimit).undefined;
+    });
+
+    it('should calculate timeout using the sum of all tests', () => {
       // Arrange
       const mutant1 = factory.mutant({ id: '1' });
       const mutants = [mutant1];
@@ -76,10 +134,11 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      expect(result[0].estimatedNetTime).eq(42);
+      assertIsRunPlan(result);
+      expect(result.runOptions.timeout).eq(calculateTimeout(42));
     });
 
     it('should report onAllMutantsMatchedWithTests', () => {
@@ -116,9 +175,7 @@ describe(sut.name, () => {
           mutatorName: 'fooMutator',
           replacement: '<=',
           static: undefined,
-          estimatedNetTime: 42,
           location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
-          hitCount: undefined,
         }),
         factory.mutantTestCoverage({
           id: '2',
@@ -126,9 +183,7 @@ describe(sut.name, () => {
           mutatorName: 'barMutator',
           replacement: '{}',
           static: undefined,
-          estimatedNetTime: 42,
           location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
-          hitCount: undefined,
         }),
       ]);
     });
@@ -149,40 +204,42 @@ describe(sut.name, () => {
       const result = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [
+      const expected: MutantTestPlan[] = [
         {
-          ...mutant,
-          status: MutantStatus.Ignored,
-          statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
-          estimatedNetTime: 0,
-          static: true,
-          testFilter: undefined,
-          coveredBy: [],
-          hitCount: 1,
+          plan: PlanKind.EarlyResult,
+          mutant: {
+            ...mutant,
+            status: MutantStatus.Ignored,
+            statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
+            static: true,
+            coveredBy: [],
+          },
         },
       ];
       expect(result).deep.eq(expected);
     });
 
-    it('should disable test filtering when ignoreStatic is disabled', () => {
+    it('should disable test filtering and set reload environment when ignoreStatic is disabled', () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
-      const mutant = factory.mutant({ id: '1' });
-      const mutants = [mutant];
+      const mutants = [factory.mutant({ id: '1' })];
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })],
         mutantCoverage: { static: { 1: 1 }, perTest: {} },
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [{ ...mutant, estimatedNetTime: 0, static: true, testFilter: undefined, coveredBy: [], hitCount: 1 }];
-      expect(result).deep.eq(expected);
+      assertIsRunPlan(result);
+      expect(result.mutant.coveredBy).lengthOf(0);
+      expect(result.mutant.static).true;
+      expect(result.runOptions.reloadEnvironment).true;
+      expect(result.runOptions.testFilter).undefined;
     });
 
-    it('should calculate the hitCount based on total hits (perTest and static)', () => {
+    it('should calculate the hitLimit based on total hits (perTest and static)', () => {
       // Arrange
       const mutant = factory.mutant({ id: '1' });
       const mutants = [mutant];
@@ -192,13 +249,14 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      expect(result[0].hitCount).deep.eq(6);
+      assertIsRunPlan(result);
+      expect(result.runOptions.hitLimit).deep.eq(600);
     });
 
-    it('should calculate estimatedNetTime as the sum of all tests', () => {
+    it('should calculate timeout with the sum of all tests', () => {
       // Arrange
       const mutant = factory.mutant({ id: '1' });
       const mutants = [mutant];
@@ -208,10 +266,11 @@ describe(sut.name, () => {
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      expect(result[0].estimatedNetTime).eq(42);
+      assertIsRunPlan(result);
+      expect(result.runOptions.timeout).eq(calculateTimeout(42));
     });
 
     it('should report onAllMutantsMatchedWithTests with correct `static` value', () => {
@@ -230,100 +289,86 @@ describe(sut.name, () => {
         id: '1',
         static: true,
         coveredBy: [],
-        testFilter: undefined,
       };
       const expectedSecondMatch: Partial<MutantTestCoverage> = {
         id: '2',
         static: false,
         coveredBy: [],
-        testFilter: [],
       };
       expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
   });
 
   describe('with hybrid coverage', () => {
-    it('should set the testFilter when ignoreStatic is enabled', async () => {
+    it('should set the testFilter, coveredBy and static when ignoreStatic is enabled', async () => {
       // Arrange
       testInjector.options.ignoreStatic = true;
-      const mutant = factory.mutant({ id: '1' });
-      const mutants = [mutant];
+      const mutants = [factory.mutant({ id: '1' })];
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 10 })],
         mutantCoverage: { static: { 1: 1 }, perTest: { spec1: { 1: 1 } } },
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [
-        {
-          ...mutant,
-          estimatedNetTime: 10,
-          static: true,
-          testFilter: ['spec1'],
-          coveredBy: ['spec1'],
-          hitCount: 2,
-        },
-      ];
-      expect(result).deep.eq(expected);
+      assertIsRunPlan(result);
+      const { mutant, runOptions } = result;
+      expect(mutant.coveredBy).deep.eq(['spec1']);
+      expect(mutant.static).deep.eq(true);
+      expect(runOptions.testFilter).deep.eq(['spec1']);
     });
-    it('should disable test filtering when ignoreStatic is false', async () => {
+
+    it('should disable test filtering yet still set coveredBy and static when ignoreStatic is false', async () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
-      const mutant = factory.mutant({ id: '1' });
-      const mutants = [mutant];
+      const mutants = [factory.mutant({ id: '1' })];
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 20 })],
         mutantCoverage: { static: { 1: 1 }, perTest: { spec1: { 1: 1 } } },
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [result] = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [
-        {
-          ...mutant,
-          estimatedNetTime: 30,
-          static: true,
-          testFilter: undefined,
-          coveredBy: ['spec1'],
-          hitCount: 2,
-        },
-      ];
-      expect(result).deep.eq(expected);
+      assertIsRunPlan(result);
+      const { mutant, runOptions } = result;
+      expect(mutant.coveredBy).deep.eq(['spec1']);
+      expect(mutant.static).deep.eq(true);
+      expect(runOptions.testFilter).deep.eq(undefined);
     });
   });
 
   describe('with perTest coverage', () => {
     it('should enable test filtering for covered tests', () => {
       // Arrange
-      const mutant1 = factory.mutant({ id: '1' });
-      const mutant2 = factory.mutant({ id: '2' });
-      const mutants = [mutant1, mutant2];
+      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 })],
         mutantCoverage: { static: { 1: 0 }, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
       });
 
       // Act
-      const result = act(dryRunResult, mutants);
+      const [plan1, plan2] = act(dryRunResult, mutants);
 
       // Assert
-      const expected: MutantTestCoverage[] = [
-        { ...mutant1, estimatedNetTime: 0, coveredBy: ['spec1'], testFilter: ['spec1'], static: false, hitCount: 1 },
-        { ...mutant2, estimatedNetTime: 0, coveredBy: ['spec2'], testFilter: ['spec2'], static: false, hitCount: 1 },
-      ];
-      expect(result).deep.eq(expected);
+      assertIsRunPlan(plan1);
+      assertIsRunPlan(plan2);
+      const { runOptions: runOptions1, mutant: mutant1 } = plan1;
+      const { runOptions: runOptions2, mutant: mutant2 } = plan2;
+      expect(runOptions1.testFilter).deep.eq(['spec1']);
+      expect(mutant1.coveredBy).deep.eq(['spec1']);
+      expect(mutant1.static).false;
+      expect(runOptions2.testFilter).deep.eq(['spec2']);
+      expect(mutant2.coveredBy).deep.eq(['spec2']);
+      expect(mutant2.static).false;
     });
 
-    it('should calculate estimatedNetTime as the sum of covered tests', () => {
+    it('should calculate timeout using the sum of covered tests', () => {
       // Arrange
-      const mutant1 = factory.mutant({ id: '1' });
-      const mutant2 = factory.mutant({ id: '2' });
-      const mutants = [mutant1, mutant2];
+      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
       const dryRunResult = factory.completeDryRunResult({
         tests: [
           factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
@@ -334,11 +379,13 @@ describe(sut.name, () => {
       });
 
       // Act
-      const actualMatches = act(dryRunResult, mutants);
+      const [plan1, plan2] = act(dryRunResult, mutants);
 
       // Assert
-      expect(actualMatches.find((mutant) => mutant.id === '1')?.estimatedNetTime).eq(42); // spec1 + spec3
-      expect(actualMatches.find((mutant) => mutant.id === '2')?.estimatedNetTime).eq(10); // spec2
+      assertIsRunPlan(plan1);
+      assertIsRunPlan(plan2);
+      expect(plan1.runOptions.timeout).eq(calculateTimeout(42)); // spec1 + spec3
+      expect(plan2.runOptions.timeout).eq(calculateTimeout(10)); // spec2
     });
 
     it('should report onAllMutantsMatchedWithTests with correct `testFilter` value', () => {
@@ -380,11 +427,18 @@ describe(sut.name, () => {
       const actualMatches = act(dryRunResult, mutants);
 
       // Assert
-      expect(actualMatches.find((mutant) => mutant.id === '1')?.coveredBy).deep.eq(['spec1']);
-      expect(actualMatches.find((mutant) => mutant.id === '2')?.coveredBy).lengthOf(0);
-      expect(testInjector.logger.debug).calledWith(
-        'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account'
+      expect(actualMatches.find(({ mutant }) => mutant.id === '1')?.mutant.coveredBy).deep.eq(['spec1']);
+      expect(actualMatches.find(({ mutant }) => mutant.id === '2')?.mutant.coveredBy).lengthOf(0);
+      expect(testInjector.logger.warn).calledWith(
+        'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.'
       );
     });
   });
 });
+
+function assertIsRunPlan(plan: MutantTestPlan): asserts plan is MutantRunPlan {
+  expect(plan.plan).eq(PlanKind.Run);
+}
+function calculateTimeout(netTime: number): number {
+  return testInjector.options.timeoutMS + testInjector.options.timeoutFactor * netTime + TIME_OVERHEAD_MS;
+}

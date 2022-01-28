@@ -201,6 +201,7 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
 
 export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
   return {
+    capabilities: sinon.stub(),
     init: sinon.stub(),
     dryRun: sinon.stub(),
     mutantRun: sinon.stub(),
@@ -255,6 +256,7 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
   disableBail: false,
+  reloadEnvironment: false,
 }));
 
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
@@ -342,9 +344,7 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   mutatorName: '',
   static: false,
   replacement: '',
-  testFilter: undefined,
   location: location(),
-  estimatedNetTime: 42,
 }));
 
 export function injector(): sinon.SinonStubbedInstance<Injector> {

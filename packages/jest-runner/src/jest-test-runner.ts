@@ -14,6 +14,7 @@ import {
   TestStatus,
   DryRunOptions,
   BaseTestResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
@@ -91,11 +92,11 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({
-    coverageAnalysis,
-    disableBail,
-    files,
-  }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
+  }
+
+  public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];

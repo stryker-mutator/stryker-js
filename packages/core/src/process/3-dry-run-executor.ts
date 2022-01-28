@@ -24,10 +24,11 @@ import { Timer } from '../utils/timer';
 import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
-import { findMutantTestCoverage } from '../mutants';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent';
 import { FileMatcher } from '../config';
 import { InputFileCollection } from '../input/input-file-collection';
+
+import { MutantTestPlanner } from '../mutants';
 
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
@@ -101,7 +102,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {

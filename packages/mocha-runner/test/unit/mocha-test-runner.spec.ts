@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import Mocha from 'mocha';
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { KilledMutantRunResult, MutantRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
 import { MochaTestRunner } from '../../src/mocha-test-runner';
@@ -48,6 +48,13 @@ describe(MochaTestRunner.name, () => {
     it('should set the static `log` property on StrykerMochaReporter', () => {
       createSut();
       expect(StrykerMochaReporter.log).eq(testInjector.logger);
+    });
+  });
+
+  describe('capabilities', () => {
+    it('should communicate reloadEnvironment=true', () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      expect(createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
 
