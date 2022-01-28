@@ -1,5 +1,5 @@
-import { CompleteDryRunResult, MutantRunOptions, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId, MutantTestCoverage, MutantCoverage, StrykerOptions, MutantStatus } from '@stryker-mutator/api/core';
+import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
+import { Mutant, CoveragePerTestId, MutantCoverage, StrykerOptions, MutantStatus } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -9,9 +9,9 @@ import { coreTokens } from '../di';
 import { StrictReporter } from '../reporters/strict-reporter';
 import { Sandbox } from '../sandbox';
 
-import { MutantTestPlan } from './mutant-test-plan';
+import { MutantRunPlan, MutantTestPlan } from './mutant-test-plan';
 
-import { PlanKind } from '.';
+import { MutantEarlyResultPlan, PlanKind } from '.';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -63,14 +63,7 @@ export class MutantTestPlanner {
     const isStatic = this.dryRunResult.mutantCoverage && this.dryRunResult.mutantCoverage.static[mutant.id] > 0;
     if (mutant.status) {
       // If this mutant was already ignored, early result
-      return {
-        plan: PlanKind.EarlyResult,
-        mutant: {
-          ...mutant,
-          status: mutant.status,
-          static: isStatic,
-        },
-      };
+      return this.createMutantEarlyResultPlan(mutant, { isStatic, status: mutant.status, statusReason: mutant.statusReason });
     } else if (this.dryRunResult.mutantCoverage) {
       // If there was coverage information (coverageAnalysis not "off")
       const tests = this.testsByMutantId.get(mutant.id) ?? [];
@@ -78,74 +71,84 @@ export class MutantTestPlanner {
       if (!isStatic || (this.options.ignoreStatic && coveredBy.length)) {
         // If not static, or it was "hybrid" (both static and perTest coverage) and ignoreStatic is on.
         // Only run covered tests
-        const estimatedNetTime = calculateTotalTime(tests);
-        return {
-          plan: PlanKind.Run,
-          mutant: {
-            ...mutant,
-            static: isStatic,
-            coveredBy,
-          },
-          runOptions: this.createMutantRunOptions(mutant, estimatedNetTime, coveredBy),
-        };
+        const netTime = calculateTotalTime(tests);
+        return this.createMutantRunPlan(mutant, { netTime, coveredBy, isStatic, testFilter: coveredBy });
       } else if (this.options.ignoreStatic) {
         // Static (w/o perTest coverage) and ignoreStatic is on -> Ignore.
-        return {
-          plan: PlanKind.EarlyResult,
-          mutant: {
-            ...mutant,
-            status: MutantStatus.Ignored,
-            statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
-            static: isStatic,
-            coveredBy,
-          },
-        };
+        return this.createMutantEarlyResultPlan(mutant, {
+          status: MutantStatus.Ignored,
+          statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
+          isStatic,
+          coveredBy,
+        });
       } else {
         // Static (or hybrid) and `ignoreStatic` is off -> run all tests
-        return {
-          plan: PlanKind.Run,
-          mutant: {
-            ...mutant,
-            coveredBy,
-            static: isStatic,
-          },
-          runOptions: this.createMutantRunOptions(mutant, this.timeSpentAllTests, undefined),
-        };
+        return this.createMutantRunPlan(mutant, { netTime: this.timeSpentAllTests, isStatic, coveredBy });
       }
     } else {
       // No coverage information exists, all tests need to run
-      return {
-        plan: PlanKind.Run,
-        mutant: {
-          ...mutant,
-          coveredBy: undefined,
-          static: undefined,
-        },
-        runOptions: this.createMutantRunOptions(mutant, this.timeSpentAllTests, undefined),
-      };
+      return this.createMutantRunPlan(mutant, { netTime: this.timeSpentAllTests });
     }
   }
 
-  private createMutantRunOptions(mutant: MutantTestCoverage, estimatedNetTime: number, testFilter: string[] | undefined): MutantRunOptions {
+  private createMutantEarlyResultPlan(
+    mutant: Mutant,
+    {
+      isStatic,
+      status,
+      statusReason,
+      coveredBy,
+    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[] }
+  ): MutantEarlyResultPlan {
+    return {
+      plan: PlanKind.EarlyResult,
+      mutant: {
+        ...mutant,
+        status,
+        static: isStatic,
+        statusReason,
+        coveredBy,
+      },
+    };
+  }
+
+  private createMutantRunPlan(
+    mutant: Mutant,
+    {
+      netTime,
+      testFilter,
+      isStatic,
+      coveredBy,
+    }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined }
+  ): MutantRunPlan {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
-    const timeout = timeoutFactor * estimatedNetTime + timeoutMS + this.timeOverheadMS;
+    const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
     const hitCount = this.hitsByMutantId.get(mutant.id);
     const hitLimit = hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
+
     return {
-      // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
-      activeMutant: {
-        id: mutant.id,
-        fileName: mutant.fileName,
-        location: mutant.location,
-        mutatorName: mutant.mutatorName,
-        replacement: mutant.replacement,
+      plan: PlanKind.Run,
+      mutant: {
+        ...mutant,
+        coveredBy,
+        static: isStatic,
       },
-      timeout,
-      testFilter,
-      sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
-      hitLimit,
-      disableBail,
-      reloadEnvironment: !testFilter,
+      runOptions: {
+        // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
+        activeMutant: {
+          id: mutant.id,
+          fileName: mutant.fileName,
+          location: mutant.location,
+          mutatorName: mutant.mutatorName,
+          replacement: mutant.replacement,
+        },
+        timeout,
+        testFilter,
+        sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
+        hitLimit,
+        disableBail,
+        reloadEnvironment: !testFilter,
+      },
     };
   }
 }

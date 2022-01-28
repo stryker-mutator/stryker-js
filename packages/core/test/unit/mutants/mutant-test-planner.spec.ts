@@ -41,7 +41,9 @@ describe(MutantTestPlanner.name, () => {
     const result = act(dryRunResult, [mutant]);
 
     // Assert
-    const expected: MutantEarlyResultPlan[] = [{ plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored } }];
+    const expected: MutantEarlyResultPlan[] = [
+      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored, coveredBy: undefined } },
+    ];
     expect(result).deep.eq(expected);
   });
 
