@@ -2,7 +2,7 @@ module.exports = function (config) {
   config.set({
     mutate: ['src/*.js'],
     testRunner: 'karma',
-    reporters: ['clear-text', 'html', 'event-recorder'],
+    reporters: ['json', 'clear-text', 'html', 'event-recorder'],
     karma: {
       config: {
         frameworks: ['mocha', 'chai'],

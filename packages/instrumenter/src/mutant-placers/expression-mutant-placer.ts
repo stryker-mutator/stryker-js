@@ -16,12 +16,14 @@ function classOrFunctionExpressionNamedIfNeeded(path: NodePath<types.Expression>
   if ((path.isFunctionExpression() || path.isClassExpression()) && !path.node.id) {
     if (path.parentPath.isVariableDeclarator() && types.isIdentifier(path.parentPath.node.id)) {
       path.node.id = path.parentPath.node.id;
+      return path.node;
     } else if (
       path.parentPath.isObjectProperty() &&
       types.isIdentifier(path.parentPath.node.key) &&
       path.getStatementParent()?.isVariableDeclaration()
     ) {
       path.node.id = path.parentPath.node.key;
+      return path.node;
     }
   }
   return;

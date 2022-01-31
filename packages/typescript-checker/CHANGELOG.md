@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+
+### Bug Fixes
+
+* **typescript cheker:** prevent unintentional declarationDir error ([#3358](https://github.com/stryker-mutator/stryker-js/issues/3358)) ([3b510e2](https://github.com/stryker-mutator/stryker-js/commit/3b510e2b28515d325d3583d500743064f5b156a7))
+
+
+
+
+
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **tsconfig:** force declarationDir false for non-build projects ([#3313](https://github.com/stryker-mutator/stryker-js/issues/3313)) ([461f39c](https://github.com/stryker-mutator/stryker-js/commit/461f39cc0808dbab2ad405a96193aa4586f7f699))
+
+
+
+
+
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+
+### Bug Fixes
+
+* **ts checker:** always disable `declarationMap` ([#3294](https://github.com/stryker-mutator/stryker-js/issues/3294)) ([990ecdc](https://github.com/stryker-mutator/stryker-js/commit/990ecdcf75ace7ad4553fd7c362d29d9bfa423ce))
+
+
+
+
+
 # [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
 
 **Note:** Version bump only for package @stryker-mutator/typescript-checker

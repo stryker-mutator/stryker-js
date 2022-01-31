@@ -8,6 +8,7 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "reporters": [
+    "json",
     "html",
     "clear-text",
     "progress",
@@ -18,7 +19,7 @@
     "projectType": "custom"
   },
   "tsconfigFile": "tsconfig.json",
-  "logLevel": "info",
+  "logLevel": "trace",
   "plugins": [
     "@stryker-mutator/karma-runner"
   ]

@@ -54,6 +54,7 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
+        declarationMap: false,
       });
       expect(
         JSON.parse(
@@ -65,6 +66,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
+                  declarationMap: false,
                 },
               },
             },
@@ -76,7 +78,49 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
+        declarationMap: false,
       });
+    });
+
+    it('should remove --declarationDir options when `--build` mode is off', () => {
+      expect(
+        JSON.parse(
+          overrideOptions(
+            {
+              config: {
+                compilerOptions: {
+                  noEmit: false,
+                  incremental: true,
+                  composite: true,
+                  declaration: true,
+                  declarationMap: false,
+                  declarationDir: '.',
+                },
+              },
+            },
+            false
+          )
+        ).compilerOptions
+      ).not.hasOwnProperty('declarationDir');
+      expect(
+        JSON.parse(
+          overrideOptions(
+            {
+              config: {
+                compilerOptions: {
+                  noEmit: false,
+                  incremental: true,
+                  composite: true,
+                  declaration: true,
+                  declarationMap: false,
+                  declarationDir: '',
+                },
+              },
+            },
+            false
+          )
+        ).compilerOptions
+      ).not.hasOwnProperty('declarationDir');
     });
 
     it('should set --emitDeclarationOnly options when `--build` mode is on', () => {

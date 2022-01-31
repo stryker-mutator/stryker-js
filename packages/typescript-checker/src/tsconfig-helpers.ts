@@ -17,6 +17,7 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
   composite: false,
   declaration: false,
+  declarationMap: false,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
@@ -51,15 +52,22 @@ export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
  * @param useBuildMode whether or not `--build` mode is used
  */
 export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean): string {
-  const config = {
-    ...parsedConfig.config,
-    compilerOptions: {
-      ...parsedConfig.config?.compilerOptions,
-      ...COMPILER_OPTIONS_OVERRIDES,
-      ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
-    },
+  const compilerOptions = {
+    ...parsedConfig.config?.compilerOptions,
+    ...COMPILER_OPTIONS_OVERRIDES,
+    ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
   };
-  return JSON.stringify(config);
+
+  if (!useBuildMode && compilerOptions.declarationDir !== undefined && compilerOptions.declarationDir !== null) {
+    // because composite and/or declaration was disabled in non-build mode, we have to disable declarationDir as well
+    // otherwise, error TS5069: Option 'declarationDir' cannot be specified without specifying option 'declaration' or option 'composite'.
+    delete compilerOptions.declarationDir;
+  }
+
+  return JSON.stringify({
+    ...parsedConfig.config,
+    compilerOptions,
+  });
 }
 
 /**

@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
+
+
+
+
 # [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
 
 

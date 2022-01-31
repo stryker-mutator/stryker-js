@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+
+### Bug Fixes
+
+* **mutators:** avoid creating some unnecessary mutations ([#3346](https://github.com/stryker-mutator/stryker-js/issues/3346)) ([0f60ecf](https://github.com/stryker-mutator/stryker-js/commit/0f60ecf2159490d6fa411ea3fa0c3a091fcdd8fa))
+
+
+
+
+
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+**Note:** Version bump only for package @stryker-mutator/instrumenter
+
+
+
+
+
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+**Note:** Version bump only for package @stryker-mutator/instrumenter
+
+
+
+
+
 # [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
 
 

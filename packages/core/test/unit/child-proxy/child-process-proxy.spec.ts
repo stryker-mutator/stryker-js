@@ -10,7 +10,6 @@ import sinon from 'sinon';
 
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
 import {
-  autoStart,
   DisposeMessage,
   InitMessage,
   ParentMessage,
@@ -65,7 +64,7 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/child-process-proxy-worker'), [autoStart], {
+      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/child-process-proxy-worker'), {
         silent: true,
         execArgv: [],
       });
@@ -118,7 +117,7 @@ describe(ChildProcessProxy.name, () => {
 
     it('should set `execArgv`', () => {
       createSut({ execArgv: ['--inspect-brk'] });
-      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match.array, sinon.match({ execArgv: ['--inspect-brk'] }));
+      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match({ execArgv: ['--inspect-brk'] }));
     });
   });
 

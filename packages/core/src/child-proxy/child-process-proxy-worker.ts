@@ -7,7 +7,7 @@ import { buildChildProcessInjector } from '../di';
 import { LogConfigurator } from '../logging';
 import { deserialize, serialize } from '../utils/string-utils';
 
-import { autoStart, CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
+import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
 
 export class ChildProcessProxyWorker {
   private log?: Logger;
@@ -131,6 +131,8 @@ export class ChildProcessProxyWorker {
 
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
-if (process.argv.includes(autoStart)) {
+// Stryker disable all
+if (require.main === module) {
   new ChildProcessProxyWorker();
 }
+// Stryker restore all
