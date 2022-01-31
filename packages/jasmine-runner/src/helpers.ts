@@ -1,8 +1,7 @@
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import jasmine from 'jasmine';
 
-import JasmineConstructor from 'jasmine';
-
-export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, timeSpentMs: number): TestResult {
+export function toStrykerTestResult(specResult: jasmine.SpecResult, timeSpentMs: number): TestResult {
   const baseResult = {
     id: specResult.id.toString(),
     name: specResult.fullName,
@@ -27,4 +26,6 @@ export function toStrykerTestResult(specResult: jasmine.CustomReporterResult, ti
   }
 }
 
-export const Jasmine = JasmineConstructor;
+export function createJasmine(options: jasmine.JasmineOptions): jasmine {
+  return new jasmine(options);
+}

@@ -1,13 +1,4 @@
-// Add this reporter to spy on the specs being executed
-jasmine.getEnv().addReporter({
-  specDone(spec) {
-    if (spec.status !== 'excluded') {
-      global.__testsInCurrentJasmineRun.push(spec.id);
-    }
-  }
-});
-
-describe("Player", function () {
+describe('Player', function () {
   var Player = require('../../lib/jasmine_examples/Player');
   var Song = require('../../lib/jasmine_examples/Song');
   var player;
@@ -18,7 +9,7 @@ describe("Player", function () {
     song = new Song();
   });
 
-  it("should be able to play a Song", function () {
+  it('should be able to play a Song', function () {
     player.play(song);
     expect(player.currentlyPlayingSong).toEqual(song);
 
@@ -26,20 +17,20 @@ describe("Player", function () {
     expect(player).toBePlaying(song);
   });
 
-  describe("when song has been paused", function () {
+  describe('when song has been paused', function () {
     beforeEach(function () {
       player.play(song);
       player.pause();
     });
 
-    it("should indicate that the song is currently paused", function () {
+    it('should indicate that the song is currently paused', function () {
       expect(player.isPlaying).toBeFalsy();
 
       // demonstrates use of 'not' with a custom matcher
       expect(player).not.toBePlaying(song);
     });
 
-    it("should be possible to resume", function () {
+    it('should be possible to resume', function () {
       player.resume();
       expect(player.isPlaying).toBeTruthy();
       expect(player.currentlyPlayingSong).toEqual(song);
@@ -47,7 +38,7 @@ describe("Player", function () {
   });
 
   // demonstrates use of spies to intercept and test method calls
-  it("tells the current song if the user has made it a favorite", function () {
+  it('tells the current song if the user has made it a favorite', function () {
     spyOn(song, 'persistFavoriteStatus');
 
     player.play(song);
@@ -57,13 +48,13 @@ describe("Player", function () {
   });
 
   //demonstrates use of expected exceptions
-  describe("#resume", function () {
-    it("should throw an exception if song is already playing", function () {
+  describe('#resume', function () {
+    it('should throw an exception if song is already playing', function () {
       player.play(song);
 
       expect(function () {
         player.resume();
-      }).toThrowError("song is already playing");
+      }).toThrowError('song is already playing');
     });
   });
 });
