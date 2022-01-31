@@ -1,5 +1,6 @@
 import type { JestEnvironment, EnvironmentContext } from '@jest/environment';
 import type { Config, Circus } from '@jest/types';
+import { InstrumenterContext } from '@stryker-mutator/api/core';
 
 import { state } from '../messaging';
 
@@ -26,36 +27,42 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
     class StrykerJestEnvironment extends JestEnvironmentClass {
       private readonly fileName: string;
 
+      /**
+       * The shared instrumenter context with the test environment (the `__stryker__` global variable)
+       */
+      private readonly context: InstrumenterContext;
+
       public static readonly [STRYKER_JEST_ENV] = true;
 
       constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
         super(config, context);
         this.fileName = context!.testPath!;
+        this.context = this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {};
       }
 
       public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await super.handleTestEvent?.(event as any, eventState);
         if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-          const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
-          ns.currentTestId = fullName(event.test);
-          ns.hitLimit = state.hitLimit;
+          this.context.currentTestId = fullName(event.test);
         }
       };
 
       public async teardown() {
-        const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
-        state.hitCount = this.global[this.global.__strykerGlobalNamespace__]?.hitCount;
-        state.hitLimit = this.global[this.global.__strykerGlobalNamespace__]?.hitLimit;
+        const mutantCoverage = this.context.mutantCoverage;
+        state.hitCount = this.context.hitCount;
+        state.hitLimit = this.context.hitLimit;
         state.handleMutantCoverage(this.fileName, mutantCoverage);
         await super.teardown();
       }
 
       public async setup() {
         await super.setup();
-        const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
-        ns.hitCount = 0;
-        ns.hitLimit = state.hitLimit;
+        if (state.firstTestFile) {
+          this.context.hitCount = 0;
+          this.context.hitLimit = state.hitLimit;
+          state.firstTestFile = false;
+        }
       }
     }
     return StrykerJestEnvironment;

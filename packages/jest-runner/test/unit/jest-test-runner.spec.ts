@@ -314,6 +314,13 @@ describe(JestTestRunner.name, () => {
       );
     });
 
+    it('should signal firstSuite = true', async () => {
+      state.firstTestFile = false;
+      const sut = createSut();
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }));
+      expect(state.firstTestFile).true;
+    });
+
     describe('coverage analysis', () => {
       it('should handle mutant coverage when coverage analysis != "off"', async () => {
         // Arrange

@@ -93,11 +93,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({
-    coverageAnalysis,
-    disableBail,
-    files,
-  }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
+  public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];
@@ -185,6 +181,7 @@ export class JestTestRunner implements TestRunner {
 
   private async run(settings: RunSettings): Promise<{ dryRunResult: DryRunResult; jestResult: jestTestResult.AggregatedResult }> {
     this.setEnv();
+    state.firstTestFile = true;
     if (this.log.isTraceEnabled()) {
       this.log.trace('Invoking Jest with config %s', JSON.stringify(settings));
     }
