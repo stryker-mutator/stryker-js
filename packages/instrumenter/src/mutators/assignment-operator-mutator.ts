@@ -1,6 +1,6 @@
 import * as types from '@babel/types';
 
-import { NodeMutator } from '.';
+import { NodeMutator } from './index.js';
 
 enum AssignmentOperators {
   '+=' = '-=',

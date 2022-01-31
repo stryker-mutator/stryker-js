@@ -1,4 +1,4 @@
-import { Ast, AstFormat, AstByFormat } from '../syntax';
+import { Ast, AstFormat, AstByFormat } from '../syntax/index.js';
 
 export interface ParserContext {
   parse<T extends AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]>;

@@ -4,12 +4,13 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { File, MutationRange } from '@stryker-mutator/api/core';
 
-import { createParser } from './parsers';
-import { transform, MutantCollector } from './transformers';
-import { print } from './printers';
-import { InstrumentResult } from './instrument-result';
-import { InstrumenterOptions } from './instrumenter-options';
+import { createParser } from './parsers/index.js';
+import { transform, MutantCollector } from './transformers/index.js';
+import { print } from './printers/index.js';
+import { InstrumentResult } from './instrument-result.js';
+import { InstrumenterOptions } from './instrumenter-options.js';
 
+const injectables = { createParser, print, transform };
 /**
  * The instrumenter is responsible for
  * * Generating mutants based on source files
@@ -22,7 +23,12 @@ export class Instrumenter {
 
   constructor(private readonly logger: Logger) {}
 
-  public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {
+  public async instrument(
+    files: readonly File[],
+    options: InstrumenterOptions,
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    { createParser, print, transform } = injectables
+  ): Promise<InstrumentResult> {
     this.logger.debug('Instrumenting %d source files with mutants', files.length);
     const mutantCollector = new MutantCollector();
     const outFiles: File[] = [];

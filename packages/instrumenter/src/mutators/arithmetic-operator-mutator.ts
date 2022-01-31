@@ -1,6 +1,8 @@
-import { types } from '@babel/core';
+import babel, { type types } from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
+
+const { types: t } = babel;
 
 enum ArithmeticOperators {
   '+' = '-',
@@ -16,7 +18,7 @@ export const arithmeticOperatorMutator: NodeMutator = {
   *mutate(path) {
     if (path.isBinaryExpression() && isSupported(path.node.operator, path.node)) {
       const mutatedOperator = ArithmeticOperators[path.node.operator];
-      const replacement = types.cloneNode(path.node, false);
+      const replacement = t.cloneNode(path.node, false);
       replacement.operator = mutatedOperator;
       yield replacement;
     }

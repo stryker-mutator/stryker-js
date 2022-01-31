@@ -1,12 +1,14 @@
-import { types } from '@babel/core';
+import babel from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax';
-import { Mutant, Mutable } from '../../src/mutant';
-import { ParserOptions } from '../../src/parsers';
-import { InstrumenterOptions } from '../../src';
-import { TransformerOptions } from '../../src/transformers';
+import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax/index.js';
+import { Mutant, Mutable } from '../../src/mutant.js';
+import { ParserOptions } from '../../src/parsers/index.js';
+import { InstrumenterOptions } from '../../src/index.js';
+import { TransformerOptions } from '../../src/transformers/index.js';
 
-import { parseTS, parseJS, findNodePath } from './syntax-test-helpers';
+import { parseTS, parseJS, findNodePath } from './syntax-test-helpers.js';
+
+const { types } = babel;
 
 export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
   return {

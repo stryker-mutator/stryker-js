@@ -5,9 +5,9 @@ import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-import { Instrumenter } from '../../src';
-import { createInstrumenterOptions } from '../helpers/factories';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { Instrumenter } from '../../src/index.js';
+import { createInstrumenterOptions } from '../helpers/factories.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('instrumenter integration', () => {
   let sut: Instrumenter;

@@ -2,10 +2,10 @@ import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
 
-import { createParser, ParserOptions } from '../../src/parsers';
-import { AstFormat, HtmlAst, TSAst, JSAst, Ast } from '../../src/syntax';
-import { createParserOptions } from '../helpers/factories';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createParser, ParserOptions } from '../../src/parsers/index.js';
+import { AstFormat, HtmlAst, TSAst, JSAst, Ast } from '../../src/syntax/index.js';
+import { createParserOptions } from '../helpers/factories.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const resolveParserTestResource = resolveTestResource.bind(null, 'parser');
 

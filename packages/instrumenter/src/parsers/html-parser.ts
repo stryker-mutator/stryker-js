@@ -1,10 +1,10 @@
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
 import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
 
-import { HtmlAst, AstFormat, HtmlRootNode, ScriptFormat, AstByFormat, ScriptAst } from '../syntax';
+import { HtmlAst, AstFormat, HtmlRootNode, ScriptFormat, AstByFormat, ScriptAst } from '../syntax/index.js';
 
-import { ParserContext } from './parser-context';
-import { ParseError } from './parse-error';
+import { ParserContext } from './parser-context.js';
+import { ParseError } from './parse-error.js';
 
 const TSX_SCRIPT_TYPES = Object.freeze(['tsx', 'text/tsx']);
 const TS_SCRIPT_TYPES = Object.freeze(['ts', 'text/typescript', 'typescript']);
@@ -28,7 +28,7 @@ export async function parse(text: string, originFileName: string, context: Parse
 
 async function ngHtmlParser(text: string, fileName: string, parserContext: ParserContext): Promise<HtmlRootNode> {
   const parser = (await import('angular-html-parser')).parse;
-  const { RecursiveVisitor, visitAll } = await import('angular-html-parser/lib/compiler/src/ml_parser/ast');
+  const { RecursiveVisitor, visitAll } = await import('angular-html-parser/lib/compiler/src/ml_parser/ast.js');
 
   const { rootNodes, errors } = parser(text, {
     canSelfClose: true,

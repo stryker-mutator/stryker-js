@@ -1,7 +1,7 @@
 import { NodePath } from '@babel/core';
 import * as types from '@babel/types';
 
-import { Mutant } from '../mutant';
+import { Mutant } from '../mutant.js';
 
 export interface MutantPlacer<TNode extends types.Node = types.Node> {
   name: string;

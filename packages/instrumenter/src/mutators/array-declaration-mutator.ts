@@ -1,11 +1,13 @@
-import { NodePath, types } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
+
+const { types } = babel;
 
 export const arrayDeclarationMutator: NodeMutator = {
   name: 'ArrayDeclaration',
 
-  *mutate(path: NodePath): Iterable<types.Node> {
+  *mutate(path: NodePath): Iterable<babel.types.Node> {
     if (path.isArrayExpression()) {
       const replacement = path.node.elements.length ? types.arrayExpression() : types.arrayExpression([types.stringLiteral('Stryker was here')]);
       yield replacement;

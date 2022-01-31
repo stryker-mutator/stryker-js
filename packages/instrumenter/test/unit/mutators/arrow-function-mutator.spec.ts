@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { arrowFunctionMutator as sut } from '../../../src/mutators/arrow-function-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { arrowFunctionMutator as sut } from '../../../src/mutators/arrow-function-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "ArrowFunction"', () => {

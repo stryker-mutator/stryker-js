@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 
-import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator';
+import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator.js';
 
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "OptionalChaining"', () => {

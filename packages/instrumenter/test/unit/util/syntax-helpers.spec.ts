@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import * as syntaxHelpers from '../../../src/util/syntax-helpers';
-import { findNodePath, parseTS } from '../../helpers/syntax-test-helpers';
+import * as syntaxHelpers from '../../../src/util/syntax-helpers.js';
+import { findNodePath, parseTS } from '../../helpers/syntax-test-helpers.js';
 
 describe('syntax-helpers', () => {
   describe('instrumentationBabelHeader', () => {

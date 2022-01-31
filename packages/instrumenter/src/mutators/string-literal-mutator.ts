@@ -1,6 +1,8 @@
-import { types, NodePath } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
+
+const { types } = babel;
 
 export const stringLiteralMutator: NodeMutator = {
   name: 'StringLiteral',
@@ -16,7 +18,7 @@ export const stringLiteralMutator: NodeMutator = {
   },
 };
 
-function isValidParent(child: NodePath<types.StringLiteral>): boolean {
+function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
   const parent = child.parent;
   return !(
     types.isImportDeclaration(parent) ||

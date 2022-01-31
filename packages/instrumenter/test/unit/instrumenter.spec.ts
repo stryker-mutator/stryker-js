@@ -4,23 +4,34 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
 
-import { Instrumenter } from '../../src';
-import * as parsers from '../../src/parsers';
-import * as transformers from '../../src/transformers';
-import * as printers from '../../src/printers';
-import { createJSAst, createTSAst, createMutable, createInstrumenterOptions } from '../helpers/factories';
-import { parseJS } from '../helpers/syntax-test-helpers';
+import { Instrumenter } from '../../src/index.js';
+import * as parsers from '../../src/parsers/index.js';
+import * as transformers from '../../src/transformers/index.js';
+import * as printers from '../../src/printers/index.js';
+import { createJSAst, createTSAst, createMutable, createInstrumenterOptions } from '../helpers/factories.js';
+import { parseJS } from '../helpers/syntax-test-helpers.js';
 
 describe(Instrumenter.name, () => {
   let sut: Instrumenter;
 
   class Helper {
     public parserStub = sinon.stub();
-    public createParserStub = sinon.stub(parsers, 'createParser').returns(this.parserStub);
-    public transformerStub = sinon.stub(transformers, 'transform');
-    public printerStub = sinon.stub(printers, 'print');
+    public transformerStub: sinon.SinonStubbedMember<typeof transformers.transform> = sinon.stub();
+    public printerStub: sinon.SinonStubbedMember<typeof printers.print> = sinon.stub();
+    public createParserStub: sinon.SinonStubbedMember<typeof parsers.createParser> = sinon.stub();
+    constructor() {
+      this.createParserStub.returns(this.parserStub);
+    }
   }
   let helper: Helper;
+
+  async function act(input: readonly File[], options = createInstrumenterOptions()) {
+    return await sut.instrument(input, options, {
+      createParser: helper.createParserStub,
+      print: helper.printerStub,
+      transform: helper.transformerStub,
+    });
+  }
 
   beforeEach(() => {
     helper = new Helper();
@@ -32,7 +43,7 @@ describe(Instrumenter.name, () => {
     const { input, output } = arrangeTwoFiles();
 
     // Act
-    const actualResult = await sut.instrument(input, createInstrumenterOptions());
+    const actualResult = await act(input);
 
     // Assert
     expect(actualResult.files).deep.eq([new File('foo.js', output[0]), new File('bar.ts', output[1])]);
@@ -43,7 +54,7 @@ describe(Instrumenter.name, () => {
     const { input } = arrangeTwoFiles();
 
     // Act
-    await sut.instrument(
+    await act(
       input,
       createInstrumenterOptions({ mutationRanges: [{ fileName: 'foo.js', start: { line: 0, column: 0 }, end: { line: 6, column: 42 } }] })
     );
@@ -58,7 +69,7 @@ describe(Instrumenter.name, () => {
   });
 
   it('should log about instrumenting', async () => {
-    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
+    await act([new File('b.js', 'foo'), new File('a.js', 'bar')]);
     expect(testInjector.logger.debug).calledWith('Instrumenting %d source files with mutants', 2);
   });
 
@@ -66,7 +77,7 @@ describe(Instrumenter.name, () => {
     helper.transformerStub.callsFake((_, collector: I<transformers.MutantCollector>) => {
       collector.collect('foo.js', parseJS('bar').program.body[0], createMutable());
     });
-    await sut.instrument([new File('b.js', 'foo'), new File('a.js', 'bar')], createInstrumenterOptions());
+    await act([new File('b.js', 'foo'), new File('a.js', 'bar')]);
     expect(testInjector.logger.info).calledWith('Instrumented %d source file(s) with %d mutant(s)', 2, 2);
   });
 
@@ -86,7 +97,7 @@ describe(Instrumenter.name, () => {
     helper.transformerStub.callsFake(fakeTransform);
 
     // Act
-    await sut.instrument(input, createInstrumenterOptions());
+    await act(input);
 
     // Assert
     expect(testInjector.logger.debug).calledWith('Instrumented foo.js (1 mutant(s))');

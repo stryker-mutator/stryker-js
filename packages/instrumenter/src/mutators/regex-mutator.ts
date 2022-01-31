@@ -2,7 +2,7 @@ import { NodePath } from '@babel/core';
 import * as types from '@babel/types';
 import weaponRegex from 'weapon-regex';
 
-import { NodeMutator } from '.';
+import { NodeMutator } from './index.js';
 
 /**
  * Checks that a string literal is an obvious regex string literal
