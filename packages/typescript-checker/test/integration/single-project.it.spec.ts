@@ -1,6 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 
+import { fileURLToPath } from 'url';
+
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Location, Mutant } from '@stryker-mutator/api/core';
@@ -11,7 +13,7 @@ import { TypescriptChecker } from '../../src/typescript-checker.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
-  __dirname,
+  path.dirname(fileURLToPath(import.meta.url)),
   '..' /* integration */,
   '..' /* test */,
   '..' /* dist */,
