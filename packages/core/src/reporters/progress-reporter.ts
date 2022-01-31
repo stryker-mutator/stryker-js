@@ -1,7 +1,7 @@
 import { MutantTestCoverage, MutantResult } from '@stryker-mutator/api/core';
 
-import { ProgressBar } from './progress-bar';
-import { ProgressKeeper } from './progress-keeper';
+import { ProgressBar } from './progress-bar.js';
+import { ProgressKeeper } from './progress-keeper.js';
 
 export class ProgressBarReporter extends ProgressKeeper {
   private progressBar?: ProgressBar;

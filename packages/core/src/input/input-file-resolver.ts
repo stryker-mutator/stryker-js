@@ -12,14 +12,14 @@ import { SourceFile } from '@stryker-mutator/api/report';
 import { isErrnoException, notEmpty } from '@stryker-mutator/util';
 import { IMinimatch, Minimatch } from 'minimatch';
 
-import { coreTokens } from '../di';
-import { StrictReporter } from '../reporters/strict-reporter';
-import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
-import { defaultOptions } from '../config/options-validator';
+import { coreTokens } from '../di/index.js';
+import { StrictReporter } from '../reporters/strict-reporter.js';
+import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';
+import { defaultOptions } from '../config/options-validator.js';
 
-import { FileMatcher } from '../config';
+import { FileMatcher } from '../config/index.js';
 
-import { InputFileCollection } from './input-file-collection';
+import { InputFileCollection } from './input-file-collection.js';
 
 function toReportSourceFile(file: File): SourceFile {
   return {

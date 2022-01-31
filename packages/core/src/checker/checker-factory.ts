@@ -2,12 +2,12 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
-import { coreTokens } from '../di';
-import { LoggingClientContext } from '../logging/logging-client-context';
+import { coreTokens } from '../di/index.js';
+import { LoggingClientContext } from '../logging/logging-client-context.js';
 
-import { CheckerChildProcessProxy } from './checker-child-process-proxy';
-import { CheckerResource } from './checker-resource';
-import { CheckerRetryDecorator } from './checker-retry-decorator';
+import { CheckerChildProcessProxy } from './checker-child-process-proxy.js';
+import { CheckerResource } from './checker-resource.js';
+import { CheckerRetryDecorator } from './checker-retry-decorator.js';
 
 createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext, commonTokens.getLogger);
 export function createCheckerFactory(

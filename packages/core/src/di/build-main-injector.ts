@@ -4,16 +4,16 @@ import { commonTokens, Injector, PluginContext, PluginKind, tokens } from '@stry
 import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
-import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markOptions } from '../config';
-import { ConfigReader } from '../config/config-reader';
-import { BroadcastReporter } from '../reporters/broadcast-reporter';
-import { TemporaryDirectory } from '../utils/temporary-directory';
-import { Timer } from '../utils/timer';
-import { UnexpectedExitHandler } from '../unexpected-exit-handler';
+import { readConfig, buildSchemaWithPluginContributions, OptionsValidator, validateOptions, markOptions } from '../config/index.js';
+import { ConfigReader } from '../config/config-reader.js';
+import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
+import { TemporaryDirectory } from '../utils/temporary-directory.js';
+import { Timer } from '../utils/timer.js';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
-import { pluginResolverFactory } from './factory-methods';
+import { pluginResolverFactory } from './factory-methods.js';
 
-import { coreTokens, PluginCreator } from '.';
+import { coreTokens, PluginCreator } from './index.js';
 
 export interface MainContext extends PluginContext {
   [coreTokens.reporter]: Required<Reporter>;

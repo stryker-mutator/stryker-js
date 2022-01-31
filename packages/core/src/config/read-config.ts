@@ -1,9 +1,9 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens } from '@stryker-mutator/api/plugin';
 
-import { coreTokens } from '../di';
+import { coreTokens } from '../di/index.js';
 
-import { ConfigReader } from './config-reader';
+import { ConfigReader } from './config-reader.js';
 
 export function readConfig(configReader: ConfigReader): StrykerOptions {
   return configReader.readConfig();

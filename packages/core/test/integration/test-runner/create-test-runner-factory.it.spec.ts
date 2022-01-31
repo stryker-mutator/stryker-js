@@ -7,13 +7,13 @@ import { LogLevel } from '@stryker-mutator/api/core';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { LoggingClientContext } from '../../../src/logging';
-import { createTestRunnerFactory } from '../../../src/test-runner';
-import { sleep } from '../../helpers/test-utils';
-import { coreTokens } from '../../../src/di';
-import { TestRunnerResource } from '../../../src/concurrent';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
+import { sleep } from '../../helpers/test-utils.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
-import { CounterTestRunner } from './additional-test-runners';
+import { CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;

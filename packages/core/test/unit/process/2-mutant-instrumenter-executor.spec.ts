@@ -8,13 +8,13 @@ import { Checker } from '@stryker-mutator/api/check';
 
 import { I } from '@stryker-mutator/util';
 
-import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import { InputFileCollection } from '../../../src/input';
-import { coreTokens } from '../../../src/di';
-import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
-import { createCheckerFactory } from '../../../src/checker';
-import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
-import { Pool } from '../../../src/concurrent';
+import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
+import { InputFileCollection } from '../../../src/input/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
+import { createCheckerFactory } from '../../../src/checker/index.js';
+import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
+import { Pool } from '../../../src/concurrent/index.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;

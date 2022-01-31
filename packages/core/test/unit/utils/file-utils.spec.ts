@@ -4,7 +4,7 @@ import fs from 'fs';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import * as fileUtils from '../../../src/utils/file-utils';
+import * as fileUtils from '../../../src/utils/file-utils.js';
 
 function wrapDirs(dirs: string[]) {
   return dirs.map((d) => {

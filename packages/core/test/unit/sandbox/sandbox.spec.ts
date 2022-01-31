@@ -9,11 +9,11 @@ import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 import { I, normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
-import { Sandbox } from '../../../src/sandbox/sandbox';
-import { coreTokens } from '../../../src/di';
-import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
-import * as fileUtils from '../../../src/utils/file-utils';
-import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
+import { Sandbox } from '../../../src/sandbox/sandbox.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
+import * as fileUtils from '../../../src/utils/file-utils.js';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;

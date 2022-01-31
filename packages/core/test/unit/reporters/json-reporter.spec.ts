@@ -5,8 +5,8 @@ import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { schema } from '@stryker-mutator/api/core';
 
-import { JsonReporter } from '../../../src/reporters/json-reporter';
-import * as JsonReporterUtil from '../../../src/reporters/reporter-util';
+import { JsonReporter } from '../../../src/reporters/json-reporter.js';
+import * as JsonReporterUtil from '../../../src/reporters/reporter-util.js';
 
 describe(JsonReporter.name, () => {
   let writeFileStub: sinon.SinonStub;

@@ -8,7 +8,8 @@
     "resolveJsonModule": true,
     "types": [
       "node" // Exclude global mocha functions for the sources
-    ]
+    ],
+    "module": "ES2020"
   },
   "include": [
     "src"

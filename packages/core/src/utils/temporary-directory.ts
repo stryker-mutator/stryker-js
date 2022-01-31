@@ -7,8 +7,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
-import { deleteDir } from './file-utils';
-import { random } from './object-utils';
+import { deleteDir } from './file-utils.js';
+import { random } from './object-utils.js';
 
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;

@@ -2,7 +2,7 @@ import { ClassPlugin, FactoryPlugin, PluginKind } from '@stryker-mutator/api/plu
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { PluginCreator } from '../../../src/di/plugin-creator';
+import { PluginCreator } from '../../../src/di/plugin-creator.js';
 
 describe('PluginCreator', () => {
   let sut: PluginCreator<PluginKind.Reporter>;

@@ -1,12 +1,12 @@
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from '../logging';
-import { buildMainInjector, coreTokens, CliOptionsProvider } from '../di';
-import { InputFileResolver } from '../input';
-import { ConfigError } from '../errors';
+import { LogConfigurator } from '../logging/index.js';
+import { buildMainInjector, coreTokens, CliOptionsProvider } from '../di/index.js';
+import { InputFileResolver } from '../input/index.js';
+import { ConfigError } from '../errors.js';
 
-import { MutantInstrumenterContext } from '.';
+import { MutantInstrumenterContext } from './index.js';
 
 export class PrepareExecutor {
   public static readonly inject = tokens(coreTokens.cliOptions, commonTokens.injector);

@@ -13,7 +13,7 @@ import {
 
 import { errorToString } from '@stryker-mutator/util';
 
-import { PluginCreator } from '../di';
+import { PluginCreator } from '../di/index.js';
 
 export class ChildProcessTestRunnerWorker implements TestRunner {
   private readonly underlyingTestRunner: TestRunner;

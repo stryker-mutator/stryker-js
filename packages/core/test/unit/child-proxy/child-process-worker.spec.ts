@@ -6,7 +6,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker';
+import { ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker.js';
 import {
   CallMessage,
   InitMessage,
@@ -15,14 +15,14 @@ import {
   WorkerMessage,
   WorkerMessageKind,
   WorkResult,
-} from '../../../src/child-proxy/message-protocol';
-import * as di from '../../../src/di';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/string-utils';
-import { currentLogMock } from '../../helpers/log-mock';
-import { Mock } from '../../helpers/producers';
+} from '../../../src/child-proxy/message-protocol.js';
+import * as di from '../../../src/di/index.js';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import { serialize } from '../../../src/utils/string-utils.js';
+import { currentLogMock } from '../../helpers/log-mock.js';
+import { Mock } from '../../helpers/producers.js';
 
-import { HelloClass } from './hello-class';
+import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 

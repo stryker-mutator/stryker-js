@@ -3,7 +3,7 @@ import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import { PluginKind, tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
-import { PluginCreator } from '../di';
+import { PluginCreator } from '../di/index.js';
 
 export class CheckerWorker implements Checker {
   private readonly innerCheckers: Array<{ name: string; checker: Checker }> = [];

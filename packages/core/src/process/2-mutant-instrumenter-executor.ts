@@ -2,16 +2,16 @@ import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { MainContext, coreTokens } from '../di';
-import { InputFileCollection } from '../input';
-import { Sandbox } from '../sandbox/sandbox';
-import { LoggingClientContext } from '../logging';
+import { MainContext, coreTokens } from '../di/index.js';
+import { InputFileCollection } from '../input/index.js';
+import { Sandbox } from '../sandbox/sandbox.js';
+import { LoggingClientContext } from '../logging/index.js';
 
-import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
-import { createCheckerFactory } from '../checker';
-import { createPreprocessor } from '../sandbox';
+import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
+import { createCheckerFactory } from '../checker/index.js';
+import { createPreprocessor } from '../sandbox/index.js';
 
-import { DryRunContext } from './3-dry-run-executor';
+import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutantInstrumenterContext extends MainContext {
   [coreTokens.inputFiles]: InputFileCollection;

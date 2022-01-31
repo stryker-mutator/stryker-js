@@ -8,11 +8,11 @@ import sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
-import * as objectUtils from '../../../src/utils/object-utils';
-import * as timerModule from '../../../src/utils/timer';
-import { ChildProcessMock } from '../../helpers/child-process-mock';
-import { Mock, mock } from '../../helpers/producers';
+import { CommandTestRunner } from '../../../src/test-runner/command-test-runner.js';
+import * as objectUtils from '../../../src/utils/object-utils.js';
+import * as timerModule from '../../../src/utils/timer.js';
+import { ChildProcessMock } from '../../helpers/child-process-mock.js';
+import { Mock, mock } from '../../helpers/producers.js';
 
 describe(CommandTestRunner.name, () => {
   let childProcessMock: ChildProcessMock;

@@ -6,14 +6,14 @@ import sinon from 'sinon';
 import { StrykerOptions, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 
-import * as optionsValidatorModule from '../../../src/config/options-validator';
-import * as pluginLoaderModule from '../../../src/di/plugin-loader';
-import * as configReaderModule from '../../../src/config/config-reader';
-import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di';
-import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector';
-import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter';
-import { currentLogMock } from '../../helpers/log-mock';
-import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
+import * as optionsValidatorModule from '../../../src/config/options-validator.js';
+import * as pluginLoaderModule from '../../../src/di/plugin-loader.js';
+import * as configReaderModule from '../../../src/config/config-reader.js';
+import { PluginCreator, PluginLoader, coreTokens, provideLogger } from '../../../src/di/index.js';
+import { buildMainInjector, CliOptionsProvider } from '../../../src/di/build-main-injector.js';
+import * as broadcastReporterModule from '../../../src/reporters/broadcast-reporter.js';
+import { currentLogMock } from '../../helpers/log-mock.js';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
 describe(buildMainInjector.name, () => {
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;

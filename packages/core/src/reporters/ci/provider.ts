@@ -1,8 +1,8 @@
-import { getEnvironmentVariable } from '../../utils/object-utils';
+import { getEnvironmentVariable } from '../../utils/object-utils.js';
 
-import { CircleProvider } from './circle-provider';
-import { TravisProvider } from './travis-provider';
-import { GithubActionsCIProvider } from './github-actions-provider';
+import { CircleProvider } from './circle-provider.js';
+import { TravisProvider } from './travis-provider.js';
+import { GithubActionsCIProvider } from './github-actions-provider.js';
 
 /**
  * Represents an object that can provide information about a CI/CD provider.

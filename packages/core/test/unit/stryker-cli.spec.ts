@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { LogConfigurator } from '../../src/logging';
-import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli';
+import { LogConfigurator } from '../../src/logging/index.js';
+import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;

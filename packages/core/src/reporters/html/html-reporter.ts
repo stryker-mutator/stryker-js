@@ -6,9 +6,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import * as ReporterUtil from '../reporter-util';
+import * as ReporterUtil from '../reporter-util.js';
 
-import { reportTemplate as reportTemplate } from './report-template';
+import { reportTemplate as reportTemplate } from './report-template.js';
 
 const DEFAULT_BASE_FOLDER = path.normalize('reports/mutation/html');
 export const RESOURCES_DIR_NAME = 'strykerResources';

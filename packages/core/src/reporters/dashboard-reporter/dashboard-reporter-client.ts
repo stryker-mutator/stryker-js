@@ -4,11 +4,11 @@ import { StrykerError } from '@stryker-mutator/util';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { isOK } from '../../utils/net-utils';
-import { getEnvironmentVariable } from '../../utils/object-utils';
+import { isOK } from '../../utils/net-utils.js';
+import { getEnvironmentVariable } from '../../utils/object-utils.js';
 
-import { dashboardReporterTokens } from './tokens';
-import { Report } from './report';
+import { dashboardReporterTokens } from './tokens.js';
+import { Report } from './report.js';
 
 interface ReportResponseBody {
   href: string;

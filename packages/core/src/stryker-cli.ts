@@ -8,10 +8,10 @@ guardMinimalNodeVersion();
 import commander from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { initializerFactory } from './initializer';
-import { LogConfigurator } from './logging';
-import { Stryker } from './stryker';
-import { defaultOptions } from './config/options-validator';
+import { initializerFactory } from './initializer/index.js';
+import { LogConfigurator } from './logging/index.js';
+import { Stryker } from './stryker.js';
+import { defaultOptions } from './config/options-validator.js';
 
 /**
  * Interpret a command line argument and add it to an object.

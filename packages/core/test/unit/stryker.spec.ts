@@ -6,12 +6,12 @@ import { PartialStrykerOptions, LogLevel, MutantResult } from '@stryker-mutator/
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from '../../src/logging';
-import { Stryker } from '../../src/stryker';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process';
-import { coreTokens } from '../../src/di';
-import { ConfigError } from '../../src/errors';
-import { TemporaryDirectory } from '../../src/utils/temporary-directory';
+import { LogConfigurator } from '../../src/logging/index.js';
+import { Stryker } from '../../src/stryker.js';
+import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process/index.js';
+import { coreTokens } from '../../src/di/index.js';
+import { ConfigError } from '../../src/errors.js';
+import { TemporaryDirectory } from '../../src/utils/temporary-directory.js';
 
 describe(Stryker.name, () => {
   let sut: Stryker;

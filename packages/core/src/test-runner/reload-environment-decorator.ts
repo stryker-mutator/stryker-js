@@ -1,6 +1,6 @@
 import { DryRunOptions, DryRunResult, MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
-import { TestRunnerDecorator } from './test-runner-decorator';
+import { TestRunnerDecorator } from './test-runner-decorator.js';
 
 enum TestEnvironmentState {
   Pristine,

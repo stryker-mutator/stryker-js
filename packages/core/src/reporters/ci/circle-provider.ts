@@ -1,6 +1,6 @@
-import { getEnvironmentVariable, getEnvironmentVariableOrThrow, undefinedEmptyString } from '../../utils/object-utils';
+import { getEnvironmentVariable, getEnvironmentVariableOrThrow, undefinedEmptyString } from '../../utils/object-utils.js';
 
-import { CIProvider } from './provider';
+import { CIProvider } from './provider.js';
 
 /**
  * https://circleci.com/docs/2.0/env-vars/#built-in-environment-variables

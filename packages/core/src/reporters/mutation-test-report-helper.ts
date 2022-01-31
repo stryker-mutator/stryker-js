@@ -9,9 +9,9 @@ import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutatio
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
-import { coreTokens } from '../di';
-import { InputFileCollection } from '../input';
-import { setExitCode } from '../utils/object-utils';
+import { coreTokens } from '../di/index.js';
+import { InputFileCollection } from '../input/index.js';
+import { setExitCode } from '../utils/object-utils.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',

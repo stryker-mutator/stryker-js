@@ -4,9 +4,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
-import * as objectUtils from '../../../src/utils/object-utils';
-import { resolveFromRoot } from '../../helpers/test-utils';
+import { CommandTestRunner } from '../../../src/test-runner/command-test-runner.js';
+import * as objectUtils from '../../../src/utils/object-utils.js';
+import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 describe(`${CommandTestRunner.name} integration`, () => {
   const workingDir = resolveFromRoot('testResources', 'command-runner');

@@ -2,9 +2,9 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import { createInjector } from 'typed-inject';
 
-import { pluginResolverFactory } from './factory-methods';
+import { pluginResolverFactory } from './factory-methods.js';
 
-import { coreTokens, provideLogger } from '.';
+import { coreTokens, provideLogger } from './index.js';
 
 export function buildChildProcessInjector(options: StrykerOptions): Injector<PluginContext> {
   return provideLogger(createInjector())

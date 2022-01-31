@@ -1,6 +1,6 @@
-import { getEnvironmentVariableOrThrow } from '../../utils/object-utils';
+import { getEnvironmentVariableOrThrow } from '../../utils/object-utils.js';
 
-import { CIProvider } from './provider';
+import { CIProvider } from './provider.js';
 
 /**
  * https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables#default-environment-variables

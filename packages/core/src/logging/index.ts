@@ -1,2 +1,2 @@
-export * from './log-configurator';
-export * from './logging-client-context';
+export * from './log-configurator.js';
+export * from './logging-client-context.js';

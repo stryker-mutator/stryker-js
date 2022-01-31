@@ -7,7 +7,8 @@
     "types": [
       "mocha",
       "node"
-    ]
+    ],
+    "module": "ES2020"
   },
   "include": [
     "test"

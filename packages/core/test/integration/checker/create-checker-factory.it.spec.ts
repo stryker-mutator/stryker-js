@@ -5,12 +5,12 @@ import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-help
 import { expect } from 'chai';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
-import { createCheckerFactory } from '../../../src/checker';
-import { CheckerResource } from '../../../src/concurrent';
-import { coreTokens } from '../../../src/di';
-import { LoggingClientContext } from '../../../src/logging';
+import { createCheckerFactory } from '../../../src/checker/index.js';
+import { CheckerResource } from '../../../src/concurrent/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
 
-import { TwoTimesTheCharm } from './additional-checkers';
+import { TwoTimesTheCharm } from './additional-checkers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
   let createSut: () => CheckerResource;

@@ -3,8 +3,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import sinon from 'sinon';
 
-import { createPluginResolverProvider, coreTokens } from '../../../src/di';
-import { resolveFromRoot } from '../../helpers/test-utils';
+import { createPluginResolverProvider, coreTokens } from '../../../src/di/index.js';
+import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 describe('Options validation integration', () => {
   it('should log about unknown properties in log file', () => {

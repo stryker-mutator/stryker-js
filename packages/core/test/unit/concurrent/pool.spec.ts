@@ -5,7 +5,7 @@ import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
 import { lastValueFrom, range, ReplaySubject } from 'rxjs';
 
-import { Pool, Resource } from '../../../src/concurrent';
+import { Pool, Resource } from '../../../src/concurrent/index.js';
 
 describe(Pool.name, () => {
   let worker1: sinon.SinonStubbedInstance<Required<Resource>>;

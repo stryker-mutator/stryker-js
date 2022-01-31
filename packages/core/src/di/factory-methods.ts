@@ -1,7 +1,7 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginResolver, tokens } from '@stryker-mutator/api/plugin';
 
-import { coreTokens, PluginLoader } from '.';
+import { coreTokens, PluginLoader } from './index.js';
 
 export function pluginResolverFactory(
   injector: Injector<{ [commonTokens.logger]: Logger; [coreTokens.pluginDescriptors]: readonly string[] }>

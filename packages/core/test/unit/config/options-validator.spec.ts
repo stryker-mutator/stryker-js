@@ -7,9 +7,9 @@ import { expect } from 'chai';
 
 import { propertyPath } from '@stryker-mutator/util';
 
-import { OptionsValidator, validateOptions } from '../../../src/config/options-validator';
-import { coreTokens } from '../../../src/di';
-import { createCpuInfo } from '../../helpers/producers';
+import { OptionsValidator, validateOptions } from '../../../src/config/options-validator.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { createCpuInfo } from '../../helpers/producers.js';
 
 describe(OptionsValidator.name, () => {
   let sut: OptionsValidator;

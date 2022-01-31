@@ -7,7 +7,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 
 import fileUrl from 'file-url';
 
-import * as ReporterUtil from './reporter-util';
+import * as ReporterUtil from './reporter-util.js';
 
 const INDENTION_LEVEL = 0;
 export const RESOURCES_DIR_NAME = 'strykerResources';

@@ -5,11 +5,11 @@ import { Task } from '@stryker-mutator/util';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
-import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
-import { LoggingClientContext } from '../../../src/logging';
-import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy';
-import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error.js';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy.js';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker.js';
 
 describe(ChildProcessTestRunnerProxy.name, () => {
   let options: StrykerOptions;

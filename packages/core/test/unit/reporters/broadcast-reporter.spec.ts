@@ -4,9 +4,9 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { coreTokens } from '../../../src/di';
-import { PluginCreator } from '../../../src/di/plugin-creator';
-import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
+import { coreTokens } from '../../../src/di/index.js';
+import { PluginCreator } from '../../../src/di/plugin-creator.js';
+import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
 
 describe(BroadcastReporter.name, () => {
   let sut: BroadcastReporter;

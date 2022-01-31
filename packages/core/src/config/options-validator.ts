@@ -8,12 +8,12 @@ import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
-import { coreTokens } from '../di';
-import { ConfigError } from '../errors';
-import { CommandTestRunner } from '../test-runner/command-test-runner';
-import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input';
+import { coreTokens } from '../di/index.js';
+import { ConfigError } from '../errors.js';
+import { CommandTestRunner } from '../test-runner/command-test-runner.js';
+import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input/index.js';
 
-import { describeErrors } from './validation-errors';
+import { describeErrors } from './validation-errors.js';
 
 const ajv = new Ajv({ useDefaults: true, allErrors: true, jsPropertySyntax: true, verbose: true, logger: false, strict: false });
 

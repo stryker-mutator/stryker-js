@@ -8,9 +8,9 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import { plural } from '../utils/string-utils';
+import { plural } from '../utils/string-utils.js';
 
-import { ClearTextScoreTable } from './clear-text-score-table';
+import { ClearTextScoreTable } from './clear-text-score-table.js';
 
 const { MutantStatus } = schema;
 

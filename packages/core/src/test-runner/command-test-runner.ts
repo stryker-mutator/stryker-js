@@ -16,8 +16,8 @@ import {
 } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
 
-import { kill } from '../utils/object-utils';
-import { Timer } from '../utils/timer';
+import { kill } from '../utils/object-utils.js';
+import { Timer } from '../utils/timer.js';
 
 /**
  * A test runner that uses a (bash or cmd) command to execute the tests.

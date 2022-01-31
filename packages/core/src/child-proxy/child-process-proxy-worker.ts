@@ -3,11 +3,11 @@ import path from 'path';
 import { errorToString } from '@stryker-mutator/util';
 import { getLogger, Logger } from 'log4js';
 
-import { buildChildProcessInjector } from '../di';
-import { LogConfigurator } from '../logging';
-import { deserialize, serialize } from '../utils/string-utils';
+import { buildChildProcessInjector } from '../di/index.js';
+import { LogConfigurator } from '../logging/index.js';
+import { deserialize, serialize } from '../utils/string-utils.js';
 
-import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
+import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
 
 export class ChildProcessProxyWorker {
   private log?: Logger;

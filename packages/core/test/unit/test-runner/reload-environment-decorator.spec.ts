@@ -3,7 +3,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ReloadEnvironmentDecorator } from '../../../src/test-runner/reload-environment-decorator';
+import { ReloadEnvironmentDecorator } from '../../../src/test-runner/reload-environment-decorator.js';
 
 describe(ReloadEnvironmentDecorator.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;

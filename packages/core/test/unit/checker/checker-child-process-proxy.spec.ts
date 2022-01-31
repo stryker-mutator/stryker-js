@@ -3,10 +3,10 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { CheckerChildProcessProxy } from '../../../src/checker/checker-child-process-proxy';
-import { CheckerWorker } from '../../../src/checker/checker-worker';
-import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
-import { LoggingClientContext } from '../../../src/logging';
+import { CheckerChildProcessProxy } from '../../../src/checker/checker-child-process-proxy.js';
+import { CheckerWorker } from '../../../src/checker/checker-worker.js';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
 
 describe(CheckerChildProcessProxy.name, () => {
   let childProcessProxyCreateStub: sinon.SinonStub;

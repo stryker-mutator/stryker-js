@@ -5,10 +5,10 @@ import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import { coreTokens } from '../di';
-import { PluginCreator } from '../di/plugin-creator';
+import { coreTokens } from '../di/index.js';
+import { PluginCreator } from '../di/plugin-creator.js';
 
-import { StrictReporter } from './strict-reporter';
+import { StrictReporter } from './strict-reporter.js';
 
 export class BroadcastReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreatorReporter, commonTokens.logger);

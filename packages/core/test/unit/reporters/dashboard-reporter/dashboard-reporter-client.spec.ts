@@ -4,11 +4,11 @@ import sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient';
 import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
 
-import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
-import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
-import { Mock, mock } from '../../../helpers/producers';
-import { Report } from '../../../../src/reporters/dashboard-reporter/report';
-import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client.js';
+import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens.js';
+import { Mock, mock } from '../../../helpers/producers.js';
+import { Report } from '../../../../src/reporters/dashboard-reporter/report.js';
+import { EnvironmentVariableStore } from '../../../helpers/environment-variable-store.js';
 
 describe(DashboardReporterClient.name, () => {
   let sut: DashboardReporterClient;

@@ -10,10 +10,10 @@ import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 import { mergeMap, toArray } from 'rxjs/operators';
 import { from, lastValueFrom } from 'rxjs';
 
-import { TemporaryDirectory } from '../utils/temporary-directory';
-import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils';
-import { coreTokens } from '../di';
-import { UnexpectedExitHandler } from '../unexpected-exit-handler';
+import { TemporaryDirectory } from '../utils/temporary-directory.js';
+import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils.js';
+import { coreTokens } from '../di/index.js';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();

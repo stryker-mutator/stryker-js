@@ -5,11 +5,11 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { deepMerge } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
-import { ConfigError } from '../errors';
+import { coreTokens } from '../di/index.js';
+import { ConfigError } from '../errors.js';
 
-import { defaultOptions, OptionsValidator } from './options-validator';
-import { createConfig } from './create-config';
+import { defaultOptions, OptionsValidator } from './options-validator.js';
+import { createConfig } from './create-config.js';
 
 export const CONFIG_SYNTAX_HELP = `
 /**

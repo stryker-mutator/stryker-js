@@ -3,6 +3,7 @@
   "version": "5.6.1",
   "description": "The extendable JavaScript mutation testing framework",
   "main": "dist/src/index.js",
+  "type":"module",
   "scripts": {
     "start": "tsc -w",
     "test": "nyc npm run test:all",

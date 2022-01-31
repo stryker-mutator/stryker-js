@@ -4,7 +4,7 @@ import { deepFreeze, I } from '@stryker-mutator/util';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { PluginResolver } from '@stryker-mutator/api/plugin';
 
-import { buildSchemaWithPluginContributions } from '../../../src/config';
+import { buildSchemaWithPluginContributions } from '../../../src/config/index.js';
 
 describe(buildSchemaWithPluginContributions.name, () => {
   let pluginResolverStub: sinon.SinonStubbedInstance<PluginResolver>;

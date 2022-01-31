@@ -6,15 +6,15 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import sinon from 'sinon';
 
-import { PrepareExecutor } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
-import { Timer } from '../../../src/utils/timer';
-import { InputFileResolver, InputFileCollection } from '../../../src/input';
+import { PrepareExecutor } from '../../../src/process/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import * as buildMainInjectorModule from '../../../src/di/build-main-injector.js';
+import { Timer } from '../../../src/utils/timer.js';
+import { InputFileResolver, InputFileCollection } from '../../../src/input/index.js';
 
-import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
-import { ConfigError } from '../../../src/errors';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
+import { ConfigError } from '../../../src/errors.js';
 
 describe(PrepareExecutor.name, () => {
   let cliOptions: PartialStrykerOptions;

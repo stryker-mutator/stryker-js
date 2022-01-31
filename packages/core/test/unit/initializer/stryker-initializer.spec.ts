@@ -8,16 +8,16 @@ import inquirer from 'inquirer';
 import sinon from 'sinon';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
-import { initializerTokens } from '../../../src/initializer';
-import { NpmClient } from '../../../src/initializer/npm-client';
-import { PackageInfo } from '../../../src/initializer/package-info';
-import { Preset } from '../../../src/initializer/presets/preset';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
-import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
-import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
-import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
-import { Mock } from '../../helpers/producers';
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
+import { initializerTokens } from '../../../src/initializer/index.js';
+import { NpmClient } from '../../../src/initializer/npm-client.js';
+import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { Preset } from '../../../src/initializer/presets/preset.js';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
+import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
+import { Mock } from '../../helpers/producers.js';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;

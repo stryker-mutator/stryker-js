@@ -6,11 +6,11 @@ import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
 import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
-import { isWarningEnabled } from '../utils/object-utils';
-import { FileMatcher } from '../config';
+import { coreTokens } from '../di/index.js';
+import { isWarningEnabled } from '../utils/object-utils.js';
+import { FileMatcher } from '../config/index.js';
 
-import { FilePreprocessor } from './file-preprocessor';
+import { FilePreprocessor } from './file-preprocessor.js';
 
 /**
  * Disabled type checking by inserting `@ts-nocheck` atop TS/JS files and removing other @ts-xxx directives from comments:

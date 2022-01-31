@@ -5,10 +5,10 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner';
-import { coreTokens } from '../../../src/di';
-import { Sandbox } from '../../../src/sandbox';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants';
+import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { Sandbox } from '../../../src/sandbox/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants/index.js';
 
 const TIME_OVERHEAD_MS = 501;
 

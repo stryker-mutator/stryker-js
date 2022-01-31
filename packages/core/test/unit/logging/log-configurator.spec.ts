@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import log4js from 'log4js';
 import sinon from 'sinon';
 
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import * as netUtils from '../../../src/utils/net-utils';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import * as netUtils from '../../../src/utils/net-utils.js';
 
 describe('LogConfigurator', () => {
   const sut = LogConfigurator;

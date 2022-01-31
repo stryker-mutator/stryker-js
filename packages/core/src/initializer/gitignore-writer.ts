@@ -3,9 +3,9 @@ import { existsSync, promises as fs } from 'fs';
 
 import { tokens } from '@stryker-mutator/api/plugin';
 
-import { defaultOptions } from '../config';
+import { defaultOptions } from '../config/index.js';
 
-import { initializerTokens } from '.';
+import { initializerTokens } from './index.js';
 
 const GITIGNORE_FILE = '.gitignore';
 

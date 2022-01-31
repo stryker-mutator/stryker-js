@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { strykerCoreSchema } from '@stryker-mutator/api/core';
 
-import { markOptions } from '../../../src/config/options-marker';
+import { markOptions } from '../../../src/config/options-marker.js';
 
 describe(markOptions.name, () => {
   describe('unknown options', () => {

@@ -4,8 +4,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { coreTokens } from '../../src/di';
-import { UnexpectedExitHandler } from '../../src/unexpected-exit-handler';
+import { coreTokens } from '../../src/di/index.js';
+import { UnexpectedExitHandler } from '../../src/unexpected-exit-handler.js';
 
 class ProcessMock extends EventEmitter {
   public exit = sinon.stub();

@@ -5,8 +5,8 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { PropertyPathBuilder, findUnserializables } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
-import { isWarningEnabled } from '../utils/object-utils';
+import { coreTokens } from '../di/index.js';
+import { isWarningEnabled } from '../utils/object-utils.js';
 
 markOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
 

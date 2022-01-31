@@ -5,9 +5,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { coreTokens } from '../../../src/di';
-import { PluginLoader } from '../../../src/di/plugin-loader';
-import * as fileUtils from '../../../src/utils/file-utils';
+import { coreTokens } from '../../../src/di/index.js';
+import { PluginLoader } from '../../../src/di/plugin-loader.js';
+import * as fileUtils from '../../../src/utils/file-utils.js';
 
 describe('PluginLoader', () => {
   let sut: PluginLoader;

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator';
+import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator.js';
 
 describe('TestRunnerDecorator', () => {
   let sut: TestRunnerDecorator;

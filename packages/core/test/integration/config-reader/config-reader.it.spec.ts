@@ -5,10 +5,10 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ConfigReader } from '../../../src/config/config-reader';
-import { coreTokens } from '../../../src/di';
-import { OptionsValidator } from '../../../src/config/options-validator';
-import { resolveFromRoot } from '../../helpers/test-utils';
+import { ConfigReader } from '../../../src/config/config-reader.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { OptionsValidator } from '../../../src/config/options-validator.js';
+import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;

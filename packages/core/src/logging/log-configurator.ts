@@ -1,10 +1,10 @@
 import { LogLevel } from '@stryker-mutator/api/core';
 import log4js from 'log4js';
 
-import { getFreePort } from '../utils/net-utils';
+import { getFreePort } from '../utils/net-utils.js';
 
-import { LoggingClientContext } from './logging-client-context';
-import { minLevel } from './log-utils';
+import { LoggingClientContext } from './logging-client-context.js';
+import { minLevel } from './log-utils.js';
 
 const enum AppenderName {
   File = 'file',

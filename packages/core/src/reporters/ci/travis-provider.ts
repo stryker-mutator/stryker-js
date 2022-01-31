@@ -1,6 +1,6 @@
-import { getEnvironmentVariable, undefinedEmptyString } from '../../utils/object-utils';
+import { getEnvironmentVariable, undefinedEmptyString } from '../../utils/object-utils.js';
 
-import { CIProvider } from './provider';
+import { CIProvider } from './provider.js';
 
 /**
  * See https://docs.travis-ci.com/user/environment-variables/#default-environment-variables

@@ -3,10 +3,10 @@ import { createInjector } from 'typed-inject';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from './logging';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process';
-import { coreTokens, provideLogger } from './di';
-import { retrieveCause, ConfigError } from './errors';
+import { LogConfigurator } from './logging/index.js';
+import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process/index.js';
+import { coreTokens, provideLogger } from './di/index.js';
+import { retrieveCause, ConfigError } from './errors.js';
 
 /**
  * The main Stryker class.

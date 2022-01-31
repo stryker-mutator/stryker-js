@@ -7,15 +7,15 @@ import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import { getLogger } from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
-import { LoggingClientContext } from '../logging';
-import { kill } from '../utils/object-utils';
-import { StringBuilder } from '../utils/string-builder';
+import { LoggingClientContext } from '../logging/index.js';
+import { kill } from '../utils/object-utils.js';
+import { StringBuilder } from '../utils/string-builder.js';
 
-import { deserialize, padLeft, serialize } from '../utils/string-utils';
+import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
 
-import { ChildProcessCrashedError } from './child-process-crashed-error';
-import { ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol';
-import { OutOfMemoryError } from './out-of-memory-error';
+import { ChildProcessCrashedError } from './child-process-crashed-error.js';
+import { ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
+import { OutOfMemoryError } from './out-of-memory-error.js';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 

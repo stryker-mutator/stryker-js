@@ -4,9 +4,9 @@ import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
 import { MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 
-import * as progressBarModule from '../../../src/reporters/progress-bar';
-import { ProgressBarReporter } from '../../../src/reporters/progress-reporter';
-import { Mock, mock } from '../../helpers/producers';
+import * as progressBarModule from '../../../src/reporters/progress-bar.js';
+import { ProgressBarReporter } from '../../../src/reporters/progress-reporter.js';
+import { Mock, mock } from '../../helpers/producers.js';
 
 const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;

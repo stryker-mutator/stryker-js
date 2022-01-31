@@ -8,10 +8,10 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
-import { coreTokens } from '../../../src/di';
-import { InputFileCollection } from '../../../src/input';
-import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
-import * as objectUtils from '../../../src/utils/object-utils';
+import { coreTokens } from '../../../src/di/index.js';
+import { InputFileCollection } from '../../../src/input/index.js';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
+import * as objectUtils from '../../../src/utils/object-utils.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;

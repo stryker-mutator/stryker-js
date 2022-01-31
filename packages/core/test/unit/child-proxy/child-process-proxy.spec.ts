@@ -8,7 +8,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
 import {
   DisposeMessage,
   InitMessage,
@@ -16,15 +16,15 @@ import {
   ParentMessageKind,
   WorkerMessage,
   WorkerMessageKind,
-} from '../../../src/child-proxy/message-protocol';
-import { LoggingClientContext } from '../../../src/logging';
-import * as stringUtils from '../../../src/utils/string-utils';
-import * as objectUtils from '../../../src/utils/object-utils';
-import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
-import { currentLogMock } from '../../helpers/log-mock';
-import { Mock } from '../../helpers/producers';
+} from '../../../src/child-proxy/message-protocol.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import * as stringUtils from '../../../src/utils/string-utils.js';
+import * as objectUtils from '../../../src/utils/object-utils.js';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
+import { currentLogMock } from '../../helpers/log-mock.js';
+import { Mock } from '../../helpers/producers.js';
 
-import { HelloClass } from './hello-class';
+import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,

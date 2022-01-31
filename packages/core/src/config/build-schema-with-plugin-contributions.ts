@@ -3,7 +3,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 import { I } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
+import { coreTokens } from '../di/index.js';
 
 function mergedSchema(mainSchema: JSONSchema7, additionalSchemas: JSONSchema7[]): JSONSchema7 {
   const schema = {

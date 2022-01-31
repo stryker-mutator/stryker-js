@@ -11,8 +11,8 @@ import { I } from '@stryker-mutator/util';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
-import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants';
+import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants/index.js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];

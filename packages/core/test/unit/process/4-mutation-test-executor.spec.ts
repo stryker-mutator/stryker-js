@@ -9,14 +9,14 @@ import { Observable } from 'rxjs';
 import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
-import { MutationTestExecutor } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { createTestRunnerPoolMock, createCheckerPoolMock, createMutantRunPlan, createMutantEarlyResultPlan } from '../../helpers/producers';
-import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
-import { Timer } from '../../../src/utils/timer';
-import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
-import { Sandbox } from '../../../src/sandbox';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner } from '../../../src/mutants';
+import { MutationTestExecutor } from '../../../src/process/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { createTestRunnerPoolMock, createCheckerPoolMock, createMutantRunPlan, createMutantEarlyResultPlan } from '../../helpers/producers.js';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
+import { Timer } from '../../../src/utils/timer.js';
+import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
+import { Sandbox } from '../../../src/sandbox/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner } from '../../../src/mutants/index.js';
 
 function ignoredEarlyResultPlan(overrides?: Partial<Mutant>): MutantEarlyResultPlan {
   return createMutantEarlyResultPlan({
