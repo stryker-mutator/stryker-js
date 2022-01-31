@@ -1,8 +1,12 @@
 import sinon from 'sinon';
 
-export function createRunDetails(): jasmine.RunDetails {
+export function createJasmineDoneInfo(): jasmine.JasmineDoneInfo {
   return {
     failedExpectations: [],
+    overallStatus: '',
+    deprecationWarnings: [],
+    incompleteReason: '',
+    totalTime: 100,
     order: {
       random: false,
       seed: '12foo',
@@ -11,39 +15,30 @@ export function createRunDetails(): jasmine.RunDetails {
   };
 }
 
-export function createCustomReporterResult(overrides?: Partial<jasmine.CustomReporterResult>): jasmine.CustomReporterResult {
+export function createSpecResult(overrides?: Partial<jasmine.SpecResult>): jasmine.SpecResult {
   return {
     description: 'should have bar',
     fullName: 'Foo should have bar',
     id: 'spec0',
+    deprecationWarnings: [],
+    duration: 42,
+    failedExpectations: [],
+    passedExpectations: [],
+    pendingReason: '',
+    properties: {},
+    status: 'passed',
     ...overrides,
   };
 }
 
+export function createSpec(overrides?: Partial<jasmine.Spec>): jasmine.Spec {
+  return { id: 'spec1', ...overrides } as jasmine.Spec;
+}
+
 export function createEnvStub(): sinon.SinonStubbedInstance<jasmine.Env> {
   return {
-    currentSpec: { id: 'spec1' } as jasmine.Spec,
-    matchersClass: sinon.stub() as unknown as jasmine.Matchers<any>,
-    version: sinon.stub(),
-    versionString: sinon.stub(),
-    nextSpecId: sinon.stub(),
     addReporter: sinon.stub(),
     execute: sinon.stub(),
-    describe: sinon.stub(),
-    beforeEach: sinon.stub(),
-    beforeAll: sinon.stub(),
-    currentRunner: sinon.stub(),
-    afterEach: sinon.stub(),
-    afterAll: sinon.stub(),
-    xdescribe: sinon.stub(),
-    it: sinon.stub(),
-    xit: sinon.stub(),
-    compareRegExps_: sinon.stub(),
-    compareObjects_: sinon.stub(),
-    equals_: sinon.stub(),
-    contains_: sinon.stub(),
-    addCustomEqualityTester: sinon.stub(),
-    addMatchers: sinon.stub(),
     specFilter: sinon.stub(),
     throwOnExpectationFailure: sinon.stub(),
     stopOnSpecFailure: sinon.stub(),
@@ -55,5 +50,12 @@ export function createEnvStub(): sinon.SinonStubbedInstance<jasmine.Env> {
     randomizeTests: sinon.stub(),
     clearReporters: sinon.stub(),
     configure: sinon.stub(),
+    configuration: sinon.stub(),
+    hideDisabled: sinon.stub(),
+    hidingDisabled: sinon.stub(),
+    setSpecProperty: sinon.stub(),
+    setSuiteProperty: sinon.stub(),
+    topSuite: sinon.stub(),
+    stoppingOnSpecFailure: sinon.stub(),
   };
 }

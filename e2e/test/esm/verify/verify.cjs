@@ -11,6 +11,11 @@ describe('esm', () => {
     execStryker('stryker run --testRunner mocha');
     await assertStrykerRanCorrectly();
   });
+
+  it('should be supported in the jasmine runner', async () => {
+    execStryker('stryker run --testRunner jasmine');
+    await assertStrykerRanCorrectly();
+  });
 });
 
 async function assertStrykerRanCorrectly() {
