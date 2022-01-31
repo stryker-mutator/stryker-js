@@ -3,7 +3,7 @@ import path from 'path';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createTypescriptChecker } from '../../src';
+import { createTypescriptChecker } from '../../src/index.js';
 
 const resolveTestResource = path.resolve.bind(
   path,

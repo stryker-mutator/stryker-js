@@ -6,7 +6,8 @@
     "types": [
       "mocha",
       "node"
-    ]
+    ],
+    "module": "ES2020"
   },
   "references": [
     {

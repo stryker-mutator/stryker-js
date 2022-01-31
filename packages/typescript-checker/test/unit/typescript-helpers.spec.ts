@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
 
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers.js';
 
 describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {

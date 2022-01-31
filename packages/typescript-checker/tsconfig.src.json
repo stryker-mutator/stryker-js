@@ -6,6 +6,7 @@
     "types": [
       "node"
     ],
+    "module": "ES2020"
   },
   "references": [
     {
