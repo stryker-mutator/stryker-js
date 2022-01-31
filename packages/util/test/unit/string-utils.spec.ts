@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, PropertyPathBuilder } from '../../src';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, PropertyPathBuilder } from '../../src/index.js';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {

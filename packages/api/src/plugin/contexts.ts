@@ -1,8 +1,8 @@
-import { StrykerOptions } from '../core';
-import { Logger, LoggerFactoryMethod } from '../logging';
+import { StrykerOptions } from '../core/index.js';
+import { Logger, LoggerFactoryMethod } from '../logging/index.js';
 
-import { PluginResolver } from './plugins';
-import { commonTokens } from './tokens';
+import { PluginResolver } from './plugins.js';
+import { commonTokens } from './tokens.js';
 
 /**
  * The basic dependency injection context within Stryker

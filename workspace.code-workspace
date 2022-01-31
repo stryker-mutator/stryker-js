@@ -95,19 +95,20 @@
     },
     "cSpell.words": [
       "Errored",
+      "execa",
       "Expirable",
       "Instrumenter",
-      "Unserializable",
-      "Unserializables",
-      "Whitespaces",
-      "execa",
       "memfs",
       "mutables",
       "mutators",
       "nocheck",
       "preprocessors",
+      "promisified",
       "quasis",
-      "serializable"
+      "serializable",
+      "Unserializable",
+      "Unserializables",
+      "Whitespaces"
     ]
   },
   "extensions": {

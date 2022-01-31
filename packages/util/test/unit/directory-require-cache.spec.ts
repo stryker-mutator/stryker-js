@@ -1,11 +1,13 @@
 import path from 'path';
+import { createRequire } from 'module';
 
 import sinon from 'sinon';
-
 import { expect } from 'chai';
 
-import { DirectoryRequireCache } from '../../src';
-import * as platform from '../../src/platform';
+import { DirectoryRequireCache } from '../../src/index.js';
+import { platform } from '../../src/platform.js';
+
+const require = createRequire(import.meta.url);
 
 describe(DirectoryRequireCache.name, () => {
   let workingDirectory: string;
@@ -196,7 +198,7 @@ describe(DirectoryRequireCache.name, () => {
     expect(require.cache[fooFileName]).undefined;
   });
 
-  it('should support case-insensitive filesystems', () => {
+  it('should support case-insensitive file systems', () => {
     const csfStub = sinon.stub(platform, 'caseSensitiveFs').returns(false);
 
     // Arrange

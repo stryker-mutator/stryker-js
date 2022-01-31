@@ -1,7 +1,7 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { findUnserializables } from '../../src';
+import { findUnserializables } from '../../src/index.js';
 
 describe(findUnserializables.name, () => {
   [4, true, undefined, null, 'str', {}, []].forEach((serializableValue) => {

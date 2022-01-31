@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Unit tests",
+      "name": "💬 Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "--timeout",

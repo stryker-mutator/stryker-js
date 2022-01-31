@@ -4,7 +4,7 @@ import { commonTokens, PluginContext, PluginResolver } from '@stryker-mutator/ap
 import sinon from 'sinon';
 import { Injector, createInjector } from 'typed-inject';
 
-import * as factory from './factory';
+import * as factory from './factory.js';
 
 class TestInjector {
   public pluginResolver!: sinon.SinonStubbedInstance<PluginResolver>;

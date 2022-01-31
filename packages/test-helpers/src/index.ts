@@ -1,6 +1,6 @@
-export * as factory from './factory';
-export * as assertions from './assertions';
-export * from './test-injector';
-export * from './logging-server';
-export * from './tick';
-export * from './fs-promises-cp';
+export * as factory from './factory.js';
+export * as assertions from './assertions.js';
+export * from './test-injector.js';
+export * from './logging-server.js';
+export * from './tick.js';
+export * from './fs-promises-cp.js';

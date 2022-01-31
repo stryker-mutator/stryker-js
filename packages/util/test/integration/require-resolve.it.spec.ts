@@ -1,13 +1,14 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { requireResolve } from '../../src';
+import { requireResolve } from '../../src/index.js';
 
 const resolveTestResource: typeof path.resolve = path.resolve.bind(
   path,
-  __dirname,
+  path.dirname(fileURLToPath(import.meta.url)),
   '..' /* integration */,
   '..' /* test */,
   '..' /* dist */,
