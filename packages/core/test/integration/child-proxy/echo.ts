@@ -1,8 +1,8 @@
 import { tokens } from '@stryker-mutator/api/plugin';
-import { getLogger } from 'log4js';
+import log4js from 'log4js';
 
 export class Echo {
-  private readonly logger = getLogger(Echo.name);
+  private readonly logger = log4js.getLogger(Echo.name);
 
   public static inject = tokens('name');
   constructor(public name: string) {}

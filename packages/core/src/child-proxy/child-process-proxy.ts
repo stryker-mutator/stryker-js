@@ -4,7 +4,7 @@ import os from 'os';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { PluginContext } from '@stryker-mutator/api/plugin';
 import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
-import { getLogger } from 'log4js';
+import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging/index.js';
@@ -37,7 +37,7 @@ export class ChildProcessProxy<T> implements Disposable {
   private disposeTask: ExpirableTask | undefined;
   private currentError: ChildProcessCrashedError | undefined;
   private readonly workerTasks: Task[] = [];
-  private readonly log = getLogger(ChildProcessProxy.name);
+  private readonly log = log4js.getLogger(ChildProcessProxy.name);
   private readonly stdoutBuilder = new StringBuilder();
   private readonly stderrBuilder = new StringBuilder();
   private isDisposed = false;

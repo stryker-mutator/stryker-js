@@ -1,6 +1,6 @@
 import { DryRunStatus, DryRunResult, DryRunOptions, MutantRunResult, MutantRunOptions, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
-import { getLogger } from 'log4js';
+import log4js from 'log4js';
 
 import { OutOfMemoryError } from '../child-proxy/out-of-memory-error.js';
 
@@ -13,7 +13,7 @@ export const MAX_RETRIES = 2;
  * Implements the retry functionality whenever an internal test runner rejects a promise.
  */
 export class RetryRejectedDecorator extends TestRunnerDecorator {
-  private readonly log = getLogger(RetryRejectedDecorator.name);
+  private readonly log = log4js.getLogger(RetryRejectedDecorator.name);
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     const result = await this.run(() => super.dryRun(options));
