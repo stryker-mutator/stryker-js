@@ -5,14 +5,14 @@ import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-import { Instrumenter } from '../../src/index.js';
+import { createInstrumenter, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('instrumenter integration', () => {
   let sut: Instrumenter;
   beforeEach(() => {
-    sut = testInjector.injector.injectClass(Instrumenter);
+    sut = testInjector.injector.injectFunction(createInstrumenter);
   });
 
   it('should be able to instrument html', async () => {

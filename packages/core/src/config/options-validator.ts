@@ -1,6 +1,6 @@
 import os from 'os';
 
-import { hasMagic } from 'glob';
+import glob from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
@@ -129,7 +129,7 @@ export class OptionsValidator {
     options.mutate.forEach((mutateString, index) => {
       const match = MUTATION_RANGE_REGEX.exec(mutateString);
       if (match) {
-        if (hasMagic(mutateString)) {
+        if (glob.hasMagic(mutateString)) {
           additionalErrors.push(
             `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`
           );

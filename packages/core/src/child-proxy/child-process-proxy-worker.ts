@@ -1,7 +1,9 @@
 import path from 'path';
 
+import { fileURLToPath } from 'url';
+
 import { errorToString } from '@stryker-mutator/util';
-import { getLogger, Logger } from 'log4js';
+import log4js from 'log4js';
 
 import { buildChildProcessInjector } from '../di/index.js';
 import { LogConfigurator } from '../logging/index.js';
@@ -10,7 +12,7 @@ import { deserialize, serialize } from '../utils/string-utils.js';
 import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
 
 export class ChildProcessProxyWorker {
-  private log?: Logger;
+  private log?: log4js.Logger;
 
   public realSubject: any;
 
@@ -48,7 +50,7 @@ export class ChildProcessProxyWorker {
 
   private handleInit(message: InitMessage) {
     LogConfigurator.configureChildProcess(message.loggingContext);
-    this.log = getLogger(ChildProcessProxyWorker.name);
+    this.log = log4js.getLogger(ChildProcessProxyWorker.name);
     this.handlePromiseRejections();
     let injector = buildChildProcessInjector(message.options);
     const locals = message.additionalInjectableValues as Record<string, any>;
@@ -132,7 +134,7 @@ export class ChildProcessProxyWorker {
 // Prevent side effects for merely requiring the file
 // Only actually start the child worker when it is requested
 // Stryker disable all
-if (require.main === module) {
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
   new ChildProcessProxyWorker();
 }
 // Stryker restore all

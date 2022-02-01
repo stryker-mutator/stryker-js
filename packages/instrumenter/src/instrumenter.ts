@@ -4,13 +4,13 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { File, MutationRange } from '@stryker-mutator/api/core';
 
-import { createParser } from './parsers/index.js';
-import { transform, MutantCollector } from './transformers/index.js';
-import { print } from './printers/index.js';
+import type { createParser } from './parsers/index.js';
+import { type transform, MutantCollector } from './transformers/index.js';
+import type { print } from './printers/index.js';
 import { InstrumentResult } from './instrument-result.js';
 import { InstrumenterOptions } from './instrumenter-options.js';
+import { instrumenterTokens } from './instrumenter-tokens.js';
 
-const injectables = { createParser, print, transform };
 /**
  * The instrumenter is responsible for
  * * Generating mutants based on source files
@@ -19,25 +19,25 @@ const injectables = { createParser, print, transform };
  * @see https://github.com/stryker-mutator/stryker-js/issues/1514
  */
 export class Instrumenter {
-  public static inject = tokens(commonTokens.logger);
+  public static inject = tokens(commonTokens.logger, instrumenterTokens.createParser, instrumenterTokens.print, instrumenterTokens.transform);
 
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly _createParser: typeof createParser,
+    private readonly _print: typeof print,
+    private readonly _transform: typeof transform
+  ) {}
 
-  public async instrument(
-    files: readonly File[],
-    options: InstrumenterOptions,
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    { createParser, print, transform } = injectables
-  ): Promise<InstrumentResult> {
+  public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {
     this.logger.debug('Instrumenting %d source files with mutants', files.length);
     const mutantCollector = new MutantCollector();
     const outFiles: File[] = [];
     let mutantCount = 0;
-    const parse = createParser(options);
+    const parse = this._createParser(options);
     for await (const file of files) {
       const ast = await parse(file.textContent, file.name);
-      transform(ast, mutantCollector, { options: { ...options, mutationRanges: options.mutationRanges.map(toBabelLineNumber) } });
-      const mutatedContent = print(ast);
+      this._transform(ast, mutantCollector, { options: { ...options, mutationRanges: options.mutationRanges.map(toBabelLineNumber) } });
+      const mutatedContent = this._print(ast);
       outFiles.push(new File(file.name, mutatedContent));
       if (this.logger.isDebugEnabled()) {
         const nrOfMutantsInFile = mutantCollector.mutants.length - mutantCount;

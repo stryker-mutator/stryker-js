@@ -1,5 +1,5 @@
 import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
+import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { MainContext, coreTokens } from '../di/index.js';
@@ -28,7 +28,7 @@ export class MutantInstrumenterExecutor {
 
   public async execute(): Promise<Injector<DryRunContext>> {
     // Create the checker and instrumenter
-    const instrumenter = this.injector.injectClass(Instrumenter);
+    const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, {

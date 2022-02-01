@@ -6,7 +6,7 @@ import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/u
 import { expect } from 'chai';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
-import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest-client/RestClient.js';
 
 import { initializerTokens } from '../../../src/initializer/index.js';
 import { NpmClient } from '../../../src/initializer/npm-client.js';
@@ -45,8 +45,8 @@ describe(StrykerInitializer.name, () => {
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
-    restClientSearch = sinon.createStubInstance(RestClient);
-    restClientPackage = sinon.createStubInstance(RestClient);
+    restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
+    restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)

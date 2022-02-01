@@ -10,6 +10,7 @@ import * as transformers from '../../src/transformers/index.js';
 import * as printers from '../../src/printers/index.js';
 import { createJSAst, createTSAst, createMutable, createInstrumenterOptions } from '../helpers/factories.js';
 import { parseJS } from '../helpers/syntax-test-helpers.js';
+import { instrumenterTokens } from '../../src/instrumenter-tokens.js';
 
 describe(Instrumenter.name, () => {
   let sut: Instrumenter;
@@ -25,18 +26,18 @@ describe(Instrumenter.name, () => {
   }
   let helper: Helper;
 
-  async function act(input: readonly File[], options = createInstrumenterOptions()) {
-    return await sut.instrument(input, options, {
-      createParser: helper.createParserStub,
-      print: helper.printerStub,
-      transform: helper.transformerStub,
-    });
-  }
-
   beforeEach(() => {
     helper = new Helper();
-    sut = testInjector.injector.injectClass(Instrumenter);
+    sut = testInjector.injector
+      .provideValue(instrumenterTokens.createParser, helper.createParserStub)
+      .provideValue(instrumenterTokens.print, helper.printerStub)
+      .provideValue(instrumenterTokens.transform, helper.transformerStub)
+      .injectClass(Instrumenter);
   });
+
+  async function act(input: readonly File[], options = createInstrumenterOptions()) {
+    return await sut.instrument(input, options);
+  }
 
   it('should parse, transform and print each file', async () => {
     // Arrange

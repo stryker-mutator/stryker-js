@@ -1,3 +1,4 @@
+export * from './create-instrumenter.js';
 export * from './instrumenter.js';
 export * from './instrument-result.js';
 export * from './instrumenter-options.js';
