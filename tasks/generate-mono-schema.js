@@ -1,12 +1,15 @@
 // @ts-check
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
-const { promisify } = require('util');
-const writeFile = promisify(fs.writeFile);
-const readFile = promisify(fs.readFile);
-const mkdir = promisify(fs.mkdir);
-const resolveFromParent = path.resolve.bind(path, __dirname, '..');
+import { writeFile as _writeFile, readFile as _readFile, mkdir as _mkdir } from 'fs';
+import path from 'path';
+import glob from 'glob';
+import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+
+const writeFile = promisify(_writeFile);
+const readFile = promisify(_readFile);
+const mkdir = promisify(_mkdir);
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+const resolveFromParent = path.resolve.bind(path, dirname, '..');
 const globAsPromised = promisify(glob);
 
 /**

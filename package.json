@@ -1,6 +1,7 @@
 {
   "name": "stryker-parent",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@types/chai": "~4.3.0",
     "@types/chai-as-promised": "~7.1.3",
