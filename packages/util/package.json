@@ -5,7 +5,7 @@
   "main": "dist/src/index.js",
   "type": "module",
   "scripts": {
-    "test": "nyc npm run test:all",
+    "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
     "test:integration": "mocha \"dist/test/integration/**/*.js\"",

@@ -4,7 +4,7 @@
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "scripts": {
-    "test": "nyc npm run test:all",
+    "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
     "test:integration": "mocha --timeout 30000 \"dist/test/integration/**/*.js\"",

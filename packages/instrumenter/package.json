@@ -5,7 +5,7 @@
   "main": "dist/src/index.js",
   "type": "module",
   "scripts": {
-    "test": "nyc npm run mocha",
+    "test": "c8 npm run mocha",
     "mocha": "mocha",
     "stryker": "node ../core/bin/stryker run"
   },
