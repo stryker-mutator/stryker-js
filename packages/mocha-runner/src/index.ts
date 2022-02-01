@@ -1,10 +1,19 @@
+import fs from 'fs';
+
+import { URL } from 'url';
+
 import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import strykerValidationSchema from '../schema/mocha-runner-options.json';
+import type schema from '../schema/mocha-runner-options.json';
 
-import { createMochaTestRunner, createMochaTestRunnerFactory } from './mocha-runner-factories';
-import { MochaTestRunner } from './mocha-test-runner';
+import { createMochaTestRunner, createMochaTestRunnerFactory } from './mocha-runner-factories.js';
+
+export { MochaTestRunner } from './mocha-test-runner.js';
 
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'mocha', createMochaTestRunner)];
 
-export { strykerValidationSchema, MochaTestRunner, createMochaTestRunnerFactory };
+export const strykerValidationSchema: typeof schema = JSON.parse(
+  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8')
+);
+
+export { createMochaTestRunner, createMochaTestRunnerFactory };

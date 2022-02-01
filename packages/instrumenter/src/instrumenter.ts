@@ -4,9 +4,9 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { File, MutationRange } from '@stryker-mutator/api/core';
 
-import type { createParser } from './parsers/index.js';
-import { type transform, MutantCollector } from './transformers/index.js';
-import type { print } from './printers/index.js';
+import { createParser } from './parsers/index.js';
+import { transform, MutantCollector } from './transformers/index.js';
+import { print } from './printers/index.js';
 import { InstrumentResult } from './instrument-result.js';
 import { InstrumenterOptions } from './instrumenter-options.js';
 import { instrumenterTokens } from './instrumenter-tokens.js';
@@ -23,9 +23,9 @@ export class Instrumenter {
 
   constructor(
     private readonly logger: Logger,
-    private readonly _createParser: typeof createParser,
-    private readonly _print: typeof print,
-    private readonly _transform: typeof transform
+    private readonly _createParser = createParser,
+    private readonly _print = print,
+    private readonly _transform = transform
   ) {}
 
   public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {

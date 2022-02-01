@@ -1,4 +1,4 @@
-var MyMath = require('./MyMath');
+import MyMath from './MyMath.js';
 
 describe('MyMath should fail', function () {
   var myMath;

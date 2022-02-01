@@ -5,10 +5,10 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { LibWrapper } from '../../src/lib-wrapper';
-import { MochaOptions } from '../../src-generated/mocha-runner-options';
-import { MochaOptionsLoader } from '../../src/mocha-options-loader';
-import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
+import { LibWrapper } from '../../src/lib-wrapper.js';
+import { MochaOptions } from '../../src-generated/mocha-runner-options.js';
+import { MochaOptionsLoader } from '../../src/mocha-options-loader.js';
+import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options.js';
 
 describe(MochaOptionsLoader.name, () => {
   let readFileStub: sinon.SinonStub;

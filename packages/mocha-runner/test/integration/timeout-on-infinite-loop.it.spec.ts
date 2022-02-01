@@ -3,9 +3,9 @@ import path from 'path';
 import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaOptions } from '../helpers/factories.js';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: MochaTestRunner;

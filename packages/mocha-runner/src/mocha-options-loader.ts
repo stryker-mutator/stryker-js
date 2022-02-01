@@ -5,11 +5,11 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { PropertyPathBuilder } from '@stryker-mutator/util';
 
-import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options.js';
 
-import { LibWrapper } from './lib-wrapper';
-import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
-import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
+import { LibWrapper } from './lib-wrapper.js';
+import { filterConfig, serializeMochaLoadOptionsArguments } from './utils.js';
+import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options.js';
 
 /**
  * Subset of defaults for mocha options

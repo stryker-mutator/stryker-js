@@ -1,9 +1,12 @@
 import path from 'path';
 
+import { createRequire } from 'module';
+
 import Mocha, { type RootHookObject } from 'mocha';
 
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions } from '../src-generated/mocha-runner-options.js';
 
+const require = createRequire(import.meta.url);
 const mochaRoot = path.dirname(require.resolve('mocha/package.json'));
 // https://github.com/mochajs/mocha/blob/master/lib/cli/run-helpers.js#L132
 

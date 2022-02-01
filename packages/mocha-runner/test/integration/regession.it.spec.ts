@@ -2,9 +2,9 @@ import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { assertions, factory, fsPromisesCp, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
-import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('regression integration tests', () => {
   let options: MochaRunnerWithStrykerOptions;
