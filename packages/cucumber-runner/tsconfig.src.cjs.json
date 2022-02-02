@@ -1,7 +1,6 @@
 {
-  // This is a temp solution until:
-  // * "cucumberjs" supports native esm (@cucumber/cucumber@^8.0.0)
-  // * "typescript" supports native ".cts" extension (typescript@4.7.x ?)
+  // This is a workaround project until native support for node's module system is added to typescript (.cts files)
+  // @see https://www.typescriptlang.org/docs/handbook/esm-node.html
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "dist",

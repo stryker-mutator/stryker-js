@@ -1,10 +1,10 @@
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers';
 
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { expectTestResults, TimelessTestResult } from '../helpers/assertions';
-import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { expectTestResults, TimelessTestResult } from '../helpers/assertions.js';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Sample project', () => {
   let sut: KarmaTestRunner | undefined;
@@ -15,7 +15,7 @@ describe('Sample project', () => {
 
   it('should be able to run karma with jasmine', async () => {
     testInjector.options.karma = { configFile: resolveTestResource('sampleProject', 'karma-jasmine.conf.js') };
-    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
     const result = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(result);
@@ -66,7 +66,7 @@ describe('Sample project', () => {
       configFile: resolveTestResource('sampleProject', 'karma-mocha.conf.js'),
     };
 
-    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
     const result = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(result);

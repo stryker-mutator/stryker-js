@@ -1,18 +1,24 @@
-import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import { requireResolve } from '@stryker-mutator/util';
 
-import { StrykerKarmaSetup } from '../../src-generated/karma-runner-options';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../karma-runner-options-with-stryker-options.js';
+import { pluginTokens } from '../plugin-tokens.js';
 
-import * as angularStarter from './angular-starter';
-import * as karmaStarter from './karma-starter';
-import { StartedProject } from './started-project';
+import { AngularProjectStarter } from './angular-starter.js';
+import { karmaConfigStarter } from './karma-starter.js';
+import { StartedProject } from './started-project.js';
 
-export class ProjectStarter {
-  constructor(private readonly getLogger: LoggerFactoryMethod, private readonly setup: StrykerKarmaSetup) {}
-  public start(): Promise<StartedProject> {
-    if (this.setup.projectType === 'angular-cli') {
-      return angularStarter.start(this.getLogger, this.setup.ngConfig);
-    } else {
-      return karmaStarter.start();
-    }
+export interface ProjectStarter {
+  start(): Promise<StartedProject>;
+}
+
+createProjectStarter.inject = tokens(commonTokens.options, commonTokens.injector);
+export function createProjectStarter(options: StrykerOptions, injector: Injector<PluginContext>): ProjectStarter {
+  const actualOptions = options as KarmaRunnerOptionsWithStrykerOptions;
+  if (actualOptions.karma.projectType === 'angular-cli') {
+    return injector.provideValue(pluginTokens.requireResolve, requireResolve).injectClass(AngularProjectStarter);
+  } else {
+    return karmaConfigStarter;
   }
 }

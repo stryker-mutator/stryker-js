@@ -1,11 +1,24 @@
 import path from 'path';
 
+import { fileURLToPath } from 'url';
+
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
 import { noopLogger, requireResolve } from '@stryker-mutator/util';
 
-import { StrykerReporter, strykerReporterFactory } from '../karma-plugins/stryker-reporter';
-import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../karma-plugins/test-hooks-middleware';
+import { StrykerReporter, strykerReporterFactory } from './stryker-reporter.js';
+import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from './test-hooks-middleware.js';
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+
+export const strykerKarmaConfigPath = path.resolve(
+  path.dirname(filename),
+  '..' /* karma-plugins */,
+  '..' /* src */,
+  '..' /* dist */,
+  'stryker-karma.conf.cjs'
+);
 
 function setDefaultOptions(config: Config) {
   config.set({
@@ -14,12 +27,12 @@ function setDefaultOptions(config: Config) {
   });
 }
 
-function setUserKarmaConfigFile(config: Config, log: Logger) {
+function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCwd: typeof requireResolve) {
   if (globalSettings.karmaConfigFile) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
     try {
-      const userConfig = requireResolve(configFileName);
+      const userConfig = requireFromCwd(configFileName);
       if (typeof userConfig !== 'function') {
         throw new TypeError(`Karma config file "${configFileName}" should export a function! Found: ${typeof userConfig}`);
       }
@@ -71,7 +84,14 @@ function setClientOptions(config: Config) {
   if (config.frameworks?.includes('jasmine')) {
     (clientOptions as any).jasmine = {
       random: false,
+
+      // Jasmine@<4
       failFast: !globalSettings.disableBail,
+      oneFailurePerSpec: !globalSettings.disableBail,
+
+      // Jasmine@4
+      stopOnSpecFailure: !globalSettings.disableBail,
+      stopSpecOnExpectationFailure: !globalSettings.disableBail,
     };
   }
 
@@ -124,7 +144,7 @@ function configureTestHooksMiddleware(config: Config) {
 function configureStrykerMutantCoverageAdapter(config: Config) {
   config.files = config.files ?? [];
   config.files.unshift({
-    pattern: require.resolve('../karma-plugins/stryker-mutant-coverage-adapter'),
+    pattern: path.resolve(dirname, 'stryker-mutant-coverage-adapter.js'),
     included: true,
     watched: false,
     served: true,
@@ -154,10 +174,10 @@ const globalSettings: GlobalSettings = {
   disableBail: false,
 };
 
-function configureKarma(config: Config): void {
-  const log = globalSettings.getLogger(path.basename(__filename));
+export function configureKarma(config: Config, requireFromCwd = requireResolve): void {
+  const log = globalSettings.getLogger(path.basename(filename));
   setDefaultOptions(config);
-  setUserKarmaConfigFile(config, log);
+  setUserKarmaConfigFile(config, log, requireFromCwd);
   setUserKarmaConfig(config);
   setBasePath(config);
   setLifeCycleOptions(config);
@@ -178,5 +198,3 @@ configureKarma.setGlobals = (globals: Partial<GlobalSettings>) => {
   globalSettings.getLogger = globals.getLogger ?? (() => noopLogger);
   globalSettings.disableBail = globals.disableBail ?? false;
 };
-
-export = configureKarma;

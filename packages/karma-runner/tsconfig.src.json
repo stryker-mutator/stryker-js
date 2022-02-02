@@ -4,17 +4,11 @@
     "outDir": "dist",
     "rootDir": ".",
     "noImplicitThis": true,
-    "types": [
-      "karma",
-      "node"
-    ]
+    "module": "ES2020",
+    "types": ["karma", "node"]
   },
-  "include": [
-    "src",
-    "src-generated",
-    "typings",
-    "schema/*.json"
-  ],
+  "include": ["src", "src-generated", "typings", "schema/*.json"],
+  // "exclude": ["src/karma-plugins"],
   "references": [
     {
       "path": "../api/tsconfig.src.json"
