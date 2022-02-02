@@ -3,6 +3,7 @@
   "version": "5.6.1",
   "description": "A plugin to use the cucumber test runner in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
+  "type": "module",
   "scripts": {
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",

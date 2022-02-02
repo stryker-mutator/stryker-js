@@ -14,19 +14,37 @@ import {
   Location,
   TableRow,
 } from '@cucumber/messages';
-import {
+import type {
   CoverageAnalysis,
   InstrumenterContext,
   Position,
 } from '@stryker-mutator/api/core';
-import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import type { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { Formatter } from './cucumber-wrapper';
+import { Formatter } from './cucumber-wrapper.js';
 
 interface DescribedScenario extends Scenario {
   fileName: string;
   fullName: string;
 }
+
+/**
+ * Temp solution. We are not able to require the "real" TestStatus enum, because we cannot "require" from an ESM.
+ */
+const TestStatusCopy = {
+  /**
+   * The test succeeded
+   */
+  Success: 0 as unknown as TestStatus.Success,
+  /**
+   * The test failed
+   */
+  Failed: 1 as unknown as TestStatus.Failed,
+  /**
+   * The test was skipped (not executed)
+   */
+  Skipped: 2 as unknown as TestStatus.Skipped,
+};
 
 // eslint-disable-next-line import/no-default-export
 export default class StrykerFormatter extends Formatter {
@@ -91,7 +109,7 @@ export default class StrykerFormatter extends Formatter {
       startPosition: determinePosition(scenario, example),
     };
     const status = determineTestStatus(testSteps);
-    if (status === TestStatus.Failed) {
+    if (status === TestStatusCopy.Failed) {
       this.reportedTestResults.push({
         status,
         failureMessage: determineFailureMessage(testSteps),
@@ -153,16 +171,16 @@ function determineTestStatus(testSteps: TestStepFinished[]): TestStatus {
         testStep.testStepResult.status !== TestStepResultStatus.PASSED
     )
   ) {
-    return TestStatus.Success;
+    return TestStatusCopy.Success;
   }
   if (
     testSteps.some((testStep) =>
       failureStatusList.includes(testStep.testStepResult.status)
     )
   ) {
-    return TestStatus.Failed;
+    return TestStatusCopy.Failed;
   }
-  return TestStatus.Skipped;
+  return TestStatusCopy.Skipped;
 }
 
 function determineFailureMessage(testSteps: TestStepFinished[]): string {

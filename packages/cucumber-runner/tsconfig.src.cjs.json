@@ -1,0 +1,13 @@
+{
+  // This is a temp solution until:
+  // * "cucumberjs" supports native esm (@cucumber/cucumber@^8.0.0)
+  // * "typescript" supports native ".cts" extension (typescript@4.7.x ?)
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["node"],
+    "module": "commonjs",
+    "rootDir": "."
+  },
+  "include": ["src/cjs/*.ts", "src/cjs/package.json"],
+}
