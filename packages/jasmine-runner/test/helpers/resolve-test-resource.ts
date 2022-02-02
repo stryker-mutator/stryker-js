@@ -1,10 +1,12 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-export const resolveFromRoot = path.resolve.bind(path, __dirname, '..', '..', '..');
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+export const resolveFromRoot = path.resolve.bind(path, dirname, '..', '..', '..');
 export const resolveTestResource = resolveFromRoot.bind(path, 'testResources');
 
 export const resolveTempTestResourceDirectory: typeof path.resolve = () => {
-  return path.resolve(__dirname, '..' /* helpers */, '..' /* test */, '..' /* dist */, 'testResources', 'tmp', `workDir${random()}`);
+  return path.resolve(dirname, '..' /* helpers */, '..' /* test */, '..' /* dist */, 'testResources', 'tmp', `workDir${random()}`);
 };
 
 function random(): number {

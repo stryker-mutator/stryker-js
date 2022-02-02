@@ -4,6 +4,7 @@
     "outDir": "dist",
     "rootDir": ".",
     "noImplicitThis": true,
+    "module": "ES2020",
     "types": [
       "node"
     ]

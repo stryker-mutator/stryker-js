@@ -18,10 +18,10 @@ import {
 import { errorToString } from '@stryker-mutator/util';
 import jasmine from 'jasmine';
 
-import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options';
+import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options.js';
 
-import { createJasmine, toStrykerTestResult } from './helpers';
-import * as pluginTokens from './plugin-tokens';
+import { helpers } from './helpers.js';
+import * as pluginTokens from './plugin-tokens.js';
 
 export function createJasmineTestRunnerFactory(
   namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
@@ -85,7 +85,7 @@ export class JasmineTestRunner implements TestRunner {
           startTimeCurrentSpec = new self.Date().getTime();
         },
         specDone(specResult: jasmine.SpecResult) {
-          tests.push(toStrykerTestResult(specResult, new self.Date().getTime() - startTimeCurrentSpec));
+          tests.push(helpers.toStrykerTestResult(specResult, new self.Date().getTime() - startTimeCurrentSpec));
         },
         jasmineDone() {
           let mutantCoverage: MutantCoverage | undefined = undefined;
@@ -122,7 +122,7 @@ export class JasmineTestRunner implements TestRunner {
     const specFilter = (spec: jasmine.Spec): boolean => {
       return this.specIdsFilter?.includes(spec.id.toString()) ?? true;
     };
-    const jasmineInstance = createJasmine({ projectBaseDir: process.cwd() });
+    const jasmineInstance = helpers.createJasmine({ projectBaseDir: process.cwd() });
     // The `loadConfigFile` will fallback on the default
     await jasmineInstance.loadConfigFile(this.jasmineConfigFile);
     jasmineInstance.env.configure({

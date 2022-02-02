@@ -6,11 +6,11 @@ import jasmine from 'jasmine';
 
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import * as pluginTokens from '../../src/plugin-tokens';
-import * as helpers from '../../src/helpers';
-import { JasmineTestRunner } from '../../src';
-import { expectTestResultsToEqual } from '../helpers/assertions';
-import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult } from '../helpers/mock-factories';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { helpers } from '../../src/helpers.js';
+import { JasmineTestRunner } from '../../src/index.js';
+import { expectTestResultsToEqual } from '../helpers/assertions.js';
+import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult } from '../helpers/mock-factories.js';
 
 describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
