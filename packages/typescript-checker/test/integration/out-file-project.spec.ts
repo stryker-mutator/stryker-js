@@ -44,7 +44,7 @@ describe('Typescript checker with project outfile enabled', () => {
 
     for (const file of Object.keys(dependencyFiles)) {
       if (file.includes('spec')) {
-        expect(dependencyFiles[file].imports.size).to.equal(3);
+        expect(dependencyFiles.get(file)!.imports.size).to.equal(3);
       }
     }
   });

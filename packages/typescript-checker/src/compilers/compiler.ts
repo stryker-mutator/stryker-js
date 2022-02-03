@@ -1,8 +1,6 @@
 import ts from 'typescript';
 
-export type SourceFiles = Record<
-  string,
-  {
+export type SourceFiles = Map<string, {
     fileName: string;
     imports: Set<string>;
     importedBy: Set<string>;
@@ -10,6 +8,6 @@ export type SourceFiles = Record<
 >;
 
 export interface TypescriptCompiler {
-  init(): Promise<{ dependencyFiles: SourceFiles; errors: ts.Diagnostic[] }>;
+  init(): Promise<{ sourceFiles: SourceFiles; errors: ts.Diagnostic[] }>;
   check(): Promise<ts.Diagnostic[]>;
 }
