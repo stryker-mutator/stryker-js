@@ -1,4 +1,4 @@
-import { ActiveChecker, Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { MutantTestCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
@@ -7,8 +7,9 @@ import { LoggingClientContext } from '../logging';
 import { Resource } from '../concurrent/pool';
 
 import { CheckerWorker } from './checker-worker';
+import { CheckerResource } from './checker-resource';
 
-export class CheckerChildProcessProxy implements Checker, Disposable, Resource, ActiveChecker {
+export class CheckerChildProcessProxy implements CheckerResource, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
   constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
@@ -23,10 +24,6 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource, 
     );
   }
 
-  public async setActiveChecker(checker: string): Promise<void> {
-    await this.childProcess.proxy.setActiveChecker(checker);
-  }
-
   public async dispose(): Promise<void> {
     await this.childProcess?.dispose();
   }
@@ -35,9 +32,9 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource, 
     await this.childProcess?.proxy.init();
   }
 
-  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+  public async check(checkerName: string, mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
     if (this.childProcess) {
-      return this.childProcess.proxy.check(mutants);
+      return this.childProcess.proxy.check(checkerName, mutants);
     }
     return mutants.map((mutant) => ({
       mutant,
@@ -47,7 +44,7 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource, 
     }));
   }
 
-  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
-    return this.childProcess.proxy.createGroups(mutants);
+  public async createGroups(checkerName: string, mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
+    return this.childProcess.proxy.createGroups(checkerName, mutants);
   }
 }

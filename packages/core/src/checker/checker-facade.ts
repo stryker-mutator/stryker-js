@@ -1,12 +1,13 @@
 import { MutantResult, MutantTestCoverage, StrykerOptions } from "@stryker-mutator/api/core";
 import { I } from "@stryker-mutator/util";
 import { EMPTY, firstValueFrom, from, lastValueFrom, merge, Observable, of, Subject, toArray } from "rxjs";
-import { CheckerResource, ConcurrencyTokenProvider, Pool } from "../concurrent";
+import { ConcurrencyTokenProvider, Pool } from "../concurrent";
 import { Logger } from '@stryker-mutator/api/logging';
 import { CheckStatus } from "@stryker-mutator/api/check";
 import { MutationTestReportHelper } from "../reporters/mutation-test-report-helper";
 import { coreTokens } from '../di';
 import { tokens, commonTokens } from "@stryker-mutator/api/plugin";
+import { CheckerResource } from "./checker-resource";
 
 export class CheckerFacade {
   public static inject = tokens(
@@ -60,29 +61,24 @@ export class CheckerFacade {
   }
 
   private async executeChecker(
-    checkerType: string,
+    checkerName: string,
     previousPassedMutants$: Observable<MutantTestCoverage>,
     checkResult$: Subject<MutantResult>,
     passedMutant$: Subject<MutantTestCoverage>
   ) {
     const mutants = await lastValueFrom(merge(previousPassedMutants$).pipe(toArray()));
 
-    // Set the active checker on all checkerWorkers
-    await this.checkerPool.runOnAllResources(async (checkerResource) => {
-      await checkerResource.setActiveChecker(checkerType);
-    });
-
     const groups = await firstValueFrom(
       this.checkerPool.schedule(of(0), async (checker) => {
-        const group = await checker.createGroups?.(mutants);
+        const group = await checker.createGroups?.(checkerName, mutants);
         return group ?? mutants.map((m) => [m]);
       })
     );
 
-    this.log.debug(`${checkerType} created ${groups.length} groups.`);
+    this.log.debug(`${checkerName} created ${groups.length} groups.`);
 
     const run$ = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
-      const results = await checker.check(mutantGroup);
+      const results = await checker.check(checkerName, mutantGroup);
       results.forEach((result) => {
         if (result.checkResult.status === CheckStatus.Passed) {
           passedMutant$.next(result.mutant);

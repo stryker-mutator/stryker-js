@@ -7,13 +7,13 @@ import { ResourceDecorator } from '../concurrent';
 import { CheckerResource } from './checker-resource';
 
 export class CheckerDecorator extends ResourceDecorator<CheckerResource> {
-  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+  public async check(checkerName: string, mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
     try {
-      return await this.innerResource.check(mutants);
+      return await this.innerResource.check(checkerName, mutants);
     } catch (err) {
       if (err instanceof ChildProcessCrashedError) {
         await this.recover();
-        return this.innerResource.check(mutants);
+        return this.innerResource.check(checkerName, mutants);
       } else {
         throw err; //oops
       }

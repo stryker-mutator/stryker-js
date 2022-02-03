@@ -24,13 +24,14 @@ import { createTestRunnerFactory } from '../test-runner';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { ConfigError } from '../errors';
 import { findMutantTestCoverage } from '../mutants';
-import { ConcurrencyTokenProvider, Pool, createTestRunnerPool, CheckerResource } from '../concurrent';
+import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent';
 import { FileMatcher } from '../config';
 import { InputFileCollection } from '../input/input-file-collection';
 
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
 import { CheckerFacade } from '../checker/checker-facade';
+import { CheckerResource } from '../checker/checker-resource';
 
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 

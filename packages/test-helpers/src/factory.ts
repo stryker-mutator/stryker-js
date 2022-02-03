@@ -214,7 +214,6 @@ export function checker(): sinon.SinonStubbedInstance<CheckerResource> {
     createGroups: sinon.stub(),
     check: sinon.stub(),
     init: sinon.stub(),
-    setActiveChecker: sinon.stub(),
   };
 }
 

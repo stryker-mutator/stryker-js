@@ -3,16 +3,12 @@ import { mergeMap, filter, shareReplay, tap } from 'rxjs/operators';
 import { notEmpty } from '@stryker-mutator/util';
 import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-import { ActiveChecker, Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di';
+import { CheckerResource } from '../checker/checker-resource';
 
 const MAX_CONCURRENT_INIT = 2;
 
-/**
- * Represents a Checker that is also a Resource (with an init and dispose)
- */
-export type CheckerResource = ActiveChecker & Checker & Resource;
 /**
  * Represents a TestRunner that is also a Resource (with an init and dispose)
  */
@@ -87,14 +83,6 @@ export class Pool<TResource extends Resource> implements Disposable {
       }),
       tap({ complete: () => recycleBin.complete() })
     );
-  }
-
-  /**
-   * Runs a task on all individual resources
-   * @param task The task to execute on each resource
-   */
-  public async runOnAllResources(task: (resource: TResource) => Promise<void>): Promise<void> {
-    await Promise.all(this.createdResources.map((resource) => task(resource)));
   }
 
   private isDisposed = false;

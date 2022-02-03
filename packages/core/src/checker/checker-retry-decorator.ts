@@ -9,21 +9,13 @@ import { ResourceDecorator } from '../concurrent';
 import { CheckerResource } from './checker-resource';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
-  // Save the activeChecker in case a new checker has to spawn
-  private activeChecker = '';
-
   constructor(producer: () => CheckerResource, private readonly log: Logger) {
     super(producer);
   }
 
-  public async setActiveChecker(checker: string): Promise<void> {
-    this.activeChecker = checker;
-    await this.innerResource.setActiveChecker(checker);
-  }
-
-  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+  public async check(checkerName: string, mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
     try {
-      return await this.innerResource.check(mutants);
+      return await this.innerResource.check(checkerName, mutants);
     } catch (error) {
       if (error instanceof ChildProcessCrashedError) {
         if (error instanceof OutOfMemoryError) {
@@ -32,15 +24,14 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
           this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
         }
         await this.recover();
-        await this.innerResource.setActiveChecker(this.activeChecker);
-        return this.innerResource.check(mutants);
+        return this.innerResource.check(checkerName, mutants);
       } else {
         throw error; //oops
       }
     }
   }
 
-  public async createGroups(mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
-    return this.innerResource.createGroups?.(mutants);
+  public async createGroups(checkerName: string, mutants: MutantTestCoverage[]): Promise<MutantTestCoverage[][] | undefined> {
+    return this.innerResource.createGroups?.(checkerName, mutants);
   }
 }
