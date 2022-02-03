@@ -36,7 +36,7 @@ export class TypescriptChecker implements Checker {
 
   private sourceFiles: SourceFiles = new Map();
 
-  constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) { }
+  constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) {}
 
   public async init(): Promise<void> {
     const { sourceFiles, errors } = await this.tsCompiler.init();

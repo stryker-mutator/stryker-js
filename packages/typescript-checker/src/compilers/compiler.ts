@@ -1,6 +1,8 @@
 import ts from 'typescript';
 
-export type SourceFiles = Map<string, {
+export type SourceFiles = Map<
+  string,
+  {
     fileName: string;
     imports: Set<string>;
     importedBy: Set<string>;

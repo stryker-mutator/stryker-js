@@ -4,6 +4,7 @@ import { PluginKind, tokens, commonTokens, PluginContext, Injector } from '@stry
 import { StrykerError } from '@stryker-mutator/util';
 
 import { PluginCreator } from '../di';
+
 import { CheckerResource } from './checker-resource';
 
 export class CheckerWorker implements CheckerResource {

@@ -13,8 +13,9 @@ import { Timer } from '../utils/timer';
 import { Pool } from '../concurrent';
 import { Sandbox } from '../sandbox';
 
-import { DryRunContext } from './3-dry-run-executor';
 import { CheckerFacade } from '../checker/checker-facade';
+
+import { DryRunContext } from './3-dry-run-executor';
 
 export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;

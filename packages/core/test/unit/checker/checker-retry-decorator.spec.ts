@@ -1,6 +1,7 @@
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+
 import { CheckerResource } from '../../../src/checker/checker-resource';
 
 import { CheckerRetryDecorator } from '../../../src/checker/checker-retry-decorator';

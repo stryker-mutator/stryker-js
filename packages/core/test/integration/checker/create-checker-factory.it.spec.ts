@@ -9,8 +9,9 @@ import { createCheckerFactory } from '../../../src/checker';
 import { coreTokens } from '../../../src/di';
 import { LoggingClientContext } from '../../../src/logging';
 
-import { TwoTimesTheCharm } from './additional-checkers';
 import { CheckerResource } from '../../../src/checker/checker-resource';
+
+import { TwoTimesTheCharm } from './additional-checkers';
 
 describe(`${createCheckerFactory.name} integration`, () => {
   let createSut: () => CheckerResource;

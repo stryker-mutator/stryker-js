@@ -41,12 +41,12 @@ export class CompilerWithWatch implements TypescriptCompiler {
           }
           return content;
         },
-        fileExists: (path: string) => {
+        fileExists: (filePath: string) => {
           // We want to ignore the buildinfo files. With them the compiler skips the program part we want to use.
-          if (path.endsWith('.tsbuildinfo')) {
+          if (filePath.endsWith('.tsbuildinfo')) {
             return false;
           }
-          return ts.sys.fileExists(path);
+          return ts.sys.fileExists(filePath);
         },
         getModifiedTime: (pathName: string) => {
           return this.fs.getFile(pathName)?.modifiedTime;

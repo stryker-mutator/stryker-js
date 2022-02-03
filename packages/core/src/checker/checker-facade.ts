@@ -1,13 +1,15 @@
-import { MutantResult, MutantTestCoverage, StrykerOptions } from "@stryker-mutator/api/core";
-import { I } from "@stryker-mutator/util";
-import { EMPTY, firstValueFrom, from, lastValueFrom, merge, Observable, of, Subject, toArray } from "rxjs";
-import { ConcurrencyTokenProvider, Pool } from "../concurrent";
+import { MutantResult, MutantTestCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import { I } from '@stryker-mutator/util';
+import { EMPTY, firstValueFrom, from, lastValueFrom, merge, Observable, of, Subject, toArray } from 'rxjs';
 import { Logger } from '@stryker-mutator/api/logging';
-import { CheckStatus } from "@stryker-mutator/api/check";
-import { MutationTestReportHelper } from "../reporters/mutation-test-report-helper";
+import { CheckStatus } from '@stryker-mutator/api/check';
+import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
+
+import { ConcurrencyTokenProvider, Pool } from '../concurrent';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
 import { coreTokens } from '../di';
-import { tokens, commonTokens } from "@stryker-mutator/api/plugin";
-import { CheckerResource } from "./checker-resource";
+
+import { CheckerResource } from './checker-resource';
 
 export class CheckerFacade {
   public static inject = tokens(
@@ -15,7 +17,7 @@ export class CheckerFacade {
     coreTokens.checkerPool,
     commonTokens.logger,
     coreTokens.concurrencyTokenProvider,
-    coreTokens.mutationTestReportHelper,
+    coreTokens.mutationTestReportHelper
   );
 
   constructor(
@@ -24,9 +26,12 @@ export class CheckerFacade {
     private readonly log: Logger,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
     private readonly mutationTestReportHelper: I<MutationTestReportHelper>
-  ) { }
+  ) {}
 
-  public executeCheck(input$: Observable<MutantTestCoverage>) {
+  public executeCheck(input$: Observable<MutantTestCoverage>): {
+    checkResult$: Observable<MutantResult>;
+    passedMutant$: Observable<MutantTestCoverage>;
+  } {
     if (!this.options.checkers.length) {
       return {
         checkResult$: EMPTY,
