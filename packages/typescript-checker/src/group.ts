@@ -38,11 +38,11 @@ import { toPosixFileName } from './fs/tsconfig-helpers';
  * In this function we create the groups of mutants who can be tested at the same time.
  */
 export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCoverage[]): MutantTestCoverage[][] {
-  let mutantsWithoutGroup = [...mutants];
+  const mutantsWithoutGroup = [...mutants];
   let groups: MutantTestCoverage[][] = [];
 
-  while (mutantsWithoutGroup.length) {
-    const firstMutant = mutantsWithoutGroup[0];
+  let firstMutant;
+  while ((firstMutant = mutantsWithoutGroup.pop())) {
     const firstMutantFilename = toPosixFileName(firstMutant.fileName);
     const firstSourceFile = sourceFiles.get(firstMutantFilename);
 
@@ -54,10 +54,10 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
       continue;
     }
 
-    let ignoreList = [firstSourceFile.fileName, ...firstSourceFile.importedBy];
+    const ignoreList = new Set([firstSourceFile.fileName, ...firstSourceFile.importedBy]);
+    const indexesToRemove: number[] = [];
 
-    // start with 1 because we already took the first mutant.
-    for (let index = 1; index < mutantsWithoutGroup.length; index++) {
+    for (let index = 0; index < mutantsWithoutGroup.length; index++) {
       const activeMutant = mutantsWithoutGroup[index];
       const activeSourceFile = sourceFiles.get(toPosixFileName(activeMutant.fileName));
 
@@ -65,18 +65,21 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
       // If the mutant is in the same file as the previous, skip it because it will never fit.
       if (!activeSourceFile || activeSourceFile.fileName === group[index - 1]?.fileName) continue;
 
-      if (!ignoreList.includes(activeSourceFile.fileName) && !dependencyInGroup([...activeSourceFile.importedBy], group)) {
+      if (!ignoreList.has(activeSourceFile.fileName) && !dependencyInGroup([...activeSourceFile.importedBy], group)) {
+        indexesToRemove.push(index);
         group.push({ fileName: activeSourceFile.fileName, mutant: activeMutant });
-        ignoreList = [...ignoreList, activeSourceFile.fileName, ...activeSourceFile.importedBy];
+        ignoreList.add(activeSourceFile.fileName);
+        activeSourceFile.importedBy.forEach((importBy) => ignoreList.add(importBy));
       }
     }
 
     addGroupToList();
 
     function addGroupToList() {
-      // Can be improved, we know the index in the for loop but can't remove it because we loop over the same array we want te remove from
-      // A solution can be to store a array with indexes to remove
-      mutantsWithoutGroup = mutantsWithoutGroup.filter((m) => !group.find((g) => g.mutant.id === m.id));
+      for (let i = indexesToRemove.length; i--; ) {
+        mutantsWithoutGroup.splice(indexesToRemove[i], 1);
+      }
+
       groups = [...groups, group.map((g) => g.mutant)];
     }
   }
