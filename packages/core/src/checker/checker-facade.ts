@@ -1,6 +1,6 @@
 import { MutantResult, MutantTestCoverage, StrykerOptions } from "@stryker-mutator/api/core";
 import { I } from "@stryker-mutator/util";
-import { firstValueFrom, from, lastValueFrom, merge, Observable, of, Subject, toArray } from "rxjs";
+import { EMPTY, firstValueFrom, from, lastValueFrom, merge, Observable, of, Subject, toArray } from "rxjs";
 import { CheckerResource, ConcurrencyTokenProvider, Pool } from "../concurrent";
 import { Logger } from '@stryker-mutator/api/logging';
 import { CheckStatus } from "@stryker-mutator/api/check";
@@ -27,10 +27,8 @@ export class CheckerFacade {
 
   public executeCheck(input$: Observable<MutantTestCoverage>) {
     if (!this.options.checkers.length) {
-      const checkResult$ = new Subject<MutantResult>();
-      checkResult$.complete();
       return {
-        checkResult$: checkResult$.asObservable(),
+        checkResult$: EMPTY,
         passedMutant$: input$,
       };
     }
