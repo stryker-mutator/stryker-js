@@ -34,22 +34,22 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
 export class TypescriptChecker implements Checker {
   public static inject = tokens(pluginTokens.tsCompiler, pluginTokens.fs, commonTokens.options);
 
-  private sourceFiles: SourceFiles = {};
+  private sourceFiles: SourceFiles = new Map();
 
   constructor(private readonly tsCompiler: TypescriptCompiler, private readonly fs: HybridFileSystem, options: StrykerOptions) { }
 
   public async init(): Promise<void> {
-    const { dependencyFiles, errors } = await this.tsCompiler.init();
+    const { sourceFiles, errors } = await this.tsCompiler.init();
 
     if (errors.length) {
       throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
     }
 
-    if (Object.keys(dependencyFiles).length === 0) {
+    if (sourceFiles.size === 0) {
       throw new Error('No sourcefiles were loaded in the compiler.');
     }
 
-    this.sourceFiles = dependencyFiles;
+    this.sourceFiles = sourceFiles;
   }
 
   public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
@@ -118,19 +118,21 @@ export class TypescriptChecker implements Checker {
     const singleMutant = mutants.find((m) => toPosixFileName(m.fileName) === errorFileName);
     if (singleMutant) return [singleMutant];
 
-    const imports = this.sourceFiles[errorFileName].imports;
+    const imports = this.sourceFiles.get(errorFileName)?.imports;
 
     const possibleMutants: Mutant[] = [];
 
     mutants.forEach((mutant) => {
       const mutantFileName = toPosixFileName(mutant.fileName);
 
+      if (!imports) return;
       imports.forEach((importFile) => {
         if (mutantFileName === importFile) {
           possibleMutants.push(mutant);
         }
       });
     });
+
     return possibleMutants;
   }
 

@@ -25,10 +25,11 @@ export class CompilerWithWatch implements TypescriptCompiler {
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
 
-  public async init(): Promise<{ dependencyFiles: SourceFiles; errors: ts.Diagnostic[] }> {
+  public async init(): Promise<{ sourceFiles: SourceFiles; errors: ts.Diagnostic[] }> {
     guardTSVersion();
     this.guardTSConfigFileExists();
     const buildModeEnabled = determineBuildModeEnabled(this.tsconfigFile);
+    const sourceFiles: SourceFiles = new Map();
 
     const host = ts.createSolutionBuilderWithWatchHost(
       {
@@ -39,6 +40,13 @@ export class CompilerWithWatch implements TypescriptCompiler {
             return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
           }
           return content;
+        },
+        fileExists: (path: string) => {
+          // We want to ignore the buildinfo files. With them the compiler skips the program part we want to use.
+          if (path.endsWith('.tsbuildinfo')) {
+            return false;
+          }
+          return ts.sys.fileExists(path);
         },
         getModifiedTime: (pathName: string) => {
           return this.fs.getFile(pathName)?.modifiedTime;
@@ -65,7 +73,32 @@ export class CompilerWithWatch implements TypescriptCompiler {
           };
         },
       },
-      undefined,
+      (...args) => {
+        const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(...args);
+        program
+          .getSourceFiles()
+          .filter(filterDependency)
+          .forEach((file) => {
+            sourceFiles.set(file.fileName, {
+              fileName: toPosixFileName(file.fileName),
+              imports: new Set(
+                program
+                  .getAllDependencies(file)
+                  .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
+                  .flatMap((importFile) => this.resolveFilename(importFile))
+              ),
+              importedBy: new Set(),
+            });
+          });
+
+        function filterDependency(file: ts.SourceFile) {
+          if (file.fileName.includes('.d.ts')) return false;
+          if (file.fileName.includes('node_modules')) return false;
+          return true;
+        }
+
+        return program;
+      },
       (error) => {
         this.currentErrors.push(error);
       },
@@ -77,50 +110,19 @@ export class CompilerWithWatch implements TypescriptCompiler {
       }
     );
 
-    const dependencyFiles: SourceFiles = {};
-
-    host.afterProgramEmitAndDiagnostics = (program: ts.EmitAndSemanticDiagnosticsBuilderProgram) => {
-      program
-        .getSourceFiles()
-        .filter(filterDependency)
-        .forEach((file) => {
-          dependencyFiles[file.fileName] = {
-            fileName: toPosixFileName(file.fileName),
-            imports: new Set(
-              program
-                .getAllDependencies(file)
-                .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
-                .flatMap((importFile) => this.resolveFilename(importFile))
-            ),
-            importedBy: new Set(),
-          };
-        });
-    };
-
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
 
     compiler.build();
 
     const errors = await this.check();
 
-    // Function should not be called after the first check is done
-    host.afterProgramEmitAndDiagnostics = undefined;
-
-    for (const file in dependencyFiles) {
-      const imports = dependencyFiles[file].imports;
-
-      for (const importFile of imports) {
-        dependencyFiles[importFile]?.importedBy.add(file);
+    for (const [fileName, souceFile] of sourceFiles) {
+      for (const importFile of souceFile.imports) {
+        sourceFiles.get(importFile)?.importedBy.add(fileName);
       }
     }
 
-    function filterDependency(file: ts.SourceFile) {
-      if (file.fileName.includes('.d.ts')) return false;
-      if (file.fileName.includes('node_modules')) return false;
-      return true;
-    }
-
-    return { dependencyFiles, errors };
+    return { sourceFiles, errors };
   }
 
   public async check(): Promise<ts.Diagnostic[]> {

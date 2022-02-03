@@ -11,7 +11,7 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
   let firstMutant;
   while ((firstMutant = mutantsWithoutGroup.pop())) {
     const firstMutantFilename = toPosixFileName(firstMutant.fileName);
-    const firstSourceFile = sourceFiles[firstMutantFilename];
+    const firstSourceFile = sourceFiles.get(firstMutantFilename);
 
     const group: Array<{ fileName: string; mutant: MutantTestCoverage }> = [{ fileName: firstMutantFilename, mutant: firstMutant }];
 
@@ -26,7 +26,7 @@ export function createGroups(sourceFiles: SourceFiles, mutants: MutantTestCovera
 
     for (let index = 0; index < mutantsWithoutGroup.length; index++) {
       const activeMutant = mutantsWithoutGroup[index];
-      const activeSourceFile = sourceFiles[toPosixFileName(activeMutant.fileName)];
+      const activeSourceFile = sourceFiles.get(toPosixFileName(activeMutant.fileName));
 
       // We allow people to mutate files that are not included in this ts project
       // If the mutant is in the same file as the previous, skip it because it will never fit.
