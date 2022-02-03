@@ -1,4 +1,5 @@
 export const checkerPool = 'checkerPool';
+export const checkerFacade = 'checkerFacade';
 export const checkerFactory = 'checkerFactory';
 export const checkerConcurrencyTokens = 'checkerConcurrencyTokens';
 export const disableTypeChecksHelper = 'disableTypeChecksHelper';

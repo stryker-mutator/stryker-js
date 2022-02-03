@@ -30,6 +30,7 @@ import { InputFileCollection } from '../input/input-file-collection';
 
 import { MutationTestContext } from './4-mutation-test-executor';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
+import { CheckerFacade } from '../checker/checker-facade';
 
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
@@ -100,7 +101,8 @@ export class DryRunExecutor {
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
+      .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage)
+      .provideClass(coreTokens.checkerFacade, CheckerFacade);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
