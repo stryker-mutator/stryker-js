@@ -5,13 +5,13 @@ import { SourceFiles } from './compilers/compiler';
 import { toPosixFileName } from './fs/tsconfig-helpers';
 
 /**
- * To speed up the TypeChecking we want to check multiple mutants at once.
- * When there are multiple mutants in different files who can't throw errors in eachother we can TypeCheck them simultaneously.
+ * To speed up the type checking we want to check multiple mutants at once.
+ * When multiple mutants in different files who can't throw errors in each other we can type check them simultaneously.
  * These mutants who can be tested at the same time are called a group.
  * Therefore the return type is an array of arrays in other words: an array of groups.
  *
  * @example
- * Lets assume we got tho following project structure and in every file is one mutant.
+ * Let's assume we got tho following project structure and in every file is one mutant.
  *
  *          ========
  *          = A.ts =
@@ -28,11 +28,11 @@ import { toPosixFileName } from './fs/tsconfig-helpers';
  * A imports B and C
  * C imports D
  *
- * In this example we can TypeCheck B and D at the same time.
- * This is because these files can't throw errors in eachother.
- * If we typecheck them and lets say B throws an error.
- * We know forsure that the mutant in B was one creating the type error.
- * If we typecheck B and D at the same time it is possible that an error shows up in A.
+ * In this example we can type check B and D at the same time.
+ * This is because these files can't throw errors in each other.
+ * If we type check them and let's say B throws an error.
+ * We know for sure that the mutant in B was the one creating the type error.
+ * If we type check B and D at the same time it is possible that an error shows up in A.
  * When this happens we go down de dependency graph and individual test the mutants who were in that group.
  *
  * In this function we create the groups of mutants who can be tested at the same time.
