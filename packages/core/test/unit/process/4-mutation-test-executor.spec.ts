@@ -31,7 +31,6 @@ describe(MutationTestExecutor.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerFacadeMock: sinon.SinonStubbedInstance<CheckerFacade>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -69,7 +68,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
-      .provideValue(coreTokens.checkerFacade, checkerFacadeMock)
+      .provideClass(coreTokens.checkerFacade, CheckerFacade)
       .injectClass(MutationTestExecutor);
   });
 
@@ -248,7 +247,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
-      .provideValue(coreTokens.checkerFacade, checkerFacadeMock)
+      .provideClass(coreTokens.checkerFacade, CheckerFacade)
       .injectClass(MutationTestExecutor);
 
     const mutant = factory.mutantTestCoverage({ id: '1' });
@@ -282,7 +281,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock as I<Pool<TestRunner>>)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
-      .provideValue(coreTokens.checkerFacade, checkerFacadeMock)
+      .provideClass(coreTokens.checkerFacade, CheckerFacade)
       .injectClass(MutationTestExecutor);
 
     mutants.push(factory.mutantTestCoverage({ id: '1' }));
