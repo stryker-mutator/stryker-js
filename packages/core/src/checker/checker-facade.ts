@@ -37,9 +37,9 @@ export class CheckerFacade {
     const checkResult$ = new Subject<MutantResult>();
     let previousPassedMutants$ = input$;
 
-    for (const checkerType of this.options.checkers) {
+    for (const checkerName of this.options.checkers) {
       const passedMutants$ = new Subject<MutantTestCoverage>();
-      this.executeChecker(checkerType, previousPassedMutants$, checkResult$, passedMutants$);
+      this.executeChecker(checkerName, previousPassedMutants$, checkResult$, passedMutants$);
       previousPassedMutants$ = passedMutants$;
     }
 
