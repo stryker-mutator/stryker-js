@@ -1,6 +1,6 @@
 import { Config } from '@jest/types';
 
-import { JestRunResult } from '../jest-run-result';
+import { JestRunResult } from '../jest-run-result.js';
 
 export interface RunSettings {
   jestConfig: Config.InitialOptions;

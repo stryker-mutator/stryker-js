@@ -1,16 +1,14 @@
-import path from 'path';
-
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import { JestOptions } from '../../src-generated/jest-runner-options';
-import { createJestOptions } from '../helpers/producers';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
-import { expectTestResults } from '../helpers/assertions';
+import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
+import { JestOptions } from '../../src-generated/jest-runner-options.js';
+import { createJestOptions } from '../helpers/producers.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
+import { expectTestResults } from '../helpers/assertions.js';
 
 // Needed for Jest in order to run tests
 process.env.BABEL_ENV = 'test';
@@ -110,13 +108,14 @@ describe(`${JestTestRunner.name} integration test`, () => {
   });
 
   describe('mutantRun', () => {
+    const resolveFromProject = resolveTestResource.bind(undefined, 'jasmine2-node-instrumented');
+
     it('should kill mutant 1', async () => {
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(exampleProjectRoot);
+      process.chdir(resolveFromProject());
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        sandboxFileName: resolveFromProject('src', 'Add.js'),
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -124,15 +123,16 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).eq('Add should be able to add two numbers');
-      expect(runResult.failureMessage).contains('Expected: 7').contains('Received: -3');
+      expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, ''))
+        .contains('Expected: 7')
+        .contains('Received: -3');
     });
 
     it('should let mutant 11 survive', async () => {
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(resolveTestResource('jasmine2-node-instrumented'));
+      process.chdir(resolveFromProject());
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Circle.js')),
+        sandboxFileName: resolveFromProject('src', 'Circle.js'),
       });
       mutantRunOptions.activeMutant.id = '11';
 
@@ -143,11 +143,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(exampleProjectRoot);
+      process.chdir(resolveFromProject());
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        sandboxFileName: resolveFromProject('src', 'Add.js'),
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -163,11 +162,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should only report the first failing test in `killedBy` when disableBail = false', async () => {
       // Arrange
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(exampleProjectRoot);
+      process.chdir(resolveFromProject());
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        sandboxFileName: resolveFromProject('src', 'Add.js'),
         activeMutant: factory.mutant({ id: '0' }),
       });
 
@@ -181,11 +179,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
       // Arrange
-      const exampleProjectRoot = resolveTestResource('jasmine2-node-instrumented');
-      process.chdir(exampleProjectRoot);
+      process.chdir(resolveFromProject());
       const jestTestRunner = createSut();
       const mutantRunOptions = factory.mutantRunOptions({
-        sandboxFileName: require.resolve(path.resolve(exampleProjectRoot, 'src', 'Add.js')),
+        sandboxFileName: resolveFromProject('src', 'Add.js'),
         activeMutant: factory.mutant({ id: '0' }),
         disableBail: true,
       });

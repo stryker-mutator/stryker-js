@@ -5,11 +5,11 @@ import { Circus, Config } from '@jest/types';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 
-import * as producers from '../../helpers/producers';
+import * as producers from '../../helpers/producers.js';
 
-import { mixinJestEnvironment } from '../../../src/jest-plugins';
-import { state } from '../../../src/messaging';
-import * as constants from '../../../src/jest-plugins/constants';
+import { mixinJestEnvironment } from '../../../src/jest-plugins/index.js';
+import { state } from '../../../src/jest-plugins/cjs/messaging.js';
+import * as constants from '../../../src/jest-plugins/constants.js';
 
 describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   class TestJestEnvironment extends JestEnvironmentNode {

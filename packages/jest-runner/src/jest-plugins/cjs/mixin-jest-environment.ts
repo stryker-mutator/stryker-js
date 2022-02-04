@@ -1,7 +1,7 @@
 import type { JestEnvironment, EnvironmentContext } from '@jest/environment';
 import type { Config, Circus } from '@jest/types';
 
-import { state } from '../messaging';
+import { state } from './messaging.js';
 
 function fullNameDescribeBlock(describe: Circus.DescribeBlock): string {
   if (describe.parent) {

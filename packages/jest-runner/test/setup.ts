@@ -5,7 +5,7 @@ import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { state } from '../src/messaging';
+import { state } from '../src/jest-plugins/cjs/messaging.js';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);

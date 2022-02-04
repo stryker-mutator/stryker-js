@@ -1,35 +1,16 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { Config } from '@jest/types';
 
-import * as customJestConfigLoader from '../../../src/config-loaders/custom-jest-config-loader';
-import * as reactScriptsJestConfigLoader from '../../../src/config-loaders/react-scripts-jest-config-loader';
-import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options';
-import { configLoaderFactory } from '../../../src/config-loaders';
+import { CustomJestConfigLoader } from '../../../src/config-loaders/custom-jest-config-loader.js';
+import { ReactScriptsJestConfigLoader } from '../../../src/config-loaders/react-scripts-jest-config-loader.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options.js';
+import { configLoaderFactory } from '../../../src/config-loaders/index.js';
 
 describe(configLoaderFactory.name, () => {
-  let customConfigLoaderStub: sinon.SinonStubbedInstance<customJestConfigLoader.CustomJestConfigLoader>;
-  let reactScriptsJestConfigLoaderStub: sinon.SinonStubbedInstance<reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
-    customConfigLoaderStub = sinon.createStubInstance(customJestConfigLoader.CustomJestConfigLoader);
-    reactScriptsJestConfigLoaderStub = sinon.createStubInstance(reactScriptsJestConfigLoader.ReactScriptsJestConfigLoader);
-
-    sinon.stub(customJestConfigLoader, 'CustomJestConfigLoader').returns(customConfigLoaderStub);
-    sinon.stub(reactScriptsJestConfigLoader, 'ReactScriptsJestConfigLoader').returns(reactScriptsJestConfigLoaderStub);
-
-    const defaultOptions: Partial<Config.InitialOptions> = {
-      collectCoverage: true,
-      verbose: true,
-      bail: false,
-      testResultsProcessor: 'someResultProcessor',
-    };
-    customConfigLoaderStub.loadConfig.returns(defaultOptions);
-    reactScriptsJestConfigLoaderStub.loadConfig.returns(defaultOptions);
-
     options = factory.strykerWithPluginOptions({
       jest: {
         enableBail: true,
@@ -39,10 +20,10 @@ describe(configLoaderFactory.name, () => {
     });
   });
 
-  it('should call the defaultConfigLoader loadConfig method when no projectType is defined', () => {
+  it('should call a CustomJestConfigLoader no projectType is defined', () => {
     const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
 
-    expect(sut).eq(customConfigLoaderStub);
+    expect(sut).instanceOf(CustomJestConfigLoader);
   });
 
   describe('with "projectType": "create-react-app"', () => {
@@ -53,19 +34,15 @@ describe(configLoaderFactory.name, () => {
     it('should create a ReactScriptsJestConfigLoader', () => {
       const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
 
-      expect(sut).eq(reactScriptsJestConfigLoaderStub);
+      expect(sut).instanceOf(ReactScriptsJestConfigLoader);
     });
 
     it('should warn when a configFile is set', () => {
-      testConfigFileWarning(options);
+      options.jest.configFile = 'jest.conf.js';
+
+      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
+
+      expect(testInjector.logger.warn).calledWith(`Config setting "configFile" is not supported for projectType "${options.jest.projectType}"`);
     });
   });
 });
-
-function testConfigFileWarning(options: JestRunnerOptionsWithStrykerOptions) {
-  options.jest.configFile = 'jest.conf.js';
-
-  testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
-
-  expect(testInjector.logger.warn).calledWith(`Config setting "configFile" is not supported for projectType "${options.jest.projectType}"`);
-}

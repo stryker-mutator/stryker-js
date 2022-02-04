@@ -2,20 +2,20 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": ".",
+    "module": "ES2020",
+    "rootDir": "."
   },
-  "include": [
-    "src",
-    "src-generated",
-    "typings",
-    "schema/*.json"
-  ],
+  "include": ["src", "src-generated", "typings", "schema/*.json"],
+  "exclude": ["src/jest-plugins/cjs"],
   "references": [
     {
-      "path": "../api/tsconfig.src.json",
+      "path": "./tsconfig.src.cjs.json"
     },
     {
-      "path": "../util/tsconfig.src.json",
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
     }
   ]
 }

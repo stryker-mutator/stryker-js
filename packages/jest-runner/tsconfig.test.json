@@ -3,18 +3,17 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "types": [
-      "mocha",
-      "node"
-    ]
+    "module": "ES2020",
+    "types": ["mocha", "node"]
   },
-  "include": [
-    "test",
-    "typings"
-  ],
+  "include": ["test", "typings"],
+  "exclude": ["test/unit/jest-plugins/cjs"],
   "references": [
     {
       "path": "./tsconfig.src.json"
+    },
+    {
+      "path": "./tsconfig.test.cjs.json"
     },
     {
       "path": "../test-helpers/tsconfig.src.json"

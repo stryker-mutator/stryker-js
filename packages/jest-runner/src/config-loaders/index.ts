@@ -1,12 +1,16 @@
+import { createRequire } from 'module';
+
 import { tokens, commonTokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
-import * as pluginTokens from '../plugin-tokens';
+import { requireResolve } from '@stryker-mutator/util';
 
-import { CustomJestConfigLoader } from './custom-jest-config-loader';
-import { ReactScriptsJestConfigLoader } from './react-scripts-jest-config-loader';
+import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
+import * as pluginTokens from '../plugin-tokens.js';
+
+import { CustomJestConfigLoader } from './custom-jest-config-loader.js';
+import { ReactScriptsJestConfigLoader } from './react-scripts-jest-config-loader.js';
 
 configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
 export function configLoaderFactory(
@@ -20,7 +24,9 @@ export function configLoaderFactory(
     }
   };
   const optionsWithJest: JestRunnerOptionsWithStrykerOptions = options as JestRunnerOptionsWithStrykerOptions;
-  const configLoaderInjector = injector.provideValue(pluginTokens.resolve, require.resolve);
+  const configLoaderInjector = injector
+    .provideValue(pluginTokens.resolve, createRequire(import.meta.url).resolve)
+    .provideValue(pluginTokens.requireFromCwd, requireResolve);
 
   switch (optionsWithJest.jest.projectType) {
     case 'custom':
