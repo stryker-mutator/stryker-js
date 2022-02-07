@@ -1,4 +1,4 @@
-import { getEnvironmentVariable } from '../../utils/object-utils.js';
+import { objectUtils } from '../../utils/object-utils.js';
 
 import { CircleProvider } from './circle-provider.js';
 import { TravisProvider } from './travis-provider.js';
@@ -25,11 +25,11 @@ export interface CIProvider {
 export function determineCIProvider(): CircleProvider | GithubActionsCIProvider | TravisProvider | null {
   // By far the coolest env. variable from all those listed at
   // https://docs.travis-ci.com/user/environment-variables/#Default-Environment-Variables
-  if (getEnvironmentVariable('HAS_JOSH_K_SEAL_OF_APPROVAL')) {
+  if (objectUtils.getEnvironmentVariable('HAS_JOSH_K_SEAL_OF_APPROVAL')) {
     return new TravisProvider();
-  } else if (getEnvironmentVariable('CIRCLECI')) {
+  } else if (objectUtils.getEnvironmentVariable('CIRCLECI')) {
     return new CircleProvider();
-  } else if (getEnvironmentVariable('GITHUB_ACTION')) {
+  } else if (objectUtils.getEnvironmentVariable('GITHUB_ACTION')) {
     return new GithubActionsCIProvider();
   }
   // TODO: Add vsts and gitlab CI

@@ -4,19 +4,20 @@ import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, s
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { normalizeWhitespaces, requireResolve } from '@stryker-mutator/util';
+import { normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
+import { version } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
 import { InputFileCollection } from '../input/index.js';
-import { setExitCode } from '../utils/object-utils.js';
+import { objectUtils } from '../utils/object-utils.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  version: require('../../../package.json').version,
+  version,
   branding: {
     homepageUrl: 'https://stryker-mutator.io',
     imageUrl:
@@ -28,14 +29,22 @@ const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' |
  * A helper class to convert and report mutants that survived or get killed
  */
 export class MutationTestReportHelper {
-  public static inject = tokens(coreTokens.reporter, commonTokens.options, coreTokens.inputFiles, commonTokens.logger, coreTokens.dryRunResult);
+  public static inject = tokens(
+    coreTokens.reporter,
+    commonTokens.options,
+    coreTokens.inputFiles,
+    commonTokens.logger,
+    coreTokens.dryRunResult,
+    coreTokens.requireFromCwd
+  );
 
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
     private readonly inputFiles: InputFileCollection,
     private readonly log: Logger,
-    private readonly dryRunResult: CompleteDryRunResult
+    private readonly dryRunResult: CompleteDryRunResult,
+    private readonly requireFromCwd: typeof requireResolve
   ) {}
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
@@ -113,7 +122,7 @@ export class MutationTestReportHelper {
       if (mutationScore < breaking) {
         this.log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
         this.log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
-        setExitCode(1);
+        objectUtils.setExitCode(1);
       } else {
         this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
       }
@@ -250,7 +259,7 @@ export class MutationTestReportHelper {
   private discoverDependencies(): schema.Dependencies {
     const discover = (specifier: string) => {
       try {
-        return [specifier, (requireResolve(`${specifier}/package.json`) as { version: string }).version];
+        return [specifier, (this.requireFromCwd(`${specifier}/package.json`) as { version: string }).version];
       } catch {
         // package does not exist...
         return undefined;

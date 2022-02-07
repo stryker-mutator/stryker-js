@@ -17,6 +17,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
   let loggingContext: LoggingClientContext;
   let sut: CheckerResource;
   let loggingServer: LoggingServer;
+  let pluginModulePaths: string[];
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -26,11 +27,15 @@ describe(`${createCheckerFactory.name} integration`, () => {
 
   beforeEach(async () => {
     // Make sure there is a logging server listening
+    pluginModulePaths = ['plugin', 'paths'];
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
     testInjector.options.plugins = [require.resolve('./additional-checkers')];
-    createSut = testInjector.injector.provideValue(coreTokens.loggingContext, loggingContext).injectFunction(createCheckerFactory);
+    createSut = testInjector.injector
+      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
+      .injectFunction(createCheckerFactory);
   });
 
   afterEach(async () => {

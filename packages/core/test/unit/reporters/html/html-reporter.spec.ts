@@ -6,7 +6,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { schema } from '@stryker-mutator/api/core';
 
 import { HtmlReporter } from '../../../../src/reporters/html/html-reporter.js';
-import * as ReporterUtil from '../../../../src/reporters/reporter-util.js';
+import { reporterUtil } from '../../../../src/reporters/reporter-util.js';
 
 describe(HtmlReporter.name, () => {
   let writeFileStub: sinon.SinonStub;
@@ -15,9 +15,9 @@ describe(HtmlReporter.name, () => {
   let sut: HtmlReporter;
 
   beforeEach(() => {
-    writeFileStub = sinon.stub(ReporterUtil, 'writeFile');
-    deleteDirStub = sinon.stub(ReporterUtil, 'deleteDir');
-    mkdirStub = sinon.stub(ReporterUtil, 'mkdir');
+    writeFileStub = sinon.stub(reporterUtil, 'writeFile');
+    deleteDirStub = sinon.stub(reporterUtil, 'deleteDir');
+    mkdirStub = sinon.stub(reporterUtil, 'mkdir');
     sut = testInjector.injector.injectClass(HtmlReporter);
   });
 

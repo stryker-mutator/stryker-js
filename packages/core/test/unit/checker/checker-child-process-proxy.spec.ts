@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from 'url';
+
 import { LogLevel } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -18,14 +20,14 @@ describe(CheckerChildProcessProxy.name, () => {
   });
 
   function createSut(): CheckerChildProcessProxy {
-    return new CheckerChildProcessProxy(testInjector.options, loggingContext);
+    return new CheckerChildProcessProxy(testInjector.options, [], loggingContext);
   }
 
   describe('constructor', () => {
     it('should create the child process', () => {
       createSut();
       expect(childProcessProxyCreateStub).calledWith(
-        require.resolve('../../../src/checker/checker-worker'),
+        fileURLToPath(new URL('../../../src/checker/checker-worker.js', import.meta.url)),
         loggingContext,
         testInjector.options,
         {},

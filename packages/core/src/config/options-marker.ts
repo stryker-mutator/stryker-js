@@ -6,7 +6,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { PropertyPathBuilder, findUnserializables } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
-import { isWarningEnabled } from '../utils/object-utils.js';
+import { objectUtils } from '../utils/object-utils.js';
 
 markOptions.inject = tokens(commonTokens.options, coreTokens.validationSchema, commonTokens.logger);
 
@@ -23,7 +23,7 @@ export function markOptions(options: StrykerOptions, schema: JSONSchema7, log: L
 function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: Logger) {
   const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
 
-  if (isWarningEnabled('unknownOptions', options.warnings)) {
+  if (objectUtils.isWarningEnabled('unknownOptions', options.warnings)) {
     const schemaKeys = Object.keys(schema.properties!);
     const unknownPropertyNames = Object.keys(options)
       .filter((key) => !key.endsWith('_comment'))
@@ -48,7 +48,7 @@ function markUnknownOptions(options: StrykerOptions, schema: JSONSchema7, log: L
 }
 
 function markUnserializableOptions(options: StrykerOptions, log: Logger) {
-  if (isWarningEnabled('unserializableOptions', options.warnings)) {
+  if (objectUtils.isWarningEnabled('unserializableOptions', options.warnings)) {
     const unserializables = findUnserializables(options);
     if (unserializables) {
       unserializables.forEach(({ reason, path }) =>

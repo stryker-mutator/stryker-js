@@ -94,6 +94,8 @@
       "source.fixAll.eslint": true
     },
     "cSpell.words": [
+      "Appender",
+      "Appenders",
       "Errored",
       "execa",
       "Expirable",

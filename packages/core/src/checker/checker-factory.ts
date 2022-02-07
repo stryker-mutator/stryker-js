@@ -9,11 +9,13 @@ import { CheckerChildProcessProxy } from './checker-child-process-proxy.js';
 import { CheckerResource } from './checker-resource.js';
 import { CheckerRetryDecorator } from './checker-retry-decorator.js';
 
-createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext, commonTokens.getLogger);
+createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext, coreTokens.pluginModulePaths, commonTokens.getLogger);
 export function createCheckerFactory(
   options: StrykerOptions,
   loggingContext: LoggingClientContext,
+  pluginModulePaths: readonly string[],
   getLogger: LoggerFactoryMethod
 ): () => CheckerResource {
-  return () => new CheckerRetryDecorator(() => new CheckerChildProcessProxy(options, loggingContext), getLogger(CheckerRetryDecorator.name));
+  return () =>
+    new CheckerRetryDecorator(() => new CheckerChildProcessProxy(options, pluginModulePaths, loggingContext), getLogger(CheckerRetryDecorator.name));
 }

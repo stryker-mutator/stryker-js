@@ -1,21 +1,22 @@
 import childProcess from 'child_process';
 import os from 'os';
 
+import { fileURLToPath, URL } from 'url';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { PluginContext } from '@stryker-mutator/api/plugin';
 import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
 import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingClientContext } from '../logging/index.js';
-import { kill } from '../utils/object-utils.js';
+import { objectUtils } from '../utils/object-utils.js';
 import { StringBuilder } from '../utils/string-builder.js';
-
 import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
 
 import { ChildProcessCrashedError } from './child-process-crashed-error.js';
 import { ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
 import { OutOfMemoryError } from './out-of-memory-error.js';
+import { ChildProcessContext } from './child-process-proxy-worker.js';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -47,20 +48,20 @@ export class ChildProcessProxy<T> implements Disposable {
     requireName: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
-    additionalInjectableValues: unknown,
+    pluginModulePaths: readonly string[],
     workingDirectory: string,
     execArgv: string[]
   ) {
-    this.worker = childProcess.fork(require.resolve('./child-process-proxy-worker'), { silent: true, execArgv });
+    this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), { silent: true, execArgv });
     this.initTask = new Task();
     this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
     this.send({
-      additionalInjectableValues,
       kind: WorkerMessageKind.Init,
       loggingContext,
       options,
-      requireName,
-      requirePath,
+      pluginModulePaths,
+      namedExport: requireName,
+      modulePath: requirePath,
       workingDirectory,
     });
     this.listenForMessages();
@@ -74,16 +75,16 @@ export class ChildProcessProxy<T> implements Disposable {
   /**
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
-  public static create<TAdditionalContext, R, Tokens extends Array<InjectionToken<PluginContext & TAdditionalContext>>>(
+  public static create<R, Tokens extends Array<InjectionToken<ChildProcessContext>>>(
     requirePath: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
-    additionalInjectableValues: TAdditionalContext,
+    pluginModulePaths: readonly string[],
     workingDirectory: string,
-    injectableClass: InjectableClass<PluginContext & TAdditionalContext, R, Tokens>,
+    injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
     execArgv: string[]
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, additionalInjectableValues, workingDirectory, execArgv);
+    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, pluginModulePaths, workingDirectory, execArgv);
   }
 
   private send(message: WorkerMessage) {
@@ -241,7 +242,7 @@ export class ChildProcessProxy<T> implements Disposable {
         await this.disposeTask.promise;
       } finally {
         this.log.debug('Kill %s', this.worker.pid);
-        await kill(this.worker.pid);
+        await objectUtils.kill(this.worker.pid);
       }
     }
   }

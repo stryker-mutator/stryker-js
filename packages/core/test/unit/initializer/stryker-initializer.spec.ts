@@ -1,5 +1,6 @@
 import childProcess from 'child_process';
 import fs from 'fs';
+import { syncBuiltinESMExports } from 'module';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
@@ -48,6 +49,7 @@ describe(StrykerInitializer.name, () => {
     restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
     restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
+    syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
       .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)

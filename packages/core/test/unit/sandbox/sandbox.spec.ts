@@ -12,7 +12,7 @@ import { I, normalizeWhitespaces, Task } from '@stryker-mutator/util';
 import { Sandbox } from '../../../src/sandbox/sandbox.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
-import * as fileUtils from '../../../src/utils/file-utils.js';
+import { fileUtils } from '../../../src/utils/file-utils.js';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
 describe(Sandbox.name, () => {

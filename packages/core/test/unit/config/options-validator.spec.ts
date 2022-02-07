@@ -7,7 +7,7 @@ import { expect } from 'chai';
 
 import { propertyPath } from '@stryker-mutator/util';
 
-import { OptionsValidator, validateOptions } from '../../../src/config/options-validator.js';
+import { OptionsValidator } from '../../../src/config/options-validator.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { createCpuInfo } from '../../helpers/producers.js';
 
@@ -383,19 +383,4 @@ describe(OptionsValidator.name, () => {
       testInjector.options[key] = value;
     }
   }
-});
-
-describe(validateOptions.name, () => {
-  let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
-
-  beforeEach(() => {
-    optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
-  });
-
-  it('should validate the options using given optionsValidator', () => {
-    const options = { foo: 'bar' };
-    const output = validateOptions(options, optionsValidatorMock as unknown as OptionsValidator);
-    expect(options).deep.eq(output);
-    expect(optionsValidatorMock.validate).calledWith(options);
-  });
 });

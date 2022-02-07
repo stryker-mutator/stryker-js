@@ -2,6 +2,8 @@ import os from 'os';
 import { types } from 'util';
 import fs from 'fs';
 
+import { fileURLToPath } from 'url';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -203,3 +205,4 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
   declareClassPlugin(PluginKind.TestRunner, 'static', StaticMutantTestRunner),
 ];
+export const additionalTestRunnersFileName = fileURLToPath(import.meta.url);

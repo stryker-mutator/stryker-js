@@ -1,11 +1,10 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
-import { HttpClient } from 'typed-rest-client/HttpClient';
+import { HttpClient } from 'typed-rest-client/HttpClient.js';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { isOK } from '../../utils/net-utils.js';
-import { getEnvironmentVariable } from '../../utils/object-utils.js';
+import { objectUtils } from '../../utils/object-utils.js';
 
 import { dashboardReporterTokens } from './tokens.js';
 import { Report } from './report.js';
@@ -34,7 +33,7 @@ export class DashboardReporterClient {
     const url = this.getPutUrl(projectName, version, moduleName);
     const serializedBody = JSON.stringify(report);
     this.log.info('PUT report to %s (~%s bytes)', url, serializedBody.length);
-    const apiKey = getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY);
+    const apiKey = objectUtils.getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY);
     if (apiKey) {
       this.log.debug('Using configured API key from environment "%s"', STRYKER_DASHBOARD_API_KEY);
     }
@@ -64,4 +63,8 @@ export class DashboardReporterClient {
       return base;
     }
   }
+}
+
+function isOK(statusCode: number): boolean {
+  return statusCode >= 200 && statusCode < 300;
 }

@@ -18,7 +18,6 @@ import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 import { calculateMutationTestMetrics, Metrics, MetricsResult, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {
   MutantRunOptions,
   DryRunOptions,
@@ -67,14 +66,6 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 }
 
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
-
-export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
-  return {
-    resolve: sinon.stub<any>(),
-    resolveAll: sinon.stub<any>(),
-    resolveValidationSchemaContributions: sinon.stub(),
-  };
-}
 
 export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
@@ -347,15 +338,15 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   location: location(),
 }));
 
-export function injector(): sinon.SinonStubbedInstance<Injector> {
-  const injectorMock: sinon.SinonStubbedInstance<Injector> = {
+export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {
+  const injectorMock: sinon.SinonStubbedInstance<Injector<T>> = {
     dispose: sinon.stub(),
     injectClass: sinon.stub<any>(),
     injectFunction: sinon.stub<any>(),
     provideClass: sinon.stub<any>(),
     provideFactory: sinon.stub<any>(),
     provideValue: sinon.stub<any>(),
-    resolve: sinon.stub(),
+    resolve: sinon.stub<any>(),
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();

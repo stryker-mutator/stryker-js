@@ -1,5 +1,6 @@
 import os from 'os';
 import fs from 'fs';
+import { syncBuiltinESMExports } from 'module';
 
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -22,6 +23,7 @@ describe(GitignoreWriter.name, () => {
     fsAppendFile = sinon.stub(fs.promises, 'appendFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
     fsReadFile = sinon.stub(fs.promises, 'readFile');
+    syncBuiltinESMExports();
     sut = testInjector.injector.provideValue(initializerTokens.out, out as unknown as typeof console.log).injectClass(GitignoreWriter);
   });
 

@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
-import { I } from '@stryker-mutator/util';
+import { I, requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
@@ -101,6 +101,7 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
       .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
   }

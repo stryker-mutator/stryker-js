@@ -13,7 +13,7 @@ import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
-import { CounterTestRunner } from './additional-test-runners.js';
+import { additionalTestRunnersFileName, CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
@@ -22,6 +22,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
+  const pluginModulePaths = Object.freeze([additionalTestRunnersFileName]);
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -42,6 +43,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     createSut = testInjector.injector
       .provideValue(coreTokens.sandbox, { workingDirectory: __dirname })
       .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);

@@ -1,3 +1,5 @@
+import { fileURLToPath, URL } from 'url';
+
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -36,14 +38,14 @@ describe(ChildProcessTestRunnerProxy.name, () => {
   });
 
   function createSut(): ChildProcessTestRunnerProxy {
-    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, testInjector.logger);
+    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, ['plugin', 'paths'], testInjector.logger);
   }
 
   it('should create the child process proxy', () => {
     options.testRunnerNodeArgs = ['--inspect', '--no-warnings'];
     createSut();
     expect(childProcessProxyCreateStub).calledWithExactly(
-      require.resolve('../../../src/test-runner/child-process-test-runner-worker.js'),
+      fileURLToPath(new URL('../../../src/test-runner/child-process-test-runner-worker.js', import.meta.url)),
       loggingContext,
       options,
       {},

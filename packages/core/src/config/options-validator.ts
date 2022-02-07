@@ -4,7 +4,7 @@ import glob from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
+import { noopLogger, propertyPath } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
@@ -177,10 +177,4 @@ export function defaultOptions(): StrykerOptions {
   const validator: OptionsValidator = new OptionsValidator(strykerCoreSchema, noopLogger);
   validator.validate(options);
   return options;
-}
-
-validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
-export function validateOptions(options: Record<string, unknown>, optionsValidator: OptionsValidator): StrykerOptions {
-  optionsValidator.validate(options);
-  return deepFreeze(options) as StrykerOptions;
 }

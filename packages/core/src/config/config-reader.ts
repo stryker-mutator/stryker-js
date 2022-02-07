@@ -22,11 +22,11 @@ module.exports = {
 const DEFAULT_CONFIG_FILE = 'stryker.conf';
 
 export class ConfigReader {
-  public static inject = tokens(coreTokens.cliOptions, commonTokens.logger, coreTokens.optionsValidator);
-  constructor(private readonly cliOptions: PartialStrykerOptions, private readonly log: Logger, private readonly validator: OptionsValidator) {}
+  public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
+  constructor(private readonly log: Logger, private readonly validator: OptionsValidator) {}
 
-  public readConfig(): StrykerOptions {
-    const configModule = this.loadConfigModule();
+  public readConfig(cliOptions: PartialStrykerOptions): StrykerOptions {
+    const configModule = this.loadConfigModule(cliOptions);
     let options: StrykerOptions;
     if (typeof configModule === 'function') {
       this.log.warn(
@@ -39,30 +39,30 @@ export class ConfigReader {
       options = configModule;
     }
     // merge the config from config file and cliOptions (precedence)
-    deepMerge(options, this.cliOptions);
+    deepMerge(options, cliOptions);
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Loaded config: ${JSON.stringify(options, null, 2)}`);
     }
     return options;
   }
 
-  private loadConfigModule(): PartialStrykerOptions | ((options: StrykerOptions) => void) {
+  private loadConfigModule(cliOptions: PartialStrykerOptions): PartialStrykerOptions | ((options: StrykerOptions) => void) {
     let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
 
-    if (!this.cliOptions.configFile) {
+    if (!cliOptions.configFile) {
       try {
         const configFile = require.resolve(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
         this.log.info(`Using ${path.basename(configFile)}`);
-        this.cliOptions.configFile = configFile;
+        cliOptions.configFile = configFile;
       } catch (e) {
         this.log.info('No config file specified. Running with command line arguments.');
         this.log.info('Use `stryker init` command to generate your config file.');
       }
     }
 
-    if (typeof this.cliOptions.configFile === 'string') {
-      this.log.debug(`Loading config ${this.cliOptions.configFile}`);
-      const configFile = this.resolveConfigFile(this.cliOptions.configFile);
+    if (typeof cliOptions.configFile === 'string') {
+      this.log.debug(`Loading config ${cliOptions.configFile}`);
+      const configFile = this.resolveConfigFile(cliOptions.configFile);
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         configModule = require(configFile);

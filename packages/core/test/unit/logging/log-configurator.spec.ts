@@ -1,10 +1,12 @@
+import { fileURLToPath, URL } from 'url';
+
 import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import log4js from 'log4js';
 import sinon from 'sinon';
 
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
-import * as netUtils from '../../../src/utils/net-utils.js';
+import { netUtils } from '../../../src/utils/net-utils.js';
 
 describe('LogConfigurator', () => {
   const sut = LogConfigurator;
@@ -123,7 +125,10 @@ describe('LogConfigurator', () => {
     const consoleLayout = allowConsoleColors ? coloredLayout : notColoredLayout;
     return {
       appenders: {
-        all: { type: require.resolve('../../../src/logging/multi-appender'), appenders: ['filterLevelConsole', 'filterLevelFile'] },
+        all: {
+          type: fileURLToPath(new URL('../../../src/logging/multi-appender.js', import.meta.url)),
+          appenders: ['filterLevelConsole', 'filterLevelFile'],
+        },
         console: { type: 'stdout', layout: consoleLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
         filterLog4jsCategoryConsole: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },

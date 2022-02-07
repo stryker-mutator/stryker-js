@@ -1,17 +1,16 @@
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
-import { PluginKind, tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
+import { PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
-import { PluginCreator } from '../di/index.js';
+import { coreTokens, PluginCreator } from '../di/index.js';
 
 export class CheckerWorker implements Checker {
   private readonly innerCheckers: Array<{ name: string; checker: Checker }> = [];
 
-  public static inject = tokens(commonTokens.options, commonTokens.injector);
-  constructor(options: StrykerOptions, injector: Injector<PluginContext>) {
-    const pluginCreator = injector.injectFunction(PluginCreator.createFactory(PluginKind.Checker));
-    this.innerCheckers = options.checkers.map((name) => ({ name, checker: pluginCreator.create(name) }));
+  public static inject = tokens(commonTokens.options, coreTokens.pluginCreator);
+  constructor(options: StrykerOptions, pluginCreator: PluginCreator) {
+    this.innerCheckers = options.checkers.map((name) => ({ name, checker: pluginCreator.create(PluginKind.Checker, name) }));
   }
   public async init(): Promise<void> {
     for await (const { name, checker } of this.innerCheckers) {

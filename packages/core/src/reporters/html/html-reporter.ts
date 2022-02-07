@@ -6,7 +6,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import * as ReporterUtil from '../reporter-util.js';
+import { reporterUtil } from '../reporter-util.js';
 
 import { reportTemplate as reportTemplate } from './report-template.js';
 
@@ -33,7 +33,7 @@ export class HtmlReporter implements Reporter {
     const indexFileName = path.resolve(this.baseDir, 'index.html');
     const singleFile = await reportTemplate(report);
     await this.cleanBaseFolder();
-    await ReporterUtil.writeFile(path.resolve(this.baseDir, 'index.html'), singleFile);
+    await reporterUtil.writeFile(path.resolve(this.baseDir, 'index.html'), singleFile);
     this.log.info(`Your report can be found at: ${fileUrl(indexFileName)}`);
   }
 
@@ -53,7 +53,7 @@ export class HtmlReporter implements Reporter {
   }
 
   private async cleanBaseFolder(): Promise<void> {
-    await ReporterUtil.deleteDir(this.baseDir);
-    await ReporterUtil.mkdir(this.baseDir);
+    await reporterUtil.deleteDir(this.baseDir);
+    await reporterUtil.mkdir(this.baseDir);
   }
 }

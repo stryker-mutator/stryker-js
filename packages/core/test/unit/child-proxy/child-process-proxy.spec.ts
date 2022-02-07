@@ -2,6 +2,8 @@ import childProcess from 'child_process';
 import { EventEmitter } from 'events';
 import os from 'os';
 
+import { fileURLToPath, URL } from 'url';
+
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -19,7 +21,7 @@ import {
 } from '../../../src/child-proxy/message-protocol.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
 import * as stringUtils from '../../../src/utils/string-utils.js';
-import * as objectUtils from '../../../src/utils/object-utils.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
 import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';
@@ -64,7 +66,7 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/child-process-proxy-worker'), {
+      expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
       });
@@ -72,21 +74,20 @@ describe(ChildProcessProxy.name, () => {
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
-        additionalInjectableValues: { name: 'fooTest' },
+        pluginModulePaths: ['foo'],
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
-        options: factory.strykerOptions(),
-        requireName: 'HelloClass',
-        requirePath: 'foobar',
+        options: factory.strykerOptions({ testRunner: 'Hello' }),
+        namedExport: 'HelloClass',
+        modulePath: 'foobar',
         workingDirectory: 'workingDirectory',
       };
 
       // Act
       createSut({
         loggingContext: LOGGING_CONTEXT,
-        name: (expectedMessage.additionalInjectableValues as { name: string }).name,
         options: expectedMessage.options,
-        requirePath: expectedMessage.requirePath,
+        requirePath: expectedMessage.modulePath,
         workingDir: expectedMessage.workingDirectory,
       });
 
@@ -284,23 +285,20 @@ describe(ChildProcessProxy.name, () => {
   }
 });
 
-function createSut(
-  overrides: {
-    requirePath?: string;
-    loggingContext?: LoggingClientContext;
-    options?: Partial<StrykerOptions>;
-    workingDir?: string;
-    name?: string;
-    execArgv?: string[];
-  } = {}
-): ChildProcessProxy<HelloClass> {
-  return ChildProcessProxy.create(
-    overrides.requirePath ?? 'foobar',
-    overrides.loggingContext ?? LOGGING_CONTEXT,
-    factory.strykerOptions(overrides.options),
-    { name: overrides.name ?? 'someArg' },
-    overrides.workingDir ?? 'workingDir',
-    HelloClass,
-    overrides.execArgv ?? []
-  );
+function createSut({
+  requirePath = 'foobar',
+  loggingContext = LOGGING_CONTEXT,
+  options = {},
+  workingDir = 'workingDir',
+  pluginModulePaths = ['plugin', 'path'],
+  execArgv = [],
+}: {
+  requirePath?: string;
+  loggingContext?: LoggingClientContext;
+  options?: Partial<StrykerOptions>;
+  workingDir?: string;
+  pluginModulePaths?: string[];
+  execArgv?: string[];
+} = {}): ChildProcessProxy<HelloClass> {
+  return ChildProcessProxy.create(requirePath, loggingContext, factory.strykerOptions(options), pluginModulePaths, workingDir, HelloClass, execArgv);
 }

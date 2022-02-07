@@ -22,10 +22,10 @@ export interface InitMessage {
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
   options: StrykerOptions;
+  pluginModulePaths: readonly string[];
   workingDirectory: string;
-  requireName: string;
-  requirePath: string;
-  additionalInjectableValues: unknown;
+  namedExport: string;
+  modulePath: string;
 }
 
 export interface DisposeMessage {

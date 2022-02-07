@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports, import/order
-const strykerPackage: { version: string; engines: { node: string } } = require('../../package.json');
-
 import semver from 'semver';
 
 guardMinimalNodeVersion();
@@ -12,6 +9,7 @@ import { initializerFactory } from './initializer/index.js';
 import { LogConfigurator } from './logging/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/options-validator.js';
+import { engines, version } from './stryker-package.js';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -51,7 +49,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(strykerPackage.version)
+      .version(version)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -208,9 +206,9 @@ export class StrykerCli {
 
 export function guardMinimalNodeVersion(processVersion = process.version): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  if (!semver.satisfies(processVersion, strykerPackage.engines.node)) {
+  if (!semver.satisfies(processVersion, engines.node)) {
     throw new Error(
-      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerPackage.engines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
+      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${engines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
     );
   }
 }

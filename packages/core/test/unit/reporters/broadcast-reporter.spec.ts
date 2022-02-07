@@ -4,8 +4,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { coreTokens } from '../../../src/di/index.js';
-import { PluginCreator } from '../../../src/di/plugin-creator.js';
+import { coreTokens, PluginCreator } from '../../../src/di/index.js';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
 
 describe(BroadcastReporter.name, () => {
@@ -13,7 +12,7 @@ describe(BroadcastReporter.name, () => {
   let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
   let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;
   let isTTY: boolean;
-  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator<PluginKind.Reporter>>;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator>;
 
   beforeEach(() => {
     captureTTY();
@@ -21,7 +20,7 @@ describe(BroadcastReporter.name, () => {
     rep1 = factory.reporter('rep1');
     rep2 = factory.reporter('rep2');
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    pluginCreatorMock.create.withArgs('rep1').returns(rep1).withArgs('rep2').returns(rep2);
+    pluginCreatorMock.create.withArgs(PluginKind.Reporter, 'rep1').returns(rep1).withArgs(PluginKind.Reporter, 'rep2').returns(rep2);
   });
 
   afterEach(() => {
@@ -49,7 +48,7 @@ describe(BroadcastReporter.name, () => {
       setTTY(true);
       testInjector.options.reporters = ['progress', 'rep2'];
       const progress = factory.reporter('progress');
-      pluginCreatorMock.create.withArgs('progress').returns(progress);
+      pluginCreatorMock.create.withArgs(PluginKind.Reporter, 'progress').returns(progress);
 
       // Act
       sut = createSut();
@@ -182,9 +181,7 @@ describe(BroadcastReporter.name, () => {
   });
 
   function createSut() {
-    return testInjector.injector
-      .provideValue(coreTokens.pluginCreatorReporter, pluginCreatorMock as unknown as PluginCreator<PluginKind.Reporter>)
-      .injectClass(BroadcastReporter);
+    return testInjector.injector.provideValue(coreTokens.pluginCreator, pluginCreatorMock).injectClass(BroadcastReporter);
   }
 
   function captureTTY() {

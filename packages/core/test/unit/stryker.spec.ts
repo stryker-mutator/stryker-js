@@ -29,7 +29,7 @@ describe(Stryker.name, () => {
   let mutationTestExecutorMock: sinon.SinonStubbedInstance<MutationTestExecutor>;
 
   beforeEach(() => {
-    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext>>;
+    injectorMock = factory.injector() as sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext>>;
     loggerMock = factory.logger();
     getLoggerStub = sinon.stub();
     mutantResults = [];
@@ -90,8 +90,7 @@ describe(Stryker.name, () => {
       cliOptions.logLevel = LogLevel.Trace;
       const expectedCliOptions = { ...cliOptions };
       await sut.runMutationTest();
-      expect(injectorMock.provideValue).calledWithExactly(coreTokens.cliOptions, expectedCliOptions);
-      expect(injectorMock.provideValue).calledBefore(injectorMock.injectClass);
+      sinon.assert.calledWith(prepareExecutorMock.execute, expectedCliOptions);
     });
 
     it('should reject when prepare rejects', async () => {

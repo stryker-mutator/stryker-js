@@ -26,8 +26,8 @@ export class Stryker {
 
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
-      const prepareExecutor = loggerProvider.provideValue(coreTokens.cliOptions, this.cliOptions).injectClass(PrepareExecutor);
-      const mutantInstrumenterInjector = await prepareExecutor.execute();
+      const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+      const mutantInstrumenterInjector = await prepareExecutor.execute(this.cliOptions);
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.

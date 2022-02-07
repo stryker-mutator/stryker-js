@@ -1,7 +1,6 @@
 import { StrykerOptions } from '../core/index.js';
 import { Logger, LoggerFactoryMethod } from '../logging/index.js';
 
-import { PluginResolver } from './plugins.js';
 import { commonTokens } from './tokens.js';
 
 /**
@@ -10,7 +9,6 @@ import { commonTokens } from './tokens.js';
 export interface BaseContext {
   [commonTokens.getLogger]: LoggerFactoryMethod;
   [commonTokens.logger]: Logger;
-  [commonTokens.pluginResolver]: PluginResolver;
 }
 
 /**

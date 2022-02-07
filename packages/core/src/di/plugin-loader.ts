@@ -1,13 +1,14 @@
 import path from 'path';
 import { readdirSync } from 'fs';
 
+import { fileURLToPath } from 'url';
+
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Plugin, PluginKind, PluginResolver, Plugins } from '@stryker-mutator/api/plugin';
+import { commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
+import { notEmpty } from '@stryker-mutator/util';
 import { tokens } from 'typed-inject';
 
-import { importModule } from '../utils/file-utils.js';
-
-import * as coreTokens from './core-tokens.js';
+import { fileUtils } from '../utils/file-utils.js';
 
 const IGNORED_PACKAGES = ['core', 'api', 'util'];
 
@@ -19,20 +20,25 @@ interface SchemaValidationContribution {
   strykerValidationSchema: Record<string, unknown>;
 }
 
-export class PluginLoader implements PluginResolver {
+/**
+ * Can resolve modules and pull them into memory
+ */
+export class PluginLoader {
   private readonly pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>> = new Map();
   private readonly contributedValidationSchemas: Array<Record<string, unknown>> = [];
 
-  public static inject = tokens(commonTokens.logger, coreTokens.pluginDescriptors);
-  constructor(private readonly log: Logger, private readonly pluginDescriptors: readonly string[]) {}
-
-  public load(): void {
-    this.resolvePluginModules().forEach((moduleName) => {
-      this.requirePlugin(moduleName);
-    });
+  public static inject = tokens(commonTokens.logger);
+  constructor(private readonly log: Logger) {}
+  public async load(pluginDescriptors: readonly string[]): Promise<readonly string[]> {
+    const pluginModules = await Promise.all(this.resolvePluginModules(pluginDescriptors).map((moduleName) => this.loadPlugin(moduleName)));
+    return pluginModules.filter(notEmpty);
   }
 
   public resolveValidationSchemaContributions(): Array<Record<string, unknown>> {
+    return this.contributedValidationSchemas;
+  }
+
+  public getValidationSchemaContributions(): Array<Record<string, unknown>> {
     return this.contributedValidationSchemas;
   }
 
@@ -52,19 +58,14 @@ export class PluginLoader implements PluginResolver {
     }
   }
 
-  public resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]> {
-    const plugins = this.pluginsByKind.get(kind) ?? [];
-    return plugins as Array<Plugins[T]>;
-  }
-
-  private resolvePluginModules() {
+  private resolvePluginModules(pluginDescriptors: readonly string[]) {
     const modules: string[] = [];
-    this.pluginDescriptors.forEach((pluginExpression) => {
+    pluginDescriptors.forEach((pluginExpression) => {
       if (typeof pluginExpression === 'string') {
         if (pluginExpression.includes('*')) {
           // Plugin directory is the node_modules folder of the module that installed stryker
           // So if current __dirname is './@stryker-mutator/core/dist/src/di' so 4 directories above
-          const pluginDirectory = path.dirname(path.resolve(__dirname, '..', '..', '..', '..', '..', pluginExpression));
+          const pluginDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..');
           const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
           this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
@@ -91,26 +92,28 @@ export class PluginLoader implements PluginResolver {
     return modules;
   }
 
-  private requirePlugin(name: string) {
+  private async loadPlugin(name: string): Promise<string | undefined> {
     this.log.debug(`Loading plugins ${name}`);
     try {
-      const module = importModule(name);
+      const module = await fileUtils.importModule(name);
       if (this.isPluginModule(module)) {
-        module.strykerPlugins.forEach((plugin) => this.loadPlugin(plugin));
+        module.strykerPlugins.forEach((plugin) => this.registerPlugin(plugin));
       }
       if (this.hasValidationSchemaContribution(module)) {
         this.contributedValidationSchemas.push(module.strykerValidationSchema);
       }
+      return name;
     } catch (e: any) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
       } else {
         this.log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
       }
+      return;
     }
   }
 
-  private loadPlugin(plugin: Plugin<PluginKind>) {
+  private registerPlugin(plugin: Plugin<PluginKind>) {
     let plugins = this.pluginsByKind.get(plugin.kind);
     if (!plugins) {
       plugins = [];
@@ -121,11 +124,11 @@ export class PluginLoader implements PluginResolver {
 
   private isPluginModule(module: unknown): module is PluginModule {
     const pluginModule = module as PluginModule;
-    return pluginModule?.strykerPlugins && Array.isArray(pluginModule.strykerPlugins);
+    return Array.isArray(pluginModule?.strykerPlugins);
   }
 
   private hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
     const pluginModule = module as SchemaValidationContribution;
-    return pluginModule?.strykerValidationSchema && typeof pluginModule.strykerValidationSchema === 'object';
+    return typeof pluginModule?.strykerValidationSchema === 'object';
   }
 }

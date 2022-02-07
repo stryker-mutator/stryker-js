@@ -1,14 +1,17 @@
+import { expect } from 'chai';
+import sinon from 'sinon';
 import { ClassPlugin, FactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
 
-import { PluginCreator } from '../../../src/di/plugin-creator.js';
+import { coreTokens, PluginCreator, PluginLoader } from '../../../src/di/index.js';
 
-describe('PluginCreator', () => {
-  let sut: PluginCreator<PluginKind.Reporter>;
+describe(PluginCreator.name, () => {
+  let sut: PluginCreator;
+  let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
 
   beforeEach(() => {
-    sut = testInjector.injector.injectFunction(PluginCreator.createFactory(PluginKind.Reporter));
+    pluginLoaderMock = sinon.createStubInstance(PluginLoader);
+    sut = testInjector.injector.provideValue(coreTokens.pluginLoader, pluginLoaderMock).injectClass(PluginCreator);
   });
 
   it("should create a FactoryPlugin using it's factory method", () => {
@@ -21,13 +24,13 @@ describe('PluginCreator', () => {
         return expectedReporter;
       },
     };
-    testInjector.pluginResolver.resolve.returns(factoryPlugin);
+    pluginLoaderMock.resolve.returns(factoryPlugin);
 
     // Act
-    const actualReporter = sut.create('fooReporter');
+    const actualReporter = sut.create(PluginKind.Reporter, 'fooReporter');
 
     // Assert
-    expect(testInjector.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
+    expect(pluginLoaderMock.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).eq(expectedReporter);
   });
 
@@ -39,19 +42,21 @@ describe('PluginCreator', () => {
       kind: PluginKind.Reporter,
       name: 'fooReporter',
     };
-    testInjector.pluginResolver.resolve.returns(plugin);
+    pluginLoaderMock.resolve.returns(plugin);
 
     // Act
-    const actualReporter = sut.create('fooReporter');
+    const actualReporter = sut.create(PluginKind.Reporter, 'fooReporter');
 
     // Assert
-    expect(testInjector.pluginResolver.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
+    expect(pluginLoaderMock.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).instanceOf(FooReporter);
   });
 
   it('should throw if plugin is not recognized', () => {
     // @ts-expect-error Testing wrong plugin format by choice
-    testInjector.pluginResolver.resolve.returns({});
-    expect(() => sut.create('foo')).throws('Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.');
+    pluginLoaderMock.resolve.returns({});
+    expect(() => sut.create(PluginKind.Reporter, 'foo')).throws(
+      'Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.'
+    );
   });
 });

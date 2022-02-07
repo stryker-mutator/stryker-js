@@ -90,12 +90,3 @@ export interface PluginInterfaces {
 export type Plugins = {
   [TPluginKind in keyof PluginInterfaces]: Plugin<TPluginKind>;
 };
-
-/**
- * Plugin resolver responsible to load plugins
- */
-export interface PluginResolver {
-  resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T];
-  resolveAll<T extends keyof Plugins>(kind: T): Array<Plugins[T]>;
-  resolveValidationSchemaContributions(): Array<Record<string, unknown>>;
-}

@@ -9,8 +9,8 @@ import sinon from 'sinon';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import * as fileUtils from '../../../src/utils/file-utils.js';
-import * as objectUtils from '../../../src/utils/object-utils.js';
+import { fileUtils } from '../../../src/utils/file-utils.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 
 describe(TemporaryDirectory.name, () => {

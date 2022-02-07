@@ -1,8 +1,14 @@
-import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { Injector, tokens, commonTokens, BaseContext } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { MainContext, coreTokens } from '../di/index.js';
+import { Reporter } from '@stryker-mutator/api/src/report';
+
+import { I } from '@stryker-mutator/util';
+
+import execa from 'execa';
+
+import { coreTokens } from '../di/index.js';
 import { InputFileCollection } from '../input/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 import { LoggingClientContext } from '../logging/index.js';
@@ -11,11 +17,23 @@ import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index
 import { createCheckerFactory } from '../checker/index.js';
 import { createPreprocessor } from '../sandbox/index.js';
 
+import { Timer } from '../utils/timer.js';
+import { TemporaryDirectory } from '../utils/temporary-directory.js';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
+
 import { DryRunContext } from './3-dry-run-executor.js';
 
-export interface MutantInstrumenterContext extends MainContext {
+export interface MutantInstrumenterContext extends BaseContext {
+  [commonTokens.options]: StrykerOptions;
   [coreTokens.inputFiles]: InputFileCollection;
   [coreTokens.loggingContext]: LoggingClientContext;
+  [coreTokens.reporter]: Required<Reporter>;
+  [coreTokens.timer]: I<Timer>;
+  [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
+  [coreTokens.execa]: typeof execa;
+  [coreTokens.process]: NodeJS.Process;
+  [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
+  [coreTokens.pluginModulePaths]: readonly string[];
 }
 
 export class MutantInstrumenterExecutor {

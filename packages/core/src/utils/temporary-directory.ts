@@ -7,8 +7,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
-import { deleteDir } from './file-utils.js';
-import { random } from './object-utils.js';
+import { fileUtils } from './file-utils.js';
+import { objectUtils } from './object-utils.js';
 
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
@@ -21,10 +21,10 @@ export class TemporaryDirectory implements Disposable {
     this.removeDuringDisposal = options.cleanTempDir;
   }
 
-  public initialize(): void {
-    this.isInitialized = true;
+  public async initialize(): Promise<void> {
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
-    mkdirp.sync(this.temporaryDirectory);
+    await mkdirp(this.temporaryDirectory);
+    this.isInitialized = true;
   }
 
   /**
@@ -36,7 +36,7 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    const dir = path.resolve(this.temporaryDirectory, `${prefix}${random()}`);
+    const dir = path.resolve(this.temporaryDirectory, `${prefix}${objectUtils.random()}`);
     mkdirp.sync(dir);
     return dir;
   }
@@ -72,7 +72,7 @@ export class TemporaryDirectory implements Disposable {
     if (this.removeDuringDisposal) {
       this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
       try {
-        await deleteDir(this.temporaryDirectory);
+        await fileUtils.deleteDir(this.temporaryDirectory);
       } catch (e) {
         this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
       }

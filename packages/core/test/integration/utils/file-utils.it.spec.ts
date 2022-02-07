@@ -9,7 +9,7 @@ import { File } from '@stryker-mutator/api/core';
 import nodeGlob from 'glob';
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import * as fileUtils from '../../../src/utils/file-utils.js';
+import { fileUtils } from '../../../src/utils/file-utils.js';
 
 describe('fileUtils', () => {
   describe('glob', () => {

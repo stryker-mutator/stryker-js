@@ -1,6 +1,6 @@
 import { MutantTestCoverage, MutantResult } from '@stryker-mutator/api/core';
 
-import { ProgressBar } from './progress-bar.js';
+import { progressBarWrapper } from './progress-bar.js';
 import { ProgressKeeper } from './progress-keeper.js';
 
 export class ProgressBarReporter extends ProgressKeeper {
@@ -11,7 +11,7 @@ export class ProgressBarReporter extends ProgressKeeper {
     const progressBarContent =
       'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
-    this.progressBar = new ProgressBar(progressBarContent, {
+    this.progressBar = new progressBarWrapper.ProgressBar(progressBarContent, {
       complete: '=',
       incomplete: ' ',
       stream: process.stdout,

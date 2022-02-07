@@ -7,7 +7,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
-import { isWarningEnabled } from '../utils/object-utils.js';
+import { objectUtils } from '../utils/object-utils.js';
 import { FileMatcher } from '../config/index.js';
 
 import { FilePreprocessor } from './file-preprocessor.js';
@@ -29,7 +29,7 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
           try {
             return await this.impl(file, { plugins: this.options.mutator.plugins });
           } catch (err) {
-            if (isWarningEnabled('preprocessorErrors', this.options.warnings)) {
+            if (objectUtils.isWarningEnabled('preprocessorErrors', this.options.warnings)) {
               warningLogged = true;
               this.log.warn(
                 `Unable to disable type checking for file "${

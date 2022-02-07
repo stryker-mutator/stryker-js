@@ -11,7 +11,7 @@ import { mergeMap, toArray } from 'rxjs/operators';
 import { from, lastValueFrom } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
-import { findNodeModulesList, MAX_CONCURRENT_FILE_IO, moveDirectoryRecursiveSync, symlinkJunction, mkdirp } from '../utils/file-utils.js';
+import { MAX_CONCURRENT_FILE_IO, fileUtils } from '../utils/file-utils.js';
 import { coreTokens } from '../di/index.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
@@ -91,22 +91,24 @@ export class Sandbox implements Disposable {
     if (this.options.symlinkNodeModules && !this.options.inPlace) {
       // TODO: Change with this.options.basePath when we have it
       const basePath = process.cwd();
-      const nodeModulesList = await findNodeModulesList(basePath, this.options.tempDirName);
+      const nodeModulesList = await fileUtils.findNodeModulesList(basePath, this.options.tempDirName);
 
       if (nodeModulesList.length > 0) {
         for (const nodeModules of nodeModulesList) {
           this.log.debug(`Create symlink from ${path.resolve(nodeModules)} to ${path.join(this.workingDirectory, nodeModules)}`);
-          await symlinkJunction(path.resolve(nodeModules), path.join(this.workingDirectory, nodeModules)).catch((error: NodeJS.ErrnoException) => {
-            if (error.code === 'EEXIST') {
-              this.log.warn(
-                normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
+          await fileUtils
+            .symlinkJunction(path.resolve(nodeModules), path.join(this.workingDirectory, nodeModules))
+            .catch((error: NodeJS.ErrnoException) => {
+              if (error.code === 'EEXIST') {
+                this.log.warn(
+                  normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
               Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`)
-              );
-            } else {
-              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
-            }
-          });
+                );
+              } else {
+                this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+              }
+            });
         }
       } else {
         this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
@@ -122,14 +124,14 @@ export class Sandbox implements Disposable {
       if (!originalContent.equals(file.content)) {
         // File is changed (either mutated or by a preprocessor), make a backup and replace in-place
         const backupFileName = path.join(this.backupDirectory, relativePath);
-        await mkdirp(path.dirname(backupFileName));
+        await fileUtils.mkdirp(path.dirname(backupFileName));
         await fsPromises.writeFile(backupFileName, originalContent);
         this.log.debug('Stored backup file at %s', backupFileName);
         await fsPromises.writeFile(file.name, file.content);
       }
     } else {
       const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
-      await mkdirp(folderName);
+      await fileUtils.mkdirp(folderName);
       const targetFileName = path.join(folderName, path.basename(relativePath));
       this.fileMap.set(file.name, targetFileName);
       await fsPromises.writeFile(targetFileName, file.content);
@@ -143,7 +145,7 @@ export class Sandbox implements Disposable {
       } else {
         this.log.info(`Resetting your original files from ${path.relative(process.cwd(), this.backupDirectory)}.`);
       }
-      moveDirectoryRecursiveSync(this.backupDirectory, this.workingDirectory);
+      fileUtils.moveDirectoryRecursiveSync(this.backupDirectory, this.workingDirectory);
     }
   }
 }

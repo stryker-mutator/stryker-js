@@ -1,3 +1,6 @@
 import ProgressBar from 'progress';
 
-export { ProgressBar };
+/**
+ * Wrapper around the progress bar for unit testing purposes
+ */
+export const progressBarWrapper = { ProgressBar };
