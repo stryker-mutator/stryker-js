@@ -7,7 +7,7 @@ import log4js from 'log4js';
  * @param b other log level
  */
 export function minLevel(a: LogLevel, b: LogLevel): LogLevel {
-  if (log4js.levels.getLevel(b).isGreaterThanOrEqualTo(log4js.levels.getLevel(a))) {
+  if (log4js.levels.getLevel(b, log4js.levels.INFO).isGreaterThanOrEqualTo(log4js.levels.getLevel(a, log4js.levels.INFO))) {
     return a;
   } else {
     return b;

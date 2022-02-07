@@ -1,2 +1,2 @@
-export { JestTestAdapter } from './jest-test-adapter';
+export type { JestTestAdapter } from './jest-test-adapter';
 export { jestTestAdapterFactory } from './jest-test-adapter-factory';

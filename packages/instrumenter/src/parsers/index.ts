@@ -7,7 +7,7 @@ import { parseTS, parseTsx } from './ts-parser';
 import { parse as htmlParse } from './html-parser';
 import { ParserOptions } from './parser-options';
 
-export { ParserOptions };
+export type { ParserOptions };
 
 export function createParser(
   parserOptions: ParserOptions

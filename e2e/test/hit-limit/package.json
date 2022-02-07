@@ -5,6 +5,7 @@
   "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit limit)",
   "main": "index.js",
   "scripts": {
+    "test:jest": "jest",
     "test:cucumber": "cucumber-js",
     "test:mocha": "mocha",
     "test:jasmine": "jasmine",

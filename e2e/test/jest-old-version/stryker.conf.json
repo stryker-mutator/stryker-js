@@ -6,6 +6,7 @@
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "reporters": [
+    "json",
     "clear-text",
     "progress",
     "html",

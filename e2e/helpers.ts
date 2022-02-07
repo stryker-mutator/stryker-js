@@ -1,10 +1,22 @@
 import { promises as fsPromises } from 'fs';
 
 import { mutationTestReportSchema } from '@stryker-mutator/api/report';
-import { expect } from 'chai';
+import chai from 'chai';
 import path from 'path';
-import { calculateMutationTestMetrics, MetricsResult, Metrics } from 'mutation-testing-metrics';
+import { calculateMutationTestMetrics, Metrics } from 'mutation-testing-metrics';
 import { execSync, ExecException } from 'child_process';
+import chaiJestSnapshot from 'chai-jest-snapshot';
+const { expect } = chai;
+
+chai.use(chaiJestSnapshot);
+
+before(function () {
+  chaiJestSnapshot.resetSnapshotRegistry();
+});
+
+beforeEach(function () {
+  chaiJestSnapshot.configureUsingMochaContext(this);
+});
 
 interface PipedStdioSyncExecException extends ExecException {
   stdout: Uint8Array;
@@ -61,54 +73,13 @@ export async function readMutationTestingJsonResult(jsonReportFile = path.resolv
   return metricsResult;
 }
 
-type WritableMetricsResult = {
-  -readonly [K in keyof MetricsResult]: MetricsResult[K];
-};
-
 export function readLogFile(fileName = path.resolve('stryker.log')): Promise<string> {
   return fsPromises.readFile(fileName, 'utf8');
 }
 
-export async function expectMetricsResult(expectedMetricsResult: Partial<MetricsResult>) {
-  const actualMetricsResult = await readMutationTestResult();
-  const actualSnippet: Partial<WritableMetricsResult> = {};
-  for (const key in expectedMetricsResult) {
-    actualSnippet[key as keyof MetricsResult] = actualMetricsResult.systemUnderTestMetrics[key as keyof MetricsResult] as any;
-  }
-  if (actualSnippet.metrics) {
-    if (typeof actualSnippet.metrics.mutationScore === 'number') {
-      actualSnippet.metrics.mutationScore = parseFloat(actualSnippet.metrics.mutationScore.toFixed(2));
-    }
-    if (typeof actualSnippet.metrics.mutationScoreBasedOnCoveredCode === 'number') {
-      actualSnippet.metrics.mutationScoreBasedOnCoveredCode = parseFloat(actualSnippet.metrics.mutationScoreBasedOnCoveredCode.toFixed(2));
-    }
-  }
-  expect(actualSnippet).deep.eq(expectedMetricsResult);
-}
-
-export async function expectMetricsJson(expectedMetrics: Partial<Metrics>) {
+export async function expectMetricsJsonToMatchSnapshot() {
   const actualMetricsResult = await readMutationTestingJsonResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
-}
-
-/**
- * @deprecated please use expectMetricsJson instead (and activate the json reporter)
- */
-export async function expectMetrics(expectedMetrics: Partial<Metrics>) {
-  const actualMetricsResult = await readMutationTestResult();
-  expectActualMetrics(expectedMetrics, actualMetricsResult.systemUnderTestMetrics);
-}
-
-export function expectActualMetrics(expectedMetrics: Partial<Metrics>, actualMetricsResult: MetricsResult) {
-  const actualMetrics: Partial<Metrics> = {};
-  Object.entries(expectedMetrics).forEach(([key]) => {
-    if (key === 'mutationScore' || key === 'mutationScoreBasedOnCoveredCode') {
-      actualMetrics[key] = parseFloat(actualMetricsResult.metrics[key].toFixed(2));
-    } else {
-      actualMetrics[key as keyof Metrics] = actualMetricsResult.metrics[key as keyof Metrics];
-    }
-  });
-  expect(actualMetrics).deep.eq(expectedMetrics);
+  expect(actualMetricsResult.systemUnderTestMetrics.metrics).to.matchSnapshot();
 }
 
 export function produceMetrics(metrics: Partial<Metrics>): Metrics {

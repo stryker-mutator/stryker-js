@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`After running stryker with test runner jasmine, test framework jasmine should report 85% mutation score 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 12,
+  "mutationScore": 85.71428571428571,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 2,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 12,
+  "totalDetected": 12,
+  "totalInvalid": 0,
+  "totalMutants": 14,
+  "totalUndetected": 2,
+  "totalValid": 14,
+}
+`;

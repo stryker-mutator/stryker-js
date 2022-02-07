@@ -1,22 +1,11 @@
 import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
-import { expectMetricsJson } from '../../../helpers';
+import { expectMetricsJsonToMatchSnapshot } from '../../../helpers';
 
 describe('After running stryker with test runner jasmine, test framework jasmine', () => {
   it('should report 85% mutation score', async () => {
-    await expectMetricsJson ({
-      killed: 12,
-      mutationScore: 85.71,
-      mutationScoreBasedOnCoveredCode: 100,
-      noCoverage: 2,
-      survived: 0,
-      totalCovered: 12,
-      totalDetected: 12,
-      totalMutants: 14,
-      totalUndetected: 2,
-      totalValid: 14
-    });
+    await expectMetricsJsonToMatchSnapshot();
   });
 
   it('should write to a log file', async () => {

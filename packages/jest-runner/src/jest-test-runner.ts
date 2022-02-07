@@ -14,6 +14,7 @@ import {
   TestStatus,
   DryRunOptions,
   BaseTestResult,
+  determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
@@ -32,6 +33,7 @@ import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-
 import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
 import { jestWrapper, mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
 import { state } from './messaging';
+import { overrideEnvironment } from './jest-plugins/with-coverage-analysis';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;
@@ -91,11 +93,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({
-    coverageAnalysis,
-    disableBail,
-    files,
-  }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
+  public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];
@@ -129,7 +127,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
     const fileNameUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
@@ -137,6 +135,8 @@ export class JestTestRunner implements TestRunner {
       testNamePattern = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
     }
     process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
+    state.hitLimit = hitLimit;
+    state.hitCount = hitLimit ? (state.hitCount ? state.hitCount : 0) : undefined;
 
     try {
       const { dryRunResult } = await this.run({
@@ -147,6 +147,9 @@ export class JestTestRunner implements TestRunner {
       return toMutantRunResult(dryRunResult, disableBail);
     } finally {
       delete process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE];
+      delete this.jestConfig.testEnvironment;
+      delete state.hitCount;
+      delete state.hitLimit;
     }
   }
 
@@ -170,11 +173,15 @@ export class JestTestRunner implements TestRunner {
     } else {
       config = this.jestConfig;
     }
+    if (state.hitLimit) {
+      overrideEnvironment(config, config);
+    }
     return config;
   }
 
   private async run(settings: RunSettings): Promise<{ dryRunResult: DryRunResult; jestResult: jestTestResult.AggregatedResult }> {
     this.setEnv();
+    state.firstTestFile = true;
     if (this.log.isTraceEnabled()) {
       this.log.trace('Invoking Jest with config %s', JSON.stringify(settings));
     }
@@ -183,6 +190,10 @@ export class JestTestRunner implements TestRunner {
   }
 
   private collectRunResult(results: jestTestResult.AggregatedResult): DryRunResult {
+    const timeoutResult = determineHitLimitReached(state.hitCount, state.hitLimit);
+    if (timeoutResult) {
+      return timeoutResult;
+    }
     if (results.numRuntimeErrorTestSuites) {
       const errorMessage = results.testResults
         .map((testSuite) => this.collectSerializableErrorText(testSuite.testExecError))
