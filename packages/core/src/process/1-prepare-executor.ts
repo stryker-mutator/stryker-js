@@ -37,7 +37,7 @@ export class PrepareExecutor {
       .provideClass(coreTokens.optionsValidator, OptionsValidator)
       .provideClass(coreTokens.pluginLoader, PluginLoader);
     const configReader = configReaderInjector.injectClass(ConfigReader);
-    const options: StrykerOptions = configReader.readConfig(cliOptions);
+    const options: StrykerOptions = await configReader.readConfig(cliOptions);
 
     // Load plugins
     const pluginLoader = configReaderInjector.resolve(coreTokens.pluginLoader);

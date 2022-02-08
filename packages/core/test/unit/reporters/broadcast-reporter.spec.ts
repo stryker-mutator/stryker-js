@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import { coreTokens, PluginCreator } from '../../../src/di/index.js';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
 
-describe(BroadcastReporter.name, () => {
+describe.only(BroadcastReporter.name, () => {
   let sut: BroadcastReporter;
   let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
   let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -40,7 +40,7 @@ describe(BroadcastReporter.name, () => {
 
       // Assert
       expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporter });
-      expect(pluginCreatorMock.create).calledWith('progress-append-only');
+      sinon.assert.calledWith(pluginCreatorMock.create, PluginKind.Reporter, 'progress-append-only');
     });
 
     it('should create the correct reporters', () => {

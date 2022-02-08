@@ -4,7 +4,6 @@ import { createReadStream, createWriteStream } from 'fs';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import mkdirp from 'mkdirp';
 import { Disposable } from 'typed-inject';
 
 import { fileUtils } from './file-utils.js';
@@ -23,22 +22,23 @@ export class TemporaryDirectory implements Disposable {
 
   public async initialize(): Promise<void> {
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
-    await mkdirp(this.temporaryDirectory);
+    await fileUtils.mkdirp(this.temporaryDirectory);
     this.isInitialized = true;
+  }
+
+  public getRandomDirectory(prefix: string): string {
+    return path.resolve(this.temporaryDirectory, `${prefix}${objectUtils.random()}`);
   }
 
   /**
    * Creates a new random directory with the specified prefix.
-   * @param prefix The prefix.
    * @returns The path to the directory.
    */
-  public createRandomDirectory(prefix: string): string {
+  public async createDirectory(name: string): Promise<void> {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    const dir = path.resolve(this.temporaryDirectory, `${prefix}${objectUtils.random()}`);
-    mkdirp.sync(dir);
-    return dir;
+    await fileUtils.mkdirp(path.resolve(this.temporaryDirectory, name));
   }
 
   /**

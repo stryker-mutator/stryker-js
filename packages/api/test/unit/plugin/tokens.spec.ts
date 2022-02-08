@@ -19,7 +19,5 @@ describe('commonTokens', () => {
   }
   itShouldProvideToken('options');
   itShouldProvideToken('logger');
-  itShouldProvideToken('pluginResolver');
-  itShouldProvideToken('produceSourceMaps');
   itShouldProvideToken('getLogger');
 });

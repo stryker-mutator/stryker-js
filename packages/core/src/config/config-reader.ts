@@ -1,4 +1,5 @@
 import path from 'path';
+import { createRequire } from 'module';
 
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -25,7 +26,7 @@ export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
   constructor(private readonly log: Logger, private readonly validator: OptionsValidator) {}
 
-  public readConfig(cliOptions: PartialStrykerOptions): StrykerOptions {
+  public async readConfig(cliOptions: PartialStrykerOptions): Promise<StrykerOptions> {
     const configModule = this.loadConfigModule(cliOptions);
     let options: StrykerOptions;
     if (typeof configModule === 'function') {
@@ -48,6 +49,7 @@ export class ConfigReader {
 
   private loadConfigModule(cliOptions: PartialStrykerOptions): PartialStrykerOptions | ((options: StrykerOptions) => void) {
     let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
+    const require = createRequire(import.meta.url);
 
     if (!cliOptions.configFile) {
       try {
@@ -83,6 +85,7 @@ export class ConfigReader {
   private resolveConfigFile(configFileName: string) {
     const configFile = path.resolve(configFileName);
     try {
+      const require = createRequire(import.meta.url);
       return require.resolve(configFile);
     } catch {
       throw new ConfigError(`File ${configFile} does not exist!`);

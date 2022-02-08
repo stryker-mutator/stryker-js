@@ -4,7 +4,6 @@ import fs from 'fs';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import mkdirp from 'mkdirp';
 import sinon from 'sinon';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
@@ -14,20 +13,16 @@ import { objectUtils } from '../../../src/utils/object-utils.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 
 describe(TemporaryDirectory.name, () => {
-  let randomStub: sinon.SinonStub;
+  let randomStub: sinon.SinonStubbedMember<typeof objectUtils.random>;
   let deleteDirStub: sinon.SinonStub;
-  let sut: TemporaryDirectory;
+  let mkdirpStub: sinon.SinonStubbedMember<typeof fileUtils.mkdirp>;
   const tempDirName = '.stryker-tmp';
 
   beforeEach(() => {
-    sinon.stub(mkdirp, 'sync');
+    mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
     sinon.stub(fs.promises, 'writeFile');
     deleteDirStub = sinon.stub(fileUtils, 'deleteDir');
-
-    sut = createSut();
-
     randomStub = sinon.stub(objectUtils, 'random');
-    randomStub.returns('rand');
   });
 
   function createSut(options?: Partial<StrykerOptions>): TemporaryDirectory {
@@ -37,66 +32,65 @@ describe(TemporaryDirectory.name, () => {
       .injectClass(TemporaryDirectory);
   }
 
-  describe('createRandomDirectory', () => {
-    describe('when temp directory is initialized', () => {
-      beforeEach(() => sut.initialize());
-      it('should create dir with correct path', () => {
-        const result = sut.createRandomDirectory('prefix');
-
-        expect(mkdirp.sync).to.have.been.calledTwice;
-        expect(result.includes('prefix')).to.be.true;
-        expect(result.includes('rand')).to.be.true;
-      });
+  describe(TemporaryDirectory.prototype.getRandomDirectory.name, () => {
+    it('should return a random directory with provided prefix', () => {
+      const sut = createSut();
+      randomStub.returns(126891);
+      expect(sut.getRandomDirectory('stryker-prefix-')).eq(path.resolve(tempDirName, 'stryker-prefix-126891'));
     });
-    describe('when temp directory is not initialized', () => {
-      it('should throw error', () => {
-        expect(() => {
-          sut.createRandomDirectory('prefix');
-        }).to.throw();
-      });
+  });
+
+  describe(TemporaryDirectory.prototype.createDirectory.name, () => {
+    it('should create dir with correct path', async () => {
+      const sut = createSut();
+      await sut.initialize();
+      await sut.createDirectory('some-dir');
+
+      sinon.assert.calledTwice(mkdirpStub);
+      sinon.assert.calledWith(mkdirpStub, path.resolve(tempDirName, 'some-dir'));
+    });
+    it('should reject when temp directory is not initialized', async () => {
+      const sut = createSut();
+      await expect(sut.createDirectory('some-dir')).rejected;
     });
   });
 
   describe('dispose', () => {
-    describe('when temp directory is initialized', () => {
-      beforeEach(() => sut.initialize());
-      it('should remove the dir if cleanTempDir option is enabled', async () => {
-        const expectedPath = path.resolve(tempDirName);
-        deleteDirStub.resolves();
-        const suite = createSut({ cleanTempDir: true });
-        suite.initialize();
-        await suite.dispose();
-        expect(fileUtils.deleteDir).calledWith(expectedPath);
-      });
-
-      it('should not remove the dir if cleanTempDir option is enabled', async () => {
-        const suite = createSut({ cleanTempDir: false });
-        suite.initialize();
-        await suite.dispose();
-        expect(fileUtils.deleteDir).not.called;
-      });
-
-      it('should not remove the dir if `removeDuringDisposal` is set to false', async () => {
-        const suite = createSut({ cleanTempDir: true });
-        suite.initialize();
-        suite.removeDuringDisposal = false;
-        await suite.dispose();
-        expect(fileUtils.deleteDir).not.called;
-      });
-
-      it('should remove the dir by default', async () => {
-        deleteDirStub.resolves();
-        await sut.dispose();
-        expect(fileUtils.deleteDir).calledOnce;
-      });
+    it('should remove the dir if cleanTempDir option is enabled', async () => {
+      const expectedPath = path.resolve(tempDirName);
+      deleteDirStub.resolves();
+      const sut = createSut({ cleanTempDir: true });
+      await sut.initialize();
+      await sut.dispose();
+      expect(fileUtils.deleteDir).calledWith(expectedPath);
     });
 
-    describe('when temp directory is not initialized', () => {
-      it('should throw error', () => {
-        expect(() => {
-          sut.createRandomDirectory('prefix');
-        }).to.throw();
-      });
+    it('should not remove the dir if cleanTempDir option is enabled', async () => {
+      const sut = createSut({ cleanTempDir: false });
+      await sut.initialize();
+      await sut.dispose();
+      expect(fileUtils.deleteDir).not.called;
+    });
+
+    it('should not remove the dir if `removeDuringDisposal` is set to false', async () => {
+      const sut = createSut({ cleanTempDir: true });
+      await sut.initialize();
+      sut.removeDuringDisposal = false;
+      await sut.dispose();
+      expect(fileUtils.deleteDir).not.called;
+    });
+
+    it('should remove the dir by default', async () => {
+      const sut = createSut();
+      await sut.initialize();
+      deleteDirStub.resolves();
+      await sut.dispose();
+      expect(fileUtils.deleteDir).calledOnce;
+    });
+
+    it('should reject when temp directory is not initialized', async () => {
+      const sut = createSut();
+      await expect(sut.dispose()).rejected;
     });
   });
 });

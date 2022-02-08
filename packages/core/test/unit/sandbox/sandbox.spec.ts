@@ -31,7 +31,7 @@ describe(Sandbox.name, () => {
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    temporaryDirectoryMock.createRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
+    temporaryDirectoryMock.getRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
     mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
     writeFileStub = sinon.stub(fsPromises, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
@@ -71,7 +71,8 @@ describe(Sandbox.name, () => {
       it('should have created a sandbox folder', async () => {
         const sut = createSut();
         await sut.init();
-        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
+        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('sandbox');
+        expect(temporaryDirectoryMock.createDirectory).calledWith(SANDBOX_WORKING_DIR);
       });
 
       it('should copy regular input files', async () => {
@@ -118,7 +119,8 @@ describe(Sandbox.name, () => {
       it('should have created a backup directory', async () => {
         const sut = createSut();
         await sut.init();
-        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('backup');
+        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('backup');
+        expect(temporaryDirectoryMock.createDirectory).calledWith(BACKUP_DIR);
       });
 
       it('should not override the current file if no changes were detected', async () => {

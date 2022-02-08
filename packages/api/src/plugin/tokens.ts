@@ -17,7 +17,6 @@ export const commonTokens = Object.freeze({
   injector,
   logger: stringLiteral('logger'),
   options: stringLiteral('options'),
-  produceSourceMaps: stringLiteral('produceSourceMaps'),
   target,
 });
 

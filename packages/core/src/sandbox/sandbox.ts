@@ -19,6 +19,7 @@ export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();
   public readonly workingDirectory: string;
   private readonly backupDirectory: string = '';
+  private readonly tempDirectoryName: string;
 
   public static readonly inject = tokens(
     commonTokens.options,
@@ -32,26 +33,29 @@ export class Sandbox implements Disposable {
   constructor(
     private readonly options: StrykerOptions,
     private readonly log: Logger,
-    temporaryDirectory: I<TemporaryDirectory>,
+    private readonly temporaryDirectory: I<TemporaryDirectory>,
     private readonly files: readonly File[],
     private readonly exec: typeof execa,
     unexpectedExitHandler: I<UnexpectedExitHandler>
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
-      this.backupDirectory = temporaryDirectory.createRandomDirectory('backup');
+      this.backupDirectory = temporaryDirectory.getRandomDirectory('backup');
+      this.tempDirectoryName = this.backupDirectory;
       this.log.info(
         'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
         path.relative(process.cwd(), this.backupDirectory)
       );
       unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
     } else {
-      this.workingDirectory = temporaryDirectory.createRandomDirectory('sandbox');
+      this.workingDirectory = temporaryDirectory.getRandomDirectory('sandbox');
+      this.tempDirectoryName = this.workingDirectory;
       this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     }
   }
 
   public async init(): Promise<void> {
+    await this.temporaryDirectory.createDirectory(this.tempDirectoryName);
     await this.fillSandbox();
     await this.runBuildCommand();
     await this.symlinkNodeModulesIfNeeded();

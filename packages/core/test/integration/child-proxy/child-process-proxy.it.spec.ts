@@ -1,8 +1,8 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
 import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import log4js from 'log4js';
@@ -22,18 +22,26 @@ describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
   let log: Mock<Logger>;
-  const echoName = 'The Echo Server';
+  const testRunnerName = 'echoRunner';
   const workingDir = '..';
 
   beforeEach(async () => {
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
-    const options = testInjector.injector.resolve(commonTokens.options);
+    testInjector.options.testRunner = testRunnerName;
     log = currentLogMock();
-    sut = ChildProcessProxy.create(require.resolve('./echo'), { port, level: LogLevel.Debug }, options, { name: echoName }, workingDir, Echo, [
-      '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
-      '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
-    ]);
+    sut = ChildProcessProxy.create(
+      fileURLToPath(new URL('./echo.js', import.meta.url)),
+      { port, level: LogLevel.Debug },
+      testInjector.options,
+      [],
+      workingDir,
+      Echo,
+      [
+        '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
+        '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
+      ]
+    );
   });
 
   afterEach(async () => {
@@ -47,12 +55,12 @@ describe(ChildProcessProxy.name, () => {
 
   it('should be able to get direct result', async () => {
     const actual = await sut.proxy.say('hello');
-    expect(actual).eq(`${echoName}: hello`);
+    expect(actual).eq(`${testRunnerName}: hello`);
   });
 
   it('should be able to get delayed result', async () => {
     const actual = await sut.proxy.sayDelayed('hello', 2);
-    expect(actual).eq(`${echoName}: hello (2 ms)`);
+    expect(actual).eq(`${testRunnerName}: hello (2 ms)`);
   });
 
   it('should set the current working directory', async () => {
@@ -69,8 +77,8 @@ describe(ChildProcessProxy.name, () => {
     await expect(sut.proxy.reject('Foobar error')).rejectedWith('Foobar error');
   });
 
-  it('should be able to receive public properties as promised', () => {
-    return expect(sut.proxy.name()).eventually.eq(echoName);
+  it('should be able to receive public properties as promised', async () => {
+    expect(await sut.proxy.testRunnerName()).eq(testRunnerName);
   });
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {

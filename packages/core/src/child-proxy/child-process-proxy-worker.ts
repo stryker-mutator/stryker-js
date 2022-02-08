@@ -4,13 +4,11 @@ import { fileURLToPath } from 'url';
 import { errorToString } from '@stryker-mutator/util';
 import log4js from 'log4js';
 import { createInjector } from 'typed-inject';
-import { commonTokens, PluginContext, Injector } from '@stryker-mutator/api/src/plugin';
+import { commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 
 import { LogConfigurator } from '../logging/index.js';
 import { deserialize, serialize } from '../utils/string-utils.js';
-
 import { coreTokens, provideLogger, PluginCreator } from '../di/index.js';
-
 import { PluginLoader } from '../di/plugin-loader.js';
 
 import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
