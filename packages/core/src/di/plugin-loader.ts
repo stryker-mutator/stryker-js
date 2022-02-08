@@ -1,12 +1,10 @@
 import path from 'path';
 import { readdirSync } from 'fs';
-
 import { fileURLToPath } from 'url';
 
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
+import { tokens, commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
 import { notEmpty } from '@stryker-mutator/util';
-import { tokens } from 'typed-inject';
 
 import { fileUtils } from '../utils/file-utils.js';
 
@@ -29,9 +27,15 @@ export class PluginLoader {
 
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
+
+  /**
+   * Loads modules based on configured module descriptors.
+   * Returns the full module paths of the modules that have been loaded.
+   */
   public async load(pluginDescriptors: readonly string[]): Promise<readonly string[]> {
-    const pluginModules = await Promise.all(this.resolvePluginModules(pluginDescriptors).map((moduleName) => this.loadPlugin(moduleName)));
-    return pluginModules.filter(notEmpty);
+    const plugins = this.resolvePlugins(pluginDescriptors);
+    await Promise.all(plugins.map((moduleName) => this.loadPlugin(moduleName)));
+    return plugins;
   }
 
   public resolveValidationSchemaContributions(): Array<Record<string, unknown>> {
@@ -58,41 +62,47 @@ export class PluginLoader {
     }
   }
 
-  private resolvePluginModules(pluginDescriptors: readonly string[]) {
-    const modules: string[] = [];
-    pluginDescriptors.forEach((pluginExpression) => {
-      if (typeof pluginExpression === 'string') {
-        if (pluginExpression.includes('*')) {
-          // Plugin directory is the node_modules folder of the module that installed stryker
-          // So if current __dirname is './@stryker-mutator/core/dist/src/di' so 4 directories above
-          const pluginDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..');
-          const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
+  private resolvePlugins(pluginDescriptors: readonly string[]): string[] {
+    return pluginDescriptors
+      .flatMap((pluginExpression) => {
+        if (typeof pluginExpression === 'string') {
+          if (pluginExpression.includes('*')) {
+            const pluginDirectory = path.dirname(
+              path.resolve(
+                fileURLToPath(import.meta.url),
+                '..' /* plugin-loader.js */,
+                '..' /* di */,
+                '..' /* src*/,
+                '..' /* dist */,
+                '..' /* core */,
+                pluginExpression
+              )
+            );
+            const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
 
-          this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-          const plugins = readdirSync(pluginDirectory)
-            .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
-            .map((pluginName) => path.resolve(pluginDirectory, pluginName));
-          if (plugins.length === 0) {
-            this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
+            this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
+            const plugins = readdirSync(pluginDirectory)
+              .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
+              .map((pluginName) => path.resolve(pluginDirectory, pluginName));
+            if (plugins.length === 0) {
+              this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
+            }
+            plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
+            return plugins;
+          } else if (pluginExpression.startsWith('.')) {
+            return path.resolve(pluginExpression);
+          } else {
+            return pluginExpression;
           }
-          plugins
-            .map((plugin) => {
-              this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression);
-              return plugin;
-            })
-            .forEach((p) => modules.push(p));
         } else {
-          modules.push(pluginExpression);
+          this.log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
+          return;
         }
-      } else {
-        this.log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
-      }
-    });
-
-    return modules;
+      })
+      .filter(notEmpty);
   }
 
-  private async loadPlugin(name: string): Promise<string | undefined> {
+  private async loadPlugin(name: string): Promise<void> {
     this.log.debug(`Loading plugins ${name}`);
     try {
       const module = await fileUtils.importModule(name);
@@ -102,14 +112,12 @@ export class PluginLoader {
       if (this.hasValidationSchemaContribution(module)) {
         this.contributedValidationSchemas.push(module.strykerValidationSchema);
       }
-      return name;
     } catch (e: any) {
       if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
         this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
       } else {
         this.log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
       }
-      return;
     }
   }
 
