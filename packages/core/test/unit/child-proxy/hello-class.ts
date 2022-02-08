@@ -5,10 +5,10 @@ export class HelloClass {
   public static inject = tokens(commonTokens.options);
   constructor(public options: StrykerOptions) {}
   public sayHello(): string {
-    return `hello from ${this.options.testRunner}`;
+    return `hello from ${HelloClass.name}`;
   }
   public sayDelayed(): Promise<unknown> {
-    return new Promise((res) => res(`delayed hello from ${this.options.testRunner}`));
+    return new Promise((res) => res(`delayed hello from ${HelloClass.name}`));
   }
 
   public say(...things: string[]): string {

@@ -3,7 +3,8 @@ import { fileURLToPath, URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { factory } from '@stryker-mutator/test-helpers';
+import { commonTokens } from '@stryker-mutator/api/plugin';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
@@ -53,6 +54,7 @@ describe(ChildProcessProxyWorker.name, () => {
     injectorMock = factory.injector();
     createInjectorStub = sinon.stub();
     createInjectorStub.returns(injectorMock);
+    injectorMock.injectClass.withArgs(HelloClass).returns(new HelloClass(testInjector.options));
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     injectorMock.resolve.withArgs(coreTokens.pluginLoader).returns(pluginLoaderMock);
     processes = [];
@@ -100,8 +102,8 @@ describe(ChildProcessProxyWorker.name, () => {
     it('should create the correct real instance', async () => {
       await processOnMessage(initMessage);
       expect(sut.realSubject).instanceOf(HelloClass);
-      const actual = sut.realSubject as HelloClass;
-      expect(actual.options.testRunner).eq('fooBar');
+      sinon.assert.calledWithExactly(injectorMock.provideValue, commonTokens.options, initMessage.options);
+      sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.pluginLoader, PluginLoader);
     });
 
     it('should change the current working directory', async () => {
@@ -174,7 +176,7 @@ describe(ChildProcessProxyWorker.name, () => {
         await processOnMessage(workerMessage);
         // Assert
         expect(processSendStub).calledWithMatch(`"correlationId":${workerMessage.correlationId.toString()}`);
-        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.Rejection.toString()}`);
+        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.CallRejection.toString()}`);
         expect(processSendStub).calledWithMatch(`"error":"Error: ${expectedError}`);
       }
 
@@ -188,8 +190,8 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
-          result: 'hello from FooBarName',
+          kind: ParentMessageKind.CallResult,
+          result: 'hello from HelloClass',
         };
 
         await actAndAssert(workerMessage, expectedResult);
@@ -227,7 +229,7 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
+          kind: ParentMessageKind.CallResult,
           result: 'hello foo and bar and chair',
         };
 
@@ -244,8 +246,8 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
-          result: 'delayed hello from FooBarName',
+          kind: ParentMessageKind.CallResult,
+          result: 'delayed hello from HelloClass',
         };
 
         await actAndAssert(workerMessage, expectedResult);

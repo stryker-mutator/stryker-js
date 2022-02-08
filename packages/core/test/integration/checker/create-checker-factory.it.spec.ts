@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { fileURLToPath, URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
@@ -27,11 +28,10 @@ describe(`${createCheckerFactory.name} integration`, () => {
 
   beforeEach(async () => {
     // Make sure there is a logging server listening
-    pluginModulePaths = ['plugin', 'paths'];
+    pluginModulePaths = [fileURLToPath(new URL('./additional-checkers.js', import.meta.url))];
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [require.resolve('./additional-checkers')];
     createSut = testInjector.injector
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)

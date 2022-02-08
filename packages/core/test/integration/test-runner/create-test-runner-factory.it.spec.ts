@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path/posix';
 
 import { expect } from 'chai';
 import log4js from 'log4js';
@@ -35,13 +37,13 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [require.resolve('./additional-test-runners')];
+    testInjector.options.plugins = [fileURLToPath(new URL('./additional-test-runners.js', import.meta.url))];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
-      .provideValue(coreTokens.sandbox, { workingDirectory: __dirname })
+      .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .injectFunction(createTestRunnerFactory);

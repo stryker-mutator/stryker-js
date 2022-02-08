@@ -2,7 +2,7 @@ import os from 'os';
 
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { propertyPath } from '@stryker-mutator/util';
@@ -358,6 +358,86 @@ describe(OptionsValidator.name, () => {
   it('should be invalid with invalid coverageAnalysis', () => {
     breakConfig('coverageAnalysis', 'invalid');
     actValidationErrors('Config option "coverageAnalysis" should be one of the allowed values ("off", "all", "perTest"), but was "invalid".');
+  });
+
+  describe('unknown options', () => {
+    it('should not warn when there are no unknown properties', () => {
+      testInjector.options.htmlReporter = {
+        baseDir: 'test',
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn when unknown properties are postfixed with "_comment"', () => {
+      testInjector.options.maxConcurrentTestRunners_comment = 'Recommended to use half of your cores';
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should warn about unknown properties', () => {
+      testInjector.options.karma = {};
+      testInjector.options.jest = {};
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledThrice;
+      expect(testInjector.logger.warn).calledWith('Unknown stryker config option "karma".');
+      expect(testInjector.logger.warn).calledWith('Unknown stryker config option "jest".');
+      expect(testInjector.logger.warn).calledWithMatch('Possible causes');
+    });
+
+    it('should not warn about unknown options when mark = false', () => {
+      testInjector.options.jest = {};
+      sut.validate(testInjector.options, false);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn about unknown properties when warnings are disabled', () => {
+      testInjector.options.karma = {};
+      testInjector.options.warnings = factory.warningOptions({ unknownOptions: false });
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+    it('should ignore options added by Stryker itself', () => {
+      testInjector.options.set = {};
+      testInjector.options.configFile = {};
+      testInjector.options.$schema = '';
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+  });
+
+  describe('unserializable values', () => {
+    it('should warn about unserializable values', () => {
+      testInjector.options.karma = {
+        config: {
+          webpack: {
+            transformPath() {
+              /* idle */
+            },
+          },
+        },
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledWith(
+        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.'
+      );
+    });
+    it('should not warn about unserializable values when the warning is disabled', () => {
+      testInjector.options.warnings = factory.warningOptions({ unserializableOptions: false, unknownOptions: false });
+      testInjector.options.myCustomReporter = {
+        filter: /some-regex/,
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should hint to disable the warning', () => {
+      testInjector.options.myCustomReporter = {
+        filter: /some-regex/,
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledWith('(disable warnings.unserializableOptions to ignore this warning)');
+    });
   });
 
   function actValidationErrors(...expectedErrors: string[]) {

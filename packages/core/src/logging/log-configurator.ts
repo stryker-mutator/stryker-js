@@ -36,7 +36,10 @@ const LOG_FILE_NAME = 'stryker.log';
 export class LogConfigurator {
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
-    const multiAppender = { type: fileURLToPath(new URL('./multi-appender.js', import.meta.url)), appenders: [AppenderName.FilterLevelConsole] };
+    const multiAppender = {
+      type: fileURLToPath(new URL('../cjs/logging/multi-appender.js', import.meta.url)),
+      appenders: [AppenderName.FilterLevelConsole],
+    };
 
     const consoleLayout = allowConsoleColors ? layouts.color : layouts.noColor;
 

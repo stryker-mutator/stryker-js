@@ -11,7 +11,7 @@ import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.
 import { LoggingClientContext } from '../../../src/logging/index.js';
 
 describe(CheckerChildProcessProxy.name, () => {
-  let childProcessProxyCreateStub: sinon.SinonStub;
+  let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
 
   beforeEach(() => {
@@ -20,17 +20,18 @@ describe(CheckerChildProcessProxy.name, () => {
   });
 
   function createSut(): CheckerChildProcessProxy {
-    return new CheckerChildProcessProxy(testInjector.options, [], loggingContext);
+    return new CheckerChildProcessProxy(testInjector.options, ['plugin', 'paths'], loggingContext);
   }
 
   describe('constructor', () => {
     it('should create the child process', () => {
       createSut();
-      expect(childProcessProxyCreateStub).calledWith(
+      sinon.assert.calledWithExactly(
+        childProcessProxyCreateStub,
         fileURLToPath(new URL('../../../src/checker/checker-worker.js', import.meta.url)),
         loggingContext,
         testInjector.options,
-        {},
+        ['plugin', 'paths'],
         process.cwd(),
         CheckerWorker,
         []

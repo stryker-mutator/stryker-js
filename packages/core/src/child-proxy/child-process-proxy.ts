@@ -14,7 +14,7 @@ import { StringBuilder } from '../utils/string-builder.js';
 import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
 
 import { ChildProcessCrashedError } from './child-process-crashed-error.js';
-import { ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
+import { InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
 import { OutOfMemoryError } from './out-of-memory-error.js';
 import { ChildProcessContext } from './child-process-proxy-worker.js';
 
@@ -42,10 +42,11 @@ export class ChildProcessProxy<T> implements Disposable {
   private readonly stdoutBuilder = new StringBuilder();
   private readonly stderrBuilder = new StringBuilder();
   private isDisposed = false;
+  private readonly initMessage: InitMessage;
 
   private constructor(
     requirePath: string,
-    requireName: string,
+    namedExport: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
     pluginModulePaths: readonly string[],
@@ -54,21 +55,23 @@ export class ChildProcessProxy<T> implements Disposable {
   ) {
     this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), { silent: true, execArgv });
     this.initTask = new Task();
-    this.log.debug('Started %s in child process %s%s', requireName, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
-    this.send({
+    this.log.debug('Started %s in child process %s%s', namedExport, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
+    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
+    this.worker.on('close', this.handleUnexpectedExit);
+    this.worker.on('error', this.handleError);
+
+    this.initMessage = {
       kind: WorkerMessageKind.Init,
       loggingContext,
       options,
       pluginModulePaths,
-      namedExport: requireName,
+      namedExport: namedExport,
       modulePath: requirePath,
       workingDirectory,
-    });
+    };
     this.listenForMessages();
     this.listenToStdoutAndStderr();
-    // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
-    this.worker.on('close', this.handleUnexpectedExit);
-    this.worker.on('error', this.handleError);
+
     this.proxy = this.initProxy();
   }
 
@@ -130,15 +133,18 @@ export class ChildProcessProxy<T> implements Disposable {
     this.worker.on('message', (serializedMessage: string) => {
       const message = deserialize<ParentMessage>(serializedMessage);
       switch (message.kind) {
+        case ParentMessageKind.Spawned:
+          this.send(this.initMessage);
+          break;
         case ParentMessageKind.Initialized:
           this.initTask.resolve(undefined);
           break;
-        case ParentMessageKind.Result:
+        case ParentMessageKind.CallResult:
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           this.workerTasks[message.correlationId].resolve(message.result);
           delete this.workerTasks[message.correlationId];
           break;
-        case ParentMessageKind.Rejection:
+        case ParentMessageKind.CallRejection:
           this.workerTasks[message.correlationId].reject(new Error(message.error));
           delete this.workerTasks[message.correlationId];
           break;
@@ -146,6 +152,9 @@ export class ChildProcessProxy<T> implements Disposable {
           if (this.disposeTask) {
             this.disposeTask.resolve(undefined);
           }
+          break;
+        case ParentMessageKind.InitError:
+          this.initTask.reject(new Error(message.error));
           break;
         default:
           this.logUnidentifiedMessage(message);

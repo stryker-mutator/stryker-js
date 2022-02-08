@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import log4js from 'log4js';
 
-import { configure, RuntimeAppender } from '../../../src/logging/multi-appender.js';
+import { configure, RuntimeAppender } from '../../../src/cjs/logging/multi-appender.js';
 
 describe('MultiAppender', () => {
   let sut: RuntimeAppender;

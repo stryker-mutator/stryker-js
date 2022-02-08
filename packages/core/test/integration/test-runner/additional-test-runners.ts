@@ -1,8 +1,8 @@
 import os from 'os';
 import { types } from 'util';
 import fs from 'fs';
-
 import { fileURLToPath } from 'url';
+import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
@@ -150,10 +150,11 @@ class SlowInitAndDisposeTestRunner extends NotImplementedTestRunner {
 }
 class VerifyWorkingFolderTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
-    if (process.cwd().toLowerCase() === __dirname.toLowerCase()) {
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+    if (process.cwd().toLowerCase() === dirname.toLowerCase()) {
       return factory.completeDryRunResult();
     } else {
-      throw new Error(`Expected ${process.cwd()} to be ${__dirname}`);
+      throw new Error(`Expected ${process.cwd()} to be ${dirname}`);
     }
   }
 }

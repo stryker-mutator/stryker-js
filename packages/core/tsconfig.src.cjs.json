@@ -1,4 +1,6 @@
 {
+    // Temp workaround until native support for node's module system is added to typescript (.cts files, so we can move this file back in the src directory)
+  // see https://www.typescriptlang.org/docs/handbook/esm-node.html
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "dist",
@@ -9,24 +11,10 @@
     "types": [
       "node" // Exclude global mocha functions for the sources
     ],
-    "module": "ES2020"
+    "module": "commonjs"
   },
   "include": [
-    "src"
+    "src/cjs",
+    "src/cjs/package.json"
   ],
-  "exclude": ["src/cjs"],
-  "references": [
-    {
-      "path": "./tsconfig.src.cjs.json"
-    },
-    {
-      "path": "../api/tsconfig.src.json"
-    },
-    {
-      "path": "../instrumenter/tsconfig.src.json"
-    },
-    {
-      "path": "../util/tsconfig.src.json"
-    }
-  ]
 }

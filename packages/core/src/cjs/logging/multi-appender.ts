@@ -1,4 +1,4 @@
-import { LoggingEvent } from 'log4js';
+import type { LoggingEvent } from 'log4js';
 
 export type RuntimeAppender = (loggingEvent: LoggingEvent) => void;
 

@@ -99,6 +99,7 @@
       "Errored",
       "execa",
       "Expirable",
+      "globbing",
       "Instrumenter",
       "memfs",
       "mutables",

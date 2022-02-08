@@ -74,10 +74,10 @@ describe(ChildProcessProxy.name, () => {
 
     it('should send init message to child process', () => {
       const expectedMessage: InitMessage = {
-        pluginModulePaths: ['foo'],
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
         options: factory.strykerOptions({ testRunner: 'Hello' }),
+        pluginModulePaths: ['foo'],
         namedExport: 'HelloClass',
         modulePath: 'foobar',
         workingDirectory: 'workingDirectory',
@@ -89,6 +89,7 @@ describe(ChildProcessProxy.name, () => {
         options: expectedMessage.options,
         requirePath: expectedMessage.modulePath,
         workingDir: expectedMessage.workingDirectory,
+        pluginModulePaths: expectedMessage.pluginModulePaths,
       });
 
       // Assert
@@ -208,7 +209,7 @@ describe(ChildProcessProxy.name, () => {
       // Arrange
       const workerResponse: ParentMessage = {
         correlationId: 0,
-        kind: ParentMessageKind.Result,
+        kind: ParentMessageKind.CallResult,
         result: 'ack',
       };
       const expectedWorkerMessage: WorkerMessage = {
@@ -297,7 +298,7 @@ function createSut({
   loggingContext?: LoggingClientContext;
   options?: Partial<StrykerOptions>;
   workingDir?: string;
-  pluginModulePaths?: string[];
+  pluginModulePaths?: readonly string[];
   execArgv?: string[];
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(requirePath, loggingContext, factory.strykerOptions(options), pluginModulePaths, workingDir, HelloClass, execArgv);

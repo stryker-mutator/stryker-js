@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import { coreTokens, PluginCreator } from '../../../src/di/index.js';
 import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
 
-describe.only(BroadcastReporter.name, () => {
+describe(BroadcastReporter.name, () => {
   let sut: BroadcastReporter;
   let rep1: sinon.SinonStubbedInstance<Required<Reporter>>;
   let rep2: sinon.SinonStubbedInstance<Required<Reporter>>;

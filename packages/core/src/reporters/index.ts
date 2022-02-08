@@ -11,6 +11,8 @@ import { ProgressBarReporter } from './progress-reporter.js';
 import { HtmlReporter } from './html/html-reporter.js';
 import { JsonReporter } from './json-reporter.js';
 
+export { BroadcastReporter } from './broadcast-reporter.js';
+
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
   declareClassPlugin(PluginKind.Reporter, 'progress', ProgressBarReporter),

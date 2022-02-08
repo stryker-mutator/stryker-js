@@ -47,11 +47,9 @@ export class PrepareExecutor {
     // Revalidate the options with plugin schema additions
     const metaSchemaBuilder = configReaderInjector.injectClass(MetaSchemaBuilder);
     const metaSchema = metaSchemaBuilder.buildMetaSchema(pluginLoader.getValidationSchemaContributions());
-    const optionsValidatorInjector = configReaderInjector
-      .provideValue(coreTokens.validationSchema, metaSchema)
-      .provideClass(coreTokens.optionsValidator, OptionsValidator);
-    const validator: OptionsValidator = optionsValidatorInjector.resolve(coreTokens.optionsValidator);
-    validator.validate(options);
+    const optionsValidatorInjector = configReaderInjector.provideValue(coreTokens.validationSchema, metaSchema);
+    const validator: OptionsValidator = optionsValidatorInjector.injectClass(OptionsValidator);
+    validator.validate(options, true);
 
     // Done reading config, deep freeze it so it won't change unexpectedly
     deepFreeze(options);
@@ -62,7 +60,6 @@ export class PrepareExecutor {
     // Resolve input files
     const inputFileResolverInjector = optionsValidatorInjector
       .provideValue(commonTokens.options, options)
-
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
       .provideClass(coreTokens.pluginCreator, PluginCreator)
       .provideClass(coreTokens.reporter, BroadcastReporter);

@@ -25,7 +25,10 @@ export class ChildProcessProxyWorker {
   constructor(private readonly injectorFactory: typeof createInjector) {
     // Make sure to bind the methods in order to ensure the `this` pointer
     this.handleMessage = this.handleMessage.bind(this);
+
+    // Start listening before sending the spawned message
     process.on('message', this.handleMessage);
+    this.send({ kind: ParentMessageKind.Spawned });
   }
 
   private send(value: ParentMessage) {
@@ -55,28 +58,35 @@ export class ChildProcessProxyWorker {
   }
 
   private async handleInit(message: InitMessage) {
-    LogConfigurator.configureChildProcess(message.loggingContext);
-    this.log = log4js.getLogger(ChildProcessProxyWorker.name);
-    this.handlePromiseRejections();
+    try {
+      LogConfigurator.configureChildProcess(message.loggingContext);
+      this.log = log4js.getLogger(ChildProcessProxyWorker.name);
+      this.handlePromiseRejections();
 
-    // Load plugins in the child process
-    const pluginInjector = provideLogger(this.injectorFactory())
-      .provideValue(commonTokens.options, message.options)
-      .provideClass(coreTokens.pluginLoader, PluginLoader);
-    const pluginLoader = pluginInjector.resolve(coreTokens.pluginLoader);
-    await pluginLoader.load(message.pluginModulePaths);
-    const injector: Injector<ChildProcessContext> = pluginInjector.provideClass(coreTokens.pluginCreator, PluginCreator);
+      // Load plugins in the child process
+      const pluginInjector = provideLogger(this.injectorFactory())
+        .provideValue(commonTokens.options, message.options)
+        .provideClass(coreTokens.pluginLoader, PluginLoader);
+      const pluginLoader = pluginInjector.resolve(coreTokens.pluginLoader);
+      await pluginLoader.load(message.pluginModulePaths);
+      const injector: Injector<ChildProcessContext> = pluginInjector.provideClass(coreTokens.pluginCreator, PluginCreator);
 
-    const childModule = await import(message.modulePath);
-    const RealSubjectClass = childModule[message.namedExport];
-    const workingDir = path.resolve(message.workingDirectory);
-    if (process.cwd() !== workingDir) {
-      this.log.debug(`Changing current working directory for this process to ${workingDir}`);
-      process.chdir(workingDir);
+      const childModule = await import(message.modulePath);
+      const RealSubjectClass = childModule[message.namedExport];
+      const workingDir = path.resolve(message.workingDirectory);
+      if (process.cwd() !== workingDir) {
+        this.log.debug(`Changing current working directory for this process to ${workingDir}`);
+        process.chdir(workingDir);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      this.realSubject = injector.injectClass(RealSubjectClass);
+      this.send({ kind: ParentMessageKind.Initialized });
+    } catch (err) {
+      this.send({
+        error: errorToString(err),
+        kind: ParentMessageKind.InitError,
+      });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    this.realSubject = injector.injectClass(RealSubjectClass);
-    this.send({ kind: ParentMessageKind.Initialized });
   }
 
   private async handleCall(message: CallMessage) {
@@ -84,14 +94,14 @@ export class ChildProcessProxyWorker {
       const result = await this.doCall(message);
       this.send({
         correlationId: message.correlationId,
-        kind: ParentMessageKind.Result,
+        kind: ParentMessageKind.CallResult,
         result,
       });
     } catch (err) {
       this.send({
         correlationId: message.correlationId,
         error: errorToString(err),
-        kind: ParentMessageKind.Rejection,
+        kind: ParentMessageKind.CallRejection,
       });
     }
   }
