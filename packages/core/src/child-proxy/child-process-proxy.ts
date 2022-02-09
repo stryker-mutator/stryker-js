@@ -134,6 +134,9 @@ export class ChildProcessProxy<T> implements Disposable {
       const message = deserialize<ParentMessage>(serializedMessage);
       switch (message.kind) {
         case ParentMessageKind.Spawned:
+          // Workaround, because of a race condition more prominent in native ESM node modules
+          // Fix has landed in v17.4.0 🎉, but we need this workaround for now.
+          // See https://github.com/nodejs/node/issues/41134
           this.send(this.initMessage);
           break;
         case ParentMessageKind.Initialized:
