@@ -12,7 +12,7 @@ export enum ParentMessageKind {
   /**
    * Indicates that the child process is spawned and ready to receive messages
    */
-  Spawned,
+  Ready,
   /**
    * Indicates that initialization is done
    */
@@ -40,7 +40,7 @@ export type ParentMessage =
   | InitRejectionResult
   | RejectionResult
   | WorkResult
-  | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized | ParentMessageKind.Spawned };
+  | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized | ParentMessageKind.Ready };
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;

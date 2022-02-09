@@ -126,7 +126,7 @@ describe('LogConfigurator', () => {
     return {
       appenders: {
         all: {
-          type: fileURLToPath(new URL('../../../src/logging/multi-appender.js', import.meta.url)),
+          type: fileURLToPath(new URL('../../../src/cjs/logging/multi-appender.js', import.meta.url)),
           appenders: ['filterLevelConsole', 'filterLevelFile'],
         },
         console: { type: 'stdout', layout: consoleLayout },

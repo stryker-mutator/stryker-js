@@ -28,7 +28,7 @@ export class ChildProcessProxyWorker {
 
     // Start listening before sending the spawned message
     process.on('message', this.handleMessage);
-    this.send({ kind: ParentMessageKind.Spawned });
+    this.send({ kind: ParentMessageKind.Ready });
   }
 
   private send(value: ParentMessage) {

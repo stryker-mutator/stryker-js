@@ -1,10 +1,9 @@
 import childProcess from 'child_process';
 import os from 'os';
-
 import { fileURLToPath, URL } from 'url';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { isErrnoException, Task, ExpirableTask } from '@stryker-mutator/util';
+import { isErrnoException, Task, ExpirableTask, StrykerError } from '@stryker-mutator/util';
 import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
@@ -36,7 +35,7 @@ export class ChildProcessProxy<T> implements Disposable {
   private readonly worker: childProcess.ChildProcess;
   private readonly initTask: Task;
   private disposeTask: ExpirableTask | undefined;
-  private currentError: ChildProcessCrashedError | undefined;
+  private fatalError: StrykerError | undefined;
   private readonly workerTasks: Task[] = [];
   private readonly log = log4js.getLogger(ChildProcessProxy.name);
   private readonly stdoutBuilder = new StringBuilder();
@@ -111,19 +110,23 @@ export class ChildProcessProxy<T> implements Disposable {
 
   private forward(methodName: string) {
     return async (...args: any[]) => {
-      if (this.currentError) {
-        return Promise.reject(this.currentError);
+      if (this.fatalError) {
+        return Promise.reject(this.fatalError);
       } else {
         const workerTask = new Task<void>();
         const correlationId = this.workerTasks.push(workerTask) - 1;
-        this.initTask.promise.then(() => {
-          this.send({
-            args,
-            correlationId,
-            kind: WorkerMessageKind.Call,
-            methodName,
+        this.initTask.promise
+          .then(() => {
+            this.send({
+              args,
+              correlationId,
+              kind: WorkerMessageKind.Call,
+              methodName,
+            });
+          })
+          .catch((error) => {
+            workerTask.reject(error);
           });
-        });
         return workerTask.promise;
       }
     };
@@ -133,7 +136,7 @@ export class ChildProcessProxy<T> implements Disposable {
     this.worker.on('message', (serializedMessage: string) => {
       const message = deserialize<ParentMessage>(serializedMessage);
       switch (message.kind) {
-        case ParentMessageKind.Spawned:
+        case ParentMessageKind.Ready:
           // Workaround, because of a race condition more prominent in native ESM node modules
           // Fix has landed in v17.4.0 🎉, but we need this workaround for now.
           // See https://github.com/nodejs/node/issues/41134
@@ -148,7 +151,7 @@ export class ChildProcessProxy<T> implements Disposable {
           delete this.workerTasks[message.correlationId];
           break;
         case ParentMessageKind.CallRejection:
-          this.workerTasks[message.correlationId].reject(new Error(message.error));
+          this.workerTasks[message.correlationId].reject(new StrykerError(message.error));
           delete this.workerTasks[message.correlationId];
           break;
         case ParentMessageKind.DisposeCompleted:
@@ -157,7 +160,9 @@ export class ChildProcessProxy<T> implements Disposable {
           }
           break;
         case ParentMessageKind.InitError:
-          this.initTask.reject(new Error(message.error));
+          this.fatalError = new StrykerError(message.error);
+          this.reportError(this.fatalError);
+          this.dispose();
           break;
         default:
           this.logUnidentifiedMessage(message);
@@ -193,27 +198,34 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private reportError(error: Error) {
-    this.workerTasks.filter((task) => !task.isCompleted).forEach((task) => task.reject(error));
+    const onGoingWorkerTasks = this.workerTasks.filter((task) => !task.isCompleted);
+    if (!this.initTask.isCompleted) {
+      onGoingWorkerTasks.push(this.initTask);
+    }
+    if (onGoingWorkerTasks.length) {
+      onGoingWorkerTasks.forEach((task) => task.reject(error));
+    }
   }
 
   private readonly handleUnexpectedExit = (code: number, signal: string) => {
     this.isDisposed = true;
     const output = StringBuilder.concat(this.stderrBuilder, this.stdoutBuilder);
     if (processOutOfMemory()) {
-      this.currentError = new OutOfMemoryError(this.worker.pid, code);
-      this.log.warn(`Child process [pid ${this.currentError.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
+      const oom = new OutOfMemoryError(this.worker.pid, code);
+      this.fatalError = oom;
+      this.log.warn(`Child process [pid ${oom.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
       this.log.debug(stdoutAndStderr());
     } else {
-      this.currentError = new ChildProcessCrashedError(
+      this.fatalError = new ChildProcessCrashedError(
         this.worker.pid,
         `Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr()}`,
         code,
         signal
       );
-      this.log.warn(this.currentError.message, this.currentError);
+      this.log.warn(this.fatalError.message, this.fatalError);
     }
 
-    this.reportError(this.currentError);
+    this.reportError(this.fatalError);
 
     function processOutOfMemory() {
       return output.includes('JavaScript heap out of memory') || output.includes('FatalProcessOutOfMemory');
