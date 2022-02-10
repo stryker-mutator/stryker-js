@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 npm run test:all",
     "test:all": "mocha \"dist/test/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
   },
   "nyc": {
     "exclude": [

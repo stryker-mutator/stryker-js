@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'url';
-
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
 import { ClearTextReporter } from './clear-text-reporter.js';

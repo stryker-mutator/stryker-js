@@ -9,7 +9,7 @@
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
     "test:integration": "mocha --timeout 30000 \"dist/test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
   },
   "repository": {
     "type": "git",
