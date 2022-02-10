@@ -1,4 +1,4 @@
-import { CoverageAnalysis, MutantCoverage } from '@stryker-mutator/api/core';
+import type { CoverageAnalysis, MutantCoverage } from '@stryker-mutator/api/core';
 
 type MutantCoverageHandler = (fileName: string, coverage: MutantCoverage | undefined) => void;
 

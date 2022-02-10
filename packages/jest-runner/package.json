@@ -3,6 +3,24 @@
   "version": "5.6.1",
   "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/jest-plugins/cjs/index.js"
+    },
+    "./jest-env/jsdom": {
+      "import": "./jest-env/jsdom.js",
+      "require": "./jest-env/jsdom.js"
+    },
+    "./jest-env/node": {
+      "import": "./jest-env/node.js",
+      "require": "./jest-env/node.js"
+    },
+    "./jest-env/jsdom-sixteen": {
+      "import": "./jest-env/jsdom-sixteen.js",
+      "require": "./jest-env/jsdom-sixteen.js"
+    }
+  },
   "type": "module",
   "scripts": {
     "test": "c8 npm run test:all",
