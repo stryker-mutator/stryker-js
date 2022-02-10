@@ -26,8 +26,8 @@ export function configLoaderFactory(
   const optionsWithJest: JestRunnerOptionsWithStrykerOptions = options as JestRunnerOptionsWithStrykerOptions;
   const configLoaderInjector = injector
     .provideValue(pluginTokens.resolve, createRequire(import.meta.url).resolve)
-    .provideValue(pluginTokens.requireFromCwd, requireResolve);
-
+    .provideValue(pluginTokens.requireFromCwd, requireResolve)
+    .provideValue(pluginTokens.processEnv, process.env);
   switch (optionsWithJest.jest.projectType) {
     case 'custom':
       return configLoaderInjector.injectClass(CustomJestConfigLoader);

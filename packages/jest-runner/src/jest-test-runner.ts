@@ -41,7 +41,6 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
     return injector
-      .provideValue(pluginTokens.processEnv, process.env)
       .provideValue(pluginTokens.jestVersion, jestWrapper.getVersion())
       .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
       .provideFactory(pluginTokens.configLoader, configLoaderFactory)
@@ -61,7 +60,6 @@ export class JestTestRunner implements TestRunner {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    pluginTokens.processEnv,
     pluginTokens.jestTestAdapter,
     pluginTokens.configLoader,
     pluginTokens.globalNamespace
@@ -70,7 +68,6 @@ export class JestTestRunner implements TestRunner {
   constructor(
     private readonly log: Logger,
     options: StrykerOptions,
-    private readonly processEnvRef: NodeJS.ProcessEnv,
     private readonly jestTestAdapter: JestTestAdapter,
     configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
@@ -206,12 +203,6 @@ export class JestTestRunner implements TestRunner {
   }
 
   private setEnv() {
-    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
-    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
-    if (!this.processEnvRef.NODE_ENV) {
-      this.processEnvRef.NODE_ENV = 'test';
-    }
-
     // Force colors off: https://github.com/chalk/supports-color#info
     process.env.FORCE_COLOR = '0';
   }

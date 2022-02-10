@@ -28,7 +28,6 @@ describe(JestTestRunner.name, () => {
 
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
   let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
-  let processEnvMock: NodeJS.ProcessEnv;
   let options: JestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
@@ -43,10 +42,6 @@ describe(JestTestRunner.name, () => {
       projectType: 'custom',
     };
     options.basePath = basePath;
-
-    processEnvMock = {
-      NODE_ENV: undefined,
-    };
   });
 
   describe('constructor', () => {
@@ -262,22 +257,6 @@ describe(JestTestRunner.name, () => {
           'ENOENT test message Error\n  at [eval]:1:1\n  at Script.runInThisContext (vm.js:120:20)\n  at Object.runInThisContext (vm.js:311:38)\n  at Object.<anonymous> ([eval]-wrapper:10:26)',
       };
       expect(result).to.deep.equal(expectedRunResult);
-    });
-
-    it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {
-      const sut = createSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-
-      expect(processEnvMock.NODE_ENV).to.equal('test');
-    });
-
-    it('should keep the value set in process.env.NODE_ENV if not null', async () => {
-      const sut = createSut();
-      processEnvMock.NODE_ENV = 'stryker';
-
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-
-      expect(processEnvMock.NODE_ENV).to.equal('stryker');
     });
 
     it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', async () => {
@@ -608,7 +587,6 @@ describe(JestTestRunner.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(pluginTokens.processEnv, processEnvMock)
       .provideValue(pluginTokens.jestTestAdapter, jestTestAdapterMock as unknown as JestTestAdapter)
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)

@@ -15,6 +15,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
   let requireResolveStub: sinon.SinonStub;
   let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let createReactJestConfigStub: sinon.SinonStub;
+  let processEnvMock: NodeJS.ProcessEnv;
 
   beforeEach(() => {
     createReactJestConfigStub = sinon.stub();
@@ -23,7 +24,11 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     createReactJestConfigStub.returns({ testPaths: ['example'] });
     requireFromCwdStub = sinon.stub();
     requireFromCwdStub.returns(createReactJestConfigStub);
+    processEnvMock = {
+      NODE_ENV: undefined,
+    };
     sut = testInjector.injector
+      .provideValue(pluginTokens.processEnv, processEnvMock)
       .provideValue(pluginTokens.resolve, requireResolveStub as unknown as RequireResolve)
       .provideValue(pluginTokens.requireFromCwd, requireFromCwdStub)
       .injectClass(ReactScriptsJestConfigLoader);
@@ -55,5 +60,19 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     options.jest = createJestOptions({ projectType: 'create-react-app' });
     sut.loadConfig();
     expect(requireFromCwdStub).calledWith('react-scripts/config/env.js');
+  });
+
+  it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", () => {
+    sut.loadConfig();
+
+    expect(processEnvMock.NODE_ENV).to.equal('test');
+  });
+
+  it('should keep the value set in process.env.NODE_ENV if not null', () => {
+    processEnvMock.NODE_ENV = 'stryker';
+
+    sut.loadConfig();
+
+    expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });
 });
