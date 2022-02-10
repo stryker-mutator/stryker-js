@@ -10,5 +10,5 @@ const pkg = deepFreeze(
   }
 );
 
-export const version = pkg.version;
-export const engines = pkg.engines;
+export const strykerVersion = pkg.version;
+export const strykerEngines = pkg.engines;

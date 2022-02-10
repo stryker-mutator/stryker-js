@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
 
-import nodeGlob from 'glob';
 import mkdirpModule from 'mkdirp';
 import rimraf from 'rimraf';
 
@@ -10,14 +9,6 @@ export const MAX_CONCURRENT_FILE_IO = 256;
 
 export const fileUtils = {
   mkdirp: mkdirpModule,
-
-  glob(expression: string): Promise<string[]> {
-    return new Promise<string[]>((resolve, reject) => {
-      nodeGlob(expression, { nodir: true }, (error, matches) => {
-        error ? reject(error) : resolve(matches);
-      });
-    });
-  },
 
   deleteDir: promisify(rimraf),
 

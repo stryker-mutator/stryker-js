@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, URL } from 'url';
 import path from 'path/posix';
 
 import { expect } from 'chai';

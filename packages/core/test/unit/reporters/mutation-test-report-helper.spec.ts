@@ -12,7 +12,7 @@ import { coreTokens } from '../../../src/di/index.js';
 import { InputFileCollection } from '../../../src/input/index.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { objectUtils } from '../../../src/utils/object-utils.js';
-import { version } from '../../../src/stryker-package.js';
+import { strykerVersion } from '../../../src/stryker-package.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -94,8 +94,7 @@ describe(MutationTestReportHelper.name, () => {
       it('should report "name", "version" and "branding"', () => {
         const expected: Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'> = {
           name: 'StrykerJS',
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          version,
+          version: strykerVersion,
           branding: {
             homepageUrl: 'https://stryker-mutator.io',
             imageUrl:

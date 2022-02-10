@@ -9,7 +9,7 @@ import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutatio
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
-import { version } from '../stryker-package.js';
+import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
 import { InputFileCollection } from '../input/index.js';
 import { objectUtils } from '../utils/object-utils.js';
@@ -17,7 +17,7 @@ import { objectUtils } from '../utils/object-utils.js';
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  version,
+  version: strykerVersion,
   branding: {
     homepageUrl: 'https://stryker-mutator.io',
     imageUrl:
