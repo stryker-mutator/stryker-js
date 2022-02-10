@@ -2,6 +2,8 @@ import fs from 'fs';
 import { syncBuiltinESMExports } from 'module';
 import path from 'path';
 
+import { pathToFileURL } from 'url';
+
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -22,26 +24,29 @@ describe(PluginLoader.name, () => {
     resolve = sinon.stub();
     resolve.callsFake((id) => path.resolve(id));
     syncBuiltinESMExports();
+    pluginDirectoryReadMock.returns(['util', 'api', 'core', 'typescript-checker', 'karma-runner']);
     sut = testInjector.injector.injectClass(PluginLoader);
   });
 
-  describe('without wildcards', () => {
-    it('should have imported the given modules', async () => {
+  describe(PluginLoader.prototype.load.name, () => {
+    it('should import modules with a bare specifier', async () => {
       await sut.load(['a', 'b']);
       expect(fileUtils.importModule).calledWith('a');
       expect(fileUtils.importModule).calledWith('b');
     });
 
-    it('should return the module ids', async () => {
+    it('should return the module ids of modules with bare specifier', async () => {
       const result = await sut.load(['a', 'b']);
       expect(result).deep.eq(['a', 'b']);
     });
 
-    it('should return resolve local plugins', async () => {
+    it('should load local plugins using their file URLs', async () => {
+      const expectedModuleA = pathToFileURL(path.resolve('a')).toString();
+      const expectedModuleReporters = pathToFileURL(path.resolve('./reporter.js')).toString();
       const result = await sut.load(['./a', './reporter.js']);
-      expect(fileUtils.importModule).calledWith(path.resolve('a'));
-      expect(fileUtils.importModule).calledWith(path.resolve('./reporter.js'));
-      expect(result).deep.eq([path.resolve('a'), path.resolve('./reporter.js')]);
+      expect(fileUtils.importModule).calledWith(expectedModuleA);
+      expect(fileUtils.importModule).calledWith(expectedModuleReporters);
+      expect(result).deep.eq([expectedModuleA, expectedModuleReporters]);
     });
 
     it('should log MODULE_NOT_FOUND errors as warnings', async () => {
@@ -50,25 +55,17 @@ describe(PluginLoader.name, () => {
       expect(testInjector.logger.warn).calledWithMatch(/Cannot find plugin "%s"\./);
       expect(testInjector.logger.warn).calledWithMatch(/Error during loading/);
     });
-  });
 
-  describe('with a wildcard', () => {
-    beforeEach(() => {
-      pluginDirectoryReadMock.returns(['util', 'api', 'core', 'typescript-checker', 'karma-runner']);
+    it('should resolve plugins matching a wildcard from the `node_modules` directory', async () => {
+      await sut.load(['@stryker-mutator/*']);
+      expect(pluginDirectoryReadMock).calledWith(resolveFromRoot('..', '@stryker-mutator'));
     });
 
-    describe('load()', () => {
-      it('should read from a `node_modules` folder', async () => {
-        await sut.load(['@stryker-mutator/*']);
-        expect(pluginDirectoryReadMock).calledWith(resolveFromRoot('..', '@stryker-mutator'));
-      });
-
-      it('should load matching modules', async () => {
-        await sut.load(['@stryker-mutator/*']);
-        expect(fileUtils.importModule).calledTwice;
-        expect(fileUtils.importModule).calledWithExactly(resolveFromRoot('..', '@stryker-mutator', 'typescript-checker'));
-        expect(fileUtils.importModule).calledWithExactly(resolveFromRoot('..', '@stryker-mutator', 'karma-runner'));
-      });
+    it('should load plugins matching a wildcard', async () => {
+      await sut.load(['@stryker-mutator/*']);
+      expect(fileUtils.importModule).calledTwice;
+      expect(fileUtils.importModule).calledWithExactly(pathToFileURL(resolveFromRoot('..', '@stryker-mutator', 'typescript-checker')).toString());
+      expect(fileUtils.importModule).calledWithExactly(pathToFileURL(resolveFromRoot('..', '@stryker-mutator', 'karma-runner')).toString());
     });
   });
 });

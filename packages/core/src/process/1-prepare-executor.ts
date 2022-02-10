@@ -12,7 +12,7 @@ import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { InputFileResolver } from '../input/index.js';
 import { ConfigError } from '../errors.js';
 import { PluginLoader } from '../di/plugin-loader.js';
-import { reporterPluginsFile } from '../reporters/index.js';
+import { reporterPluginsFileUrl } from '../reporters/index.js';
 import { Timer } from '../utils/timer.js';
 import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
 import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
@@ -41,7 +41,7 @@ export class PrepareExecutor {
 
     // Load plugins
     const pluginLoader = configReaderInjector.resolve(coreTokens.pluginLoader);
-    const pluginDescriptors = [...options.plugins, reporterPluginsFile, ...options.appendPlugins];
+    const pluginDescriptors = [...options.plugins, reporterPluginsFileUrl, ...options.appendPlugins];
     const pluginModulePaths = await pluginLoader.load(pluginDescriptors);
 
     // Revalidate the options with plugin schema additions

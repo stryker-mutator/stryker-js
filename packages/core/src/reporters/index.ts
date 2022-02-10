@@ -24,4 +24,4 @@ export const strykerPlugins = [
   declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory),
 ];
 
-export const reporterPluginsFile = fileURLToPath(import.meta.url);
+export const reporterPluginsFileUrl = import.meta.url;

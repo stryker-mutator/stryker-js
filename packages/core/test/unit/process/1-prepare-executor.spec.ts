@@ -15,7 +15,7 @@ import { InputFileResolver, InputFileCollection } from '../../../src/input/index
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 import { ConfigError } from '../../../src/errors.js';
 import { ConfigReader, OptionsValidator, MetaSchemaBuilder } from '../../../src/config/index.js';
-import { BroadcastReporter, reporterPluginsFile } from '../../../src/reporters/index.js';
+import { BroadcastReporter, reporterPluginsFileUrl } from '../../../src/reporters/index.js';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
 interface AllContext extends MutantInstrumenterContext {
@@ -83,7 +83,7 @@ describe(PrepareExecutor.name, () => {
     await sut.execute(cliOptions);
 
     // Assert
-    sinon.assert.calledWithExactly(pluginLoaderMock.load, ['@stryker-mutator/*', './my-custom-plugin.js', reporterPluginsFile, 'appended']);
+    sinon.assert.calledWithExactly(pluginLoaderMock.load, ['@stryker-mutator/*', './my-custom-plugin.js', reporterPluginsFileUrl, 'appended']);
   });
 
   it('should provided the loaded modules as pluginModulePaths', async () => {

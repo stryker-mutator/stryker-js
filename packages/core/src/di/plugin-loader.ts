@@ -1,6 +1,6 @@
 import path from 'path';
 import { readdirSync } from 'fs';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
@@ -83,14 +83,14 @@ export class PluginLoader {
             this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
             const plugins = readdirSync(pluginDirectory)
               .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
-              .map((pluginName) => path.resolve(pluginDirectory, pluginName));
+              .map((pluginName) => pathToFileURL(path.resolve(pluginDirectory, pluginName)).toString());
             if (plugins.length === 0) {
               this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
             }
             plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
             return plugins;
           } else if (pluginExpression.startsWith('.')) {
-            return path.resolve(pluginExpression);
+            return pathToFileURL(path.resolve(pluginExpression)).toString();
           } else {
             return pluginExpression;
           }
