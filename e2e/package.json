@@ -2,6 +2,7 @@
   "name": "e2e-tests",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@babel/cli": "~7.16.0",
     "@babel/core": "~7.16.0",
@@ -49,9 +50,9 @@
   "scripts": {
     "bootstrap": "node ../node_modules/lerna/cli.js bootstrap",
     "postinstall": "(npm run bootstrap || npm run bootstrap) && npm run install-local-dependencies && npm run link-parent-bin",
-    "install-local-dependencies": "ts-node tasks/install-local-dependencies",
+    "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "link-parent-bin": "link-parent-bin -c test --link-local-dependencies true",
-    "test": "ts-node tasks/run-e2e-tests.ts",
+    "test": "node tasks/run-e2e-tests.js",
     "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm test"
   },
   "localDependencies": {

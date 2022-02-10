@@ -10,7 +10,7 @@
     "test:jasmine": "jasmine",
     "test:karma": "karma start karma.conf.cjs",
     "test:jest": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test": "mocha --no-config --no-timeout --require ../../tasks/ts-node-register.js verify/*.cjs"
+    "test": "mocha --no-config --no-timeout verify/verify.js"
   },
   "keywords": [],
   "author": "",

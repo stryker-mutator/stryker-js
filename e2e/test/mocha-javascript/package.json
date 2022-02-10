@@ -8,7 +8,7 @@
     "pretest": "rimraf \"reports\"",
     "test": "stryker run",
     "test:unit": "mocha",
-    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"

@@ -7,7 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\" stryker.log .stryker-tmp ",
     "test": "stryker run || node -e \"require('fs').appendFileSync('stryker.log', 'Exit with non-zero exit code');\"",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "keywords": [],
   "author": "",

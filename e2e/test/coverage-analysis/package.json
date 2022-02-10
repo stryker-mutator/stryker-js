@@ -7,6 +7,6 @@
     "test:unit:jasmine": "jasmine",
     "test:unit:mocha": "mocha",
     "test:unit:karma": "karma start",
-    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\": \"esnext\"}' TS_NODE_TRANSPILE_ONLY=true node --loader ts-node/esm ../../node_modules/mocha/lib/cli/cli.js --no-config --no-package --timeout 60000  verify/*.ts"
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

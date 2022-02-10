@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\"",
-    "test": "mocha --no-config --require ../../tasks/ts-node-register.js --no-timeout verify/*.ts",
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "test:unit": "mocha",
     "test:mutation": "stryker run"
   },
