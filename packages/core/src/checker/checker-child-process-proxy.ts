@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
@@ -15,7 +15,7 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
 
   constructor(options: StrykerOptions, pluginModulePaths: readonly string[], loggingContext: LoggingClientContext) {
     this.childProcess = ChildProcessProxy.create(
-      fileURLToPath(new URL('./checker-worker.js', import.meta.url)),
+      new URL('./checker-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
       pluginModulePaths,

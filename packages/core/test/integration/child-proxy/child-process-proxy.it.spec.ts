@@ -1,5 +1,5 @@
 import path from 'path';
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -31,7 +31,7 @@ describe(ChildProcessProxy.name, () => {
     testInjector.options.testRunner = testRunnerName;
     log = currentLogMock();
     sut = ChildProcessProxy.create(
-      fileURLToPath(new URL('./echo.js', import.meta.url)),
+      new URL('./echo.js', import.meta.url).toString(),
       { port, level: LogLevel.Debug },
       testInjector.options,
       [],
