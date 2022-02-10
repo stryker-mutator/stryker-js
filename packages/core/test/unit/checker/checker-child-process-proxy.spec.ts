@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -28,7 +28,7 @@ describe(CheckerChildProcessProxy.name, () => {
       createSut();
       sinon.assert.calledWithExactly(
         childProcessProxyCreateStub,
-        fileURLToPath(new URL('../../../src/checker/checker-worker.js', import.meta.url)),
+        new URL('../../../src/checker/checker-worker.js', import.meta.url).toString(),
         loggingContext,
         testInjector.options,
         ['plugin', 'paths'],
