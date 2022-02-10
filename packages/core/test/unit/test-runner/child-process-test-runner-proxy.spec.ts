@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
@@ -43,7 +43,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
     createSut();
     sinon.assert.calledWithExactly(
       childProcessProxyCreateStub,
-      fileURLToPath(new URL('../../../src/test-runner/child-process-test-runner-worker.js', import.meta.url)),
+      new URL('../../../src/test-runner/child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
       ['plugin', 'paths'],

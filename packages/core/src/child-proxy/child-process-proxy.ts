@@ -44,7 +44,7 @@ export class ChildProcessProxy<T> implements Disposable {
   private readonly initMessage: InitMessage;
 
   private constructor(
-    requirePath: string,
+    modulePath: string,
     namedExport: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
@@ -65,7 +65,7 @@ export class ChildProcessProxy<T> implements Disposable {
       options,
       pluginModulePaths,
       namedExport: namedExport,
-      modulePath: requirePath,
+      modulePath: modulePath,
       workingDirectory,
     };
     this.listenForMessages();
@@ -78,7 +78,7 @@ export class ChildProcessProxy<T> implements Disposable {
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
   public static create<R, Tokens extends Array<InjectionToken<ChildProcessContext>>>(
-    requirePath: string,
+    modulePath: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
     pluginModulePaths: readonly string[],
@@ -86,7 +86,7 @@ export class ChildProcessProxy<T> implements Disposable {
     injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
     execArgv: string[]
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(requirePath, injectableClass.name, loggingContext, options, pluginModulePaths, workingDirectory, execArgv);
+    return new ChildProcessProxy(modulePath, injectableClass.name, loggingContext, options, pluginModulePaths, workingDirectory, execArgv);
   }
 
   private send(message: WorkerMessage) {

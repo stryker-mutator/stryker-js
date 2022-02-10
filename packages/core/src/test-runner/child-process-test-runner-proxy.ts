@@ -1,4 +1,4 @@
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -27,7 +27,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
     private readonly log: Logger
   ) {
     this.worker = ChildProcessProxy.create(
-      fileURLToPath(new URL('./child-process-test-runner-worker.js', import.meta.url)),
+      new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
       pluginModulePaths,
