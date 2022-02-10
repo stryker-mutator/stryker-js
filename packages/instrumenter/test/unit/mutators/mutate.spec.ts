@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 import { expect } from 'chai';
 
@@ -16,7 +16,7 @@ describe('allMutators', () => {
         .filter((fileName) => fileName.endsWith('.js'))
         .filter((fileName) => !blackList.includes(fileName))
         .map(async (fileName) => {
-          const mutatorModule = (await import(resolveMutator(fileName))) as Record<string, unknown>;
+          const mutatorModule = (await import(pathToFileURL(resolveMutator(fileName)).toString())) as Record<string, unknown>;
           const keys = Object.keys(mutatorModule);
           if (keys.length > 1) {
             throw new Error(`File ${fileName} is exporting more than the mutator: ${keys.join(',')}`);
