@@ -1,9 +1,6 @@
 #!/usr/bin/env node
-
-'use strict';
+import { StrykerCli } from '../dist/src/index.js';
 
 process.title = 'stryker';
-
 // Run the Stryker CLI
-const { StrykerCli } = require('..');
 new StrykerCli(process.argv).run();

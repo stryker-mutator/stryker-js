@@ -54,7 +54,7 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "bin": {
-    "stryker": "./bin/stryker"
+    "stryker": "./bin/stryker.js"
   },
   "dependencies": {
     "@stryker-mutator/api": "5.6.1",
