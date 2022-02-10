@@ -24,7 +24,7 @@ describe(PluginLoader.name, () => {
     resolve = sinon.stub();
     resolve.callsFake((id) => path.resolve(id));
     syncBuiltinESMExports();
-    pluginDirectoryReadMock.returns(['util', 'api', 'core', 'typescript-checker', 'karma-runner']);
+    pluginDirectoryReadMock.returns(['util', 'api', 'core', 'instrumenter', 'typescript-checker', 'karma-runner']);
     sut = testInjector.injector.injectClass(PluginLoader);
   });
 
@@ -58,14 +58,14 @@ describe(PluginLoader.name, () => {
 
     it('should resolve plugins matching a wildcard from the `node_modules` directory', async () => {
       await sut.load(['@stryker-mutator/*']);
-      expect(pluginDirectoryReadMock).calledWith(resolveFromRoot('..', '@stryker-mutator'));
+      expect(pluginDirectoryReadMock).calledWith(resolveFromRoot('..', '..', '@stryker-mutator'));
     });
 
     it('should load plugins matching a wildcard', async () => {
       await sut.load(['@stryker-mutator/*']);
       expect(fileUtils.importModule).calledTwice;
-      expect(fileUtils.importModule).calledWithExactly(pathToFileURL(resolveFromRoot('..', '@stryker-mutator', 'typescript-checker')).toString());
-      expect(fileUtils.importModule).calledWithExactly(pathToFileURL(resolveFromRoot('..', '@stryker-mutator', 'karma-runner')).toString());
+      expect(fileUtils.importModule).calledWithExactly('@stryker-mutator/typescript-checker');
+      expect(fileUtils.importModule).calledWithExactly('@stryker-mutator/karma-runner');
     });
   });
 });

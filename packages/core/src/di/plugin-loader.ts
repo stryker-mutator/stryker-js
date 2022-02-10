@@ -1,6 +1,6 @@
 import path from 'path';
 import { readdirSync } from 'fs';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL, URL } from 'url';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
@@ -8,7 +8,7 @@ import { notEmpty } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 
-const IGNORED_PACKAGES = ['core', 'api', 'util'];
+const IGNORED_PACKAGES = ['core', 'api', 'util', 'instrumenter'];
 
 interface PluginModule {
   strykerPlugins: Array<Plugin<PluginKind>>;
@@ -67,25 +67,17 @@ export class PluginLoader {
       .flatMap((pluginExpression) => {
         if (typeof pluginExpression === 'string') {
           if (pluginExpression.includes('*')) {
-            const pluginDirectory = path.dirname(
-              path.resolve(
-                fileURLToPath(import.meta.url),
-                '..' /* plugin-loader.js */,
-                '..' /* di */,
-                '..' /* src*/,
-                '..' /* dist */,
-                '..' /* core */,
-                pluginExpression
-              )
-            );
-            const regexp = new RegExp('^' + path.basename(pluginExpression).replace('*', '.*'));
+            const { org, pkg } = distillOrganization(pluginExpression);
+
+            const pluginDirectory = path.resolve(fileURLToPath(new URL('../../../../../', import.meta.url)), org);
+            const regexp = new RegExp('^' + pkg.replace('*', '.*'));
 
             this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
             const plugins = readdirSync(pluginDirectory)
               .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
-              .map((pluginName) => pathToFileURL(path.resolve(pluginDirectory, pluginName)).toString());
+              .map((pluginName) => `${org.length ? `${org}/` : ''}${pluginName}`);
             if (plugins.length === 0) {
-              this.log.debug('Expression %s not resulted in plugins to load', pluginExpression);
+              this.log.warn('Expression" %s" not resulted in plugins to load.', pluginExpression);
             }
             plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
             return plugins;
@@ -138,5 +130,26 @@ export class PluginLoader {
   private hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
     const pluginModule = module as SchemaValidationContribution;
     return typeof pluginModule?.strykerValidationSchema === 'object';
+  }
+}
+
+/**
+ * Distills organization name from a package expression.
+ * @example
+ *  '@stryker-mutator/core' => { org: '@stryker-mutator', 'core' }
+ *  'glob' => { org: '', 'glob' }
+ */
+function distillOrganization(pluginExpression: string) {
+  const parts = pluginExpression.split('/');
+  if (parts.length > 1) {
+    return {
+      org: parts.slice(0, parts.length - 1).join('/'),
+      pkg: parts[parts.length - 1],
+    };
+  } else {
+    return {
+      org: '',
+      pkg: parts[0],
+    };
   }
 }
