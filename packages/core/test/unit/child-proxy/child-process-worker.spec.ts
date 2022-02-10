@@ -1,5 +1,5 @@
 import path from 'path';
-import { fileURLToPath, URL } from 'url';
+import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -94,7 +94,7 @@ describe(ChildProcessProxyWorker.name, () => {
         options,
         pluginModulePaths,
         namedExport: HelloClass.name,
-        modulePath: fileURLToPath(new URL('./hello-class.js', import.meta.url)),
+        modulePath: new URL('./hello-class.js', import.meta.url).toString(),
         workingDirectory: workingDir,
       };
     });
