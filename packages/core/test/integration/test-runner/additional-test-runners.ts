@@ -206,4 +206,4 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
   declareClassPlugin(PluginKind.TestRunner, 'static', StaticMutantTestRunner),
 ];
-export const additionalTestRunnersFileName = fileURLToPath(import.meta.url);
+export const additionalTestRunnersFileUrl = import.meta.url;

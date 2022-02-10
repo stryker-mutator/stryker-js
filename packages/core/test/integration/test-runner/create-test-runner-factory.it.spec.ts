@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { fileURLToPath, URL } from 'url';
-import path from 'path/posix';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 import { expect } from 'chai';
 import log4js from 'log4js';
@@ -15,7 +15,7 @@ import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
-import { additionalTestRunnersFileName, CounterTestRunner } from './additional-test-runners.js';
+import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
@@ -24,7 +24,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
-  const pluginModulePaths = Object.freeze([additionalTestRunnersFileName]);
+  const pluginModulePaths = Object.freeze([additionalTestRunnersFileUrl]);
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -37,7 +37,6 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [fileURLToPath(new URL('./additional-test-runners.js', import.meta.url))];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;

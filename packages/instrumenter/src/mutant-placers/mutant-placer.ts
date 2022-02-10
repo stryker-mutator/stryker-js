@@ -1,5 +1,4 @@
-import { NodePath } from '@babel/core';
-import * as types from '@babel/types';
+import { NodePath, types } from '@babel/core';
 
 import { Mutant } from '../mutant.js';
 

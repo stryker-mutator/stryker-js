@@ -1,6 +1,8 @@
-import * as types from '@babel/types';
+import babel from '@babel/core';
 
 import { NodeMutator } from './index.js';
+
+const { types } = babel;
 
 export const objectLiteralMutator: NodeMutator = {
   name: 'ObjectLiteral',

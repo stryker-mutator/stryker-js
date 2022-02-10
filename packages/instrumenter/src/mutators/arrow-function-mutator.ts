@@ -1,4 +1,6 @@
-import * as types from '@babel/types';
+import babel from '@babel/core';
+
+const { types } = babel;
 
 import { NodeMutator } from './index.js';
 

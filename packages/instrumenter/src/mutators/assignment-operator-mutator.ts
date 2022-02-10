@@ -1,6 +1,8 @@
-import * as types from '@babel/types';
+import babel, { type types as t } from '@babel/core';
 
 import { NodeMutator } from './index.js';
+
+const { types } = babel;
 
 enum AssignmentOperators {
   '+=' = '-=',
@@ -37,7 +39,7 @@ function isSupportedAssignmentOperator(operator: string): operator is keyof type
   return Object.keys(AssignmentOperators).includes(operator);
 }
 
-function isSupported(node: types.AssignmentExpression): boolean {
+function isSupported(node: t.AssignmentExpression): boolean {
   // Excludes assignment operators that apply to strings.
   if (stringTypes.includes(node.right.type) && !stringAssignmentTypes.includes(node.operator)) {
     return false;
