@@ -1,6 +1,6 @@
-const { PluginKind, declareClassPlugin } = require('@stryker-mutator/api/plugin');
+import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
 
-class CoverageAnalysisReporter {
+export class CoverageAnalysisReporter {
   /**
    * @type {import('mutation-testing-report-schema').MutationTestResult}
    */
@@ -22,10 +22,5 @@ class CoverageAnalysisReporter {
     this.report = report;
   }
 }
-const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'coverageAnalysis', CoverageAnalysisReporter)];
-module.exports = {
-  CoverageAnalysisReporter,
-  strykerPlugins
-};
-
+export const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'coverageAnalysis', CoverageAnalysisReporter)];
 

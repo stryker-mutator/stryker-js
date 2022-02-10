@@ -1,7 +1,7 @@
 import { ListByPackage, LocalInstaller, progress } from 'install-local';
 import fs from 'fs';
-import glob = require('glob');
-import path = require('path');
+import glob from 'glob';
+import path from 'path';
 
 console.log('starting installation of local dependencies');
 

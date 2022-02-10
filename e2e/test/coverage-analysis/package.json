@@ -1,11 +1,12 @@
 {
   "name": "coverage-analysis",
   "description": "A e2e test for --coverageAnalysis",
+  "type": "commonjs",
   "scripts": {
     "test:unit:cucumber": "cucumber-js",
     "test:unit:jasmine": "jasmine",
     "test:unit:mocha": "mocha",
     "test:unit:karma": "karma start",
-    "test": "mocha --no-package --timeout 60000 --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
+    "test": "cross-env TS_NODE_COMPILER_OPTIONS='{\"module\": \"esnext\"}' TS_NODE_TRANSPILE_ONLY=true node --loader ts-node/esm ../../node_modules/mocha/lib/cli/cli.js --no-config --no-package --timeout 60000  verify/*.ts"
   }
 }

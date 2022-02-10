@@ -1,8 +1,8 @@
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { default as Stryker } from '@stryker-mutator/core';
 import { expect } from 'chai';
-import { CoverageAnalysisReporter } from './coverage-analysis-reporter';
 import { calculateMetrics, Metrics } from 'mutation-testing-metrics';
+import { CoverageAnalysisReporter } from './coverage-analysis-reporter.js';
 import { describe } from 'mocha';
 
 describe('Coverage analysis', () => {
@@ -14,7 +14,7 @@ describe('Coverage analysis', () => {
       reporters: ['coverageAnalysis', 'html'],
       timeoutMS: 60000,
       concurrency: 1,
-      plugins: [require.resolve('./coverage-analysis-reporter')],
+      plugins: ['./verify/coverage-analysis-reporter.js'],
     };
   });
 
