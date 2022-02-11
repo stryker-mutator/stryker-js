@@ -15,7 +15,7 @@ export abstract class ResourceDecorator<T extends Resource> implements Resource 
     await this.innerResource.dispose?.();
   }
   /**
-   * Disposes the current test runner and creates a new one
+   * Disposes the current test runner and
    * To be used in decorators that need recreation.
    */
   protected async recover(): Promise<void> {
