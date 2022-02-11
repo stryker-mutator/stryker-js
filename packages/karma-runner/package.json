@@ -50,7 +50,7 @@
   "dependencies": {
     "@stryker-mutator/api": "5.6.1",
     "@stryker-mutator/util": "5.6.1",
-    "decamelize": "~5.0.0",
+    "decamelize": "~6.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.3.0"
   },
