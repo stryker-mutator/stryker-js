@@ -1,12 +1,12 @@
 module.exports = {
+  root: true,
   env: {
-    node: true
+    node: true,
   },
   parserOptions: {
     sourceType: 'module',
-    project: [require.resolve('./tsconfig.lint.json')]
+    project: [require.resolve('./tsconfig.lint.json'), require.resolve('./e2e/tsconfig.json')],
   },
-  root: true,
   parser: '@typescript-eslint/parser',
   extends: ['plugin:@typescript-eslint/all', 'prettier'],
   plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
@@ -15,8 +15,8 @@ module.exports = {
     'unicorn/filename-case': [
       'error',
       {
-        'case': 'kebabCase'
-      }
+        case: 'kebabCase',
+      },
     ],
 
     // import rules
@@ -25,8 +25,8 @@ module.exports = {
       'error',
       {
         'newlines-between': 'always-and-inside-groups',
-        'groups': ['builtin', 'external', 'internal', 'parent', 'sibling', 'index']
-      }
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+      },
     ],
     'import/no-default-export': 'error',
 
@@ -37,8 +37,8 @@ module.exports = {
     '@typescript-eslint/array-type': [
       'error',
       {
-        default: 'array-simple'
-      }
+        default: 'array-simple',
+      },
     ],
     '@typescript-eslint/no-extra-parens': ['error', 'functions'],
     '@typescript-eslint/quotes': ['error', 'single', { avoidEscape: true }],
@@ -47,24 +47,24 @@ module.exports = {
       {
         overrides: {
           constructors: 'no-public',
-          properties: 'explicit'
-        }
-      }
+          properties: 'explicit',
+        },
+      },
     ],
     '@typescript-eslint/method-signature-style': ['error', 'method'],
     '@typescript-eslint/no-this-alias': [
       'error',
       {
-        'allowDestructuring': true,
-        'allowedNames': ['self'] 
-      }
+        allowDestructuring: true,
+        allowedNames: ['self'],
+      },
     ],
 
     // disabled typescript-eslint rules we should enable in some way
-   
+
     // fix - serparate PR
     '@typescript-eslint/naming-convention': 'off',
-    
+
     // fix - separate PR
     '@typescript-eslint/require-await': 'off',
     '@typescript-eslint/promise-function-async': 'off',
@@ -72,14 +72,14 @@ module.exports = {
     '@typescript-eslint/return-await': 'off',
     '@typescript-eslint/await-thenable': 'off',
     '@typescript-eslint/no-floating-promises': 'off',
-  
+
     // fix - separate PR
     '@typescript-eslint/unbound-method': 'off',
     '@typescript-eslint/no-unnecessary-condition': 'off',
 
     // fix - separate PR
     '@typescript-eslint/no-base-to-string': 'off',
-    
+
     // fix - serarate PR
     '@typescript-eslint/init-declarations': 'off',
 
@@ -123,5 +123,15 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/default-param-last': 'off',
-  }
+  },
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        // These do not work with jsdoc: https://github.com/typescript-eslint/typescript-eslint/issues/906
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/explicit-member-accessibility': 'off'
+      },
+    },
+  ],
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 module.exports = {
   'jsdom-sixteen': require('./jsdom-sixteen'),
   jsdom: require('./jsdom'),

@@ -1,12 +1,15 @@
 import fs from 'fs';
 import path from 'path';
+
+import os from 'os';
+
+import { fileURLToPath, URL } from 'url';
+
 import execa from 'execa';
 import semver from 'semver';
-import os from 'os';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
 import minimatch from 'minimatch';
-import { fileURLToPath } from 'url';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
@@ -40,10 +43,10 @@ runE2eTests().subscribe({
 });
 
 /**
- * 
- * @param {string} command 
- * @param {string} testDir 
- * @param {boolean} stream 
+ *
+ * @param {string} command
+ * @param {string} testDir
+ * @param {boolean} stream
  * @returns {Promise<execa.ExecaReturnValue<string>>}
  */
 function execNpm(command, testDir, stream) {
@@ -73,12 +76,15 @@ function execNpm(command, testDir, stream) {
 }
 
 /**
- * @param {string} testDir 
+ * @param {string} testDir
  * @returns {boolean}
  */
 function satisfiesNodeVersion(testDir) {
   const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf-8'));
-  const supportedNodeVersionRange = pkg.engines && pkg.engines.node;
+  /**
+   * @type {string}
+   */
+  const supportedNodeVersionRange = pkg.engines ?? pkg.engines.node;
   if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
     console.log(`\u2610 ${testDir} skipped (node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
     return false;
@@ -88,7 +94,7 @@ function satisfiesNodeVersion(testDir) {
 }
 
 /**
- * @param {string} testDir 
+ * @param {string} testDir
  * @returns {Promise<string>}
  */
 async function runTest(testDir) {

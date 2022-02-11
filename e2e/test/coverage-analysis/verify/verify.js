@@ -1,6 +1,7 @@
 import { Stryker } from '@stryker-mutator/core';
 import { expect } from 'chai';
 import { calculateMetrics } from 'mutation-testing-metrics';
+
 import { CoverageAnalysisReporter } from './coverage-analysis-reporter.js';
 
 describe('Coverage analysis', () => {
@@ -104,8 +105,7 @@ describe('Coverage analysis', () => {
    */
 
   /**
-   *
-   * @param {Partial<TestCount>} overrides
+   * @param {Partial<TestCount>} [overrides]
    */
   function describeTests(overrides) {
     const expectedTestCount = {

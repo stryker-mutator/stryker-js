@@ -49,9 +49,8 @@
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
     "postinstall": "lerna bootstrap --no-ci -- --legacy-peer-deps && link-parent-bin",
-    "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx",
-    "lint:log": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx -f compact -o lint.log",
-    "lint:fix": "eslint . --resolve-plugins-relative-to . --ext .ts,.tsx --fix",
+    "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.js",
+    "lint:fix": "npm run lint -- --fix",
     "clean": "rimraf \"packages/*/{package-lock.json,.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
     "prebuild": "npm run generate",

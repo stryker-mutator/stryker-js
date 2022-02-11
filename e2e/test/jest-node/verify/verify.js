@@ -1,8 +1,10 @@
-import { expect } from 'chai';
-import path from 'path';
 import { promises as fsPromises } from 'fs';
-import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
+
 import { fileURLToPath } from 'url';
+
+import { expect } from 'chai';
+
+import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 
 describe('After running stryker with test runner jest on test environment "node"', () => {
   it('should report 75% mutation score', async () => {
@@ -10,7 +12,7 @@ describe('After running stryker with test runner jest on test environment "node"
   });
   it('should report test files and test locations', async () => {
     const sumTestFileName = fileURLToPath(new URL('../src/sum.test.js', import.meta.url));
-    const report = JSON.parse(await fsPromises.readFile(fileURLToPath(new URL('../reports/mutation/mutation.json', import.meta.url))));
+    const report = JSON.parse(await fsPromises.readFile(fileURLToPath(new URL('../reports/mutation/mutation.json', import.meta.url)), 'utf-8'));
     const expectedTestFiles = {
       [sumTestFileName]: {
         source: await fsPromises.readFile(sumTestFileName, 'utf-8'),

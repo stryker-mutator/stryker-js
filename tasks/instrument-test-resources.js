@@ -1,9 +1,11 @@
 // @ts-check
-import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 import { readFileSync, writeFileSync } from 'fs';
 import { relative } from 'path';
-import { File, INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
+
 import { fileURLToPath } from 'url';
+
+import { File, INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
+import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 
 // @ts-expect-error
 const instrumenter = new Instrumenter({
@@ -62,7 +64,7 @@ async function main() {
 
 /**
  *
- * @param {object} fromTo
+ * @param {Record<string,string>} fromTo
  * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {

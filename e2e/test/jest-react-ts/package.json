@@ -11,9 +11,6 @@
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": {
     "production": [
       ">0.2%",

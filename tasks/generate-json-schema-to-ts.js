@@ -1,10 +1,13 @@
 // @ts-check
-import { compile } from 'json-schema-to-typescript';
 import fs from 'fs';
 import path from 'path';
-import glob from 'glob';
+
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
+
+import glob from 'glob';
+import { compile } from 'json-schema-to-typescript';
+
 const writeFile = promisify(fs.writeFile);
 const mkdir = promisify(fs.mkdir);
 
@@ -23,6 +26,7 @@ async function generate(schemaFile) {
   const resolveOutputDir = path.resolve.bind(path, parsedFile.dir, '..', 'src-generated');
   const outFile = resolveOutputDir(`${parsedFile.name}.ts`);
   await mkdir(resolveOutputDir(), { recursive: true });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   let ts = await compile(schema, parsedFile.base, {
     style: {
       singleQuote: true,
@@ -56,6 +60,9 @@ generateAllSchemas().catch((err) => {
   process.exitCode = 1;
 });
 
+/**
+ * @param {any} inputSchema
+ */
 function preprocessSchema(inputSchema) {
   const cleanedSchema = cleanExternalRef(inputSchema);
 
@@ -104,16 +111,23 @@ function preprocessSchema(inputSchema) {
 
 class SchemaError extends Error {}
 
+/**
+ * @param {any} inputProperties
+ */
 function preprocessProperties(inputProperties) {
   if (inputProperties) {
     const outputProperties = {};
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     Object.entries(inputProperties).forEach(([name, value]) => (outputProperties[name] = preprocessSchema(value)));
     return outputProperties;
   }
 }
 
+/**
+ * @param {any} inputSchema
+ */
 function cleanExternalRef(inputSchema) {
-  if (inputSchema.$ref && inputSchema.$ref.startsWith('http')) {
+  if (inputSchema.$ref ?? inputSchema.$ref.startsWith('http')) {
     return {
       ...inputSchema,
       $ref: undefined,
@@ -122,8 +136,14 @@ function cleanExternalRef(inputSchema) {
   return inputSchema;
 }
 
+/**
+ * @param {any} inputProperties
+ * @param {any} inputRequired
+ * @returns
+ */
 function preprocessRequired(inputProperties, inputRequired) {
   if (inputProperties) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Object.entries(inputProperties)
       .filter(([name, value]) => 'default' in value || inputRequired.indexOf(name) >= 0)
       .map(([name]) => name);

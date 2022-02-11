@@ -1,5 +1,6 @@
-import { bootstrapLocalDependencies } from '../../helpers/bootstrap-local-dependencies.js';
 import { fileURLToPath, URL } from 'url';
+
+import { bootstrapLocalDependencies } from '../../helpers/bootstrap-local-dependencies.js';
 
 /**
  * Installs the Stryker dependencies inside the correct test packages (using "localDependencies")

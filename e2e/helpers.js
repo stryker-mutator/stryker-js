@@ -1,10 +1,11 @@
 import { promises as fsPromises } from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
 
 import chai from 'chai';
-import path from 'path';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
-import { execSync } from 'child_process';
 import chaiJestSnapshot from 'chai-jest-snapshot';
+
 const { expect } = chai;
 
 chai.use(chaiJestSnapshot);
@@ -32,8 +33,7 @@ beforeEach(function () {
  */
 
 /**
- * 
- * @param {string} cmd 
+ * @param {string} cmd
  * @returns {ExecStrykerResult}
  */
 export function execStryker(cmd) {
@@ -69,17 +69,17 @@ export function execStryker(cmd) {
 }
 
 /**
- * 
- * @param {string} eventResultDirectory 
- * @returns {import('mutation-testing-metrics').MutationTestMetricsResult}
+ *
+ * @param {string} eventResultDirectory
+ * @returns {Promise<import('mutation-testing-metrics').MutationTestMetricsResult>}
  */
 export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
   const allReportFiles = await fsPromises.readdir(eventResultDirectory);
-  const mutationTestReportFile = allReportFiles.find((file) => !!file.match(/.*onMutationTestReportReady.*/));
+  const mutationTestReportFile = allReportFiles.find((file) => !!/.*onMutationTestReportReady.*/.exec(file));
   expect(mutationTestReportFile).ok;
   const mutationTestReportContent = await fsPromises.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
   /**
-   * @type {import('@stryker-mutator/api/core').schema}
+   * @type {import('mutation-testing-report-schema/api').MutationTestResult}
    */
   const report = JSON.parse(mutationTestReportContent);
   const metricsResult = calculateMutationTestMetrics(report);
@@ -89,7 +89,7 @@ export async function readMutationTestResult(eventResultDirectory = path.resolve
 export async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
   const mutationTestReportContent = await fsPromises.readFile(jsonReportFile, 'utf8');
   /**
-   * @type {import('mutation-testing-metrics').MutationTestMetricsResult}
+   * @type {import('mutation-testing-report-schema/api').MutationTestResult}
    */
   const report = JSON.parse(mutationTestReportContent);
   const metricsResult = calculateMutationTestMetrics(report);
@@ -97,7 +97,7 @@ export async function readMutationTestingJsonResult(jsonReportFile = path.resolv
 }
 
 /**
- * @param {string} fileName 
+ * @param {string} fileName
  * @returns {Promise<string>}
  */
 export function readLogFile(fileName = path.resolve('stryker.log')) {

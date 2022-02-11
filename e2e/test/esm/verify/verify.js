@@ -1,4 +1,5 @@
 import fs from 'fs';
+
 import { expectMetricsJsonToMatchSnapshot, execStryker } from '../../../helpers.js';
 
 describe('esm', () => {

@@ -1,11 +1,17 @@
 import fs from 'fs';
+import { URL } from 'url';
 
 import { expect } from 'chai';
 import Ajv from 'ajv';
 import Axios from 'axios';
 import { beforeEach } from 'mocha';
 
-const monoSchema = JSON.parse(fs.readFileSync(new URL('../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json', import.meta.url), 'utf-8'));
+/**
+ * @type {import('ajv').SchemaObject}
+ */
+const monoSchema = JSON.parse(
+  fs.readFileSync(new URL('../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json', import.meta.url), 'utf-8')
+);
 const valid = JSON.parse(fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'));
 const invalid = JSON.parse(fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'));
 
@@ -19,6 +25,9 @@ const ajv = new Ajv({
   },
 });
 describe('The Stryker meta schema', () => {
+  /**
+   * @type {import('ajv').ValidateFunction}
+   */
   let validator;
   beforeEach(async () => {
     validator = await ajv.compileAsync(monoSchema);

@@ -65,6 +65,7 @@
     "typescript.tsdk": "parent/node_modules/typescript/lib",
     "search.exclude": {
       "**/node_modules": true,
+      "**/coverage": true,
       "**/bower_components": true,
       "**/*.code-search": true,
       "**/*.tsbuildinfo": true,

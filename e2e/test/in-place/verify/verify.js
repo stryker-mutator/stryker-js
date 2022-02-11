@@ -1,13 +1,20 @@
-import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 import { promises as fsPromises } from 'fs';
+
+import path from 'path';
+
+import { promisify } from 'util';
+
+import { fileURLToPath, URL } from 'url';
+
 import chai from 'chai';
 import execa from 'execa';
 import rimraf from 'rimraf';
-import path from 'path';
-import { promisify } from 'util';
+
 import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
-import { fileURLToPath, URL } from 'url';
+
+import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
+
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 const rm = promisify(rimraf);
@@ -15,6 +22,9 @@ const rm = promisify(rimraf);
 const rootResolve = path.resolve.bind(path, fileURLToPath(new URL('..', import.meta.url)));
 
 describe('in place', () => {
+  /**
+   * @type {string}
+   */
   let originalAddJSContent;
   function readAddJS() {
     return fsPromises.readFile(rootResolve('src', 'Add.js'), 'utf-8');

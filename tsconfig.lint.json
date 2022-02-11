@@ -1,18 +1,15 @@
 {
   "extends": "./tsconfig.settings.json",
+  "compilerOptions": {
+    "allowJs": true
+  },
   // This file is a workaround for: https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser#parseroptionsproject
   "include": [
+    "packages/*/bin",
     "packages/*/src",
     "packages/*/typings",
     "packages/*/test",
-    "packages/api/config.ts",
-    "packages/api/core.ts",
-    "packages/api/logging.ts",
-    "packages/api/mutant.ts",
-    "packages/api/report.ts",
-    "packages/api/test_framework.ts",
-    "packages/api/test_runner.ts",
-    "packages/api/transpile.ts",
-    "packages/api/plugin.ts"
+    "packages/jest-runner/jest-env/*.js",
+    "tasks/**/*.js"
   ]
 }

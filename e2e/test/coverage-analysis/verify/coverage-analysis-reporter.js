@@ -9,13 +9,13 @@ export class CoverageAnalysisReporter {
    * @type { CoverageAnalysisReporter }
    */
   static instance;
-  
+
   constructor() {
     CoverageAnalysisReporter.instance = this;
   }
-  
+
   /**
-   * @param {import('mutation-testing-report-schema').MutationTestResult} report 
+   * @param {import('mutation-testing-report-schema').MutationTestResult} report
    * @returns {void}
    */
   onMutationTestReportReady(report) {
@@ -23,4 +23,3 @@ export class CoverageAnalysisReporter {
   }
 }
 export const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'coverageAnalysis', CoverageAnalysisReporter)];
-
