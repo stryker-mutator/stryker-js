@@ -10,34 +10,12 @@ import { fileURLToPath } from 'url';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
-// const filter = ['cucumber-old-version',
-//   'exit-prematurely-dry-run-fails',
-//   'exit-prematurely-no-tests-executed',
-//   'command',
-//   'esm',
-//   'flow-test-project',
-//   'ignore-project',
-//   'grunt-stryker-test',
-//   'jasmine-javascript',
-//   'babel-transpiling',
-//   'angular-project',
-//   'in-place',
-//   'jest-mutate-outside-roots',
-//   'jest-old-version',
-//   'jest-node',
-//   'jasmine-ts-node',
-//   'jest-custom-env',
-
-// ];
-
 function runE2eTests() {
   const pattern = process.argv[2] ?? '*';
   const testDirs = fs
     .readdirSync(testRootDir, { withFileTypes: true })
     .filter((dir) => dir.isDirectory())
-    // .filter((dir) => !filter.includes(dir.name))
     .map((dir) => dir.name)
-
     .filter(minimatch.filter(pattern));
 
   console.log(`Running e2e test in ${testDirs.length ? testDirs.join(', ') : '<none>'}`);
@@ -46,8 +24,9 @@ function runE2eTests() {
   const test$ = from(testDirs).pipe(map((testDir) => defer(() => runTest(testDir))));
 
   let testsRan = 0;
+  const concurrency = Math.max(os.cpus().length / 2, 2);
   return test$.pipe(
-    mergeAll(os.cpus().length), // use mergeAll to limit concurrent test runs
+    mergeAll(concurrency),
     tap((testDir) => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`))
   );
 }

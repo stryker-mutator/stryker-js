@@ -1,8 +1,8 @@
 // @ts-check
-const { declareClassPlugin, PluginKind, tokens, commonTokens } = require('@stryker-mutator/api/plugin');
-const { DryRunStatus } = require('@stryker-mutator/api/test-runner');
+import { declareClassPlugin, PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-module.exports.strykerPlugins = [
+export const strykerPlugins = [
   declareClassPlugin(
     PluginKind.TestRunner,
     'custom',
