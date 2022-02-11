@@ -4,7 +4,6 @@
     "outDir": "dist",
     "rootDir": ".",
     "noImplicitThis": true,
-    "module": "ES2020",
     "types": ["karma", "node"]
   },
   "include": ["src", "src-generated", "typings", "schema/*.json"],

@@ -1,12 +1,9 @@
-{	
+{
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "types": [
-      "node"
-    ],
-    "module": "ES2020"
+    "types": ["node"]
   },
   "references": [
     {

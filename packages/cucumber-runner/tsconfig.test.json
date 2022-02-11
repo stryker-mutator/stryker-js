@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node", "mocha"],
-    "module": "ES2020",
     "rootDir": "."
   },
   "include": ["test", "typings"],
@@ -16,6 +15,6 @@
     },
     {
       "path": "../test-helpers/tsconfig.src.json"
-    },
+    }
   ]
 }

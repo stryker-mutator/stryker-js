@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "dist/src",
     "rootDir": "src",
-    "module": "ES2020",
     "types": [
       "node"
     ]

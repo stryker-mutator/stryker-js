@@ -3,18 +3,12 @@
   "compilerOptions": {
     "outDir": "dist/test",
     "rootDir": "test",
-    "module": "ES2020",
-    "types": [
-      "mocha",
-      "node"
-    ]
+    "types": ["mocha", "node"]
   },
-  "include": [
-    "test"
-  ],
+  "include": ["test"],
   "references": [
     {
-      "path": "tsconfig.src.json",
+      "path": "tsconfig.src.json"
     },
     {
       "path": "../test-helpers/tsconfig.src.json"

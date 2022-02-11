@@ -3,11 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "types": [
-      "mocha",
-      "node"
-    ],
-    "module": "ES2020"
+    "types": ["mocha", "node"]
   },
   "references": [
     {

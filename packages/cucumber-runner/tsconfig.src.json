@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node"],
-    "module": "ES2020",
     "rootDir": "."
   },
   "include": ["src/*.ts", "src-generated", "schema/*.json", "typings"],

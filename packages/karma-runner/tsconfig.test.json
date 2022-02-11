@@ -3,17 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "module": "ES2020",
-    "types": [
-      "karma",
-      "mocha",
-      "node"
-    ]
+    "types": ["karma", "mocha", "node"]
   },
-  "include": [
-    "test",
-    "typings"
-  ],
+  "include": ["test", "typings"],
   "references": [
     {
       "path": "./tsconfig.src.json"
