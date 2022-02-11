@@ -38,8 +38,7 @@ describe('Typescript checker on a project with project references', () => {
       status: CheckStatus.Passed,
     };
     const actualResult = await sut.check([mutant]);
-    expect(actualResult).to.have.lengthOf(1);
-    expect(actualResult[0].checkResult).deep.eq(expectedResult);
+    expect(actualResult[mutant.id]).deep.eq(expectedResult);
   });
 
   it('should be able to validate two mutants in the same file', async () => {
@@ -51,9 +50,8 @@ describe('Typescript checker on a project with project references', () => {
       status: CheckStatus.Passed,
     };
     const actualResult = await sut.check(mutants);
-    expect(actualResult).to.have.lengthOf(2);
-    expect(actualResult[0].checkResult).deep.eq(expectedResult);
-    expect(actualResult[1].checkResult).deep.eq(expectedResult);
+    expect(actualResult[mutants[0].id]).deep.eq(expectedResult);
+    expect(actualResult[mutants[1].id]).deep.eq(expectedResult);
   });
 
   it('should allow unused local variables (override options)', async () => {
@@ -62,8 +60,7 @@ describe('Typescript checker on a project with project references', () => {
       status: CheckStatus.Passed,
     };
     const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
+    expect(actual[mutant.id]).deep.eq(expectedResult);
   });
 });
 

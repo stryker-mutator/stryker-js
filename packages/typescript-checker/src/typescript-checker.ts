@@ -52,8 +52,8 @@ export class TypescriptChecker implements Checker {
     this.sourceFiles = sourceFiles;
   }
 
-  public async check(mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
-    const mutantResults: Array<{ mutant: MutantTestCoverage; errors: ts.Diagnostic[] }> = mutants.map((mutant) => {
+  public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    const mutantResults: Array<{ mutant: Mutant; errors: ts.Diagnostic[] }> = mutants.map((mutant) => {
       return {
         mutant,
         errors: [],
@@ -85,22 +85,22 @@ export class TypescriptChecker implements Checker {
       mutantResult.errors = await this.typeCheckMutants([mutant]);
     }
 
-    return mutantResults.map((mutantResult) => {
-      if (mutantResult.errors.length) {
-        return {
-          mutant: mutantResult.mutant,
-          checkResult: {
-            status: CheckStatus.CompileError,
-            reason: this.formatErrors(mutantResult.errors),
-          },
+    const result: Record<string, CheckResult> = {};
+
+    mutantResults.forEach(({ mutant, errors: mutantErrors }) => {
+      if (mutantErrors.length) {
+        result[mutant.id] = {
+          status: CheckStatus.CompileError,
+          reason: this.formatErrors(mutantErrors),
+        };
+      } else {
+        result[mutant.id] = {
+          status: CheckStatus.Passed,
         };
       }
-
-      return {
-        mutant: mutantResult.mutant,
-        checkResult: { status: CheckStatus.Passed },
-      };
     });
+
+    return result;
   }
 
   private async typeCheckMutants(mutants: Mutant[]): Promise<ts.Diagnostic[]> {

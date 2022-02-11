@@ -5,6 +5,8 @@ import { expect } from 'chai';
 import { Location, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
+import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+
 import { createTypescriptChecker } from '../../src';
 import { TypescriptChecker } from '../../src/typescript-checker';
 
@@ -21,7 +23,7 @@ const resolveTestResource = path.resolve.bind(
 describe('Typescript checker on a project with multiple files', () => {
   let sut: TypescriptChecker;
 
-  before(async () => {
+  beforeEach(async () => {
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.root.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
 
@@ -46,18 +48,16 @@ describe('Typescript checker on a project with multiple files', () => {
       createMutantTestCoverage('src/todo.ts', 'this.description;', '""', '2'),
       createMutantTestCoverage('src/item.ts', 'private name: string) {', 'private name:  number) {""-""', '1'),
     ];
+    const expectedResult: CheckResult = {
+      status: CheckStatus.CompileError,
+      reason:
+        "testResources/multiple-file-project/src/item.ts(3,39): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\ntestResources/multiple-file-project/src/item.ts(3,42): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\n",
+    };
 
     const result = await sut.check(mutants);
 
-    expect(result).to.have.lengthOf(2);
-    expect(result?.[0].checkResult.status).to.equal('passed');
-
-    expect(result?.[1].checkResult.status).to.equal('compileError');
-    if (result?.[1].checkResult.status === 'compileError') {
-      expect(result?.[1].checkResult.reason).to.equal(
-        "testResources/multiple-file-project/src/item.ts(3,39): error TS2362: The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\ntestResources/multiple-file-project/src/item.ts(3,42): error TS2363: The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.\r\n"
-      );
-    }
+    expect(result?.[mutants[0].id].status).to.equal('passed');
+    expect(result?.[mutants[1].id]).deep.eq(expectedResult);
   });
 
   it('should not check multiple times when it already has an error', async () => {
@@ -68,9 +68,8 @@ describe('Typescript checker on a project with multiple files', () => {
 
     const result = await sut.check(mutants);
 
-    expect(result).to.have.lengthOf(2);
-    expect(result?.[0].checkResult.status).to.equal('passed');
-    expect(result?.[1].checkResult.status).to.equal('compileError');
+    expect(result?.[mutants[0].id].status).to.equal('passed');
+    expect(result?.[mutants[1].id].status).to.equal('compileError');
   });
 
   it('should create a valid group', async () => {

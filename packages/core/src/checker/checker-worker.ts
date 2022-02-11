@@ -1,5 +1,5 @@
 import { Checker, CheckResult } from '@stryker-mutator/api/check';
-import { StrykerOptions, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutantTestCoverage, Mutant } from '@stryker-mutator/api/core';
 import { PluginKind, tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
@@ -26,7 +26,7 @@ export class CheckerWorker implements CheckerResource {
     }
   }
 
-  public async check(checkerName: string, mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+  public async check(checkerName: string, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     if (checkerName === '') {
       throw new Error('No checker set.');
     }

@@ -49,38 +49,36 @@ describe(`${createCheckerFactory.name} integration`, () => {
   it('should pass along the check result', async () => {
     const checkerName = 'healthy';
     await arrangeSut(checkerName);
-    const mutant = factory.mutantTestCoverage({ id: '1' });
-    const expected = { checkResult: { status: CheckStatus.Passed }, mutant };
+    const mutant = factory.mutant({ id: '1' });
     const result = await sut.check(checkerName, [mutant]);
-    expect(result[0]).deep.eq(expected);
+    expect(result[mutant.id]).deep.eq({ status: CheckStatus.Passed });
   });
 
   it('should reject when the checker behind rejects', async () => {
     const checkerName = 'crashing';
     await arrangeSut(checkerName);
-    await expect(sut.check(checkerName, [factory.mutantTestCoverage()])).rejectedWith('Always crashing');
+    await expect(sut.check(checkerName, [factory.mutant()])).rejectedWith('Always crashing');
   });
 
   it('should recover when the checker behind rejects', async () => {
     const checkerName = 'two-times-the-charm';
     await fs.promises.writeFile(TwoTimesTheCharm.COUNTER_FILE, '0', 'utf-8');
     await arrangeSut(checkerName);
-    const mutant = factory.mutantTestCoverage();
+    const mutant = factory.mutant();
     const actual = await sut.check(checkerName, [mutant]);
-    const expected = { mutant, checkResult: { status: CheckStatus.Passed } };
-    expect(actual[0]).deep.eq(expected);
+    expect(actual[mutant.id]).deep.eq({ status: CheckStatus.Passed });
   });
 
   it('should provide the nodeArgs', async () => {
     testInjector.options.checkerNodeArgs = ['--title=shouldProvideNodeArgs'];
     const checkerName = 'verify-title';
     await arrangeSut(checkerName);
-    const passedMutant = factory.mutantTestCoverage({ fileName: 'shouldProvideNodeArgs' });
-    const failedMutant = factory.mutantTestCoverage({ fileName: 'somethingElse' });
+    const passedMutant = factory.mutant({ fileName: 'shouldProvideNodeArgs' });
+    const failedMutant = factory.mutant({ fileName: 'somethingElse' });
     const passed = await sut.check(checkerName, [passedMutant]);
     const failed = await sut.check(checkerName, [failedMutant]);
 
-    expect(passed[0]).deep.eq({ mutant: passedMutant, checkResult: factory.checkResult({ status: CheckStatus.Passed }) });
-    expect(failed[0]).deep.eq({ mutant: failedMutant, checkResult: factory.checkResult({ status: CheckStatus.CompileError }) });
+    expect(passed[passedMutant.id]).deep.eq(factory.checkResult({ status: CheckStatus.Passed }));
+    expect(failed[failedMutant.id]).deep.eq(factory.checkResult({ status: CheckStatus.CompileError }));
   });
 });

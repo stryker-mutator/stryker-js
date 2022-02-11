@@ -73,12 +73,9 @@ describe(MutationTestExecutor.name, () => {
   });
 
   function arrangeScenario(overrides?: { mutant?: MutantTestCoverage; checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
-    checker.check.resolves([
-      {
-        mutant: overrides?.mutant ?? factory.mutantTestCoverage(),
-        checkResult: overrides?.checkResult ?? factory.checkResult(),
-      },
-    ]);
+    checker.check.resolves({
+      [overrides?.mutant?.id ?? factory.mutantTestCoverage().id]: overrides?.checkResult ?? factory.checkResult(),
+    });
     testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
   }
 
@@ -252,12 +249,9 @@ describe(MutationTestExecutor.name, () => {
 
     const mutant = factory.mutantTestCoverage({ id: '1' });
     const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
-    checker.check.resolves([
-      {
-        mutant,
-        checkResult: failedCheckResult,
-      },
-    ]);
+    checker.check.resolves({
+      [mutant.id]: failedCheckResult,
+    });
     mutants.push(mutant);
 
     // Act
@@ -285,18 +279,13 @@ describe(MutationTestExecutor.name, () => {
       .injectClass(MutationTestExecutor);
 
     mutants.push(factory.mutantTestCoverage({ id: '1' }));
-    const checkTask = new Task<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>>();
+    const checkTask = new Task<Record<string, CheckResult>>();
     const testRunnerTask = new Task<MutantRunResult>();
     testRunner.mutantRun.returns(testRunnerTask.promise);
     checker.check.returns(checkTask.promise);
 
     // Act & assert
-    checkTask.resolve([
-      {
-        mutant: factory.mutantTestCoverage(),
-        checkResult: factory.checkResult(),
-      },
-    ]);
+    checkTask.resolve({ [factory.mutantTestCoverage().id]: factory.checkResult() });
     const executePromise = await sut.execute();
     await tick(10);
     expect(checkerPoolMock.dispose).called;

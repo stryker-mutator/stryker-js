@@ -1,5 +1,5 @@
 import { CheckResult } from '@stryker-mutator/api/check';
-import { MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error';
@@ -13,7 +13,7 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
     super(producer);
   }
 
-  public async check(checkerName: string, mutants: MutantTestCoverage[]): Promise<Array<{ mutant: MutantTestCoverage; checkResult: CheckResult }>> {
+  public async check(checkerName: string, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     try {
       return await this.innerResource.check(checkerName, mutants);
     } catch (error) {

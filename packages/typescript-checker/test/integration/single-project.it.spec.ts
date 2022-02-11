@@ -36,16 +36,18 @@ describe('Typescript checker on a single project', () => {
     const mutant = createMutantTestCoverage('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43');
     const expectedResult: CheckResult = { status: CheckStatus.Passed };
     const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
+    expect(actual[mutant.id]).deep.eq(expectedResult);
   });
 
   it('should be able invalidate a mutant that does result in a compile error', async () => {
     const mutant = createMutantTestCoverage('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
     const actual = await sut.check([mutant]);
-    expect(actual).to.have.lengthOf(1);
-    assertions.expectCompileError(actual[0].checkResult);
-    expect(actual[0].checkResult.reason).has.string('todo.ts(15,9): error TS2322');
+    const expectedResult: CheckResult = {
+      status: CheckStatus.CompileError,
+      reason: "testResources/single-project/src/todo.ts(15,9): error TS2322: Type 'string' is not assignable to type 'number'.\r\n",
+    };
+    assertions.expectCompileError(actual[mutant.id]);
+    expect(actual[mutant.id]).deep.eq(expectedResult);
   });
 
   it('should be able validate a mutant that does not result in a compile error after a compile error', async () => {
@@ -61,42 +63,43 @@ describe('Typescript checker on a single project', () => {
     const actual = await sut.check([mutantWithoutError]);
 
     // Assert
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
+    expect(actual[mutantWithoutError.id]).deep.eq(expectedResult);
   });
 
   it('should be able to invalidate a mutant that results in an error in a different file', async () => {
-    const actual = await sut.check([createMutantTestCoverage('todo.ts', 'return totalCount;', '')]);
-    assertions.expectCompileError(actual[0].checkResult);
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult.reason).has.string('todo.spec.ts(4,7): error TS2322');
+    const mutant = createMutantTestCoverage('todo.ts', 'return totalCount;', '');
+    const actual = await sut.check([mutant]);
+    const expectedResult: CheckResult = { status: CheckStatus.CompileError, reason: "testResources/single-project/src/todo.spec.ts(4,7): error TS2322: Type 'void' is not assignable to type 'number'.\r\n" };
+
+    assertions.expectCompileError(actual[mutant.id]);
+    expect(actual[mutant.id]).deep.equal(expectedResult);
   });
 
   it('should be able to validate a mutant after a mutant in a different file resulted in a transpile error', async () => {
     // Act
     await sut.check([createMutantTestCoverage('todo.ts', 'return totalCount;', '')]);
-    const result = await sut.check([createMutantTestCoverage('todo.spec.ts', "'Mow lawn'", "'this is valid, right?'")]);
+    const mutant = createMutantTestCoverage('todo.spec.ts', "'Mow lawn'", "'this is valid, right?'");
+    const result = await sut.check([mutant]);
 
     // Assert
     const expectedResult: CheckResult = {
       status: CheckStatus.Passed,
     };
 
-    expect(result).to.have.lengthOf(1);
-    expect(result[0].checkResult).deep.eq(expectedResult);
+    expect(result[mutant.id]).deep.eq(expectedResult);
   });
 
   it('should be allow mutations in unrelated files', async () => {
     // Act
-    const result = await sut.check([createMutantTestCoverage('not-type-checked.js', 'bar', 'baz')]);
+    const mutant = createMutantTestCoverage('not-type-checked.js', 'bar', 'baz');
+    const result = await sut.check([mutant]);
 
     // Assert
     const expectedResult: CheckResult = {
       status: CheckStatus.Passed,
     };
 
-    expect(result).to.have.lengthOf(1);
-    expect(result[0].checkResult).deep.eq(expectedResult);
+    expect(result[mutant.id]).deep.eq(expectedResult);
   });
 
   it('should allow unused local variables (override options)', async () => {
@@ -106,8 +109,7 @@ describe('Typescript checker on a single project', () => {
     };
     const actual = await sut.check([mutant]);
 
-    expect(actual).to.have.lengthOf(1);
-    expect(actual[0].checkResult).deep.eq(expectedResult);
+    expect(actual[mutant.id]).deep.eq(expectedResult);
   });
 });
 

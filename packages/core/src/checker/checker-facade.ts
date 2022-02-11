@@ -84,12 +84,10 @@ export class CheckerFacade {
 
     const run$ = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
       const results = await checker.check(checkerName, mutantGroup);
-      results.forEach((result) => {
-        if (result.checkResult.status === CheckStatus.Passed) {
-          passedMutant$.next(result.mutant);
-        } else {
-          checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(result.mutant, result.checkResult));
-        }
+      Object.entries(results).forEach(([id, result]) => {
+        const mutant = mutantGroup.find((m) => m.id === id)!;
+        if (result.status === CheckStatus.Passed) passedMutant$.next(mutant);
+        else checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(mutant, result));
       });
     });
 
