@@ -82,9 +82,9 @@ function execNpm(command, testDir, stream) {
 function satisfiesNodeVersion(testDir) {
   const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf-8'));
   /**
-   * @type {string}
+   * @type {string|undefined}
    */
-  const supportedNodeVersionRange = pkg.engines ?? pkg.engines.node;
+  const supportedNodeVersionRange = pkg.engines?.node;
   if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
     console.log(`\u2610 ${testDir} skipped (node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
     return false;
