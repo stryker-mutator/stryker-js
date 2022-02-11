@@ -67,23 +67,11 @@ export class PluginLoader {
       .flatMap((pluginExpression) => {
         if (typeof pluginExpression === 'string') {
           if (pluginExpression.includes('*')) {
-            const { org, pkg } = distillOrganization(pluginExpression);
-
-            const pluginDirectory = path.resolve(fileURLToPath(new URL('../../../../../', import.meta.url)), org);
-            const regexp = new RegExp('^' + pkg.replace('*', '.*'));
-
-            this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-            const plugins = readdirSync(pluginDirectory)
-              .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
-              .map((pluginName) => `${org.length ? `${org}/` : ''}${pluginName}`);
-            if (plugins.length === 0) {
-              this.log.warn('Expression" %s" not resulted in plugins to load.', pluginExpression);
-            }
-            plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
-            return plugins;
-          } else if (pluginExpression.startsWith('.')) {
+            return this.globPlugins(pluginExpression);
+          } else if (path.isAbsolute(pluginExpression) || pluginExpression.startsWith('.')) {
             return pathToFileURL(path.resolve(pluginExpression)).toString();
           } else {
+            // Bare plugin expression, like "@stryker-mutator/mocha-runner"
             return pluginExpression;
           }
         } else {
@@ -92,6 +80,23 @@ export class PluginLoader {
         }
       })
       .filter(notEmpty);
+  }
+
+  private globPlugins(pluginExpression: string) {
+    const { org, pkg } = parsePluginExpression(pluginExpression);
+
+    const pluginDirectory = path.resolve(fileURLToPath(new URL('../../../../../', import.meta.url)), org);
+    const regexp = new RegExp('^' + pkg.replace('*', '.*'));
+
+    this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
+    const plugins = readdirSync(pluginDirectory)
+      .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
+      .map((pluginName) => `${org.length ? `${org}/` : ''}${pluginName}`);
+    if (plugins.length === 0) {
+      this.log.warn('Expression" %s" not resulted in plugins to load.', pluginExpression);
+    }
+    plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
+    return plugins;
   }
 
   private async loadPlugin(name: string): Promise<void> {
@@ -139,7 +144,7 @@ export class PluginLoader {
  *  '@stryker-mutator/core' => { org: '@stryker-mutator', 'core' }
  *  'glob' => { org: '', 'glob' }
  */
-function distillOrganization(pluginExpression: string) {
+function parsePluginExpression(pluginExpression: string) {
   const parts = pluginExpression.split('/');
   if (parts.length > 1) {
     return {

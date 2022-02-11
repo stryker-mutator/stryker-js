@@ -49,6 +49,14 @@ describe(PluginLoader.name, () => {
       expect(result).deep.eq([expectedModuleA, expectedModuleReporters]);
     });
 
+    it('should load plugins with their absolute path', async () => {
+      const localPlugin = path.resolve('./local-test-runner.js');
+      const expectedPlugin = pathToFileURL(localPlugin).toString();
+      const result = await sut.load([localPlugin]);
+      expect(fileUtils.importModule).calledWith(expectedPlugin);
+      expect(result).deep.eq([expectedPlugin]);
+    });
+
     it('should log MODULE_NOT_FOUND errors as warnings', async () => {
       importModuleStub.throws({ code: 'MODULE_NOT_FOUND', message: 'a' });
       await sut.load(['a', 'b']);
