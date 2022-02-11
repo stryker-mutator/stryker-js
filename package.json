@@ -56,7 +56,7 @@
     "prebuild": "npm run generate",
     "build": "tsc -b && lerna run build",
     "test": "lerna run test --stream --concurrency 2",
-    "e2e": "cd e2e && npm ci && npm t && cd ..",
+    "e2e": "cd e2e && npm ci && npm run lint && npm t && cd ..",
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
     "perf": "cd perf && npm ci && npm t && cd ..",
     "start": "tsc -b -w",

@@ -127,7 +127,9 @@ function preprocessProperties(inputProperties) {
  * @param {any} inputSchema
  */
 function cleanExternalRef(inputSchema) {
-  if (inputSchema.$ref ?? inputSchema.$ref.startsWith('http')) {
+  // node 12 doesn't support optional chain yet
+  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+  if (inputSchema.$ref && inputSchema.$ref.startsWith('http')) {
     return {
       ...inputSchema,
       $ref: undefined,
