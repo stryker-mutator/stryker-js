@@ -52,7 +52,7 @@
     "postinstall": "(npm run bootstrap || npm run bootstrap) && npm run install-local-dependencies && npm run link-parent-bin",
     "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "link-parent-bin": "link-parent-bin -c test --link-local-dependencies true",
-    "lint": "tsc -p tsconfig.json",
+    "lint": "tsc -p tsconfig.json && eslint . --resolve-plugins-relative-to . --ext .ts,.js",
     "test": "node tasks/run-e2e-tests.js",
     "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm test"
   },

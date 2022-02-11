@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs';
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath, URL } from 'url';
 
 import { expect } from 'chai';
 

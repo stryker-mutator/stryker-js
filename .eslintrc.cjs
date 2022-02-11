@@ -5,7 +5,7 @@ module.exports = {
   },
   parserOptions: {
     sourceType: 'module',
-    project: [require.resolve('./tsconfig.lint.json'), require.resolve('./e2e/tsconfig.json')],
+    project: [require.resolve('./tsconfig.lint.json')],
   },
   parser: '@typescript-eslint/parser',
   extends: ['plugin:@typescript-eslint/all', 'prettier'],
