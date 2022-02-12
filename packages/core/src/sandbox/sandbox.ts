@@ -1,8 +1,8 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import execa from 'execa';
-import npmRunPath from 'npm-run-path';
+import type { execaCommand } from 'execa';
+import { npmRunPathEnv } from 'npm-run-path';
 import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -35,7 +35,7 @@ export class Sandbox implements Disposable {
     private readonly log: Logger,
     private readonly temporaryDirectory: I<TemporaryDirectory>,
     private readonly files: readonly File[],
-    private readonly exec: typeof execa,
+    private readonly execCommand: typeof execaCommand,
     unexpectedExitHandler: I<UnexpectedExitHandler>
   ) {
     if (options.inPlace) {
@@ -83,10 +83,10 @@ export class Sandbox implements Disposable {
 
   private async runBuildCommand() {
     if (this.options.buildCommand) {
-      const env = npmRunPath.env();
+      const env = npmRunPathEnv();
       this.log.info('Running build command "%s" in "%s".', this.options.buildCommand, this.workingDirectory);
       this.log.debug('(using PATH: %s)', env.PATH);
-      await this.exec.command(this.options.buildCommand, { cwd: this.workingDirectory, env });
+      await this.execCommand(this.options.buildCommand, { cwd: this.workingDirectory, env });
     }
   }
 

@@ -3,7 +3,7 @@ import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/ap
 
 import { deepFreeze } from '@stryker-mutator/util';
 
-import execa from 'execa';
+import { execaCommand } from 'execa';
 
 import { ConfigReader } from '../config/config-reader.js';
 import { LogConfigurator } from '../logging/index.js';
@@ -72,7 +72,7 @@ export class PrepareExecutor {
         .provideValue(coreTokens.timer, timer)
         .provideValue(coreTokens.inputFiles, inputFiles)
         .provideValue(coreTokens.loggingContext, loggingContext)
-        .provideValue(coreTokens.execa, execa)
+        .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
         .provideValue(coreTokens.pluginModulePaths, pluginModulePaths);

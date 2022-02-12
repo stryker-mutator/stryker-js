@@ -145,7 +145,7 @@ export class ClearTextReporter implements Reporter {
     return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
   }
 
-  private color(color: typeof Color, ...text: unknown[]) {
+  private color(color: Color, ...text: unknown[]) {
     if (this.options.clearTextReporter.allowColor) {
       return chalk[color](...text);
     }

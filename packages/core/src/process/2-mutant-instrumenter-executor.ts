@@ -6,7 +6,7 @@ import { Reporter } from '@stryker-mutator/api/src/report';
 
 import { I } from '@stryker-mutator/util';
 
-import execa from 'execa';
+import { execaCommand } from 'execa';
 
 import { coreTokens } from '../di/index.js';
 import { InputFileCollection } from '../input/index.js';
@@ -30,7 +30,7 @@ export interface MutantInstrumenterContext extends BaseContext {
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.timer]: I<Timer>;
   [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
-  [coreTokens.execa]: typeof execa;
+  [coreTokens.execa]: typeof execaCommand;
   [coreTokens.process]: NodeJS.Process;
   [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
   [coreTokens.pluginModulePaths]: readonly string[];

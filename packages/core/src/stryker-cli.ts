@@ -2,7 +2,7 @@ import semver from 'semver';
 
 guardMinimalNodeVersion();
 
-import commander from 'commander';
+import { Command } from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer/index.js';
@@ -40,7 +40,7 @@ export class StrykerCli {
 
   constructor(
     private readonly argv: string[],
-    private readonly program: commander.Command = new commander.Command(),
+    private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 

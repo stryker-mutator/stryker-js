@@ -1,8 +1,8 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import execa from 'execa';
-import npmRunPath from 'npm-run-path';
+import type { execaNode } from 'execa';
+import { npmRunPathEnv } from 'npm-run-path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
@@ -22,7 +22,7 @@ describe(Sandbox.name, () => {
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesListStub: sinon.SinonStub;
-  let execaMock: sinon.SinonStubbedInstance<I<typeof execa>>;
+  let execaCommandMock: sinon.SinonStubbedInstance<I<typeof execaNode>>;
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<I<UnexpectedExitHandler>>;
   let readFile: sinon.SinonStub;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
@@ -38,12 +38,7 @@ describe(Sandbox.name, () => {
     findNodeModulesListStub = sinon.stub(fileUtils, 'findNodeModulesList');
     moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
     readFile = sinon.stub(fsPromises, 'readFile');
-    execaMock = {
-      command: sinon.stub<any>(),
-      commandSync: sinon.stub<any>(),
-      node: sinon.stub<any>(),
-      sync: sinon.stub<any>(),
-    };
+    execaCommandMock = sinon.stub();
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),
       dispose: sinon.stub(),
@@ -57,7 +52,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(coreTokens.execa, execaMock as unknown as typeof execa)
+      .provideValue(coreTokens.execa, execaCommandMock as unknown as typeof execaNode)
       .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitHandlerMock)
       .injectClass(Sandbox);
   }
@@ -280,7 +275,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = 'npm run build';
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
+      expect(execaCommandMock).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPathEnv() });
       expect(testInjector.logger.info).calledWith('Running build command "%s" in "%s".', 'npm run build', SANDBOX_WORKING_DIR);
     });
 
@@ -288,7 +283,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = undefined;
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).not.called;
+      expect(execaCommandMock).not.called;
     });
 
     it('should execute the buildCommand before the node_modules are symlinked', async () => {
@@ -296,7 +291,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = 'npm run build';
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).calledBefore(symlinkJunctionStub);
+      expect(execaCommandMock).calledBefore(symlinkJunctionStub);
     });
   });
 
