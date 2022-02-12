@@ -186,11 +186,6 @@ describe(Stryker.name, () => {
       expect(shutdownLoggingStub).called;
     });
 
-    it('should shut down the logging server', async () => {
-      await sut.runMutationTest();
-      expect(shutdownLoggingStub).called;
-    });
-
     it('should dispose the injector when actual mutation testing rejects', async () => {
       mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
       await expect(sut.runMutationTest()).rejected;
