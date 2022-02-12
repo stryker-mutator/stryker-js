@@ -1,11 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-
 import os from 'os';
-
 import { fileURLToPath, URL } from 'url';
 
-import execa from 'execa';
+import { execa } from 'execa';
 import semver from 'semver';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
@@ -47,7 +45,7 @@ runE2eTests().subscribe({
  * @param {string} command
  * @param {string} testDir
  * @param {boolean} stream
- * @returns {Promise<execa.ExecaReturnValue<string>>}
+ * @returns {Promise<import('execa').ExecaReturnValue<string>>}
  */
 function execNpm(command, testDir, stream) {
   const currentTestDir = path.resolve(testRootDir, testDir);
