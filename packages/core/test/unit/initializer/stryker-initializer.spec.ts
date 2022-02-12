@@ -256,7 +256,7 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
-    it('should configure the additional settings from the plugins', async () => {
+    it('should annotate the config file with the docs url', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: [],
