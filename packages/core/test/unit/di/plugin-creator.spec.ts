@@ -1,62 +1,109 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
-import { ClassPlugin, FactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { ClassPlugin, FactoryPlugin, Plugin, PluginKind } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import { coreTokens, PluginCreator, PluginLoader } from '../../../src/di/index.js';
+import { coreTokens, PluginCreator } from '../../../src/di/index.js';
 
 describe(PluginCreator.name, () => {
   let sut: PluginCreator;
-  let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
+  let pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>>;
 
   beforeEach(() => {
-    pluginLoaderMock = sinon.createStubInstance(PluginLoader);
-    sut = testInjector.injector.provideValue(coreTokens.pluginLoader, pluginLoaderMock).injectClass(PluginCreator);
+    pluginsByKind = new Map();
+    sut = testInjector.injector.provideValue(coreTokens.pluginsByKind, pluginsByKind).injectClass(PluginCreator);
   });
 
   it("should create a FactoryPlugin using it's factory method", () => {
     // Arrange
-    const expectedReporter = factory.reporter('fooReporter');
+    const expectedReporter = factory.reporter('foo');
     const factoryPlugin: FactoryPlugin<PluginKind.Reporter, []> = {
       kind: PluginKind.Reporter,
-      name: 'fooReporter',
+      name: 'foo',
       factory() {
         return expectedReporter;
       },
     };
-    pluginLoaderMock.resolve.returns(factoryPlugin);
+    pluginsByKind.set(PluginKind.Reporter, [factoryPlugin]);
 
     // Act
-    const actualReporter = sut.create(PluginKind.Reporter, 'fooReporter');
+    const actualReporter = sut.create(PluginKind.Reporter, 'foo');
 
     // Assert
-    expect(pluginLoaderMock.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).eq(expectedReporter);
   });
 
   it("should create a ClassPlugin using it's constructor", () => {
     // Arrange
     class FooReporter {}
-    const plugin: ClassPlugin<PluginKind.Reporter, []> = {
+    const classPlugin: ClassPlugin<PluginKind.Reporter, []> = {
       injectableClass: FooReporter,
       kind: PluginKind.Reporter,
-      name: 'fooReporter',
+      name: 'foo',
     };
-    pluginLoaderMock.resolve.returns(plugin);
+    pluginsByKind.set(PluginKind.Reporter, [classPlugin]);
 
     // Act
-    const actualReporter = sut.create(PluginKind.Reporter, 'fooReporter');
+    const actualReporter = sut.create(PluginKind.Reporter, 'foo');
 
     // Assert
-    expect(pluginLoaderMock.resolve).calledWith(PluginKind.Reporter, 'fooReporter');
     expect(actualReporter).instanceOf(FooReporter);
   });
 
+  it('should match plugins on name ignore case', () => {
+    // Arrange
+    const expectedReporter = factory.reporter('bar');
+    pluginsByKind.set(PluginKind.Reporter, [
+      {
+        kind: PluginKind.Reporter,
+        name: 'foo',
+        factory: factory.reporter,
+      },
+      {
+        kind: PluginKind.Reporter,
+        name: 'bar',
+        factory() {
+          return expectedReporter;
+        },
+      },
+      {
+        kind: PluginKind.Reporter,
+        name: 'baz',
+        factory: factory.reporter,
+      },
+    ]);
+
+    // Act
+    const actualReporter = sut.create(PluginKind.Reporter, 'bAr');
+
+    // Assert
+    expect(actualReporter).eq(expectedReporter);
+  });
+
   it('should throw if plugin is not recognized', () => {
-    // @ts-expect-error Testing wrong plugin format by choice
-    pluginLoaderMock.resolve.returns({});
+    // @ts-expect-error
+    const errorPlugin: ClassPlugin<PluginKind.Reporter, []> = {
+      kind: PluginKind.Reporter,
+      name: 'foo',
+    };
+    pluginsByKind.set(PluginKind.Reporter, [errorPlugin]);
     expect(() => sut.create(PluginKind.Reporter, 'foo')).throws(
       'Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.'
+    );
+  });
+
+  it('should throw if the plugin cannot be found', () => {
+    expect(() => sut.create(PluginKind.Checker, 'chess')).throws(
+      'Cannot find Checker plugin "chess". In fact, no Checker plugins were loaded. Did you forget to install it?'
+    );
+  });
+
+  it('should throw if the plugin cannot be found, but other plugins of its kind could', () => {
+    pluginsByKind.set(PluginKind.Reporter, [
+      { kind: PluginKind.Reporter, factory: factory.reporter, name: 'foo' },
+      { kind: PluginKind.Reporter, factory: factory.reporter, name: 'bar' },
+    ]);
+    expect(() => sut.create(PluginKind.Reporter, 'chess')).throws(
+      'Cannot find Reporter plugin "chess". Did you forget to install it? Loaded Reporter plugins were: foo, bar'
     );
   });
 });

@@ -64,12 +64,12 @@ export class ChildProcessProxyWorker {
       this.handlePromiseRejections();
 
       // Load plugins in the child process
-      const pluginInjector = provideLogger(this.injectorFactory())
-        .provideValue(commonTokens.options, message.options)
-        .provideClass(coreTokens.pluginLoader, PluginLoader);
-      const pluginLoader = pluginInjector.resolve(coreTokens.pluginLoader);
-      await pluginLoader.load(message.pluginModulePaths);
-      const injector: Injector<ChildProcessContext> = pluginInjector.provideClass(coreTokens.pluginCreator, PluginCreator);
+      const pluginInjector = provideLogger(this.injectorFactory()).provideValue(commonTokens.options, message.options);
+      const pluginLoader = pluginInjector.injectClass(PluginLoader);
+      const { pluginsByKind } = await pluginLoader.load(message.pluginModulePaths);
+      const injector: Injector<ChildProcessContext> = pluginInjector
+        .provideValue(coreTokens.pluginsByKind, pluginsByKind)
+        .provideClass(coreTokens.pluginCreator, PluginCreator);
 
       const childModule = await import(message.modulePath);
       const RealSubjectClass = childModule[message.namedExport];

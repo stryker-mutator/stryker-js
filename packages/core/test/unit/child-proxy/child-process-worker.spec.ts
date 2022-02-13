@@ -3,7 +3,7 @@ import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, PluginKind, Plugin } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -24,14 +24,14 @@ import { LogConfigurator, LoggingClientContext } from '../../../src/logging/inde
 import { serialize } from '../../../src/utils/string-utils.js';
 import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';
-import { coreTokens, PluginLoader } from '../../../src/di/index.js';
+import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
 
 import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
 
 interface PrivateContext extends ChildProcessContext {
-  [coreTokens.pluginLoader]: PluginLoader;
+  [coreTokens.pluginsByKind]: PluginLoader;
 }
 
 describe(ChildProcessProxyWorker.name, () => {
@@ -47,6 +47,7 @@ describe(ChildProcessProxyWorker.name, () => {
   let logMock: Mock<Logger>;
   let originalProcessSend: typeof process.send;
   let processes: NodeJS.MessageListener[];
+  let loadedPlugins: LoadedPlugins;
   let pluginModulePaths: string[];
   const workingDir = 'working dir';
 
@@ -54,9 +55,8 @@ describe(ChildProcessProxyWorker.name, () => {
     injectorMock = factory.injector();
     createInjectorStub = sinon.stub();
     createInjectorStub.returns(injectorMock);
-    injectorMock.injectClass.withArgs(HelloClass).returns(new HelloClass(testInjector.options));
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
-    injectorMock.resolve.withArgs(coreTokens.pluginLoader).returns(pluginLoaderMock);
+    injectorMock.injectClass.withArgs(PluginLoader).returns(pluginLoaderMock).withArgs(HelloClass).returns(new HelloClass(testInjector.options));
     processes = [];
     logMock = currentLogMock();
     processOnStub = sinon.stub(process, 'on');
@@ -65,6 +65,14 @@ describe(ChildProcessProxyWorker.name, () => {
     processRemoveListenerStub = sinon.stub(process, 'removeListener');
     processSendStub = sinon.stub();
     pluginModulePaths = ['plugin', 'paths'];
+    loadedPlugins = {
+      pluginModulePaths,
+      pluginsByKind: new Map<PluginKind, Array<Plugin<PluginKind>>>([
+        [PluginKind.Reporter, [{ kind: PluginKind.Reporter, name: 'rep', factory: factory.reporter }]],
+      ]),
+      schemaContributions: [],
+    };
+    pluginLoaderMock.load.resolves(loadedPlugins);
     // process.send is normally undefined
     originalProcessSend = process.send;
     process.send = processSendStub;
@@ -103,7 +111,7 @@ describe(ChildProcessProxyWorker.name, () => {
       await processOnMessage(initMessage);
       expect(sut.realSubject).instanceOf(HelloClass);
       sinon.assert.calledWithExactly(injectorMock.provideValue, commonTokens.options, initMessage.options);
-      sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.pluginLoader, PluginLoader);
+      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
     });
 
     it('should change the current working directory', async () => {

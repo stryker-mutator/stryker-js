@@ -1,10 +1,10 @@
 import path from 'path';
-import { readdirSync } from 'fs';
+import fs from 'fs';
 import { fileURLToPath, pathToFileURL, URL } from 'url';
 
 import { Logger } from '@stryker-mutator/api/logging';
-import { tokens, commonTokens, Plugin, PluginKind, Plugins } from '@stryker-mutator/api/plugin';
-import { notEmpty } from '@stryker-mutator/util';
+import { tokens, commonTokens, Plugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { notEmpty, propertyPath } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 
@@ -19,122 +19,138 @@ interface SchemaValidationContribution {
 }
 
 /**
+ * Represents a collection of loaded plugins and metadata
+ */
+export interface LoadedPlugins {
+  /**
+   * The JSON schema contributions loaded
+   */
+  schemaContributions: Array<Record<string, unknown>>;
+  /**
+   * The actual Stryker plugins loaded, sorted by type
+   */
+  pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>>;
+  /**
+   * The import specifiers or full URL paths to the actual plugins
+   */
+  pluginModulePaths: string[];
+}
+
+/**
  * Can resolve modules and pull them into memory
  */
 export class PluginLoader {
-  private readonly pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>> = new Map();
-  private readonly contributedValidationSchemas: Array<Record<string, unknown>> = [];
-
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
   /**
-   * Loads modules based on configured module descriptors.
-   * Returns the full module paths of the modules that have been loaded.
+   * Loads plugins based on configured plugin descriptors.
+   * A plugin descriptor can be:
+   *  * A full url: "file:///home/nicojs/github/my-plugin.js"
+   *  * An absolute file path: "/home/nicojs/github/my-plugin.js"
+   *  * A relative path: "./my-plugin.js"
+   *  * A bare import expression: "@stryker-mutator/karma-runner"
+   *  * A simple glob expression (only wild cards are supported): "@stryker-mutator/*"
    */
-  public async load(pluginDescriptors: readonly string[]): Promise<readonly string[]> {
-    const plugins = this.resolvePlugins(pluginDescriptors);
-    await Promise.all(plugins.map((moduleName) => this.loadPlugin(moduleName)));
-    return plugins;
-  }
+  public async load(pluginDescriptors: readonly string[]): Promise<LoadedPlugins> {
+    const pluginModules = await this.resolvePluginModules(pluginDescriptors);
+    const loadedPluginModules = (
+      await Promise.all(
+        pluginModules.map(async (moduleName) => {
+          const plugin = await this.loadPlugin(moduleName);
+          return {
+            ...plugin,
+            moduleName,
+          };
+        })
+      )
+    ).filter(notEmpty);
 
-  public resolveValidationSchemaContributions(): Array<Record<string, unknown>> {
-    return this.contributedValidationSchemas;
-  }
+    const result: LoadedPlugins = { schemaContributions: [], pluginsByKind: new Map<PluginKind, Array<Plugin<PluginKind>>>(), pluginModulePaths: [] };
 
-  public getValidationSchemaContributions(): Array<Record<string, unknown>> {
-    return this.contributedValidationSchemas;
-  }
-
-  public resolve<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
-    const plugins = this.pluginsByKind.get(kind);
-    if (plugins) {
-      const pluginFound = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
-      if (pluginFound) {
-        return pluginFound as Plugins[T];
-      } else {
-        throw new Error(
-          `Cannot load ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
-        );
+    loadedPluginModules.forEach(({ plugins, schemaContribution, moduleName }) => {
+      if (plugins) {
+        result.pluginModulePaths.push(moduleName);
+        plugins.forEach((plugin) => {
+          const pluginsForKind = result.pluginsByKind.get(plugin.kind);
+          if (pluginsForKind) {
+            pluginsForKind.push(plugin);
+          } else {
+            result.pluginsByKind.set(plugin.kind, [plugin]);
+          }
+        });
       }
-    } else {
-      throw new Error(`Cannot load ${kind} plugin "${name}". In fact, no ${kind} plugins were loaded. Did you forget to install it?`);
-    }
+      if (schemaContribution) {
+        result.schemaContributions.push(schemaContribution);
+      }
+    });
+    return result;
   }
 
-  private resolvePlugins(pluginDescriptors: readonly string[]): string[] {
-    return pluginDescriptors
-      .flatMap((pluginExpression) => {
-        if (typeof pluginExpression === 'string') {
+  private async resolvePluginModules(pluginDescriptors: readonly string[]): Promise<string[]> {
+    return (
+      await Promise.all(
+        pluginDescriptors.map(async (pluginExpression) => {
           if (pluginExpression.includes('*')) {
-            return this.globPlugins(pluginExpression);
+            return await this.globPluginModules(pluginExpression);
           } else if (path.isAbsolute(pluginExpression) || pluginExpression.startsWith('.')) {
             return pathToFileURL(path.resolve(pluginExpression)).toString();
           } else {
-            // Bare plugin expression, like "@stryker-mutator/mocha-runner"
+            // Bare plugin expression like "@stryker-mutator/mocha-runner" (or file URL)
             return pluginExpression;
           }
-        } else {
-          this.log.warn('Ignoring plugin %s, as its not a string type', pluginExpression);
-          return;
-        }
-      })
-      .filter(notEmpty);
+        })
+      )
+    )
+      .filter(notEmpty)
+      .flat();
   }
 
-  private globPlugins(pluginExpression: string) {
+  private async globPluginModules(pluginExpression: string) {
     const { org, pkg } = parsePluginExpression(pluginExpression);
 
     const pluginDirectory = path.resolve(fileURLToPath(new URL('../../../../../', import.meta.url)), org);
     const regexp = new RegExp('^' + pkg.replace('*', '.*'));
-
     this.log.debug('Loading %s from %s', pluginExpression, pluginDirectory);
-    const plugins = readdirSync(pluginDirectory)
+    const plugins = (await fs.promises.readdir(pluginDirectory))
       .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
       .map((pluginName) => `${org.length ? `${org}/` : ''}${pluginName}`);
     if (plugins.length === 0) {
-      this.log.warn('Expression" %s" not resulted in plugins to load.', pluginExpression);
+      this.log.warn('Expression "%s" not resulted in plugins to load.', pluginExpression);
     }
     plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));
     return plugins;
   }
 
-  private async loadPlugin(name: string): Promise<void> {
-    this.log.debug(`Loading plugins ${name}`);
+  private async loadPlugin(
+    descriptor: string
+  ): Promise<{ plugins: Array<Plugin<PluginKind>> | undefined; schemaContribution: Record<string, unknown> | undefined } | undefined> {
+    this.log.debug('Loading plugin %s', descriptor);
     try {
-      const module = await fileUtils.importModule(name);
-      if (this.isPluginModule(module)) {
-        module.strykerPlugins.forEach((plugin) => this.registerPlugin(plugin));
-      }
-      if (this.hasValidationSchemaContribution(module)) {
-        this.contributedValidationSchemas.push(module.strykerValidationSchema);
+      const module = await fileUtils.importModule(descriptor);
+      const plugins = isPluginModule(module) ? module.strykerPlugins : undefined;
+      const schemaContribution = hasValidationSchemaContribution(module) ? module.strykerValidationSchema : undefined;
+      if (plugins || schemaContribution) {
+        return {
+          plugins,
+          schemaContribution,
+        };
+      } else {
+        this.log.warn(
+          'Module "%s" did not contribute a StrykerJS plugin. It didn\'t export a "%s" or "%s".',
+          descriptor,
+          propertyPath<PluginModule>('strykerPlugins'),
+          propertyPath<SchemaValidationContribution>('strykerValidationSchema')
+        );
       }
     } catch (e: any) {
-      if (e.code === 'MODULE_NOT_FOUND' && e.message.indexOf(name) !== -1) {
-        this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?\n' + '  npm install %s --save-dev', name, name);
+      if (e.code === 'ERR_MODULE_NOT_FOUND' && e.message.indexOf(descriptor) !== -1) {
+        this.log.warn('Cannot find plugin "%s".\n  Did you forget to install it ?', descriptor);
       } else {
-        this.log.warn('Error during loading "%s" plugin:\n  %s', name, e.message);
+        this.log.warn('Error during loading "%s" plugin:\n  %s', descriptor, e.message);
       }
     }
-  }
-
-  private registerPlugin(plugin: Plugin<PluginKind>) {
-    let plugins = this.pluginsByKind.get(plugin.kind);
-    if (!plugins) {
-      plugins = [];
-      this.pluginsByKind.set(plugin.kind, plugins);
-    }
-    plugins.push(plugin);
-  }
-
-  private isPluginModule(module: unknown): module is PluginModule {
-    const pluginModule = module as PluginModule;
-    return Array.isArray(pluginModule?.strykerPlugins);
-  }
-
-  private hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
-    const pluginModule = module as SchemaValidationContribution;
-    return typeof pluginModule?.strykerValidationSchema === 'object';
+    return;
   }
 }
 
@@ -157,4 +173,14 @@ function parsePluginExpression(pluginExpression: string) {
       pkg: parts[0],
     };
   }
+}
+
+function isPluginModule(module: unknown): module is PluginModule {
+  const pluginModule = module as Partial<PluginModule>;
+  return Array.isArray(pluginModule.strykerPlugins);
+}
+
+function hasValidationSchemaContribution(module: unknown): module is SchemaValidationContribution {
+  const pluginModule = module as Partial<SchemaValidationContribution>;
+  return typeof pluginModule.strykerValidationSchema === 'object';
 }

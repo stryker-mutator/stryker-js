@@ -34,19 +34,18 @@ export class PrepareExecutor {
     // Read the config file
     const configReaderInjector = this.injector
       .provideValue(coreTokens.validationSchema, strykerCoreSchema)
-      .provideClass(coreTokens.optionsValidator, OptionsValidator)
-      .provideClass(coreTokens.pluginLoader, PluginLoader);
+      .provideClass(coreTokens.optionsValidator, OptionsValidator);
     const configReader = configReaderInjector.injectClass(ConfigReader);
     const options: StrykerOptions = await configReader.readConfig(cliOptions);
 
     // Load plugins
-    const pluginLoader = configReaderInjector.resolve(coreTokens.pluginLoader);
+    const pluginLoader = configReaderInjector.injectClass(PluginLoader);
     const pluginDescriptors = [...options.plugins, reporterPluginsFileUrl, ...options.appendPlugins];
-    const pluginModulePaths = await pluginLoader.load(pluginDescriptors);
+    const loadedPlugins = await pluginLoader.load(pluginDescriptors);
 
     // Revalidate the options with plugin schema additions
     const metaSchemaBuilder = configReaderInjector.injectClass(MetaSchemaBuilder);
-    const metaSchema = metaSchemaBuilder.buildMetaSchema(pluginLoader.getValidationSchemaContributions());
+    const metaSchema = metaSchemaBuilder.buildMetaSchema(loadedPlugins.schemaContributions);
     const optionsValidatorInjector = configReaderInjector.provideValue(coreTokens.validationSchema, metaSchema);
     const validator: OptionsValidator = optionsValidatorInjector.injectClass(OptionsValidator);
     validator.validate(options, true);
@@ -61,6 +60,7 @@ export class PrepareExecutor {
     const inputFileResolverInjector = optionsValidatorInjector
       .provideValue(commonTokens.options, options)
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
+      .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind)
       .provideClass(coreTokens.pluginCreator, PluginCreator)
       .provideClass(coreTokens.reporter, BroadcastReporter);
     const inputFiles = await inputFileResolverInjector.injectClass(InputFileResolver).resolve();
@@ -75,7 +75,7 @@ export class PrepareExecutor {
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
-        .provideValue(coreTokens.pluginModulePaths, pluginModulePaths);
+        .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths);
     } else {
       throw new ConfigError('No input files found.');
     }

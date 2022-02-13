@@ -239,6 +239,19 @@ describe(MutantTestPlanner.name, () => {
       expect(result.runOptions.testFilter).undefined;
     });
 
+    it('should set activeMutant on the runOptions', () => {
+      // Arrange
+      const mutants = [Object.freeze(factory.mutant({ id: '1' }))];
+      const dryRunResult = factory.completeDryRunResult({ tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })] });
+
+      // Act
+      const [result] = act(dryRunResult, mutants);
+
+      // Assert
+      assertIsRunPlan(result);
+      expect(result.runOptions.activeMutant).deep.eq(mutants[0]);
+    });
+
     it('should calculate the hitLimit based on total hits (perTest and static)', () => {
       // Arrange
       const mutant = factory.mutant({ id: '1' });

@@ -13,16 +13,14 @@ import {
 } from '@stryker-mutator/api/plugin';
 import { InjectableFunction, InjectableClass } from 'typed-inject';
 
-import { PluginLoader } from './plugin-loader.js';
-
 import { coreTokens } from './index.js';
 
 export class PluginCreator {
-  public static readonly inject = tokens(coreTokens.pluginLoader, commonTokens.injector);
-  constructor(private readonly pluginLoader: Pick<PluginLoader, 'resolve'>, private readonly injector: Injector<PluginContext>) {}
+  public static readonly inject = tokens(coreTokens.pluginsByKind, commonTokens.injector);
+  constructor(private readonly pluginsByKind: Map<PluginKind, Array<Plugin<PluginKind>>>, private readonly injector: Injector<PluginContext>) {}
 
   public create<TPlugin extends keyof Plugins>(kind: TPlugin, name: string): PluginInterfaces[TPlugin] {
-    const plugin = this.pluginLoader.resolve(kind, name);
+    const plugin = this.findPlugin(kind, name);
     if (isFactoryPlugin(plugin)) {
       return this.injector.injectFunction(
         plugin.factory as InjectableFunction<PluginContext, PluginInterfaces[TPlugin], Array<InjectionToken<PluginContext>>>
@@ -33,6 +31,22 @@ export class PluginCreator {
       );
     } else {
       throw new Error(`Plugin "${kind}:${name}" could not be created, missing "factory" or "injectableClass" property.`);
+    }
+  }
+
+  private findPlugin<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
+    const plugins = this.pluginsByKind.get(kind);
+    if (plugins) {
+      const pluginFound = plugins.find((plugin) => plugin.name.toLowerCase() === name.toLowerCase());
+      if (pluginFound) {
+        return pluginFound as Plugins[T];
+      } else {
+        throw new Error(
+          `Cannot find ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`
+        );
+      }
+    } else {
+      throw new Error(`Cannot find ${kind} plugin "${name}". In fact, no ${kind} plugins were loaded. Did you forget to install it?`);
     }
   }
 }

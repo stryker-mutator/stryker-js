@@ -9,7 +9,7 @@ import { PartialStrykerOptions, File, LogLevel } from '@stryker-mutator/api/core
 import { BaseContext } from '@stryker-mutator/api/plugin';
 
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
-import { coreTokens, PluginLoader } from '../../../src/di/index.js';
+import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
 import { InputFileResolver, InputFileCollection } from '../../../src/input/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
@@ -21,7 +21,7 @@ import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 interface AllContext extends MutantInstrumenterContext {
   [coreTokens.validationSchema]: unknown;
   [coreTokens.optionsValidator]: OptionsValidator;
-  [coreTokens.pluginLoader]: PluginLoader;
+  [coreTokens.pluginsByKind]: PluginLoader;
 }
 
 describe(PrepareExecutor.name, () => {
@@ -36,6 +36,7 @@ describe(PrepareExecutor.name, () => {
   let inputFileResolverMock: sinon.SinonStubbedInstance<InputFileResolver>;
   let inputFiles: InputFileCollection;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
+  let loadedPlugins: LoadedPlugins;
   let sut: PrepareExecutor;
 
   beforeEach(() => {
@@ -46,17 +47,17 @@ describe(PrepareExecutor.name, () => {
     metaSchemaBuilderMock = sinon.createStubInstance(MetaSchemaBuilder);
     configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
+    loadedPlugins = { pluginModulePaths: [], pluginsByKind: new Map(), schemaContributions: [] };
+    pluginLoaderMock.load.resolves(loadedPlugins);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     inputFileResolverMock = sinon.createStubInstance(InputFileResolver);
     optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<AllContext>>;
-    injectorMock.resolve
-      .withArgs(coreTokens.pluginLoader)
-      .returns(pluginLoaderMock)
-      .withArgs(coreTokens.temporaryDirectory)
-      .returns(temporaryDirectoryMock);
+    injectorMock.resolve.withArgs(coreTokens.temporaryDirectory).returns(temporaryDirectoryMock);
     injectorMock.injectClass
+      .withArgs(PluginLoader)
+      .returns(pluginLoaderMock)
       .withArgs(OptionsValidator)
       .returns(optionsValidatorMock)
       .withArgs(MetaSchemaBuilder)
@@ -89,7 +90,7 @@ describe(PrepareExecutor.name, () => {
   it('should provided the loaded modules as pluginModulePaths', async () => {
     // Arrange
     const expectedPluginPaths = ['@stryker-mutator/core', path.resolve('./my-custom-plugin.js'), 'appended'];
-    pluginLoaderMock.load.resolves(expectedPluginPaths);
+    loadedPlugins.pluginModulePaths.push(...expectedPluginPaths);
 
     // Act
     await sut.execute(cliOptions);
@@ -102,7 +103,7 @@ describe(PrepareExecutor.name, () => {
     // Arrange
     const contributions = [{ some: 'schema contributions' }];
     const metaSchema: JSONSchema7 = { properties: { meta: { $comment: 'schema' } } };
-    pluginLoaderMock.getValidationSchemaContributions.returns(contributions);
+    loadedPlugins.schemaContributions.push(...contributions);
     metaSchemaBuilderMock.buildMetaSchema.returns(metaSchema);
 
     // Act
