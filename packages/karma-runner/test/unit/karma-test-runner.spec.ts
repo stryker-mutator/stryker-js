@@ -119,6 +119,11 @@ describe(KarmaTestRunner.name, () => {
         "Karma exited prematurely with exit code 1. Please run stryker with `--logLevel trace` to see the karma logging and figure out what's wrong."
       );
     });
+
+    it('should reject on karma version prior to 6.3.0', async () => {
+      sinon.stub(karma, 'VERSION').value('6.2.9');
+      await expect(sut.init()).rejectedWith('Your karma version (6.2.9) is not supported. Please install 6.3.0 or higher');
+    });
   });
 
   describe('dryRun', () => {

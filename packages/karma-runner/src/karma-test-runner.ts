@@ -1,3 +1,4 @@
+import semver from 'semver';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
@@ -25,6 +26,8 @@ export function createKarmaTestRunner(injector: Injector<PluginContext>): KarmaT
   return injector.provideFactory(pluginTokens.projectStarter, createProjectStarter).injectClass(KarmaTestRunner);
 }
 
+const MIN_KARMA_VERSION = '6.3.0';
+
 export class KarmaTestRunner implements TestRunner {
   private exitPromise: Promise<number> | undefined;
   private runConfig!: Config;
@@ -45,6 +48,10 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
+    const version = semver.coerce(karma.VERSION);
+    if (!version || semver.lt(version, MIN_KARMA_VERSION)) {
+      throw new Error(`Your karma version (${version}) is not supported. Please install ${MIN_KARMA_VERSION} or higher`);
+    }
     const browsersReadyPromise = StrykerReporter.instance.whenBrowsersReady();
     const { exitPromise } = await this.starter.start();
     this.exitPromise = exitPromise;

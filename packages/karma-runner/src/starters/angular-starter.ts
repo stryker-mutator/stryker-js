@@ -6,10 +6,8 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
 import { NgTestArguments } from '../../src-generated/karma-runner-options.js';
-
 import { strykerKarmaConfigPath } from '../karma-plugins/index.js';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../karma-runner-options-with-stryker-options.js';
-
 import { pluginTokens } from '../plugin-tokens.js';
 
 import { StartedProject } from './started-project.js';
