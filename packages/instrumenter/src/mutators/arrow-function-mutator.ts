@@ -1,6 +1,8 @@
-import * as types from '@babel/types';
+import babel from '@babel/core';
 
-import { NodeMutator } from '.';
+const { types } = babel;
+
+import { NodeMutator } from './index.js';
 
 export const arrowFunctionMutator: NodeMutator = {
   name: 'ArrowFunction',

@@ -4,9 +4,9 @@ import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutato
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaOptions } from '../helpers/factories.js';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 

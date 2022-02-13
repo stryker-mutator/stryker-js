@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 
-import { ParserContext } from '../../src/parsers/parser-context';
-import { PrinterContext } from '../../src/printers';
-import { TransformerContext } from '../../src/transformers';
+import { ParserContext } from '../../src/parsers/parser-context.js';
+import { PrinterContext } from '../../src/printers/index.js';
+import { TransformerContext } from '../../src/transformers/index.js';
 
-import { createTransformerOptions } from './factories';
+import { createTransformerOptions } from './factories.js';
 
 export function parserContextStub(): sinon.SinonStubbedInstance<ParserContext> {
   return {

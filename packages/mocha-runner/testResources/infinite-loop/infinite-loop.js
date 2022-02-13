@@ -7,4 +7,4 @@ function loop(n, action) {
   }
 }
 
-module.exports = loop;
+export default loop;

@@ -5,12 +5,12 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
-import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { CommandTestRunner } from '../test-runner/command-test-runner.js';
 
-import { PresetConfiguration } from './presets/preset-configuration';
-import { PromptOption } from './prompt-option';
+import { PresetConfiguration } from './presets/preset-configuration.js';
+import { PromptOption } from './prompt-option.js';
 
-import { initializerTokens } from '.';
+import { initializerTokens } from './index.js';
 
 const STRYKER_JS_CONFIG_FILE = 'stryker.conf.js';
 const STRYKER_JSON_CONFIG_FILE = 'stryker.conf.json';

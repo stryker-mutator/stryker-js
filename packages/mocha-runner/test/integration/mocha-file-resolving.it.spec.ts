@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { MochaOptionsLoader } from '../../src/mocha-options-loader';
-import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
-import { MochaAdapter } from '../../src/mocha-adapter';
+import { MochaOptionsLoader } from '../../src/mocha-options-loader.js';
+import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
+import { MochaAdapter } from '../../src/mocha-adapter.js';
 
 describe('Mocha file resolving integration', () => {
   it('should resolve test files while respecting "files", "spec", "extension" and "exclude" properties', () => {

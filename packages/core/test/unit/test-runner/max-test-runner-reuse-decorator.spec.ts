@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator';
-import { MaxTestRunnerReuseDecorator } from '../../../src/test-runner/max-test-runner-reuse-decorator';
+import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator.js';
+import { MaxTestRunnerReuseDecorator } from '../../../src/test-runner/max-test-runner-reuse-decorator.js';
 
 describe(MaxTestRunnerReuseDecorator.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;

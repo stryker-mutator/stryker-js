@@ -5,10 +5,10 @@ import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner';
-import { coreTokens } from '../../../src/di';
-import { Sandbox } from '../../../src/sandbox';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants';
+import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { Sandbox } from '../../../src/sandbox/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants/index.js';
 
 const TIME_OVERHEAD_MS = 501;
 
@@ -237,6 +237,19 @@ describe(MutantTestPlanner.name, () => {
       expect(result.mutant.static).true;
       expect(result.runOptions.reloadEnvironment).true;
       expect(result.runOptions.testFilter).undefined;
+    });
+
+    it('should set activeMutant on the runOptions', () => {
+      // Arrange
+      const mutants = [Object.freeze(factory.mutant({ id: '1' }))];
+      const dryRunResult = factory.completeDryRunResult({ tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })] });
+
+      // Act
+      const [result] = act(dryRunResult, mutants);
+
+      // Assert
+      assertIsRunPlan(result);
+      expect(result.runOptions.activeMutant).deep.eq(mutants[0]);
     });
 
     it('should calculate the hitLimit based on total hits (perTest and static)', () => {

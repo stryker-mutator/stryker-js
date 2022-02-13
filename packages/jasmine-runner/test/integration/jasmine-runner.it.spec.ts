@@ -2,11 +2,11 @@ import { factory, assertions, testInjector, fsPromisesCp } from '@stryker-mutato
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner';
-import { expectTestResultsToEqual } from '../helpers/assertions';
-import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner.js';
+import { expectTestResultsToEqual } from '../helpers/assertions.js';
+import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
-import { jasmineInitSuccessResults } from './helpers';
+import { jasmineInitSuccessResults } from './helpers.js';
 
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;

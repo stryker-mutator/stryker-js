@@ -9,10 +9,10 @@ import { expect } from 'chai';
 
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import * as pluginTokens from '../../src/plugin-tokens';
-import { CucumberTestRunner } from '../../src';
-import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { CucumberTestRunner } from '../../src/index.js';
+import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running in an instrumented example project', () => {
   let options: CucumberRunnerWithStrykerOptions;

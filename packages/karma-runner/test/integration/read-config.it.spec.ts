@@ -2,8 +2,8 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('read config integration', () => {
   let sut: KarmaTestRunner | undefined;
@@ -16,7 +16,7 @@ describe('read config integration', () => {
     testInjector.options.karma = {
       configFile: resolveTestResource('configs', 'mocha-client-options-karma.conf.js'),
     };
-    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
     const dryRunResult = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(dryRunResult);
@@ -32,7 +32,7 @@ describe('read config integration', () => {
     testInjector.options.karma = {
       configFile: resolveTestResource('configs', 'jasmine-client-options-karma.conf.js'),
     };
-    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
     const dryRunResult = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(dryRunResult);

@@ -8,11 +8,8 @@
     "build": "react-scripts build",
     "test:unit": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

@@ -5,20 +5,15 @@ import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import { coreTokens } from '../di';
-import { PluginCreator } from '../di/plugin-creator';
+import { coreTokens, PluginCreator } from '../di/index.js';
 
-import { StrictReporter } from './strict-reporter';
+import { StrictReporter } from './strict-reporter.js';
 
 export class BroadcastReporter implements StrictReporter {
-  public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreatorReporter, commonTokens.logger);
+  public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreator, commonTokens.logger);
 
   public readonly reporters: Record<string, Reporter>;
-  constructor(
-    private readonly options: StrykerOptions,
-    private readonly pluginCreator: PluginCreator<PluginKind.Reporter>,
-    private readonly log: Logger
-  ) {
+  constructor(private readonly options: StrykerOptions, private readonly pluginCreator: PluginCreator, private readonly log: Logger) {
     this.reporters = {};
     this.options.reporters.forEach((reporterName) => this.createReporter(reporterName));
     this.logAboutReporters();
@@ -29,7 +24,7 @@ export class BroadcastReporter implements StrictReporter {
       this.log.info('Detected that current console does not support the "progress" reporter, downgrading to "progress-append-only" reporter');
       reporterName = 'progress-append-only';
     }
-    this.reporters[reporterName] = this.pluginCreator.create(reporterName);
+    this.reporters[reporterName] = this.pluginCreator.create(PluginKind.Reporter, reporterName);
   }
 
   private logAboutReporters(): void {

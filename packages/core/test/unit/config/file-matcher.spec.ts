@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { FileMatcher } from '../../../src/config';
+import { FileMatcher } from '../../../src/config/index.js';
 
 describe(FileMatcher.name, () => {
   describe(FileMatcher.prototype.matches.name, () => {

@@ -1,16 +1,16 @@
-export { File } from './file';
-export type { Position } from './position';
-export type { Location } from './location';
-export * from './mutant';
-export * from '../../src-generated/stryker-core';
-export * from './report-types';
-export * from './stryker-options-schema';
-export * from './partial-stryker-options';
-export * from './instrument';
-export * from './mutant-coverage';
+export { File } from './file.js';
+export type { Position } from './position.js';
+export type { Location } from './location.js';
+export * from './mutant.js';
+export * from '../../src-generated/stryker-core.js';
+export * from './report-types.js';
+export * from './stryker-options-schema.js';
+export * from './partial-stryker-options.js';
+export * from './instrument.js';
+export * from './mutant-coverage.js';
 
 /**
  * Re-export all members from "mutation-testing-report-schema" under the `schema` key
  */
 export * as schema from 'mutation-testing-report-schema/api';
-export * from './mutation-range';
+export * from './mutation-range.js';

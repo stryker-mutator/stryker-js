@@ -7,10 +7,10 @@ import {
 } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import * as pluginTokens from '../../src/plugin-tokens';
-import { CucumberTestRunner } from '../../src';
-import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { CucumberTestRunner } from '../../src/index.js';
+import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   const infiniteLoopFileName = path.join('features', 'infinite-loop.feature');

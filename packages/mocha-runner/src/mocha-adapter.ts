@@ -5,9 +5,9 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { RootHookObject } from 'mocha';
 
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions } from '../src-generated/mocha-runner-options.js';
 
-import { LibWrapper } from './lib-wrapper';
+import { LibWrapper } from './lib-wrapper.js';
 
 /**
  * A class that contains polyfills for different versions of mocha.

@@ -5,12 +5,12 @@ import sinon from 'sinon';
 import { KilledMutantRunResult, MutantRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { MochaTestRunner } from '../../src/mocha-test-runner';
-import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter';
-import { MochaAdapter } from '../../src/mocha-adapter';
-import * as pluginTokens from '../../src/plugin-tokens';
-import { MochaOptionsLoader } from '../../src/mocha-options-loader';
-import { createMochaOptions } from '../helpers/factories';
+import { MochaTestRunner } from '../../src/mocha-test-runner.js';
+import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter.js';
+import { MochaAdapter } from '../../src/mocha-adapter.js';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { MochaOptionsLoader } from '../../src/mocha-options-loader.js';
+import { createMochaOptions } from '../helpers/factories.js';
 
 describe(MochaTestRunner.name, () => {
   let directoryRequireCacheMock: sinon.SinonStubbedInstance<DirectoryRequireCache>;

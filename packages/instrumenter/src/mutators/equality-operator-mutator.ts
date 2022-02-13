@@ -1,6 +1,8 @@
-import { types } from '@babel/core';
+import babel from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
+
+const { types: t } = babel;
 
 const operators = {
   '<': ['<=', '>='],
@@ -22,7 +24,7 @@ export const equalityOperatorMutator: NodeMutator = {
   *mutate(path) {
     if (path.isBinaryExpression() && isEqualityOperator(path.node.operator)) {
       for (const mutableOperator of operators[path.node.operator]) {
-        const replacement = types.cloneNode(path.node, true);
+        const replacement = t.cloneNode(path.node, true);
         replacement.operator = mutableOperator;
         yield replacement;
       }

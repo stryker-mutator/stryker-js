@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "attach",
-      "name": "Attach to Port",
+      "name": "🧲 Attach to Port",
       "address": "localhost",
       "port": 9229,
       "skipFiles": [

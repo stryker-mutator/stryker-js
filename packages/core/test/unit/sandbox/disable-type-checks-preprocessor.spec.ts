@@ -6,8 +6,8 @@ import sinon from 'sinon';
 
 import { expect } from 'chai';
 
-import { coreTokens } from '../../../src/di';
-import { DisableTypeChecksPreprocessor } from '../../../src/sandbox/disable-type-checks-preprocessor';
+import { coreTokens } from '../../../src/di/index.js';
+import { DisableTypeChecksPreprocessor } from '../../../src/sandbox/disable-type-checks-preprocessor.js';
 
 describe(DisableTypeChecksPreprocessor.name, () => {
   let sut: DisableTypeChecksPreprocessor;

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { booleanLiteralMutator as sut } from '../../../src/mutators/boolean-literal-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { booleanLiteralMutator as sut } from '../../../src/mutators/boolean-literal-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "BooleanLiteral"', () => {

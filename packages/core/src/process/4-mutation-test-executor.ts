@@ -7,14 +7,14 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
 
-import { coreTokens } from '../di';
-import { StrictReporter } from '../reporters/strict-reporter';
-import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
-import { Timer } from '../utils/timer';
-import { Pool, ConcurrencyTokenProvider } from '../concurrent';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner, PlanKind } from '../mutants';
+import { coreTokens } from '../di/index.js';
+import { StrictReporter } from '../reporters/strict-reporter.js';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
+import { Timer } from '../utils/timer.js';
+import { Pool, ConcurrencyTokenProvider } from '../concurrent/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner, PlanKind } from '../mutants/index.js';
 
-import { DryRunContext } from './3-dry-run-executor';
+import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;

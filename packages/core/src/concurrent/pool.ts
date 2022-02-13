@@ -5,7 +5,7 @@ import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { coreTokens } from '../di';
+import { coreTokens } from '../di/index.js';
 
 const MAX_CONCURRENT_INIT = 2;
 

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { deepFreeze } from '../../src/immutable';
+import { deepFreeze } from '../../src/immutable.js';
 
 describe(deepFreeze.name, () => {
   it('should not change the input object', () => {

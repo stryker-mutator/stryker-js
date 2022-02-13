@@ -1,8 +1,9 @@
-import { NodePath } from '@babel/core';
-import * as types from '@babel/types';
+import babel, { NodePath, type types as t } from '@babel/core';
 import weaponRegex from 'weapon-regex';
 
-import { NodeMutator } from '.';
+import { NodeMutator } from './index.js';
+
+const { types } = babel;
 
 /**
  * Checks that a string literal is an obvious regex string literal
@@ -10,7 +11,7 @@ import { NodeMutator } from '.';
  * @example
  * new RegExp("\\d{4}");
  */
-function isObviousRegexString(path: NodePath<types.StringLiteral>) {
+function isObviousRegexString(path: NodePath<t.StringLiteral>) {
   return (
     path.parentPath.isNewExpression() &&
     types.isIdentifier(path.parentPath.node.callee) &&

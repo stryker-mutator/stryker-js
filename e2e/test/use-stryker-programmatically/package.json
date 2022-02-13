@@ -2,7 +2,8 @@
   "name": "use-stryker-programmatically",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "test": "node --require ../../tasks/ts-node-register.js usingStryker.ts"
+    "test": "node run-stryker.js"
   }
 }

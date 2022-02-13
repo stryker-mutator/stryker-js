@@ -4,6 +4,7 @@
   "version": "5.6.1",
   "description": "A helper package for testing",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {},
   "repository": {
     "type": "git",

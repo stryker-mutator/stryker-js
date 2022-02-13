@@ -65,6 +65,7 @@
     "typescript.tsdk": "parent/node_modules/typescript/lib",
     "search.exclude": {
       "**/node_modules": true,
+      "**/coverage": true,
       "**/bower_components": true,
       "**/*.code-search": true,
       "**/*.tsbuildinfo": true,
@@ -94,20 +95,24 @@
       "source.fixAll.eslint": true
     },
     "cSpell.words": [
+      "Appender",
+      "Appenders",
       "Errored",
-      "Expirable",
-      "Instrumenter",
-      "Unserializable",
-      "Unserializables",
-      "Whitespaces",
       "execa",
+      "Expirable",
+      "globbing",
+      "Instrumenter",
       "memfs",
       "mutables",
       "mutators",
       "nocheck",
       "preprocessors",
+      "promisified",
       "quasis",
-      "serializable"
+      "serializable",
+      "Unserializable",
+      "Unserializables",
+      "Whitespaces"
     ]
   },
   "extensions": {

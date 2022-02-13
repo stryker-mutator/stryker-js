@@ -4,9 +4,9 @@ import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutato
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src';
-import { createMochaOptions } from '../helpers/factories';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src/index.js';
+import { createMochaOptions } from '../helpers/factories.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running an instrumented project', () => {
   let sut: MochaTestRunner;

@@ -1,1 +1,2 @@
-module.exports = require('../dist/src/jest-plugins/jest-environment-node');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+module.exports = require('../dist/src/jest-plugins/cjs/jest-environment-node');

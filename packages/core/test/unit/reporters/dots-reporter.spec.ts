@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import { MutantStatus } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { DotsReporter } from '../../../src/reporters/dots-reporter';
+import { DotsReporter } from '../../../src/reporters/dots-reporter.js';
 
 describe(DotsReporter.name, () => {
   let sut: DotsReporter;

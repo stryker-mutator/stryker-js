@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 import { expect } from 'chai';
 import log4js from 'log4js';
@@ -7,13 +9,13 @@ import { LogLevel } from '@stryker-mutator/api/core';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { LoggingClientContext } from '../../../src/logging';
-import { createTestRunnerFactory } from '../../../src/test-runner';
-import { sleep } from '../../helpers/test-utils';
-import { coreTokens } from '../../../src/di';
-import { TestRunnerResource } from '../../../src/concurrent';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
+import { sleep } from '../../helpers/test-utils.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
-import { CounterTestRunner } from './additional-test-runners';
+import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
@@ -22,6 +24,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
+  const pluginModulePaths = Object.freeze([additionalTestRunnersFileUrl]);
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -34,14 +37,14 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [require.resolve('./additional-test-runners')];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
-      .provideValue(coreTokens.sandbox, { workingDirectory: __dirname })
+      .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
       .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);

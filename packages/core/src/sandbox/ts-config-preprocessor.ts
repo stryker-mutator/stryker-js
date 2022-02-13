@@ -4,7 +4,7 @@ import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { FilePreprocessor } from './file-preprocessor';
+import { FilePreprocessor } from './file-preprocessor.js';
 
 export interface TSConfig {
   references?: Array<{ path: string }>;
@@ -62,7 +62,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       const tsconfigFile = this.fs.get(tsconfigFileName);
       if (tsconfigFile) {
         this.log.debug('Rewriting file %s', tsconfigFile);
-        const ts = await import('typescript');
+        const { default: ts } = await import('typescript');
         const { config }: { config?: TSConfig } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
         if (config) {
           await this.rewriteExtends(config, tsconfigFileName);
@@ -103,7 +103,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
   }
 
   private async rewriteProjectReferences(config: TSConfig, originTSConfigFileName: string): Promise<void> {
-    const ts = await import('typescript');
+    const { default: ts } = await import('typescript');
     if (Array.isArray(config.references)) {
       for (const reference of config.references) {
         const referencePath = ts.resolveProjectReferencePath(reference);

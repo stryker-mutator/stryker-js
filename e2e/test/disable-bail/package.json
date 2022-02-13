@@ -9,7 +9,7 @@
     "test:jasmine": "jasmine",
     "test:karma": "karma start",
     "test:jest": "jest",
-    "test": "mocha --no-config --no-timeout --require ../../tasks/ts-node-register.js verify/*.ts"
+    "test": "mocha --no-config --no-timeout verify/verify.js"
   },
   "keywords": [],
   "author": "",

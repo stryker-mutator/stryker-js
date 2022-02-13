@@ -11,7 +11,7 @@
     "posttest:not-in-place": "npm run verify",
     "test:in-place": "stryker run stryker.conf.js --inPlace",
     "posttest:in-place": "npm run verify",
-    "verify": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"

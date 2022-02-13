@@ -17,12 +17,6 @@ dist
 dist-test
 packages/*/testResources/tmp
 packages/report.*.json # Ignore heap dumps
-e2e/module/*.js
-e2e/module/*.map
-e2e/module/*.d.ts
-e2e/*.js
-e2e/*.map
-e2e/*.d.ts
 .idea
 *.iml
 *.tmp.txt

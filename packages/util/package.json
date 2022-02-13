@@ -3,12 +3,13 @@
   "version": "5.6.1",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "main": "dist/src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "nyc npm run test:all",
+    "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
     "test:integration": "mocha \"dist/test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
   },
   "repository": {
     "type": "git",

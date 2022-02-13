@@ -1,6 +1,6 @@
 import path from 'path';
 
-import 'source-map-support/register';
+import 'source-map-support/register.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';

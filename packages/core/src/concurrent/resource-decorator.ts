@@ -1,4 +1,4 @@
-import { Resource } from './pool';
+import { Resource } from './pool.js';
 
 export abstract class ResourceDecorator<T extends Resource> implements Resource {
   protected innerResource: T;

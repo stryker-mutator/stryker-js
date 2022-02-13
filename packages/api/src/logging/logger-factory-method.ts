@@ -1,4 +1,4 @@
-import { Logger } from './logger';
+import { Logger } from './logger.js';
 
 /**
  * Represents a factory to get loggers by category name.

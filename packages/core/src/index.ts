@@ -1,5 +1,5 @@
-import { StrykerCli } from './stryker-cli';
-import { Stryker } from './stryker';
+import { StrykerCli } from './stryker-cli.js';
+import { Stryker } from './stryker.js';
 
 export { Stryker, StrykerCli };
 

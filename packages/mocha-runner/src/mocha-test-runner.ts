@@ -18,11 +18,11 @@ import {
 
 import { Context, RootHookObject, Suite } from 'mocha';
 
-import { StrykerMochaReporter } from './stryker-mocha-reporter';
-import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
-import * as pluginTokens from './plugin-tokens';
-import { MochaOptionsLoader } from './mocha-options-loader';
-import { MochaAdapter } from './mocha-adapter';
+import { StrykerMochaReporter } from './stryker-mocha-reporter.js';
+import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options.js';
+import * as pluginTokens from './plugin-tokens.js';
+import { MochaOptionsLoader } from './mocha-options-loader.js';
+import { MochaAdapter } from './mocha-adapter.js';
 
 export class MochaTestRunner implements TestRunner {
   private mocha!: Mocha;

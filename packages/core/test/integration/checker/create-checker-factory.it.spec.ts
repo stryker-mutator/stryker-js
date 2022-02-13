@@ -1,22 +1,24 @@
 import fs from 'fs';
+import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
-import { createCheckerFactory } from '../../../src/checker';
-import { CheckerResource } from '../../../src/concurrent';
-import { coreTokens } from '../../../src/di';
-import { LoggingClientContext } from '../../../src/logging';
+import { createCheckerFactory } from '../../../src/checker/index.js';
+import { CheckerResource } from '../../../src/concurrent/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
 
-import { TwoTimesTheCharm } from './additional-checkers';
+import { TwoTimesTheCharm } from './additional-checkers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
   let createSut: () => CheckerResource;
   let loggingContext: LoggingClientContext;
   let sut: CheckerResource;
   let loggingServer: LoggingServer;
+  let pluginModulePaths: string[];
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -26,11 +28,14 @@ describe(`${createCheckerFactory.name} integration`, () => {
 
   beforeEach(async () => {
     // Make sure there is a logging server listening
+    pluginModulePaths = [new URL('./additional-checkers.js', import.meta.url).toString()];
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [require.resolve('./additional-checkers')];
-    createSut = testInjector.injector.provideValue(coreTokens.loggingContext, loggingContext).injectFunction(createCheckerFactory);
+    createSut = testInjector.injector
+      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
+      .injectFunction(createCheckerFactory);
   });
 
   afterEach(async () => {

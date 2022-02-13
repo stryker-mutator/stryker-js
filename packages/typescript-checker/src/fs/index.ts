@@ -1,1 +1,1 @@
-export * from './hybrid-file-system';
+export * from './hybrid-file-system.js';

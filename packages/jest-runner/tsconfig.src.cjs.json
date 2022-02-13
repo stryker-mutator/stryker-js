@@ -1,0 +1,20 @@
+{
+  // Temp workaround until native support for node's module system is added to typescript (.cts files, so we can move this file back in the src directory)
+  // see https://www.typescriptlang.org/docs/handbook/esm-node.html
+
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "module": "commonjs",
+    "rootDir": "."
+  },
+  "include": ["typings", "src/jest-plugins/cjs", "src/jest-plugins/cjs/package.json"],
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ]
+}

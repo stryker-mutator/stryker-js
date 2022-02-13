@@ -280,7 +280,7 @@ Default: `['@stryker-mutator/*']`<br />
 Command line: `--plugins @stryker-mutator/jasmine-framework,@stryker-mutator/karma-runner`<br />
 Config file: `"plugins": ["@stryker-mutator/jasmine-framework", "@stryker-mutator/karma-runner"]`
 
-With `plugins`, you can add additional Node modules for Stryker to load (or `require`).
+With `plugins`, you can add additional Node modules for Stryker to load (using `import`).
 By default, all `node_modules` starting with `@stryker-mutator/*` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
 you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or use one of the officially supported plugins.

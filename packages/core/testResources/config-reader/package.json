@@ -1,0 +1,4 @@
+{
+  "type": "commonjs",
+  "_": "Should be removed while fixing https://github.com/stryker-mutator/stryker-js/issues/3408"
+}

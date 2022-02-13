@@ -2,8 +2,8 @@ import sinon from 'sinon';
 import { File } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 
-import { MultiPreprocessor } from '../../../src/sandbox/multi-preprocessor';
-import { FilePreprocessor } from '../../../src/sandbox';
+import { MultiPreprocessor } from '../../../src/sandbox/multi-preprocessor.js';
+import { FilePreprocessor } from '../../../src/sandbox/index.js';
 
 describe(MultiPreprocessor.name, () => {
   describe(MultiPreprocessor.prototype.preprocess.name, () => {

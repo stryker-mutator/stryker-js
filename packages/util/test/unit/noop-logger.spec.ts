@@ -1,8 +1,7 @@
 import { expect } from 'chai';
-
 import sinon from 'sinon';
 
-import { noopLogger } from '../../src/noop-logger';
+import { noopLogger } from '../../src/noop-logger.js';
 
 describe('noopLogger', () => {
   it('should not enable any logging', () => {

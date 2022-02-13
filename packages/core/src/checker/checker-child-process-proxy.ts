@@ -1,22 +1,24 @@
+import { URL } from 'url';
+
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
-import { ChildProcessProxy } from '../child-proxy/child-process-proxy';
-import { LoggingClientContext } from '../logging';
-import { Resource } from '../concurrent/pool';
+import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
+import { LoggingClientContext } from '../logging/index.js';
+import { Resource } from '../concurrent/pool.js';
 
-import { CheckerWorker } from './checker-worker';
+import { CheckerWorker } from './checker-worker.js';
 
 export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
-  constructor(options: StrykerOptions, loggingContext: LoggingClientContext) {
+  constructor(options: StrykerOptions, pluginModulePaths: readonly string[], loggingContext: LoggingClientContext) {
     this.childProcess = ChildProcessProxy.create(
-      require.resolve('./checker-worker'),
+      new URL('./checker-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
-      {},
+      pluginModulePaths,
       process.cwd(),
       CheckerWorker,
       options.checkerNodeArgs

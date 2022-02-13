@@ -1,23 +1,24 @@
 import childProcess from 'child_process';
 import fs from 'fs';
+import { syncBuiltinESMExports } from 'module';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
-import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest-client/RestClient.js';
 
-import { initializerTokens } from '../../../src/initializer';
-import { NpmClient } from '../../../src/initializer/npm-client';
-import { PackageInfo } from '../../../src/initializer/package-info';
-import { Preset } from '../../../src/initializer/presets/preset';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
-import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
-import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
-import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
-import { Mock } from '../../helpers/producers';
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
+import { initializerTokens } from '../../../src/initializer/index.js';
+import { NpmClient } from '../../../src/initializer/npm-client.js';
+import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { Preset } from '../../../src/initializer/presets/preset.js';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
+import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
+import { Mock } from '../../helpers/producers.js';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -45,9 +46,10 @@ describe(StrykerInitializer.name, () => {
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     fsExistsSync = sinon.stub(fs, 'existsSync');
-    restClientSearch = sinon.createStubInstance(RestClient);
-    restClientPackage = sinon.createStubInstance(RestClient);
+    restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
+    restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
+    syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
       .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
@@ -254,7 +256,7 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
-    it('should configure the additional settings from the plugins', async () => {
+    it('should annotate the config file with the docs url', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: [],

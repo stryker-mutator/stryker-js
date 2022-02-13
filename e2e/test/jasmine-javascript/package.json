@@ -7,7 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\" \"stryker.log\"",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "Apache-2.0"

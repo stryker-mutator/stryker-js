@@ -1,3 +1,3 @@
-export type { FilePreprocessor } from './file-preprocessor';
-export * from './sandbox';
-export * from './create-preprocessor';
+export type { FilePreprocessor } from './file-preprocessor.js';
+export * from './sandbox.js';
+export * from './create-preprocessor.js';

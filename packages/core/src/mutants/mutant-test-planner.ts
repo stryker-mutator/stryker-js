@@ -5,13 +5,13 @@ import { Logger } from '@stryker-mutator/api/logging';
 
 import { I } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
-import { StrictReporter } from '../reporters/strict-reporter';
-import { Sandbox } from '../sandbox';
+import { coreTokens } from '../di/index.js';
+import { StrictReporter } from '../reporters/strict-reporter.js';
+import { Sandbox } from '../sandbox/index.js';
 
-import { MutantRunPlan, MutantTestPlan } from './mutant-test-plan';
+import { MutantRunPlan, MutantTestPlan } from './mutant-test-plan.js';
 
-import { MutantEarlyResultPlan, PlanKind } from '.';
+import { MutantEarlyResultPlan, PlanKind } from './index.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.

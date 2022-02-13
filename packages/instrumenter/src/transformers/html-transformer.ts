@@ -1,6 +1,6 @@
-import { AstFormat } from '../syntax';
+import { AstFormat } from '../syntax/index.js';
 
-import { AstTransformer } from '.';
+import { AstTransformer } from './index.js';
 
 export const transformHtml: AstTransformer<AstFormat.Html> = ({ root }, mutantCollector, context) => {
   root.scripts.forEach((ast) => {

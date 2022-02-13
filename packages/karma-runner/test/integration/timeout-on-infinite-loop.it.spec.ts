@@ -1,8 +1,8 @@
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: KarmaTestRunner;
@@ -15,7 +15,7 @@ describe('Infinite loop', () => {
       },
     };
     testInjector.options.karma = karmaOptions;
-    sut = testInjector.injector.injectClass(KarmaTestRunner);
+    sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
   });
   afterEach(async () => {

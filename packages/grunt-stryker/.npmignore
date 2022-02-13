@@ -4,7 +4,7 @@
 *.js.map
 test
 testResources
-
+/coverage
 # General related files
 .editorconfig
 .gitattributes

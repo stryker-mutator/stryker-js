@@ -2,9 +2,9 @@ import sinon from 'sinon';
 import { NodePath, parseSync, types } from '@babel/core';
 import { expect } from 'chai';
 
-import { throwPlacementError, MutantPlacer } from '../../../src/mutant-placers';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
-import { createMutant } from '../../helpers/factories';
+import { throwPlacementError, MutantPlacer } from '../../../src/mutant-placers/index.js';
+import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
+import { createMutant } from '../../helpers/factories.js';
 
 describe(throwPlacementError.name, () => {
   let path: NodePath;

@@ -1,6 +1,6 @@
 import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
-import { ResourceDecorator } from '../concurrent';
+import { ResourceDecorator } from '../concurrent/index.js';
 
 export class TestRunnerDecorator extends ResourceDecorator<TestRunner> {
   public async capabilities(): Promise<TestRunnerCapabilities> {

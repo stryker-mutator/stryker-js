@@ -1,3 +1,3 @@
-export * from './pool';
-export * from './concurrency-token-provider';
-export * from './resource-decorator';
+export * from './pool.js';
+export * from './concurrency-token-provider.js';
+export * from './resource-decorator.js';

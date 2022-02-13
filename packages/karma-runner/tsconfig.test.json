@@ -3,16 +3,9 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "types": [
-      "karma",
-      "mocha",
-      "node"
-    ]
+    "types": ["karma", "mocha", "node"]
   },
-  "include": [
-    "test",
-    "typings"
-  ],
+  "include": ["test", "typings"],
   "references": [
     {
       "path": "./tsconfig.src.json"

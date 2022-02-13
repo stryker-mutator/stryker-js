@@ -1,9 +1,14 @@
-import { traverse, types } from '@babel/core';
+import babel, { type types } from '@babel/core';
 import generate from '@babel/generator';
 import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
 
-import { Offset } from './syntax';
-import { deepCloneNode, eqNode } from './util';
+import { Offset } from './syntax/index.js';
+import { deepCloneNode, eqNode } from './util/index.js';
+
+const { traverse } = babel;
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generator: typeof generate = generate.default;
 
 export interface Mutable {
   mutatorName: string;
@@ -27,7 +32,7 @@ export class Mutant implements Mutable {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
     this.ignoreReason = specs.ignoreReason;
-    this.replacementCode = generate(this.replacement).code;
+    this.replacementCode = generator(this.replacement).code;
   }
 
   public toApiMutant(): ApiMutant {

@@ -3,6 +3,7 @@ test
 dist/test
 /schema
 /reports
+/coverage
 /testResources
 /typings
 /.nyc_output

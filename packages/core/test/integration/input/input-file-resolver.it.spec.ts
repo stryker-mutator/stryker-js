@@ -1,9 +1,9 @@
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { coreTokens } from '../../../src/di';
-import { InputFileResolver } from '../../../src/input';
-import { resolveFromRoot } from '../../helpers/test-utils';
+import { coreTokens } from '../../../src/di/index.js';
+import { InputFileResolver } from '../../../src/input/index.js';
+import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'input-files');
 

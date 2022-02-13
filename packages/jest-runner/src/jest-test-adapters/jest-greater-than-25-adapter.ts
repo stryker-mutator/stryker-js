@@ -1,7 +1,7 @@
-import { jestWrapper } from '../utils';
-import { JestRunResult } from '../jest-run-result';
+import { jestWrapper } from '../utils/index.js';
+import { JestRunResult } from '../jest-run-result.js';
 
-import { JestTestAdapter, RunSettings } from './jest-test-adapter';
+import { JestTestAdapter, RunSettings } from './jest-test-adapter.js';
 
 export class JestGreaterThan25TestAdapter implements JestTestAdapter {
   public async run({ jestConfig, fileNamesUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {

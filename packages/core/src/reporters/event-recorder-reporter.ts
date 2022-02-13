@@ -6,9 +6,9 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 
-import { cleanFolder } from '../utils/file-utils';
+import { fileUtils } from '../utils/file-utils.js';
 
-import { StrictReporter } from './strict-reporter';
+import { StrictReporter } from './strict-reporter.js';
 
 export class EventRecorderReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
@@ -18,7 +18,7 @@ export class EventRecorderReporter implements StrictReporter {
   private index = 0;
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
-    this.createBaseFolderTask = cleanFolder(this.options.eventReporter.baseDir);
+    this.createBaseFolderTask = fileUtils.cleanFolder(this.options.eventReporter.baseDir);
   }
 
   private writeToFile(methodName: keyof Reporter, data: any) {

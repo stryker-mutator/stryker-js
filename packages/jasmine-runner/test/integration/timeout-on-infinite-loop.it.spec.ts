@@ -1,8 +1,8 @@
 import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src';
-import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
+import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: JasmineTestRunner;

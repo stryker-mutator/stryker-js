@@ -3,10 +3,10 @@ import { promises as fsPromises } from 'fs';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 
-import { createParser } from '../../src/parsers';
-import { print } from '../../src/printers';
-import { createParserOptions } from '../helpers/factories';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createParser } from '../../src/parsers/index.js';
+import { print } from '../../src/printers/index.js';
+import { createParserOptions } from '../helpers/factories.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const resolvePrinterTestResource = resolveTestResource.bind(null, 'printer');
 

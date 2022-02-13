@@ -1,1 +1,1 @@
-export * from './checker-factory';
+export * from './checker-factory.js';

@@ -1,13 +1,15 @@
+import { URL } from 'url';
+
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
-import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error';
-import { ChildProcessProxy } from '../child-proxy/child-process-proxy';
-import { LoggingClientContext } from '../logging';
+import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error.js';
+import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
+import { LoggingClientContext } from '../logging/index.js';
 
-import { ChildProcessTestRunnerWorker } from './child-process-test-runner-worker';
+import { ChildProcessTestRunnerWorker } from './child-process-test-runner-worker.js';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
 
@@ -17,12 +19,18 @@ const MAX_WAIT_FOR_DISPOSE = 2000;
 export class ChildProcessTestRunnerProxy implements TestRunner {
   private readonly worker: ChildProcessProxy<ChildProcessTestRunnerWorker>;
 
-  constructor(options: StrykerOptions, sandboxWorkingDirectory: string, loggingContext: LoggingClientContext, private readonly log: Logger) {
+  constructor(
+    options: StrykerOptions,
+    sandboxWorkingDirectory: string,
+    loggingContext: LoggingClientContext,
+    pluginModulePaths: readonly string[],
+    private readonly log: Logger
+  ) {
     this.worker = ChildProcessProxy.create(
-      require.resolve('./child-process-test-runner-worker'),
+      new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
-      {},
+      pluginModulePaths,
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker,
       options.testRunnerNodeArgs

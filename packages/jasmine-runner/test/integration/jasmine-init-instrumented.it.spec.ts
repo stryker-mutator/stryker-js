@@ -2,8 +2,8 @@ import { factory, testInjector, assertions, fsPromisesCp } from '@stryker-mutato
 import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource';
+import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/index.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('JasmineRunner integration with code instrumentation', () => {
   let sut: JasmineTestRunner;

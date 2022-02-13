@@ -1,8 +1,8 @@
-import { types } from '@babel/core';
+import babel, { type types } from '@babel/core';
 
-import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util';
+import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/index.js';
 
-import { MutantPlacer } from './mutant-placer';
+import { MutantPlacer } from './mutant-placer.js';
 
 /**
  * Places the mutants with consequent of a SwitchCase node. Uses an if-statement to do so.
@@ -20,13 +20,13 @@ export const switchCaseMutantPlacer: MutantPlacer<types.SwitchCase> = {
     return path.isSwitchCase();
   },
   place(path, appliedMutants) {
-    let consequence: types.Statement = types.blockStatement([
-      types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+    let consequence: types.Statement = babel.types.blockStatement([
+      babel.types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
       ...path.node.consequent,
     ]);
     for (const [mutant, appliedMutant] of appliedMutants) {
-      consequence = types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement(appliedMutant.consequent), consequence);
+      consequence = babel.types.ifStatement(mutantTestExpression(mutant.id), babel.types.blockStatement(appliedMutant.consequent), consequence);
     }
-    path.replaceWith(types.switchCase(path.node.test, [consequence]));
+    path.replaceWith(babel.types.switchCase(path.node.test, [consequence]));
   },
 };

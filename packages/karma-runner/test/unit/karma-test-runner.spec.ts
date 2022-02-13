@@ -4,43 +4,39 @@ import { testInjector, assertions, factory, tick } from '@stryker-mutator/test-h
 import { expect } from 'chai';
 import { TestResults } from 'karma';
 import sinon from 'sinon';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import { Task } from '@stryker-mutator/util';
-
 import { DryRunOptions, MutantRunOptions, TestRunnerCapabilities, TestStatus } from '@stryker-mutator/api/test-runner';
-
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import strykerKarmaConf from '../../src/starters/stryker-karma.conf';
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import * as projectStarter from '../../src/starters/project-starter';
-import { StrykerKarmaSetup, NgConfigOptions } from '../../src-generated/karma-runner-options';
-import { Browser, KarmaSpec, StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
-import { TestHooksMiddleware } from '../../src/karma-plugins/test-hooks-middleware';
-import { karma } from '../../src/karma-wrapper';
+import { configureKarma } from '../../src/karma-plugins/stryker-karma.conf.js';
+import { KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { ProjectStarter } from '../../src/starters/project-starter.js';
+import { StrykerKarmaSetup } from '../../src-generated/karma-runner-options.js';
+import { Browser, KarmaSpec, StrykerReporter } from '../../src/karma-plugins/stryker-reporter.js';
+import { TestHooksMiddleware } from '../../src/karma-plugins/test-hooks-middleware.js';
+import { karma } from '../../src/karma-wrapper.js';
+import { pluginTokens } from '../../src/plugin-tokens.js';
 
 // Unit tests for both the KarmaTestRunner and the StrykerReporter, as they are closely related
 
 describe(KarmaTestRunner.name, () => {
-  let projectStarterMock: sinon.SinonStubbedInstance<projectStarter.ProjectStarter>;
-  let setGlobalsStub: sinon.SinonStubbedMember<typeof strykerKarmaConf.setGlobals>;
+  let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
+  let setGlobalsStub: sinon.SinonStubbedMember<typeof configureKarma.setGlobals>;
   let karmaRunStub: sinon.SinonStubbedMember<typeof karma.runner.run>;
   let getLogger: LoggerFactoryMethod;
   let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
 
   beforeEach(() => {
-    projectStarterMock = sinon.createStubInstance(projectStarter.ProjectStarter);
+    projectStarterMock = { start: sinon.stub() };
     testHooksMiddlewareMock = sinon.createStubInstance(TestHooksMiddleware);
-    sinon.stub(projectStarter, 'ProjectStarter').returns(projectStarterMock);
-    setGlobalsStub = sinon.stub(strykerKarmaConf, 'setGlobals');
+    setGlobalsStub = sinon.stub(configureKarma, 'setGlobals');
     karmaRunStub = sinon.stub(karma.runner, 'run');
     sinon.stub(TestHooksMiddleware, 'instance').value(testHooksMiddlewareMock);
     getLogger = testInjector.injector.resolve(commonTokens.getLogger);
   });
 
   function createSut() {
-    return testInjector.injector.injectClass(KarmaTestRunner);
+    return testInjector.injector.provideValue(pluginTokens.projectStarter, projectStarterMock).injectClass(KarmaTestRunner);
   }
 
   describe('capabilities', () => {
@@ -77,35 +73,7 @@ describe(KarmaTestRunner.name, () => {
       karmaConfigFile: expectedSetup.configFile,
       disableBail: true,
     });
-
     expect(testInjector.logger.warn).not.called;
-    expect(projectStarter.ProjectStarter).calledWith(sinon.match.func, expectedSetup);
-  });
-
-  it('should run ng test with parameters from stryker options', () => {
-    const ngConfig: NgConfigOptions = {};
-    ngConfig.testArguments = {
-      project: '@ns/mypackage',
-    };
-    const expectedSetup: StrykerKarmaSetup = {
-      config: {
-        basePath: 'foo/bar',
-      },
-      configFile: 'baz.conf.js',
-      ngConfig,
-      projectType: 'angular-cli',
-    };
-    testInjector.options.karma = expectedSetup;
-    testInjector.options.disableBail = true;
-    createSut();
-    expect(setGlobalsStub).calledWith({
-      getLogger,
-      karmaConfig: expectedSetup.config,
-      karmaConfigFile: expectedSetup.configFile,
-      disableBail: true,
-    });
-    expect(testInjector.logger.warn).not.called;
-    expect(projectStarter.ProjectStarter).calledWith(sinon.match.func, expectedSetup);
   });
 
   describe('init', () => {
@@ -150,6 +118,11 @@ describe(KarmaTestRunner.name, () => {
       await expect(onGoingInit).rejectedWith(
         "Karma exited prematurely with exit code 1. Please run stryker with `--logLevel trace` to see the karma logging and figure out what's wrong."
       );
+    });
+
+    it('should reject on karma version prior to 6.3.0', async () => {
+      sinon.stub(karma, 'VERSION').value('6.2.9');
+      await expect(sut.init()).rejectedWith('Your karma version (6.2.9) is not supported. Please install 6.3.0 or higher');
     });
   });
 

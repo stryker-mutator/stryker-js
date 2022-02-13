@@ -3,10 +3,11 @@
   "version": "5.6.1",
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "nyc npm run mocha",
+    "test": "c8 npm run mocha",
     "mocha": "mocha",
-    "stryker": "node ../core/bin/stryker run"
+    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
   },
   "repository": {
     "type": "git",

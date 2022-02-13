@@ -1,11 +1,11 @@
 import { I } from '@stryker-mutator/util';
 
-import { Ast, AstByFormat, AstFormat } from '../syntax';
+import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
 
-import { TransformerOptions } from './transformer-options';
-import { transformBabel } from './babel-transformer';
-import { transformHtml } from './html-transformer';
-import { MutantCollector } from './mutant-collector';
+import { TransformerOptions } from './transformer-options.js';
+import { transformBabel } from './babel-transformer.js';
+import { transformHtml } from './html-transformer.js';
+import { MutantCollector } from './mutant-collector.js';
 
 /**
  * Transform the AST by generating mutants and placing them in the AST.
