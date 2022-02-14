@@ -1,5 +1,5 @@
+import fs from 'fs';
 import path from 'path';
-import { createRequire } from 'module';
 
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -9,86 +9,135 @@ import { deepMerge } from '@stryker-mutator/util';
 import { coreTokens } from '../di/index.js';
 import { ConfigError } from '../errors.js';
 
-import { defaultOptions, OptionsValidator } from './options-validator.js';
-import { createConfig } from './create-config.js';
+import { fileUtils } from '../utils/file-utils.js';
+
+import { OptionsValidator } from './options-validator.js';
 
 export const CONFIG_SYNTAX_HELP = `
+Example of how a config file should look:
+/**
+  * @type {import('@stryker-mutator/api/core').StrykerOptions}
+  */
+export default {
+  // You're options here!
+}
+
+Or using commonjs:
 /**
   * @type {import('@stryker-mutator/api/core').StrykerOptions}
   */
 module.exports = {
   // You're options here!
-}`.trim();
+}
 
-const DEFAULT_CONFIG_FILE = 'stryker.conf';
+See https://stryker-mutator.io/docs/stryker-js/config-file for more information.`.trim();
+
+const DEFAULT_CONFIG_FILE_BASE_NAME = 'stryker.conf';
 
 export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
   constructor(private readonly log: Logger, private readonly validator: OptionsValidator) {}
 
   public async readConfig(cliOptions: PartialStrykerOptions): Promise<StrykerOptions> {
-    const configModule = this.loadConfigModule(cliOptions);
-    let options: StrykerOptions;
-    if (typeof configModule === 'function') {
-      this.log.warn(
-        'Usage of `module.exports = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
-      );
-      options = defaultOptions();
-      configModule(createConfig(options));
-    } else {
-      this.validator.validate(configModule);
-      options = configModule;
-    }
+    const options = await this.loadOptionsFromConfigFile(cliOptions);
+
     // merge the config from config file and cliOptions (precedence)
     deepMerge(options, cliOptions);
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Loaded config: ${JSON.stringify(options, null, 2)}`);
     }
+    this.validator.validate(options);
     return options;
   }
 
-  private loadConfigModule(cliOptions: PartialStrykerOptions): PartialStrykerOptions | ((options: StrykerOptions) => void) {
-    let configModule: PartialStrykerOptions | ((config: StrykerOptions) => void) = {};
-    const require = createRequire(import.meta.url);
-
-    if (!cliOptions.configFile) {
-      try {
-        const configFile = require.resolve(path.resolve(`./${DEFAULT_CONFIG_FILE}`));
-        this.log.info(`Using ${path.basename(configFile)}`);
-        cliOptions.configFile = configFile;
-      } catch (e) {
-        this.log.info('No config file specified. Running with command line arguments.');
-        this.log.info('Use `stryker init` command to generate your config file.');
-      }
+  private async loadOptionsFromConfigFile(cliOptions: PartialStrykerOptions): Promise<PartialStrykerOptions> {
+    const configFile = await this.findConfigFile(cliOptions.configFile);
+    if (!configFile) {
+      this.log.info('No config file specified. Running with command line arguments.');
+      this.log.info('Use `stryker init` command to generate your config file.');
+      return {};
     }
+    this.log.debug(`Loading config ${configFile}`);
 
-    if (typeof cliOptions.configFile === 'string') {
-      this.log.debug(`Loading config ${cliOptions.configFile}`);
-      const configFile = this.resolveConfigFile(cliOptions.configFile);
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        configModule = require(configFile);
-      } catch (error: unknown) {
-        this.log.info('Stryker can help you setup a `stryker.conf` file for your project.');
-        this.log.info("Please execute `stryker init` in your project's root directory.");
-        throw new ConfigError('Invalid config file', error);
-      }
-      if (typeof configModule !== 'function' && typeof configModule !== 'object') {
-        this.log.fatal('Config file must export an object!\n' + CONFIG_SYNTAX_HELP);
-        throw new ConfigError('Config file must export an object!');
-      }
+    if (path.extname(configFile).toLocaleLowerCase() === '.json') {
+      return this.readJsonConfig(configFile);
+    } else {
+      return this.importJSConfig(configFile);
     }
-
-    return configModule;
   }
 
-  private resolveConfigFile(configFileName: string) {
-    const configFile = path.resolve(configFileName);
-    try {
-      const require = createRequire(import.meta.url);
-      return require.resolve(configFile);
-    } catch {
-      throw new ConfigError(`File ${configFile} does not exist!`);
+  private async findConfigFile(configFileName: unknown): Promise<string | undefined> {
+    if (typeof configFileName === 'string') {
+      if (await fileUtils.exists(configFileName)) {
+        return configFileName;
+      } else {
+        throw new ConfigReaderError('File does not exist!', configFileName);
+      }
     }
+    const candidates = [
+      `${DEFAULT_CONFIG_FILE_BASE_NAME}.json`,
+      `${DEFAULT_CONFIG_FILE_BASE_NAME}.js`,
+      `${DEFAULT_CONFIG_FILE_BASE_NAME}.mjs`,
+      `${DEFAULT_CONFIG_FILE_BASE_NAME}.cjs`,
+    ];
+    for (const candidate of candidates) {
+      if (await fileUtils.exists(candidate)) {
+        return candidate;
+      }
+    }
+    return undefined;
+  }
+
+  private async readJsonConfig(configFile: string): Promise<PartialStrykerOptions> {
+    try {
+      return JSON.parse(await fs.promises.readFile(configFile, 'utf-8'));
+    } catch (err) {
+      throw new ConfigReaderError('File contains invalid JSON', configFile, err);
+    }
+  }
+
+  private async importJSConfig(configFile: string): Promise<PartialStrykerOptions> {
+    const importedModule = await fileUtils.importModule(path.resolve(configFile));
+
+    if (this.hasDefaultExport(importedModule)) {
+      const maybeOptions = importedModule.default;
+      if (typeof maybeOptions !== 'object') {
+        if (typeof maybeOptions === 'function') {
+          this.log.fatal(
+            `Invalid config file. Exporting a function is no longer supported. Please export an object with your configuration instead, or use a "stryker.conf.json" file.\n${CONFIG_SYNTAX_HELP}`
+          );
+        } else {
+          this.log.fatal(`Invalid config file. It must export an object, found a "${typeof maybeOptions}"!\n${CONFIG_SYNTAX_HELP}`);
+        }
+        throw new ConfigReaderError('Default export of config file must be an object!', configFile);
+      }
+      if (!maybeOptions || !Object.keys(maybeOptions).length) {
+        this.log.warn(`Stryker options were empty. Did you forget to export options from ${configFile}?`);
+      }
+
+      return { ...maybeOptions } as PartialStrykerOptions;
+    } else {
+      this.log.fatal(`Invalid config file. It is missing a default export. ${namedExportsHelper()}\n${CONFIG_SYNTAX_HELP}`);
+      throw new ConfigReaderError('Config file must have a default export!', configFile);
+
+      function namedExportsHelper() {
+        const namedExports = Object.keys(importedModule as object);
+        if (namedExports.length === 0) {
+          return "In fact, it didn't export anything.";
+        } else {
+          return `found named export(s): ${namedExports.map((name) => `"${name}"`).join(', ')}.`;
+        }
+      }
+    }
+  }
+
+  private hasDefaultExport(importedModule: any): importedModule is { default: unknown } {
+    return importedModule && 'default' in importedModule;
+  }
+}
+
+export class ConfigReaderError extends ConfigError {
+  constructor(message: string, configFileName: string, cause?: unknown) {
+    super(`Invalid config file "${configFileName}". ${message}`, cause);
   }
 }
