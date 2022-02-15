@@ -24,13 +24,13 @@ export const fileUtils = {
   },
 
   async exists(fileName: string): Promise<boolean> {
-    try{
+    try {
       await fs.promises.stat(fileName);
       return true;
-    } catch(err){
-      if(isErrnoException(err) && err.code === 'ENOENT') {
-        return false;        
-      }else {
+    } catch (err) {
+      if (isErrnoException(err) && err.code === 'ENOENT') {
+        return false;
+      } else {
         // Oops, didn't mean to catch this one ⚾
         throw err;
       }
