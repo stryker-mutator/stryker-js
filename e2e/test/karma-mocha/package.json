@@ -7,9 +7,9 @@
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test": "npm run test:not-in-place && npm run test:in-place",
-    "test:not-in-place": "stryker run stryker.conf.js",
+    "test:not-in-place": "stryker run",
     "posttest:not-in-place": "npm run verify",
-    "test:in-place": "stryker run stryker.conf.js --inPlace",
+    "test:in-place": "stryker run --inPlace",
     "posttest:in-place": "npm run verify",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
