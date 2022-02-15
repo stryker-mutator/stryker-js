@@ -7,7 +7,7 @@ import { coreTokens } from '../../../src/di/index.js';
 import { OptionsValidator } from '../../../src/config/options-validator.js';
 import { resolveFromRoot } from '../../helpers/test-utils.js';
 
-describe.only(ConfigReader.name, () => {
+describe(ConfigReader.name, () => {
   let sut: ConfigReader;
 
   function createSut(): ConfigReader {

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { syncBuiltinESMExports } from 'module';
-
+import { pathToFileURL } from 'url';
 import path from 'path';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
@@ -49,7 +49,7 @@ describe(ConfigReader.name, () => {
     const expectedOptions = { testRunner: 'my-runner', configFile: 'file.js' };
     existsStub.withArgs('file.js').resolves(true);
     readFileStub.resolves(JSON.stringify(expectedOptions));
-    importModuleStub.withArgs(path.resolve('file.js')).resolves({ default: expectedOptions });
+    importModuleStub.withArgs(pathToFileURL(path.resolve('file.js')).toString()).resolves({ default: expectedOptions });
 
     // Act
     const result = await sut.readConfig({ configFile: 'file.js' });
@@ -81,7 +81,7 @@ describe(ConfigReader.name, () => {
       const expectedOptions = { testRunner: 'my-runner' };
       existsStub.withArgs(strykerConfFile).resolves(true);
       readFileStub.resolves(JSON.stringify(expectedOptions));
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({ default: expectedOptions });
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
 
       // Act
       const result = await sut.readConfig({});
@@ -127,7 +127,7 @@ describe(ConfigReader.name, () => {
     // Arrange
     const strykerConfFile = 'stryker.conf.js';
     existsStub.withArgs(strykerConfFile).resolves(true);
-    importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({ default: 42 });
+    importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: 42 });
 
     // Act & assert
     const error = await expect(sut.readConfig({})).rejectedWith(
@@ -168,7 +168,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({
         default: () => {
           /* idle */
         },
@@ -191,7 +191,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({ pi: 3.14, foo: 'bar' });
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ pi: 3.14, foo: 'bar' });
 
       // Act & assert
       const error = await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.js". Config file must have a default export!');
@@ -206,7 +206,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({});
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({});
 
       // Act & assert
       await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.js". Config file must have a default export!');
@@ -220,7 +220,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves(42);
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves(42);
 
       // Act & assert
       await expect(sut.readConfig({})).rejected;
@@ -279,7 +279,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'foo.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({ default: {} });
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: {} });
 
       // Act
       await sut.readConfig({ configFile: 'foo.conf.js' });
@@ -295,7 +295,7 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'foo.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(path.resolve(strykerConfFile)).resolves({ default: null });
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: null });
 
       // Act
       await sut.readConfig({ configFile: 'foo.conf.js' });

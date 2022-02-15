@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
 
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -133,7 +134,7 @@ export class ConfigReader {
 
   private async importJSConfigModule(configFile: string): Promise<unknown> {
     try {
-      return await fileUtils.importModule(path.resolve(configFile));
+      return await fileUtils.importModule(pathToFileURL(path.resolve(configFile)).toString());
     } catch (err) {
       throw new ConfigReaderError('Error during import', configFile, err);
     }
