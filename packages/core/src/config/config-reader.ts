@@ -4,11 +4,10 @@ import path from 'path';
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { deepMerge } from '@stryker-mutator/util';
+import { deepMerge, I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { ConfigError } from '../errors.js';
-
 import { fileUtils } from '../utils/file-utils.js';
 
 import { OptionsValidator } from './options-validator.js';
@@ -36,17 +35,17 @@ const DEFAULT_CONFIG_FILE_BASE_NAME = 'stryker.conf';
 
 export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
-  constructor(private readonly log: Logger, private readonly validator: OptionsValidator) {}
+  constructor(private readonly log: Logger, private readonly validator: I<OptionsValidator>) {}
 
   public async readConfig(cliOptions: PartialStrykerOptions): Promise<StrykerOptions> {
     const options = await this.loadOptionsFromConfigFile(cliOptions);
 
     // merge the config from config file and cliOptions (precedence)
     deepMerge(options, cliOptions);
+    this.validator.validate(options);
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Loaded config: ${JSON.stringify(options, null, 2)}`);
     }
-    this.validator.validate(options);
     return options;
   }
 
@@ -57,7 +56,7 @@ export class ConfigReader {
       this.log.info('Use `stryker init` command to generate your config file.');
       return {};
     }
-    this.log.debug(`Loading config ${configFile}`);
+    this.log.debug(`Loading config from ${configFile}`);
 
     if (path.extname(configFile).toLocaleLowerCase() === '.json') {
       return this.readJsonConfig(configFile);
@@ -89,15 +88,16 @@ export class ConfigReader {
   }
 
   private async readJsonConfig(configFile: string): Promise<PartialStrykerOptions> {
+    const fileContent = await fs.promises.readFile(configFile, 'utf-8');
     try {
-      return JSON.parse(await fs.promises.readFile(configFile, 'utf-8'));
+      return JSON.parse(fileContent);
     } catch (err) {
       throw new ConfigReaderError('File contains invalid JSON', configFile, err);
     }
   }
 
   private async importJSConfig(configFile: string): Promise<PartialStrykerOptions> {
-    const importedModule = await fileUtils.importModule(path.resolve(configFile));
+    const importedModule = await this.importJSConfigModule(configFile);
 
     if (this.hasDefaultExport(importedModule)) {
       const maybeOptions = importedModule.default;
@@ -117,22 +117,30 @@ export class ConfigReader {
 
       return { ...maybeOptions } as PartialStrykerOptions;
     } else {
-      this.log.fatal(`Invalid config file. It is missing a default export. ${namedExportsHelper()}\n${CONFIG_SYNTAX_HELP}`);
+      this.log.fatal(`Invalid config file. It is missing a default export. ${describeNamedExports()}\n${CONFIG_SYNTAX_HELP}`);
       throw new ConfigReaderError('Config file must have a default export!', configFile);
 
-      function namedExportsHelper() {
-        const namedExports = Object.keys(importedModule as object);
+      function describeNamedExports() {
+        const namedExports: string[] = (typeof importedModule === 'object' && Object.keys(importedModule ?? {})) || [];
         if (namedExports.length === 0) {
           return "In fact, it didn't export anything.";
         } else {
-          return `found named export(s): ${namedExports.map((name) => `"${name}"`).join(', ')}.`;
+          return `Found named export(s): ${namedExports.map((name) => `"${name}"`).join(', ')}.`;
         }
       }
     }
   }
 
-  private hasDefaultExport(importedModule: any): importedModule is { default: unknown } {
-    return importedModule && 'default' in importedModule;
+  private async importJSConfigModule(configFile: string): Promise<unknown> {
+    try {
+      return await fileUtils.importModule(path.resolve(configFile));
+    } catch (err) {
+      throw new ConfigReaderError('Error during import', configFile, err);
+    }
+  }
+
+  private hasDefaultExport(importedModule: unknown): importedModule is { default: unknown } {
+    return importedModule && typeof importedModule === 'object' && 'default' in importedModule ? true : false;
   }
 }
 
