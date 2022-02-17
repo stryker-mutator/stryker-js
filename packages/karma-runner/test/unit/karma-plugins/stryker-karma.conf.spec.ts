@@ -12,7 +12,7 @@ import { configureKarma as sut } from '../../../src/karma-plugins/stryker-karma.
 import { strykerReporterFactory } from '../../../src/karma-plugins/stryker-reporter.js';
 import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware.js';
 
-describe.only('stryker-karma.conf.js', () => {
+describe('stryker-karma.conf.js', () => {
   let getLogger: sinon.SinonStub;
   let requireResolveStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let config: Config;
