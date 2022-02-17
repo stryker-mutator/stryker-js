@@ -12,6 +12,7 @@ import { ConfigError } from '../errors.js';
 import { fileUtils } from '../utils/file-utils.js';
 
 import { OptionsValidator } from './options-validator.js';
+import { DEFAULT_CONFIG_FILE_BASE_NAME, SUPPORTED_CONFIG_FILE_EXTENSIONS } from './config-file-formats.js';
 
 export const CONFIG_SYNTAX_HELP = `
 Example of how a config file should look:
@@ -31,8 +32,6 @@ module.exports = {
 }
 
 See https://stryker-mutator.io/docs/stryker-js/config-file for more information.`.trim();
-
-const DEFAULT_CONFIG_FILE_BASE_NAME = 'stryker.conf';
 
 export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
@@ -74,12 +73,7 @@ export class ConfigReader {
         throw new ConfigReaderError('File does not exist!', configFileName);
       }
     }
-    const candidates = [
-      `${DEFAULT_CONFIG_FILE_BASE_NAME}.json`,
-      `${DEFAULT_CONFIG_FILE_BASE_NAME}.js`,
-      `${DEFAULT_CONFIG_FILE_BASE_NAME}.mjs`,
-      `${DEFAULT_CONFIG_FILE_BASE_NAME}.cjs`,
-    ];
+    const candidates = SUPPORTED_CONFIG_FILE_EXTENSIONS.map((ext) => `${DEFAULT_CONFIG_FILE_BASE_NAME}${ext}`);
     for (const candidate of candidates) {
       if (await fileUtils.exists(candidate)) {
         return candidate;

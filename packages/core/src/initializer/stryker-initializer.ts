@@ -45,7 +45,7 @@ export class StrykerInitializer {
    * @function
    */
   public async initialize(): Promise<void> {
-    this.configWriter.guardForExistingConfig();
+    await this.configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
     let configFileName: string;
