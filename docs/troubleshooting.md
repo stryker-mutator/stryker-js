@@ -208,15 +208,15 @@ Alternatively, you can start with the [default list defined in StrykerJS](https:
 
 ### Mutants survive but should be killed - Jest runner
 
-### Symptom
+**Symptom**
 
 For a TypeScript file the mutants don't get killed but a coverage (in Jest) is shown.
 
-### Problem
+**Problem**
 
 The mutated source file is only implementing callbacks for a framework that uses express in the background as a server. The unit tests for this module are written with Jest and are using Axios to make REST calls against the server. There is no module dependency needed for the test. But Stryker is using Jest's `--findRelatedTests` to optimize the performance. And it looks like that this Jest feature is only looking at imports (see this [StackOverflow post](https://stackoverflow.com/questions/44066996/how-does-jest-findrelatedtests-work-under-the-hood).
 
-### Solution
+**Solution**
 
 There are two solutions for this problem.
 
