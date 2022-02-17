@@ -27,7 +27,7 @@ function setDefaultOptions(config: Config) {
   });
 }
 
-function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCwd: typeof requireResolve) {
+async function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCwd: typeof requireResolve) {
   if (globalSettings.karmaConfigFile) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
@@ -36,7 +36,7 @@ function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCwd: typ
       if (typeof userConfig !== 'function') {
         throw new TypeError(`Karma config file "${configFileName}" should export a function! Found: ${typeof userConfig}`);
       }
-      userConfig(config);
+      await userConfig(config);
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
     } catch (error: any) {
       if (error.code === 'MODULE_NOT_FOUND') {
@@ -174,10 +174,10 @@ const globalSettings: GlobalSettings = {
   disableBail: false,
 };
 
-export function configureKarma(config: Config, requireFromCwd = requireResolve): void {
+export async function configureKarma(config: Config, requireFromCwd = requireResolve): Promise<void> {
   const log = globalSettings.getLogger(path.basename(filename));
   setDefaultOptions(config);
-  setUserKarmaConfigFile(config, log, requireFromCwd);
+  await setUserKarmaConfigFile(config, log, requireFromCwd);
   setUserKarmaConfig(config);
   setBasePath(config);
   setLifeCycleOptions(config);
