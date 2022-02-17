@@ -4,6 +4,7 @@ import { promisify } from 'util';
 
 import mkdirpModule from 'mkdirp';
 import rimraf from 'rimraf';
+import { isErrnoException } from '@stryker-mutator/util';
 
 export const MAX_CONCURRENT_FILE_IO = 256;
 
@@ -19,6 +20,20 @@ export const fileUtils = {
       return fileUtils.mkdirp(folderName);
     } catch (e) {
       return fileUtils.mkdirp(folderName);
+    }
+  },
+
+  async exists(fileName: string): Promise<boolean> {
+    try {
+      await fs.promises.stat(fileName);
+      return true;
+    } catch (err) {
+      if (isErrnoException(err) && err.code === 'ENOENT') {
+        return false;
+      } else {
+        // Oops, didn't mean to catch this one ⚾
+        throw err;
+      }
     }
   },
 

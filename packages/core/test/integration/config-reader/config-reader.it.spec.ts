@@ -1,9 +1,6 @@
-import path from 'path';
-
 import { strykerCoreSchema } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import sinon from 'sinon';
 
 import { ConfigReader } from '../../../src/config/config-reader.js';
 import { coreTokens } from '../../../src/di/index.js';
@@ -33,23 +30,42 @@ describe(ConfigReader.name, () => {
   });
 
   describe('readConfig()', () => {
-    it('should use cli options', async () => {
-      process.chdir(resolveTestResource('empty-json'));
-      sut = createSut();
-      const result = await sut.readConfig({ some: 'option', someOther: 2 });
-      expect(result.some).to.be.eq('option');
-      expect(result.someOther).to.be.eq(2);
-    });
-
     it('should throw an error with a non-existing config file', async () => {
       sut = createSut();
 
-      await expect(sut.readConfig({ configFile: 'no-file.js' })).rejectedWith(`File ${path.resolve('no-file.js')} does not exist!`);
+      await expect(sut.readConfig({ configFile: 'no-file.js' })).rejectedWith('Invalid config file "no-file.js". File does not exist!');
     });
 
-    describe('without config file or CLI options', () => {
-      it('should parse the stryker.conf.js config in cwd', async () => {
-        process.chdir(resolveTestResource('js'));
+    describe('without overridden config file', () => {
+      it('should load the stryker.conf.js as mjs config in cwd', async () => {
+        process.chdir(resolveTestResource('js-as-esm'));
+        sut = createSut();
+
+        const result = await sut.readConfig({});
+
+        expect(result.type).to.be.eq('js');
+      });
+
+      it('should load the stryker.conf.js as cjs config in cwd', async () => {
+        process.chdir(resolveTestResource('js-as-cjs'));
+        sut = createSut();
+
+        const result = await sut.readConfig({});
+
+        expect(result.type).to.be.eq('js');
+      });
+
+      it('should load the stryker.conf.cjs config in cwd', async () => {
+        process.chdir(resolveTestResource('cjs'));
+        sut = createSut();
+
+        const result = await sut.readConfig({});
+
+        expect(result.type).to.be.eq('js');
+      });
+
+      it('should load the stryker.conf.mjs config in cwd', async () => {
+        process.chdir(resolveTestResource('mjs'));
         sut = createSut();
 
         const result = await sut.readConfig({});
@@ -65,16 +81,6 @@ describe(ConfigReader.name, () => {
         const result = await sut.readConfig({});
 
         expect(result.type).to.be.eq('json');
-        expect(testInjector.logger.warn).not.called;
-      });
-
-      it('should use the stryker.conf.js file if both stryker.conf.js and stryker.conf.json are available', async () => {
-        process.chdir(resolveTestResource('json-and-js'));
-        sut = createSut();
-
-        const result = await sut.readConfig({});
-
-        expect(result.type).to.be.eq('js');
         expect(testInjector.logger.warn).not.called;
       });
 
@@ -101,15 +107,6 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
-      it('should give precedence to CLI options', async () => {
-        sut = createSut();
-
-        const result = await sut.readConfig({ configFile: 'testResources/config-reader/valid.conf.js', read: false });
-
-        expect(result.read).to.be.eq(false);
-        expect(testInjector.logger.warn).not.called;
-      });
-
       it('should read a json config file', async () => {
         sut = createSut();
 
@@ -121,22 +118,6 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
     });
-    describe('when the config is not a function or object', () => {
-      it('should report a fatal error', async () => {
-        sut = createSut();
-        await expect(sut.readConfig({ configFile: 'testResources/config-reader/invalid.conf.js' })).rejected;
-        expect(testInjector.logger.fatal).calledWithMatch(
-          sinon
-            .match('Config file must export an object!')
-            .and(sinon.match("@type {import('@stryker-mutator/api/core').StrykerOptions}").and(sinon.match('module.exports = {')))
-        );
-      });
-
-      it('should throw an error', async () => {
-        sut = createSut();
-        await expect(sut.readConfig({ configFile: 'testResources/config-reader/invalid.conf.js' })).rejectedWith('Config file must export an object');
-      });
-    });
 
     describe('with an existing file, but has syntax errors', () => {
       beforeEach(() => {
@@ -145,18 +126,7 @@ describe(ConfigReader.name, () => {
 
       it('should throw an error', async () => {
         await expect(sut.readConfig({ configFile: 'testResources/config-reader/syntax-error.conf.js' })).rejectedWith(
-          'Invalid config file. Inner error: SyntaxError: Unexpected identifier'
-        );
-      });
-    });
-
-    describe('deprecation information', () => {
-      it('should report deprecation on module.export = function(config) {}', async () => {
-        sut = createSut();
-        await sut.readConfig({ configFile: 'testResources/config-reader/deprecatedFunction.conf.js' });
-
-        expect(testInjector.logger.warn).calledWithMatch(
-          'Usage of `module.exports = function(config) {}` is deprecated. Please use `module.export = {}` or a "stryker.conf.json" file. For more details, see https://stryker-mutator.io/blog/2020-03-11/stryker-version-3#new-config-format'
+          'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier'
         );
       });
     });

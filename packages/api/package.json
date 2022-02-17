@@ -27,7 +27,7 @@
     }
   },
   "scripts": {
-    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs",
+    "stryker": "node ../core/bin/stryker.js run",
     "test": "c8 npm run test:unit",
     "test:unit": "mocha \"dist/test/unit/**/*.js\""
   },

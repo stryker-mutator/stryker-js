@@ -10,6 +10,7 @@
     "packages/*/typings",
     "packages/*/test",
     "packages/jest-runner/jest-env/*.js",
+    "packages/*/stryker.conf.js",
     "tasks/**/*.js"
   ]
 }

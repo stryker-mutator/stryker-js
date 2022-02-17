@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 npm run mocha",
     "mocha": "mocha",
-    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
+    "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
     "type": "git",

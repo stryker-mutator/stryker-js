@@ -10,7 +10,7 @@
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha 'dist/test/unit/**/*.js'",
     "test:integration": "mocha 'dist/test/integration/**/*.js'",
-    "stryker": "node ../core/bin/stryker.js run stryker.conf.cjs"
+    "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
     "type": "git",

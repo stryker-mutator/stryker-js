@@ -1,1 +1,2 @@
-module.exports = require('./js/stryker.conf.js');
+import conf from './js-as-esm/stryker.conf.js';
+export default conf;

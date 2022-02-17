@@ -9,6 +9,7 @@
   ],
   "concurrency": 2,
   "coverageAnalysis": "perTest",
+  "timeoutMS": 10000,
   "reporters": [
     "json",
     "progress",
