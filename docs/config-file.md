@@ -23,12 +23,24 @@ With a `stryker.conf.json`:
 Or as `stryker.conf.js`:
 
 ```js
+// @ts-check
 /**
-* @type {import('@stryker-mutator/api/core').StrykerOptions}
+* @type {import('@stryker-mutator/api/core').PartialStrykerOptions}
 */
 module.exports = {
   // Your config here
 };
+```
+
+Since Stryker version 6 you can define your config in a native [ECMAScript module](https://nodejs.org/api/esm.html). Either using the `.mjs` extension, or `.js` if you use `{ "type": module" }` in your `package.json`.
+
+```js
+// @ts-check
+/** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
+const config = {
+  // Your config here
+};
+export default;
 ```
 
 You can use your editor's autocompletion to help you author your configuration file.
@@ -40,7 +52,7 @@ You can use your editor's autocompletion to help you author your configuration f
 By default, Stryker will look for a "stryker.conf.js" or "stryker.conf.json" file in the current working directory (cwd). You can also use a different configuration file with a second argument to the `run` command.
 
 ```shell
-# Use "stryker.conf.js" or "stryker.conf.json" in the cwd
+# Use "stryker.conf.[js,json,mjs]" in the cwd
 npx stryker run
 # Use "alternative-stryker.conf.json"
 npx stryker run alternative-stryker.conf.json
