@@ -14,7 +14,7 @@ export class GitignoreWriter {
   constructor(private readonly out: typeof console.log) {}
 
   public async addStrykerTempFolder(): Promise<void> {
-    const defaultTempDirName = defaultOptions().tempDirName;
+    const defaultTempDirName = defaultOptions.tempDirName;
     if (existsSync(GITIGNORE_FILE)) {
       const gitignoreContent = await fs.readFile(GITIGNORE_FILE);
       if (!gitignoreContent.toString().includes(defaultTempDirName)) {

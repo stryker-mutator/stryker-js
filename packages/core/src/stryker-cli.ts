@@ -8,7 +8,7 @@ import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions
 import { initializerFactory } from './initializer/index.js';
 import { LogConfigurator } from './logging/index.js';
 import { Stryker } from './stryker.js';
-import { defaultOptions } from './config/options-validator.js';
+import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
 
 /**
@@ -46,7 +46,6 @@ export class StrykerCli {
 
   public run(): void {
     const dashboard: Partial<DashboardOptions> = {};
-    const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       .version(strykerVersion)
@@ -91,7 +90,7 @@ export class StrykerCli {
       )
       .option('--checkerNodeArgs <listOfNodeArgs>', 'A list of node args to be passed to checker child processes.', createSplitter(' '))
       .option(
-        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
+        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
@@ -123,11 +122,11 @@ export class StrykerCli {
       )
       .option(
         '--logLevel <level>',
-        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.logLevel}"`
+        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.logLevel}"`
       )
       .option(
         '--fileLogLevel <level>',
-        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.fileLogLevel}"`
+        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.fileLogLevel}"`
       )
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(
@@ -147,12 +146,12 @@ export class StrykerCli {
       )
       .option(
         '--dashboard.baseUrl <url>',
-        `Indicates which baseUrl to use when reporting to the stryker dashboard. Default: "${defaultValues.dashboard.baseUrl}"`,
+        `Indicates which baseUrl to use when reporting to the stryker dashboard. Default: "${defaultOptions.dashboard.baseUrl}"`,
         deepOption(dashboard, 'baseUrl')
       )
       .option(
         `--dashboard.reportType <${ALL_REPORT_TYPES.join('|')}>`,
-        `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultValues.dashboard.reportType}`,
+        `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultOptions.dashboard.reportType}`,
         deepOption(dashboard, 'reportType')
       )
       .option(
@@ -165,7 +164,7 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true/false>',
-        `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
+        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
       .showSuggestionAfterError()

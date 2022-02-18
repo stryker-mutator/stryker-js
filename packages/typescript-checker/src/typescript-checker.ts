@@ -125,7 +125,7 @@ export class TypescriptChecker implements Checker {
       throw new Error(
         `The tsconfig file does not exist at: "${path.resolve(
           this.tsconfigFile
-        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>('tsconfigFile')}"`
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>()('tsconfigFile')}"`
       );
     }
   }

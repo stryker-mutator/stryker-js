@@ -1,3 +1,6 @@
+import { propertyPath } from '@stryker-mutator/util';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+
 export function wrapInClosure(codeFragment: string): string {
   return `
     (function (window) {
@@ -27,3 +30,8 @@ export function serialize(thing: unknown): string {
 export function deserialize<T>(stringified: string): T {
   return JSON.parse(stringified);
 }
+
+/**
+ * Print the name of (or path to) a stryker option
+ */
+export const optionsPath = propertyPath<StrykerOptions>();

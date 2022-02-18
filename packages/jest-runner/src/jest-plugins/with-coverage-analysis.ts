@@ -61,7 +61,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
     // 'jest-circus/runner' is supported, via handleTestEvent, see https://jestjs.io/docs/en/configuration#testenvironment-string
     // Use includes here, since "react-scripts" will specify the full path to `jest-circus`, see https://github.com/stryker-mutator/stryker-js/issues/2789
     throw new Error(
-      `The @stryker-mutator/jest-runner doesn't support ${propertyPath<StrykerOptions>(
+      `The @stryker-mutator/jest-runner doesn't support ${propertyPath<StrykerOptions>()(
         'coverageAnalysis'
       )} "perTest" with "jestConfig.testRunner": "${
         jestConfig.testRunner

@@ -14,9 +14,7 @@ import minimatch, { type IMinimatch } from 'minimatch';
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';
-import { defaultOptions } from '../config/options-validator.js';
-
-import { FileMatcher } from '../config/index.js';
+import { defaultOptions, FileMatcher } from '../config/index.js';
 
 import { InputFileCollection } from './input-file-collection.js';
 
@@ -56,7 +54,7 @@ export class InputFileResolver {
   }
 
   private resolveMutateFiles(inputFileNames: string[]) {
-    return this.filterPatterns(inputFileNames, this.mutatePatterns, !isDeepStrictEqual(this.mutatePatterns, defaultOptions().mutate));
+    return this.filterPatterns(inputFileNames, this.mutatePatterns, !isDeepStrictEqual(this.mutatePatterns, defaultOptions.mutate));
   }
 
   private resolveMutationRange(): MutationRange[] {

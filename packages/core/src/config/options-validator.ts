@@ -4,13 +4,13 @@ import glob from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, PropertyPathBuilder, findUnserializables } from '@stryker-mutator/util';
+import { noopLogger, findUnserializables, Immutable, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di/index.js';
-import { objectUtils } from '../utils/object-utils.js';
 import { ConfigError } from '../errors.js';
+import { objectUtils, optionsPath } from '../utils/index.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
 import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input/index.js';
 
@@ -72,14 +72,12 @@ export class OptionsValidator {
         ? 'webpack --config webpack.config.js'
         : 'npm run build';
       this.log.warn(
-        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${propertyPath<StrykerOptions>(
-          'buildCommand'
-        )}". For example, ${example}.`
+        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`
       );
       delete rawOptions.transpilers;
     }
     if (Array.isArray(rawOptions.files)) {
-      const ignorePatternsName = propertyPath<StrykerOptions>('ignorePatterns');
+      const ignorePatternsName = optionsPath('ignorePatterns');
       const isString = (uncertain: unknown): uncertain is string => typeof uncertain === 'string';
       const files = rawOptions.files.filter(isString);
       const newIgnorePatterns: string[] = [
@@ -129,11 +127,9 @@ export class OptionsValidator {
     }
     if (options.ignoreStatic && options.coverageAnalysis !== 'perTest') {
       additionalErrors.push(
-        `Config option "${propertyPath<StrykerOptions>('ignoreStatic')}" is not supported with coverage analysis "${
+        `Config option "${optionsPath('ignoreStatic')}" is not supported with coverage analysis "${
           options.coverageAnalysis
-        }". Either turn off "${propertyPath<StrykerOptions>('ignoreStatic')}", or configure "${propertyPath<StrykerOptions>(
-          'coverageAnalysis'
-        )}" to be "perTest".`
+        }". Either turn off "${optionsPath('ignoreStatic')}", or configure "${optionsPath('coverageAnalysis')}" to be "perTest".`
       );
     }
     options.mutate.forEach((mutateString, index) => {
@@ -201,14 +197,12 @@ export class OptionsValidator {
           this.log.warn(`Unknown stryker config option "${excessPropertyName}".`);
         });
 
-        const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unknownOptions').build();
-
         this.log.warn(`Possible causes:
      * Is it a typo on your end?
      * Did you only write this property as a comment? If so, please postfix it with "_comment".
      * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
      * The plugin that is using it did not contribute explicit validation. 
-     (disable "${p}" to ignore this warning)`);
+     (disable "${optionsPath('warnings', 'unknownOptions')}" to ignore this warning)`);
       }
     }
   }
@@ -224,16 +218,17 @@ export class OptionsValidator {
             )}" is not (fully) serializable. ${reason}. Any test runner or checker worker processes might not receive this value as intended.`
           )
         );
-        const p = PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('unserializableOptions').build();
-        this.log.warn(`(disable ${p} to ignore this warning)`);
+        this.log.warn(`(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`);
       }
     }
   }
 }
 
-export function defaultOptions(): StrykerOptions {
+export function createDefaultOptions(): StrykerOptions {
   const options: Record<string, unknown> = {};
   const validator: OptionsValidator = new OptionsValidator(strykerCoreSchema, noopLogger);
   validator.validate(options);
   return options;
 }
+
+export const defaultOptions: Immutable<StrykerOptions> = deepFreeze(createDefaultOptions());
