@@ -10,7 +10,7 @@
     "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
   },
   "devDependencies": {
-    "karma": "4.4.1",
+    "karma": "6.3.14",
     "karma-chrome-launcher": "3.1.0",
     "karma-mocha": "2.0.1",
     "karma-chai": "0.1.0"
