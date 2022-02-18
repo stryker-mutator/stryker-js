@@ -1,4 +1,5 @@
 import os from 'os';
+import path from 'path';
 
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
@@ -57,6 +58,9 @@ describe(OptionsValidator.name, () => {
         fileLogLevel: LogLevel.Off,
         jsonReporter: {
           fileName: 'reports/mutation/mutation.json',
+        },
+        htmlReporter: {
+          fileName: 'reports/mutation/mutation.html',
         },
         logLevel: LogLevel.Information,
         maxConcurrentTestRunners: 9007199254740991,
@@ -169,9 +173,26 @@ describe(OptionsValidator.name, () => {
     testInjector.options.jest = { enableBail: false };
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
-      'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+      'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
     );
     expect(testInjector.options.disableBail).true;
+  });
+
+  describe('htmlReporter.baseDir', () => {
+    it('should report a deprecation warning and set fileName', () => {
+      breakConfig('htmlReporter', { baseDir: 'some/base/dir' }, false);
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "htmlReporter.fileName" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string'
+      );
+      expect(testInjector.options.htmlReporter.fileName).eq(path.join('some', 'base', 'dir', 'index.html'));
+    });
+
+    it('should not override the fileName if a fileName is already set', () => {
+      breakConfig('htmlReporter', { baseDir: 'some/base/dir', fileName: 'some-other.file.html' });
+      sut.validate(testInjector.options);
+      expect(testInjector.options.htmlReporter.fileName).eq('some-other.file.html');
+    });
   });
 
   describe('plugins', () => {
@@ -362,7 +383,7 @@ describe(OptionsValidator.name, () => {
   describe('unknown options', () => {
     it('should not warn when there are no unknown properties', () => {
       testInjector.options.htmlReporter = {
-        baseDir: 'test',
+        fileName: 'test.html',
       };
       sut.validate(testInjector.options, true);
       expect(testInjector.logger.warn).not.called;
@@ -454,9 +475,9 @@ describe(OptionsValidator.name, () => {
     expect(testInjector.logger.warn).not.called;
   }
 
-  function breakConfig(key: keyof StrykerOptions, value: any): void {
+  function breakConfig(key: keyof StrykerOptions, value: any, mergeObjects = true): void {
     const original = testInjector.options[key];
-    if (typeof original === 'object' && !Array.isArray(original)) {
+    if (typeof original === 'object' && !Array.isArray(original) && mergeObjects) {
       testInjector.options[key] = { ...original, ...value };
     } else {
       testInjector.options[key] = value;

@@ -1,14 +1,42 @@
-import { readFile } from 'fs';
-import { promisify } from 'util';
+import path from 'path';
+import fs from 'fs';
+
 import { createRequire } from 'module';
 
-import { schema } from '@stryker-mutator/api/core';
+import fileUrl from 'file-url';
+import { schema, StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { Reporter } from '@stryker-mutator/api/report';
 
-const promisedReadFile = promisify(readFile);
+import { reporterUtil } from './reporter-util.js';
 
-export async function reportTemplate(report: schema.MutationTestResult): Promise<string> {
+export class HtmlReporter implements Reporter {
+  private mainPromise: Promise<void> | undefined;
+
+  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}
+
+  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
+
+  public onMutationTestReportReady(report: schema.MutationTestResult): void {
+    this.mainPromise = this.generateReport(report);
+  }
+
+  public wrapUp(): Promise<void> | undefined {
+    return this.mainPromise;
+  }
+
+  private async generateReport(report: schema.MutationTestResult) {
+    this.log.debug(`Using file "${this.options.htmlReporter.fileName}"`);
+    const html = await createReportHtml(report);
+    await reporterUtil.writeFile(this.options.htmlReporter.fileName, html);
+    this.log.info(`Your report can be found at: ${fileUrl(path.resolve(this.options.htmlReporter.fileName))}`);
+  }
+}
+
+async function createReportHtml(report: schema.MutationTestResult): Promise<string> {
   const require = createRequire(import.meta.url);
-  const scriptContent = await promisedReadFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), 'utf-8');
+  const scriptContent = await fs.promises.readFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), 'utf-8');
 
   return `<!DOCTYPE html>
   <html>
@@ -41,5 +69,6 @@ export async function reportTemplate(report: schema.MutationTestResult): Promise
  * Escapes the HTML tags inside strings in a JSON input by breaking them apart.
  */
 function escapeHtmlTags(json: string) {
-  return json.replace(/</g, '<" + "');
+  const j = json.replace(/</g, '<"+"');
+  return j;
 }
