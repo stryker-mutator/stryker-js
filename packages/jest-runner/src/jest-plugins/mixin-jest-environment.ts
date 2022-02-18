@@ -25,42 +25,42 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
     return JestEnvironmentClass;
   } else {
     class StrykerJestEnvironment extends JestEnvironmentClass {
-      private readonly fileName: string;
+      private readonly strykerFileName: string;
 
       /**
        * The shared instrumenter context with the test environment (the `__stryker__` global variable)
        */
-      private readonly context: InstrumenterContext;
+      private readonly strykerContext: InstrumenterContext;
 
       public static readonly [STRYKER_JEST_ENV] = true;
 
       constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
         super(config, context);
-        this.fileName = context!.testPath!;
-        this.context = this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {};
+        this.strykerFileName = context!.testPath!;
+        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {};
       }
 
       public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await super.handleTestEvent?.(event as any, eventState);
         if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-          this.context.currentTestId = fullName(event.test);
+          this.strykerContext.currentTestId = fullName(event.test);
         }
       };
 
       public async teardown() {
-        const mutantCoverage = this.context.mutantCoverage;
-        state.hitCount = this.context.hitCount;
-        state.hitLimit = this.context.hitLimit;
-        state.handleMutantCoverage(this.fileName, mutantCoverage);
+        const mutantCoverage = this.strykerContext.mutantCoverage;
+        state.hitCount = this.strykerContext.hitCount;
+        state.hitLimit = this.strykerContext.hitLimit;
+        state.handleMutantCoverage(this.strykerFileName, mutantCoverage);
         await super.teardown();
       }
 
       public async setup() {
         await super.setup();
         if (state.firstTestFile) {
-          this.context.hitCount = 0;
-          this.context.hitLimit = state.hitLimit;
+          this.strykerContext.hitCount = 0;
+          this.strykerContext.hitLimit = state.hitLimit;
           state.firstTestFile = false;
         }
       }
