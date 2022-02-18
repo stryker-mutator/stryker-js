@@ -1,4 +1,5 @@
 import os from 'os';
+import path from 'path';
 
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
@@ -184,7 +185,7 @@ describe(OptionsValidator.name, () => {
       expect(testInjector.logger.warn).calledWith(
         'DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "htmlReporter.fileName" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string'
       );
-      expect(testInjector.options.htmlReporter.fileName).eq('some/base/dir/index.html');
+      expect(testInjector.options.htmlReporter.fileName).eq(path.join('some', 'base', 'dir', 'index.html'));
     });
 
     it('should not override the fileName if a fileName is already set', () => {
