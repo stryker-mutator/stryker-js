@@ -1,9 +1,7 @@
 import path from 'path';
-import { promisify } from 'util';
 import { createReadStream, createWriteStream, promises as fs } from 'fs';
 
 import mkdirp from 'mkdirp';
-import rimraf from 'rimraf';
 
 export const reporterUtil = {
   copyFile(fromFilename: string, toFilename: string): Promise<void> {
@@ -17,7 +15,6 @@ export const reporterUtil = {
     });
   },
 
-  deleteDir: promisify(rimraf),
   mkdir: mkdirp,
 
   async writeFile(fileName: string, content: string): Promise<void> {

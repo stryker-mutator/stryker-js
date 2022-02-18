@@ -12,7 +12,7 @@ describe('Verify stryker has ran correctly', () => {
   }
 
   it('should report the html file', () => {
-    expectExists('reports/mutation/html/index.html');
+    expectExists('reports/mutation/mutation.html');
   });
 
   it('should have a clear text report', () => {

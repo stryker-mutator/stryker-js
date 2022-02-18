@@ -1,4 +1,5 @@
 import os from 'os';
+import path from 'path';
 
 import glob from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
@@ -98,12 +99,29 @@ export class OptionsValidator {
     // @ts-expect-error jest.enableBail
     if (rawOptions.jest?.enableBail !== undefined) {
       this.log.warn(
-        'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+        'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
       );
       // @ts-expect-error jest.enableBail
       rawOptions.disableBail = !rawOptions.jest?.enableBail;
       // @ts-expect-error jest.enableBail
       delete rawOptions.jest.enableBail;
+    }
+
+    // @ts-expect-error htmlReporter.baseDir
+    if (rawOptions.htmlReporter?.baseDir) {
+      this.log.warn(
+        `DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "${optionsPath(
+          'htmlReporter',
+          'fileName'
+        )}" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string`
+      );
+      // @ts-expect-error htmlReporter.baseDir
+      if (!rawOptions.htmlReporter.fileName) {
+        // @ts-expect-error htmlReporter.baseDir
+        rawOptions.htmlReporter.fileName = path.join(String(rawOptions.htmlReporter.baseDir), 'index.html');
+      }
+      // @ts-expect-error htmlReporter.baseDir
+      delete rawOptions.htmlReporter.baseDir;
     }
   }
 
@@ -211,11 +229,11 @@ export class OptionsValidator {
     if (objectUtils.isWarningEnabled('unserializableOptions', options.warnings)) {
       const unserializables = findUnserializables(options);
       if (unserializables) {
-        unserializables.forEach(({ reason, path }) =>
+        unserializables.forEach((unserializable) =>
           this.log.warn(
-            `Config option "${path.join(
-              '.'
-            )}" is not (fully) serializable. ${reason}. Any test runner or checker worker processes might not receive this value as intended.`
+            `Config option "${unserializable.path.join('.')}" is not (fully) serializable. ${
+              unserializable.reason
+            }. Any test runner or checker worker processes might not receive this value as intended.`
           )
         );
         this.log.warn(`(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`);

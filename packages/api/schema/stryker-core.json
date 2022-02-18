@@ -126,10 +126,10 @@
       "additionalProperties": false,
       "type": "object",
       "properties": {
-        "baseDir": {
-          "description": "The output folder for the html report.",
+        "fileName": {
+          "description": "The `fileName` of the html report.",
           "type": "string",
-          "default": "reports/mutation/html"
+          "default": "reports/mutation/mutation.html"
         }
       }
     },
@@ -383,7 +383,8 @@
     },
     "htmlReporter": {
       "description": "The options for the html reporter",
-      "$ref": "#/definitions/htmlReporterOptions"
+      "$ref": "#/definitions/htmlReporterOptions",
+      "default": {}
     },
     "jsonReporter": {
       "description": "The options for the json reporter",

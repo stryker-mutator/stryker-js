@@ -6,7 +6,7 @@ import { DotsReporter } from './dots-reporter.js';
 import { EventRecorderReporter } from './event-recorder-reporter.js';
 import { ProgressAppendOnlyReporter } from './progress-append-only-reporter.js';
 import { ProgressBarReporter } from './progress-reporter.js';
-import { HtmlReporter } from './html/html-reporter.js';
+import { HtmlReporter } from './html-reporter.js';
 import { JsonReporter } from './json-reporter.js';
 
 export { BroadcastReporter } from './broadcast-reporter.js';

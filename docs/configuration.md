@@ -296,7 +296,7 @@ These reporters can be used out of the box: `html`, `json`, `progress`, `clear-t
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
-The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
+The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { fileName: 'mypath/reports/stryker.html' }` (since Stryker v6).
 
 The `json` reporter allows specifying an output file name (may also contain a path). The config for your config file is: `jsonReporter: { fileName: 'mypath/reports/mutation.json' }`
 
