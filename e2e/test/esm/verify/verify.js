@@ -16,6 +16,16 @@ describe('esm', () => {
     execStryker('stryker run --testRunner jasmine');
     await assertStrykerRanCorrectly();
   });
+
+  it('should be supported in the jest runner', async () => {
+    execStryker('stryker run --testRunner jest --testRunnerNodeArgs "--experimental-vm-modules"');
+    await assertStrykerRanCorrectly();
+  });
+
+  it('should be supported in the karma runner', async () => {
+    execStryker('stryker run --testRunner karma');
+    await assertStrykerRanCorrectly();
+  });
 });
 
 async function assertStrykerRanCorrectly() {

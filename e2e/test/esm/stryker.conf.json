@@ -4,6 +4,6 @@
   "reporters": ["json", "html"],
   "disableBail": true,
   "karma": {
-    "configFile": "karma.conf.js"
+    "configFile": "karma.conf.cjs"
   }
 }
