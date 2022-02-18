@@ -2,7 +2,7 @@ import path from 'path';
 
 import { Config } from '@jest/types';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { PropertyPathBuilder, type requireResolve } from '@stryker-mutator/util';
+import { propertyPath, type requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import * as pluginTokens from '../plugin-tokens.js';
@@ -31,10 +31,10 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
         throw Error(
-          `Unable to locate package "react-scripts". This package is required when "${PropertyPathBuilder.create<JestRunnerOptionsWithStrykerOptions>()
-            .prop('jest')
-            .prop('projectType')
-            .build()}" is set to "create-react-app".`
+          `Unable to locate package "react-scripts". This package is required when "${propertyPath<JestRunnerOptionsWithStrykerOptions>()(
+            'jest',
+            'projectType'
+          )}" is set to "create-react-app".`
         );
       }
       throw e;
