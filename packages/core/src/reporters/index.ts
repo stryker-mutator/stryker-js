@@ -1,13 +1,15 @@
 import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import { ClearTextReporter } from './clear-text-reporter';
-import { dashboardReporterFactory } from './dashboard-reporter';
-import { DotsReporter } from './dots-reporter';
-import { EventRecorderReporter } from './event-recorder-reporter';
-import { ProgressAppendOnlyReporter } from './progress-append-only-reporter';
-import { ProgressBarReporter } from './progress-reporter';
-import { HtmlReporter } from './html/html-reporter';
-import { JsonReporter } from './json-reporter';
+import { ClearTextReporter } from './clear-text-reporter.js';
+import { dashboardReporterFactory } from './dashboard-reporter/index.js';
+import { DotsReporter } from './dots-reporter.js';
+import { EventRecorderReporter } from './event-recorder-reporter.js';
+import { ProgressAppendOnlyReporter } from './progress-append-only-reporter.js';
+import { ProgressBarReporter } from './progress-reporter.js';
+import { HtmlReporter } from './html/html-reporter.js';
+import { JsonReporter } from './json-reporter.js';
+
+export { BroadcastReporter } from './broadcast-reporter.js';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
@@ -19,3 +21,5 @@ export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'json', JsonReporter),
   declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory),
 ];
+
+export const reporterPluginsFileUrl = import.meta.url;

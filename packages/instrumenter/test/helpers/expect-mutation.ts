@@ -1,9 +1,12 @@
-import { traverse } from '@babel/core';
+import babel from '@babel/core';
 import { parse, ParserPlugin } from '@babel/parser';
-import generate from '@babel/generator';
+import generator from '@babel/generator';
 import { expect } from 'chai';
 
-import { NodeMutator } from '../../src/mutators/node-mutator';
+import { NodeMutator } from '../../src/mutators/node-mutator.js';
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
 
 const plugins = [
   'doExpressions',
@@ -41,7 +44,7 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
     sourceType: 'module',
   });
   const mutants: string[] = [];
-  traverse(ast, {
+  babel.traverse(ast, {
     enter(path) {
       for (const replacement of sut.mutate(path)) {
         const mutatedCode = generate(replacement).code;
@@ -52,6 +55,10 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
       }
     },
   });
-  expect(mutants).lengthOf(expectedReplacements.length);
-  expectedReplacements.forEach((expected) => expect(mutants, `was: ${mutants.join(',')}`).to.include(expected));
+  /* eslint-disable @typescript-eslint/require-array-sort-compare */
+  /* because we know mutants and expectedReplacements are strings */
+  mutants.sort();
+  expectedReplacements.sort();
+  /* eslint-enable @typescript-eslint/require-array-sort-compare */
+  expect(mutants).to.deep.equal(expectedReplacements);
 }

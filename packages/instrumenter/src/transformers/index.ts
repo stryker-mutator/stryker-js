@@ -1,5 +1,6 @@
-import { MutantCollector } from './mutant-collector';
-import { TransformerOptions } from './transformer-options';
+import { MutantCollector } from './mutant-collector.js';
+import { TransformerOptions } from './transformer-options.js';
 
-export { MutantCollector, TransformerOptions };
-export * from './transformer';
+export type { TransformerOptions };
+export { MutantCollector };
+export * from './transformer.js';

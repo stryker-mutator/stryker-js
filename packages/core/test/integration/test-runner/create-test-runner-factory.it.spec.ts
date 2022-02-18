@@ -1,21 +1,21 @@
 import fs from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-import { LogLevel } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import log4js from 'log4js';
-import { toArray } from 'rxjs/operators';
+import { lastValueFrom, toArray } from 'rxjs';
+import { LogLevel } from '@stryker-mutator/api/core';
 import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { lastValueFrom } from 'rxjs';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
+import { sleep } from '../../helpers/test-utils.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
-import { LoggingClientContext } from '../../../src/logging';
-import { createTestRunnerFactory } from '../../../src/test-runner';
-import { sleep } from '../../helpers/test-utils';
-import { coreTokens } from '../../../src/di';
-import { TestRunnerResource } from '../../../src/concurrent';
-
-import { CounterTestRunner } from './additional-test-runners';
+import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
@@ -24,6 +24,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
+  const pluginModulePaths = Object.freeze([additionalTestRunnersFileUrl]);
 
   function rmSync(fileName: string) {
     if (fs.existsSync(fileName)) {
@@ -36,14 +37,14 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
-    testInjector.options.plugins = [require.resolve('./additional-test-runners')];
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
-      .provideValue(coreTokens.sandbox, { workingDirectory: __dirname })
+      .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
       .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);
@@ -185,5 +186,30 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
     await actMutantRun();
     expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
+  });
+
+  describe('running static mutants', () => {
+    beforeEach(async () => {
+      await arrangeSut('static');
+    });
+
+    it('should not reload environment when reloadEnvironment = false', async () => {
+      const result1 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      const result2 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      assertions.expectKilled(result1); // killed means it was the first run in the environment
+      assertions.expectSurvived(result2); // survived means it was the second run in the environment
+    });
+
+    it('should reload environment when reloadEnvironment is true', async () => {
+      await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
+      assertions.expectKilled(result);
+    });
+
+    it('should reload environment when reloadEnvironment is true and dry run came before', async () => {
+      await actDryRun();
+      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
+      assertions.expectKilled(result);
+    });
   });
 });

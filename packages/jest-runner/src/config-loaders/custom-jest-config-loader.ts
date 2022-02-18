@@ -5,20 +5,20 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
+import type { requireResolve } from '@stryker-mutator/util';
 
-import { requireResolve } from '@stryker-mutator/util';
+import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
+import * as pluginTokens from '../plugin-tokens.js';
 
-import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options';
-
-import { JestConfigLoader } from './jest-config-loader';
+import { JestConfigLoader } from './jest-config-loader.js';
 
 /**
  * The Default config loader will load the Jest configuration using the package.json in the package root
  */
 export class CustomJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(commonTokens.logger, commonTokens.options);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.requireFromCwd);
 
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly requireFromCwd: typeof requireResolve) {}
 
   public loadConfig(): Config.InitialOptions {
     const jestConfig = this.readConfigFromJestConfigFile() ?? this.readConfigFromPackageJson() ?? {};
@@ -29,7 +29,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
   private readConfigFromJestConfigFile(): Config.InitialOptions | undefined {
     const configFilePath = this.resolveJestConfigFilePath();
     if (configFilePath) {
-      const config = requireResolve(configFilePath) as Config.InitialOptions;
+      const config = this.requireFromCwd(configFilePath) as Config.InitialOptions;
       this.log.debug(`Read Jest config from ${configFilePath}`);
       this.setRootDir(config, configFilePath);
       return config;

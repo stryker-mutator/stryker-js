@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:unit:manual": "cross-env BABEL_ENV=test VUE_CLI_TRANSPILE_BABEL_RUNTIME=true VUE_CLI_BABEL_TARGET_NODE=true VUE_CLI_BABEL_TRANSPILE_MODULES=true jest --runInBand",
     "test": "cross-env BABEL_ENV=test VUE_CLI_TRANSPILE_BABEL_RUNTIME=true VUE_CLI_BABEL_TARGET_NODE=true VUE_CLI_BABEL_TRANSPILE_MODULES=true stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/verify.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "dependencies": {
     "core-js": "~3.6.4",

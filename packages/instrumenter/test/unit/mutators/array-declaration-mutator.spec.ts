@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { arrayDeclarationMutator as sut } from '../../../src/mutators/array-declaration-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { arrayDeclarationMutator as sut } from '../../../src/mutators/array-declaration-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "ArrayDeclaration"', () => {

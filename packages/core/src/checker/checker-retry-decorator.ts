@@ -2,11 +2,11 @@ import { CheckResult } from '@stryker-mutator/api/check';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error';
-import { OutOfMemoryError } from '../child-proxy/out-of-memory-error';
-import { ResourceDecorator } from '../concurrent';
+import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error.js';
+import { OutOfMemoryError } from '../child-proxy/out-of-memory-error.js';
+import { ResourceDecorator } from '../concurrent/index.js';
 
-import { CheckerResource } from './checker-resource';
+import { CheckerResource } from './checker-resource.js';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
   constructor(producer: () => CheckerResource, private readonly log: Logger) {

@@ -3,14 +3,9 @@
   "compilerOptions": {
     "outDir": "dist/test",
     "rootDir": "test",
-    "types": [
-      "mocha",
-      "node"
-    ]
+    "types": ["mocha", "node"]
   },
-  "include": [
-    "test"
-  ],
+  "include": ["test"],
   "references": [
     {
       "path": "./tsconfig.src.json"

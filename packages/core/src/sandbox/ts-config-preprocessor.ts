@@ -4,11 +4,15 @@ import { StrykerOptions, File } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import { FilePreprocessor } from './file-preprocessor';
+import { FilePreprocessor } from './file-preprocessor.js';
 
-interface TSConfigReferences {
+export interface TSConfig {
   references?: Array<{ path: string }>;
   extends?: string;
+  files?: string[];
+  exclude?: string[];
+  include?: string[];
+  compilerOptions?: Record<string, unknown>;
 }
 /**
  * A helper class that rewrites `references` and `extends` file paths if they end up falling outside of the sandbox.
@@ -58,46 +62,69 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       const tsconfigFile = this.fs.get(tsconfigFileName);
       if (tsconfigFile) {
         this.log.debug('Rewriting file %s', tsconfigFile);
-        const ts = await import('typescript');
-        const { config }: { config?: TSConfigReferences } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
+        const { default: ts } = await import('typescript');
+        const { config }: { config?: TSConfig } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
         if (config) {
           await this.rewriteExtends(config, tsconfigFileName);
           await this.rewriteProjectReferences(config, tsconfigFileName);
+          this.rewriteFileArrayProperty(config, tsconfigFileName, 'include');
+          this.rewriteFileArrayProperty(config, tsconfigFileName, 'exclude');
+          this.rewriteFileArrayProperty(config, tsconfigFileName, 'files');
           this.fs.set(tsconfigFileName, new File(tsconfigFileName, JSON.stringify(config, null, 2)));
         }
       }
     }
   }
 
-  private async rewriteExtends(config: TSConfigReferences, tsconfigFileName: string): Promise<boolean> {
+  private async rewriteExtends(config: TSConfig, tsconfigFileName: string): Promise<void> {
     const extend = config.extends;
     if (typeof extend === 'string') {
-      const extendsFileName = path.resolve(path.dirname(tsconfigFileName), extend);
-      const relativeToSandbox = path.relative(process.cwd(), extendsFileName);
-      if (relativeToSandbox.startsWith('..')) {
-        config.extends = this.join('..', '..', extend);
-        return true;
+      const rewritten = this.tryRewriteReference(extend, tsconfigFileName);
+      if (rewritten) {
+        config.extends = rewritten;
       } else {
-        await this.rewriteTSConfigFile(extendsFileName);
+        await this.rewriteTSConfigFile(path.resolve(path.dirname(tsconfigFileName), extend));
       }
     }
-    return false;
   }
 
-  private async rewriteProjectReferences(config: TSConfigReferences, originTSConfigFileName: string): Promise<void> {
-    const ts = await import('typescript');
+  private rewriteFileArrayProperty(config: TSConfig, tsconfigFileName: string, prop: 'exclude' | 'files' | 'include'): void {
+    const fileArray = config[prop];
+    if (Array.isArray(fileArray)) {
+      config[prop] = fileArray.map((pattern) => {
+        const rewritten = this.tryRewriteReference(pattern, tsconfigFileName);
+        if (rewritten) {
+          return rewritten;
+        } else {
+          return pattern;
+        }
+      });
+    }
+  }
+
+  private async rewriteProjectReferences(config: TSConfig, originTSConfigFileName: string): Promise<void> {
+    const { default: ts } = await import('typescript');
     if (Array.isArray(config.references)) {
       for (const reference of config.references) {
         const referencePath = ts.resolveProjectReferencePath(reference);
-        const referencedProjectFileName = path.resolve(path.dirname(originTSConfigFileName), referencePath);
-        const relativeToProject = path.relative(process.cwd(), referencedProjectFileName);
-        if (relativeToProject.startsWith('..')) {
-          reference.path = this.join('..', '..', referencePath);
+        const rewritten = this.tryRewriteReference(referencePath, originTSConfigFileName);
+        if (rewritten) {
+          reference.path = rewritten;
         } else {
-          await this.rewriteTSConfigFile(referencedProjectFileName);
+          await this.rewriteTSConfigFile(path.resolve(path.dirname(originTSConfigFileName), referencePath));
         }
       }
     }
+  }
+
+  private tryRewriteReference(reference: string, originTSConfigFileName: string): string | false {
+    const dirName = path.dirname(originTSConfigFileName);
+    const fileName = path.resolve(dirName, reference);
+    const relativeToSandbox = path.relative(process.cwd(), fileName);
+    if (relativeToSandbox.startsWith('..')) {
+      return this.join('..', '..', reference);
+    }
+    return false;
   }
 
   private join(...pathSegments: string[]) {

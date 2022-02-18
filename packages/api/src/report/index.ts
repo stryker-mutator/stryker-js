@@ -1,2 +1,2 @@
-export { Reporter } from './reporter';
-export { SourceFile } from './source-file';
+export type { Reporter } from './reporter.js';
+export type { SourceFile } from './source-file.js';

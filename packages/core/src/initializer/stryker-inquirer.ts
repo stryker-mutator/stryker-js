@@ -1,10 +1,10 @@
 import inquirer from 'inquirer';
 
-import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { CommandTestRunner } from '../test-runner/command-test-runner.js';
 
-import { ChoiceType } from './choice-type';
-import { Preset } from './presets/preset';
-import { PromptOption } from './prompt-option';
+import { ChoiceType } from './choice-type.js';
+import { Preset } from './presets/preset.js';
+import { PromptOption } from './prompt-option.js';
 
 export interface PromptResult {
   additionalNpmDependencies: string[];
@@ -41,6 +41,18 @@ export class StrykerInquirer {
     } else {
       return { name: CommandTestRunner.runnerName, pkg: null };
     }
+  }
+
+  public async promptBuildCommand(skip: boolean): Promise<PromptOption> {
+    const { buildCommand } = await inquirer.prompt<{ buildCommand: string }>({
+      message:
+        'What build command should be executed just before running your tests? For example: "npm run build" or "tsc -b" (leave empty when this is not needed).',
+      name: 'buildCommand',
+      default: 'none',
+      when: !skip,
+    });
+
+    return { name: buildCommand !== 'none' ? buildCommand : '', pkg: null };
   }
 
   public async promptReporters(options: PromptOption[]): Promise<PromptOption[]> {

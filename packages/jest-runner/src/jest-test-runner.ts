@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import { StrykerOptions, INSTRUMENTER_CONSTANTS, MutantCoverage, CoverageAnalysis } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -14,24 +14,25 @@ import {
   TestStatus,
   DryRunOptions,
   BaseTestResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
+import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
 import { SerializableError } from '@jest/types/build/TestResult';
 
-import { JestOptions } from '../src-generated/jest-runner-options';
+import { JestOptions } from '../src-generated/jest-runner-options.js';
 
-import { jestTestAdapterFactory } from './jest-test-adapters';
-import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
-import { JestConfigLoader } from './config-loaders/jest-config-loader';
-import { withCoverageAnalysis } from './jest-plugins';
-import * as pluginTokens from './plugin-tokens';
-import { configLoaderFactory } from './config-loaders';
-import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
-import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
-import { jestWrapper, mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils';
-import { state } from './messaging';
+import { jestTestAdapterFactory } from './jest-test-adapters/index.js';
+import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter.js';
+import { JestConfigLoader } from './config-loaders/jest-config-loader.js';
+import { withCoverageAnalysis } from './jest-plugins/index.js';
+import * as pluginTokens from './plugin-tokens.js';
+import { configLoaderFactory } from './config-loaders/index.js';
+import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options.js';
+import { JEST_OVERRIDE_OPTIONS } from './jest-override-options.js';
+import { jestWrapper, mergeMutantCoverage, verifyAllTestFilesHaveCoverage } from './utils/index.js';
+import { state } from './jest-plugins/cjs/messaging.js';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;
@@ -40,7 +41,6 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
     return injector
-      .provideValue(pluginTokens.processEnv, process.env)
       .provideValue(pluginTokens.jestVersion, jestWrapper.getVersion())
       .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
       .provideFactory(pluginTokens.configLoader, configLoaderFactory)
@@ -60,7 +60,6 @@ export class JestTestRunner implements TestRunner {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    pluginTokens.processEnv,
     pluginTokens.jestTestAdapter,
     pluginTokens.configLoader,
     pluginTokens.globalNamespace
@@ -69,7 +68,6 @@ export class JestTestRunner implements TestRunner {
   constructor(
     private readonly log: Logger,
     options: StrykerOptions,
-    private readonly processEnvRef: NodeJS.ProcessEnv,
     private readonly jestTestAdapter: JestTestAdapter,
     configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
@@ -91,7 +89,11 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({ coverageAnalysis, disableBail }: Pick<DryRunOptions, 'coverageAnalysis' | 'disableBail'>): Promise<DryRunResult> {
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
+  }
+
+  public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const mutantCoverage: MutantCoverage = { perTest: {}, static: {} };
     const fileNamesWithMutantCoverage: string[] = [];
@@ -101,9 +103,11 @@ export class JestTestRunner implements TestRunner {
         fileNamesWithMutantCoverage.push(fileName);
       });
     }
+    const fileNamesUnderTest = this.enableFindRelatedTests ? files : undefined;
     try {
       const { dryRunResult, jestResult } = await this.run({
-        jestConfig: withCoverageAnalysis({ ...this.jestConfig }, coverageAnalysis),
+        fileNamesUnderTest,
+        jestConfig: this.configForDryRun(fileNamesUnderTest, coverageAnalysis),
         testLocationInResults: true,
       });
       if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
@@ -134,7 +138,7 @@ export class JestTestRunner implements TestRunner {
 
     try {
       const { dryRunResult } = await this.run({
-        fileNameUnderTest,
+        fileNamesUnderTest: fileNameUnderTest ? [fileNameUnderTest] : undefined,
         jestConfig: this.configForMutantRun(fileNameUnderTest),
         testNamePattern,
       });
@@ -144,14 +148,22 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
+  private configForDryRun(fileNamesUnderTest: string[] | undefined, coverageAnalysis: CoverageAnalysis): jest.Config.InitialOptions {
+    return withCoverageAnalysis(this.configWithRoots(fileNamesUnderTest), coverageAnalysis);
+  }
+
   private configForMutantRun(fileNameUnderTest: string | undefined): jest.Config.InitialOptions {
+    return this.configWithRoots(fileNameUnderTest ? [fileNameUnderTest] : undefined);
+  }
+
+  private configWithRoots(fileNamesUnderTest: string[] | undefined): jest.Config.InitialOptions {
     let config: jest.Config.InitialOptions;
 
-    if (fileNameUnderTest && this.jestConfig.roots) {
+    if (fileNamesUnderTest && this.jestConfig.roots) {
       // Make sure the file under test lives inside one of the roots
       config = {
         ...this.jestConfig,
-        roots: [...this.jestConfig.roots, path.dirname(fileNameUnderTest)],
+        roots: [...this.jestConfig.roots, ...new Set(fileNamesUnderTest.map((file) => path.dirname(file)))],
       };
     } else {
       config = this.jestConfig;
@@ -191,25 +203,8 @@ export class JestTestRunner implements TestRunner {
   }
 
   private setEnv() {
-    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
-    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
-    if (!this.processEnvRef.NODE_ENV) {
-      this.processEnvRef.NODE_ENV = 'test';
-    }
-
     // Force colors off: https://github.com/chalk/supports-color#info
     process.env.FORCE_COLOR = '0';
-
-    if (this.jestOptions.projectType === 'create-react-app') {
-      try {
-        requireResolve('react-scripts/config/env.js');
-      } catch (err) {
-        this.log.warn(
-          'Unable to load environment variables using "react-scripts/config/env.js". The environment variables might differ from expected. Please open an issue if you think this is a bug: https://github.com/stryker-mutator/stryker-js/issues/new/choose.'
-        );
-        this.log.debug('Inner error', err);
-      }
-    }
   }
 
   private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {

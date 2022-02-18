@@ -8,9 +8,9 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { HybridFileSystem } from './fs';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers';
-import * as pluginTokens from './plugin-tokens';
+import { HybridFileSystem } from './fs/index.js';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers.js';
+import * as pluginTokens from './plugin-tokens.js';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,

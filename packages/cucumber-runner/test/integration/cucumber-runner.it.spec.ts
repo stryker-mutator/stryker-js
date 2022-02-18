@@ -1,5 +1,7 @@
 import path from 'path';
 
+import { createRequire } from 'module';
+
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import {
   assertions,
@@ -9,10 +11,10 @@ import {
 
 import { expect } from 'chai';
 
-import * as pluginTokens from '../../src/plugin-tokens';
-import { CucumberTestRunner } from '../../src';
-import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { CucumberTestRunner } from '../../src/index.js';
+import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running in an example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
@@ -76,11 +78,12 @@ describe('Running in an example project', () => {
   });
 
   it('should log the exec command on debug', async () => {
+    const require = createRequire(import.meta.url);
     testInjector.logger.isDebugEnabled.returns(true);
     await sut.dryRun(factory.dryRunOptions());
     expect(testInjector.logger.debug).calledWith(
       `${process.cwd()} "node" "cucumber-js" "--retry" "0" "--parallel" "0" "--format" "${require.resolve(
-        '../../src/stryker-formatter'
+        '../../src/cjs/stryker-formatter'
       )}" "--fail-fast"`
     );
   });

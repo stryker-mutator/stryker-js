@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { LogConfigurator } from '../../src/logging';
-import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli';
+import { LogConfigurator } from '../../src/logging/index.js';
+import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
@@ -31,6 +31,10 @@ describe(StrykerCli.name, () => {
       [['--ignorePatterns', 'foo.js,bar.js'], { ignorePatterns: ['foo.js', 'bar.js'] }],
       [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
       [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
+      [['--checkers', 'foo,bar'], { checkers: ['foo', 'bar'] }],
+      [['--checkers', 'foo'], { checkers: ['foo'] }],
+      [['--checkers', ''], { checkers: [] }],
+      [['--checkerNodeArgs', '--inspect=1337 --gc'], { checkerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--disableBail'], { disableBail: true }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
@@ -45,13 +49,14 @@ describe(StrykerCli.name, () => {
       [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--inPlace'], { inPlace: true }],
+      [['--ignoreStatic'], { ignoreStatic: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],
       [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
     ];
     testCases.forEach(([args, expected]) => {
-      it(`should parse option "${args.join(' ')}" as ${JSON.stringify(expected)}"`, () => {
+      it(`should parse option "${args.map((arg) => (arg === '' ? "''" : arg)).join(' ')}" as ${JSON.stringify(expected)}"`, () => {
         arrangeActAssertConfigOption(args, expected);
       });
     });
@@ -96,13 +101,13 @@ describe(StrykerCli.name, () => {
   });
 
   describe(guardMinimalNodeVersion.name, () => {
-    it('should fail for < v12.17', () => {
-      expect(() => guardMinimalNodeVersion('v12.16.0')).throws(
-        'Node.js version v12.16.0 detected. StrykerJS requires version to match >=12.17. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
+    it('should fail for < v12.20', () => {
+      expect(() => guardMinimalNodeVersion('v12.19.0')).throws(
+        'Node.js version v12.19.0 detected. StrykerJS requires version to match >=12.20. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
       );
     });
-    it('should not fail for >= v12.17', () => {
-      expect(() => guardMinimalNodeVersion('v12.17.0')).not.throws();
+    it('should not fail for >= v12.20', () => {
+      expect(() => guardMinimalNodeVersion('v12.20.0')).not.throws();
     });
   });
 

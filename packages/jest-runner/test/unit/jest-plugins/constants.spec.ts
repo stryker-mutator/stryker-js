@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import * as constants from '../../../src/jest-plugins/constants';
+import * as constants from '../../../src/jest-plugins/constants.js';
 
 describe('jest-plugins constants', () => {
   (

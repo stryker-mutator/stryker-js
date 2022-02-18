@@ -2,16 +2,17 @@ import sinon from 'sinon';
 import { File, Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import * as strykerUtil from '@stryker-mutator/util';
+import type { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
-import { coreTokens } from '../../../src/di';
-import { InputFileCollection } from '../../../src/input';
-import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper';
-import * as objectUtils from '../../../src/utils/object-utils';
+import { coreTokens } from '../../../src/di/index.js';
+import { InputFileCollection } from '../../../src/input/index.js';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
+import { strykerVersion } from '../../../src/stryker-package.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -19,10 +20,10 @@ describe(MutationTestReportHelper.name, () => {
   let files: File[];
   let setExitCodeStub: sinon.SinonStub;
   let dryRunResult: CompleteDryRunResult;
-  let requireResolveStub: sinon.SinonStub<Parameters<typeof strykerUtil.requireResolve>, ReturnType<typeof strykerUtil.requireResolve>>;
+  let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
 
   beforeEach(() => {
-    requireResolveStub = sinon.stub(strykerUtil, 'requireResolve');
+    requireFromCwdStub = sinon.stub();
     reporterMock = factory.reporter();
     setExitCodeStub = sinon.stub(objectUtils, 'setExitCode');
     files = [];
@@ -41,6 +42,7 @@ describe(MutationTestReportHelper.name, () => {
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.inputFiles, inputFiles)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.requireFromCwd, requireFromCwdStub)
       .injectClass(MutationTestReportHelper);
   }
 
@@ -92,8 +94,7 @@ describe(MutationTestReportHelper.name, () => {
       it('should report "name", "version" and "branding"', () => {
         const expected: Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'> = {
           name: 'StrykerJS',
-          // eslint-disable-next-line @typescript-eslint/no-require-imports
-          version: require('../../../../package.json').version,
+          version: strykerVersion,
           branding: {
             homepageUrl: 'https://stryker-mutator.io',
             imageUrl:
@@ -128,7 +129,7 @@ describe(MutationTestReportHelper.name, () => {
           'webpack-cli': '1.0.19',
           'ts-jest': '1.0.20',
         };
-        Object.entries(expectedDependencies).forEach(([dep, version]) => requireResolveStub.withArgs(`${dep}/package.json`).returns({ version }));
+        Object.entries(expectedDependencies).forEach(([dep, version]) => requireFromCwdStub.withArgs(`${dep}/package.json`).returns({ version }));
 
         // Act
         const [actualReport] = actReportAll([]);
@@ -139,8 +140,8 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should ignore dependencies that could not be found', () => {
         // Arrange
-        requireResolveStub.withArgs('karma/package.json').returns({ version: '2.3.4' });
-        requireResolveStub.withArgs('typescript/package.json').throws(new Error('[MODULE_NOT_FOUND]: Cannot find module "typescript"'));
+        requireFromCwdStub.withArgs('karma/package.json').returns({ version: '2.3.4' });
+        requireFromCwdStub.withArgs('typescript/package.json').throws(new Error('[MODULE_NOT_FOUND]: Cannot find module "typescript"'));
 
         // Act
         const [actualReport] = actReportAll([]);
@@ -433,7 +434,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Act
         const actual = sut.reportCheckFailed(
-          factory.mutant({
+          factory.mutantTestCoverage({
             id: '32',
             fileName: 'add.js',
             location,
@@ -460,7 +461,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Act
         const actual = sut.reportCheckFailed(
-          factory.mutant({ fileName: 'add.js' }),
+          factory.mutantTestCoverage({ fileName: 'add.js' }),
           factory.failedCheckResult({ status: CheckStatus.CompileError, reason: 'cannot call foo of undefined' })
         );
 

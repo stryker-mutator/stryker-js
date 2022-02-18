@@ -1,17 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports, import/order
-const strykerPackage: { version: string; engines: { node: string } } = require('../../package.json');
-
 import semver from 'semver';
 
 guardMinimalNodeVersion();
 
-import commander from 'commander';
+import { Command } from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { initializerFactory } from './initializer';
-import { LogConfigurator } from './logging';
-import { Stryker } from './stryker';
-import { defaultOptions } from './config/options-validator';
+import { initializerFactory } from './initializer/index.js';
+import { LogConfigurator } from './logging/index.js';
+import { Stryker } from './stryker.js';
+import { defaultOptions } from './config/options-validator.js';
+import { strykerEngines, strykerVersion } from './stryker-package.js';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -28,7 +26,7 @@ function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T) {
 const list = createSplitter(',');
 
 function createSplitter(sep: string) {
-  return (val: string) => val.split(sep);
+  return (val: string) => val.split(sep).filter(Boolean);
 }
 
 function parseBoolean(val: string) {
@@ -42,7 +40,7 @@ export class StrykerCli {
 
   constructor(
     private readonly argv: string[],
-    private readonly program: commander.Command = new commander.Command(),
+    private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 
@@ -51,7 +49,7 @@ export class StrykerCli {
     const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(strykerPackage.version)
+      .version(strykerVersion)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -75,6 +73,7 @@ export class StrykerCli {
         'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
+      .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
       .option(
         '-m, --mutate <filesToMutate>',
         'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
@@ -85,6 +84,12 @@ export class StrykerCli {
         'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
+      .option(
+        '--checkers <listOfCheckersOrEmptyString>',
+        'A comma separated list of checkers to use, for example --checkers typescript',
+        createSplitter(',')
+      )
+      .option('--checkerNodeArgs <listOfNodeArgs>', 'A list of node args to be passed to checker child processes.', createSplitter(' '))
       .option(
         `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
       )
@@ -163,6 +168,7 @@ export class StrykerCli {
         `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
+      .showSuggestionAfterError()
       .parse(this.argv);
 
     // Earliest opportunity to configure the log level based on the logLevel argument
@@ -200,9 +206,9 @@ export class StrykerCli {
 
 export function guardMinimalNodeVersion(processVersion = process.version): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  if (!semver.satisfies(processVersion, strykerPackage.engines.node)) {
+  if (!semver.satisfies(processVersion, strykerEngines.node)) {
     throw new Error(
-      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerPackage.engines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
+      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerEngines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
     );
   }
 }

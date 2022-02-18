@@ -3,6 +3,6 @@
   "scripts": {
     "pretest": "rimraf stryker.log .stryker-tmp",
     "test:mutation:plugin": "stryker run --fileLogLevel info stryker-error-in-plugin-options.conf.js || exit 0",
-    "test": "mocha --timeout 60000 --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

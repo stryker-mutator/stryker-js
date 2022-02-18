@@ -1,6 +1,7 @@
 stryker.conf.js
 test
 dist/test
+/coverage
 /reports
 /testResources
 /.nyc_output

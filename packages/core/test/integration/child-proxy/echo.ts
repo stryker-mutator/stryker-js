@@ -1,14 +1,18 @@
-import { tokens } from '@stryker-mutator/api/plugin';
-import { getLogger } from 'log4js';
+import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
 
 export class Echo {
-  private readonly logger = getLogger(Echo.name);
+  public static inject = tokens(commonTokens.logger, commonTokens.options);
 
-  public static inject = tokens('name');
-  constructor(public name: string) {}
+  public readonly testRunnerName: string;
+
+  constructor(private readonly logger: Logger, options: StrykerOptions) {
+    this.testRunnerName = options.testRunner;
+  }
 
   public say(value: string): string {
-    return `${this.name}: ${value}`;
+    return `${this.testRunnerName}: ${value}`;
   }
 
   public sayDelayed(value: string, delay: number): Promise<string> {

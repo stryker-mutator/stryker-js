@@ -1,8 +1,8 @@
-import { TestStatus } from './test-status';
-import { DryRunResult, TimeoutDryRunResult } from './dry-run-result';
-import { MutantRunResult, MutantRunStatus } from './mutant-run-result';
-import { DryRunStatus } from './dry-run-status';
-import { FailedTestResult } from './test-result';
+import { TestStatus } from './test-status.js';
+import { DryRunResult, TimeoutDryRunResult } from './dry-run-result.js';
+import { MutantRunResult, MutantRunStatus } from './mutant-run-result.js';
+import { DryRunStatus } from './dry-run-status.js';
+import { FailedTestResult } from './test-result.js';
 
 export function determineHitLimitReached(hitCount: number | undefined, hitLimit: number | undefined): TimeoutDryRunResult | undefined {
   if (hitCount !== undefined && hitLimit !== undefined && hitCount > hitLimit) {

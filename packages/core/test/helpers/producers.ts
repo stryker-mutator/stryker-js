@@ -1,13 +1,18 @@
 import { CpuInfo } from 'os';
 
-import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
+import { ClearTextReporterOptions, MutantStatus } from '@stryker-mutator/api/core';
 import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent';
+import { I } from '@stryker-mutator/util';
+
+import { factory } from '@stryker-mutator/test-helpers';
+
+import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
+import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants/index.js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -33,7 +38,7 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   maxTestsToLog: 3,
 }));
 
-export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<ConcurrencyTokenProvider> & {
+export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<I<ConcurrencyTokenProvider>> & {
   testRunnerToken$: ReplaySubject<number>;
   checkerToken$: ReplaySubject<number>;
 };
@@ -47,24 +52,42 @@ export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMo
   };
 }
 
-export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<Pool<TestRunner>> {
+export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<TestRunner>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
-    schedule: sinon.stub(),
+    schedule: sinon.stub<any>(),
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<Pool<Checker>> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Checker>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
-    schedule: sinon.stub(),
+    schedule: sinon.stub<any>(),
+  };
+}
+
+export function createMutantRunPlan(overrides?: Partial<MutantRunPlan>): MutantRunPlan {
+  return {
+    plan: PlanKind.Run,
+    mutant: factory.mutantTestCoverage(),
+    runOptions: factory.mutantRunOptions(),
+    ...overrides,
+  };
+}
+
+export function createMutantEarlyResultPlan(overrides?: Partial<MutantEarlyResultPlan>): MutantEarlyResultPlan {
+  return {
+    plan: PlanKind.EarlyResult,
+    mutant: { ...factory.mutantTestCoverage(), status: MutantStatus.Ignored },
+    ...overrides,
   };
 }
 
 export const logger = (): Mock<Logger> => {
   return {
+    category: 'foo-category',
     _log: sinon.stub(),
     addContext: sinon.stub(),
     clearContext: sinon.stub(),

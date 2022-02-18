@@ -1,15 +1,15 @@
 import { createInjector } from 'typed-inject';
 import { RestClient } from 'typed-rest-client';
 
-import { provideLogger } from '../di';
+import { provideLogger } from '../di/index.js';
 
-import * as initializerTokens from './initializer-tokens';
-import { NpmClient } from './npm-client';
-import { StrykerConfigWriter } from './stryker-config-writer';
-import { StrykerInitializer } from './stryker-initializer';
-import { StrykerInquirer } from './stryker-inquirer';
-import { strykerPresets } from './stryker-presets';
-import { GitignoreWriter } from './gitignore-writer';
+import * as initializerTokens from './initializer-tokens.js';
+import { NpmClient } from './npm-client.js';
+import { StrykerConfigWriter } from './stryker-config-writer.js';
+import { StrykerInitializer } from './stryker-initializer.js';
+import { StrykerInquirer } from './stryker-inquirer.js';
+import { strykerPresets } from './stryker-presets.js';
+import { GitignoreWriter } from './gitignore-writer.js';
 
 const BASE_NPM_SEARCH = 'https://api.npms.io';
 const BASE_NPM_PACKAGE = 'https://www.unpkg.com';

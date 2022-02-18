@@ -2,12 +2,12 @@ import { expect } from 'chai';
 
 import sinon from 'sinon';
 
-import { parse } from '../../../src/parsers/html-parser';
-import { ParserContext } from '../../../src/parsers/parser-context';
-import { parserContextStub } from '../../helpers/stubs';
-import { createJSAst } from '../../helpers/factories';
-import { AstFormat } from '../../../src/syntax';
-import { ParseError } from '../../../src/parsers/parse-error';
+import { parse } from '../../../src/parsers/html-parser.js';
+import { ParserContext } from '../../../src/parsers/parser-context.js';
+import { parserContextStub } from '../../helpers/stubs.js';
+import { createJSAst } from '../../helpers/factories.js';
+import { AstFormat } from '../../../src/syntax/index.js';
+import { ParseError } from '../../../src/parsers/parse-error.js';
 
 describe('html-parser', () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;

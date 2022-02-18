@@ -1,6 +1,6 @@
 import { Disposable } from '@stryker-mutator/api/plugin';
 
-import { coreTokens } from './di';
+import { coreTokens } from './di/index.js';
 
 export type ExitHandler = () => void;
 

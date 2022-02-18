@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { createHtmlAst, createJSAst } from '../../helpers/factories';
-import { print } from '../../../src/printers/html-printer';
-import { PrinterContext } from '../../../src/printers';
-import { printerContextStub } from '../../helpers/stubs';
-import { offsetLocations } from '../../../src/util/syntax-helpers';
+import { createHtmlAst, createJSAst } from '../../helpers/factories.js';
+import { print } from '../../../src/printers/html-printer.js';
+import { PrinterContext } from '../../../src/printers/index.js';
+import { printerContextStub } from '../../helpers/stubs.js';
+import { offsetLocations } from '../../../src/util/syntax-helpers.js';
 
 describe('html-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;

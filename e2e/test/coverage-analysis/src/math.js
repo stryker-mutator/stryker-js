@@ -10,8 +10,11 @@ function addOne(a) {
   return ++a;
 }
 
-module.exports = {
-  add,
-  multiply,
-  addOne
-};
+// Stryker disable all: Not useful for coverage analysis test
+if (typeof module === 'object') {
+  module.exports = {
+    add,
+    multiply,
+    addOne,
+  };
+}

@@ -1,2 +1,2 @@
-export * from './syntax-helpers';
-export * from './binary-operator';
+export * from './syntax-helpers.js';
+export * from './binary-operator.js';

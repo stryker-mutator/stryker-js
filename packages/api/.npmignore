@@ -3,6 +3,7 @@ test
 dist/test
 /schema
 /reports
+/coverage
 /testResources
 /.nyc_output
 .vscode

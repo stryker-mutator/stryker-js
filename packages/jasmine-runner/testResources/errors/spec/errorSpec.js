@@ -1,1 +1,1 @@
-require('../lib/error');
+import '../lib/error.js';

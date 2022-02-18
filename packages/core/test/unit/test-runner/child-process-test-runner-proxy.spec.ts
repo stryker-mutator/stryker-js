@@ -1,32 +1,31 @@
+import { URL } from 'url';
+
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
-import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error';
-import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
-import { LoggingClientContext } from '../../../src/logging';
-import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy';
-import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker';
+import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error.js';
+import { ChildProcessProxy, Promisified } from '../../../src/child-proxy/child-process-proxy.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy.js';
+import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker.js';
 
 describe(ChildProcessTestRunnerProxy.name, () => {
   let options: StrykerOptions;
-  let childProcessProxyMock: {
-    proxy: sinon.SinonStubbedInstance<Required<TestRunner>>;
-    dispose: sinon.SinonStub;
-  };
-  let childProcessProxyCreateStub: sinon.SinonStub;
+  let childProcessProxyMock: sinon.SinonStubbedInstance<ChildProcessProxy<ChildProcessTestRunnerWorker>>;
+  let proxyMock: sinon.SinonStubbedInstance<Promisified<ChildProcessTestRunnerWorker>>;
+  let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
   let clock: sinon.SinonFakeTimers;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
-    childProcessProxyMock = {
-      dispose: sinon.stub(),
-      proxy: factory.testRunner(),
-    };
+    childProcessProxyMock = sinon.createStubInstance(ChildProcessProxy);
+    proxyMock = (childProcessProxyMock as { proxy: Promisified<ChildProcessTestRunnerWorker> }).proxy =
+      factory.testRunner() as sinon.SinonStubbedInstance<Promisified<ChildProcessTestRunnerWorker>>;
+
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     childProcessProxyCreateStub.returns(childProcessProxyMock);
     options = factory.strykerOptions({
@@ -36,17 +35,18 @@ describe(ChildProcessTestRunnerProxy.name, () => {
   });
 
   function createSut(): ChildProcessTestRunnerProxy {
-    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, testInjector.logger);
+    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, ['plugin', 'paths'], testInjector.logger);
   }
 
   it('should create the child process proxy', () => {
     options.testRunnerNodeArgs = ['--inspect', '--no-warnings'];
     createSut();
-    expect(childProcessProxyCreateStub).calledWithExactly(
-      require.resolve('../../../src/test-runner/child-process-test-runner-worker.js'),
+    sinon.assert.calledWithExactly(
+      childProcessProxyCreateStub,
+      new URL('../../../src/test-runner/child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
-      {},
+      ['plugin', 'paths'],
       'a working directory',
       ChildProcessTestRunnerWorker,
       ['--inspect', '--no-warnings']
@@ -55,46 +55,46 @@ describe(ChildProcessTestRunnerProxy.name, () => {
 
   it('should forward `init` calls', async () => {
     const sut = createSut();
-    childProcessProxyMock.proxy.init.resolves();
+    proxyMock.init.resolves();
     await sut.init();
-    expect(childProcessProxyMock.proxy.init).called;
+    expect(proxyMock.init).called;
   });
 
   it('should forward `dryRun` calls', async () => {
     const sut = createSut();
     const expectedResult = factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage() });
-    childProcessProxyMock.proxy.dryRun.resolves(expectedResult);
+    proxyMock.dryRun.resolves(expectedResult);
     const runOptions = factory.dryRunOptions({
       timeout: 234,
     });
     const actualResult = await sut.dryRun(runOptions);
     expect(actualResult).eq(expectedResult);
-    expect(childProcessProxyMock.proxy.dryRun).calledWith(runOptions);
+    expect(proxyMock.dryRun).calledWith(runOptions);
   });
 
   it('should forward `mutantRun` calls', async () => {
     const sut = createSut();
     const expectedResult = factory.survivedMutantRunResult();
-    childProcessProxyMock.proxy.mutantRun.resolves(expectedResult);
+    proxyMock.mutantRun.resolves(expectedResult);
     const runOptions = factory.mutantRunOptions({
       timeout: 234,
     });
     const actualResult = await sut.mutantRun(runOptions);
     expect(actualResult).eq(expectedResult);
-    expect(childProcessProxyMock.proxy.mutantRun).calledWith(runOptions);
+    expect(proxyMock.mutantRun).calledWith(runOptions);
   });
 
   describe('dispose', () => {
     it('should dispose the test runner before disposing the child process itself on `dispose`', async () => {
       const sut = createSut();
-      childProcessProxyMock.proxy.dispose.resolves();
+      proxyMock.dispose.resolves();
       await sut.dispose();
-      expect(childProcessProxyMock.proxy.dispose).calledBefore(childProcessProxyMock.dispose);
+      expect(proxyMock.dispose).calledBefore(childProcessProxyMock.dispose);
     });
 
     it('should not reject when the child process is down', async () => {
       const sut = createSut();
-      childProcessProxyMock.proxy.dispose.rejects(new ChildProcessCrashedError(1, '1'));
+      proxyMock.dispose.rejects(new ChildProcessCrashedError(1, '1'));
       await sut.dispose();
       expect(childProcessProxyMock.dispose).called;
       expect(testInjector.logger.warn).not.called;
@@ -103,7 +103,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
     it('should log, but not reject, when the child process rejects', async () => {
       const sut = createSut();
       const expectedError = new Error('Could not divide by zero 🤷‍♀️');
-      childProcessProxyMock.proxy.dispose.rejects(expectedError);
+      proxyMock.dispose.rejects(expectedError);
       await sut.dispose();
       expect(childProcessProxyMock.dispose).called;
       expect(testInjector.logger.warn).calledWithExactly(
@@ -115,7 +115,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
     it('should only wait 2 seconds for the test runner to be disposed', async () => {
       const sut = createSut();
       const testRunnerDisposeTask = new Task();
-      childProcessProxyMock.proxy.dispose.returns(testRunnerDisposeTask.promise);
+      proxyMock.dispose.returns(testRunnerDisposeTask.promise);
       const disposePromise = sut.dispose();
       clock.tick(2001);
       await disposePromise;

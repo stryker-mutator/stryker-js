@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import ts from 'typescript';
 
-import { ScriptFile } from '../../../src/fs/script-file';
+import { ScriptFile } from '../../../src/fs/script-file.js';
 
 describe('fs', () => {
   describe(ScriptFile.name, () => {

@@ -3,7 +3,7 @@ import path from 'path';
 import { testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
 
-import { FilePreprocessor, createPreprocessor } from '../../../src/sandbox';
+import { FilePreprocessor, createPreprocessor } from '../../../src/sandbox/index.js';
 
 describe(createPreprocessor.name, () => {
   let sut: FilePreprocessor;

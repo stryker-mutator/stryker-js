@@ -1,4 +1,4 @@
-import 'source-map-support/register';
+import 'source-map-support/register.js';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';

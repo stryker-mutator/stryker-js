@@ -1,10 +1,13 @@
 import path from 'path';
+import { createRequire } from 'module';
 
 import sinon from 'sinon';
-
 import { expect } from 'chai';
 
-import { DirectoryRequireCache } from '../../src';
+import { DirectoryRequireCache } from '../../src/index.js';
+import { platform } from '../../src/platform.js';
+
+const require = createRequire(import.meta.url);
 
 describe(DirectoryRequireCache.name, () => {
   let workingDirectory: string;
@@ -193,6 +196,46 @@ describe(DirectoryRequireCache.name, () => {
 
     // Assert
     expect(require.cache[fooFileName]).undefined;
+  });
+
+  it('should support case-insensitive file systems', () => {
+    const csfStub = sinon.stub(platform, 'caseSensitiveFs').returns(false);
+
+    // Arrange
+    const fooFileName = path.join(workingDirectory, 'foo.js');
+    const barFileName = path.join(workingDirectory.toUpperCase(), 'bar.js');
+    fakeRequireFile(fooFileName, 'foo', null);
+    fakeRequireFile(barFileName, 'bar', null);
+    sut.record();
+
+    // Act
+    sut.clear();
+
+    csfStub.restore();
+
+    // Assert
+    expect(require.cache[fooFileName]).undefined;
+    expect(require.cache[barFileName]).undefined;
+  });
+
+  it('should support case-sensitive filesystems', () => {
+    const csfStub = sinon.stub(platform, 'caseSensitiveFs').returns(true);
+
+    // Arrange
+    const fooFileName = path.join(workingDirectory, 'foo.js');
+    const barFileName = path.join(workingDirectory.toUpperCase(), 'bar.js');
+    fakeRequireFile(fooFileName, 'foo', null);
+    fakeRequireFile(barFileName, 'bar', null);
+    sut.record();
+
+    // Act
+    sut.clear();
+
+    csfStub.restore();
+
+    // Assert
+    expect(require.cache[fooFileName]).undefined;
+    expect(require.cache[barFileName]).not.undefined;
   });
   function createModule(content: string, fileName: string, parent: NodeModule | null = rootModule): NodeModule {
     return {

@@ -1,2 +1,2 @@
-export { Logger } from './logger';
-export { LoggerFactoryMethod } from './logger-factory-method';
+export type { Logger } from './logger.js';
+export type { LoggerFactoryMethod } from './logger-factory-method.js';

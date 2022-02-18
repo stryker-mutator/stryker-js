@@ -1,4 +1,4 @@
-import { PresetConfiguration } from './preset-configuration';
+import { PresetConfiguration } from './preset-configuration.js';
 
 export interface Preset {
   readonly name: string;

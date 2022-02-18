@@ -1,12 +1,16 @@
 import { expect } from 'chai';
-import { types, NodePath } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
-import generate from '@babel/generator';
+import generator from '@babel/generator';
 
-import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer';
-import { findNodePath, parseJS, parseTS } from '../../helpers/syntax-test-helpers';
-import { Mutant } from '../../../src/mutant';
-import { createMutant } from '../../helpers/factories';
+import { expressionMutantPlacer } from '../../../src/mutant-placers/expression-mutant-placer.js';
+import { findNodePath, parseJS, parseTS } from '../../helpers/syntax-test-helpers.js';
+import { Mutant } from '../../../src/mutant.js';
+import { createMutant } from '../../helpers/factories.js';
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
+const { types } = babel;
 
 describe('expressionMutantPlacer', () => {
   it('should have the correct name', () => {
@@ -102,7 +106,7 @@ describe('expressionMutantPlacer', () => {
     it('should place the original code as the alternative', () => {
       const { binaryExpression, appliedMutants, ast } = arrangeSingleMutant();
       expressionMutantPlacer.place(binaryExpression, appliedMutants);
-      const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
+      const actualAlternative = findNodePath<babel.types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
       const actualAlternativeCode = generate(actualAlternative).code;
       expect(actualAlternativeCode.endsWith('a + b'), `${actualAlternativeCode} did not end with "a + b"`).true;
     });
@@ -110,7 +114,7 @@ describe('expressionMutantPlacer', () => {
     it('should add mutant coverage syntax', () => {
       const { binaryExpression, appliedMutants, ast } = arrangeSingleMutant();
       expressionMutantPlacer.place(binaryExpression, appliedMutants);
-      const actualAlternative = findNodePath<types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
+      const actualAlternative = findNodePath<babel.types.ConditionalExpression>(ast, (p) => p.isConditionalExpression()).node.alternate;
       const actualAlternativeCode = generate(actualAlternative).code;
       const expected = 'stryCov_9fa48("1"), a + b';
       expect(actualAlternativeCode.startsWith(expected), `${actualAlternativeCode} did not start with "${expected}"`).true;
@@ -119,7 +123,7 @@ describe('expressionMutantPlacer', () => {
     it('should be able to place multiple mutants', () => {
       // Arrange
       const ast = parseJS('const foo = a + b');
-      const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const binaryExpression = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
       const mutants = [
         createMutant({
           id: '52',
@@ -132,7 +136,7 @@ describe('expressionMutantPlacer', () => {
           replacement: types.identifier('bar'),
         }),
       ];
-      const appliedMutants = new Map<Mutant, types.BinaryExpression>([
+      const appliedMutants = new Map<Mutant, babel.types.BinaryExpression>([
         [mutants[0], mutants[0].applied(binaryExpression.node)],
         [mutants[1], mutants[1].applied(binaryExpression.node)],
       ] as const);
@@ -147,7 +151,7 @@ describe('expressionMutantPlacer', () => {
 
     function arrangeSingleMutant() {
       const ast = parseJS('const foo = a + b');
-      const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const binaryExpression = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
       const mutant = new Mutant('1', 'file.js', binaryExpression.node, {
         replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
         mutatorName: 'fooMutator',
@@ -161,7 +165,7 @@ describe('expressionMutantPlacer', () => {
      * @see https://github.com/stryker-mutator/stryker-js/issues/2362
      */
     describe('anonymous expressions', () => {
-      function arrangeActAssert(ast: types.File, expression: NodePath<types.Expression>, expectedMatch: RegExp) {
+      function arrangeActAssert(ast: babel.types.File, expression: NodePath<babel.types.Expression>, expectedMatch: RegExp) {
         const mutant = createMutant({
           id: '4',
           original: expression.node,
@@ -180,49 +184,49 @@ describe('expressionMutantPlacer', () => {
       it('should set the name of an anonymous function expression', () => {
         // Arrange
         const ast = parseJS('const foo = function () { }');
-        const functionExpression = findNodePath<types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
+        const functionExpression = findNodePath<babel.types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
         arrangeActAssert(ast, functionExpression, /const foo =.*function foo\(\) {}/);
       });
 
       it('should set the name of an anonymous method expression', () => {
         // Arrange
         const ast = parseJS('const foo = { bar: function () { } }');
-        const functionExpression = findNodePath<types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
+        const functionExpression = findNodePath<babel.types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
         arrangeActAssert(ast, functionExpression, /const foo =.*bar:.*function bar\(\) {}/);
       });
 
       it('should not set the name if the statement is not a variable declaration', () => {
         // Arrange
         const ast = parseJS('foo.bar = function () { }');
-        const functionExpression = findNodePath<types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
+        const functionExpression = findNodePath<babel.types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
         arrangeActAssert(ast, functionExpression, /foo\.bar =.*function \(\) {}/);
       });
 
       it('should not set the name of a named function expression', () => {
         // Arrange
         const ast = parseJS('const foo = function bar () { }');
-        const functionExpression = findNodePath<types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
+        const functionExpression = findNodePath<babel.types.FunctionExpression>(ast, (p) => p.isFunctionExpression());
         arrangeActAssert(ast, functionExpression, /const foo =.*function bar\(\) {}/);
       });
 
       it('should set the name of an anonymous class expression', () => {
         // Arrange
         const ast = parseJS('const Foo = class { }');
-        const classExpression = findNodePath<types.ClassExpression>(ast, (p) => p.isClassExpression());
+        const classExpression = findNodePath<babel.types.ClassExpression>(ast, (p) => p.isClassExpression());
         arrangeActAssert(ast, classExpression, /const Foo =.*class Foo {}/);
       });
 
       it('should not override the name of a named class expression', () => {
         // Arrange
         const ast = parseJS('const Foo = class Bar { }');
-        const classExpression = findNodePath<types.ClassExpression>(ast, (p) => p.isClassExpression());
+        const classExpression = findNodePath<babel.types.ClassExpression>(ast, (p) => p.isClassExpression());
         arrangeActAssert(ast, classExpression, /const Foo =.*class Bar {}/);
       });
 
       it('should set the name of an anonymous arrow function', () => {
         // Arrange
         const ast = parseJS('const bar = () => {}');
-        const functionExpression = findNodePath<types.ArrowFunctionExpression>(ast, (p) => p.isArrowFunctionExpression());
+        const functionExpression = findNodePath<babel.types.ArrowFunctionExpression>(ast, (p) => p.isArrowFunctionExpression());
         arrangeActAssert(ast, functionExpression, /const bar =.*\(\(\) => { const bar = \(\) => {}; return bar; }\)\(\)/);
       });
     });

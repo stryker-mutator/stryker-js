@@ -9,8 +9,9 @@
   ],
   "concurrency": 2,
   "coverageAnalysis": "perTest",
+  "timeoutMS": 10000,
   "reporters": [
-    "event-recorder",
+    "json",
     "progress",
     "clear-text",
     "html"

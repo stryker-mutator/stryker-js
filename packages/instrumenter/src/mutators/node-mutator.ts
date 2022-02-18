@@ -1,4 +1,4 @@
-import { NodePath, types } from '@babel/core';
+import type { types, NodePath } from '@babel/core';
 
 export interface NodeMutator {
   mutate(path: NodePath): Iterable<types.Node>;

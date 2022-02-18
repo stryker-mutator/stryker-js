@@ -4,9 +4,9 @@ import { NodePath } from '@babel/core';
 import { PropertyPathBuilder } from '@stryker-mutator/util';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { Mutant } from '../mutant';
+import { Mutant } from '../mutant.js';
 
-import { MutantPlacer } from './mutant-placer';
+import { MutantPlacer } from './mutant-placer.js';
 
 export function throwPlacementError(error: Error, nodePath: NodePath, placer: MutantPlacer, mutants: Mutant[], fileName: string): never {
   const location = `${path.relative(process.cwd(), fileName)}:${nodePath.node.loc?.start.line}:${nodePath.node.loc?.start.column}`;

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`in place should report correct score 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 14,
+  "mutationScore": 73.68421052631578,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 5,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 14,
+  "totalDetected": 14,
+  "totalInvalid": 0,
+  "totalMutants": 19,
+  "totalUndetected": 5,
+  "totalValid": 19,
+}
+`;

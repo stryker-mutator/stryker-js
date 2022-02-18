@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "tempDirName": "stryker-tmp",
-  "reporters": ["html", "clear-text", "progress", "event-recorder"],
+  "reporters": ["json", "html", "clear-text", "progress", "event-recorder"],
   "testRunner": "jest",
   "jest": {
     "configFile": "jest.config.js"

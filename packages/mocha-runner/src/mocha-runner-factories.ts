@@ -2,10 +2,10 @@ import { INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { MochaAdapter } from './mocha-adapter';
-import { MochaOptionsLoader } from './mocha-options-loader';
-import { MochaTestRunner } from './mocha-test-runner';
-import * as pluginTokens from './plugin-tokens';
+import { MochaAdapter } from './mocha-adapter.js';
+import { MochaOptionsLoader } from './mocha-options-loader.js';
+import { MochaTestRunner } from './mocha-test-runner.js';
+import * as pluginTokens from './plugin-tokens.js';
 
 export const createMochaTestRunner = createMochaTestRunnerFactory();
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation';
-import { conditionalExpressionMutator as sut } from '../../../src/mutators/conditional-expression-mutator';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { conditionalExpressionMutator as sut } from '../../../src/mutators/conditional-expression-mutator.js';
 
 describe(sut.name, () => {
   it('should have name "ConditionalExpression"', () => {
@@ -67,6 +67,50 @@ describe(sut.name, () => {
       `for (let i = 0; false; i++) {
   console.log();
 }`
+    );
+  });
+
+  it('should not mutate (a || b) condition to (a || true)', () => {
+    expectJSMutation(
+      sut,
+      'if (b === 5 || c === 3) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if (false || c === 3) { a++ }',
+      'if (b === 5 || false) { a++ }'
+    );
+  });
+
+  it('should not mutate (a && b) condition to (a && false)', () => {
+    expectJSMutation(
+      sut,
+      'if (b === 5 && c === 3) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if (true && c === 3) { a++ }',
+      'if (b === 5 && true) { a++ }'
+    );
+  });
+
+  it('should mutate ((c1 && c2) || (c3 && c4))', () => {
+    expectJSMutation(
+      sut,
+      'if ((c1 && c2) || (c3 && c4)) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if ((false) || (c3 && c4)) { a++ }',
+      'if ((c1 && c2) || (false)) { a++ }'
+    );
+  });
+
+  it('should mutate ((c1 || c2) && (c3 || c4))', () => {
+    expectJSMutation(
+      sut,
+      'if ((c1 || c2) && (c3 || c4)) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+      'if ((true) && (c3 || c4)) { a++ }',
+      'if ((c1 || c2) && (true)) { a++ }'
     );
   });
 

@@ -3,9 +3,9 @@
   "check-coverage": true,
   "reporter": ["text", "html"],
   "report-dir": "reports/coverage",
-  "lines": 100,
-  "functions": 100,
-  "statements": 100,
-  "branches": 85,
+  "lines": 99,
+  "functions": 99,
+  "statements": 99,
+  "branches": 95,
   "include": "dist/src/**/*.js"
 }

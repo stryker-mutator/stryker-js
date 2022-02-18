@@ -3,7 +3,6 @@
 module.exports = function (grunt) {
 
   grunt.registerMultiTask('stryker', 'The extendable JavaScript mutation testing framework.', function () {
-    var Stryker = require('@stryker-mutator/core').default;
     var target = this.name + "." + this.target + ".";
     var filesProperty = target + 'files';
     var mutateProperty = target + 'mutate';
@@ -27,16 +26,18 @@ module.exports = function (grunt) {
     }
 
     var done = this.async();
-    var stryker = new Stryker(options);
-    stryker.runMutationTest().then(function () {
-      var success = true;
-
-      if(process.exitCode > 0) {
-        success = false;
-      }
-      done(success);
-    }, function (error) {
-        grunt.fail.fatal("Stryker was unable to run the mutation test. " + error);
+    import('@stryker-mutator/core').then(({Stryker}) => {
+      var stryker = new Stryker(options);
+      stryker.runMutationTest().then(function () {
+        var success = true;
+  
+        if(process.exitCode > 0) {
+          success = false;
+        }
+        done(success);
+      }, function (error) {
+          grunt.fail.fatal("Stryker was unable to run the mutation test. " + error);
+      });
     });
   });
 

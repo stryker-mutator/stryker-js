@@ -7,8 +7,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { lastValueFrom } from 'rxjs';
 
-import { ConcurrencyTokenProvider } from '../../../src/concurrent';
-import { createCpuInfo } from '../../helpers/producers';
+import { ConcurrencyTokenProvider } from '../../../src/concurrent/index.js';
+import { createCpuInfo } from '../../helpers/producers.js';
 
 describe(ConcurrencyTokenProvider.name, () => {
   function createSut() {

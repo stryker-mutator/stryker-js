@@ -3,7 +3,7 @@ import { Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { Resource, ResourceDecorator } from '../../../src/concurrent';
+import { Resource, ResourceDecorator } from '../../../src/concurrent/index.js';
 
 class ResourceDecoratorUnderTest extends ResourceDecorator<Resource> {
   public override recover() {

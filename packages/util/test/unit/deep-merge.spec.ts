@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { deepMerge } from '../../src/deep-merge';
+import { deepMerge } from '../../src/deep-merge.js';
 
 interface Foo {
   foo?: string | undefined;

@@ -1,4 +1,4 @@
-import 'source-map-support/register';
+import 'source-map-support/register.js';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
@@ -13,7 +13,6 @@ export const mochaHooks = {
     delete global.__stryker2__?.activeMutant;
     delete global.__stryker2__?.currentTestId;
     delete global.__stryker2__?.mutantCoverage;
-    global.__testsInCurrentJasmineRun = [];
 
     sinon.restore();
     testInjector.reset();

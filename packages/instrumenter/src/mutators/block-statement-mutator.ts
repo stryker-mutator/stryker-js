@@ -1,6 +1,8 @@
-import { types, NodePath } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
+
+const { types } = babel;
 
 export const blockStatementMutator: NodeMutator = {
   name: 'BlockStatement',
@@ -12,11 +14,11 @@ export const blockStatementMutator: NodeMutator = {
   },
 };
 
-function isValid(path: NodePath<types.BlockStatement>) {
+function isValid(path: NodePath<babel.types.BlockStatement>) {
   return !isEmpty(path) && !isInvalidConstructorBody(path);
 }
 
-function isEmpty(path: NodePath<types.BlockStatement>) {
+function isEmpty(path: NodePath<babel.types.BlockStatement>) {
   return !path.node.body.length;
 }
 
@@ -40,7 +42,7 @@ function isEmpty(path: NodePath<types.BlockStatement>) {
  * @see https://github.com/stryker-mutator/stryker-js/issues/2314
  * @see https://github.com/stryker-mutator/stryker-js/issues/2474
  */
-function isInvalidConstructorBody(blockStatement: NodePath<types.BlockStatement>): boolean {
+function isInvalidConstructorBody(blockStatement: NodePath<babel.types.BlockStatement>): boolean {
   return !!(
     blockStatement.parentPath.isClassMethod() &&
     blockStatement.parentPath.node.kind === 'constructor' &&
@@ -49,18 +51,18 @@ function isInvalidConstructorBody(blockStatement: NodePath<types.BlockStatement>
   );
 }
 
-function containsTSParameterProperties(constructor: NodePath<types.ClassMethod>): boolean {
+function containsTSParameterProperties(constructor: NodePath<babel.types.ClassMethod>): boolean {
   return constructor.node.params.some((param) => types.isTSParameterProperty(param));
 }
 
-function containsInitializedClassProperties(constructor: NodePath<types.ClassMethod>): boolean {
+function containsInitializedClassProperties(constructor: NodePath<babel.types.ClassMethod>): boolean {
   return (
     constructor.parentPath.isClassBody() &&
     constructor.parentPath.node.body.some((classMember) => types.isClassProperty(classMember) && classMember.value)
   );
 }
 
-function hasSuperExpressionOnFirstLine(constructor: NodePath<types.BlockStatement>): boolean {
+function hasSuperExpressionOnFirstLine(constructor: NodePath<babel.types.BlockStatement>): boolean {
   return (
     types.isExpressionStatement(constructor.node.body[0]) &&
     types.isCallExpression(constructor.node.body[0].expression) &&

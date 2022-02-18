@@ -9,23 +9,26 @@ import { Observable } from 'rxjs';
 import { mergeMap } from 'rxjs/operators';
 
 import { I } from '@stryker-mutator/util';
+import { File } from '@stryker-mutator/api/core';
 
-import { Timer } from '../../../src/utils/timer';
-import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { ConfigError } from '../../../src/errors';
-import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
-import { createTestRunnerPoolMock } from '../../helpers/producers';
-import { Sandbox } from '../../../src/sandbox';
+import { Timer } from '../../../src/utils/timer.js';
+import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { ConfigError } from '../../../src/errors.js';
+import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
+import { createTestRunnerPoolMock } from '../../helpers/producers.js';
+import { Sandbox } from '../../../src/sandbox/index.js';
+import { InputFileCollection } from '../../../src/input/input-file-collection.js';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
-  let testRunnerPoolMock: sinon.SinonStubbedInstance<Pool<TestRunner>>;
+  let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandbox: sinon.SinonStubbedInstance<Sandbox>;
+  let inputFiles: InputFileCollection;
 
   beforeEach(() => {
     timerMock = sinon.createStubInstance(Timer);
@@ -38,9 +41,11 @@ describe(DryRunExecutor.name, () => {
       >
     ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
-    injectorMock = factory.injector();
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
+    inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);
+    injectorMock.resolve.withArgs(coreTokens.inputFiles).returns(inputFiles);
     sut = new DryRunExecutor(
       injectorMock as Injector<DryRunContext>,
       testInjector.logger,
@@ -105,6 +110,26 @@ describe(DryRunExecutor.name, () => {
       await sut.execute();
       expect(testRunnerMock.dryRun).calledWithMatch({
         disableBail: true,
+      });
+    });
+  });
+
+  describe('files', () => {
+    const dryRunFileName = '.sandbox/bar.js';
+    let runResult: CompleteDryRunResult;
+
+    beforeEach(() => {
+      sandbox.sandboxFileFor.withArgs(inputFiles.filesToMutate[0].name).returns(dryRunFileName);
+
+      runResult = factory.completeDryRunResult();
+      testRunnerMock.dryRun.resolves(runResult);
+      runResult.tests.push(factory.successTestResult());
+    });
+
+    it('should test only for files to mutate', async () => {
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        files: [dryRunFileName],
       });
     });
   });

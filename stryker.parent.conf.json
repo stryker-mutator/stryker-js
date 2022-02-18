@@ -3,14 +3,16 @@
   "coverageAnalysis": "perTest",
   "testRunner": "mocha",
   "reporters": [
+    "json",
     "progress",
     "html",
     "dashboard"
   ],  
   "plugins": [
-    "../mocha-runner",
-    "../typescript-checker"
+    "../mocha-runner/dist/src/index.js",
+    "../typescript-checker/dist/src/index.js"
   ],
+  "ignoreStatic": true,
   "checkers": ["typescript"],
   "dashboard": {},
   "buildCommand": "tsc -b",

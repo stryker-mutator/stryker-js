@@ -1,35 +1,55 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { LoggingClientContext } from '../logging';
+import { LoggingClientContext } from '../logging/index.js';
 
 export enum WorkerMessageKind {
-  'Init',
-  'Call',
-  'Dispose',
+  Init,
+  Call,
+  Dispose,
 }
 
 export enum ParentMessageKind {
-  'Initialized',
-  'Result',
-  'Rejection',
-  'DisposeCompleted',
+  /**
+   * Indicates that the child process is spawned and ready to receive messages
+   */
+  Ready,
+  /**
+   * Indicates that initialization is done
+   */
+  Initialized,
+  /**
+   * Indicates an error happened during initialization
+   */
+  InitError,
+  /**
+   * Indicates that a 'Call' was successful
+   */
+  CallResult,
+  /**
+   * Indicates that a 'Call' was rejected
+   */
+  CallRejection,
+  /**
+   * Indicates that a 'Dispose' was completed
+   */
+  DisposeCompleted,
 }
 
 export type WorkerMessage = CallMessage | DisposeMessage | InitMessage;
-export type ParentMessage = RejectionResult | WorkResult | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized };
-
-// Make this an unlikely command line argument
-// (prevents incidental start of child process)
-export const autoStart = 'childProcessAutoStart12937129s7d';
+export type ParentMessage =
+  | InitRejectionResult
+  | RejectionResult
+  | WorkResult
+  | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized | ParentMessageKind.Ready };
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
   options: StrykerOptions;
+  pluginModulePaths: readonly string[];
   workingDirectory: string;
-  requireName: string;
-  requirePath: string;
-  additionalInjectableValues: unknown;
+  namedExport: string;
+  modulePath: string;
 }
 
 export interface DisposeMessage {
@@ -37,14 +57,19 @@ export interface DisposeMessage {
 }
 
 export interface WorkResult {
-  kind: ParentMessageKind.Result;
+  kind: ParentMessageKind.CallResult;
   correlationId: number;
   result: any;
 }
 
 export interface RejectionResult {
-  kind: ParentMessageKind.Rejection;
+  kind: ParentMessageKind.CallRejection;
   correlationId: number;
+  error: string;
+}
+
+export interface InitRejectionResult {
+  kind: ParentMessageKind.InitError;
   error: string;
 }
 

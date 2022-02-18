@@ -6,5 +6,5 @@
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
   "coverageAnalysis": "off",
-  "reporters": ["event-recorder", "progress", "html"]
+  "reporters": ["json", "event-recorder", "progress", "html"]
 }

@@ -5,8 +5,8 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { MochaAdapter } from '../../src/mocha-adapter';
-import { LibWrapper } from '../../src/lib-wrapper';
+import { MochaAdapter } from '../../src/mocha-adapter.js';
+import { LibWrapper } from '../../src/lib-wrapper.js';
 
 describe(MochaAdapter.name, () => {
   let requireStub: sinon.SinonStub;
@@ -38,84 +38,20 @@ describe(MochaAdapter.name, () => {
   });
 
   describe(MochaAdapter.prototype.collectFiles.name, () => {
-    let globStub: sinon.SinonStub;
+    let discoveredFiles: string[];
 
-    describe('when mocha version < 6', () => {
-      beforeEach(() => {
-        collectFilesStub.value(undefined);
-        globStub = sinon.stub(LibWrapper, 'glob');
-      });
-
-      it('should log about mocha < 6 detection', async () => {
-        globStub.returns(['foo.js']);
-        sut.collectFiles({});
-        expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to discover files');
-      });
-
-      it('should support both `files` as `spec`', async () => {
-        globStub.returns(['foo.js']);
-        sut.collectFiles({
-          files: ['bar'],
-          spec: ['foo'],
-        });
-        expect(globStub).calledWith('foo');
-        expect(globStub).calledWith('bar');
-      });
-
-      it('should match given file names with configured mocha files as `string`', () => {
-        // Arrange
-        const relativeGlobPattern = '*.js';
-        const expectedFiles = ['foo.js', 'bar.js'];
-        globStub.returns(expectedFiles);
-
-        // Act
-        const actualFiles = sut.collectFiles({ files: relativeGlobPattern });
-
-        // Assert
-        expect(globStub).calledWith(relativeGlobPattern);
-        expect(actualFiles).deep.eq(expectedFiles);
-      });
-
-      it('should match given file names with default mocha pattern "test/**/*.js"', () => {
-        globStub.returns(['foo.js']);
-        sut.collectFiles({});
-        expect(globStub).calledWith('test/**/*.js');
-      });
-
-      it('should reject if no files could be discovered', async () => {
-        // Arrange
-        globStub.returns([]);
-        const relativeGlobbing = JSON.stringify(['test/**/*.js'], null, 2);
-
-        // Act & assert
-        expect(() => sut.collectFiles({})).throws(
-          `[MochaTestRunner] No files discovered (tried pattern(s) ${relativeGlobbing}). Please specify the files (glob patterns) containing your tests in mochaOptions.spec in your config file.`
-        );
-        expect(testInjector.logger.debug).calledWith(`Tried ${relativeGlobbing} but did not result in any files.`);
-      });
+    beforeEach(() => {
+      discoveredFiles = [];
+      collectFilesStub.returns(discoveredFiles);
     });
 
-    describe('when mocha version >= 6', () => {
-      let discoveredFiles: string[];
-
-      beforeEach(() => {
-        discoveredFiles = [];
-        collectFilesStub.returns(discoveredFiles);
-      });
-
-      it('should log about mocha >= 6 detection', async () => {
-        sut.collectFiles({});
-        expect(testInjector.logger.debug).calledWith("Mocha >= 6 detected. Using mocha's `collectFiles` to load files");
-      });
-
-      it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', async () => {
-        const originalProcessExit = process.exit;
-        let stubbedProcessExit = process.exit;
-        collectFilesStub.callsFake(() => (stubbedProcessExit = process.exit));
-        sut.collectFiles({});
-        expect(originalProcessExit, "Process.exit doesn't seem to be stubbed away").not.eq(stubbedProcessExit);
-        expect(originalProcessExit, "Process.exit doesn't seem to be reset").eq(process.exit);
-      });
+    it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', async () => {
+      const originalProcessExit = process.exit;
+      let stubbedProcessExit = process.exit;
+      collectFilesStub.callsFake(() => (stubbedProcessExit = process.exit));
+      sut.collectFiles({});
+      expect(originalProcessExit, "Process.exit doesn't seem to be stubbed away").not.eq(stubbedProcessExit);
+      expect(originalProcessExit, "Process.exit doesn't seem to be reset").eq(process.exit);
     });
   });
 

@@ -1,12 +1,16 @@
 import { expect } from 'chai';
-import { types } from '@babel/core';
-import generate from '@babel/generator';
+import babel from '@babel/core';
+import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { statementMutantPlacer } from '../../../src/mutant-placers/statement-mutant-placer';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
-import { Mutant } from '../../../src/mutant';
-import { createMutant } from '../../helpers/factories';
+import { statementMutantPlacer } from '../../../src/mutant-placers/statement-mutant-placer.js';
+import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
+import { Mutant } from '../../../src/mutant.js';
+import { createMutant } from '../../helpers/factories.js';
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
+const { types } = babel;
 
 describe('statementMutantPlacer', () => {
   it('should have the correct name', () => {
@@ -40,8 +44,8 @@ describe('statementMutantPlacer', () => {
   describe(statementMutantPlacer.place.name, () => {
     function arrangeSingleMutant() {
       const ast = parseJS('const foo = a + b');
-      const statement = findNodePath<types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
-      const nodeToMutate = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const statement = findNodePath<babel.types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
+      const nodeToMutate = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
       const mutant = new Mutant('1', 'file.js', nodeToMutate.node, {
         replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
         mutatorName: 'fooMutator',
@@ -65,8 +69,8 @@ describe('statementMutantPlacer', () => {
     it('should keep block statements in tact', () => {
       // Arrange
       const ast = parseJS('function add(a, b) { return a + b; }');
-      const statement = findNodePath<types.BlockStatement>(ast, (p) => p.isBlockStatement());
-      const originalNodePath = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const statement = findNodePath<babel.types.BlockStatement>(ast, (p) => p.isBlockStatement());
+      const originalNodePath = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
       const mutant = createMutant({
         original: originalNodePath.node,
         replacement: types.binaryExpression('>>>', types.identifier('a'), types.identifier('b')),
@@ -98,9 +102,9 @@ describe('statementMutantPlacer', () => {
     it('should be able to place multiple mutants', () => {
       // Arrange
       const ast = parseJS('const foo = a + b');
-      const statement = findNodePath<types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
-      const binaryExpression = findNodePath<types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
-      const fooIdentifier = findNodePath<types.Identifier>(ast, (p) => p.isIdentifier());
+      const statement = findNodePath<babel.types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
+      const binaryExpression = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const fooIdentifier = findNodePath<babel.types.Identifier>(ast, (p) => p.isIdentifier());
       const mutants = [
         new Mutant('52', 'file.js', binaryExpression.node, {
           replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
@@ -111,7 +115,7 @@ describe('statementMutantPlacer', () => {
           mutatorName: 'fooMutator',
         }),
       ];
-      const appliedMutants = new Map<Mutant, types.Statement>();
+      const appliedMutants = new Map<Mutant, babel.types.Statement>();
       appliedMutants.set(mutants[0], mutants[0].applied(statement.node));
       appliedMutants.set(mutants[1], mutants[1].applied(statement.node));
 

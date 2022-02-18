@@ -3,10 +3,10 @@ import { createInjector } from 'typed-inject';
 
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from './logging';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process';
-import { coreTokens, provideLogger } from './di';
-import { retrieveCause, ConfigError } from './errors';
+import { LogConfigurator } from './logging/index.js';
+import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process/index.js';
+import { coreTokens, provideLogger } from './di/index.js';
+import { retrieveCause, ConfigError } from './errors.js';
 
 /**
  * The main Stryker class.
@@ -26,8 +26,8 @@ export class Stryker {
 
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
-      const prepareExecutor = loggerProvider.provideValue(coreTokens.cliOptions, this.cliOptions).injectClass(PrepareExecutor);
-      const mutantInstrumenterInjector = await prepareExecutor.execute();
+      const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+      const mutantInstrumenterInjector = await prepareExecutor.execute(this.cliOptions);
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.
@@ -56,8 +56,12 @@ export class Stryker {
         log.error(cause.message);
       } else {
         log.error('Unexpected error occurred while running Stryker', error);
+        log.info('This might be a known problem with a solution documented in our troubleshooting guide.');
+        log.info('You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/');
         if (!log.isTraceEnabled()) {
-          log.info('Trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.');
+          log.info(
+            'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.'
+          );
         }
       }
       throw cause;

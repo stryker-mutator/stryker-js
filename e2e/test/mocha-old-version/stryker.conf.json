@@ -3,7 +3,7 @@
   "testRunner": "mocha",
   "concurrency": 1,
   "coverageAnalysis": "off",
-  "reporters": ["clear-text", "html", "event-recorder"],
+  "reporters": ["json", "clear-text", "html", "event-recorder"],
   "mochaOptions": {
     "spec": ["test/**/*.js"]
   },

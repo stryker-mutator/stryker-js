@@ -2,7 +2,7 @@ import os from 'os';
 
 import { MutantTestCoverage } from '@stryker-mutator/api/core';
 
-import { ProgressKeeper } from './progress-keeper';
+import { ProgressKeeper } from './progress-keeper.js';
 
 export class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference?: NodeJS.Timer;

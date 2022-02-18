@@ -1,31 +1,31 @@
-import { existsSync, promises as fs } from 'fs';
+import { promises as fs } from 'fs';
 
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { childProcessAsPromised } from '@stryker-mutator/util';
 
-import { CommandTestRunner } from '../test-runner/command-test-runner';
+import { fileUtils } from '../utils/file-utils.js';
+import { CommandTestRunner } from '../test-runner/command-test-runner.js';
+import { DEFAULT_CONFIG_FILE_BASE_NAME, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../config/index.js';
 
-import { PresetConfiguration } from './presets/preset-configuration';
-import { PromptOption } from './prompt-option';
+import { PresetConfiguration } from './presets/preset-configuration.js';
+import { PromptOption } from './prompt-option.js';
 
-import { initializerTokens } from '.';
-
-const STRYKER_JS_CONFIG_FILE = 'stryker.conf.js';
-const STRYKER_JSON_CONFIG_FILE = 'stryker.conf.json';
+import { initializerTokens } from './index.js';
 
 export class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
-  public guardForExistingConfig(): void {
-    this.checkIfConfigFileExists(STRYKER_JS_CONFIG_FILE);
-    this.checkIfConfigFileExists(STRYKER_JSON_CONFIG_FILE);
+  public async guardForExistingConfig(): Promise<void> {
+    for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
+      await this.checkIfConfigFileExists(`${DEFAULT_CONFIG_FILE_BASE_NAME}${ext}`);
+    }
   }
 
-  private checkIfConfigFileExists(file: string) {
-    if (existsSync(file)) {
+  private async checkIfConfigFileExists(file: string) {
+    if (await fileUtils.exists(file)) {
       const msg = `Stryker config file "${file}" already exists in the current directory. Please remove it and try again.`;
       this.log.error(msg);
       throw new Error(msg);
@@ -38,17 +38,23 @@ export class StrykerConfigWriter {
    */
   public write(
     selectedTestRunner: PromptOption,
+    buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
-    const configObject: Partial<StrykerOptions> = {
+    const configObject: Partial<StrykerOptions> & { _comment: string } = {
+      _comment:
+        "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
       packageManager: selectedPackageManager.name as 'npm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
+
+    // Only write buildCommand to config file if non-empty
+    if (buildCommand.name) configObject.buildCommand = buildCommand.name;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
@@ -76,33 +82,35 @@ export class StrykerConfigWriter {
   }
 
   private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
-    this.out(`Writing & formatting ${STRYKER_JS_CONFIG_FILE}...`);
+    const configFileName = `${DEFAULT_CONFIG_FILE_BASE_NAME}.mjs`;
+    this.out(`Writing & formatting ${configFileName} ...`);
     const rawConfig = this.stringify(commentedConfig);
-    const formattedConfig = `/**
-      * @type {import('@stryker-mutator/api/core').StrykerOptions}
-      */
-      module.exports = ${rawConfig};`;
-    await fs.writeFile(STRYKER_JS_CONFIG_FILE, formattedConfig);
+
+    const formattedConfig = `// @ts-check
+    /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
+      const config = ${rawConfig};
+      export default config;`;
+    await fs.writeFile(configFileName, formattedConfig);
     try {
-      await childProcessAsPromised.exec(`npx prettier --write ${STRYKER_JS_CONFIG_FILE}`);
+      await childProcessAsPromised.exec(`npx prettier --write ${configFileName}`);
     } catch (error) {
       this.log.debug('Prettier exited with error', error);
       this.out('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
     }
-
-    return STRYKER_JS_CONFIG_FILE;
+    return configFileName;
   }
 
   private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
-    this.out(`Writing & formatting ${STRYKER_JSON_CONFIG_FILE}...`);
+    const configFileName = `${DEFAULT_CONFIG_FILE_BASE_NAME}.json`;
+    this.out(`Writing & formatting ${configFileName}...`);
     const typedConfig = {
       $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
       ...commentedConfig,
     };
     const formattedConfig = this.stringify(typedConfig);
-    await fs.writeFile(STRYKER_JSON_CONFIG_FILE, formattedConfig);
+    await fs.writeFile(configFileName, formattedConfig);
 
-    return STRYKER_JSON_CONFIG_FILE;
+    return configFileName;
   }
 
   private stringify(input: Record<string, unknown>): string {

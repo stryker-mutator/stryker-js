@@ -8,7 +8,7 @@ import {
   MutantRunStatus,
   determineHitLimitReached,
   TimeoutDryRunResult,
-} from '../../../src/test-runner';
+} from '../../../src/test-runner/index.js';
 
 describe('runResultHelpers', () => {
   describe(determineHitLimitReached.name, () => {

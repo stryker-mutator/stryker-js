@@ -1,10 +1,12 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import path from 'path';
+
+import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaOptions } from '../helpers/factories.js';
+import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 
@@ -13,20 +15,30 @@ const countFailed = (runResult: CompleteDryRunResult) => countTests(runResult, (
 
 describe('Running a sample project', () => {
   let sut: MochaTestRunner;
-  let spec: string[];
+  let resolveTestFile: (...pathSegments: string[]) => string;
 
   function createSut() {
     return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
   }
 
+  beforeEach(async () => {
+    // Work in a tmp dir, files can only be loaded once.
+    const tmpDir = resolveTempTestResourceDirectory();
+    await fsPromisesCp(resolveTestResource('sample-project'), tmpDir, { recursive: true });
+    resolveTestFile = path.resolve.bind(undefined, tmpDir);
+  });
+
   describe('when tests pass', () => {
-    beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
+    beforeEach(async () => {
+      const spec = [resolveTestFile('MyMathSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
-      return sut.init();
+      await sut.init();
     });
 
+    afterEach(async () => {
+      await sut.dispose();
+    });
     it('should report completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
@@ -43,28 +55,15 @@ describe('Running a sample project', () => {
     });
   });
 
-  describe('with an error in an un-included input file', () => {
-    beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathSpec.js')];
-      testInjector.options.mochaOptions = createMochaOptions({
-        files: spec,
-      });
-      sut = createSut();
-      return sut.init();
-    });
-
-    it('should report completed tests without errors', async () => {
-      const runResult = await sut.dryRun(factory.dryRunOptions());
-      assertions.expectCompleted(runResult);
-    });
-  });
-
   describe('with multiple failed tests', () => {
-    before(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js'), resolveTestResource('sample-project', 'MyMathFailedSpec.js')];
+    beforeEach(() => {
+      const spec = [resolveTestFile('MyMathFailedSpec.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
+    });
+    afterEach(async () => {
+      await sut.dispose();
     });
 
     it('should only report the first failure (bail)', async () => {
@@ -82,12 +81,15 @@ describe('Running a sample project', () => {
 
   describe('when no tests are executed', () => {
     beforeEach(() => {
-      spec = [resolveTestResource('sample-project', 'MyMath.js')];
+      const spec = [resolveTestFile('MyMath.js')];
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
     });
 
+    afterEach(async () => {
+      await sut.dispose();
+    });
     it('should report no completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);

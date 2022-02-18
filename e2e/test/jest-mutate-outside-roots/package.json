@@ -4,6 +4,6 @@
   "scripts": {
     "test:unit": "jest",
     "test": "stryker run",
-    "posttest": "mocha --require \"../../tasks/ts-node-register.js\" verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

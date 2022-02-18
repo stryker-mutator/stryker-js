@@ -1,7 +1,7 @@
 import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
-import { I } from '@stryker-mutator/util';
+import { I, requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
@@ -18,18 +18,20 @@ import {
 import { lastValueFrom, of } from 'rxjs';
 import { Checker } from '@stryker-mutator/api/check';
 
-import { coreTokens } from '../di';
-import { Sandbox } from '../sandbox/sandbox';
-import { Timer } from '../utils/timer';
-import { createTestRunnerFactory } from '../test-runner';
-import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper';
-import { ConfigError } from '../errors';
-import { findMutantTestCoverage } from '../mutants';
-import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent';
-import { FileMatcher } from '../config';
+import { coreTokens } from '../di/index.js';
+import { Sandbox } from '../sandbox/sandbox.js';
+import { Timer } from '../utils/timer.js';
+import { createTestRunnerFactory } from '../test-runner/index.js';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
+import { ConfigError } from '../errors.js';
+import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
+import { FileMatcher } from '../config/index.js';
+import { InputFileCollection } from '../input/input-file-collection.js';
 
-import { MutationTestContext } from './4-mutation-test-executor';
-import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor';
+import { MutantTestPlanner } from '../mutants/index.js';
+
+import { MutationTestContext } from './4-mutation-test-executor.js';
+import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
 
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 
@@ -38,6 +40,7 @@ export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.mutants]: readonly Mutant[];
   [coreTokens.checkerPool]: I<Pool<Checker>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
+  [coreTokens.inputFiles]: InputFileCollection;
 }
 
 /**
@@ -98,8 +101,9 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideFactory(coreTokens.mutantsWithTestCoverage, findMutantTestCoverage);
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
@@ -123,6 +127,8 @@ export class DryRunExecutor {
 
   private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
+    const inputFiles = this.injector.resolve(coreTokens.inputFiles);
+    const dryRunFiles = inputFiles.filesToMutate.map((file) => this.sandbox.sandboxFileFor(file.name));
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
@@ -132,6 +138,7 @@ export class DryRunExecutor {
       timeout: dryRunTimeout,
       coverageAnalysis: this.options.coverageAnalysis,
       disableBail: this.options.disableBail,
+      files: dryRunFiles,
     });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);

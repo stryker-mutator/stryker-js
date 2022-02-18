@@ -1,56 +1,122 @@
+import path from 'path';
+
+import sinon from 'sinon';
+import { JSONSchema7 } from 'json-schema';
 import { Injector } from 'typed-inject';
 import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PartialStrykerOptions, File, LogLevel } from '@stryker-mutator/api/core';
-import { commonTokens } from '@stryker-mutator/api/plugin';
+import { BaseContext } from '@stryker-mutator/api/plugin';
 
-import sinon from 'sinon';
+import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
+import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import { InputFileResolver, InputFileCollection } from '../../../src/input/index.js';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
+import { ConfigError } from '../../../src/errors.js';
+import { ConfigReader, OptionsValidator, MetaSchemaBuilder } from '../../../src/config/index.js';
+import { BroadcastReporter, reporterPluginsFileUrl } from '../../../src/reporters/index.js';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
-import { PrepareExecutor } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import * as buildMainInjectorModule from '../../../src/di/build-main-injector';
-import { Timer } from '../../../src/utils/timer';
-import { InputFileResolver, InputFileCollection } from '../../../src/input';
-
-import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
-import { ConfigError } from '../../../src/errors';
+interface AllContext extends MutantInstrumenterContext {
+  [coreTokens.validationSchema]: unknown;
+  [coreTokens.optionsValidator]: OptionsValidator;
+  [coreTokens.pluginsByKind]: PluginLoader;
+}
 
 describe(PrepareExecutor.name, () => {
   let cliOptions: PartialStrykerOptions;
+  let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
+  let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
+  let metaSchemaBuilderMock: sinon.SinonStubbedInstance<MetaSchemaBuilder>;
   let configureMainProcessStub: sinon.SinonStub;
+  let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
   let configureLoggingServerStub: sinon.SinonStub;
-  let injectorMock: sinon.SinonStubbedInstance<Injector<buildMainInjectorModule.MainContext>>;
-  let timerMock: sinon.SinonStubbedInstance<Timer>;
+  let injectorMock: sinon.SinonStubbedInstance<Injector<AllContext>>;
   let inputFileResolverMock: sinon.SinonStubbedInstance<InputFileResolver>;
   let inputFiles: InputFileCollection;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
+  let loadedPlugins: LoadedPlugins;
   let sut: PrepareExecutor;
 
   beforeEach(() => {
     inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
     cliOptions = {};
-    timerMock = sinon.createStubInstance(Timer);
+    configReaderMock = sinon.createStubInstance(ConfigReader);
+    configReaderMock.readConfig.resolves(testInjector.options);
+    metaSchemaBuilderMock = sinon.createStubInstance(MetaSchemaBuilder);
+    configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
+    pluginLoaderMock = sinon.createStubInstance(PluginLoader);
+    loadedPlugins = { pluginModulePaths: [], pluginsByKind: new Map(), schemaContributions: [] };
+    pluginLoaderMock.load.resolves(loadedPlugins);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     inputFileResolverMock = sinon.createStubInstance(InputFileResolver);
-    configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
+    optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
-    injectorMock = factory.injector();
-    sinon.stub(buildMainInjectorModule, 'buildMainInjector').returns(injectorMock as Injector<buildMainInjectorModule.MainContext>);
-    injectorMock.resolve
-      .withArgs(commonTokens.options)
-      .returns(testInjector.options)
-      .withArgs(coreTokens.timer)
-      .returns(timerMock)
-      .withArgs(coreTokens.temporaryDirectory)
-      .returns(temporaryDirectoryMock);
-    injectorMock.injectClass.withArgs(InputFileResolver).returns(inputFileResolverMock);
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<AllContext>>;
+    injectorMock.resolve.withArgs(coreTokens.temporaryDirectory).returns(temporaryDirectoryMock);
+    injectorMock.injectClass
+      .withArgs(PluginLoader)
+      .returns(pluginLoaderMock)
+      .withArgs(OptionsValidator)
+      .returns(optionsValidatorMock)
+      .withArgs(MetaSchemaBuilder)
+      .returns(metaSchemaBuilderMock)
+      .withArgs(ConfigReader)
+      .returns(configReaderMock)
+      .withArgs(InputFileResolver)
+      .returns(inputFileResolverMock);
     inputFileResolverMock.resolve.resolves(inputFiles);
-    sut = new PrepareExecutor(cliOptions, injectorMock as Injector<buildMainInjectorModule.MainContext>);
+    sut = new PrepareExecutor(injectorMock as Injector<BaseContext>);
+  });
+
+  it('should provide the cliOptions to the config reader', async () => {
+    await sut.execute(cliOptions);
+    expect(configReaderMock.readConfig).calledWithExactly(cliOptions);
+  });
+
+  it('should load the plugins', async () => {
+    // Arrange
+    testInjector.options.appendPlugins = ['appended'];
+    testInjector.options.plugins = ['@stryker-mutator/*', './my-custom-plugin.js'];
+
+    // Act
+    await sut.execute(cliOptions);
+
+    // Assert
+    sinon.assert.calledWithExactly(pluginLoaderMock.load, ['@stryker-mutator/*', './my-custom-plugin.js', reporterPluginsFileUrl, 'appended']);
+  });
+
+  it('should provided the loaded modules as pluginModulePaths', async () => {
+    // Arrange
+    const expectedPluginPaths = ['@stryker-mutator/core', path.resolve('./my-custom-plugin.js'), 'appended'];
+    loadedPlugins.pluginModulePaths.push(...expectedPluginPaths);
+
+    // Act
+    await sut.execute(cliOptions);
+
+    // Assert
+    sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.pluginModulePaths, expectedPluginPaths);
+  });
+
+  it('should validate final options with the meta schema', async () => {
+    // Arrange
+    const contributions = [{ some: 'schema contributions' }];
+    const metaSchema: JSONSchema7 = { properties: { meta: { $comment: 'schema' } } };
+    loadedPlugins.schemaContributions.push(...contributions);
+    metaSchemaBuilderMock.buildMetaSchema.returns(metaSchema);
+
+    // Act
+    await sut.execute(cliOptions);
+
+    // Assert
+    sinon.assert.calledWithExactly(metaSchemaBuilderMock.buildMetaSchema, contributions);
+    sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.validationSchema, metaSchema);
+    sinon.assert.calledWithExactly(optionsValidatorMock.validate, testInjector.options, true);
   });
 
   it('should configure logging for the main process', async () => {
-    await sut.execute();
+    await sut.execute(cliOptions);
     expect(configureMainProcessStub).calledOnce;
   });
 
@@ -63,42 +129,47 @@ describe(PrepareExecutor.name, () => {
     testInjector.options.logLevel = LogLevel.Information;
     testInjector.options.fileLogLevel = LogLevel.Trace;
     testInjector.options.allowConsoleColors = true;
-    await sut.execute();
+    await sut.execute(cliOptions);
     expect(configureLoggingServerStub).calledWithExactly(LogLevel.Information, LogLevel.Trace, true);
     expect(injectorMock.provideValue).calledWithExactly(coreTokens.loggingContext, expectedLoggingContext);
   });
 
-  it('should build the main injector', async () => {
-    await sut.execute();
-    expect(buildMainInjectorModule.buildMainInjector).calledWith(injectorMock);
-  });
-
   it('should resolve input files', async () => {
-    await sut.execute();
+    await sut.execute(cliOptions);
     expect(inputFileResolverMock.resolve).called;
     expect(injectorMock.provideValue).calledWithExactly(coreTokens.inputFiles, inputFiles);
+  });
+
+  it('should provide the reporter the reporter', async () => {
+    await sut.execute(cliOptions);
+    sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.reporter, BroadcastReporter);
+  });
+
+  it('should provide the UnexpectedExitRegister', async () => {
+    await sut.execute(cliOptions);
+    sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.unexpectedExitRegistry, UnexpectedExitHandler);
   });
 
   it('should reject when logging server rejects', async () => {
     const expectedError = Error('expected error');
     configureLoggingServerStub.rejects(expectedError);
-    await expect(sut.execute()).rejectedWith(expectedError);
+    await expect(sut.execute(cliOptions)).rejectedWith(expectedError);
   });
 
   it('should reject when input file globbing results in a rejection', async () => {
     const expectedError = Error('expected error');
     inputFileResolverMock.resolve.rejects(expectedError);
-    await expect(sut.execute()).rejectedWith(expectedError);
+    await expect(sut.execute(cliOptions)).rejectedWith(expectedError);
   });
 
   it('should reject when no input files where found', async () => {
     inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
-    await expect(sut.execute()).rejectedWith(ConfigError, 'No input files found');
+    await expect(sut.execute(cliOptions)).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
     inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
-    await expect(sut.execute()).rejected;
+    await expect(sut.execute(cliOptions)).rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });
 });

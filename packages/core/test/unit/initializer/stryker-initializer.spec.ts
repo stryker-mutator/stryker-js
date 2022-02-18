@@ -1,23 +1,26 @@
 import childProcess from 'child_process';
 import fs from 'fs';
+import { syncBuiltinESMExports } from 'module';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
-import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest-client/RestClient.js';
 
-import { initializerTokens } from '../../../src/initializer';
-import { NpmClient } from '../../../src/initializer/npm-client';
-import { PackageInfo } from '../../../src/initializer/package-info';
-import { Preset } from '../../../src/initializer/presets/preset';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
-import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
-import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
-import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
-import { Mock } from '../../helpers/producers';
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
+import { fileUtils } from '../../../src/utils/file-utils.js';
+import { initializerTokens } from '../../../src/initializer/index.js';
+import { NpmClient } from '../../../src/initializer/npm-client.js';
+import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { Preset } from '../../../src/initializer/presets/preset.js';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
+import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
+import { Mock } from '../../helpers/producers.js';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
+import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -25,7 +28,7 @@ describe(StrykerInitializer.name, () => {
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
-  let fsExistsSync: sinon.SinonStub;
+  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
   let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
@@ -44,10 +47,11 @@ describe(StrykerInitializer.name, () => {
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
-    fsExistsSync = sinon.stub(fs, 'existsSync');
-    restClientSearch = sinon.createStubInstance(RestClient);
-    restClientPackage = sinon.createStubInstance(RestClient);
+    existsStub = sinon.stub(fileUtils, 'exists');
+    restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
+    restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
+    syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
       .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
@@ -62,7 +66,7 @@ describe(StrykerInitializer.name, () => {
 
   describe('initialize()', () => {
     beforeEach(() => {
-      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner');
+      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner', '@stryker-mutator/jest-runner');
       stubMutators('@stryker-mutator/typescript', '@stryker-mutator/javascript-mutator');
       stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
       stubPackageClient({
@@ -77,6 +81,7 @@ describe(StrykerInitializer.name, () => {
           files: [],
           someOtherSetting: 'enabled',
         },
+        '@stryker-mutator/jest-runner': null,
       });
       fsWriteFile.resolves();
       presets.push(presetMock);
@@ -91,20 +96,24 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(5);
-      const [promptPreset, promptTestRunner, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] = [
-        inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0],
-        inquirerPrompt.getCall(3).args[0],
-        inquirerPrompt.getCall(4).args[0],
-      ];
+      expect(inquirerPrompt).callCount(6);
+      const [promptPreset, promptTestRunner, promptBuildCommand, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] =
+        [
+          inquirerPrompt.getCall(0).args[0],
+          inquirerPrompt.getCall(1).args[0],
+          inquirerPrompt.getCall(2).args[0],
+          inquirerPrompt.getCall(3).args[0],
+          inquirerPrompt.getCall(4).args[0],
+          inquirerPrompt.getCall(5).args[0],
+        ];
+
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
       expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
       expect(promptTestRunner.type).to.eq('list');
       expect(promptTestRunner.name).to.eq('testRunner');
-      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', new inquirer.Separator(), 'command']);
+      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', 'jest', new inquirer.Separator(), 'command']);
+      expect(promptBuildCommand.name).to.eq('buildCommand');
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
@@ -134,13 +143,13 @@ describe(StrykerInitializer.name, () => {
         config,
         guideUrl,
       });
-      const expectedOutput = `/**
-         * @type {import('@stryker-mutator/api/core').StrykerOptions}
-         */  
-        module.exports = {
+      const expectedOutput = `// @ts-check
+        /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */  
+        const config =  {
           "_comment": "This config was generated using 'stryker init'. Please see the guide for more information: https://awesome-preset.org",
           "awesomeConf": "${config.awesomeConf}"
-        };`;
+        };
+        export default config;`;
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
@@ -148,7 +157,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
-      expect(childExec).calledWith('npx prettier --write stryker.conf.js');
+      expect(childExec).calledWith('npx prettier --write stryker.conf.mjs');
     });
 
     it('should handle errors when formatting fails', async () => {
@@ -247,6 +256,69 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"someOtherSetting": "enabled"'));
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
+    });
+
+    it('should annotate the config file with the docs url', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match(
+          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information"'
+        )
+      );
+    });
+
+    it('should not prompt for buildCommand if test runner is jest', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars', 'progress'],
+        testRunner: 'jest',
+        configType: 'JSON',
+        buildCommand: 'none',
+      });
+
+      await sut.initialize();
+
+      const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => call.args[0].name === 'buildCommand');
+      expect(promptBuildCommand.length === 1);
+      expect(promptBuildCommand[0].args[0].when).to.be.false;
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match((val) => !val.includes('"buildCommand": '))
+      );
+    });
+
+    it('should not write "buildCommand" config option if empty buildCommand entered', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+        buildCommand: 'none',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match((val) => !val.includes('"buildCommand": '))
+      );
+    });
+
+    it('should save entered build command', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+        buildCommand: 'npm run build',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": "npm run build"'));
     });
 
     it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
@@ -350,13 +422,15 @@ describe(StrykerInitializer.name, () => {
     });
   });
 
-  it('should log an error and quit when `stryker.conf.js` file already exists', async () => {
-    fsExistsSync.resolves(true);
+  SUPPORTED_CONFIG_FILE_EXTENSIONS.forEach((ext) => {
+    it(`should log an error and quit when \`stryker.conf${ext}\` file already exists`, async () => {
+      existsStub.withArgs(`stryker.conf${ext}`).resolves(true);
 
-    expect(sut.initialize()).to.be.rejected;
-    expect(testInjector.logger.error).calledWith(
-      'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.'
-    );
+      await expect(sut.initialize()).to.be.rejected;
+      expect(testInjector.logger.error).calledWith(
+        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+      );
+    });
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
@@ -434,7 +508,7 @@ describe(StrykerInitializer.name, () => {
 
   function expectStrykerConfWritten(expectedRawConfig: string) {
     const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
-    expect(fileName).eq('stryker.conf.js');
-    expect(normalizeWhitespaces(actualConfig as string)).deep.eq(normalizeWhitespaces(expectedRawConfig));
+    expect(fileName).eq('stryker.conf.mjs');
+    expect(normalizeWhitespaces(actualConfig as string)).eq(normalizeWhitespaces(expectedRawConfig));
   }
 });

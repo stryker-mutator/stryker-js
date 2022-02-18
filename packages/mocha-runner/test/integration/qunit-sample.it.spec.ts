@@ -1,9 +1,9 @@
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaOptions } from '../helpers/factories';
-import { createMochaTestRunnerFactory } from '../../src';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaOptions } from '../helpers/factories.js';
+import { createMochaTestRunnerFactory } from '../../src/index.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('QUnit sample', () => {
   function createSut() {
@@ -28,16 +28,6 @@ describe('QUnit sample', () => {
       'Math should be able to recognize a negative number',
       'Math should be able to recognize that 0 is not a negative number',
     ]);
-  });
-
-  it('should not run tests when not configured with "qunit" ui', async () => {
-    testInjector.options.mochaOptions = createMochaOptions({
-      files: [resolveTestResource('qunit-sample', 'MyMathSpec.js')],
-    });
-    const sut = createSut();
-    await sut.init();
-    const actualResult = await sut.dryRun(factory.dryRunOptions());
-    assertions.expectCompleted(actualResult);
-    expect(actualResult.tests).lengthOf(0);
+    await sut.dispose();
   });
 });

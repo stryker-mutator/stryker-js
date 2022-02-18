@@ -1,7 +1,11 @@
-import { types, parseAsync } from '@babel/core';
+import { createRequire } from 'module';
 
-import { AstFormat, TSAst, TsxAst } from '../syntax';
+import babel from '@babel/core';
 
+import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
+
+const { types, parseAsync } = babel;
+const require = createRequire(import.meta.url);
 /**
  * See https://babeljs.io/docs/en/babel-preset-typescript
  * @param text The text to parse
@@ -25,7 +29,7 @@ export async function parseTsx(text: string, fileName: string): Promise<TsxAst> 
   };
 }
 
-async function parse(text: string, fileName: string, isTSX: boolean): Promise<types.File> {
+async function parse(text: string, fileName: string, isTSX: boolean): Promise<babel.types.File> {
   const ast = await parseAsync(text, {
     filename: fileName,
     parserOpts: {

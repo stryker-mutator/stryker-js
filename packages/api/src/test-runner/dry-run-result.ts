@@ -1,7 +1,7 @@
-import { MutantCoverage } from '../core/mutant-coverage';
+import { MutantCoverage } from '../core/index.js';
 
-import { DryRunStatus } from './dry-run-status';
-import { TestResult } from './test-result';
+import { DryRunStatus } from './dry-run-status.js';
+import { TestResult } from './test-result.js';
 
 export type DryRunResult = CompleteDryRunResult | ErrorDryRunResult | TimeoutDryRunResult;
 

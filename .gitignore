@@ -15,16 +15,12 @@ stryker-tmp
 src-generated
 dist
 dist-test
+packages/*/testResources/tmp
 packages/report.*.json # Ignore heap dumps
-e2e/module/*.js
-e2e/module/*.map
-e2e/module/*.d.ts
-e2e/*.js
-e2e/*.map
-e2e/*.d.ts
 .idea
 *.iml
 *.tmp.txt
 tsconfig.*.tsbuildinfo
 packages/core/schema
+packages/*/package-lock.json
 __filterSpecs.js

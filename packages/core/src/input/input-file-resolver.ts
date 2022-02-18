@@ -1,6 +1,5 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
-
 import { isDeepStrictEqual } from 'util';
 
 import { from, lastValueFrom } from 'rxjs';
@@ -10,16 +9,16 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { SourceFile } from '@stryker-mutator/api/report';
 import { isErrnoException, notEmpty } from '@stryker-mutator/util';
-import { IMinimatch, Minimatch } from 'minimatch';
+import minimatch, { type IMinimatch } from 'minimatch';
 
-import { coreTokens } from '../di';
-import { StrictReporter } from '../reporters/strict-reporter';
-import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
-import { defaultOptions } from '../config/options-validator';
+import { coreTokens } from '../di/index.js';
+import { StrictReporter } from '../reporters/strict-reporter.js';
+import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';
+import { defaultOptions } from '../config/options-validator.js';
 
-import { FileMatcher } from '../config';
+import { FileMatcher } from '../config/index.js';
 
-import { InputFileCollection } from './input-file-collection';
+import { InputFileCollection } from './input-file-collection.js';
 
 function toReportSourceFile(file: File): SourceFile {
   return {
@@ -27,6 +26,8 @@ function toReportSourceFile(file: File): SourceFile {
     path: file.name,
   };
 }
+
+const { Minimatch } = minimatch;
 
 const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '/reports', '*.tsbuildinfo', '/stryker.log']);
 

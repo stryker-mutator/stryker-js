@@ -1,31 +1,31 @@
-import childProcess from 'child_process';
+import childProcess, { ChildProcess } from 'child_process';
 import { EventEmitter } from 'events';
 import os from 'os';
+import { fileURLToPath, URL } from 'url';
 
 import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy';
+import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
 import {
-  autoStart,
   DisposeMessage,
   InitMessage,
   ParentMessage,
   ParentMessageKind,
   WorkerMessage,
   WorkerMessageKind,
-} from '../../../src/child-proxy/message-protocol';
-import { LoggingClientContext } from '../../../src/logging';
-import * as stringUtils from '../../../src/utils/string-utils';
-import * as objectUtils from '../../../src/utils/object-utils';
-import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error';
-import { currentLogMock } from '../../helpers/log-mock';
-import { Mock } from '../../helpers/producers';
+} from '../../../src/child-proxy/message-protocol.js';
+import { LoggingClientContext } from '../../../src/logging/index.js';
+import * as stringUtils from '../../../src/utils/string-utils.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
+import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
+import { currentLogMock } from '../../helpers/log-mock.js';
+import { Mock } from '../../helpers/producers.js';
 
-import { HelloClass } from './hello-class';
+import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
   level: LogLevel.Fatal,
@@ -33,7 +33,7 @@ const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
 });
 
 class ChildProcessMock extends EventEmitter {
-  public send = sinon.stub();
+  public send: sinon.SinonStubbedMember<ChildProcess['send']> = sinon.stub();
   public stderr = new EventEmitter();
   public stdout = new EventEmitter();
   public pid = 4648;
@@ -65,34 +65,16 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(require.resolve('../../../src/child-proxy/child-process-proxy-worker'), [autoStart], {
+      expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
       });
     });
 
-    it('should send init message to child process', () => {
-      const expectedMessage: InitMessage = {
-        additionalInjectableValues: { name: 'fooTest' },
-        kind: WorkerMessageKind.Init,
-        loggingContext: LOGGING_CONTEXT,
-        options: factory.strykerOptions(),
-        requireName: 'HelloClass',
-        requirePath: 'foobar',
-        workingDirectory: 'workingDirectory',
-      };
-
-      // Act
-      createSut({
-        loggingContext: LOGGING_CONTEXT,
-        name: (expectedMessage.additionalInjectableValues as { name: string }).name,
-        options: expectedMessage.options,
-        requirePath: expectedMessage.requirePath,
-        workingDir: expectedMessage.workingDirectory,
-      });
-
-      // Assert
-      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedMessage));
+    it('should not directly send the init message', () => {
+      // https://github.com/nodejs/node/issues/41134#issuecomment-1024972805
+      createSut();
+      expect(childProcessMock.send).not.called;
     });
 
     it('should log the exec arguments and require name', () => {
@@ -118,7 +100,32 @@ describe(ChildProcessProxy.name, () => {
 
     it('should set `execArgv`', () => {
       createSut({ execArgv: ['--inspect-brk'] });
-      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match.array, sinon.match({ execArgv: ['--inspect-brk'] }));
+      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match({ execArgv: ['--inspect-brk'] }));
+    });
+
+    it('should send init message to child process when the Ready message is received', () => {
+      const expectedMessage: InitMessage = {
+        kind: WorkerMessageKind.Init,
+        loggingContext: LOGGING_CONTEXT,
+        options: factory.strykerOptions({ testRunner: 'Hello' }),
+        pluginModulePaths: ['foo'],
+        namedExport: 'HelloClass',
+        modulePath: 'foobar',
+        workingDirectory: 'workingDirectory',
+      };
+      createSut({
+        loggingContext: LOGGING_CONTEXT,
+        options: expectedMessage.options,
+        requirePath: expectedMessage.modulePath,
+        workingDir: expectedMessage.workingDirectory,
+        pluginModulePaths: expectedMessage.pluginModulePaths,
+      });
+
+      // Act
+      receiveMessage({ kind: ParentMessageKind.Ready });
+
+      // Assert
+      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedMessage));
     });
   });
 
@@ -198,17 +205,52 @@ describe(ChildProcessProxy.name, () => {
     }
   });
 
+  describe('init', () => {
+    it('should kill the child process on init error', async () => {
+      // Arrange
+      createSut();
+      receiveMessage({ kind: ParentMessageKind.Ready });
+
+      // Act
+      receiveMessage({ kind: ParentMessageKind.InitError, error: 'some error' });
+
+      // Assert
+      await assertDisposedCorrectly();
+    });
+
+    it('should reject messages when the child process rejects with init error', async () => {
+      // Arrange
+      sut = createSut();
+      receiveMessage({ kind: ParentMessageKind.Ready });
+
+      // Act
+      receiveMessage({ kind: ParentMessageKind.InitError, error: 'some error' });
+
+      // Assert
+      await expect(sut.proxy.sayHello()).rejectedWith('some error');
+      await assertDisposedCorrectly();
+    });
+
+    async function assertDisposedCorrectly() {
+      const expectedDispose: WorkerMessage = { kind: WorkerMessageKind.Dispose };
+      sinon.assert.calledWithExactly(childProcessMock.send, JSON.stringify(expectedDispose));
+      receiveMessage({ kind: ParentMessageKind.DisposeCompleted });
+      await tick();
+      expect(killStub).calledWith(childProcessMock.pid);
+    }
+  });
+
   describe('when calling methods', () => {
     beforeEach(() => {
       sut = createSut();
-      receiveMessage({ kind: ParentMessageKind.Initialized });
     });
 
     it('should proxy the message', async () => {
       // Arrange
+      receiveMessage({ kind: ParentMessageKind.Initialized });
       const workerResponse: ParentMessage = {
         correlationId: 0,
-        kind: ParentMessageKind.Result,
+        kind: ParentMessageKind.CallResult,
         result: 'ack',
       };
       const expectedWorkerMessage: WorkerMessage = {
@@ -228,11 +270,29 @@ describe(ChildProcessProxy.name, () => {
       expect(result).eq('ack');
       expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
     });
+
+    it('should wait with starting to proxy until initialized', async () => {
+      // Arrange
+      const onGoingCall = sut.proxy.sayHello();
+      await tick();
+
+      // Act & Assert
+      expect(childProcessMock.send).not.called;
+      receiveMessage({ kind: ParentMessageKind.Ready });
+      await tick();
+      expect(childProcessMock.send).calledOnce; // init
+      receiveMessage({ kind: ParentMessageKind.Initialized });
+      await tick();
+      expect(childProcessMock.send).calledTwice; // call
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'Hello' });
+      expect(await onGoingCall).eq('Hello');
+    });
   });
 
   describe('dispose', () => {
     beforeEach(() => {
       sut = createSut();
+      receiveMessage({ kind: ParentMessageKind.Ready });
     });
 
     it('should send a dispose message', async () => {
@@ -285,23 +345,20 @@ describe(ChildProcessProxy.name, () => {
   }
 });
 
-function createSut(
-  overrides: {
-    requirePath?: string;
-    loggingContext?: LoggingClientContext;
-    options?: Partial<StrykerOptions>;
-    workingDir?: string;
-    name?: string;
-    execArgv?: string[];
-  } = {}
-): ChildProcessProxy<HelloClass> {
-  return ChildProcessProxy.create(
-    overrides.requirePath ?? 'foobar',
-    overrides.loggingContext ?? LOGGING_CONTEXT,
-    factory.strykerOptions(overrides.options),
-    { name: overrides.name ?? 'someArg' },
-    overrides.workingDir ?? 'workingDir',
-    HelloClass,
-    overrides.execArgv ?? []
-  );
+function createSut({
+  requirePath = 'foobar',
+  loggingContext = LOGGING_CONTEXT,
+  options = {},
+  workingDir = 'workingDir',
+  pluginModulePaths = ['plugin', 'path'],
+  execArgv = [],
+}: {
+  requirePath?: string;
+  loggingContext?: LoggingClientContext;
+  options?: Partial<StrykerOptions>;
+  workingDir?: string;
+  pluginModulePaths?: readonly string[];
+  execArgv?: string[];
+} = {}): ChildProcessProxy<HelloClass> {
+  return ChildProcessProxy.create(requirePath, loggingContext, factory.strykerOptions(options), pluginModulePaths, workingDir, HelloClass, execArgv);
 }

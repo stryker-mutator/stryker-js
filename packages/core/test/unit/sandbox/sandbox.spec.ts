@@ -1,19 +1,19 @@
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import execa from 'execa';
-import npmRunPath from 'npm-run-path';
+import type { execaNode } from 'execa';
+import { npmRunPathEnv } from 'npm-run-path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
 import { File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, Task } from '@stryker-mutator/util';
+import { I, normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
-import { Sandbox } from '../../../src/sandbox/sandbox';
-import { coreTokens } from '../../../src/di';
-import { TemporaryDirectory } from '../../../src/utils/temporary-directory';
-import * as fileUtils from '../../../src/utils/file-utils';
-import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler';
+import { Sandbox } from '../../../src/sandbox/sandbox.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
+import { fileUtils } from '../../../src/utils/file-utils.js';
+import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 
 describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
@@ -22,8 +22,8 @@ describe(Sandbox.name, () => {
   let writeFileStub: sinon.SinonStub;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesListStub: sinon.SinonStub;
-  let execaMock: sinon.SinonStubbedInstance<typeof execa>;
-  let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<UnexpectedExitHandler>;
+  let execaCommandMock: sinon.SinonStubbedInstance<I<typeof execaNode>>;
+  let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<I<UnexpectedExitHandler>>;
   let readFile: sinon.SinonStub;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   const SANDBOX_WORKING_DIR = path.resolve('.stryker-tmp/sandbox-123');
@@ -31,19 +31,14 @@ describe(Sandbox.name, () => {
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    temporaryDirectoryMock.createRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
+    temporaryDirectoryMock.getRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
     mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
     writeFileStub = sinon.stub(fsPromises, 'writeFile');
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesListStub = sinon.stub(fileUtils, 'findNodeModulesList');
     moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
     readFile = sinon.stub(fsPromises, 'readFile');
-    execaMock = {
-      command: sinon.stub(),
-      commandSync: sinon.stub(),
-      node: sinon.stub(),
-      sync: sinon.stub(),
-    };
+    execaCommandMock = sinon.stub();
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),
       dispose: sinon.stub(),
@@ -57,7 +52,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.files, files)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(coreTokens.execa, execaMock as unknown as typeof execa)
+      .provideValue(coreTokens.execa, execaCommandMock as unknown as typeof execaNode)
       .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitHandlerMock)
       .injectClass(Sandbox);
   }
@@ -71,7 +66,8 @@ describe(Sandbox.name, () => {
       it('should have created a sandbox folder', async () => {
         const sut = createSut();
         await sut.init();
-        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('sandbox');
+        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('sandbox');
+        expect(temporaryDirectoryMock.createDirectory).calledWith(SANDBOX_WORKING_DIR);
       });
 
       it('should copy regular input files', async () => {
@@ -118,7 +114,8 @@ describe(Sandbox.name, () => {
       it('should have created a backup directory', async () => {
         const sut = createSut();
         await sut.init();
-        expect(temporaryDirectoryMock.createRandomDirectory).calledWith('backup');
+        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('backup');
+        expect(temporaryDirectoryMock.createDirectory).calledWith(BACKUP_DIR);
       });
 
       it('should not override the current file if no changes were detected', async () => {
@@ -278,7 +275,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = 'npm run build';
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPath.env() });
+      expect(execaCommandMock).calledWith('npm run build', { cwd: SANDBOX_WORKING_DIR, env: npmRunPathEnv() });
       expect(testInjector.logger.info).calledWith('Running build command "%s" in "%s".', 'npm run build', SANDBOX_WORKING_DIR);
     });
 
@@ -286,7 +283,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = undefined;
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).not.called;
+      expect(execaCommandMock).not.called;
     });
 
     it('should execute the buildCommand before the node_modules are symlinked', async () => {
@@ -294,7 +291,7 @@ describe(Sandbox.name, () => {
       testInjector.options.buildCommand = 'npm run build';
       const sut = createSut();
       await sut.init();
-      expect(execaMock.command).calledBefore(symlinkJunctionStub);
+      expect(execaCommandMock).calledBefore(symlinkJunctionStub);
     });
   });
 

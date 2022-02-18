@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
+
+**Note:** Version bump only for package @stryker-mutator/jasmine-runner
+
+
+
+
+
+# [5.6.0](https://github.com/stryker-mutator/stryker-js/compare/v5.5.1...v5.6.0) (2022-01-09)
+
+
+### Bug Fixes
+
+* **jasmine:** correct peer dependency for jasmine ([#3341](https://github.com/stryker-mutator/stryker-js/issues/3341)) ([07b50a9](https://github.com/stryker-mutator/stryker-js/commit/07b50a922b50fea64c978ab7023f8ea0486d9392))
+
+
+
+
+
+## [5.5.1](https://github.com/stryker-mutator/stryker-js/compare/v5.5.0...v5.5.1) (2021-12-02)
+
+**Note:** Version bump only for package @stryker-mutator/jasmine-runner
+
+
+
+
+
+# [5.5.0](https://github.com/stryker-mutator/stryker-js/compare/v5.4.1...v5.5.0) (2021-11-23)
+
+
+### Features
+
+* **hit limit:** infinite loop prevention in jasmine-runner ([#3199](https://github.com/stryker-mutator/stryker-js/issues/3199)) ([bc792e0](https://github.com/stryker-mutator/stryker-js/commit/bc792e087225641256c95f18a6d70fefdca507b5))
+
+
+
+
+
 ## [5.4.1](https://github.com/stryker-mutator/stryker-js/compare/v5.4.0...v5.4.1) (2021-09-30)
 
 **Note:** Version bump only for package @stryker-mutator/jasmine-runner

@@ -1,13 +1,13 @@
 import path from 'path';
 
-import { AstFormat, AstByFormat } from '../syntax';
+import { AstFormat, AstByFormat } from '../syntax/index.js';
 
-import { createParser as createJSParser } from './js-parser';
-import { parseTS, parseTsx } from './ts-parser';
-import { parse as htmlParse } from './html-parser';
-import { ParserOptions } from './parser-options';
+import { createParser as createJSParser } from './js-parser.js';
+import { parseTS, parseTsx } from './ts-parser.js';
+import { parse as htmlParse } from './html-parser.js';
+import { ParserOptions } from './parser-options.js';
 
-export { ParserOptions };
+export type { ParserOptions };
 
 export function createParser(
   parserOptions: ParserOptions

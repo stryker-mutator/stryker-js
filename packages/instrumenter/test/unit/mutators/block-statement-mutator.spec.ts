@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { blockStatementMutator as sut } from '../../../src/mutators/block-statement-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { blockStatementMutator as sut } from '../../../src/mutators/block-statement-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "BlockStatement"', () => {

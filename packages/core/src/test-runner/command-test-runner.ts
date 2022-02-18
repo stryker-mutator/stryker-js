@@ -12,11 +12,12 @@ import {
   ErrorDryRunResult,
   CompleteDryRunResult,
   toMutantRunResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
 
-import { kill } from '../utils/object-utils';
-import { Timer } from '../utils/timer';
+import { objectUtils } from '../utils/object-utils.js';
+import { Timer } from '../utils/timer.js';
 
 /**
  * A test runner that uses a (bash or cmd) command to execute the tests.
@@ -46,6 +47,11 @@ export class CommandTestRunner implements TestRunner {
     this.settings = options.commandRunner;
   }
 
+  public capabilities(): TestRunnerCapabilities {
+    // Can reload, because each call is a new process.
+    return { reloadEnvironment: true };
+  }
+
   public async dryRun(): Promise<DryRunResult> {
     return this.run({});
   }
@@ -56,14 +62,15 @@ export class CommandTestRunner implements TestRunner {
   }
 
   private run({ activeMutantId }: { activeMutantId?: string }): Promise<DryRunResult> {
+    const timerInstance = new Timer();
     return new Promise((res, rej) => {
-      const timerInstance = new Timer();
       const output: Array<Buffer | string> = [];
       const env =
         activeMutantId === undefined ? process.env : { ...process.env, [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutantId };
       const childProcess = exec(this.settings.command, { cwd: this.workingDir, env });
       childProcess.on('error', (error) => {
-        kill(childProcess.pid)
+        objectUtils
+          .kill(childProcess.pid)
           .then(() => handleResolve(errorResult(error)))
           .catch(rej);
       });
@@ -80,7 +87,7 @@ export class CommandTestRunner implements TestRunner {
 
       this.timeoutHandler = async () => {
         handleResolve({ status: DryRunStatus.Timeout });
-        await kill(childProcess.pid);
+        await objectUtils.kill(childProcess.pid);
       };
 
       const handleResolve = (runResult: DryRunResult) => {

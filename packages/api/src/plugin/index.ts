@@ -1,6 +1,6 @@
-export * from './contexts';
-export * from './plugins';
-export * from './plugin-kind';
-export * from './tokens';
-export * from './scope';
-export { Injectable, Injector, InjectionToken, CorrespondingType, Disposable } from 'typed-inject';
+export * from './contexts.js';
+export * from './plugins.js';
+export * from './plugin-kind.js';
+export * from './tokens.js';
+export * from './scope.js';
+export type { Injectable, Injector, InjectionToken, CorrespondingType, Disposable } from 'typed-inject';

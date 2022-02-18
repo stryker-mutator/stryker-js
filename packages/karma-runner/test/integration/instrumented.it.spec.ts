@@ -2,12 +2,12 @@ import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 function createSut() {
-  return testInjector.injector.injectClass(KarmaTestRunner);
+  return testInjector.injector.injectFunction(createKarmaTestRunner);
 }
 
 describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
