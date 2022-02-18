@@ -63,7 +63,7 @@ export class JasmineTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = options.hitLimit;
     this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     const runResult = await this.run(options.testFilter, undefined, options.disableBail);
-    return toMutantRunResult(runResult, true);
+    return toMutantRunResult(runResult);
   }
 
   private async run(testFilter: string[] | undefined, coverageAnalysis: CoverageAnalysis | undefined, disableBail: boolean): Promise<DryRunResult> {

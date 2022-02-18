@@ -122,7 +122,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).eq('Add should be able to add two numbers');
+      expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, ''))
         .contains('Expected: 7')
         .contains('Received: -3');
@@ -174,7 +174,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Assert
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('Add should be able to add two numbers');
+      expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
     });
 
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {

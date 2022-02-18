@@ -96,8 +96,7 @@ export class CucumberTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = options.hitLimit;
     this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     return toMutantRunResult(
-      await this.run(options.disableBail, options.testFilter),
-      true
+      await this.run(options.disableBail, options.testFilter)
     );
   }
 

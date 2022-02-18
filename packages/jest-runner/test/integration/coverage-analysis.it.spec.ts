@@ -123,7 +123,7 @@ describe('JestTestRunner coverage analysis integration', () => {
             })
           );
           assertions.expectKilled(result);
-          expect(result.killedBy).eq('Add should be able to recognize a negative number');
+          expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
           expect(result.nrOfTests).eq(1);
         });
 
@@ -262,7 +262,7 @@ describe('JestTestRunner coverage analysis integration', () => {
             })
           );
           assertions.expectKilled(result);
-          expect(result.killedBy).eq('Add should be able to recognize a negative number');
+          expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
           expect(result.nrOfTests).eq(1);
         });
 

@@ -515,7 +515,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js' }),
-          factory.killedMutantRunResult({ killedBy: '1', nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' })
+          factory.killedMutantRunResult({ killedBy: ['1'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' })
         );
 
         // Assert

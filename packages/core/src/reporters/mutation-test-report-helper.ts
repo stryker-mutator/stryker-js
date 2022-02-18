@@ -76,7 +76,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: MutantStatus.Killed,
           testsCompleted: result.nrOfTests,
-          killedBy: typeof result.killedBy === 'string' ? [result.killedBy] : result.killedBy,
+          killedBy: result.killedBy,
           statusReason: result.failureMessage,
         });
       case MutantRunStatus.Timeout:

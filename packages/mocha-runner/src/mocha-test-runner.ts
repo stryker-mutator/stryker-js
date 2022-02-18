@@ -120,7 +120,7 @@ export class MochaTestRunner implements TestRunner {
       this.setIfDefined(this.originalGrep, this.mocha.grep);
     }
     const dryRunResult = await this.run(disableBail);
-    return toMutantRunResult(dryRunResult, true);
+    return toMutantRunResult(dryRunResult);
   }
 
   public async run(disableBail: boolean): Promise<DryRunResult> {
