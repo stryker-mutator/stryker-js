@@ -139,8 +139,8 @@ export class PluginLoader {
         this.log.warn(
           'Module "%s" did not contribute a StrykerJS plugin. It didn\'t export a "%s" or "%s".',
           descriptor,
-          propertyPath<PluginModule>('strykerPlugins'),
-          propertyPath<SchemaValidationContribution>('strykerValidationSchema')
+          propertyPath<PluginModule>()('strykerPlugins'),
+          propertyPath<SchemaValidationContribution>()('strykerValidationSchema')
         );
       }
     } catch (e: any) {

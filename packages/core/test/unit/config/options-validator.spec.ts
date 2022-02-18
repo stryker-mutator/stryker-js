@@ -5,11 +5,10 @@ import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryke
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { propertyPath } from '@stryker-mutator/util';
-
 import { OptionsValidator } from '../../../src/config/options-validator.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { createCpuInfo } from '../../helpers/producers.js';
+import { optionsPath } from '../../../src/utils/index.js';
 
 describe(OptionsValidator.name, () => {
   let sut: OptionsValidator;
@@ -104,13 +103,13 @@ describe(OptionsValidator.name, () => {
       );
     });
 
-    it(`should rewrite them to "${propertyPath<StrykerOptions>('ignorePatterns')}"`, () => {
+    it(`should rewrite them to "${optionsPath('ignorePatterns')}"`, () => {
       testInjector.options.files = ['src/**/*.js', '!src/index.js'];
       sut.validate(testInjector.options);
       expect(testInjector.options.ignorePatterns).deep.eq(['**', '!src/**/*.js', 'src/index.js']);
     });
 
-    it(`should not clear existing "${propertyPath<StrykerOptions>('ignorePatterns')}" when rewritting "files"`, () => {
+    it(`should not clear existing "${optionsPath('ignorePatterns')}" when rewritting "files"`, () => {
       testInjector.options.files = ['src/**/*.js'];
       testInjector.options.ignorePatterns = ['src/index.js'];
       sut.validate(testInjector.options);

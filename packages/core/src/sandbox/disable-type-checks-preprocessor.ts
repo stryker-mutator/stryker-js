@@ -4,8 +4,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
-import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
+import { optionsPath } from '../utils/index.js';
 import { coreTokens } from '../di/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { FileMatcher } from '../config/index.js';
@@ -34,7 +34,7 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
               this.log.warn(
                 `Unable to disable type checking for file "${
                   file.name
-                }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${propertyPath<StrykerOptions>(
+                }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${optionsPath(
                   'disableTypeChecks'
                 )}" settings (or turn it completely off with \`false\`)`,
                 err
@@ -48,7 +48,7 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
       })
     );
     if (warningLogged) {
-      this.log.warn(`(disable "${PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('preprocessorErrors')}" to ignore this warning`);
+      this.log.warn(`(disable "${optionsPath('warnings', 'preprocessorErrors')}" to ignore this warning`);
     }
     return outFiles;
   }

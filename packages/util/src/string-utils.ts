@@ -11,12 +11,23 @@ export function normalizeWhitespaces(str: string): string {
   return str.replace(/\s+/g, ' ').trim();
 }
 
+export interface PropertyPathOverloads<T> {
+  (key: KnownKeys<T>): string;
+  <TProp1 extends KnownKeys<T>>(key: TProp1, key2: KnownKeys<OnlyObject<T[TProp1]>>): string;
+  <TProp1 extends KnownKeys<T>, TProp2 extends KnownKeys<OnlyObject<T[TProp1]>>>(
+    key: TProp1,
+    key2: TProp2,
+    key3: KnownKeys<OnlyObject<OnlyObject<T[TProp1]>[TProp2]>>
+  ): string;
+}
+
 /**
  * Given a base type, allows type safe access to the name of a property.
  * @param prop The property name
  */
-export function propertyPath<T>(prop: KnownKeys<T>): string {
-  return String(prop);
+export function propertyPath<T>(): PropertyPathOverloads<T> {
+  const fn: PropertyPathOverloads<T> = ((...args: string[]) => args.join('.')) as unknown as PropertyPathOverloads<T>;
+  return fn;
 }
 
 /**
