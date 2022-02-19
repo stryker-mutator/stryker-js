@@ -1,11 +1,13 @@
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import { PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 
-export class CheckerWorker implements Checker {
+import { CheckerResource } from './checker-resource.js';
+
+export class CheckerWorker implements CheckerResource {
   private readonly innerCheckers: Array<{ name: string; checker: Checker }> = [];
 
   public static inject = tokens(commonTokens.options, coreTokens.pluginCreator);
@@ -21,13 +23,11 @@ export class CheckerWorker implements Checker {
       }
     }
   }
-  public async check(mutant: Mutant): Promise<CheckResult> {
-    for await (const { checker } of this.innerCheckers) {
-      const result = await checker.check(mutant);
-      if (result.status !== CheckStatus.Passed) {
-        return result;
-      }
-    }
-    return { status: CheckStatus.Passed };
+  public async check(checkerIndex: number, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    return this.innerCheckers[checkerIndex].checker.check(mutants);
+  }
+
+  public async createGroups(checkerIndex: number, mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    return this.innerCheckers[checkerIndex].checker.createGroups?.(mutants);
   }
 }

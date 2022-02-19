@@ -16,7 +16,6 @@ import {
   ErrorDryRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { lastValueFrom, of } from 'rxjs';
-import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
@@ -30,6 +29,10 @@ import { InputFileCollection } from '../input/input-file-collection.js';
 
 import { MutantTestPlanner } from '../mutants/index.js';
 
+import { CheckerResource } from '../checker/checker-resource.js';
+
+import { CheckerFacade } from '../checker/checker-facade.js';
+
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
 
@@ -38,7 +41,7 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
-  [coreTokens.checkerPool]: I<Pool<Checker>>;
+  [coreTokens.checkerPool]: I<Pool<CheckerResource>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
   [coreTokens.inputFiles]: InputFileCollection;
 }
@@ -103,7 +106,8 @@ export class DryRunExecutor {
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
+      .provideClass(coreTokens.checkerFacade, CheckerFacade);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {

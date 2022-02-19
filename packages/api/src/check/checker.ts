@@ -5,5 +5,7 @@ import { CheckResult } from './check-result.js';
 export interface Checker {
   init(): Promise<void>;
 
-  check(mutant: Mutant): Promise<CheckResult>;
+  check(mutants: Mutant[]): Promise<Record<string, CheckResult>>;
+
+  createGroups?(mutants: Mutant[]): Promise<Mutant[][] | undefined>;
 }

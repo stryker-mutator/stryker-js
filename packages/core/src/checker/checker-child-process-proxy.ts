@@ -1,6 +1,6 @@
 import { URL } from 'url';
 
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
@@ -9,8 +9,9 @@ import { LoggingClientContext } from '../logging/index.js';
 import { Resource } from '../concurrent/pool.js';
 
 import { CheckerWorker } from './checker-worker.js';
+import { CheckerResource } from './checker-resource.js';
 
-export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
+export class CheckerChildProcessProxy implements CheckerResource, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
   constructor(options: StrykerOptions, pluginModulePaths: readonly string[], loggingContext: LoggingClientContext) {
@@ -33,12 +34,18 @@ export class CheckerChildProcessProxy implements Checker, Disposable, Resource {
     await this.childProcess?.proxy.init();
   }
 
-  public async check(mutant: Mutant): Promise<CheckResult> {
+  public async check(checkerIndex: number, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     if (this.childProcess) {
-      return this.childProcess.proxy.check(mutant);
+      return this.childProcess.proxy.check(checkerIndex, mutants);
     }
-    return {
-      status: CheckStatus.Passed,
-    };
+
+    const result: Record<string, CheckResult> = {};
+    mutants.forEach((mutant) => (result[mutant.id] = { status: CheckStatus.Passed }));
+
+    return result;
+  }
+
+  public async createGroups(checkerIndex: number, mutants: Mutant[]): Promise<Mutant[][] | undefined> {
+    return this.childProcess.proxy.createGroups(checkerIndex, mutants);
   }
 }
