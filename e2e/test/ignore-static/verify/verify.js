@@ -30,7 +30,7 @@ describe('Ignore static e2e test', () => {
     await expectMetricsJsonToMatchSnapshot();
   });
   it('should work for jest', async () => {
-    const { exitCode } = execStryker('stryker run --testRunner jest');
+    const { exitCode } = execStryker('stryker run --testRunner jest --tempDirName stryker-tmp');
     expect(exitCode).eq(0);
     await expectMetricsJsonToMatchSnapshot();
   });
