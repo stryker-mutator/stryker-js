@@ -50,7 +50,6 @@ function runStryker(testDir: string): Observable<string> {
       require.resolve('../../packages/karma-runner'),
       require.resolve('../../packages/jest-runner'),
       require.resolve('../../packages/jasmine-runner'),
-      require.resolve('../../packages/mocha-runner'),
       require.resolve('../../packages/typescript-checker'),
     ].join(','),
   ];
