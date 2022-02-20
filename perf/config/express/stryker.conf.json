@@ -1,5 +1,9 @@
 {
   "$schema": "../../../packages/core/schema/stryker-schema.json",
   "testRunner": "mocha",
-  "coverageAnalysis": "perTest"
+  "coverageAnalysis": "perTest",
+  "mochaOptions": {
+    "require": ["test/support/env"],
+    "files": ["test/*.js", "test/acceptance/*.js"]
+  }
 }

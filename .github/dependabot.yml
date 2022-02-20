@@ -1,26 +1,28 @@
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: '/'
-  schedule:
-    interval: daily
-  commit-message:
-    prefix: 'chore'
-    prefix-development: 'chore'
-    include: 'scope'
-- package-ecosystem: npm
-  directory: "/"
-  schedule:
-    interval: daily
-    time: "03:00"
-  open-pull-requests-limit: 10
-  target-branch: master
-  commit-message:
-    prefix: 'build'
-    prefix-development: 'build'
-    include: 'scope'
-  ignore:
-  - dependency-name: log4js
-    versions:
-    - "< 4"
-    - ">= 3.a"
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
+  - package-ecosystem: npm
+    # Only scan `/packages` because we don't want e2e/test directories to be updated
+    # See https://github.com/dependabot/dependabot-core/issues/4364#issuecomment-1038194085
+    directory: '/packages'
+    schedule:
+      interval: daily
+      time: '03:00'
+    open-pull-requests-limit: 10
+    target-branch: master
+    commit-message:
+      prefix: 'build'
+      prefix-development: 'build'
+      include: 'scope'
+    ignore:
+      - dependency-name: log4js
+        versions:
+          - '< 4'
+          - '>= 3.a'

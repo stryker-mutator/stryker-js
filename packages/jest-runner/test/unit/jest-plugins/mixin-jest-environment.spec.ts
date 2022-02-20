@@ -9,13 +9,12 @@ import * as producers from '../../helpers/producers.js';
 
 import { mixinJestEnvironment } from '../../../src/jest-plugins/index.js';
 import { state } from '../../../src/jest-plugins/cjs/messaging.js';
-import * as constants from '../../../src/jest-plugins/constants.js';
 
 describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   class TestJestEnvironment extends JestEnvironmentNode {
     constructor(config: Config.ProjectConfig, _context: EnvironmentContext) {
       super(config);
-      this.global.__strykerGlobalNamespace__ = constants.namespaceAlternative;
+      this.global.__strykerGlobalNamespace__ = '__stryker2__';
     }
     public async handleTestEvent(_event: Circus.Event, _eventState: Circus.State) {
       // Idle
@@ -74,7 +73,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
 
       await sut.handleTestEvent(producers.createCircusTestStartEvent(), producers.createCircusState());
 
-      expect(sut.global.__stryker2__).undefined;
+      expect(sut.global.__stryker2__?.currentTestId).undefined;
     });
 
     it('should call super.handleTestEvent', async () => {
@@ -92,13 +91,41 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
     });
   });
 
+  describe(TestJestEnvironment.prototype.setup.name, () => {
+    it('should initialize the hitLimit and hitCount on the __stryker__ variable', async () => {
+      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+      state.hitLimit = 99;
+      state.firstTestFile = true;
+      await sut.setup();
+      expect(sut.global.__stryker2__?.hitLimit).eq(99);
+      expect(sut.global.__stryker2__?.hitCount).eq(0);
+    });
+
+    it('should only initialize the hitLimit the first time (it gets called per test file)', async () => {
+      // Arrange
+      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+      state.hitLimit = 99;
+      state.firstTestFile = true;
+      await sut.setup();
+
+      // Act
+      state.hitLimit = 5;
+      state.hitCount = 100;
+      await sut.setup();
+
+      // Assert
+      expect(sut.global.__stryker2__?.hitLimit).eq(99);
+      expect(sut.global.__stryker2__?.hitCount).eq(0);
+    });
+  });
+
   describe(TestJestEnvironment.prototype.teardown.name, () => {
     it('should report mutant coverage', async () => {
       // Arrange
       const handleMutantCoverageSpy = sinon.spy(state, 'handleMutantCoverage');
       const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext({ testPath: 'foo/bar.js' }));
       const expectedMutantCoverage: MutantCoverage = { static: { 0: 1, 6: 7 }, perTest: {} };
-      sut.global[constants.namespaceAlternative] = { mutantCoverage: expectedMutantCoverage };
+      sut.global.__stryker2__!.mutantCoverage = expectedMutantCoverage;
 
       // Act
       await sut.teardown();
@@ -129,6 +156,18 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
 
       // Assert
       expect(superTearDownSpy).called;
+    });
+
+    it('should call setup', async () => {
+      // Arrange
+      const superSetupSpy = sinon.spy(JestEnvironmentNode.prototype, 'setup');
+      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+
+      // Act
+      await sut.setup();
+
+      // Assert
+      expect(superSetupSpy).called;
     });
   });
 });

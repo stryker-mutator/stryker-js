@@ -296,6 +296,13 @@ describe(JestTestRunner.name, () => {
       );
     });
 
+    it('should signal firstSuite = true', async () => {
+      state.firstTestFile = false;
+      const sut = createSut();
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }));
+      expect(state.firstTestFile).true;
+    });
+
     describe('coverage analysis', () => {
       it('should handle mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
@@ -583,6 +590,19 @@ describe(JestTestRunner.name, () => {
         })
       );
     });
+
+    it('should report a timeout when the hitLimit was reached', async () => {
+      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      assertions.expectTimeout(result);
+      expect(result.reason).contains('Hit limit reached (10/9)');
+    });
+
+    it('should reset the hitLimit between runs', async () => {
+      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      assertions.expectTimeout(firstResult);
+      assertions.expectSurvived(secondResult);
+    });
   });
 
   function createSut() {
@@ -591,5 +611,12 @@ describe(JestTestRunner.name, () => {
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JestTestRunner);
+  }
+
+  async function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
+    const sut = createSut();
+    state.hitCount = hitCount;
+    const result = await sut.mutantRun(option);
+    return result;
   }
 });

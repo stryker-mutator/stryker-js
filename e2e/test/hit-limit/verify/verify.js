@@ -31,4 +31,12 @@ describe('Limit counter', () => {
     expect(timeoutResults).lengthOf(3);
     timeoutResults.forEach((result) => expect(result.statusReason).eq('Hit limit reached (501/500)'));
   });
+
+  it('should limit infinite loops in the jest-runner', async () => {
+    const stryker = new Stryker({ testRunner: 'jest' });
+    const results = await stryker.runMutationTest();
+    const timeoutResults = results.filter((res) => res.status === MutantStatus.Timeout);
+    expect(timeoutResults).lengthOf(3);
+    timeoutResults.forEach((result) => expect(result.statusReason).eq('Hit limit reached (501/500)'));
+  });
 });
