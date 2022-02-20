@@ -219,7 +219,7 @@ describe(MutantTestPlanner.name, () => {
       expect(result).deep.eq(expected);
     });
 
-    it('should disable test filtering and set reload environment when ignoreStatic is disabled', () => {
+    it('should disable test filtering, set reload environment and activate mutant statically when ignoreStatic is disabled', () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
       const mutants = [factory.mutant({ id: '1' })];
@@ -237,6 +237,7 @@ describe(MutantTestPlanner.name, () => {
       expect(result.mutant.static).true;
       expect(result.runOptions.reloadEnvironment).true;
       expect(result.runOptions.testFilter).undefined;
+      expect(result.runOptions.mutantActivation).eq('static');
     });
 
     it('should set activeMutant on the runOptions', () => {
@@ -313,7 +314,7 @@ describe(MutantTestPlanner.name, () => {
   });
 
   describe('with hybrid coverage', () => {
-    it('should set the testFilter, coveredBy and static when ignoreStatic is enabled', async () => {
+    it('should set the testFilter, coveredBy, static and runtime mutant activation when ignoreStatic is enabled', async () => {
       // Arrange
       testInjector.options.ignoreStatic = true;
       const mutants = [factory.mutant({ id: '1' })];
@@ -331,9 +332,10 @@ describe(MutantTestPlanner.name, () => {
       expect(mutant.coveredBy).deep.eq(['spec1']);
       expect(mutant.static).deep.eq(true);
       expect(runOptions.testFilter).deep.eq(['spec1']);
+      expect(result.runOptions.mutantActivation).eq('runtime');
     });
 
-    it('should disable test filtering yet still set coveredBy and static when ignoreStatic is false', async () => {
+    it('should disable test filtering and statically activate the mutant, yet still set coveredBy and static when ignoreStatic is false', async () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
       const mutants = [factory.mutant({ id: '1' })];
@@ -351,11 +353,12 @@ describe(MutantTestPlanner.name, () => {
       expect(mutant.coveredBy).deep.eq(['spec1']);
       expect(mutant.static).deep.eq(true);
       expect(runOptions.testFilter).deep.eq(undefined);
+      expect(result.runOptions.mutantActivation).eq('static');
     });
   });
 
   describe('with perTest coverage', () => {
-    it('should enable test filtering for covered tests', () => {
+    it('should enable test filtering with runtime mutant activation for covered tests', () => {
       // Arrange
       const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
       const dryRunResult = factory.completeDryRunResult({
@@ -372,9 +375,11 @@ describe(MutantTestPlanner.name, () => {
       const { runOptions: runOptions1, mutant: mutant1 } = plan1;
       const { runOptions: runOptions2, mutant: mutant2 } = plan2;
       expect(runOptions1.testFilter).deep.eq(['spec1']);
+      expect(runOptions1.mutantActivation).eq('runtime');
       expect(mutant1.coveredBy).deep.eq(['spec1']);
       expect(mutant1.static).false;
       expect(runOptions2.testFilter).deep.eq(['spec2']);
+      expect(runOptions2.mutantActivation).eq('runtime');
       expect(mutant2.coveredBy).deep.eq(['spec2']);
       expect(mutant2.static).false;
     });

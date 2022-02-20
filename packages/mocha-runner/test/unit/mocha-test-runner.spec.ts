@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 import { KilledMutantRunResult, MutantRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
-import { DirectoryRequireCache } from '@stryker-mutator/util';
+import { DirectoryRequireCache, Task } from '@stryker-mutator/util';
 
 import { MochaTestRunner } from '../../src/mocha-test-runner.js';
 import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter.js';
@@ -252,6 +252,7 @@ describe(MochaTestRunner.name, () => {
 
   describe(MochaTestRunner.prototype.mutantRun.name, () => {
     let sut: MochaTestRunner;
+
     beforeEach(async () => {
       mochaOptionsLoaderMock.load.returns({});
       sut = createSut();
@@ -259,9 +260,42 @@ describe(MochaTestRunner.name, () => {
       StrykerMochaReporter.currentInstance = reporterMock;
     });
 
-    it('should activate the given mutant', async () => {
-      await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }) }));
+    it("should activate the given mutant statically when mutantActivation = 'static'", async () => {
+      // Arrange
+      const loadFilesAsyncTask = new Task();
+      mocha.loadFilesAsync.returns(loadFilesAsyncTask.promise);
+
+      // Act
+      const onGoingAct = actMutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' })
+      );
+
+      // Assert
       expect(global.__stryker2__?.activeMutant).eq('42');
+      loadFilesAsyncTask.resolve();
+      await tick();
+      expect(global.__stryker2__?.activeMutant).eq('42');
+      expect(mocha.run).called;
+      await onGoingAct;
+    });
+
+    it("should activate the given mutant at runtime when mutantActivation = 'runtime'", async () => {
+      // Arrange
+      const loadFilesAsyncTask = new Task();
+      mocha.loadFilesAsync.returns(loadFilesAsyncTask.promise);
+
+      // Act
+      const onGoingAct = actMutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' })
+      );
+
+      // Assert
+      expect(global.__stryker2__?.activeMutant).eq(undefined);
+      loadFilesAsyncTask.resolve();
+      await tick();
+      expect(global.__stryker2__?.activeMutant).eq('42');
+      expect(mocha.run).called;
+      await onGoingAct;
     });
 
     it('should set bail to true when disableBail is false', async () => {
