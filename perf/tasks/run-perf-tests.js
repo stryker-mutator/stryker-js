@@ -49,18 +49,8 @@ async function runTest(testDir) {
  * @returns {Observable<string>}
  */
 function runStryker(testDir) {
-  const strykerBin = require.resolve('../../packages/core/bin/stryker');
-  const args = [
-    'run',
-    '--plugins',
-    [
-      require.resolve('../../packages/mocha-runner'),
-      require.resolve('../../packages/karma-runner'),
-      require.resolve('../../packages/jest-runner'),
-      require.resolve('../../packages/jasmine-runner'),
-      require.resolve('../../packages/typescript-checker'),
-    ].join(','),
-  ];
+  const strykerBin = fileURLToPath(new URL('../../packages/core/bin/stryker.js', import.meta.url));
+  const args = ['run'];
   const currentTestDirUrl = new URL(testDir, `${testRootDirUrl}/`);
   console.log(`(${testDir}) exec "${strykerBin} ${args.join(' ')}"`);
 
