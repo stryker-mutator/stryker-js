@@ -7,10 +7,9 @@
     "src/App/TodoList/Item/index.tsx",
     "src/NotFound.tsx"
   ],
-  "timeoutMS": 20000,
+  "timeoutMS": 40000,
   "concurrency": 2,
   "coverageAnalysis": "perTest",
-  "timeoutMS": 10000,
   "reporters": [
     "json",
     "progress",

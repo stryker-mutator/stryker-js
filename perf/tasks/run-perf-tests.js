@@ -1,11 +1,11 @@
 import fs from 'fs';
-import path from 'path'
-import execa from 'execa';
-import { lastValueFrom, Observable } from 'rxjs';
-import { tap, throttleTime } from 'rxjs/operators';
+import { fileURLToPath, URL } from 'url';
+
+import { execa } from 'execa';
+import { lastValueFrom, Observable, tap, throttleTime } from 'rxjs';
 import minimatch from 'minimatch';
 
-const testRootDir = path.resolve(__dirname, '..', 'test');
+const testRootDirUrl = new URL('../test', import.meta.url);
 
 runPerfTests()
   .then(() => console.log('Done'))
@@ -16,7 +16,7 @@ runPerfTests()
 
 async function runPerfTests() {
   const globPattern = process.env.PERF_TEST_GLOB_PATTERN || '*';
-  const testDirs = fs.readdirSync(testRootDir).filter((testDir) => minimatch(testDir, globPattern));
+  const testDirs = (await fs.promises.readdir(testRootDirUrl)).filter((testDir) => minimatch(testDir, globPattern));
   if (testDirs.length) {
     console.log(`Running performance tests on ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`);
   } else {
@@ -30,34 +30,32 @@ async function runPerfTests() {
   console.timeEnd('all tests');
 }
 
-async function runTest(testDir: string) {
+/**
+ * @param {string} testDir
+ */
+async function runTest(testDir) {
   console.time(testDir);
-  await lastValueFrom(runStryker(testDir)
-    .pipe(
+  await lastValueFrom(
+    runStryker(testDir).pipe(
       throttleTime(60000),
       tap((logMessage) => console.timeLog(testDir, 'last log message: ', logMessage))
-    ));
+    )
+  );
   console.timeEnd(testDir);
 }
 
-function runStryker(testDir: string): Observable<string> {
-  const strykerBin = require.resolve('../../packages/core/bin/stryker');
-  const args = [
-    'run',
-    '--plugins',
-    [
-      require.resolve('../../packages/mocha-runner'),
-      require.resolve('../../packages/karma-runner'),
-      require.resolve('../../packages/jest-runner'),
-      require.resolve('../../packages/jasmine-runner'),
-      require.resolve('../../packages/typescript-checker'),
-    ].join(','),
-  ];
-  const currentTestDir = path.resolve(testRootDir, testDir);
+/**
+ * @param {string} testDir
+ * @returns {Observable<string>}
+ */
+function runStryker(testDir) {
+  const strykerBin = fileURLToPath(new URL('../../packages/core/bin/stryker.js', import.meta.url));
+  const args = ['run'];
+  const currentTestDirUrl = new URL(testDir, `${testRootDirUrl}/`);
   console.log(`(${testDir}) exec "${strykerBin} ${args.join(' ')}"`);
 
   return new Observable((observer) => {
-    const testProcess = execa(strykerBin, args, { timeout: 0, cwd: currentTestDir, stdio: 'pipe' });
+    const testProcess = execa(strykerBin, args, { timeout: 0, cwd: fileURLToPath(currentTestDirUrl), stdio: 'pipe' });
     let stderr = '';
     testProcess.stderr?.on('data', (chunk) => (stderr += chunk.toString()));
     testProcess.stdout?.on('data', (chunk) => observer.next(chunk.toString().trim()));
