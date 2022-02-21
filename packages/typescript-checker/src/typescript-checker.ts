@@ -135,15 +135,22 @@ export class TypescriptChecker implements Checker {
    * Will simply pass through if the file mutated isn't part of the typescript project
    * @param mutant The mutant to check
    */
-  public async check(mutant: Mutant): Promise<CheckResult> {
+  public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    const mutant = mutants[0];
+
     if (this.fs.existsInMemory(mutant.fileName)) {
       this.clearCheckState();
       this.fs.mutate(mutant);
-      return this.currentTask.promise;
+
+      return {
+        [mutant.id]: await this.currentTask.promise,
+      };
     } else {
       // We allow people to mutate files that are not included in this ts project
       return {
-        status: CheckStatus.Passed,
+        [mutant.id]: {
+          status: CheckStatus.Passed,
+        },
       };
     }
   }

@@ -75,17 +75,12 @@ export class CheckerFacade {
   ) {
     const mutants = await lastValueFrom(merge(previousPassedMutants$).pipe(toArray()));
 
-    /**
-     * TODO: Go from MutantTestPlan[] to Mutant[]
-     */
     const groups = await firstValueFrom(
       this.checkerPool.schedule(of(0), async (checker) => {
-        const group = await checker.createGroups?.(checkerIndex, mutants);
+        const mutantArray = mutants.map((m) => m.mutant);
+        const group = await checker.createGroups?.(checkerIndex, mutantArray);
 
-        /**
-         * TODO: Make mutants type of Mutant[]
-         */
-        return group ?? mutants.map((m) => [m]);
+        return group ?? mutants.map((m) => [m.mutant]);
       })
     );
 
@@ -94,13 +89,14 @@ export class CheckerFacade {
     const run$ = this.checkerPool.schedule(from(groups), async (checker, mutantGroup) => {
       const results = await checker.check(checkerIndex, mutantGroup);
       Object.entries(results).forEach(([id, result]) => {
-        const mutant = mutantGroup.find((m) => m.mutant.id === id)!;
 
         /**
-         * TODO: Here the other way around -> Mutant[] to MutantTestPlan[]
+         * TODO: It searches in the whole mutant array. It should only search in the mutant group.
          */
+        const mutant = mutants.find((m) => m.mutant.id === id)!;
+
         if (result.status === CheckStatus.Passed) passedMutant$.next(mutant);
-        else checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(mutant, result));
+        else checkResult$.next(this.mutationTestReportHelper.reportCheckFailed(mutant.mutant, result));
       });
     });
 
