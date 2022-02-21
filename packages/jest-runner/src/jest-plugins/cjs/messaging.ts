@@ -10,6 +10,13 @@ class State {
   public coverageAnalysis: CoverageAnalysis = 'off';
   public jestEnvironment = 'jest-runner/circus';
   private mutantCoverageHandler?: MutantCoverageHandler;
+  public hitCount: number | undefined;
+  public hitLimit: number | undefined;
+
+  /**
+   * Keeps track of whether or not the current call to "setup" is for the first test file or not.
+   */
+  public firstTestFile = true;
 
   public setMutantCoverageHandler(handler: MutantCoverageHandler) {
     this.mutantCoverageHandler = handler;

@@ -1,9 +1,17 @@
 {
+  // This is a ts config file that lints the `verify.js` files and tasks
+  "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true
-  }
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "composite": false,
+    "importHelpers": false,
+    "strictNullChecks": false, // hard to handle without a non-null assertion
+    "useUnknownInCatchVariables": false,// hard to handle without type assertions
+    "esModuleInterop": true,
+    "rootDir": "..",
+    "types": ["mocha", "node"]
+  },
+  "include": ["tasks"]
 }

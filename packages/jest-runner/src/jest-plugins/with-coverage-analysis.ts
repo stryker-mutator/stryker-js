@@ -70,7 +70,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
   }
 }
 
-function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
+export function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions): void {
   const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults().testEnvironment;
   state.jestEnvironment = nameEnvironment(originalJestEnvironment);
   overrides.testEnvironment = jestEnvironmentGenericFileName;

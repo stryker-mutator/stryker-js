@@ -1,9 +1,9 @@
 import fs from 'fs';
+import { fileURLToPath, URL } from 'url';
 import minimatch from 'minimatch';
-import path from 'path'
-import execa from 'execa';
+import { execa } from 'execa';
 
-const testRootDir = path.resolve(__dirname, '..', 'test');
+const testRootDirUrl = new URL('../test', import.meta.url);
 
 installAll()
   .then(() => console.log('Done'))
@@ -17,7 +17,7 @@ installAll()
  */
 async function installAll() {
   const globPattern = process.env.PERF_TEST_GLOB_PATTERN || '*';
-  const testDirs = fs.readdirSync(testRootDir).filter((testDir) => minimatch(testDir, globPattern));
+  const testDirs = fs.readdirSync(testRootDirUrl).filter((testDir) => minimatch(testDir, globPattern));
   if (testDirs.length) {
     console.log(`Installing ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`);
   } else {
@@ -26,19 +26,25 @@ async function installAll() {
   await Promise.all(testDirs.map(install));
 }
 
-async function install(testDir: string) {
-  const strykerConfig = require(`../test/${testDir}/stryker.conf`);
-  const packageManager: string | undefined = strykerConfig.packageManager;
+/**
+ * @param {string} testDir
+ */
+async function install(testDir) {
+  const testDirUrl = new URL(testDir, `${testRootDirUrl}/`);
+  const strykerConfig = JSON.parse(await fs.promises.readFile(new URL(`../test/${testDir}/stryker.conf.json`, import.meta.url), 'utf-8'));
+  /** @type {string | undefined} */
+  const packageManager = strykerConfig.packageManager;
   let command = 'npm';
-  let args: string[] = [];
+  /** @type {string[]} */
+  let args = [];
   if (packageManager === 'yarn') {
     command = 'yarn';
     args.push('install', '--frozen-lockfile');
-  } else if(fs.existsSync(path.resolve(testRootDir, testDir, 'package-lock.json'))) {
+  } else if (fs.existsSync(new URL('package-lock.json', `${testDirUrl}/`))) {
     args.push('ci');
   } else {
     args.push('install');
   }
   console.log(`[${testDir}] ${command} ${args.join(' ')}`);
-  await execa(command, args, { cwd: path.resolve(testRootDir, testDir) });
+  await execa(command, args, { cwd: fileURLToPath(testDirUrl) });
 }
