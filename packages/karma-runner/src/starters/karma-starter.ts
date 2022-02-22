@@ -1,3 +1,5 @@
+import { createRequire } from 'module';
+
 import { Task } from '@stryker-mutator/util';
 import type { Config, ConfigOptions } from 'karma';
 
@@ -15,6 +17,17 @@ export const karmaConfigStarter: ProjectStarter = {
     };
     if (karma.config?.parseConfig) {
       config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
+      config.logLevel = 'debug';
+      const require = createRequire(import.meta.url);
+      const log4js = require(require.resolve('log4js', { paths: [require.resolve('karma')] }));
+      log4js.configure({
+        appenders: {
+          out: { type: 'stdout' },
+        },
+        categories: {
+          default: { appenders: ['out'], level: 'debug' },
+        },
+      });
     }
 
     const exitTask = new Task<number>();
