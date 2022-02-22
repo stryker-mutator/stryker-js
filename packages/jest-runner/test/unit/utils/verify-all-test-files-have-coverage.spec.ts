@@ -15,7 +15,7 @@ describe(verifyAllTestFilesHaveCoverage.name, () => {
           producers.createJestTestResult({ testFilePath: path.resolve('bar.spec.js') }),
         ],
       }),
-      [path.resolve('foo.spec.js'), path.resolve('bar.spec.js')]
+      new Set([path.resolve('foo.spec.js'), path.resolve('bar.spec.js')])
     );
     expect(result).undefined;
   });
@@ -30,7 +30,7 @@ describe(verifyAllTestFilesHaveCoverage.name, () => {
           producers.createJestTestResult({ testFilePath: path.resolve('qux.spec.js') }),
         ],
       }),
-      [path.resolve('bar.spec.js')]
+      new Set([path.resolve('bar.spec.js')])
     );
     const expected = `
 Missing coverage results for:
@@ -53,7 +53,7 @@ You probably configured a test environment in jest that is not reporting code co
           producers.createJestTestResult({ testFilePath: path.resolve('quux.spec.js') }),
         ],
       }),
-      [path.resolve('bar.spec.js')]
+      new Set([path.resolve('bar.spec.js')])
     );
     const expected = `
 Missing coverage results for:
