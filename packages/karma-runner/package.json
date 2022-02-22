@@ -8,7 +8,8 @@
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 120000 --exit \"dist/test/integration/**/*.js\"",
+    "test:integration": "mocha --timeout 180000 --exit \"dist/test/integration/**/*.js\"",
+    "test:integration_comment": "echo 'Chrome.exe can be extremely slow to start on windows, which is why we choose this very high timeout'",
     "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
