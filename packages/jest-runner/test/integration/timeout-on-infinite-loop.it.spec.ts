@@ -50,7 +50,7 @@ describe('Infinite Loop', () => {
         });
         // Act
         const result = await sut.mutantRun(mutantRunOptions);
-        console.log(result);
+
         // Assert
         assertions.expectTimeout(result);
         expect(result.reason).contains('Hit limit reached');

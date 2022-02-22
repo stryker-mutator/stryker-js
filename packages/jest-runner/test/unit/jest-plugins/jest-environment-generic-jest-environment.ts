@@ -1,6 +1,6 @@
 import NodeEnvironment from 'jest-environment-node';
-import { Event } from '@jest/types/build/Circus';
-import { Config } from '@jest/types';
+import type { Event } from '@jest/types/build/Circus';
+import type { Config } from '@jest/types';
 
 import * as constants from '../../../src/jest-plugins/constants';
 

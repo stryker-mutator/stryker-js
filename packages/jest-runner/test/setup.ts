@@ -20,6 +20,6 @@ export const mochaHooks = {
     process.exit = originalProcessExit;
     delete global.__stryker2__;
     state.coverageAnalysis = 'off';
-    state.resetMutantCoverageHandler();
+    state.clear();
   },
 };
