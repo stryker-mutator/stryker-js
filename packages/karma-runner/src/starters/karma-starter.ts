@@ -15,7 +15,6 @@ export const karmaConfigStarter: ProjectStarter = {
     };
     if (karma.config?.parseConfig) {
       config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
-      config.logLevel = 'debug';
     }
 
     const exitTask = new Task<number>();
