@@ -25,7 +25,7 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
     return JestEnvironmentClass;
   } else {
     class StrykerJestEnvironment extends JestEnvironmentClass {
-      private readonly strykerFileName: string;
+      // private readonly strykerFileName: string;
 
       /**
        * The shared instrumenter context with the test environment (the `__stryker__` global variable)
@@ -36,34 +36,21 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
 
       constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
         super(config, context);
-        this.strykerFileName = context!.testPath!;
-        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {};
+        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = state.instrumenterContext;
+        state.testFilesWithStrykerEnvironment.add(context!.testPath);
       }
 
       public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await super.handleTestEvent?.(event as any, eventState);
-        if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-          this.strykerContext.currentTestId = fullName(event.test);
+        if (state.coverageAnalysis === 'perTest') {
+          if (event.name === 'test_start') {
+            this.strykerContext.currentTestId = fullName(event.test);
+          } else if (event.name === 'test_done') {
+            this.strykerContext.currentTestId = undefined;
+          }
         }
       };
-
-      public async teardown() {
-        const mutantCoverage = this.strykerContext.mutantCoverage;
-        state.hitCount = this.strykerContext.hitCount;
-        state.hitLimit = this.strykerContext.hitLimit;
-        state.handleMutantCoverage(this.strykerFileName, mutantCoverage);
-        await super.teardown();
-      }
-
-      public async setup() {
-        await super.setup();
-        if (state.firstTestFile) {
-          this.strykerContext.hitCount = 0;
-          this.strykerContext.hitLimit = state.hitLimit;
-          state.firstTestFile = false;
-        }
-      }
     }
     return StrykerJestEnvironment;
   }
