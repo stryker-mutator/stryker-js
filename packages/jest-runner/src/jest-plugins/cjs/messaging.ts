@@ -1,34 +1,20 @@
-import type { CoverageAnalysis, MutantCoverage } from '@stryker-mutator/api/core';
-
-type MutantCoverageHandler = (fileName: string, coverage: MutantCoverage | undefined) => void;
+import type { CoverageAnalysis, InstrumenterContext } from '@stryker-mutator/api/core';
 
 class State {
+  public instrumenterContext!: InstrumenterContext;
+  public testFilesWithStrykerEnvironment = new Set<string>();
+  public coverageAnalysis!: CoverageAnalysis;
+  public jestEnvironment!: string;
+
   constructor() {
-    this.resetMutantCoverageHandler();
+    this.clear();
   }
 
-  public coverageAnalysis: CoverageAnalysis = 'off';
-  public jestEnvironment = 'jest-runner/circus';
-  private mutantCoverageHandler?: MutantCoverageHandler;
-  public hitCount: number | undefined;
-  public hitLimit: number | undefined;
-
-  /**
-   * Keeps track of whether or not the current call to "setup" is for the first test file or not.
-   */
-  public firstTestFile = true;
-
-  public setMutantCoverageHandler(handler: MutantCoverageHandler) {
-    this.mutantCoverageHandler = handler;
-  }
-
-  public handleMutantCoverage(fileName: string, coverage: MutantCoverage | undefined) {
-    this.mutantCoverageHandler!(fileName, coverage);
-  }
-
-  public resetMutantCoverageHandler() {
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    this.mutantCoverageHandler = () => {};
+  public clear() {
+    this.testFilesWithStrykerEnvironment.clear();
+    this.instrumenterContext = {};
+    this.coverageAnalysis = 'off';
+    this.jestEnvironment = 'jest-circus/runner';
   }
 }
 
