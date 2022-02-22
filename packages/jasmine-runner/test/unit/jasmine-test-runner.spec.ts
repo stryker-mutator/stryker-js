@@ -1,16 +1,16 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { TestStatus, CompleteDryRunResult, DryRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import jasmine from 'jasmine';
-
 import { MutantCoverage } from '@stryker-mutator/api/core';
+import { Task } from '@stryker-mutator/util';
 
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { helpers } from '../../src/helpers.js';
 import { JasmineTestRunner } from '../../src/index.js';
 import { expectTestResultsToEqual } from '../helpers/assertions.js';
-import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult } from '../helpers/mock-factories.js';
+import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult, createJasmineStartedInfo } from '../helpers/mock-factories.js';
 
 describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
@@ -83,9 +83,52 @@ describe(JasmineTestRunner.name, () => {
       expect(actualSpecFilter(createSpec({ id: '2' }))).true;
     });
 
-    it('should set the activeMutant on global scope', async () => {
-      actEmptyMutantRun(undefined, factory.mutant({ id: '23' }));
+    it("should set the activeMutant on global scope statically when mutantActivation = 'static'", async () => {
+      // Arrange
+      const executeTask = new Task<jasmine.JasmineDoneInfo>();
+      let customReporter: jasmine.CustomReporter | undefined;
+      function addReporter(rep: jasmine.CustomReporter) {
+        customReporter = rep;
+      }
+      jasmineEnvStub.addReporter.callsFake(addReporter);
+      jasmineStub.execute.returns(executeTask.promise);
+
+      // Act
+      const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'static' }));
+      await tick();
+
+      // Assert
       expect(global.__stryker2__?.activeMutant).eq('23');
+      customReporter!.jasmineStarted!(createJasmineStartedInfo());
+      expect(global.__stryker2__?.activeMutant).eq('23');
+      const doneInfo = createJasmineDoneInfo();
+      customReporter!.jasmineDone!(doneInfo);
+      executeTask.resolve(doneInfo);
+      await onGoingAct;
+    });
+
+    it("should set the activeMutant on global scope at runtime when mutantActivation = 'runtime'", async () => {
+      // Arrange
+      const executeTask = new Task<jasmine.JasmineDoneInfo>();
+      let customReporter: jasmine.CustomReporter | undefined;
+      function addReporter(rep: jasmine.CustomReporter) {
+        customReporter = rep;
+      }
+      jasmineEnvStub.addReporter.callsFake(addReporter);
+      jasmineStub.execute.returns(executeTask.promise);
+
+      // Act
+      const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'runtime' }));
+      await tick();
+
+      // Assert
+      expect(global.__stryker2__?.activeMutant).undefined;
+      customReporter!.jasmineStarted!(createJasmineStartedInfo());
+      expect(global.__stryker2__?.activeMutant).eq('23');
+      const doneInfo = createJasmineDoneInfo();
+      customReporter!.jasmineDone!(doneInfo);
+      executeTask.resolve(doneInfo);
+      await onGoingAct;
     });
 
     function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {

@@ -14,6 +14,7 @@ import {
   DryRunOptions,
   determineHitLimitReached,
   TestRunnerCapabilities,
+  MutantActivation,
 } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
 import jasmine from 'jasmine';
@@ -55,20 +56,26 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(undefined, options.coverageAnalysis, options.disableBail);
+    return this.run(undefined, options.coverageAnalysis, options.disableBail, undefined, undefined);
   }
 
-  public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    this.instrumenterContext.activeMutant = options.activeMutant.id;
-    this.instrumenterContext.hitLimit = options.hitLimit;
-    this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
-    const runResult = await this.run(options.testFilter, undefined, options.disableBail);
+  public async mutantRun({ hitLimit, testFilter, disableBail, activeMutant, mutantActivation }: MutantRunOptions): Promise<MutantRunResult> {
+    this.instrumenterContext.hitLimit = hitLimit;
+    this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
+    const runResult = await this.run(testFilter, undefined, disableBail, activeMutant.id, mutantActivation);
     return toMutantRunResult(runResult);
   }
 
-  private async run(testFilter: string[] | undefined, coverageAnalysis: CoverageAnalysis | undefined, disableBail: boolean): Promise<DryRunResult> {
+  private async run(
+    testFilter: string[] | undefined,
+    coverageAnalysis: CoverageAnalysis | undefined,
+    disableBail: boolean,
+    activeMutantId: string | undefined,
+    mutantActivation: MutantActivation | undefined
+  ): Promise<DryRunResult> {
     try {
       if (!this.jasmine) {
+        this.instrumenterContext.activeMutant = mutantActivation === 'static' ? activeMutantId : undefined;
         this.jasmine = await this.createAndConfigureJasmineRunner(disableBail);
       }
       const jasmineInstance: jasmine = this.jasmine;
@@ -78,6 +85,9 @@ export class JasmineTestRunner implements TestRunner {
       let startTimeCurrentSpec = 0;
       let result: DryRunResult | undefined;
       const reporter: jasmine.CustomReporter = {
+        jasmineStarted() {
+          self.instrumenterContext.activeMutant = activeMutantId;
+        },
         specStarted(spec) {
           if (coverageAnalysis && coverageAnalysis === 'perTest') {
             self.instrumenterContext.currentTestId = spec.id;

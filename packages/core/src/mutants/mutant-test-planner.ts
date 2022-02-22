@@ -70,7 +70,7 @@ export class MutantTestPlanner {
       const coveredBy = toTestIds(tests);
       if (!isStatic || (this.options.ignoreStatic && coveredBy.length)) {
         // If not static, or it was "hybrid" (both static and perTest coverage) and ignoreStatic is on.
-        // Only run covered tests
+        // Only run covered tests with mutant active during runtime
         const netTime = calculateTotalTime(tests);
         return this.createMutantRunPlan(mutant, { netTime, coveredBy, isStatic, testFilter: coveredBy });
       } else if (this.options.ignoreStatic) {
@@ -142,6 +142,7 @@ export class MutantTestPlanner {
           mutatorName: mutant.mutatorName,
           replacement: mutant.replacement,
         },
+        mutantActivation: testFilter ? 'runtime' : 'static',
         timeout,
         testFilter,
         sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),

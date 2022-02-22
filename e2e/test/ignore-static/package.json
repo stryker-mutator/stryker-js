@@ -1,7 +1,8 @@
 {
-  "name": "coverage-analysis",
-  "description": "A e2e test for --coverageAnalysis",
-  "type": "commonjs",
+  "name": "ignore-static",
+  "description": "e2e test for testing --ignoreStatic",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
     "test:cucumber": "cucumber-js",
     "test:jasmine": "jasmine --config=jasmine.json",

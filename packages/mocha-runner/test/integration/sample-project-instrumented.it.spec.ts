@@ -10,15 +10,16 @@ import { resolveTempTestResourceDirectory, resolveTestResource } from '../helper
 
 describe('Running an instrumented project', () => {
   let sut: MochaTestRunner;
+  let spec: string[];
+  let tmpDir: string;
 
   beforeEach(async () => {
     // Work in a tmp dir, files can only be loaded once.
-    const tmpDir = resolveTempTestResourceDirectory();
+    tmpDir = resolveTempTestResourceDirectory();
     await fsPromisesCp(resolveTestResource('sample-project-instrumented'), tmpDir, { recursive: true });
-    const spec = [path.resolve(tmpDir, 'MyMath.js'), path.resolve(tmpDir, 'MyMathSpec.js')];
+    spec = [path.resolve(tmpDir, 'MyMath.js'), path.resolve(tmpDir, 'MyMathSpec.js')];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
-    await sut.init();
   });
 
   afterEach(async () => {
@@ -26,6 +27,10 @@ describe('Running an instrumented project', () => {
   });
 
   describe('dryRun', () => {
+    beforeEach(async () => {
+      await sut.init();
+    });
+
     it('should report perTest mutantCoverage when coverage analysis is "perTest"', async () => {
       const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
       assertions.expectCompleted(result);
@@ -109,6 +114,10 @@ describe('Running an instrumented project', () => {
   });
 
   describe('mutantRun', () => {
+    beforeEach(async () => {
+      await sut.init();
+    });
+
     it('should be able to survive a mutant', async () => {
       const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }) }));
       assertions.expectSurvived(result);
@@ -155,6 +164,28 @@ describe('Running an instrumented project', () => {
         })
       );
       assertions.expectSurvived(result);
+    });
+  });
+
+  describe('mutantRun mutant activation', () => {
+    beforeEach(async () => {
+      while (spec.pop());
+      spec.push(path.resolve(tmpDir, 'MyMath.js'), path.resolve(tmpDir, 'MyMathMutantActivationSpec.js'));
+      await sut.init();
+    });
+
+    it('should activate mutant only during runtime', async () => {
+      // First run with "pi" mutant active during runtime
+      const resultPiMutant = await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }), mutantActivation: 'runtime' })
+      );
+      const resultAddMutant = await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), mutantActivation: 'runtime' })
+      );
+
+      assertions.expectSurvived(resultPiMutant);
+      assertions.expectKilled(resultAddMutant);
+      expect(resultAddMutant.killedBy).deep.eq(['MyMath with mutantActivation should give 6.28 for pi + pi']);
     });
   });
 });

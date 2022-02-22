@@ -14,6 +14,7 @@ import {
   CompleteDryRunResult,
   determineHitLimitReached,
   TestRunnerCapabilities,
+  MutantActivation,
 } from '@stryker-mutator/api/test-runner';
 
 import { Context, RootHookObject, Suite } from 'mocha';
@@ -108,8 +109,7 @@ export class MochaTestRunner implements TestRunner {
     return runResult;
   }
 
-  public async mutantRun({ activeMutant, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
-    this.instrumenterContext.activeMutant = activeMutant.id;
+  public async mutantRun({ activeMutant, testFilter, disableBail, hitLimit, mutantActivation }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
     if (testFilter) {
@@ -119,13 +119,21 @@ export class MochaTestRunner implements TestRunner {
     } else {
       this.setIfDefined(this.originalGrep, this.mocha.grep);
     }
-    const dryRunResult = await this.run(disableBail);
+    const dryRunResult = await this.run(disableBail, activeMutant.id, mutantActivation);
     return toMutantRunResult(dryRunResult);
   }
 
-  public async run(disableBail: boolean): Promise<DryRunResult> {
+  public async run(disableBail: boolean, activeMutantId?: string, mutantActivation?: MutantActivation): Promise<DryRunResult> {
     setBail(!disableBail, this.mocha.suite);
     try {
+      if (!this.loadedEnv) {
+        this.instrumenterContext.activeMutant = mutantActivation === 'static' ? activeMutantId : undefined;
+        // Loading files Async is needed to support native esm modules
+        // See https://mochajs.org/api/mocha#loadFilesAsync
+        await this.mocha.loadFilesAsync();
+        this.loadedEnv = true;
+      }
+      this.instrumenterContext.activeMutant = activeMutantId;
       await this.runMocha();
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
@@ -171,12 +179,6 @@ export class MochaTestRunner implements TestRunner {
   }
 
   private async runMocha(): Promise<void> {
-    if (!this.loadedEnv) {
-      // Loading files Async is needed to support native esm modules
-      // See https://mochajs.org/api/mocha#loadFilesAsync
-      await this.mocha.loadFilesAsync();
-      this.loadedEnv = true;
-    }
     return new Promise<void>((res) => {
       this.mocha.run(() => res());
     });
