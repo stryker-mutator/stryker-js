@@ -192,6 +192,10 @@ export const createCircusTestStartEvent = (test = createCircusTestEntry()): Circ
   name: 'test_start',
   test,
 });
+export const createCircusTestDoneEvent = (test = createCircusTestEntry()): Circus.Event => ({
+  name: 'test_done',
+  test,
+});
 export const createCircusRunStartEvent = (): Circus.AsyncEvent => ({
   name: 'run_start',
 });

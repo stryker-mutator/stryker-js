@@ -26,11 +26,13 @@ describe(JestTestRunner.name, () => {
   let processEnvMock: NodeJS.ProcessEnv;
   let options: JestRunnerOptionsWithStrykerOptions;
   let requireResolveStub: sinon.SinonStubbedMember<typeof util.requireResolve>;
+  let jestRunResult: JestRunResult;
 
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestTestAdapterMock = { run: sinon.stub() };
-    jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) }));
+    jestRunResult = producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) });
+    jestTestAdapterMock.run.resolves(jestRunResult);
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
     requireResolveStub = sinon.stub(util, 'requireResolve');
@@ -95,7 +97,7 @@ describe(JestTestRunner.name, () => {
 
     it('should set bail = false when disableBail', async () => {
       const sut = createSut();
-      await sut.dryRun({ coverageAnalysis: 'off', disableBail: true });
+      await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({
@@ -314,30 +316,23 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should signal firstSuite = true', async () => {
-      state.firstTestFile = false;
-      const sut = createSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }));
-      expect(state.firstTestFile).true;
-    });
-
     describe('coverage analysis', () => {
-      it('should handle mutant coverage when coverage analysis != "off"', async () => {
+      it('should return the mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
         const sut = createSut();
         const runTask = new util.Task<JestRunResult>();
         jestTestAdapterMock.run.returns(runTask.promise);
+        const expectedMutantCoverage: MutantCoverage = {
+          static: { 0: 3, 1: 2 },
+          perTest: { 'foo should be bar': { 7: 1 }, 'baz should be qux': { 6: 1 } },
+        };
 
         // Act
         const onGoingDryRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
-        state.handleMutantCoverage('foo.js', { static: { 0: 2 }, perTest: { 'foo should be bar': { 3: 1 } } });
-        state.handleMutantCoverage('bar.js', { static: { 0: 3, 1: 2 }, perTest: { 'foo should be bar': { 7: 1 }, 'baz should be qux': { 6: 1 } } });
+        state.instrumenterContext.mutantCoverage = expectedMutantCoverage;
         runTask.resolve({
           results: producers.createJestAggregatedResult({
-            testResults: [
-              producers.createJestTestResult({ testFilePath: path.resolve('foo.js') }),
-              producers.createJestTestResult({ testFilePath: path.resolve('bar.js') }),
-            ],
+            testResults: [],
           }),
           globalConfig: producers.createGlobalConfig(),
         });
@@ -345,21 +340,7 @@ describe(JestTestRunner.name, () => {
 
         // Assert
         assertions.expectCompleted(result);
-        const expectedMutantCoverage: MutantCoverage = {
-          perTest: {
-            'foo should be bar': { 3: 1, 7: 1 },
-            'baz should be qux': { 6: 1 },
-          },
-          static: { 0: 5, 1: 2 },
-        };
         expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
-      });
-
-      it('should remove the coverage handler afterwards', async () => {
-        const sut = createSut();
-        const resetSpy = sinon.spy(state, 'resetMutantCoverageHandler');
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-        expect(resetSpy).called;
       });
 
       it('should override the testEnvironment if coverage analysis != off', async () => {
@@ -483,7 +464,7 @@ describe(JestTestRunner.name, () => {
 
         // Act
         const onGoingRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-        state.handleMutantCoverage(path.resolve('foo.js'), { perTest: {}, static: {} });
+        state.testFilesWithStrykerEnvironment.add('foo.js');
         // mutant coverage for bar.js is missing
         runTask.resolve(
           producers.createJestRunResult({
@@ -623,7 +604,10 @@ describe(JestTestRunner.name, () => {
 
   async function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
     const sut = createSut();
-    state.hitCount = hitCount;
+    jestTestAdapterMock.run.callsFake(async () => {
+      state.instrumenterContext.hitCount = hitCount;
+      return jestRunResult;
+    });
     const result = await sut.mutantRun(option);
     return result;
   }
