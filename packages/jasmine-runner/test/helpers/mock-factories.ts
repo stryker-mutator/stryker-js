@@ -15,6 +15,17 @@ export function createJasmineDoneInfo(): jasmine.JasmineDoneInfo {
   };
 }
 
+export function createJasmineStartedInfo(): jasmine.JasmineStartedInfo {
+  return {
+    totalSpecsDefined: 42,
+    order: {
+      random: false,
+      seed: '12foo',
+      sort: (_) => _,
+    } as jasmine.Order,
+  };
+}
+
 export function createSpecResult(overrides?: Partial<jasmine.SpecResult>): jasmine.SpecResult {
   return {
     description: 'should have bar',

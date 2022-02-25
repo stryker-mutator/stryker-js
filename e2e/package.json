@@ -24,7 +24,7 @@
     "grunt": "~1.4.1",
     "jasmine": "~4.0.2",
     "jasmine-core": "~4.0.0",
-    "jest": "~27.4.3",
+    "jest": "~27.5.1",
     "jest-environment-jsdom-sixteen": "~1.0.3",
     "karma": "~6.3.9",
     "karma-chai": "~0.1.0",

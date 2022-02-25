@@ -29,11 +29,13 @@ describe(JestTestRunner.name, () => {
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
   let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
+  let jestRunResult: JestRunResult;
 
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestTestAdapterMock = { run: sinon.stub() };
-    jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) }));
+    jestRunResult = producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) });
+    jestTestAdapterMock.run.resolves(jestRunResult);
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
 
@@ -297,22 +299,22 @@ describe(JestTestRunner.name, () => {
     });
 
     describe('coverage analysis', () => {
-      it('should handle mutant coverage when coverage analysis != "off"', async () => {
+      it('should return the mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
         const sut = createSut();
         const runTask = new Task<JestRunResult>();
         jestTestAdapterMock.run.returns(runTask.promise);
+        const expectedMutantCoverage: MutantCoverage = {
+          static: { 0: 3, 1: 2 },
+          perTest: { 'foo should be bar': { 7: 1 }, 'baz should be qux': { 6: 1 } },
+        };
 
         // Act
         const onGoingDryRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
-        state.handleMutantCoverage('foo.js', { static: { 0: 2 }, perTest: { 'foo should be bar': { 3: 1 } } });
-        state.handleMutantCoverage('bar.js', { static: { 0: 3, 1: 2 }, perTest: { 'foo should be bar': { 7: 1 }, 'baz should be qux': { 6: 1 } } });
+        state.instrumenterContext.mutantCoverage = expectedMutantCoverage;
         runTask.resolve({
           results: producers.createJestAggregatedResult({
-            testResults: [
-              producers.createJestTestResult({ testFilePath: path.resolve('foo.js') }),
-              producers.createJestTestResult({ testFilePath: path.resolve('bar.js') }),
-            ],
+            testResults: [],
           }),
           globalConfig: producers.createGlobalConfig(),
         });
@@ -320,21 +322,7 @@ describe(JestTestRunner.name, () => {
 
         // Assert
         assertions.expectCompleted(result);
-        const expectedMutantCoverage: MutantCoverage = {
-          perTest: {
-            'foo should be bar': { 3: 1, 7: 1 },
-            'baz should be qux': { 6: 1 },
-          },
-          static: { 0: 5, 1: 2 },
-        };
         expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
-      });
-
-      it('should remove the coverage handler afterwards', async () => {
-        const sut = createSut();
-        const resetSpy = sinon.spy(state, 'resetMutantCoverageHandler');
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-        expect(resetSpy).called;
       });
 
       it('should override the testEnvironment if coverage analysis != off', async () => {
@@ -469,7 +457,7 @@ describe(JestTestRunner.name, () => {
 
         // Act
         const onGoingRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-        state.handleMutantCoverage(path.resolve('foo.js'), { perTest: {}, static: {} });
+        state.testFilesWithStrykerEnvironment.add('foo.js');
         // mutant coverage for bar.js is missing
         runTask.resolve(
           producers.createJestRunResult({
@@ -583,6 +571,19 @@ describe(JestTestRunner.name, () => {
         })
       );
     });
+
+    it('should report a timeout when the hitLimit was reached', async () => {
+      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      assertions.expectTimeout(result);
+      expect(result.reason).contains('Hit limit reached (10/9)');
+    });
+
+    it('should reset the hitLimit between runs', async () => {
+      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      assertions.expectTimeout(firstResult);
+      assertions.expectSurvived(secondResult);
+    });
   });
 
   function createSut() {
@@ -591,5 +592,15 @@ describe(JestTestRunner.name, () => {
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JestTestRunner);
+  }
+
+  async function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
+    const sut = createSut();
+    jestTestAdapterMock.run.callsFake(async () => {
+      state.instrumenterContext.hitCount = hitCount;
+      return jestRunResult;
+    });
+    const result = await sut.mutantRun(option);
+    return result;
   }
 });

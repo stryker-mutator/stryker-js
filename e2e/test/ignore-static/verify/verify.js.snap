@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Ignore static e2e test should work for cucumber 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 8,
+  "killed": 2,
+  "mutationScore": 100,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 2,
+  "totalDetected": 2,
+  "totalInvalid": 0,
+  "totalMutants": 10,
+  "totalUndetected": 0,
+  "totalValid": 2,
+}
+`;
+
+exports[`Ignore static e2e test should work for jasmine 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 7,
+  "killed": 2,
+  "mutationScore": 66.66666666666666,
+  "mutationScoreBasedOnCoveredCode": 66.66666666666666,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 1,
+  "timeout": 0,
+  "totalCovered": 3,
+  "totalDetected": 2,
+  "totalInvalid": 0,
+  "totalMutants": 10,
+  "totalUndetected": 1,
+  "totalValid": 3,
+}
+`;
+
+exports[`Ignore static e2e test should work for jest 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 7,
+  "killed": 3,
+  "mutationScore": 100,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 3,
+  "totalDetected": 3,
+  "totalInvalid": 0,
+  "totalMutants": 10,
+  "totalUndetected": 0,
+  "totalValid": 3,
+}
+`;
+
+exports[`Ignore static e2e test should work for karma 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 7,
+  "killed": 3,
+  "mutationScore": 100,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 3,
+  "totalDetected": 3,
+  "totalInvalid": 0,
+  "totalMutants": 10,
+  "totalUndetected": 0,
+  "totalValid": 3,
+}
+`;
+
+exports[`Ignore static e2e test should work for mocha 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 7,
+  "killed": 2,
+  "mutationScore": 66.66666666666666,
+  "mutationScoreBasedOnCoveredCode": 66.66666666666666,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 1,
+  "timeout": 0,
+  "totalCovered": 3,
+  "totalDetected": 2,
+  "totalInvalid": 0,
+  "totalMutants": 10,
+  "totalUndetected": 1,
+  "totalValid": 3,
+}
+`;

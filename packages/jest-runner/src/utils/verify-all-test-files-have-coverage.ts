@@ -7,9 +7,9 @@ import { AggregatedResult } from '@jest/test-result';
  * @param results The jest test run result
  * @param fileNamesWithMutantCoverage the file names for which coverage was reported
  */
-export function verifyAllTestFilesHaveCoverage(results: AggregatedResult, fileNamesWithMutantCoverage: string[]): string | undefined {
+export function verifyAllTestFilesHaveCoverage(results: AggregatedResult, fileNamesWithMutantCoverage: Set<string>): string | undefined {
   const allTestFiles = new Set<string>(results.testResults.map(({ testFilePath }) => path.resolve(testFilePath)));
-  const fullFileNamesWithCoverage = fileNamesWithMutantCoverage.map((fileName) => path.resolve(fileName));
+  const fullFileNamesWithCoverage = [...fileNamesWithMutantCoverage].map((fileName) => path.resolve(fileName));
   const missing = [...allTestFiles].filter((testFile) => !fullFileNamesWithCoverage.includes(testFile));
   if (missing.length > 0) {
     return formatError(missing);

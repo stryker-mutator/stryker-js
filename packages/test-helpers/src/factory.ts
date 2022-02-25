@@ -247,6 +247,7 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
   disableBail: false,
+  mutantActivation: 'static',
   reloadEnvironment: false,
 }));
 

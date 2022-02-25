@@ -46,6 +46,17 @@ export function withCoverageAnalysis(jestConfig: Config.InitialOptions, coverage
   }
 }
 
+export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number | undefined): Config.InitialOptions {
+  // Override with Stryker specific test environment to capture coverage analysis
+  if (typeof hitLimit === 'number') {
+    const overrides: Config.InitialOptions = {};
+    overrideEnvironment(jestConfig, overrides);
+    return { ...jestConfig, ...overrides };
+  } else {
+    return jestConfig;
+  }
+}
+
 /**
  * Setup the test framework (aka "runner" in jest terms) for "perTest" coverage analysis.
  * Will use monkey patching for framework "jest-jasmine2", and will assume the test environment handles events when "jest-circus"
@@ -70,7 +81,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
   }
 }
 
-function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
+function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions): void {
   const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults().testEnvironment;
   state.jestEnvironment = nameEnvironment(originalJestEnvironment);
   overrides.testEnvironment = jestEnvironmentGenericFileName;

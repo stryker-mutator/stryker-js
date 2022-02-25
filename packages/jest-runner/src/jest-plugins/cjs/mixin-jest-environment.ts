@@ -1,5 +1,6 @@
 import type { JestEnvironment, EnvironmentContext } from '@jest/environment';
 import type { Config, Circus } from '@jest/types';
+import { InstrumenterContext } from '@stryker-mutator/api/core';
 
 import { state } from './messaging.js';
 
@@ -24,29 +25,32 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
     return JestEnvironmentClass;
   } else {
     class StrykerJestEnvironment extends JestEnvironmentClass {
-      private readonly fileName: string;
+      // private readonly strykerFileName: string;
+
+      /**
+       * The shared instrumenter context with the test environment (the `__stryker__` global variable)
+       */
+      private readonly strykerContext: InstrumenterContext;
 
       public static readonly [STRYKER_JEST_ENV] = true;
 
       constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
         super(config, context);
-        this.fileName = context!.testPath!;
+        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = state.instrumenterContext;
+        state.testFilesWithStrykerEnvironment.add(context!.testPath);
       }
 
       public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         await super.handleTestEvent?.(event as any, eventState);
-        if (state.coverageAnalysis === 'perTest' && event.name === 'test_start') {
-          const ns = (this.global[this.global.__strykerGlobalNamespace__] = this.global[this.global.__strykerGlobalNamespace__] ?? {});
-          ns.currentTestId = fullName(event.test);
+        if (state.coverageAnalysis === 'perTest') {
+          if (event.name === 'test_start') {
+            this.strykerContext.currentTestId = fullName(event.test);
+          } else if (event.name === 'test_done') {
+            this.strykerContext.currentTestId = undefined;
+          }
         }
       };
-
-      public async teardown() {
-        const mutantCoverage = this.global[this.global.__strykerGlobalNamespace__]?.mutantCoverage;
-        state.handleMutantCoverage(this.fileName, mutantCoverage);
-        await super.teardown();
-      }
     }
     return StrykerJestEnvironment;
   }

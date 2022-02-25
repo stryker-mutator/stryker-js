@@ -23,16 +23,15 @@ describe(jestEnvironmentGeneric.name, () => {
 
   it('should mix in the StrykerTestEnvironment', async () => {
     // Arrange
+    state.clear();
     state.jestEnvironment = fileURLToPath(new URL('./cjs/jest-environment-generic-jest-environment.js', import.meta.url));
-    let actualFileName: string | undefined;
-    state.setMutantCoverageHandler((fileName) => (actualFileName = fileName));
 
     // Act
     const jestEnv = jestEnvironmentGeneric(producers.createProjectConfig(), producers.createEnvironmentContext({ testPath: 'foo.spec.js' }));
     await jestEnv.teardown();
 
     // Assert
-    state.resetMutantCoverageHandler();
-    expect(actualFileName).eq('foo.spec.js');
+    expect(state.testFilesWithStrykerEnvironment).lengthOf(1);
+    expect(state.testFilesWithStrykerEnvironment).contains('foo.spec.js');
   });
 });
