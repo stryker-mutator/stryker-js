@@ -18,5 +18,5 @@ export interface Checker {
    * @param mutants the mutants to group
    * @returns the groups of mutant ids
    */
-  group?(mutants: Mutant[]): Promise<string[][] | undefined>;
+  group?(mutants: Mutant[]): Promise<string[][]>;
 }

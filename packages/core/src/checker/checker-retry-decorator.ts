@@ -1,4 +1,3 @@
-import { CheckResult } from '@stryker-mutator/api/check';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -13,9 +12,17 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
     super(producer);
   }
 
-  public async check(checkerIndex: number, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+  public async check(checkerName: string, mutants: Mutant[]): ReturnType<CheckerResource['check']> {
+    return this.tryAction(() => this.innerResource.check(checkerName, mutants));
+  }
+
+  public async group(checkerName: string, mutants: Mutant[]): ReturnType<CheckerResource['group']> {
+    return this.tryAction(() => this.innerResource.group(checkerName, mutants));
+  }
+
+  private async tryAction<T>(act: () => Promise<T>): Promise<T> {
     try {
-      return await this.innerResource.check(checkerIndex, mutants);
+      return await act();
     } catch (error) {
       if (error instanceof ChildProcessCrashedError) {
         if (error instanceof OutOfMemoryError) {
@@ -24,7 +31,7 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
           this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
         }
         await this.recover();
-        return this.innerResource.check(checkerIndex, mutants);
+        return act();
       } else {
         throw error; //oops
       }
