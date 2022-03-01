@@ -6,8 +6,7 @@ import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-help
 import { expect } from 'chai';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
-import { createCheckerFactory } from '../../../src/checker/index.js';
-import { CheckerResource } from '../../../src/concurrent/index.js';
+import { CheckerResource, createCheckerFactory } from '../../../src/checker/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
 

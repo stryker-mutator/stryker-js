@@ -10,10 +10,11 @@ import { I } from '@stryker-mutator/util';
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
 import { InputFileCollection } from '../../../src/input/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
+import { createConcurrencyTokenProviderMock, createCheckerResourcePoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
 import { createCheckerFactory } from '../../../src/checker/index.js';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
 import { Pool } from '../../../src/concurrent/index.js';
+import { CheckerResource } from '../../../src/checker/checker-resource.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
@@ -23,7 +24,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<Checker>>>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<CheckerResource>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let mutatedFile: File;
   let originalFile: File;
@@ -34,7 +35,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     originalFile = new File('foo.js', 'console.log("bar")');
     testFile = new File('foo.spec.js', '');
     concurrencyTokenProviderMock = createConcurrencyTokenProviderMock();
-    checkerPoolMock = createCheckerPoolMock();
+    checkerPoolMock = createCheckerResourcePoolMock();
 
     instrumentResult = {
       files: [mutatedFile],
@@ -56,7 +57,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       .withArgs(coreTokens.concurrencyTokenProvider)
       .returns(concurrencyTokenProviderMock)
       .withArgs(coreTokens.checkerPool)
-      .returns(checkerPoolMock as I<Pool<Checker>>);
+      .returns(checkerPoolMock as I<Pool<CheckerResource>>);
     instrumenterMock.instrument.resolves(instrumentResult);
   });
 

@@ -11,7 +11,7 @@ import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { createTestRunnerPoolMock, createCheckerPoolMock, createMutantRunPlan, createMutantEarlyResultPlan } from '../../helpers/producers.js';
+import { createTestRunnerPoolMock, createCheckerResourcePoolMock, createMutantRunPlan, createMutantEarlyResultPlan } from '../../helpers/producers.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { Timer } from '../../../src/utils/timer.js';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
@@ -54,7 +54,7 @@ describe(MutationTestExecutor.name, () => {
     timerMock = sinon.createStubInstance(Timer);
     testRunner = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
-    checkerPoolMock = createCheckerPoolMock();
+    checkerPoolMock = createCheckerResourcePoolMock();
     checker = factory.checker();
     concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
     sandboxMock = sinon.createStubInstance(Sandbox);
