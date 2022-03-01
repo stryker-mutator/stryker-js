@@ -5,7 +5,7 @@ import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 
 import { coreTokens } from '../di/index.js';
-import { CheckerResource } from '../checker/checker-resource.js';
+import { CheckerFacade } from '../checker/index.js';
 
 const MAX_CONCURRENT_INIT = 2;
 
@@ -24,8 +24,8 @@ export function createTestRunnerPool(factory: () => TestRunnerResource, concurre
 }
 
 createCheckerPool.inject = tokens(coreTokens.checkerFactory, coreTokens.checkerConcurrencyTokens);
-export function createCheckerPool(factory: () => CheckerResource, concurrencyToken$: Observable<number>): Pool<CheckerResource> {
-  return new Pool<CheckerResource>(factory, concurrencyToken$);
+export function createCheckerPool(factory: () => CheckerFacade, concurrencyToken$: Observable<number>): Pool<CheckerFacade> {
+  return new Pool<CheckerFacade>(factory, concurrencyToken$);
 }
 
 /**

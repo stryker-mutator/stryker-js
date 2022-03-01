@@ -6,7 +6,7 @@ import { coreTokens } from '../di/index.js';
 import { LoggingClientContext } from '../logging/logging-client-context.js';
 
 import { CheckerChildProcessProxy } from './checker-child-process-proxy.js';
-import { CheckerResource } from './checker-resource.js';
+import { CheckerFacade } from './checker-facade2.js';
 import { CheckerRetryDecorator } from './checker-retry-decorator.js';
 
 createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext, coreTokens.pluginModulePaths, commonTokens.getLogger);
@@ -15,7 +15,13 @@ export function createCheckerFactory(
   loggingContext: LoggingClientContext,
   pluginModulePaths: readonly string[],
   getLogger: LoggerFactoryMethod
-): () => CheckerResource {
+): () => CheckerFacade {
   return () =>
-    new CheckerRetryDecorator(() => new CheckerChildProcessProxy(options, pluginModulePaths, loggingContext), getLogger(CheckerRetryDecorator.name));
+    new CheckerFacade(
+      () =>
+        new CheckerRetryDecorator(
+          () => new CheckerChildProcessProxy(options, pluginModulePaths, loggingContext),
+          getLogger(CheckerRetryDecorator.name)
+        )
+    );
 }
