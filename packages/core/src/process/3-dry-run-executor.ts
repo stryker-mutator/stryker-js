@@ -26,12 +26,8 @@ import { ConfigError } from '../errors.js';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
 import { InputFileCollection } from '../input/input-file-collection.js';
-
 import { MutantTestPlanner } from '../mutants/index.js';
-
-import { CheckerResource } from '../checker/checker-resource.js';
-
-import { CheckerFacade } from '../checker/checker-facade.js';
+import { CheckerFacade } from '../checker/index.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
@@ -41,7 +37,7 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
-  [coreTokens.checkerPool]: I<Pool<CheckerResource>>;
+  [coreTokens.checkerPool]: I<Pool<CheckerFacade>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
   [coreTokens.inputFiles]: InputFileCollection;
 }
@@ -106,8 +102,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
-      .provideClass(coreTokens.checkerFacade, CheckerFacade);
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
