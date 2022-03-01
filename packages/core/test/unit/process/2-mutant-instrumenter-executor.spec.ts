@@ -10,10 +10,9 @@ import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } 
 import { InputFileCollection } from '../../../src/input/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { createConcurrencyTokenProviderMock, createCheckerResourcePoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
-import { createCheckerFactory } from '../../../src/checker/index.js';
+import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
 import { Pool } from '../../../src/concurrent/index.js';
-import { CheckerFacade } from '../../../src/checker/index.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
