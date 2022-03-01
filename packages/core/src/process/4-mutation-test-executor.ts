@@ -43,7 +43,7 @@ export class MutationTestExecutor {
   constructor(
     private readonly reporter: StrictReporter,
     private readonly testRunnerPool: I<Pool<TestRunner>>,
-    private readonly checkerPool: I<Pool<CheckerFacade>>,
+    private readonly checkerPool: I<Pool<I<CheckerFacade>>>,
     private readonly mutants: readonly Mutant[],
     private readonly planner: MutantTestPlanner,
     private readonly mutationTestReportHelper: I<MutationTestReportHelper>,
@@ -151,5 +151,5 @@ export class MutationTestExecutor {
 }
 
 function isEarlyResult(mutantPlan: MutantTestPlan): mutantPlan is MutantEarlyResultPlan {
-  return mutantPlan.mutant.status !== undefined;
+  return mutantPlan.plan === PlanKind.EarlyResult;
 }

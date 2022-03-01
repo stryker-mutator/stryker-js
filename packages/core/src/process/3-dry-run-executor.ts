@@ -37,7 +37,7 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
-  [coreTokens.checkerPool]: I<Pool<CheckerFacade>>;
+  [coreTokens.checkerPool]: I<Pool<I<CheckerFacade>>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
   [coreTokens.inputFiles]: InputFileCollection;
 }
