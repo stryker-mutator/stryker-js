@@ -5,8 +5,7 @@ import { MutantResult, MutantStatus, Mutant, StrykerOptions } from '@stryker-mut
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
-
-import { CheckStatus } from '@stryker-mutator/api/src/check';
+import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';

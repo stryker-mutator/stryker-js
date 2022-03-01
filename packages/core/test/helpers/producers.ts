@@ -10,7 +10,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
 import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants/index.js';
-import { CheckerResource } from '../../src/checker/index.js';
+import { CheckerFacade } from '../../src/checker/index.js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -58,7 +58,7 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Te
   };
 }
 
-export function createCheckerResourcePoolMock(): sinon.SinonStubbedInstance<I<Pool<CheckerResource>>> {
+export function createCheckerResourcePoolMock(): sinon.SinonStubbedInstance<I<Pool<CheckerFacade>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
