@@ -90,13 +90,17 @@ describe(MutationTestExecutor.name, () => {
       .injectClass(MutationTestExecutor);
   });
 
-  function arrangeScenario(overrides?: { mutantRunPlan?: MutantRunPlan; checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
-    checker.check.resolves([[overrides?.mutantRunPlan ?? mutantRunPlan(), overrides?.checkResult ?? factory.checkResult()]]);
-    testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
+  function arrangeMutationTestReportHelper() {
     mutationTestReportHelperMock.reportMutantStatus.returnsArg(0);
     mutationTestReportHelperMock.reportCheckFailed.returnsArg(0);
     mutationTestReportHelperMock.reportMutantRunResult.returnsArg(0);
     mutationTestReportHelperMock.reportAll.returnsArg(0);
+  }
+
+  function arrangeScenario(overrides?: { mutantRunPlan?: MutantRunPlan; checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
+    checker.check.resolves([[overrides?.mutantRunPlan ?? mutantRunPlan(), overrides?.checkResult ?? factory.checkResult()]]);
+    testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
+    arrangeMutationTestReportHelper();
   }
 
   describe('early result', () => {
@@ -169,6 +173,94 @@ describe(MutationTestExecutor.name, () => {
 
       // Assert
       expect(mutationTestReportHelperMock.reportCheckFailed).calledWithExactly(mutantTestPlans[0].mutant, failedCheckResult);
+    });
+
+    it('should group mutants buffered by time', async () => {
+      // Arrange
+      const clock = sinon.useFakeTimers();
+      const plan = mutantRunPlan({ id: '1' });
+      const plan2 = mutantRunPlan({ id: '2' });
+      arrangeMutationTestReportHelper();
+      testRunner.mutantRun.resolves(factory.survivedMutantRunResult());
+      const secondCheckerTask = new Task<Array<[MutantRunPlan, CheckResult]>>();
+      checker.check
+        .withArgs(sinon.match.string, [plan])
+        .resolves([[plan, factory.checkResult()]])
+        .withArgs(sinon.match.string, [plan2])
+        .returns(secondCheckerTask.promise)
+        .withArgs(sinon.match.string, [plan, plan2])
+        .resolves([
+          [plan, factory.checkResult()],
+          [plan2, factory.checkResult()],
+        ]);
+      // Add a second checker process
+      testInjector.options.checkers.push('bar');
+      mutantTestPlans.push(plan, plan2);
+      checker.group
+        .withArgs('foo', [plan, plan2])
+        .resolves([[plan], [plan2]])
+        .withArgs('bar', [plan])
+        .resolves([[plan]])
+        .withArgs('bar', [plan2])
+        .resolves([[plan2]]);
+
+      // Act
+      const onGoingAct = sut.execute();
+
+      // Assert
+      await tick();
+      // Assert that checker is called for the first 2 groups
+      expect(checker.group).calledOnce;
+      expect(checker.check).calledTwice;
+      sinon.assert.calledWithExactly(checker.check, 'foo', [plan]);
+      sinon.assert.calledWithExactly(checker.check, 'foo', [plan2]);
+
+      // Assert first check resolved, now tick the clock 10s in the future
+      clock.tick(10_001);
+      await tick();
+      // Now the second grouping should have happened
+      expect(checker.group).calledTwice;
+      expect(checker.check).calledThrice;
+      sinon.assert.calledWithExactly(checker.check, 'bar', [plan]);
+
+      // Now resolve the second checker task
+      secondCheckerTask.resolve([[plan2, factory.checkResult()]]);
+      await onGoingAct;
+
+      // Finally all checks should have been done
+      expect(checker.group).calledThrice;
+      expect(checker.check).callCount(4);
+      sinon.assert.calledWithExactly(checker.check, 'bar', [plan2]);
+    });
+
+    it('should short circuit failed checks', async () => {
+      // Arrange
+      testInjector.options.checkers.push('bar');
+      const plan = mutantRunPlan({ id: '1' });
+      const plan2 = mutantRunPlan({ id: '2' });
+      arrangeMutationTestReportHelper();
+      testRunner.mutantRun.resolves(factory.survivedMutantRunResult());
+      checker.check
+        .withArgs('foo', [plan])
+        .resolves([[plan, factory.checkResult({ status: CheckStatus.CompileError })]])
+        .withArgs('foo', [plan2])
+        .resolves([[plan2, factory.checkResult({ status: CheckStatus.Passed })]])
+        .withArgs('bar', [plan2])
+        .resolves([[plan2, factory.checkResult({ status: CheckStatus.Passed })]]);
+      mutantTestPlans.push(plan, plan2);
+      checker.group
+        .withArgs('foo', [plan, plan2])
+        .resolves([[plan], [plan2]])
+        .withArgs('bar', [plan2])
+        .resolves([[plan2]]);
+
+      // Act
+      const mutantResults = await sut.execute();
+
+      // Assert
+      expect(checker.check).calledThrice;
+      sinon.assert.neverCalledWith(checker.check, 'bar', [plan]);
+      expect(mutantResults).deep.eq([plan.mutant, plan2.mutant]);
     });
 
     it('should check mutants in groups', async () => {
