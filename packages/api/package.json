@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "5.6.1",
+  "version": "6.0.0-beta.0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "type": "module",
   "repository": {
@@ -18,12 +18,24 @@
   },
   "typesVersions": {
     "*": {
-      "check": ["./dist/src/check/index.d.ts"],
-      "core": ["./dist/src/core/index.d.ts"],
-      "logging": ["./dist/src/logging/index.d.ts"],
-      "plugin": ["./dist/src/plugin/index.d.ts"],
-      "report": ["./dist/src/report/index.d.ts"],
-      "test-runner": ["./dist/src/test-runner/index.d.ts"]
+      "check": [
+        "./dist/src/check/index.d.ts"
+      ],
+      "core": [
+        "./dist/src/core/index.d.ts"
+      ],
+      "logging": [
+        "./dist/src/logging/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/src/plugin/index.d.ts"
+      ],
+      "report": [
+        "./dist/src/report/index.d.ts"
+      ],
+      "test-runner": [
+        "./dist/src/test-runner/index.d.ts"
+      ]
     }
   },
   "scripts": {
