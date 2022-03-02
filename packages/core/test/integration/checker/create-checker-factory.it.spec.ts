@@ -6,17 +6,18 @@ import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-help
 import { expect } from 'chai';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
-import { createCheckerFactory } from '../../../src/checker/index.js';
-import { CheckerResource } from '../../../src/concurrent/index.js';
+import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
+
+import { createMutantRunPlan } from '../../helpers/producers.js';
 
 import { TwoTimesTheCharm } from './additional-checkers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
-  let createSut: () => CheckerResource;
+  let createSut: () => CheckerFacade;
   let loggingContext: LoggingClientContext;
-  let sut: CheckerResource;
+  let sut: CheckerFacade;
   let loggingServer: LoggingServer;
   let pluginModulePaths: string[];
 
@@ -51,30 +52,39 @@ describe(`${createCheckerFactory.name} integration`, () => {
   }
 
   it('should pass along the check result', async () => {
+    const mutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ id: '1' }) });
     await arrangeSut('healthy');
     const expected: CheckResult = { status: CheckStatus.Passed };
-    expect(await sut.check(factory.mutant({ id: '1' }))).deep.eq(expected);
+    expect(await sut.check('healthy', [mutantRunPlan])).deep.eq([[mutantRunPlan, expected]]);
   });
 
   it('should reject when the checker behind rejects', async () => {
     await arrangeSut('crashing');
-    await expect(sut.check(factory.mutant())).rejectedWith('Always crashing');
+    await expect(sut.check('crashing', [createMutantRunPlan()])).rejectedWith('Always crashing');
   });
 
   it('should recover when the checker behind rejects', async () => {
+    const mutantRunPlan = createMutantRunPlan();
     await fs.promises.writeFile(TwoTimesTheCharm.COUNTER_FILE, '0', 'utf-8');
     await arrangeSut('two-times-the-charm');
-    const actual = await sut.check(factory.mutant());
+    const actual = await sut.check('two-times-the-charm', [mutantRunPlan]);
     const expected: CheckResult = { status: CheckStatus.Passed };
-    expect(actual).deep.eq(expected);
+    expect(actual).deep.eq([[mutantRunPlan, expected]]);
   });
 
   it('should provide the nodeArgs', async () => {
+    // Arrange
+    const passingMutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ fileName: 'shouldProvideNodeArgs' }) });
+    const failingMutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ fileName: 'somethingElse' }) });
     testInjector.options.checkerNodeArgs = ['--title=shouldProvideNodeArgs'];
+
+    // Act
     await arrangeSut('verify-title');
-    const passed = await sut.check(factory.mutant({ fileName: 'shouldProvideNodeArgs' }));
-    const failed = await sut.check(factory.mutant({ fileName: 'somethingElse' }));
-    expect(passed).deep.eq(factory.checkResult({ status: CheckStatus.Passed }));
-    expect(failed).deep.eq(factory.checkResult({ status: CheckStatus.CompileError }));
+    const passed = await sut.check('verify-title', [passingMutantRunPlan]);
+    const failed = await sut.check('verify-title', [failingMutantRunPlan]);
+
+    // Assert
+    expect(passed).deep.eq([[passingMutantRunPlan, factory.checkResult({ status: CheckStatus.Passed })]]);
+    expect(failed).deep.eq([[failingMutantRunPlan, factory.checkResult({ status: CheckStatus.CompileError })]]);
   });
 });

@@ -5,14 +5,12 @@ import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-import { Checker } from '@stryker-mutator/api/check';
-
 import { I } from '@stryker-mutator/util';
-
 import { factory } from '@stryker-mutator/test-helpers';
 
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
 import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants/index.js';
+import { CheckerFacade } from '../../src/checker/index.js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -60,7 +58,7 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Te
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Checker>>> {
+export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>> {
   return {
     dispose: sinon.stub(),
     init: sinon.stub(),
@@ -105,7 +103,6 @@ export const logger = (): Mock<Logger> => {
     level: 'level',
     log: sinon.stub(),
     mark: sinon.stub(),
-    new: sinon.stub(),
     removeContext: sinon.stub(),
     setParseCallStackFunction: sinon.stub(),
     trace: sinon.stub(),

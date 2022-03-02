@@ -16,7 +16,6 @@ import {
   ErrorDryRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { lastValueFrom, of } from 'rxjs';
-import { Checker } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
@@ -27,8 +26,8 @@ import { ConfigError } from '../errors.js';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
 import { InputFileCollection } from '../input/input-file-collection.js';
-
 import { MutantTestPlanner } from '../mutants/index.js';
+import { CheckerFacade } from '../checker/index.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
@@ -38,7 +37,7 @@ const INITIAL_TEST_RUN_MARKER = 'Initial test run';
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
   [coreTokens.mutants]: readonly Mutant[];
-  [coreTokens.checkerPool]: I<Pool<Checker>>;
+  [coreTokens.checkerPool]: I<Pool<I<CheckerFacade>>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
   [coreTokens.inputFiles]: InputFileCollection;
 }

@@ -1,19 +1,21 @@
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
 import { PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerError } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 
-export class CheckerWorker implements Checker {
-  private readonly innerCheckers: Array<{ name: string; checker: Checker }> = [];
+import { CheckerResource } from './checker-resource.js';
+
+export class CheckerWorker implements CheckerResource {
+  private readonly innerCheckers: Map<string, Checker>;
 
   public static inject = tokens(commonTokens.options, coreTokens.pluginCreator);
   constructor(options: StrykerOptions, pluginCreator: PluginCreator) {
-    this.innerCheckers = options.checkers.map((name) => ({ name, checker: pluginCreator.create(PluginKind.Checker, name) }));
+    this.innerCheckers = new Map(options.checkers.map((name) => [name, pluginCreator.create(PluginKind.Checker, name)]));
   }
   public async init(): Promise<void> {
-    for await (const { name, checker } of this.innerCheckers) {
+    for await (const [name, checker] of this.innerCheckers.entries()) {
       try {
         await checker.init();
       } catch (error: unknown) {
@@ -21,13 +23,26 @@ export class CheckerWorker implements Checker {
       }
     }
   }
-  public async check(mutant: Mutant): Promise<CheckResult> {
-    for await (const { checker } of this.innerCheckers) {
-      const result = await checker.check(mutant);
-      if (result.status !== CheckStatus.Passed) {
-        return result;
-      }
+  public async check(checkerName: string, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    return this.perform(checkerName, (checker) => checker.check(mutants));
+  }
+
+  public async group(checkerName: string, mutants: Mutant[]): Promise<string[][]> {
+    return this.perform(
+      checkerName,
+      (checker) =>
+        checker.group?.(mutants) ??
+        // Group one by one by default
+        mutants.map(({ id }) => [id])
+    );
+  }
+
+  private perform<T>(checkerName: string, act: (checker: Checker) => T) {
+    const checker = this.innerCheckers.get(checkerName);
+    if (checker) {
+      return act(checker);
+    } else {
+      throw new Error(`Checker ${checkerName} does not exist!`);
     }
-    return { status: CheckStatus.Passed };
   }
 }

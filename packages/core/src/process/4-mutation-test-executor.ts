@@ -1,18 +1,19 @@
-import { from, partition, merge, Observable, lastValueFrom } from 'rxjs';
-import { toArray, map, tap, shareReplay } from 'rxjs/operators';
+import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap } from 'rxjs';
+import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, MutantStatus, Mutant } from '@stryker-mutator/api/core';
+import { MutantResult, MutantStatus, Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
-import { CheckStatus, Checker, CheckResult, PassedCheckResult } from '@stryker-mutator/api/check';
+import { CheckStatus } from '@stryker-mutator/api/check';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 import { Timer } from '../utils/timer.js';
-import { Pool, ConcurrencyTokenProvider } from '../concurrent/index.js';
+import { ConcurrencyTokenProvider, Pool } from '../concurrent/index.js';
 import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner, PlanKind } from '../mutants/index.js';
+import { CheckerFacade } from '../checker/index.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
 
@@ -23,27 +24,31 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
 }
 
+const CHECK_BUFFER_MS = 10_000;
+
 export class MutationTestExecutor {
   public static inject = tokens(
     coreTokens.reporter,
-    coreTokens.checkerPool,
     coreTokens.testRunnerPool,
+    coreTokens.checkerPool,
     coreTokens.mutants,
     coreTokens.mutantTestPlanner,
     coreTokens.mutationTestReportHelper,
     commonTokens.logger,
+    commonTokens.options,
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider
   );
 
   constructor(
     private readonly reporter: StrictReporter,
-    private readonly checkerPool: I<Pool<Checker>>,
     private readonly testRunnerPool: I<Pool<TestRunner>>,
+    private readonly checkerPool: I<Pool<I<CheckerFacade>>>,
     private readonly mutants: readonly Mutant[],
     private readonly planner: MutantTestPlanner,
     private readonly mutationTestReportHelper: I<MutationTestReportHelper>,
     private readonly log: Logger,
+    private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
   ) {}
@@ -51,7 +56,7 @@ export class MutationTestExecutor {
   public async execute(): Promise<MutantResult[]> {
     const mutantTestPlans = this.planner.makePlan(this.mutants);
     const { ignoredResult$, notIgnoredMutant$ } = this.executeEarlyResult(from(mutantTestPlans));
-    const { passedMutant$, checkResult$ } = this.executeCheck(from(notIgnoredMutant$));
+    const { passedMutant$, checkResult$ } = this.executeCheck(notIgnoredMutant$);
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
@@ -75,37 +80,6 @@ export class MutationTestExecutor {
     return { noCoverageResult$, coveredMutant$ };
   }
 
-  private executeCheck(input$: Observable<MutantRunPlan>): { checkResult$: Observable<MutantResult>; passedMutant$: Observable<MutantRunPlan> } {
-    const checkTask$ = this.checkerPool
-      .schedule(input$, async (checker, { mutant, runOptions }) => {
-        const checkResult = await checker.check(mutant);
-        return {
-          checkResult,
-          mutant,
-          runOptions,
-        };
-      })
-      .pipe(
-        // Dispose when all checks are completed.
-        // This will allow resources to be freed up and more test runners to be spined up.
-        tap({
-          complete: () => {
-            this.checkerPool.dispose();
-            this.concurrencyTokenProvider.freeCheckers();
-          },
-        }),
-        shareReplay()
-      );
-    const [passedCheckResult$, failedCheckResult$] = partition(checkTask$, ({ checkResult }) => checkResult.status === CheckStatus.Passed);
-    const checkResult$ = failedCheckResult$.pipe(
-      map((failedMutant) =>
-        this.mutationTestReportHelper.reportCheckFailed(failedMutant.mutant, failedMutant.checkResult as Exclude<CheckResult, PassedCheckResult>)
-      )
-    );
-    const passedMutant$ = passedCheckResult$.pipe(map(({ mutant, runOptions }) => ({ mutant, runOptions, plan: PlanKind.Run as const })));
-    return { checkResult$, passedMutant$ };
-  }
-
   private executeRunInTestRunner(input$: Observable<MutantRunPlan>): Observable<MutantResult> {
     return this.testRunnerPool.schedule(input$, async (testRunner, { mutant, runOptions }) => {
       const result = await testRunner.mutantRun(runOptions);
@@ -116,8 +90,66 @@ export class MutationTestExecutor {
   private logDone() {
     this.log.info('Done in %s.', this.timer.humanReadableElapsed());
   }
+
+  /**
+   * Checks mutants against all configured checkers (if any) and returns steams for failed checks and passed checks respectively
+   * @param input$ The mutant run plans to check
+   */
+  public executeCheck(input$: Observable<MutantRunPlan>): {
+    checkResult$: Observable<MutantResult>;
+    passedMutant$: Observable<MutantRunPlan>;
+  } {
+    let checkResult$: Observable<MutantResult> = EMPTY;
+    let passedMutant$ = input$;
+    for (const checkerName of this.options.checkers) {
+      // Use this checker
+      const [checkFailedResult$, checkPassedResult$] = partition(this.executeSingleChecker(checkerName, passedMutant$), isEarlyResult);
+
+      // Prepare for the next one
+      passedMutant$ = checkPassedResult$;
+      checkResult$ = concat(checkResult$, checkFailedResult$.pipe(map(({ mutant }) => mutant)));
+    }
+    return {
+      checkResult$,
+      passedMutant$: passedMutant$.pipe(
+        tap({
+          complete: () => {
+            this.checkerPool.dispose();
+            this.concurrencyTokenProvider.freeCheckers();
+          },
+        })
+      ),
+    };
+  }
+
+  /**
+   * Executes the check task for one checker
+   * @param checkerName The name of the checker to execute
+   * @param input$ The mutants tasks to check
+   * @returns An observable stream with early results (check failed) and passed results
+   */
+  private executeSingleChecker(checkerName: string, input$: Observable<MutantRunPlan>): Observable<MutantTestPlan> {
+    const group$ = this.checkerPool
+      .schedule(input$.pipe(bufferTime(CHECK_BUFFER_MS)), (checker, mutants) => checker.group(checkerName, mutants))
+      .pipe(mergeMap((mutantGroups) => mutantGroups));
+    const checkTask$ = this.checkerPool
+      .schedule(group$, (checker, group) => checker.check(checkerName, group))
+      .pipe(
+        mergeMap((mutantGroupResults) => mutantGroupResults),
+        shareReplay(),
+        map(([mutantRunPlan, checkResult]) =>
+          checkResult.status === CheckStatus.Passed
+            ? mutantRunPlan
+            : {
+                plan: PlanKind.EarlyResult as const,
+                mutant: this.mutationTestReportHelper.reportCheckFailed(mutantRunPlan.mutant, checkResult),
+              }
+        )
+      );
+    return checkTask$;
+  }
 }
 
 function isEarlyResult(mutantPlan: MutantTestPlan): mutantPlan is MutantEarlyResultPlan {
-  return mutantPlan.mutant.status !== undefined;
+  return mutantPlan.plan === PlanKind.EarlyResult;
 }
