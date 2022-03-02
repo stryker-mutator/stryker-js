@@ -13,7 +13,8 @@
       "conventionalCommits": true,
       "createRelease": "github",
       "forcePublish": true,
-      "exact": true
+      "exact": true,
+      "preid": "beta"
     }
   }
 }
