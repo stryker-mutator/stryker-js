@@ -129,13 +129,13 @@ describe(MutationTestExecutor.name, () => {
     it('should report an ignored mutant as `Ignored`', async () => {
       // Arrange
       arrangeScenario();
-      mutantTestPlans.push(mutantRunPlan({ id: '1', status: MutantStatus.Ignored, statusReason: '1 is ignored' }));
+      mutantTestPlans.push(ignoredEarlyResultPlan({ id: '1', statusReason: '1 is ignored' }));
 
       // Act
       await sut.execute();
 
       // Assert
-      expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutantTestPlans[0].mutant, MutantStatus.Ignored);
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportMutantStatus, mutantTestPlans[0].mutant, MutantStatus.Ignored);
     });
 
     it('should report an uncovered mutant with `NoCoverage`', async () => {
