@@ -56,7 +56,7 @@ async function createReportHtml(report: schema.MutationTestResult): Promise<stri
       const app = document.querySelector('mutation-test-report-app');
       app.report = ${escapeHtmlTags(JSON.stringify(report))};
       function updateTheme() {
-        document.body.style.backgroundColor = app.theme === 'dark' ? '#222' : '#fff';
+        document.body.style.backgroundColor = app.themeBackgroundColor;
       }
       app.addEventListener('theme-changed', updateTheme);
       updateTheme();
