@@ -1,4 +1,4 @@
-const foo = require('../lib/foo').foo;
+import { foo } from '../lib/foo.js';
 
 describe('foo', () => {
   it('should be baz', () => {

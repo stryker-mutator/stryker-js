@@ -8,9 +8,9 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Task, propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { HybridFileSystem } from './fs';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers';
-import * as pluginTokens from './plugin-tokens';
+import { HybridFileSystem } from './fs/index.js';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers.js';
+import * as pluginTokens from './plugin-tokens.js';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
   getCanonicalFileName: (fileName) => fileName,
@@ -125,7 +125,7 @@ export class TypescriptChecker implements Checker {
       throw new Error(
         `The tsconfig file does not exist at: "${path.resolve(
           this.tsconfigFile
-        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>('tsconfigFile')}"`
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>()('tsconfigFile')}"`
       );
     }
   }
@@ -135,15 +135,22 @@ export class TypescriptChecker implements Checker {
    * Will simply pass through if the file mutated isn't part of the typescript project
    * @param mutant The mutant to check
    */
-  public async check(mutant: Mutant): Promise<CheckResult> {
+  public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    const mutant = mutants[0];
+
     if (this.fs.existsInMemory(mutant.fileName)) {
       this.clearCheckState();
       this.fs.mutate(mutant);
-      return this.currentTask.promise;
+
+      return {
+        [mutant.id]: await this.currentTask.promise,
+      };
     } else {
       // We allow people to mutate files that are not included in this ts project
       return {
-        status: CheckStatus.Passed,
+        [mutant.id]: {
+          status: CheckStatus.Passed,
+        },
       };
     }
   }

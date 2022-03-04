@@ -11,7 +11,10 @@
       "path": "./tsconfig.src.json"
     },
     {
-      "path": "../test-helpers/tsconfig.src.json"
+      "path": "./tsconfig.src.cjs.json"
     },
+    {
+      "path": "../test-helpers/tsconfig.src.json"
+    }
   ]
 }

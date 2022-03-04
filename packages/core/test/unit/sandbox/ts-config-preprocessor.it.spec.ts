@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
 
-import { TSConfig, TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor';
+import { TSConfig, TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor.js';
 
 describe(TSConfigPreprocessor.name, () => {
   let files: File[];

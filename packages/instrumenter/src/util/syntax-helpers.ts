@@ -1,10 +1,8 @@
 import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
-import { types, NodePath } from '@babel/core';
-import traverse from '@babel/traverse';
-import { parse } from '@babel/parser';
+import babel from '@babel/core';
 import { deepFreeze } from '@stryker-mutator/util';
 
-import { Mutant } from '../mutant';
+import { Mutant } from '../mutant.js';
 
 export { ID };
 
@@ -12,11 +10,14 @@ const STRYKER_NAMESPACE_HELPER = 'stryNS_9fa48';
 const COVER_MUTANT_HELPER = 'stryCov_9fa48';
 const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
 
+const { types, traverse, parse } = babel;
+
 /**
  * Returns syntax for the header if JS/TS files
  */
 export const instrumentationBabelHeader = deepFreeze(
-  parse(`function ${STRYKER_NAMESPACE_HELPER}(){
+  parse(
+    `function ${STRYKER_NAMESPACE_HELPER}(){
   var g = new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
@@ -59,14 +60,16 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   }
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);
-}`).program.body
-) as readonly types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
+}`,
+    { configFile: false }
+  ) as babel.types.File
+).program.body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
 
 /**
  * returns syntax for `global.activeMutant === $mutantId`
  * @param mutantId The id of the mutant to switch
  */
-export function mutantTestExpression(mutantId: string): types.CallExpression {
+export function mutantTestExpression(mutantId: string): babel.types.CallExpression {
   return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [types.stringLiteral(mutantId)]);
 }
 
@@ -75,19 +78,19 @@ interface Position {
   column: number;
 }
 
-function eqLocation(a: types.SourceLocation, b: types.SourceLocation): boolean {
+function eqLocation(a: babel.types.SourceLocation, b: babel.types.SourceLocation): boolean {
   function eqPosition(start: Position, end: Position): boolean {
     return start.column === end.column && start.line === end.line;
   }
   return eqPosition(a.start, b.start) && eqPosition(a.end, b.end);
 }
 
-export function eqNode<T extends types.Node>(a: T, b: types.Node): b is T {
+export function eqNode<T extends babel.types.Node>(a: T, b: babel.types.Node): b is T {
   return a.type === b.type && !!a.loc && !!b.loc && eqLocation(a.loc, b.loc);
 }
 
-export function offsetLocations(file: types.File, { position, line, column }: { position: number; line: number; column: number }): void {
-  const offsetNode = (node: types.Node): void => {
+export function offsetLocations(file: babel.types.File, { position, line, column }: { position: number; line: number; column: number }): void {
+  const offsetNode = (node: babel.types.Node): void => {
     node.start! += position;
     node.end! += position;
     //  we need to subtract 1, as lines always start at 1
@@ -117,16 +120,16 @@ export function offsetLocations(file: types.File, { position, line, column }: { 
  * @param mutants The mutants for which covering syntax needs to be generated
  * @param targetExpression The original expression
  */
-export function mutationCoverageSequenceExpression(mutants: Iterable<Mutant>, targetExpression?: types.Expression): types.Expression {
+export function mutationCoverageSequenceExpression(mutants: Iterable<Mutant>, targetExpression?: babel.types.Expression): babel.types.Expression {
   const mutantIds = [...mutants].map((mutant) => types.stringLiteral(mutant.id));
-  const sequence: types.Expression[] = [types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds)];
+  const sequence: babel.types.Expression[] = [types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds)];
   if (targetExpression) {
     sequence.push(targetExpression);
   }
   return types.sequenceExpression(sequence);
 }
 
-export function isTypeNode(path: NodePath): boolean {
+export function isTypeNode(path: babel.NodePath): boolean {
   return (
     path.isTypeAnnotation() ||
     flowTypeAnnotationNodeTypes.includes(path.node.type) ||
@@ -141,7 +144,7 @@ export function isTypeNode(path: NodePath): boolean {
  * @example
  * declare const foo: 'foo';
  */
-function isDeclareVariableStatement(path: NodePath): boolean {
+function isDeclareVariableStatement(path: babel.NodePath): boolean {
   return path.isVariableDeclaration() && path.node.declare === true;
 }
 
@@ -150,11 +153,11 @@ function isDeclareVariableStatement(path: NodePath): boolean {
  * @example
  * declare module "express" {};
  */
-function isDeclareModule(path: NodePath): boolean {
+function isDeclareModule(path: babel.NodePath): boolean {
   return path.isTSModuleDeclaration() && (path.node.declare ?? false);
 }
 
-const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
+const tsTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> = Object.freeze([
   'TSAsExpression',
   'TSInterfaceDeclaration',
   'TSTypeAnnotation',
@@ -165,7 +168,7 @@ const tsTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.free
   'TSTypeParameterDeclaration',
 ]);
 
-const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.freeze([
+const flowTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> = Object.freeze([
   'DeclareClass',
   'DeclareFunction',
   'DeclareInterface',
@@ -182,7 +185,7 @@ const flowTypeAnnotationNodeTypes: ReadonlyArray<types.Node['type']> = Object.fr
   'InterfaceDeclaration',
 ]);
 
-export function isImportDeclaration(path: NodePath): boolean {
+export function isImportDeclaration(path: babel.NodePath): boolean {
   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
 }
 
@@ -191,7 +194,7 @@ export function isImportDeclaration(path: NodePath): boolean {
  * @param haystack The range to look in
  * @param needle the range to search for
  */
-export function locationIncluded(haystack: types.SourceLocation, needle: types.SourceLocation): boolean {
+export function locationIncluded(haystack: babel.types.SourceLocation, needle: babel.types.SourceLocation): boolean {
   const startIncluded =
     haystack.start.line < needle.start.line || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
   const endIncluded = haystack.end.line > needle.end.line || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
@@ -201,7 +204,7 @@ export function locationIncluded(haystack: types.SourceLocation, needle: types.S
 /**
  * Determines if two locations overlap with each other
  */
-export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocation): boolean {
+export function locationOverlaps(a: babel.types.SourceLocation, b: babel.types.SourceLocation): boolean {
   const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
   const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;
@@ -210,6 +213,6 @@ export function locationOverlaps(a: types.SourceLocation, b: types.SourceLocatio
 /**
  * Helper for `types.cloneNode(node, deep: true, withoutLocations: false);`
  */
-export function deepCloneNode<TNode extends types.Node>(node: TNode): TNode {
+export function deepCloneNode<TNode extends babel.types.Node>(node: TNode): TNode {
   return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
 }

@@ -73,10 +73,10 @@ A factory method example (useful when you want to inject additional values/class
 
 ```ts
 // index.ts
-import FooTestRunner from './foo-test-runner';
-import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader';
-import { configLoaderToken, processEnvToken, fooTestRunnerVersionToken } from './plugin-tokens';
 import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import FooTestRunner from './foo-test-runner.js';
+import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader.js';
+import { configLoaderToken, processEnvToken } from './plugin-tokens.js';
 
 const createFooTestRunner = createFooTestRunnerFactory();
 
@@ -85,7 +85,6 @@ export function createFooTestRunnerFactory() {
   function fooTestRunnerFactory(injector: Injector<PluginContext>): FooTestRunner {
     return injector
       .provideValue(processEnvToken, process.env)
-      .provideValue(fooTestRunnerVersionToken, require('fooTestRunner/package.json').version as string)
       .provideClass(configLoaderToken, FooTestRunnerConfigFileLoader)
       .injectClass(FooTestRunner);
   }
@@ -104,12 +103,13 @@ It is easy to test your plugin on a test project by loading it via the plugins s
 For example, when your test project resides next to your plugin implementation:
 
 ```js
-// stryker.conf.js
-module.exports = {
-  testRunner: 'foo', // name of your test runner
-  plugins: ['@stryker-mutator/*', require.resolve('../my-plugin')], // load your test runner here
-  concurrency: 1, // useful for debugging your 
-  testRunnerNodeArgs: ['--inspect'] // useful for debugging your test runner plugin
+// stryker.conf.json
+{
+  "testRunner": 'foo', // name of your test runner
+  "plugins": ["@stryker-mutator/*", "../my-plugin/index.js"], // load your test runner here
+  "timeoutMS": 99999, // useful for debugging your  
+  "concurrency": 1, // useful for debugging your 
+  "testRunnerNodeArgs": ["--inspect"] // useful for debugging your test runner plugin
 };
 ```
 
@@ -136,7 +136,7 @@ See this example below.
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginContext } from '@stryker-mutator/api/plugin';
-import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import * as pluginTokens from './plugin-tokens';
 import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader';
 
@@ -145,8 +145,7 @@ export class FooTestRunner implements TestRunner {
     commonTokens.logger,
     commonTokens.options,
     pluginTokens.configLoader,
-    pluginTokens.processEnv,
-    pluginTokens.fooTestRunnerVersion
+    pluginTokens.processEnv
   ] as const;
   
   constructor(
@@ -154,8 +153,11 @@ export class FooTestRunner implements TestRunner {
     private readonly options: StrykerOptions,
     private readonly configLoader: FooTestRunnerConfigFileLoader,
     private readonly processEnvRef: NodeJS.ProcessEnv,
-    private readonly fooTestRunnerVersion: string
   ) { }
+
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: false };
+  }
 
   public init(): Promise<void> {
     // TODO: Implement or remove
@@ -178,7 +180,6 @@ export class FooTestRunner implements TestRunner {
 export function fooTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
     .provideValue(pluginTokens.processEnv, process.env)
-    .provideValue(pluginTokens.fooTestRunnerVersion, require('foo/package.json').version as string)
     .provideClass(pluginTokens.configLoader, FooTestRunnerConfigFileLoader)
     .injectClass(FooTestRunner);
 }

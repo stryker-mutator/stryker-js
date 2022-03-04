@@ -1,22 +1,26 @@
 import { Task } from '@stryker-mutator/util';
 import type { Config, ConfigOptions } from 'karma';
 
-import { karma } from '../karma-wrapper';
+import { strykerKarmaConfigPath } from '../karma-plugins/index.js';
+import { karma } from '../karma-wrapper.js';
 
-import { StartedProject } from './started-project';
+import type { ProjectStarter } from './project-starter.js';
+import type { StartedProject } from './started-project.js';
 
-export async function start(): Promise<StartedProject> {
-  const configFile = require.resolve('./stryker-karma.conf');
-  let config: Config | ConfigOptions = {
-    configFile,
-  };
-  if (karma.config?.parseConfig) {
-    config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
-  }
+export const karmaConfigStarter: ProjectStarter = {
+  async start(): Promise<StartedProject> {
+    const configFile = strykerKarmaConfigPath;
+    let config: Config | ConfigOptions = {
+      configFile,
+    };
+    if (karma.config?.parseConfig) {
+      config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
+    }
 
-  const exitTask = new Task<number>();
-  await new karma.Server(config, exitTask.resolve).start();
-  return {
-    exitPromise: exitTask.promise,
-  };
-}
+    const exitTask = new Task<number>();
+    await new karma.Server(config, exitTask.resolve).start();
+    return {
+      exitPromise: exitTask.promise,
+    };
+  },
+};

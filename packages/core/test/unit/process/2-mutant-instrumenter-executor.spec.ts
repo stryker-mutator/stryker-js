@@ -3,18 +3,16 @@ import { expect } from 'chai';
 import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { Instrumenter, InstrumentResult, InstrumenterOptions } from '@stryker-mutator/instrumenter';
-import { Checker } from '@stryker-mutator/api/check';
-
+import { Instrumenter, InstrumentResult, InstrumenterOptions, createInstrumenter } from '@stryker-mutator/instrumenter';
 import { I } from '@stryker-mutator/util';
 
-import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process';
-import { InputFileCollection } from '../../../src/input';
-import { coreTokens } from '../../../src/di';
-import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers';
-import { createCheckerFactory } from '../../../src/checker';
-import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox';
-import { Pool } from '../../../src/concurrent';
+import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
+import { InputFileCollection } from '../../../src/input/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
+import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
+import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
+import { Pool } from '../../../src/concurrent/index.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
@@ -24,7 +22,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
   let instrumentResult: InstrumentResult;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<Checker>>>;
+  let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let mutatedFile: File;
   let originalFile: File;
@@ -50,14 +48,14 @@ describe(MutantInstrumenterExecutor.name, () => {
     inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
     sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
-    injectorMock.injectClass.withArgs(Instrumenter).returns(instrumenterMock);
+    injectorMock.injectFunction.withArgs(createInstrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.resolve.withArgs(coreTokens.sandbox).returns(sandboxMock);
     injectorMock.resolve
       .withArgs(coreTokens.concurrencyTokenProvider)
       .returns(concurrencyTokenProviderMock)
       .withArgs(coreTokens.checkerPool)
-      .returns(checkerPoolMock as I<Pool<Checker>>);
+      .returns(checkerPoolMock);
     instrumenterMock.instrument.resolves(instrumentResult);
   });
 

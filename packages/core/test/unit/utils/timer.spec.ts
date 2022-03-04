@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { Timer } from '../../../src/utils/timer';
+import { Timer } from '../../../src/utils/timer.js';
 
 describe(Timer.name, () => {
   let clock: sinon.SinonFakeTimers;

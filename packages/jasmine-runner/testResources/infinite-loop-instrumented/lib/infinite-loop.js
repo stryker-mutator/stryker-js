@@ -61,7 +61,7 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-function loop(n, action) {
+export default function loop(n, action) {
   if (stryMutAct_9fa48("15")) {
     {}
   } else {
@@ -80,5 +80,3 @@ function loop(n, action) {
     }
   }
 }
-
-module.exports = loop;

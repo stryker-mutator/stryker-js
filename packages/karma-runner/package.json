@@ -1,14 +1,16 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "5.6.1",
+  "version": "6.0.0-beta.0",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "nyc npm run test:all",
+    "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha \"dist/test/unit/**/*.js\"",
-    "test:integration": "mocha --timeout 60000 --exit \"dist/test/integration/**/*.js\"",
-    "stryker": "node ../core/bin/stryker run"
+    "test:integration": "mocha --timeout 180000 --exit \"dist/test/integration/**/*.js\"",
+    "test:integration_comment": "echo 'Chrome.exe can be extremely slow to start on windows, which is why we choose this very high timeout'",
+    "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
     "type": "git",
@@ -33,7 +35,7 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "5.6.1",
+    "@stryker-mutator/test-helpers": "6.0.0-beta.0",
     "@types/express": "~4.17.0",
     "@types/node": "^17.0.0",
     "@types/semver": "~7.3.1",
@@ -45,12 +47,12 @@
     "karma-mocha": "~2.0.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~5.6.0"
+    "@stryker-mutator/core": "~6.0.0-beta.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "5.6.1",
-    "@stryker-mutator/util": "5.6.1",
-    "decamelize": "~5.0.0",
+    "@stryker-mutator/api": "6.0.0-beta.0",
+    "@stryker-mutator/util": "6.0.0-beta.0",
+    "decamelize": "~6.0.0",
     "semver": "~6.3.0",
     "tslib": "~2.3.0"
   },

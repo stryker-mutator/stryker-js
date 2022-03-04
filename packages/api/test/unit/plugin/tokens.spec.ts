@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { commonTokens, tokens } from '../../../src/plugin';
+import { commonTokens, tokens } from '../../../src/plugin/index.js';
 
 describe('tokens', () => {
   it('should return input as array', () => {
@@ -19,7 +19,5 @@ describe('commonTokens', () => {
   }
   itShouldProvideToken('options');
   itShouldProvideToken('logger');
-  itShouldProvideToken('pluginResolver');
-  itShouldProvideToken('produceSourceMaps');
   itShouldProvideToken('getLogger');
 });

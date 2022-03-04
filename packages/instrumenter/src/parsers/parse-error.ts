@@ -1,4 +1,4 @@
-import { types } from '@babel/core';
+import type { types } from '@babel/core';
 
 export class ParseError extends Error {
   constructor(message: string, fileName: string, location: types.SourceLocation['start']) {

@@ -2,7 +2,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { FailedTestResult, TestResult, SuccessTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { I } from '@stryker-mutator/util';
 
-import { Timer } from './timer';
+import { Timer } from './timer.js';
 
 export class StrykerMochaReporter {
   /*

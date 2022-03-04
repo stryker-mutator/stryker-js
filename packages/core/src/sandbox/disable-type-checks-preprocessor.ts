@@ -4,13 +4,13 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
-import { propertyPath, PropertyPathBuilder } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di';
-import { isWarningEnabled } from '../utils/object-utils';
-import { FileMatcher } from '../config';
+import { optionsPath } from '../utils/index.js';
+import { coreTokens } from '../di/index.js';
+import { objectUtils } from '../utils/object-utils.js';
+import { FileMatcher } from '../config/index.js';
 
-import { FilePreprocessor } from './file-preprocessor';
+import { FilePreprocessor } from './file-preprocessor.js';
 
 /**
  * Disabled type checking by inserting `@ts-nocheck` atop TS/JS files and removing other @ts-xxx directives from comments:
@@ -29,12 +29,12 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
           try {
             return await this.impl(file, { plugins: this.options.mutator.plugins });
           } catch (err) {
-            if (isWarningEnabled('preprocessorErrors', this.options.warnings)) {
+            if (objectUtils.isWarningEnabled('preprocessorErrors', this.options.warnings)) {
               warningLogged = true;
               this.log.warn(
                 `Unable to disable type checking for file "${
                   file.name
-                }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${propertyPath<StrykerOptions>(
+                }". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${optionsPath(
                   'disableTypeChecks'
                 )}" settings (or turn it completely off with \`false\`)`,
                 err
@@ -48,7 +48,7 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
       })
     );
     if (warningLogged) {
-      this.log.warn(`(disable "${PropertyPathBuilder.create<StrykerOptions>().prop('warnings').prop('preprocessorErrors')}" to ignore this warning`);
+      this.log.warn(`(disable "${optionsPath('warnings', 'preprocessorErrors')}" to ignore this warning`);
     }
     return outFiles;
   }

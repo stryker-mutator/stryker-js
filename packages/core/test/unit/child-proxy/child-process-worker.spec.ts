@@ -1,12 +1,16 @@
 import path from 'path';
+import { URL } from 'url';
 
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { commonTokens, PluginKind, Plugin } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { Task } from '@stryker-mutator/util';
+import type { createInjector, Injector } from 'typed-inject';
 
-import { ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker';
+import { ChildProcessContext, ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker.js';
 import {
   CallMessage,
   InitMessage,
@@ -15,16 +19,20 @@ import {
   WorkerMessage,
   WorkerMessageKind,
   WorkResult,
-} from '../../../src/child-proxy/message-protocol';
-import * as di from '../../../src/di';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging';
-import { serialize } from '../../../src/utils/string-utils';
-import { currentLogMock } from '../../helpers/log-mock';
-import { Mock } from '../../helpers/producers';
+} from '../../../src/child-proxy/message-protocol.js';
+import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import { serialize } from '../../../src/utils/string-utils.js';
+import { currentLogMock } from '../../helpers/log-mock.js';
+import { Mock } from '../../helpers/producers.js';
+import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
 
-import { HelloClass } from './hello-class';
+import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
+
+interface PrivateContext extends ChildProcessContext {
+  [coreTokens.pluginsByKind]: PluginLoader;
+}
 
 describe(ChildProcessProxyWorker.name, () => {
   let processOnStub: sinon.SinonStub;
@@ -32,13 +40,23 @@ describe(ChildProcessProxyWorker.name, () => {
   let processListenersStub: sinon.SinonStub;
   let configureChildProcessStub: sinon.SinonStub;
   let processRemoveListenerStub: sinon.SinonStub;
+  let injectorMock: sinon.SinonStubbedInstance<Injector<PrivateContext>>;
+  let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let processChdirStub: sinon.SinonStub;
+  let createInjectorStub: sinon.SinonStubbedMember<typeof createInjector>;
   let logMock: Mock<Logger>;
   let originalProcessSend: typeof process.send;
   let processes: NodeJS.MessageListener[];
+  let loadedPlugins: LoadedPlugins;
+  let pluginModulePaths: string[];
   const workingDir = 'working dir';
 
   beforeEach(() => {
+    injectorMock = factory.injector();
+    createInjectorStub = sinon.stub();
+    createInjectorStub.returns(injectorMock);
+    pluginLoaderMock = sinon.createStubInstance(PluginLoader);
+    injectorMock.injectClass.withArgs(PluginLoader).returns(pluginLoaderMock).withArgs(HelloClass).returns(new HelloClass(testInjector.options));
     processes = [];
     logMock = currentLogMock();
     processOnStub = sinon.stub(process, 'on');
@@ -46,12 +64,20 @@ describe(ChildProcessProxyWorker.name, () => {
     processListenersStub.returns(processes);
     processRemoveListenerStub = sinon.stub(process, 'removeListener');
     processSendStub = sinon.stub();
+    pluginModulePaths = ['plugin', 'paths'];
+    loadedPlugins = {
+      pluginModulePaths,
+      pluginsByKind: new Map<PluginKind, Array<Plugin<PluginKind>>>([
+        [PluginKind.Reporter, [{ kind: PluginKind.Reporter, name: 'rep', factory: factory.reporter }]],
+      ]),
+      schemaContributions: [],
+    };
+    pluginLoaderMock.load.resolves(loadedPlugins);
     // process.send is normally undefined
     originalProcessSend = process.send;
     process.send = processSendStub;
     processChdirStub = sinon.stub(process, 'chdir');
     configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
-    sinon.stub(di, 'buildChildProcessInjector').returns(testInjector.injector);
   });
 
   afterEach(() => {
@@ -59,7 +85,7 @@ describe(ChildProcessProxyWorker.name, () => {
   });
 
   it('should listen to parent process', () => {
-    new ChildProcessProxyWorker();
+    new ChildProcessProxyWorker(createInjectorStub);
     expect(processOnStub).calledWith('message');
   });
 
@@ -68,44 +94,43 @@ describe(ChildProcessProxyWorker.name, () => {
     let initMessage: InitMessage;
 
     beforeEach(() => {
-      sut = new ChildProcessProxyWorker();
-      const options = factory.strykerOptions();
+      sut = new ChildProcessProxyWorker(createInjectorStub);
+      const options = factory.strykerOptions({ testRunner: 'fooBar' });
       initMessage = {
-        additionalInjectableValues: { name: 'FooBarName' },
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
         options,
-        requireName: HelloClass.name,
-        requirePath: require.resolve('./hello-class'),
+        pluginModulePaths,
+        namedExport: HelloClass.name,
+        modulePath: new URL('./hello-class.js', import.meta.url).toString(),
         workingDirectory: workingDir,
       };
     });
 
-    it('should create the correct real instance', () => {
-      processOnMessage(initMessage);
+    it('should create the correct real instance', async () => {
+      await processOnMessage(initMessage);
       expect(sut.realSubject).instanceOf(HelloClass);
-      const actual = sut.realSubject as HelloClass;
-      expect(actual.name).eq('FooBarName');
+      sinon.assert.calledWithExactly(injectorMock.provideValue, commonTokens.options, initMessage.options);
+      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
     });
 
-    it('should change the current working directory', () => {
-      processOnMessage(initMessage);
+    it('should change the current working directory', async () => {
+      await processOnMessage(initMessage);
       const fullWorkingDir = path.resolve(workingDir);
       expect(logMock.debug).calledWith(`Changing current working directory for this process to ${fullWorkingDir}`);
       expect(processChdirStub).calledWith(fullWorkingDir);
     });
 
-    it("should not change the current working directory if it didn't change", () => {
+    it("should not change the current working directory if it didn't change", async () => {
       initMessage.workingDirectory = process.cwd();
-      processOnMessage(initMessage);
+      await processOnMessage(initMessage);
       expect(logMock.debug).not.called;
       expect(processChdirStub).not.called;
     });
 
     it('should send "init_done"', async () => {
-      processOnMessage(initMessage);
+      await processOnMessage(initMessage);
       const expectedWorkerResponse: ParentMessage = { kind: ParentMessageKind.Initialized };
-      await tick(); // make sure promise is resolved
       expect(processSendStub).calledWith(serialize(expectedWorkerResponse));
     });
 
@@ -117,7 +142,7 @@ describe(ChildProcessProxyWorker.name, () => {
       processes.push(noop);
 
       // Act
-      processOnMessage(initMessage);
+      await processOnMessage(initMessage);
       await tick(); // make sure promise is resolved
 
       // Assert
@@ -129,15 +154,15 @@ describe(ChildProcessProxyWorker.name, () => {
       expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
     });
 
-    it('should handle unhandledRejection events', () => {
-      processOnMessage(initMessage);
+    it('should handle unhandledRejection events', async () => {
+      await processOnMessage(initMessage);
       const error = new Error('foobar');
       processOnStub.withArgs('unhandledRejection').callArgWith(1, error);
       expect(logMock.debug).calledWith(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${error}`);
     });
 
-    it('should handle rejectionHandled events', () => {
-      processOnMessage(initMessage);
+    it('should handle rejectionHandled events', async () => {
+      await processOnMessage(initMessage);
       processOnStub.withArgs('rejectionHandled').callArgWith(1);
       expect(logMock.debug).calledWith('PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 0)');
     });
@@ -145,21 +170,21 @@ describe(ChildProcessProxyWorker.name, () => {
     describe('on worker message', () => {
       async function actAndAssert(workerMessage: CallMessage, expectedResult: WorkResult) {
         // Act
-        processOnMessage(initMessage);
-        processOnMessage(workerMessage);
-        await tick();
+        await processOnMessage(initMessage);
+
+        await processOnMessage(workerMessage);
         // Assert
         expect(processSendStub).calledWith(serialize(expectedResult));
       }
 
       async function actAndAssertRejection(workerMessage: CallMessage, expectedError: string) {
         // Act
-        processOnMessage(initMessage);
-        processOnMessage(workerMessage);
-        await tick();
+        await processOnMessage(initMessage);
+
+        await processOnMessage(workerMessage);
         // Assert
         expect(processSendStub).calledWithMatch(`"correlationId":${workerMessage.correlationId.toString()}`);
-        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.Rejection.toString()}`);
+        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.CallRejection.toString()}`);
         expect(processSendStub).calledWithMatch(`"error":"Error: ${expectedError}`);
       }
 
@@ -173,8 +198,8 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
-          result: 'hello from FooBarName',
+          kind: ParentMessageKind.CallResult,
+          result: 'hello from HelloClass',
         };
 
         await actAndAssert(workerMessage, expectedResult);
@@ -212,7 +237,7 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
+          kind: ParentMessageKind.CallResult,
           result: 'hello foo and bar and chair',
         };
 
@@ -229,8 +254,8 @@ describe(ChildProcessProxyWorker.name, () => {
         };
         const expectedResult: WorkResult = {
           correlationId: 32,
-          kind: ParentMessageKind.Result,
-          result: 'delayed hello from FooBarName',
+          kind: ParentMessageKind.CallResult,
+          result: 'delayed hello from HelloClass',
         };
 
         await actAndAssert(workerMessage, expectedResult);
@@ -239,7 +264,10 @@ describe(ChildProcessProxyWorker.name, () => {
   });
 
   function processOnMessage(message: WorkerMessage) {
+    const task = new Task();
+    processSendStub.callsFake(task.resolve);
     processOnStub.withArgs('message').callArgWith(1, [serialize(message)]);
+    return task.promise;
   }
 });
 

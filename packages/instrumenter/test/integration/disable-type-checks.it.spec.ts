@@ -5,9 +5,9 @@ import chaiJestSnapshot from 'chai-jest-snapshot';
 
 import { File } from '@stryker-mutator/api/core';
 
-import { disableTypeChecks } from '../../src';
-import { createInstrumenterOptions } from '../helpers/factories';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { disableTypeChecks } from '../../src/index.js';
+import { createInstrumenterOptions } from '../helpers/factories.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe(`${disableTypeChecks.name} integration`, () => {
   it('should be able disable type checks of a typescript file', async () => {

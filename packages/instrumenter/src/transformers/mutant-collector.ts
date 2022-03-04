@@ -1,7 +1,7 @@
-import { types } from '@babel/core';
+import type { types } from '@babel/core';
 
-import { Mutant, Mutable } from '../mutant';
-import { Offset } from '../syntax';
+import { Mutant, Mutable } from '../mutant.js';
+import { Offset } from '../syntax/index.js';
 
 export class MutantCollector {
   private readonly _mutants: Mutant[] = [];

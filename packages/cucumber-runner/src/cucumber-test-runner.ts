@@ -1,3 +1,5 @@
+import { createRequire } from 'module';
+
 import { Logger } from '@stryker-mutator/api/logging';
 import {
   commonTokens,
@@ -15,6 +17,7 @@ import {
   MutantRunResult,
   TestResult,
   TestRunner,
+  TestRunnerCapabilities,
   TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
@@ -25,12 +28,11 @@ import {
 } from '@stryker-mutator/api/core';
 import { DirectoryRequireCache } from '@stryker-mutator/util';
 
-import { CucumberSetup } from '../src-generated/cucumber-runner-options';
+import { CucumberSetup } from '../src-generated/cucumber-runner-options.js';
 
-import { CucumberRunnerWithStrykerOptions } from './cucumber-runner-with-stryker-options';
-import { Cli } from './cucumber-wrapper';
-import StrykerFormatter from './stryker-formatter';
-import * as pluginTokens from './plugin-tokens';
+import { CucumberRunnerWithStrykerOptions } from './cucumber-runner-with-stryker-options.js';
+import { Cli } from './cjs/cucumber-wrapper.js';
+import * as pluginTokens from './plugin-tokens.js';
 
 cucumberTestRunnerFactory.inject = [commonTokens.injector];
 export function cucumberTestRunnerFactory(
@@ -43,6 +45,13 @@ export function cucumberTestRunnerFactory(
     )
     .injectClass(CucumberTestRunner);
 }
+
+const require_ = createRequire(import.meta.url);
+const strykerFormatterFile = require_.resolve('./cjs/stryker-formatter');
+
+// Workaround while the StrykerFormatter needs to be a commonjs module
+const StrykerFormatter: typeof import('./cjs/stryker-formatter').default =
+  require_('./cjs/stryker-formatter.js').default;
 
 export class CucumberTestRunner implements TestRunner {
   public static inject = tokens(
@@ -67,6 +76,10 @@ export class CucumberTestRunner implements TestRunner {
 
   private readonly directoryRequireCache = new DirectoryRequireCache();
 
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
+  }
+
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     StrykerFormatter.coverageAnalysis = options.coverageAnalysis;
     const result = await this.run(options.disableBail);
@@ -83,8 +96,7 @@ export class CucumberTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = options.hitLimit;
     this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     return toMutantRunResult(
-      await this.run(options.disableBail, options.testFilter),
-      true
+      await this.run(options.disableBail, options.testFilter)
     );
   }
 
@@ -104,7 +116,7 @@ export class CucumberTestRunner implements TestRunner {
       '--parallel',
       '0',
       '--format',
-      require.resolve('./stryker-formatter'),
+      strykerFormatterFile,
       ...bailArgs,
       ...tagsArgs,
       ...profileArgs,

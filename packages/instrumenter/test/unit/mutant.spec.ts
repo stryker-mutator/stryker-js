@@ -1,12 +1,17 @@
-import { types } from '@babel/core';
+import babel from '@babel/core';
 import generator from '@babel/generator';
 import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { Mutant } from '../../src/mutant';
-import { createJSAst } from '../helpers/factories';
-import { parseJS, findNodePath } from '../helpers/syntax-test-helpers';
+import { Mutant } from '../../src/mutant.js';
+import { createJSAst } from '../helpers/factories.js';
+import { parseJS, findNodePath } from '../helpers/syntax-test-helpers.js';
+
+const { types } = babel;
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
 
 describe(Mutant.name, () => {
   describe('constructor', () => {
@@ -62,7 +67,7 @@ describe(Mutant.name, () => {
 
     it('should offset location correctly', () => {
       // Arrange
-      const lt = findNodePath<types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
+      const lt = findNodePath<babel.types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
       const lte = types.binaryExpression('<=', lt.left, lt.right);
       const mutant = new Mutant('1', 'bar.js', lt, { replacement: lte, mutatorName: 'barMutator' }, { position: 42, line: 4 });
 
@@ -93,9 +98,9 @@ describe(Mutant.name, () => {
       const appliedMutant = mutant.applied(parent);
 
       // Assert
-      expect(generator(appliedMutant).code).eq('const c = a - b;');
+      expect(generate(appliedMutant).code).eq('const c = a - b;');
       // original AST should not be mutated
-      expect(generator(ast).code).eq('const c = a + b;');
+      expect(generate(ast).code).eq('const c = a + b;');
     });
   });
 });

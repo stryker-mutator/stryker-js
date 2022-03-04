@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, PropertyPathBuilder } from '../../src';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp } from '../../src/index.js';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -17,8 +17,12 @@ describe('stringUtils', () => {
     });
   });
 
-  describe(PropertyPathBuilder.name, () => {
+  describe(propertyPath.name, () => {
     interface Foo {
+      bar: string;
+      [name: string]: string;
+    }
+    interface Bar {
       bar: {
         baz: string;
       };
@@ -27,32 +31,40 @@ describe('stringUtils', () => {
         quux: string;
       };
     }
-
-    it('should be able to point to a path', () => {
-      const path = PropertyPathBuilder.create<Foo>().prop('bar').prop('baz');
-      expect(path.build()).eq('bar.baz');
-      expect(path.toString()).eq('bar.baz');
-    });
-
-    it('should not be able to point to a path non-existing path', () => {
-      // @ts-expect-error Argument of type '"bar"' is not assignable to parameter of type '"quux"'.ts(2345)
-      PropertyPathBuilder.create<Foo>().prop('qux').prop('bar');
-    });
-  });
-
-  describe(propertyPath.name, () => {
-    interface Foo {
-      bar: string;
-      [name: string]: string;
+    interface Baz {
+      flags:
+        | false
+        | {
+            f1: boolean;
+            f2:
+              | false
+              | {
+                  f3: boolean;
+                };
+          };
     }
 
-    it('should be able to point to a path', () => {
-      expect(propertyPath<Foo>('bar')).eq('bar');
+    it('should be able to point to a path of lenght 1', () => {
+      expect(propertyPath<Foo>()('bar')).eq('bar');
     });
 
-    it('should not be able to point to a non-existing path', () => {
+    it('should not be able to point to a non-existing path of length 1', () => {
       // @ts-expect-error Argument of type '"baz"' is not assignable to parameter of type '"bar"'.ts(2345)
-      propertyPath<Foo>('baz');
+      propertyPath<Foo>()('baz');
+    });
+
+    it('should be able to point to a path of length 2', () => {
+      expect(propertyPath<Bar>()('bar', 'baz')).eq('bar.baz');
+    });
+
+    it('should not be able to point to a path non-existing path of length 2', () => {
+      // @ts-expect-error Argument of type '"bar"' is not assignable to parameter of type '"quux"'.ts(2345)
+      propertyPath<Bar>()('qux', 'bar');
+    });
+
+    it('should be able to point to a path of a union type', () => {
+      expect(propertyPath<Baz>()('flags', 'f1')).eq('flags.f1');
+      expect(propertyPath<Baz>()('flags', 'f2', 'f3')).eq('flags.f2.f3');
     });
   });
 

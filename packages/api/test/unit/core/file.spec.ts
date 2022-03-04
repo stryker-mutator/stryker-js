@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { File } from '../../../src/core';
+import { File } from '../../../src/core/index.js';
 
 describe('File', () => {
   it('should allow utf8 encoded string content in the constructor', () => {

@@ -4,9 +4,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
-import * as objectUtils from '../../../src/utils/object-utils';
-import { resolveFromRoot } from '../../helpers/test-utils';
+import { CommandTestRunner } from '../../../src/test-runner/command-test-runner.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
+import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 describe(`${CommandTestRunner.name} integration`, () => {
   const workingDir = resolveFromRoot('testResources', 'command-runner');
@@ -61,7 +61,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
       const sut = createSut({ command: 'npm run mutant' });
       const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }) });
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('all');
+      expect(result.killedBy).deep.eq(['all']);
     });
   });
 

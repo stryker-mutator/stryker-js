@@ -1,20 +1,20 @@
-import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
+import { factory, testInjector, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/index.js';
+import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('JasmineRunner integration with code instrumentation', () => {
   let sut: JasmineTestRunner;
+  let tmpDir: string;
 
-  beforeEach(() => {
-    process.chdir(resolveTestResource('jasmine-init-instrumented'));
+  beforeEach(async () => {
+    // Since jasmine uses `import`, we need to make sure to work from a different directory each time
+    tmpDir = resolveTempTestResourceDirectory();
+    await fsPromisesCp(resolveTestResource('jasmine-init-instrumented'), tmpDir, { recursive: true });
+    process.chdir(tmpDir);
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
-  });
-
-  afterEach(async () => {
-    await sut.dispose();
   });
 
   describe('dryRun', () => {
@@ -47,6 +47,11 @@ describe('JasmineRunner integration with code instrumentation', () => {
       assertions.expectKilled(result);
       expect(result.killedBy).deep.eq(['spec0']);
       expect(result.failureMessage).eq('Expected Player({ currentlyPlayingSong: Song({  }), isPlaying: false }) to be playing Song({  }).');
+    });
+
+    it('should be able to survive a mutant when the killing test is filtered out', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: ['spec1'] }));
+      assertions.expectSurvived(result);
     });
 
     it('should be able report "survive" when a mutant is invincible', async () => {

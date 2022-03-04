@@ -2,26 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}\\Gruntfile.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false
-    },
-    {
-      "name": "Run sample test",
+      "name": "🐷 Run sample test",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",

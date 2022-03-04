@@ -1,4 +1,6 @@
-import { types, traverse, NodePath, parseSync } from '@babel/core';
+import { createRequire } from 'module';
+
+import babel, { type NodePath, type types } from '@babel/core';
 import { expect } from 'chai';
 import generate from '@babel/generator';
 
@@ -8,6 +10,9 @@ import { File } from '@babel/core';
 /* eslint-enable @typescript-eslint/no-duplicate-imports */
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
+
+const require = createRequire(import.meta.url);
+const { traverse, parseSync } = babel;
 
 /**
  * This helper function loosely asserts an AST. During unit testing, we're not looking for exact AST comparison,

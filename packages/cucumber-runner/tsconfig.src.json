@@ -5,5 +5,10 @@
     "types": ["node"],
     "rootDir": "."
   },
-  "include": ["src", "src-generated", "schema/*.json", "typings"]
+  "include": ["src/*.ts", "src-generated", "schema/*.json", "typings"],
+  "references": [
+    {
+      "path": "./tsconfig.src.cjs.json"
+    }
+  ]
 }

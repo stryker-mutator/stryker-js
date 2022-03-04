@@ -1,9 +1,11 @@
 import { ParserPlugin } from '@babel/parser';
-import { parseAsync, types } from '@babel/core';
+import babel from '@babel/core';
 
-import { AstFormat, JSAst } from '../syntax';
+import { AstFormat, JSAst } from '../syntax/index.js';
 
-import { ParserOptions } from './parser-options';
+import { ParserOptions } from './parser-options.js';
+
+const { types, parseAsync } = babel;
 
 const defaultPlugins: ParserPlugin[] = [
   'doExpressions',

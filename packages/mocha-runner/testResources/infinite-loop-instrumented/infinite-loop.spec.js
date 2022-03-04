@@ -1,5 +1,5 @@
-var expect = require('chai').expect;
-var loop = require('./infinite-loop');
+import { expect } from 'chai';
+import loop from './infinite-loop.js';
 
 it('should handle an infinite loop as a timeout', () => {
   while (true);

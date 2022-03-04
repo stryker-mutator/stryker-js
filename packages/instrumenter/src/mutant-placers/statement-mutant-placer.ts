@@ -1,8 +1,10 @@
-import { types } from '@babel/core';
+import babel, { type types } from '@babel/core';
 
-import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers';
+import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers.js';
 
-import { MutantPlacer } from './mutant-placer';
+import { MutantPlacer } from './mutant-placer.js';
+
+const { types: t } = babel;
 
 /**
  * Mutant placer that places mutants in statements that allow it.
@@ -14,13 +16,13 @@ export const statementMutantPlacer: MutantPlacer<types.Statement> = {
     return path.isStatement();
   },
   place(path, appliedMutants) {
-    let statement: types.Statement = types.blockStatement([
-      types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+    let statement: types.Statement = t.blockStatement([
+      t.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
       ...(path.isBlockStatement() ? path.node.body : [path.node]),
     ]);
     for (const [mutant, appliedMutant] of appliedMutants) {
-      statement = types.ifStatement(mutantTestExpression(mutant.id), types.blockStatement([appliedMutant]), statement);
+      statement = t.ifStatement(mutantTestExpression(mutant.id), t.blockStatement([appliedMutant]), statement);
     }
-    path.replaceWith(path.isBlockStatement() ? types.blockStatement([statement]) : statement);
+    path.replaceWith(path.isBlockStatement() ? t.blockStatement([statement]) : statement);
   },
 };

@@ -1,4 +1,5 @@
-import { resolve } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 export function sleep(ms = 0): Promise<unknown> {
   return new Promise((res) => {
@@ -7,5 +8,5 @@ export function sleep(ms = 0): Promise<unknown> {
 }
 
 export function resolveFromRoot(...pathSegments: string[]): string {
-  return resolve(__dirname, '..', '..', '..', ...pathSegments);
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', ...pathSegments);
 }

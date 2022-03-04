@@ -1,10 +1,7 @@
 import { File } from '@stryker-mutator/api/core';
 import { assertions } from '@stryker-mutator/test-helpers';
-import sinon from 'sinon';
-import { expect } from 'chai';
 
-import * as parsers from '../../src/parsers';
-import { disableTypeChecks } from '../../src';
+import { disableTypeChecks } from '../../src/index.js';
 
 describe(disableTypeChecks.name, () => {
   describe('with TS or JS AST format', () => {
@@ -36,10 +33,9 @@ describe(disableTypeChecks.name, () => {
     });
 
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {
-      const createParserSpy = sinon.spy(parsers, 'createParser');
-      const inputFile = new File('foo.js', 'foo.bar();');
-      await disableTypeChecks(inputFile, { plugins: null });
-      expect(createParserSpy).not.called;
+      const inputFile = new File('foo.js', 'some garbage that cannot be parsed');
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
+      assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\nsome garbage that cannot be parsed'));
     });
 
     it('should remove @ts directives from a JS file', async () => {

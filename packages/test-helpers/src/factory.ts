@@ -18,7 +18,6 @@ import { Reporter, SourceFile } from '@stryker-mutator/api/report';
 import { calculateMutationTestMetrics, Metrics, MetricsResult, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
-import { PluginResolver } from '@stryker-mutator/api/plugin';
 import {
   MutantRunOptions,
   DryRunOptions,
@@ -67,14 +66,6 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 }
 
 export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
-
-export function pluginResolver(): sinon.SinonStubbedInstance<PluginResolver> {
-  return {
-    resolve: sinon.stub<any>(),
-    resolveAll: sinon.stub<any>(),
-    resolveValidationSchemaContributions: sinon.stub(),
-  };
-}
 
 export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
@@ -201,6 +192,7 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
 
 export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
   return {
+    capabilities: sinon.stub(),
     init: sinon.stub(),
     dryRun: sinon.stub(),
     mutantRun: sinon.stub(),
@@ -255,6 +247,8 @@ export const mutantRunOptions = factoryMethod<MutantRunOptions>(() => ({
   timeout: 2000,
   sandboxFileName: '.stryker-tmp/sandbox123/file',
   disableBail: false,
+  mutantActivation: 'static',
+  reloadEnvironment: false,
 }));
 
 export const dryRunOptions = factoryMethod<DryRunOptions>(() => ({
@@ -343,18 +337,17 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   static: false,
   replacement: '',
   location: location(),
-  estimatedNetTime: 42,
 }));
 
-export function injector(): sinon.SinonStubbedInstance<Injector> {
-  const injectorMock: sinon.SinonStubbedInstance<Injector> = {
+export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {
+  const injectorMock: sinon.SinonStubbedInstance<Injector<T>> = {
     dispose: sinon.stub(),
     injectClass: sinon.stub<any>(),
     injectFunction: sinon.stub<any>(),
     provideClass: sinon.stub<any>(),
     provideFactory: sinon.stub<any>(),
     provideValue: sinon.stub<any>(),
-    resolve: sinon.stub(),
+    resolve: sinon.stub<any>(),
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();

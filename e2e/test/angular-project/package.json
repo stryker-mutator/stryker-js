@@ -9,7 +9,7 @@
     "pretest": "rimraf reports",
     "test:unit": "ng test --watch=false --browsers=ChromeHeadless",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "private": true,
   "dependencies": {

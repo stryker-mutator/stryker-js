@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation';
-import { stringLiteralMutator as sut } from '../../../src/mutators/string-literal-mutator';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { stringLiteralMutator as sut } from '../../../src/mutators/string-literal-mutator.js';
 
 describe(sut.name, () => {
   it('should have name "StringLiteral"', () => {

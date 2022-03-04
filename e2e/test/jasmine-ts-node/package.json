@@ -4,7 +4,7 @@
   "scripts": {
     "test:unit": "jasmine",
     "test": "stryker run",
-    "posttest": "mocha --no-package --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "mocha": {
     "require": "ts-node/register/transpile-only",

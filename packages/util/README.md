@@ -9,3 +9,5 @@
 # StrykerJS Util
 
 Utility functions for StrykerJS plugins and/or core packages.
+
+Note: this is not designed to be for use outside of the StrykerJS ecosystem and thus does **NOT follow strict semver**. Use at your own risk.

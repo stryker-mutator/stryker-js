@@ -1,7 +1,5 @@
 // This file is generated with tasks/instrument-test-resources.js
- 'use strict';
-
-function stryNS_9fa48() {
+ function stryNS_9fa48() {
   var g = new Function("return this")();
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
@@ -122,4 +120,4 @@ MyMath.prototype.isNegativeNumber = function (number) {
   }
 };
 
-module.exports = MyMath;
+export default MyMath;

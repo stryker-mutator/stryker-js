@@ -1,15 +1,46 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "5.6.1",
+  "version": "6.0.0-beta.0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
+  "exports": {
+    "./check": "./dist/src/check/index.js",
+    "./core": "./dist/src/core/index.js",
+    "./logging": "./dist/src/logging/index.js",
+    "./plugin": "./dist/src/plugin/index.js",
+    "./report": "./dist/src/report/index.js",
+    "./test-runner": "./dist/src/test-runner/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "check": [
+        "./dist/src/check/index.d.ts"
+      ],
+      "core": [
+        "./dist/src/core/index.d.ts"
+      ],
+      "logging": [
+        "./dist/src/logging/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/src/plugin/index.d.ts"
+      ],
+      "report": [
+        "./dist/src/report/index.d.ts"
+      ],
+      "test-runner": [
+        "./dist/src/test-runner/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
-    "stryker": "node ../core/bin/stryker run",
-    "test": "nyc npm run test:unit",
+    "stryker": "node ../core/bin/stryker.js run",
+    "test": "c8 npm run test:unit",
     "test:unit": "mocha \"dist/test/unit/**/*.js\""
   },
   "keywords": [

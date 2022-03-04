@@ -1,5 +1,3 @@
-'use strict';
-
 const pi = 3 + .14;
 
 function MyMath() {
@@ -27,5 +25,5 @@ MyMath.prototype.isNegativeNumber = function(number) {
   return isNegative;
 };
 
-module.exports = MyMath;
+export default MyMath;
 

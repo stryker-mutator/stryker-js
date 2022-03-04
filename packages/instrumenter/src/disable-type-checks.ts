@@ -1,9 +1,9 @@
-import { types } from '@babel/core';
+import type { types } from '@babel/core';
 import { File } from '@stryker-mutator/api/core';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { createParser, getFormat, ParserOptions } from './parsers';
-import { AstFormat, HtmlAst, ScriptAst } from './syntax';
+import { createParser, getFormat, ParserOptions } from './parsers/index.js';
+import { AstFormat, HtmlAst, ScriptAst } from './syntax/index.js';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;

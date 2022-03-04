@@ -1,8 +1,11 @@
-import { declareClassPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { URL } from 'url';
+import fs from 'fs';
 
-import strykerValidationSchema from '../schema/karma-runner-options.json';
+import { declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-import { KarmaTestRunner } from './karma-test-runner';
+import { createKarmaTestRunner } from './karma-test-runner.js';
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.TestRunner, 'karma', KarmaTestRunner)];
-export { strykerValidationSchema };
+export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'karma', createKarmaTestRunner)];
+export const strykerValidationSchema: typeof import('../schema/karma-runner-options.json') = JSON.parse(
+  fs.readFileSync(new URL('../schema/karma-runner-options.json', import.meta.url), 'utf-8')
+);

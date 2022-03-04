@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
-import { transformHtml } from '../../../src/transformers/html-transformer';
-import { MutantCollector } from '../../../src/transformers/mutant-collector';
-import { createHtmlAst, createJSAst, createTSAst } from '../../helpers/factories';
-import { transformerContextStub } from '../../helpers/stubs';
+import { transformHtml } from '../../../src/transformers/html-transformer.js';
+import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
+import { createHtmlAst, createJSAst, createTSAst } from '../../helpers/factories.js';
+import { transformerContextStub } from '../../helpers/stubs.js';
 
 describe('transformHtml', () => {
   it('should transform the scripts', () => {

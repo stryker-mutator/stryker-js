@@ -1,9 +1,5 @@
-import * as coreTokens from './core-tokens';
+export * as coreTokens from './core-tokens.js';
 
-export * from './build-main-injector';
-export * from './build-child-process-injector';
-export * from './plugin-creator';
-export * from './plugin-loader';
-export * from './factory-methods';
-export * from './provide-logger';
-export { coreTokens };
+export * from './plugin-loader.js';
+export * from './provide-logger.js';
+export * from './plugin-creator.js';

@@ -2,7 +2,7 @@ import { MutantRunOptions, MutantRunResult, TestRunner } from '@stryker-mutator/
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { TestRunnerDecorator } from './test-runner-decorator';
+import { TestRunnerDecorator } from './test-runner-decorator.js';
 
 /**
  * Wraps a test runner and implements the retry functionality.

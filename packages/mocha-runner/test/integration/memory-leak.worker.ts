@@ -1,10 +1,12 @@
+import { fileURLToPath } from 'url';
+
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { expect } from 'chai';
 import { DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { createMochaTestRunnerFactory } from '../../src';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { createMochaTestRunnerFactory } from '../../src/index.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 /**
  * This file will run the mocha runner a number of times in a test suite that is designed
@@ -16,7 +18,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource';
  * @see https://stackoverflow.com/questions/30252905/nodejs-decrease-v8-garbage-collector-memory-usage
  */
 
-if (require.main === module) {
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
   main().catch((err) => {
     console.error(err);
     process.exitCode = 1;

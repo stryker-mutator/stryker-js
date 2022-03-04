@@ -3,10 +3,10 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
 import semver from 'semver';
 
-import { jestVersion } from '../plugin-tokens';
+import { jestVersion } from '../plugin-tokens.js';
 
-import { JestLessThan25TestAdapter } from './jest-less-than-25-adapter';
-import { JestGreaterThan25TestAdapter } from './jest-greater-than-25-adapter';
+import { JestLessThan25TestAdapter } from './jest-less-than-25-adapter.js';
+import { JestGreaterThan25TestAdapter } from './jest-greater-than-25-adapter.js';
 
 export function jestTestAdapterFactory(
   log: Logger,

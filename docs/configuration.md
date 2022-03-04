@@ -183,6 +183,28 @@ If a glob pattern starts with `/`, the pattern is relative to the current workin
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
 
+### `ignoreStatic` [`boolean`]
+
+Default: `false`<br />
+Command line: `--ignoreStatic`<br />
+Config file: `"ignoreStatic": true`<br />
+
+Static mutants are mutants which are only executed during the loading of a file. Testing these mutants come with a big performance penalty. Therefore, it might make sense to ignore static mutants altogether.
+
+For example:
+
+```js
+const hi = '👋'; // Mutant 👽 StringLiteral
+
+export function greet(name) {
+  return `${hi} ${name}`
+}
+```
+
+In this example, `'👋'` on line 1 would be mutated to an empty string by the StringLiteral mutator. However, the mutant is only executed _when the file is loaded_, making it a static mutant. It is impossible to measure the exact code coverage per test for the mutant. Therefore, Stryker would default to running all tests.
+
+_Note:_ Enabling `--ignoreStatic` requires `"coverageAnalysis": "perTest"`, because detecting which mutant is static is done during the initial test run and needs per test coverage analysis.
+
 ### `inPlace` [`boolean`]
 
 Default: `false`<br />
@@ -258,7 +280,7 @@ Default: `['@stryker-mutator/*']`<br />
 Command line: `--plugins @stryker-mutator/jasmine-framework,@stryker-mutator/karma-runner`<br />
 Config file: `"plugins": ["@stryker-mutator/jasmine-framework", "@stryker-mutator/karma-runner"]`
 
-With `plugins`, you can add additional Node modules for Stryker to load (or `require`).
+With `plugins`, you can add additional Node modules for Stryker to load (using `import`).
 By default, all `node_modules` starting with `@stryker-mutator/*` will be loaded, so you would normally not need to specify this option.
 These modules should be installed right next to stryker. For a current list of plugins,
 you can consult [npm](https://www.npmjs.com/search?q=stryker-plugin) or use one of the officially supported plugins.
@@ -274,7 +296,7 @@ These reporters can be used out of the box: `html`, `json`, `progress`, `clear-t
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
-The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { baseDir: 'mypath/reports/stryker' }`
+The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { fileName: 'mypath/reports/stryker.html' }` (since Stryker v6).
 
 The `json` reporter allows specifying an output file name (may also contain a path). The config for your config file is: `jsonReporter: { fileName: 'mypath/reports/mutation.json' }`
 

@@ -2,12 +2,12 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { JestOptions } from '../../src-generated/jest-runner-options';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import { jestTestRunnerFactory } from '../../src/jest-test-runner';
-import { createJestOptions } from '../helpers/producers';
+import { JestOptions } from '../../src-generated/jest-runner-options.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
+import { jestTestRunnerFactory } from '../../src/jest-test-runner.js';
+import { createJestOptions } from '../helpers/producers.js';
 
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('jest with config in child dir', () => {
   function createSut(overrides?: Partial<JestOptions>) {

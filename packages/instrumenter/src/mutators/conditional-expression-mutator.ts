@@ -1,8 +1,10 @@
-import { NodePath, types } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 
-import { NodeMutator } from './node-mutator';
+import { NodeMutator } from './node-mutator.js';
 
 const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
+
+const { types } = babel;
 
 export const conditionalExpressionMutator: NodeMutator = {
   name: 'ConditionalExpression',
@@ -61,6 +63,6 @@ function isTestOfCondition(path: NodePath): boolean {
   return parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
 }
 
-function isBooleanExpression(path: NodePath<types.Node>) {
+function isBooleanExpression(path: NodePath<babel.types.Node>) {
   return (path.isBinaryExpression() || path.isLogicalExpression()) && booleanOperators.includes(path.node.operator);
 }

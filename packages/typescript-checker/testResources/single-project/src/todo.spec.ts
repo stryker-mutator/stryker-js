@@ -1,4 +1,4 @@
-import { TodoList } from './todo';
+import { TodoList } from './todo.js';
 
 const list = new TodoList();
 const n: number = list.createTodoItem('Mow lawn', 'Mow moving forward.')

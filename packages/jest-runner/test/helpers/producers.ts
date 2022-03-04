@@ -3,9 +3,9 @@ import type { EnvironmentContext } from '@jest/environment';
 import { Circus, Config } from '@jest/types';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { JestOptions } from '../../src-generated/jest-runner-options';
-import { JestRunResult } from '../../src/jest-run-result';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
+import { JestOptions } from '../../src-generated/jest-runner-options.js';
+import { JestRunResult } from '../../src/jest-run-result.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
 
 export const createJestRunnerOptionsWithStrykerOptions = (overrides?: Partial<JestOptions>): JestRunnerOptionsWithStrykerOptions => {
   return factory.strykerWithPluginOptions({ jest: createJestOptions(overrides) });

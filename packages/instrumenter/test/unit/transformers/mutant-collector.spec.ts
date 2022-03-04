@@ -1,9 +1,11 @@
 import { expect } from 'chai';
-import { types } from '@babel/core';
+import babel from '@babel/core';
 
-import { MutantCollector } from '../../../src/transformers/mutant-collector';
-import { createMutant } from '../../helpers/factories';
-import { Offset } from '../../../src/syntax';
+import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
+import { createMutant } from '../../helpers/factories.js';
+import { Offset } from '../../../src/syntax/index.js';
+
+const { types } = babel;
 
 describe(MutantCollector.name, () => {
   let sut: MutantCollector;

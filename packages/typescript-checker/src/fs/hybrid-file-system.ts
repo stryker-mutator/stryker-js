@@ -3,9 +3,9 @@ import { Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
-import { toPosixFileName } from '../tsconfig-helpers';
+import { toPosixFileName } from '../tsconfig-helpers.js';
 
-import { ScriptFile } from './script-file';
+import { ScriptFile } from './script-file.js';
 
 /**
  * A very simple hybrid file system.

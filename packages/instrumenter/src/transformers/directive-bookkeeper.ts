@@ -1,4 +1,4 @@
-import { types } from '@babel/core';
+import type { types } from '@babel/core';
 import { notEmpty } from '@stryker-mutator/util';
 
 const WILDCARD = 'all';

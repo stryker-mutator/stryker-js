@@ -1,21 +1,39 @@
-import { Injector, tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { Instrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
+import { Injector, tokens, commonTokens, BaseContext } from '@stryker-mutator/api/plugin';
+import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { File, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { MainContext, coreTokens } from '../di';
-import { InputFileCollection } from '../input';
-import { Sandbox } from '../sandbox/sandbox';
-import { LoggingClientContext } from '../logging';
+import { Reporter } from '@stryker-mutator/api/src/report';
 
-import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent';
-import { createCheckerFactory } from '../checker';
-import { createPreprocessor } from '../sandbox';
+import { I } from '@stryker-mutator/util';
 
-import { DryRunContext } from './3-dry-run-executor';
+import { execaCommand } from 'execa';
 
-export interface MutantInstrumenterContext extends MainContext {
+import { coreTokens } from '../di/index.js';
+import { InputFileCollection } from '../input/index.js';
+import { Sandbox } from '../sandbox/sandbox.js';
+import { LoggingClientContext } from '../logging/index.js';
+
+import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
+import { createCheckerFactory } from '../checker/index.js';
+import { createPreprocessor } from '../sandbox/index.js';
+
+import { Timer } from '../utils/timer.js';
+import { TemporaryDirectory } from '../utils/temporary-directory.js';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
+
+import { DryRunContext } from './3-dry-run-executor.js';
+
+export interface MutantInstrumenterContext extends BaseContext {
+  [commonTokens.options]: StrykerOptions;
   [coreTokens.inputFiles]: InputFileCollection;
   [coreTokens.loggingContext]: LoggingClientContext;
+  [coreTokens.reporter]: Required<Reporter>;
+  [coreTokens.timer]: I<Timer>;
+  [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
+  [coreTokens.execa]: typeof execaCommand;
+  [coreTokens.process]: NodeJS.Process;
+  [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
+  [coreTokens.pluginModulePaths]: readonly string[];
 }
 
 export class MutantInstrumenterExecutor {
@@ -28,7 +46,7 @@ export class MutantInstrumenterExecutor {
 
   public async execute(): Promise<Injector<DryRunContext>> {
     // Create the checker and instrumenter
-    const instrumenter = this.injector.injectClass(Instrumenter);
+    const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
     const instrumentResult = await instrumenter.instrument(this.inputFiles.filesToMutate, {

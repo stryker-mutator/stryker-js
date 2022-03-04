@@ -1,7 +1,11 @@
-import { MochaOptions } from '../src-generated/mocha-runner-options';
+import { URL } from 'url';
+import fs from 'fs';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-import mochaSchema = require('../schema/mocha-runner-options.json');
+import { MochaOptions } from '../src-generated/mocha-runner-options.js';
+
+const mochaSchema: typeof import('../schema/mocha-runner-options.json') = JSON.parse(
+  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8')
+);
 
 export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
   const args: string[] = [];

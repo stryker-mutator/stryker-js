@@ -20,7 +20,7 @@ export interface KilledMutantRunResult {
   /**
    * An array with the ids of the tests that killed this mutant
    */
-  killedBy: string[] | string;
+  killedBy: string[];
   /**
    * The failure message that was reported by first the test
    */

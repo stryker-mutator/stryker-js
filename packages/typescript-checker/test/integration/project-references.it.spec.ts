@@ -2,17 +2,19 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 
+import { fileURLToPath } from 'url';
+
 import { expect } from 'chai';
 import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
-import { createTypescriptChecker } from '../../src';
-import { TypescriptChecker } from '../../src/typescript-checker';
+import { createTypescriptChecker } from '../../src/index.js';
+import { TypescriptChecker } from '../../src/typescript-checker.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
-  __dirname,
+  path.dirname(fileURLToPath(import.meta.url)),
   '..' /* integration */,
   '..' /* test */,
   '..' /* dist */,
@@ -34,20 +36,16 @@ describe('Typescript checker on a project with project references', () => {
   });
 
   it('should be able to validate a mutant', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
-    const actualResult = await sut.check(mutant);
+    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43', 'mutId');
+    const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
+    const actualResult = await sut.check([mutant]);
     expect(actualResult).deep.eq(expectedResult);
   });
 
   it('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42');
-    const expectedResult: CheckResult = {
-      status: CheckStatus.Passed,
-    };
-    const actual = await sut.check(mutant);
+    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42', 'mutId');
+    const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
+    const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
 });
@@ -57,7 +55,7 @@ const fileContents = Object.freeze({
   ['test/todo.spec.ts']: fs.readFileSync(resolveTestResource('test', 'todo.spec.ts'), 'utf8'),
 });
 
-function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, offset = 0): Mutant {
+function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
   const lines = fileContents[fileName].split(os.EOL);
   const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {
@@ -69,6 +67,7 @@ function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: s
     end: { line: lineNumber, column: textColumn + findText.length },
   };
   return factory.mutant({
+    id,
     fileName: resolveTestResource('src', fileName),
     mutatorName: 'foo-mutator',
     location,

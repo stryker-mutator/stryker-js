@@ -25,11 +25,7 @@ export interface Mutant extends Pick<schema.MutantResult, 'id' | 'location' | 'm
 /**
  * Represents a mutant in its matched-with-the-tests state, ready to be tested.
  */
-export type MutantTestCoverage = Mutant &
-  Pick<schema.MutantResult, 'coveredBy' | 'static'> & {
-    estimatedNetTime: number;
-    hitCount?: number;
-  };
+export type MutantTestCoverage = Mutant & Pick<schema.MutantResult, 'coveredBy' | 'static'>;
 
 /**
  * Represents a mutant in its final state, ready to be reported.

@@ -9,7 +9,7 @@ import chalk from 'chalk';
 
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
-import { ClearTextReporter } from '../../../src/reporters/clear-text-reporter';
+import { ClearTextReporter } from '../../../src/reporters/clear-text-reporter.js';
 
 describe(ClearTextReporter.name, () => {
   let sut: ClearTextReporter;

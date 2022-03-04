@@ -1,0 +1,8 @@
+{
+  "testRunner": "custom",
+  "concurrency": 1,
+  "coverageAnalysis": "perTest",
+  "fileLogLevel": "trace",
+  "reporters": ["json", "clear-text", "html", "event-recorder"],
+  "plugins": ["./custom-test-runner.mjs"]
+}

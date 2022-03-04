@@ -1,12 +1,15 @@
 import path from 'path';
-import url from 'url';
+import url, { fileURLToPath } from 'url';
 
 import { RequestHandler } from 'express';
 import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
-export const TEST_HOOKS_FILE_NAME = require.resolve('./test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0');
+export const TEST_HOOKS_FILE_NAME = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  'test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0.js'
+);
 const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);
 
 const SUPPORTED_FRAMEWORKS = Object.freeze(['mocha', 'jasmine'] as const);

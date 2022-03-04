@@ -1,6 +1,6 @@
-import { Position } from '../core';
+import { Position } from '../core/index.js';
 
-import { TestStatus } from './test-status';
+import { TestStatus } from './test-status.js';
 
 /**
  * Indicates the result of a single test

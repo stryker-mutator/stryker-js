@@ -2,11 +2,11 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { JestOptions } from '../../src-generated/jest-runner-options';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import { JestTestRunner, createJestTestRunnerFactory } from '../../src/jest-test-runner';
-import { createJestOptions } from '../helpers/producers';
-import { resolveTestResource } from '../helpers/resolve-test-resource';
+import { JestOptions } from '../../src-generated/jest-runner-options.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
+import { JestTestRunner, createJestTestRunnerFactory } from '../../src/jest-test-runner.js';
+import { createJestOptions } from '../helpers/producers.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const jestTestRunnerFactory = createJestTestRunnerFactory('__stryker2__');
 
@@ -123,7 +123,7 @@ describe('JestTestRunner coverage analysis integration', () => {
             })
           );
           assertions.expectKilled(result);
-          expect(result.killedBy).eq('Add should be able to recognize a negative number');
+          expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
           expect(result.nrOfTests).eq(1);
         });
 
@@ -262,7 +262,7 @@ describe('JestTestRunner coverage analysis integration', () => {
             })
           );
           assertions.expectKilled(result);
-          expect(result.killedBy).eq('Add should be able to recognize a negative number');
+          expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
           expect(result.nrOfTests).eq(1);
         });
 

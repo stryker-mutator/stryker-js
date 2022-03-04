@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit test/**/*.ts src/**/*.spec.ts",
     "test": "stryker run",
-    "posttest": "mocha --require ../../tasks/ts-node-register.js --no-package verify/verify.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "dependencies": {
     "core-js": "~3.19.2",

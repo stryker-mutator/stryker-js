@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { equalityOperatorMutator as sut } from '../../../src/mutators/equality-operator-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { equalityOperatorMutator as sut } from '../../../src/mutators/equality-operator-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "EqualityOperator"', () => {

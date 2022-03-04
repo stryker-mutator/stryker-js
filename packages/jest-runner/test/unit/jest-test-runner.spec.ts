@@ -1,31 +1,34 @@
 import path from 'path';
 
+import { fileURLToPath, URL } from 'url';
+
+import { createRequire } from 'module';
+
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
-import * as util from '@stryker-mutator/util';
 
-import { JestTestAdapter } from '../../src/jest-test-adapters';
-import { JestTestRunner } from '../../src/jest-test-runner';
-import * as producers from '../helpers/producers';
-import * as pluginTokens from '../../src/plugin-tokens';
-import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader';
-import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options';
-import { JestRunResult } from '../../src/jest-run-result';
-import { state } from '../../src/messaging';
-import { jestWrapper } from '../../src/utils';
+import { Task } from '@stryker-mutator/util';
+
+import { JestTestAdapter } from '../../src/jest-test-adapters/index.js';
+import { JestTestRunner } from '../../src/jest-test-runner.js';
+import * as producers from '../helpers/producers.js';
+import * as pluginTokens from '../../src/plugin-tokens.js';
+import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader.js';
+import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
+import { JestRunResult } from '../../src/jest-run-result.js';
+import { state } from '../../src/jest-plugins/cjs/messaging.js';
+import { jestWrapper } from '../../src/utils/index.js';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
 
   let jestTestAdapterMock: sinon.SinonStubbedInstance<JestTestAdapter>;
   let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
-  let processEnvMock: NodeJS.ProcessEnv;
   let options: JestRunnerOptionsWithStrykerOptions;
-  let requireResolveStub: sinon.SinonStubbedMember<typeof util.requireResolve>;
   let jestRunResult: JestRunResult;
 
   beforeEach(() => {
@@ -35,17 +38,12 @@ describe(JestTestRunner.name, () => {
     jestTestAdapterMock.run.resolves(jestRunResult);
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
-    requireResolveStub = sinon.stub(util, 'requireResolve');
 
     options.jest = {
       enableFindRelatedTests: true,
       projectType: 'custom',
     };
     options.basePath = basePath;
-
-    processEnvMock = {
-      NODE_ENV: undefined,
-    };
   });
 
   describe('constructor', () => {
@@ -62,6 +60,13 @@ describe(JestTestRunner.name, () => {
       expect(testInjector.logger.debug).calledWith(
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
+    });
+  });
+
+  describe('capabilities', () => {
+    it('should communicate reloadEnvironment=true', () => {
+      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      expect(createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
 
@@ -95,7 +100,7 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should set bail = false when disableBail', async () => {
+    it("should set bail = false (process is exited if we don't)", async () => {
       const sut = createSut();
       await sut.dryRun({ coverageAnalysis: 'off' });
       expect(jestTestAdapterMock.run).calledWithMatch(
@@ -256,29 +261,6 @@ describe(JestTestRunner.name, () => {
       expect(result).to.deep.equal(expectedRunResult);
     });
 
-    it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {
-      const sut = createSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-
-      expect(processEnvMock.NODE_ENV).to.equal('test');
-    });
-
-    it('should keep the value set in process.env.NODE_ENV if not null', async () => {
-      const sut = createSut();
-      processEnvMock.NODE_ENV = 'stryker';
-
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-
-      expect(processEnvMock.NODE_ENV).to.equal('stryker');
-    });
-
-    it('should load "react-scripts/config/env.js" when projectType = create-react-app', async () => {
-      options.jest.projectType = 'create-react-app';
-      const sut = createSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-      expect(requireResolveStub).calledWith('react-scripts/config/env.js');
-    });
-
     it('should override verbose, collectCoverage, testResultsProcessor, notify and bail on all loaded configs', async () => {
       const sut = createSut();
       await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
@@ -320,7 +302,7 @@ describe(JestTestRunner.name, () => {
       it('should return the mutant coverage when coverage analysis != "off"', async () => {
         // Arrange
         const sut = createSut();
-        const runTask = new util.Task<JestRunResult>();
+        const runTask = new Task<JestRunResult>();
         jestTestAdapterMock.run.returns(runTask.promise);
         const expectedMutantCoverage: MutantCoverage = {
           static: { 0: 3, 1: 2 },
@@ -349,7 +331,9 @@ describe(JestTestRunner.name, () => {
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
-          jestConfig: sinon.match({ testEnvironment: require.resolve('../../src/jest-plugins/jest-environment-generic') }),
+          jestConfig: sinon.match({
+            testEnvironment: fileURLToPath(new URL('../../src/jest-plugins/cjs/jest-environment-generic.js', import.meta.url)),
+          }),
         });
         expect(state.jestEnvironment).eq(testEnvironment);
       });
@@ -375,7 +359,9 @@ describe(JestTestRunner.name, () => {
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
-          jestConfig: sinon.match({ setupFilesAfterEnv: [require.resolve('../../src/jest-plugins/jasmine2-setup-coverage-analysis')] }),
+          jestConfig: sinon.match({
+            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url))],
+          }),
         });
       });
 
@@ -386,7 +372,9 @@ describe(JestTestRunner.name, () => {
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
-          jestConfig: sinon.match({ setupFilesAfterEnv: [require.resolve('../../src/jest-plugins/jasmine2-setup-coverage-analysis')] }),
+          jestConfig: sinon.match({
+            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url))],
+          }),
         });
       });
 
@@ -411,6 +399,7 @@ describe(JestTestRunner.name, () => {
       });
 
       it('should not allow a full path to circus test runner for coverage analysis "perTest"', async () => {
+        const require = createRequire(import.meta.url);
         options.jest.config = { testRunner: require.resolve('jest-circus/runner') };
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
@@ -425,7 +414,11 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            setupFilesAfterEnv: [require.resolve('../../src/jest-plugins/jasmine2-setup-coverage-analysis'), 'setup/env.js', 'setup/unit.js'],
+            setupFilesAfterEnv: [
+              fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url)),
+              'setup/env.js',
+              'setup/unit.js',
+            ],
           }),
         });
       });
@@ -458,7 +451,7 @@ describe(JestTestRunner.name, () => {
 
       it('should reject if coverage analysis is enabled but coverage is not reported for all files', async () => {
         // Arrange
-        const runTask = new util.Task<JestRunResult>();
+        const runTask = new Task<JestRunResult>();
         const sut = createSut();
         jestTestAdapterMock.run.returns(runTask.promise);
 
@@ -595,7 +588,6 @@ describe(JestTestRunner.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(pluginTokens.processEnv, processEnvMock)
       .provideValue(pluginTokens.jestTestAdapter, jestTestAdapterMock as unknown as JestTestAdapter)
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)

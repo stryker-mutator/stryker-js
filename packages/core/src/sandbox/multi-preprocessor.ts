@@ -1,6 +1,6 @@
 import { File } from '@stryker-mutator/api/core';
 
-import { FilePreprocessor } from './file-preprocessor';
+import { FilePreprocessor } from './file-preprocessor.js';
 
 export class MultiPreprocessor implements FilePreprocessor {
   constructor(private readonly preprocessors: FilePreprocessor[]) {}

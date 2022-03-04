@@ -8,10 +8,10 @@ import { Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { coreTokens } from '../../../src/di';
-import { InputFileResolver } from '../../../src/input';
-import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter';
-import { Mock, mock } from '../../helpers/producers';
+import { coreTokens } from '../../../src/di/index.js';
+import { InputFileResolver } from '../../../src/input/index.js';
+import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
+import { Mock, mock } from '../../helpers/producers.js';
 
 describe(InputFileResolver.name, () => {
   let reporterMock: Mock<BroadcastReporter>;

@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 
-import { print } from '../../../src/printers/js-printer';
-import { printerContextStub } from '../../helpers/stubs';
-import { createJSAst } from '../../helpers/factories';
-import { PrinterContext } from '../../../src/printers';
+import { print } from '../../../src/printers/js-printer.js';
+import { printerContextStub } from '../../helpers/stubs.js';
+import { createJSAst } from '../../helpers/factories.js';
+import { PrinterContext } from '../../../src/printers/index.js';
 
 describe('js-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;

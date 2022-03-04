@@ -6,9 +6,9 @@ import { testInjector, assertions, factory } from '@stryker-mutator/test-helpers
 import { expect } from 'chai';
 import { FilePattern } from 'karma';
 
-import { KarmaTestRunner } from '../../src/karma-test-runner';
-import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter';
-import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options';
+import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter.js';
+import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
 
 function setOptions({
   files = ['testResources/sampleProject/src-instrumented/Add.js', 'testResources/sampleProject/test-jasmine/AddSpec.js'],
@@ -29,7 +29,7 @@ function setOptions({
 }
 
 function createSut() {
-  return testInjector.injector.injectClass(KarmaTestRunner);
+  return testInjector.injector.injectFunction(createKarmaTestRunner);
 }
 
 describe(`${KarmaTestRunner.name} integration`, () => {

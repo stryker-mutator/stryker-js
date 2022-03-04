@@ -1,19 +1,21 @@
 import os from 'os';
+import path from 'path';
 
-import { hasMagic } from 'glob';
+import glob from 'glob';
 import Ajv, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, propertyPath, deepFreeze } from '@stryker-mutator/util';
+import { noopLogger, findUnserializables, Immutable, deepFreeze } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
-import { coreTokens } from '../di';
-import { ConfigError } from '../errors';
-import { CommandTestRunner } from '../test-runner/command-test-runner';
-import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input';
+import { coreTokens } from '../di/index.js';
+import { ConfigError } from '../errors.js';
+import { objectUtils, optionsPath } from '../utils/index.js';
+import { CommandTestRunner } from '../test-runner/command-test-runner.js';
+import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input/index.js';
 
-import { describeErrors } from './validation-errors';
+import { describeErrors } from './validation-errors.js';
 
 const ajv = new Ajv({ useDefaults: true, allErrors: true, jsPropertySyntax: true, verbose: true, logger: false, strict: false });
 
@@ -22,14 +24,23 @@ export class OptionsValidator {
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
-  constructor(schema: JSONSchema7, private readonly log: Logger) {
+  constructor(private readonly schema: JSONSchema7, private readonly log: Logger) {
     this.validateFn = ajv.compile(schema);
   }
 
-  public validate(options: Record<string, unknown>): asserts options is StrykerOptions {
+  /**
+   * Validates the provided options, throwing an error if something is wrong.
+   * Optionally also warns about excess or unserializable options.
+   * @param options The stryker options to validate
+   * @param mark Wether or not to log warnings on unknown properties or unserializable properties
+   */
+  public validate(options: Record<string, unknown>, mark = false): asserts options is StrykerOptions {
     this.removeDeprecatedOptions(options);
     this.schemaValidate(options);
-    this.additionalValidation(options);
+    this.customValidation(options);
+    if (mark) {
+      this.markOptions(options);
+    }
   }
 
   private removeDeprecatedOptions(rawOptions: Record<string, unknown>) {
@@ -62,14 +73,12 @@ export class OptionsValidator {
         ? 'webpack --config webpack.config.js'
         : 'npm run build';
       this.log.warn(
-        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${propertyPath<StrykerOptions>(
-          'buildCommand'
-        )}". For example, ${example}.`
+        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`
       );
       delete rawOptions.transpilers;
     }
     if (Array.isArray(rawOptions.files)) {
-      const ignorePatternsName = propertyPath<StrykerOptions>('ignorePatterns');
+      const ignorePatternsName = optionsPath('ignorePatterns');
       const isString = (uncertain: unknown): uncertain is string => typeof uncertain === 'string';
       const files = rawOptions.files.filter(isString);
       const newIgnorePatterns: string[] = [
@@ -90,16 +99,33 @@ export class OptionsValidator {
     // @ts-expect-error jest.enableBail
     if (rawOptions.jest?.enableBail !== undefined) {
       this.log.warn(
-        'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+        'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
       );
       // @ts-expect-error jest.enableBail
       rawOptions.disableBail = !rawOptions.jest?.enableBail;
       // @ts-expect-error jest.enableBail
       delete rawOptions.jest.enableBail;
     }
+
+    // @ts-expect-error htmlReporter.baseDir
+    if (rawOptions.htmlReporter?.baseDir) {
+      this.log.warn(
+        `DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "${optionsPath(
+          'htmlReporter',
+          'fileName'
+        )}" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string`
+      );
+      // @ts-expect-error htmlReporter.baseDir
+      if (!rawOptions.htmlReporter.fileName) {
+        // @ts-expect-error htmlReporter.baseDir
+        rawOptions.htmlReporter.fileName = path.join(String(rawOptions.htmlReporter.baseDir), 'index.html');
+      }
+      // @ts-expect-error htmlReporter.baseDir
+      delete rawOptions.htmlReporter.baseDir;
+    }
   }
 
-  private additionalValidation(options: StrykerOptions) {
+  private customValidation(options: StrykerOptions) {
     const additionalErrors: string[] = [];
     if (options.thresholds.high < options.thresholds.low) {
       additionalErrors.push('Config option "thresholds.high" should be higher than "thresholds.low".');
@@ -117,10 +143,17 @@ export class OptionsValidator {
         );
       }
     }
+    if (options.ignoreStatic && options.coverageAnalysis !== 'perTest') {
+      additionalErrors.push(
+        `Config option "${optionsPath('ignoreStatic')}" is not supported with coverage analysis "${
+          options.coverageAnalysis
+        }". Either turn off "${optionsPath('ignoreStatic')}", or configure "${optionsPath('coverageAnalysis')}" to be "perTest".`
+      );
+    }
     options.mutate.forEach((mutateString, index) => {
       const match = MUTATION_RANGE_REGEX.exec(mutateString);
       if (match) {
-        if (hasMagic(mutateString)) {
+        if (glob.hasMagic(mutateString)) {
           additionalErrors.push(
             `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`
           );
@@ -161,17 +194,59 @@ export class OptionsValidator {
       );
     }
   }
+
+  private markOptions(options: StrykerOptions): void {
+    this.markExcessOptions(options);
+    this.markUnserializableOptions(options);
+  }
+
+  private markExcessOptions(options: StrykerOptions) {
+    const OPTIONS_ADDED_BY_STRYKER = ['set', 'configFile', '$schema'];
+
+    if (objectUtils.isWarningEnabled('unknownOptions', options.warnings)) {
+      const schemaKeys = Object.keys(this.schema.properties!);
+      const excessPropertyNames = Object.keys(options)
+        .filter((key) => !key.endsWith('_comment'))
+        .filter((key) => !OPTIONS_ADDED_BY_STRYKER.includes(key))
+        .filter((key) => !schemaKeys.includes(key));
+
+      if (excessPropertyNames.length) {
+        excessPropertyNames.forEach((excessPropertyName) => {
+          this.log.warn(`Unknown stryker config option "${excessPropertyName}".`);
+        });
+
+        this.log.warn(`Possible causes:
+     * Is it a typo on your end?
+     * Did you only write this property as a comment? If so, please postfix it with "_comment".
+     * You might be missing a plugin that is supposed to use it. Stryker loaded plugins from: ${JSON.stringify(options.plugins)}
+     * The plugin that is using it did not contribute explicit validation. 
+     (disable "${optionsPath('warnings', 'unknownOptions')}" to ignore this warning)`);
+      }
+    }
+  }
+
+  private markUnserializableOptions(options: StrykerOptions) {
+    if (objectUtils.isWarningEnabled('unserializableOptions', options.warnings)) {
+      const unserializables = findUnserializables(options);
+      if (unserializables) {
+        unserializables.forEach((unserializable) =>
+          this.log.warn(
+            `Config option "${unserializable.path.join('.')}" is not (fully) serializable. ${
+              unserializable.reason
+            }. Any test runner or checker worker processes might not receive this value as intended.`
+          )
+        );
+        this.log.warn(`(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`);
+      }
+    }
+  }
 }
 
-export function defaultOptions(): StrykerOptions {
+export function createDefaultOptions(): StrykerOptions {
   const options: Record<string, unknown> = {};
   const validator: OptionsValidator = new OptionsValidator(strykerCoreSchema, noopLogger);
   validator.validate(options);
   return options;
 }
 
-validateOptions.inject = tokens(commonTokens.options, coreTokens.optionsValidator);
-export function validateOptions(options: Record<string, unknown>, optionsValidator: OptionsValidator): StrykerOptions {
-  optionsValidator.validate(options);
-  return deepFreeze(options) as StrykerOptions;
-}
+export const defaultOptions: Immutable<StrykerOptions> = deepFreeze(createDefaultOptions());
