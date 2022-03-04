@@ -16,7 +16,7 @@ updates:
       interval: daily
       time: '03:00'
     open-pull-requests-limit: 10
-    target-branch: master
+    target-branch: 'epic/esm'
     commit-message:
       prefix: 'build'
       prefix-development: 'build'
