@@ -7,7 +7,7 @@ import { childProcessAsPromised } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
-import { DEFAULT_CONFIG_FILE_BASE_NAME, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../config/index.js';
+import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../config/index.js';
 
 import { PresetConfiguration } from './presets/preset-configuration.js';
 import { PromptOption } from './prompt-option.js';
@@ -19,8 +19,10 @@ export class StrykerConfigWriter {
   constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
 
   public async guardForExistingConfig(): Promise<void> {
-    for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
-      await this.checkIfConfigFileExists(`${DEFAULT_CONFIG_FILE_BASE_NAME}${ext}`);
+    for (const file of SUPPORTED_CONFIG_FILE_BASE_NAMES) {
+      for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
+        await this.checkIfConfigFileExists(`${file}${ext}`);
+      }
     }
   }
 
@@ -82,7 +84,7 @@ export class StrykerConfigWriter {
   }
 
   private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
-    const configFileName = `${DEFAULT_CONFIG_FILE_BASE_NAME}.mjs`;
+    const configFileName = `${SUPPORTED_CONFIG_FILE_BASE_NAMES[0]}.mjs`;
     this.out(`Writing & formatting ${configFileName} ...`);
     const rawConfig = this.stringify(commentedConfig);
 
@@ -101,7 +103,7 @@ export class StrykerConfigWriter {
   }
 
   private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
-    const configFileName = `${DEFAULT_CONFIG_FILE_BASE_NAME}.json`;
+    const configFileName = `${SUPPORTED_CONFIG_FILE_BASE_NAMES[0]}.json`;
     this.out(`Writing & formatting ${configFileName}...`);
     const typedConfig = {
       $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',

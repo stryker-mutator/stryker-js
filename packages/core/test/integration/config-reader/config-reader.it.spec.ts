@@ -84,6 +84,16 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
+      it('should use the .stryker.conf.js file in cwd', async () => {
+        process.chdir(resolveTestResource('hidden'));
+        sut = createSut();
+
+        const result = await sut.readConfig({});
+
+        expect(result.hidden).to.be.eq(true);
+        expect(testInjector.logger.warn).not.called;
+      });
+
       it('should use the default config if no stryker.conf file was found', async () => {
         process.chdir(resolveTestResource('no-config'));
 

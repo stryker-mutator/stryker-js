@@ -12,7 +12,7 @@ import { ConfigError } from '../errors.js';
 import { fileUtils } from '../utils/file-utils.js';
 
 import { OptionsValidator } from './options-validator.js';
-import { DEFAULT_CONFIG_FILE_BASE_NAME, SUPPORTED_CONFIG_FILE_EXTENSIONS } from './config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from './config-file-formats.js';
 
 export const CONFIG_SYNTAX_HELP = `
 Example of how a config file should look:
@@ -73,10 +73,11 @@ export class ConfigReader {
         throw new ConfigReaderError('File does not exist!', configFileName);
       }
     }
-    const candidates = SUPPORTED_CONFIG_FILE_EXTENSIONS.map((ext) => `${DEFAULT_CONFIG_FILE_BASE_NAME}${ext}`);
-    for (const candidate of candidates) {
-      if (await fileUtils.exists(candidate)) {
-        return candidate;
+    for (const file of SUPPORTED_CONFIG_FILE_BASE_NAMES) {
+      for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
+        if (await fileUtils.exists(`${file}${ext}`)) {
+          return `${file}${ext}`;
+        }
       }
     }
     return undefined;
