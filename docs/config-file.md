@@ -49,10 +49,17 @@ You can use your editor's autocompletion to help you author your configuration f
 
 ## Usage
 
-By default, Stryker will look for a "stryker.conf.js" or "stryker.conf.json" file in the current working directory (cwd). You can also use a different configuration file with a second argument to the `run` command.
+By default, Stryker will look for a config file in te current working directory. The default config file names are:
+- `stryker.conf.json`
+- `stryker.conf.js`
+- `stryker.conf.cjs`
+- `stryker.conf.mjs`
+- `.stryker.conf.json`
+- `.stryker.conf.js`
+- `.stryker.conf.cjs`
+- `.stryker.conf.mjs`
 
-Since Stryker version 6 you can use hidden file: ".stryker.conf.js" or ".stryker.conf.json".
-
+You can also use a different configuration file with a second argument to the `run` command.
 ```shell
 # Use "stryker.conf.[js,json,mjs]" or ".stryker.conf.[js,json,mjs]" in the cwd
 npx stryker run
