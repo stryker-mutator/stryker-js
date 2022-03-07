@@ -90,6 +90,22 @@ describe(ConfigReader.name, () => {
       sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
       expect(result).deep.eq(expectedOptions);
     });
+
+    it(`should load .stryker.conf.${ext} by default`, async () => {
+      // Arrange
+      const strykerConfFile = `.stryker.conf.${ext}`;
+      const expectedOptions = { testRunner: 'my-runner' };
+      existsStub.withArgs(strykerConfFile).resolves(true);
+      readFileStub.resolves(JSON.stringify(expectedOptions));
+      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
+
+      // Act
+      const result = await sut.readConfig({});
+
+      // Assert
+      sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+      expect(result).deep.eq(expectedOptions);
+    });
   });
 
   it('should use cli options if no config file is available', async () => {

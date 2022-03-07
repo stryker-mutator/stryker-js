@@ -431,6 +431,15 @@ describe(StrykerInitializer.name, () => {
         `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
       );
     });
+
+    it(`should log an error and quit when \`.stryker.conf${ext}\` file already exists`, async () => {
+      existsStub.withArgs(`.stryker.conf${ext}`).resolves(true);
+
+      await expect(sut.initialize()).to.be.rejected;
+      expect(testInjector.logger.error).calledWith(
+        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+      );
+    });
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
