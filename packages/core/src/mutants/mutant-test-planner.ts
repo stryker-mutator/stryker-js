@@ -53,7 +53,20 @@ export class MutantTestPlanner {
   }
 
   public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantTestPlans = mutants.map((mutant) => this.planMutant(mutant));
+    const mutantTestPlans = mutants
+      .map((mutant) => this.planMutant(mutant))
+      .sort((a, b) => {
+        if (a.plan === PlanKind.Run && b.plan === PlanKind.Run) {
+          if (a.runOptions.reloadEnvironment && !b.runOptions.reloadEnvironment) {
+            return 1;
+          }
+          if (!a.runOptions.reloadEnvironment && b.runOptions.reloadEnvironment) {
+            return -1;
+          }
+          return 0;
+        }
+        return 0;
+      });
     this.reporter.onAllMutantsMatchedWithTests(mutantTestPlans.map(({ mutant }) => mutant));
     return mutantTestPlans;
   }
