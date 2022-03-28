@@ -72,14 +72,11 @@ describe(BroadcastReporter.name, () => {
       sut = createSut();
     });
 
-    it('should forward "onSourceFileRead"', () => {
-      actAssertShouldForward('onSourceFileRead', factory.sourceFile());
+    it('should forward "onDryRunCompleted"', () => {
+      actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
     });
-    it('should forward "onAllSourceFilesRead"', () => {
-      actAssertShouldForward('onAllSourceFilesRead', [factory.sourceFile()]);
-    });
-    it('should forward "onAllMutantsMatchedWithTests"', () => {
-      actAssertShouldForward('onAllMutantsMatchedWithTests', [factory.mutantTestCoverage()]);
+    it('should forward "onMutationTestingPlanReady"', () => {
+      actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
     });
     it('should forward "onMutantTested"', () => {
       actAssertShouldForward('onMutantTested', factory.mutantResult());
@@ -145,14 +142,11 @@ describe(BroadcastReporter.name, () => {
         factory.ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
       });
 
-      it('should still broadcast "onSourceFileRead"', () => {
-        actAssertShouldForward('onSourceFileRead', factory.sourceFile());
+      it('should still broadcast "onDryRunCompleted"', () => {
+        actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
       });
-      it('should still broadcast "onAllSourceFilesRead"', () => {
-        actAssertShouldForward('onAllSourceFilesRead', [factory.sourceFile()]);
-      });
-      it('should still broadcast "onAllMutantsMatchedWithTests"', () => {
-        actAssertShouldForward('onAllMutantsMatchedWithTests', [factory.mutantTestCoverage()]);
+      it('should still broadcast "onMutationTestingPlanReady"', () => {
+        actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
       });
       it('should still broadcast "onMutantTested"', () => {
         actAssertShouldForward('onMutantTested', factory.mutantResult());

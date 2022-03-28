@@ -8,7 +8,7 @@ export * from './stryker-options-schema.js';
 export * from './partial-stryker-options.js';
 export * from './instrument.js';
 export * from './mutant-coverage.js';
-
+export * from './mutant-test-plan.js';
 /**
  * Re-export all members from "mutation-testing-report-schema" under the `schema` key
  */

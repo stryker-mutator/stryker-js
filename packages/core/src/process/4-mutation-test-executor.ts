@@ -1,7 +1,16 @@
 import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap } from 'rxjs';
 import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, MutantStatus, Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  MutantResult,
+  MutantStatus,
+  Mutant,
+  StrykerOptions,
+  PlanKind,
+  MutantTestPlan,
+  MutantEarlyResultPlan,
+  MutantRunPlan,
+} from '@stryker-mutator/api/core';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
@@ -12,7 +21,7 @@ import { StrictReporter } from '../reporters/strict-reporter.js';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 import { Timer } from '../utils/timer.js';
 import { ConcurrencyTokenProvider, Pool } from '../concurrent/index.js';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner, PlanKind } from '../mutants/index.js';
+import { MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';

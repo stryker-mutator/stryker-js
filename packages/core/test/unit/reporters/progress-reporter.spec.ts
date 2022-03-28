@@ -2,7 +2,6 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
-import { MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 
 import { progressBarWrapper } from '../../../src/reporters/progress-bar.js';
 import { ProgressBarReporter } from '../../../src/reporters/progress-reporter.js';
@@ -16,11 +15,10 @@ const ONE_HOUR = SECOND * 3600;
 
 describe(ProgressBarReporter.name, () => {
   let sut: ProgressBarReporter;
-  let mutants: MutantTestCoverage[];
   let progressBar: Mock<ProgressBar>;
   let progressBarConstructorStub: sinon.SinonStub;
   const progressBarContent =
-    'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
+    'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:mutants Mutants tested (:survived survived, :timedOut timed out)';
 
   beforeEach(() => {
     sinon.useFakeTimers();
@@ -30,39 +28,41 @@ describe(ProgressBarReporter.name, () => {
     progressBarConstructorStub.returns(progressBar);
   });
 
-  describe('onAllMutantsMatchedWithTests()', () => {
-    it('should show a progress bar for 3 mutants with 3 static mutants ', () => {
-      mutants = [
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ static: true }),
-      ];
+  describe('onMutationTestingPlanReady()', () => {
+    it('should calculate the correct total', () => {
+      sut.onDryRunCompleted(
+        factory.dryRunCompletedEvent({
+          result: factory.completeDryRunResult({
+            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+          }),
+          timing: factory.runTiming({ net: 15, overhead: 100 }),
+        })
+      );
+      sut.onMutationTestingPlanReady(
+        factory.mutationTestingPlanReadyEvent({
+          mutantPlans: [
+            // Ignored mutant
+            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            // Run test 1, takes 10ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '2' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+            }),
+            // Run test 2, takes 5ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '3' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+            }),
+            // Run all tests, takes 115ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '4' }),
+              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+            }),
+          ],
+        })
+      );
 
-      sut.onAllMutantsMatchedWithTests(mutants);
-
-      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 3 });
-    });
-
-    it('should show a progress bar for 2 mutants when 3 mutants are presented of which 2 have coverage', () => {
-      mutants = [
-        factory.mutantTestCoverage({ coveredBy: undefined }),
-        factory.mutantTestCoverage({ coveredBy: ['spec1'] }),
-        factory.mutantTestCoverage({ coveredBy: ['spec2'] }),
-      ];
-
-      sut.onAllMutantsMatchedWithTests(mutants);
-      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 2 });
-    });
-
-    it('should show a progress bar of 2 mutants when 3 mutants are presented of which 1 is static and 1 has coverage', () => {
-      mutants = [
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ coveredBy: ['spec1'] }),
-        factory.mutantTestCoverage({ static: false, coveredBy: undefined }),
-      ];
-
-      sut.onAllMutantsMatchedWithTests(mutants);
-      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 2 });
+      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 115 + 5 + 10 });
     });
   });
 
@@ -70,83 +70,127 @@ describe(ProgressBarReporter.name, () => {
     let progressBarTickTokens: any;
 
     beforeEach(() => {
-      mutants = [
-        factory.mutantTestCoverage({ coveredBy: undefined, static: false }), // NoCoverage
-        factory.mutantTestCoverage({ coveredBy: [''] }),
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ coveredBy: [''] }),
-      ];
-      sut.onAllMutantsMatchedWithTests(mutants);
+      sut.onDryRunCompleted(
+        factory.dryRunCompletedEvent({
+          result: factory.completeDryRunResult({
+            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+          }),
+          timing: factory.runTiming({ net: 15, overhead: 100 }),
+        })
+      );
+      sut.onMutationTestingPlanReady(
+        factory.mutationTestingPlanReadyEvent({
+          mutantPlans: [
+            // Ignored mutant
+            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            // Run test 1, takes 10ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '2' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+            }),
+            // Run test 2, takes 5ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '3' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+            }),
+            // Run all tests, takes 115ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '4' }),
+              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+            }),
+          ],
+        })
+      );
     });
 
     it('should tick the ProgressBar with 1 tested mutant, 0 survived when status is not "Survived"', () => {
-      sut.onMutantTested(factory.killedMutantResult());
-      progressBarTickTokens = { total: 3, tested: 1, survived: 0 };
-      expect(progressBar.tick).calledWithMatch(progressBarTickTokens);
+      sut.onMutantTested(factory.killedMutantResult({ id: '2' }));
+      progressBarTickTokens = { total: 130, tested: 1, survived: 0 };
+      sinon.assert.calledWithMatch(progressBar.tick, 10, progressBarTickTokens);
     });
 
-    it("should not tick the ProgressBar if the result was for a mutant that wasn't matched to any tests", () => {
-      sut.onMutantTested(factory.mutantResult({ coveredBy: undefined, static: false }));
-      progressBarTickTokens = { total: 3, tested: 0, survived: 0 };
-      expect(progressBar.tick).to.not.have.been.called;
+    it('should not tick the ProgressBar the result did not yield any ticks', () => {
+      progressBar.total = 130;
+      sut.onMutantTested(factory.ignoredMutantResult({ id: '1' })); // ignored mutant
+      progressBarTickTokens = { total: 130, tested: 0, survived: 0 };
+      sinon.assert.notCalled(progressBar.tick);
+      sinon.assert.calledWithMatch(progressBar.render, progressBarTickTokens);
     });
 
     it('should tick the ProgressBar with 1 survived mutant when status is "Survived"', () => {
-      sut.onMutantTested(factory.mutantResult({ static: true, status: MutantStatus.Survived }));
-      progressBarTickTokens = { total: 3, tested: 1, survived: 1 };
-      expect(progressBar.tick).calledWithMatch(progressBarTickTokens);
-    });
-
-    it('should not render the ProgressBar if all mutants have status "NoCoverage" or are static', () => {
-      const noCoverageResult = { coveredBy: undefined, static: false };
-      mutants = [factory.mutantTestCoverage(noCoverageResult), factory.mutantTestCoverage({ static: true })];
-      sut.onAllMutantsMatchedWithTests(mutants);
-
-      sut.onMutantTested(factory.mutantResult(noCoverageResult));
-
-      expect(progressBar.render).to.not.have.been.called;
+      sut.onMutantTested(factory.survivedMutantResult({ id: '4', static: true }));
+      progressBarTickTokens = { total: 130, tested: 1, survived: 1 };
+      sinon.assert.calledWithMatch(progressBar.tick, 115, progressBarTickTokens);
     });
   });
 
   describe('ProgressBar estimated time for 3 mutants', () => {
     beforeEach(() => {
-      sut.onAllMutantsMatchedWithTests([
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ static: true }),
-        factory.mutantTestCoverage({ static: true }),
-      ]);
+      sut.onDryRunCompleted(
+        factory.dryRunCompletedEvent({
+          result: factory.completeDryRunResult({
+            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+          }),
+          timing: factory.runTiming({ net: 15, overhead: 100 }),
+        })
+      );
+      sut.onMutationTestingPlanReady(
+        factory.mutationTestingPlanReadyEvent({
+          mutantPlans: [
+            // Ignored mutant
+            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            // Run test 1, takes 10ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '2' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+            }),
+            // Run test 2, takes 5ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '3' }),
+              runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+            }),
+            // Run all tests, takes 115ms
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '4' }),
+              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+            }),
+          ],
+        })
+      );
     });
 
-    it('should show correct time info after ten seconds and 1 mutants tested', () => {
+    it('should show correct time info after ten seconds and 3.8% tested', () => {
       sinon.clock.tick(TEN_SECONDS);
 
-      sut.onMutantTested(factory.mutantResult({ static: true }));
+      sut.onMutantTested(factory.mutantResult({ id: '3' }));
 
-      expect(progressBar.tick).calledWithMatch({ et: '<1m', etc: '<1m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 5, { et: '<1m', etc: '~4m' });
     });
 
-    it('should show correct time info after a hundred seconds and 1 mutants tested', () => {
+    it('should show correct time info after a hundred seconds and 7% tested', () => {
       sinon.clock.tick(HUNDRED_SECONDS);
 
-      sut.onMutantTested(factory.mutantResult({ static: true }));
+      sut.onMutantTested(factory.mutantResult({ id: '2' }));
 
-      expect(progressBar.tick).calledWithMatch({ et: '~1m', etc: '~3m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 10, { et: '~1m', etc: '~20m' });
     });
 
-    it('should show correct time info after ten thousand seconds and 1 mutants tested', () => {
+    it('should show correct time info after ten thousand seconds and 88%', () => {
       sinon.clock.tick(TEN_THOUSAND_SECONDS);
 
-      sut.onMutantTested(factory.mutantResult({ static: true }));
+      sut.onMutantTested(factory.mutantResult({ id: '4' }));
 
-      expect(progressBar.tick).calledWithMatch({ et: '~2h 46m', etc: '~5h 33m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 115, { et: '~2h 46m', etc: '~21m' });
     });
 
-    it('should show correct time info after an hour and 1 mutants tested', () => {
+    it('should show correct time info after an hour and 11% tested', () => {
       sinon.clock.tick(ONE_HOUR);
 
-      sut.onMutantTested(factory.mutantResult({ status: MutantStatus.Killed }));
+      sut.onMutantTested(factory.mutantResult({ id: '2' }));
+      sut.onMutantTested(factory.mutantResult({ id: '3' }));
 
-      expect(progressBar.tick).calledWithMatch({ et: '~1h 0m', etc: '~2h 0m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 10, { et: '~1h 0m', etc: '~12h 0m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 5, { et: '~1h 0m', etc: '~7h 40m' });
     });
   });
 });

@@ -2,30 +2,24 @@ import path from 'path';
 import { Dirent, promises as fsPromises } from 'fs';
 
 import { File, MutationRange } from '@stryker-mutator/api/core';
-import { SourceFile } from '@stryker-mutator/api/report';
 import { assertions, factory, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { coreTokens } from '../../../src/di/index.js';
 import { InputFileResolver } from '../../../src/input/index.js';
-import { BroadcastReporter } from '../../../src/reporters/broadcast-reporter.js';
-import { Mock, mock } from '../../helpers/producers.js';
 
 describe(InputFileResolver.name, () => {
-  let reporterMock: Mock<BroadcastReporter>;
   let readFileStub: sinon.SinonStub;
   let readdirStub: sinon.SinonStubbedMember<typeof fsPromises.readdir>;
 
   beforeEach(() => {
-    reporterMock = mock(BroadcastReporter);
     readdirStub = sinon.stub(fsPromises, 'readdir');
     readFileStub = sinon.stub(fsPromises, 'readFile');
   });
 
   it('should log a warning if no files were resolved', async () => {
-    stubFileSystem({}); // emtpy dir
+    stubFileSystem({}); // empty dir
     const sut = createSut();
     await sut.resolve();
     expect(testInjector.logger.warn).calledWith(
@@ -365,36 +359,6 @@ describe(InputFileResolver.name, () => {
       expect(result.filesToMutate.map((_) => _.name)).to.deep.equal([path.resolve('mute1.js')]);
     });
 
-    it('should report OnAllSourceFilesRead', async () => {
-      stubFileSystemWith5Files();
-      testInjector.options.mutate = ['mute*'];
-      const sut = createSut();
-      await sut.resolve();
-      const expected: SourceFile[] = [
-        { path: path.resolve('file1.js'), content: 'file 1 content' },
-        { path: path.resolve('file2.js'), content: 'file 2 content' },
-        { path: path.resolve('file3.js'), content: 'file 3 content' },
-        { path: path.resolve('mute1.js'), content: 'mutate 1 content' },
-        { path: path.resolve('mute2.js'), content: 'mutate 2 content' },
-      ];
-      expect(reporterMock.onAllSourceFilesRead).calledWith(expected);
-    });
-
-    it('should report OnSourceFileRead', async () => {
-      stubFileSystemWith5Files();
-      testInjector.options.mutate = ['mute*'];
-      const sut = createSut();
-      await sut.resolve();
-      const expected: SourceFile[] = [
-        { path: path.resolve('file1.js'), content: 'file 1 content' },
-        { path: path.resolve('file2.js'), content: 'file 2 content' },
-        { path: path.resolve('file3.js'), content: 'file 3 content' },
-        { path: path.resolve('mute1.js'), content: 'mutate 1 content' },
-        { path: path.resolve('mute2.js'), content: 'mutate 2 content' },
-      ];
-      expected.forEach((sourceFile) => expect(reporterMock.onSourceFileRead).calledWith(sourceFile));
-    });
-
     it('should warn about useless patterns custom "mutate" patterns', async () => {
       testInjector.options.mutate = ['src/**/*.js', '!src/index.js', 'types/global.d.ts'];
       stubFileSystem({
@@ -422,7 +386,7 @@ describe(InputFileResolver.name, () => {
   });
 
   function createSut() {
-    return testInjector.injector.provideValue(coreTokens.reporter, reporterMock).injectClass(InputFileResolver);
+    return testInjector.injector.injectClass(InputFileResolver);
   }
 
   // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
