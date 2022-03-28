@@ -15,7 +15,7 @@ jobs:
         node-version: ['14.18.0', 16.x]
         os: ['ubuntu-latest', 'windows-latest']
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2.5.1
       with:
@@ -39,7 +39,7 @@ jobs:
       run: |
         echo TEMP="D:\Temp" >> $env:GITHUB_ENV
         echo TMP="D:\Temp" >> $env:GITHUB_ENV
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v3
     - uses: actions/setup-node@v2.5.1
       with:
         node-version: lts/*
