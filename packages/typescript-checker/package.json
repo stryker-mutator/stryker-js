@@ -18,7 +18,7 @@
     "directory": "packages/typescript-checker"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14.18.0"
   },
   "publishConfig": {
     "access": "public"

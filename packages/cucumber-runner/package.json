@@ -17,7 +17,7 @@
     "directory": "packages/cucumber-runner"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14.18.0"
   },
   "keywords": [
     "stryker",

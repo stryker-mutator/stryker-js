@@ -101,13 +101,13 @@ describe(StrykerCli.name, () => {
   });
 
   describe(guardMinimalNodeVersion.name, () => {
-    it('should fail for < v12.20', () => {
-      expect(() => guardMinimalNodeVersion('v12.19.0')).throws(
-        'Node.js version v12.19.0 detected. StrykerJS requires version to match >=12.20. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
+    it('should fail for < v14.18.0', () => {
+      expect(() => guardMinimalNodeVersion('v14.17.0')).throws(
+        'Node.js version v14.17.0 detected. StrykerJS requires version to match >=14.18.0. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
       );
     });
-    it('should not fail for >= v12.20', () => {
-      expect(() => guardMinimalNodeVersion('v12.20.0')).not.throws();
+    it('should not fail for >= v14.18.0', () => {
+      expect(() => guardMinimalNodeVersion('v14.18.0')).not.throws();
     });
   });
 
