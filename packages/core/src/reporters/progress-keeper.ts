@@ -1,7 +1,7 @@
 import { MutantResult, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import { Timer } from '../utils/timer';
+import { Timer } from '../utils/timer.js';
 
 function mutantHasCoverage(mutant: Pick<MutantResult, 'coveredBy' | 'static'>) {
   return !!mutant.static || !!mutant.coveredBy?.length;

@@ -1,6 +1,6 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect } = require('chai');
-const { concat } = require('../../src/concat');
+const { concat, greet } = require('../../src/concat');
 const { add, multiply } = require('../../src/math');
 
 Given('input {string}', function (input) {
@@ -15,9 +15,14 @@ When('concat with {string}', function (other) {
   this.result = concat(this.input, other);
 });
 
+When('I greet {string}', function (subject) {
+  this.result = greet(subject);
+});
+
 When('add with {int}', function (other) {
   this.result = add(this.input, other);
 });
+
 When('multiplied with {int}', function (other) {
   this.result = multiply(this.input, other);
 });

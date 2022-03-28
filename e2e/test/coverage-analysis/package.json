@@ -1,8 +1,13 @@
 {
   "name": "coverage-analysis",
   "description": "A e2e test for --coverageAnalysis",
+  "type": "commonjs",
   "scripts": {
-    "test:unit": "jasmine",
-    "test": "mocha --no-package --timeout 60000 --require \"../../tasks/ts-node-register.js\" verify/verify.ts"
+    "test:cucumber": "cucumber-js",
+    "test:jasmine": "jasmine --config=jasmine.json",
+    "test:mocha": "mocha",
+    "test:jest": "jest",
+    "test:karma": "karma start",
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

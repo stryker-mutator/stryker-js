@@ -2,6 +2,9 @@
   "$schema": "../../../packages/core/schema/stryker-schema.json",
   "testRunner": "mocha",
   "coverageAnalysis": "perTest",
+  "plugins": [
+    "../../../packages/mocha-runner/dist/src/index.js"
+  ],
   "mochaOptions": {
     "require": ["test/support/env"],
     "files": ["test/*.js", "test/acceptance/*.js"]

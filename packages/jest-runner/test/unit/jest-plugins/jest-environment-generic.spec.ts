@@ -1,15 +1,17 @@
+import { fileURLToPath, URL } from 'url';
+
 import { expect } from 'chai';
 
-import jestEnvironmentGeneric from '../../../src/jest-plugins/jest-environment-generic';
-import { state } from '../../../src/messaging';
-import * as producers from '../../helpers/producers';
+import jestEnvironmentGeneric from '../../../src/jest-plugins/cjs/jest-environment-generic.js';
+import { state } from '../../../src/jest-plugins/cjs/messaging.js';
+import * as producers from '../../helpers/producers.js';
 
-import JestTestEnvironment from './jest-environment-generic-jest-environment';
+import JestTestEnvironment from './cjs/jest-environment-generic-jest-environment.js';
 
 describe(jestEnvironmentGeneric.name, () => {
-  it('should still allow for custom environments', async () => {
+  it('should still allow for custom environments (defined as commonjs module)', async () => {
     // Arrange
-    state.jestEnvironment = require.resolve('./jest-environment-generic-jest-environment');
+    state.jestEnvironment = fileURLToPath(new URL('./cjs/jest-environment-generic-jest-environment.js', import.meta.url));
 
     // Act
     const jestEnv = jestEnvironmentGeneric(producers.createProjectConfig(), producers.createEnvironmentContext());
@@ -22,7 +24,7 @@ describe(jestEnvironmentGeneric.name, () => {
   it('should mix in the StrykerTestEnvironment', async () => {
     // Arrange
     state.clear();
-    state.jestEnvironment = require.resolve('./jest-environment-generic-jest-environment');
+    state.jestEnvironment = fileURLToPath(new URL('./cjs/jest-environment-generic-jest-environment.js', import.meta.url));
 
     // Act
     const jestEnv = jestEnvironmentGeneric(producers.createProjectConfig(), producers.createEnvironmentContext({ testPath: 'foo.spec.js' }));

@@ -3,10 +3,10 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { errorToString } from '@stryker-mutator/util';
 import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
 
-import { PackageInfo } from './package-info';
-import { PromptOption } from './prompt-option';
+import { PackageInfo } from './package-info.js';
+import { PromptOption } from './prompt-option.js';
 
-import { initializerTokens } from '.';
+import { initializerTokens } from './index.js';
 
 interface NpmSearchResult {
   total: number;

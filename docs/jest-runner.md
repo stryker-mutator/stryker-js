@@ -113,9 +113,9 @@ Becomes:
 
 This is the list of jest environments that are shipped with @stryker-mutator/jest-runner.
 
-| Jest test environment          | @stryker-mutator/jest-runner override              |
-| ------------------------------ | -------------------------------------------------- |
-| node                           | @stryker-mutator/jest-runner/jest-env/node         |
+| Jest test environment          | @stryker-mutator/jest-runner override               |
+| ------------------------------ | --------------------------------------------------- |
+| node                           | @stryker-mutator/jest-runner/jest-env/node          |
 | jsdom                          | @stryker-mutator/jest-runner/jest-env/jsdom         |
 | jest-environment-jsdom-sixteen | @stryker-mutator/jest-runner/jest-env/jsdom-sixteen |
 

@@ -3,33 +3,20 @@ import fs from 'fs';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { HtmlReporter } from '../../../../src/reporters/html/html-reporter';
+import { HtmlReporter } from '../../../../src/reporters/html-reporter.js';
+import { fileUtils } from '../../../../src/utils/file-utils.js';
 
-import { simpleReport } from './simple-report';
+import { simpleReport } from './simple-report.js';
 
 describe('HtmlReporter with example math project', () => {
-  let sut: HtmlReporter;
-  const baseDir = 'reports/mutation/math';
-
-  beforeEach(async () => {
-    testInjector.options.htmlReporter = { baseDir };
-    sut = testInjector.injector.injectClass(HtmlReporter);
+  it('should have created the "index.html" file in the configured directory', async () => {
+    const fileName = 'reports/mutation/math.html';
+    testInjector.options.htmlReporter = { fileName };
+    const sut = testInjector.injector.injectClass(HtmlReporter);
     sut.onMutationTestReportReady(simpleReport);
     await sut.wrapUp();
-  });
-
-  it('should have created the "index.html" file in the configured directory', () => {
-    expectFileExists(`${baseDir}/index.html`, true);
-    const bindMutationTestReportContent = fs.readFileSync(`${baseDir}/index.html`, 'utf8');
+    expect(await fileUtils.exists(fileName), `file ${fileName} does not exist`).true;
+    const bindMutationTestReportContent = await fs.promises.readFile(fileName, 'utf8');
     expect(bindMutationTestReportContent).include(JSON.stringify(simpleReport));
   });
 });
-
-function expectFileExists(file: string, expected: boolean) {
-  try {
-    fs.readFileSync(file);
-    expect(expected, `file ${file} does not exist`).to.be.true;
-  } catch (err) {
-    expect(expected, `file ${file} exists`).to.be.false;
-  }
-}

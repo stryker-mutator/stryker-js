@@ -1,6 +1,8 @@
-import { types } from '@babel/core';
+import babel from '@babel/core';
 
-import { NodeMutator } from '.';
+import { NodeMutator } from './index.js';
+
+const { types: t } = babel;
 
 /**
  * Mutates optional chaining operators
@@ -19,17 +21,17 @@ export const optionalChainingMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isOptionalMemberExpression() && path.node.optional) {
-      yield types.optionalMemberExpression(
-        types.cloneNode(path.node.object, true),
-        types.cloneNode(path.node.property, true),
+      yield t.optionalMemberExpression(
+        t.cloneNode(path.node.object, true),
+        t.cloneNode(path.node.property, true),
         path.node.computed,
         /*optional*/ false
       );
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
-      yield types.optionalCallExpression(
-        types.cloneNode(path.node.callee, true),
-        path.node.arguments.map((arg) => types.cloneNode(arg, true)),
+      yield t.optionalCallExpression(
+        t.cloneNode(path.node.callee, true),
+        path.node.arguments.map((arg) => t.cloneNode(arg, true)),
         /*optional*/ false
       );
     }

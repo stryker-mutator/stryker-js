@@ -1,10 +1,12 @@
+import { fileURLToPath, URL } from 'url';
+
 import { LogLevel } from '@stryker-mutator/api/core';
 import log4js from 'log4js';
 
-import { getFreePort } from '../utils/net-utils';
+import { netUtils } from '../utils/net-utils.js';
 
-import { LoggingClientContext } from './logging-client-context';
-import { minLevel } from './log-utils';
+import { LoggingClientContext } from './logging-client-context.js';
+import { minLevel } from './log-utils.js';
 
 const enum AppenderName {
   File = 'file',
@@ -34,7 +36,10 @@ const LOG_FILE_NAME = 'stryker.log';
 export class LogConfigurator {
   private static createMainProcessAppenders(consoleLogLevel: LogLevel, fileLogLevel: LogLevel, allowConsoleColors: boolean): AppendersConfiguration {
     // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
-    const multiAppender = { type: require.resolve('./multi-appender'), appenders: [AppenderName.FilterLevelConsole] };
+    const multiAppender = {
+      type: fileURLToPath(new URL('../cjs/logging/multi-appender.js', import.meta.url)),
+      appenders: [AppenderName.FilterLevelConsole],
+    };
 
     const consoleLayout = allowConsoleColors ? layouts.color : layouts.noColor;
 
@@ -111,7 +116,7 @@ export class LogConfigurator {
     fileLogLevel: LogLevel,
     allowConsoleColors: boolean
   ): Promise<LoggingClientContext> {
-    const loggerPort = await getFreePort();
+    const loggerPort = await netUtils.getFreePort();
 
     // Include the appenders for the main Stryker process, as log4js has only one single `configure` method.
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);

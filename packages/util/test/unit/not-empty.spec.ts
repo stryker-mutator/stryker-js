@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { notEmpty } from '../../src';
+import { notEmpty } from '../../src/index.js';
 
 describe(notEmpty.name, () => {
   it('should return true when not null or undefined', () => {

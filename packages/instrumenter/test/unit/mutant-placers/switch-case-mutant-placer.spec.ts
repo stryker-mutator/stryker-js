@@ -1,11 +1,15 @@
-import { NodePath, types } from '@babel/core';
-import generate from '@babel/generator';
+import babel, { type NodePath } from '@babel/core';
+import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 
-import { switchCaseMutantPlacer as sut } from '../../../src/mutant-placers/switch-case-mutant-placer';
-import { createMutant } from '../../helpers/factories';
-import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers';
+import { switchCaseMutantPlacer as sut } from '../../../src/mutant-placers/switch-case-mutant-placer.js';
+import { createMutant } from '../../helpers/factories.js';
+import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
+const { types } = babel;
 
 describe('switchCaseMutantPlacer', () => {
   it('should have the correct name', () => {
@@ -29,8 +33,8 @@ describe('switchCaseMutantPlacer', () => {
   });
 
   describe(sut.place.name, () => {
-    let ast: types.File;
-    let switchCase: NodePath<types.SwitchCase>;
+    let ast: babel.types.File;
+    let switchCase: NodePath<babel.types.SwitchCase>;
 
     beforeEach(() => {
       ast = parseJS('switch(foo) { case "bar": console.log("bar"); break; }');

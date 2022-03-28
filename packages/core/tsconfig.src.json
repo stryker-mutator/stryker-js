@@ -13,7 +13,11 @@
   "include": [
     "src"
   ],
+  "exclude": ["src/cjs"],
   "references": [
+    {
+      "path": "./tsconfig.src.cjs.json"
+    },
     {
       "path": "../api/tsconfig.src.json"
     },

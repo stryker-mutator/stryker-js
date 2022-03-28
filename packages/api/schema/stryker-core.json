@@ -126,10 +126,10 @@
       "additionalProperties": false,
       "type": "object",
       "properties": {
-        "baseDir": {
-          "description": "The output folder for the html report.",
+        "fileName": {
+          "description": "The `fileName` of the html report.",
           "type": "string",
-          "default": "reports/mutation/html"
+          "default": "reports/mutation/mutation.html"
         }
       }
     },
@@ -303,6 +303,11 @@
       },
       "default": []
     },
+    "ignoreStatic": {
+      "description": "Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file. This means that Stryker has to reload the entire environment in order to test the mutant AND has to run all tests. Therefore, it might make sense to ignore static mutants.",
+      "type": "boolean",
+      "default": false
+    },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
       "$ref": "#/definitions/logLevel",
@@ -378,7 +383,8 @@
     },
     "htmlReporter": {
       "description": "The options for the html reporter",
-      "$ref": "#/definitions/htmlReporterOptions"
+      "$ref": "#/definitions/htmlReporterOptions",
+      "default": {}
     },
     "jsonReporter": {
       "description": "The options for the json reporter",

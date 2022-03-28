@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v5.6.1...v6.0.0-beta.0) (2022-03-02)
+
+
+### Features
+
+* **checker-api:** support checking on groups of mutants ([#3450](https://github.com/stryker-mutator/stryker-js/issues/3450)) ([e9bbd39](https://github.com/stryker-mutator/stryker-js/commit/e9bbd394092aa86f2eabc857ec7feabc6d7a0b4f))
+* **esm config:** support config file as pure esm ([#3432](https://github.com/stryker-mutator/stryker-js/issues/3432)) ([309a7e2](https://github.com/stryker-mutator/stryker-js/commit/309a7e2807e454a82f177de781bc4908f87c739b))
+* **esm:** migrate StrykerJS to pure ESM ([#3409](https://github.com/stryker-mutator/stryker-js/issues/3409)) ([78c305e](https://github.com/stryker-mutator/stryker-js/commit/78c305e2c2271fedb54bfff3d34aa6b70b421b3a))
+* **html reporter:** allow choice of `fileName`. ([#3438](https://github.com/stryker-mutator/stryker-js/issues/3438)) ([d197319](https://github.com/stryker-mutator/stryker-js/commit/d197319a21872a77b28cfef16c1087bf1bb4b9dc))
+* **ignore static:** allow to ignore static mutants ([#3284](https://github.com/stryker-mutator/stryker-js/issues/3284)) ([75d9b79](https://github.com/stryker-mutator/stryker-js/commit/75d9b792e04dbafaaaff88c3994cf1a1e456610b))
+* **ignore static:** prevent leak of hybrid mutants ([#3443](https://github.com/stryker-mutator/stryker-js/issues/3443)) ([231049a](https://github.com/stryker-mutator/stryker-js/commit/231049a32f73083c7579b1bf8b4424ad309f655d))
+* **reload test environment:** implement test environment reload  ([#3369](https://github.com/stryker-mutator/stryker-js/issues/3369)) ([b95b907](https://github.com/stryker-mutator/stryker-js/commit/b95b907e54d3a114731a8bcf659a1910df4e4f0b))
+* **test runner api:** `killedBy` is always an array ([#3187](https://github.com/stryker-mutator/stryker-js/issues/3187)) ([c257966](https://github.com/stryker-mutator/stryker-js/commit/c257966e6c7726e180e072c8ae7f3fd011485c05))
+
+
+### BREAKING CHANGES
+
+* **checker-api:** The `check` method of checker plugins now receives a _group of mutants_ and should provide a `CheckResult` per mutant id.
+* **html reporter:** Configuration option `htmlReporter.baseDir` is deprecated and will be removed in a later version. Please use `htmlReporter.fileName` instead.
+* **esm config:** Exporting a function (using `module.exports = function(config) {}`) from your `stryker.conf.js` file is no longer supported. This was already deprecated but now will give an error.
+* **esm:** StrykerJS is now a pure ESM. Please [read this](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
+* **esm:** Node 12.20 is now the min version.
+* **esm:** Karma v6.3 is now the min supported karma version for `@stryker-mutator/karma-runner`, since [that version added support for async config loading](https://github.com/karma-runner/karma/blob/master/CHANGELOG.md#630-2021-03-23)
+* **reload test environment:** Test runner plugins must provide `TestRunnerCapabilities` by implementing the `capabilities` method.
+
+
+
+
+
 ## [5.6.1](https://github.com/stryker-mutator/stryker-js/compare/v5.6.0...v5.6.1) (2022-01-23)
 
 

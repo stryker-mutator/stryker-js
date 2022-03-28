@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import weaponRegex from 'weapon-regex';
 
-import { regexMutator as sut } from '../../../src/mutators/regex-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { regexMutator as sut } from '../../../src/mutators/regex-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "Regex"', () => {

@@ -1,23 +1,34 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { errorToString } from '@stryker-mutator/util';
-import { getLogger, Logger } from 'log4js';
+import log4js from 'log4js';
+import { createInjector } from 'typed-inject';
+import { commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 
-import { buildChildProcessInjector } from '../di';
-import { LogConfigurator } from '../logging';
-import { deserialize, serialize } from '../utils/string-utils';
+import { LogConfigurator } from '../logging/index.js';
+import { deserialize, serialize } from '../utils/string-utils.js';
+import { coreTokens, provideLogger, PluginCreator } from '../di/index.js';
+import { PluginLoader } from '../di/plugin-loader.js';
 
-import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol';
+import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
+
+export interface ChildProcessContext extends PluginContext {
+  [coreTokens.pluginCreator]: PluginCreator;
+}
 
 export class ChildProcessProxyWorker {
-  private log?: Logger;
+  private log?: log4js.Logger;
 
   public realSubject: any;
 
-  constructor() {
+  constructor(private readonly injectorFactory: typeof createInjector) {
     // Make sure to bind the methods in order to ensure the `this` pointer
     this.handleMessage = this.handleMessage.bind(this);
+
+    // Start listening before sending the spawned message
     process.on('message', this.handleMessage);
+    this.send({ kind: ParentMessageKind.Ready });
   }
 
   private send(value: ParentMessage) {
@@ -46,26 +57,36 @@ export class ChildProcessProxyWorker {
     }
   }
 
-  private handleInit(message: InitMessage) {
-    LogConfigurator.configureChildProcess(message.loggingContext);
-    this.log = getLogger(ChildProcessProxyWorker.name);
-    this.handlePromiseRejections();
-    let injector = buildChildProcessInjector(message.options);
-    const locals = message.additionalInjectableValues as Record<string, any>;
-    for (const token in locals) {
-      injector = injector.provideValue(token, locals[token]);
+  private async handleInit(message: InitMessage) {
+    try {
+      LogConfigurator.configureChildProcess(message.loggingContext);
+      this.log = log4js.getLogger(ChildProcessProxyWorker.name);
+      this.handlePromiseRejections();
+
+      // Load plugins in the child process
+      const pluginInjector = provideLogger(this.injectorFactory()).provideValue(commonTokens.options, message.options);
+      const pluginLoader = pluginInjector.injectClass(PluginLoader);
+      const { pluginsByKind } = await pluginLoader.load(message.pluginModulePaths);
+      const injector: Injector<ChildProcessContext> = pluginInjector
+        .provideValue(coreTokens.pluginsByKind, pluginsByKind)
+        .provideClass(coreTokens.pluginCreator, PluginCreator);
+
+      const childModule = await import(message.modulePath);
+      const RealSubjectClass = childModule[message.namedExport];
+      const workingDir = path.resolve(message.workingDirectory);
+      if (process.cwd() !== workingDir) {
+        this.log.debug(`Changing current working directory for this process to ${workingDir}`);
+        process.chdir(workingDir);
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      this.realSubject = injector.injectClass(RealSubjectClass);
+      this.send({ kind: ParentMessageKind.Initialized });
+    } catch (err) {
+      this.send({
+        error: errorToString(err),
+        kind: ParentMessageKind.InitError,
+      });
     }
-    // we want it sync
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const RealSubjectClass = require(message.requirePath)[message.requireName];
-    const workingDir = path.resolve(message.workingDirectory);
-    if (process.cwd() !== workingDir) {
-      this.log.debug(`Changing current working directory for this process to ${workingDir}`);
-      process.chdir(workingDir);
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    this.realSubject = injector.injectClass(RealSubjectClass);
-    this.send({ kind: ParentMessageKind.Initialized });
   }
 
   private async handleCall(message: CallMessage) {
@@ -73,14 +94,14 @@ export class ChildProcessProxyWorker {
       const result = await this.doCall(message);
       this.send({
         correlationId: message.correlationId,
-        kind: ParentMessageKind.Result,
+        kind: ParentMessageKind.CallResult,
         result,
       });
     } catch (err) {
       this.send({
         correlationId: message.correlationId,
         error: errorToString(err),
-        kind: ParentMessageKind.Rejection,
+        kind: ParentMessageKind.CallRejection,
       });
     }
   }
@@ -129,10 +150,10 @@ export class ChildProcessProxyWorker {
   }
 }
 
-// Prevent side effects for merely requiring the file
+// Prevent side effects for merely importing the file
 // Only actually start the child worker when it is requested
 // Stryker disable all
-if (require.main === module) {
-  new ChildProcessProxyWorker();
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
+  new ChildProcessProxyWorker(createInjector);
 }
 // Stryker restore all

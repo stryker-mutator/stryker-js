@@ -1,6 +1,6 @@
-import { HtmlAst } from '../syntax';
+import { HtmlAst } from '../syntax/index.js';
 
-import { Printer } from '.';
+import { Printer } from './index.js';
 
 export const print: Printer<HtmlAst> = (ast, context) => {
   const sortedScripts = [...ast.root.scripts].sort((a, b) => a.root.start! - b.root.start!);

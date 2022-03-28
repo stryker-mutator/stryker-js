@@ -8,9 +8,9 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import { plural } from '../utils/string-utils';
+import { plural } from '../utils/string-utils.js';
 
-import { ClearTextScoreTable } from './clear-text-score-table';
+import { ClearTextScoreTable } from './clear-text-score-table.js';
 
 const { MutantStatus } = schema;
 
@@ -145,7 +145,7 @@ export class ClearTextReporter implements Reporter {
     return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
   }
 
-  private color(color: typeof Color, ...text: unknown[]) {
+  private color(color: Color, ...text: unknown[]) {
     if (this.options.clearTextReporter.allowColor) {
       return chalk[color](...text);
     }

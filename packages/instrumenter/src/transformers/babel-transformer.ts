@@ -1,19 +1,21 @@
-import { NodePath, traverse, types } from '@babel/core';
+import babel, { type NodePath, type types } from '@babel/core';
 
 /* eslint-disable @typescript-eslint/no-duplicate-imports */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 /* eslint-enable @typescript-eslint/no-duplicate-imports */
 
-import { allMutators } from '../mutators';
-import { instrumentationBabelHeader, isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps } from '../util/syntax-helpers';
-import { ScriptFormat } from '../syntax';
-import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers';
-import { Mutable, Mutant } from '../mutant';
+import { instrumentationBabelHeader, isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps } from '../util/syntax-helpers.js';
+import { ScriptFormat } from '../syntax/index.js';
+import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers/index.js';
+import { Mutable, Mutant } from '../mutant.js';
+import { allMutators } from '../mutators/index.js';
 
-import { DirectiveBookkeeper } from './directive-bookkeeper';
+import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 
-import { AstTransformer } from '.';
+import { AstTransformer } from './index.js';
+
+const { traverse } = babel;
 
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;

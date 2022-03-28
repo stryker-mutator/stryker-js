@@ -1,4 +1,4 @@
-var loop = require('../../lib/infinite-loop');
+import loop from '../../lib/infinite-loop.js';
 
 it('should handle an infinite loop as a timeout', () => {
   while (true);

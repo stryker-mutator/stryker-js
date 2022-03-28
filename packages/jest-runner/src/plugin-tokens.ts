@@ -1,3 +1,4 @@
+export const requireFromCwd = 'requireFromCwd';
 export const resolve = 'resolve';
 export const configLoader = 'configLoader';
 export const processEnv = 'processEnv';

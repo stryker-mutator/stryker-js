@@ -1,18 +1,22 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { types } from '@babel/core';
+import babel from '@babel/core';
 import generator from '@babel/generator';
 import { I, normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { transformerContextStub } from '../../helpers/stubs';
-import { TransformerContext } from '../../../src/transformers';
-import { MutantCollector } from '../../../src/transformers/mutant-collector';
-import { transformBabel } from '../../../src/transformers/babel-transformer';
-import { ScriptAst } from '../../../src/syntax';
-import { instrumentationBabelHeader } from '../../../src/util';
-import { MutantPlacer } from '../../../src/mutant-placers';
-import { NodeMutator } from '../../../src/mutators';
-import { createJSAst, createTSAst } from '../../helpers/factories';
+import { transformerContextStub } from '../../helpers/stubs.js';
+import { TransformerContext } from '../../../src/transformers/index.js';
+import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
+import { transformBabel } from '../../../src/transformers/babel-transformer.js';
+import { ScriptAst } from '../../../src/syntax/index.js';
+import { instrumentationBabelHeader } from '../../../src/util/index.js';
+import { MutantPlacer } from '../../../src/mutant-placers/index.js';
+import { NodeMutator } from '../../../src/mutators/index.js';
+import { createJSAst, createTSAst } from '../../helpers/factories.js';
+
+// @ts-expect-error CJS typings not in line with synthetic esm
+const generate: typeof generator = generator.default;
+const { types } = babel;
 
 /**
  * The babel-transformer is pretty complex and has a lot of recursion.
@@ -43,12 +47,12 @@ describe('babel-transformer', () => {
     },
   };
 
-  const blockStatementPlacer: MutantPlacer<types.Statement> = {
+  const blockStatementPlacer: MutantPlacer<babel.types.Statement> = {
     name: 'blockStatementPlacerForTest',
     canPlace: (path) => path.isStatement(),
     place: (path, appliedMutants) => path.replaceWith(types.blockStatement([...appliedMutants.values(), path.node])),
   };
-  const sequenceExpressionPlacer: MutantPlacer<types.SequenceExpression> = {
+  const sequenceExpressionPlacer: MutantPlacer<babel.types.SequenceExpression> = {
     name: 'sequenceExpressionPlacerForTest',
     canPlace: (path) => path.isSequenceExpression(),
     place: (path, appliedMutants) =>
@@ -71,13 +75,13 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants[0].mutatorName).eq('Foo');
       expect(mutantCollector.mutants[1].replacementCode).eq('bar - baz');
       expect(mutantCollector.mutants[1].mutatorName).eq('Plus');
-      expect(normalizeWhitespaces(generator(ast.root).code)).contains('{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }');
+      expect(normalizeWhitespaces(generate(ast.root).code)).contains('{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }');
     });
 
     it('should not place the same mutant twice (#2968)', () => {
       const ast = createJSAst({ rawContent: 'foo((console.log(bar + baz), bar + baz));' });
       act(ast);
-      const code = generator(ast.root).code;
+      const code = generate(ast.root).code;
       expect(normalizeWhitespaces(code)).contains(
         normalizeWhitespaces(`{
         bar((console.log(bar + baz), bar + baz));
@@ -88,7 +92,7 @@ describe('babel-transformer', () => {
 
     it('should throw a decent placement error when something goes wrong', () => {
       // Arrange
-      const brokenPlacer: MutantPlacer<types.Identifier> = {
+      const brokenPlacer: MutantPlacer<babel.types.Identifier> = {
         name: 'brokenPlacer',
         canPlace: (path) => path.isIdentifier(),
         place: () => {
@@ -108,14 +112,14 @@ describe('babel-transformer', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
       context.options.excludedMutations = ['Foo'];
       act(ast);
-      const result = normalizeWhitespaces(generator(ast.root).code);
+      const result = normalizeWhitespaces(generate(ast.root).code);
       expect(result).not.include('bar = bar + baz;');
     });
     it('should still place other mutants', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
       context.options.excludedMutations = ['Foo'];
       act(ast);
-      const result = normalizeWhitespaces(generator(ast.root).code);
+      const result = normalizeWhitespaces(generate(ast.root).code);
       expect(result).include('foo = bar - baz');
     });
     it('should collect ignored mutants with correct ignore message', () => {
@@ -563,7 +567,7 @@ describe('babel-transformer', () => {
           }
         },
       });
-      const catchAllMutantPlacer: MutantPlacer<types.Program> = {
+      const catchAllMutantPlacer: MutantPlacer<babel.types.Program> = {
         name: 'catchAllMutantPlacer',
         canPlace: (path) => path.isProgram(),
         place() {

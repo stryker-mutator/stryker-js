@@ -9,16 +9,9 @@ import { File } from '@stryker-mutator/api/core';
 import nodeGlob from 'glob';
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import * as fileUtils from '../../../src/utils/file-utils';
+import { fileUtils } from '../../../src/utils/file-utils.js';
 
 describe('fileUtils', () => {
-  describe('glob', () => {
-    it('should resolve files', () => expect(fileUtils.glob('testResources/globTestFiles/sample/**/*.js')).to.eventually.have.length(10));
-
-    it('should not resolve to directories', () =>
-      expect(fileUtils.glob('testResources/globTestFiles/notResolveDirs/**/*.js')).to.eventually.have.length(1));
-  });
-
   describe('moveDirectoryRecursiveSync', () => {
     const from = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncFrom');
     const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncTo');

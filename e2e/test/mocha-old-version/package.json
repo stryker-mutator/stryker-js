@@ -7,7 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test": "stryker run",
-    "posttest": "mocha --no-config --require ../../tasks/ts-node-register.js verify/*.ts"
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
@@ -19,6 +19,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "~5.2.0"
+    "mocha": "7.2"
   }
 }

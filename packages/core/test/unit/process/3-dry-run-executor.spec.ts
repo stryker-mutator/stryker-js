@@ -11,14 +11,14 @@ import { mergeMap } from 'rxjs/operators';
 import { I } from '@stryker-mutator/util';
 import { File } from '@stryker-mutator/api/core';
 
-import { Timer } from '../../../src/utils/timer';
-import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process';
-import { coreTokens } from '../../../src/di';
-import { ConfigError } from '../../../src/errors';
-import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent';
-import { createTestRunnerPoolMock } from '../../helpers/producers';
-import { Sandbox } from '../../../src/sandbox';
-import { InputFileCollection } from '../../../src/input/input-file-collection';
+import { Timer } from '../../../src/utils/timer.js';
+import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { ConfigError } from '../../../src/errors.js';
+import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
+import { createTestRunnerPoolMock } from '../../helpers/producers.js';
+import { Sandbox } from '../../../src/sandbox/index.js';
+import { InputFileCollection } from '../../../src/input/input-file-collection.js';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;

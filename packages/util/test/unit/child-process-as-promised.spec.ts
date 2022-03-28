@@ -3,7 +3,7 @@ import { promisify } from 'util';
 
 import { expect } from 'chai';
 
-import { childProcessAsPromised } from '../../src';
+import { childProcessAsPromised } from '../../src/index.js';
 
 describe('childProcessAsPromised', () => {
   it('should expose promisified exec', () => {

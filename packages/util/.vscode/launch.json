@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Tests",
+      "name": "🛠 Tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
       "args": [
         "--timeout",

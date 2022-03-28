@@ -5,12 +5,12 @@ import { MutantStatus, ReportType, schema } from '@stryker-mutator/api/core';
 
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
-import { CIProvider } from '../../../../src/reporters/ci/provider';
-import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter';
-import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client';
-import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens';
-import { mock, Mock } from '../../../helpers/producers';
-import { Report } from '../../../../src/reporters/dashboard-reporter/report';
+import { CIProvider } from '../../../../src/reporters/ci/provider.js';
+import { DashboardReporter } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter.js';
+import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client.js';
+import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens.js';
+import { mock, Mock } from '../../../helpers/producers.js';
+import { Report } from '../../../../src/reporters/dashboard-reporter/report.js';
 
 describe(DashboardReporter.name, () => {
   let dashboardClientMock: Mock<DashboardReporterClient>;

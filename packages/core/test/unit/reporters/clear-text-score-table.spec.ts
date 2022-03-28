@@ -8,7 +8,7 @@ import { MetricsResult } from 'mutation-testing-metrics';
 import chalk from 'chalk';
 import flatMap from 'lodash.flatmap';
 
-import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table';
+import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {

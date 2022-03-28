@@ -1,4 +1,4 @@
-import { CheckStatus } from './check-status';
+import { CheckStatus } from './check-status.js';
 
 export interface FailedCheckResult {
   reason: string;

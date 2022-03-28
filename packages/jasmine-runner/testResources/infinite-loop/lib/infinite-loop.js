@@ -1,4 +1,4 @@
-function loop(n, action) {
+export default function loop(n, action) {
   let goOn = true;
   while (goOn) {
     action(n);
@@ -6,5 +6,3 @@ function loop(n, action) {
     goOn = n > 0;
   }
 }
-
-module.exports = loop;

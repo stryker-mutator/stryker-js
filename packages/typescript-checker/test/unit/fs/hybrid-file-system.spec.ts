@@ -3,7 +3,7 @@ import ts from 'typescript';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
-import { HybridFileSystem } from '../../../src/fs';
+import { HybridFileSystem } from '../../../src/fs/index.js';
 
 describe('fs', () => {
   describe(HybridFileSystem.name, () => {

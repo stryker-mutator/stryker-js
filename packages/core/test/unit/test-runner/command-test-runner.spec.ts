@@ -1,5 +1,6 @@
 import childProcess from 'child_process';
 import os from 'os';
+import { syncBuiltinESMExports } from 'module';
 
 import { DryRunResult, DryRunStatus, TestStatus } from '@stryker-mutator/api/test-runner';
 import { errorToString } from '@stryker-mutator/util';
@@ -8,39 +9,37 @@ import sinon from 'sinon';
 import { factory, assertions } from '@stryker-mutator/test-helpers';
 import { CommandRunnerOptions } from '@stryker-mutator/api/core';
 
-import { CommandTestRunner } from '../../../src/test-runner/command-test-runner';
-import * as objectUtils from '../../../src/utils/object-utils';
-import * as timerModule from '../../../src/utils/timer';
-import { ChildProcessMock } from '../../helpers/child-process-mock';
-import { Mock, mock } from '../../helpers/producers';
+import { CommandTestRunner } from '../../../src/test-runner/command-test-runner.js';
+import { objectUtils } from '../../../src/utils/object-utils.js';
+import { ChildProcessMock } from '../../helpers/child-process-mock.js';
 
 describe(CommandTestRunner.name, () => {
   let childProcessMock: ChildProcessMock;
   let killStub: sinon.SinonStub;
-  let timerMock: Mock<timerModule.Timer>;
+  let clock: sinon.SinonFakeTimers;
+  let execMock: sinon.SinonStubbedMember<typeof childProcess.exec>;
 
   beforeEach(() => {
+    clock = sinon.useFakeTimers();
     childProcessMock = new ChildProcessMock(42);
-    sinon.stub(childProcess, 'exec').returns(childProcessMock as childProcess.ChildProcess);
+    execMock = sinon.stub(childProcess, 'exec').returns(childProcessMock as childProcess.ChildProcess);
     killStub = sinon.stub(objectUtils, 'kill');
-    timerMock = mock(timerModule.Timer);
-    sinon.stub(timerModule, 'Timer').returns(timerMock);
+    syncBuiltinESMExports();
   });
 
   describe(CommandTestRunner.prototype.dryRun.name, () => {
     it('should run `npm test` by default', async () => {
       await actDryRun(createSut(undefined, 'foobarDir'));
-      expect(childProcess.exec).calledWith('npm test', { cwd: 'foobarDir', env: process.env });
+      expect(execMock).calledWith('npm test', { cwd: 'foobarDir', env: process.env });
     });
 
     it('should allow other commands using configuration', async () => {
       await actDryRun(createSut({ command: 'some other command' }));
-      expect(childProcess.exec).calledWith('some other command');
+      expect(execMock).calledWith('some other command');
     });
 
     it('should report successful test when the exit code = 0', async () => {
-      timerMock.elapsedMs.returns(42);
-      const result = await actDryRun();
+      const result = await actDryRun(undefined, 0, 42);
       const expectedResult: DryRunResult = {
         status: DryRunStatus.Complete,
         tests: [{ id: 'all', name: 'All tests', status: TestStatus.Success, timeSpentMs: 42 }],
@@ -49,17 +48,15 @@ describe(CommandTestRunner.name, () => {
     });
 
     it('should report failed test when the exit code != 0', async () => {
-      timerMock.elapsedMs.returns(42);
       const sut = createSut();
       const resultPromise = sut.dryRun();
-      await tick();
       childProcessMock.stdout.emit('data', 'x Test 1 failed');
       childProcessMock.stderr.emit('data', '1 != 2');
       childProcessMock.emit('exit', 1);
       const result = await resultPromise;
       const expectedResult: DryRunResult = {
         status: DryRunStatus.Complete,
-        tests: [{ id: 'all', name: 'All tests', status: TestStatus.Failed, timeSpentMs: 42, failureMessage: `x Test 1 failed${os.EOL}1 != 2` }],
+        tests: [{ id: 'all', name: 'All tests', status: TestStatus.Failed, timeSpentMs: 0, failureMessage: `x Test 1 failed${os.EOL}1 != 2` }],
       };
       expect(result).deep.eq(expectedResult);
     });
@@ -69,7 +66,6 @@ describe(CommandTestRunner.name, () => {
       const expectedError = new Error('foobar error');
       const sut = createSut();
       const resultPromise = sut.dryRun();
-      await tick();
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
       const expectedResult: DryRunResult = {
@@ -92,7 +88,7 @@ describe(CommandTestRunner.name, () => {
     it('should run with __ACTIVE_MUTANT__ environment variable active', async () => {
       const sut = createSut(undefined, 'foobarDir');
       await actMutantRun(sut, { activeMutantId: '0' });
-      expect(childProcess.exec).calledWith('npm test', { cwd: 'foobarDir', env: { ...process.env, __STRYKER_ACTIVE_MUTANT__: '0' } });
+      expect(execMock).calledWith('npm test', { cwd: 'foobarDir', env: { ...process.env, __STRYKER_ACTIVE_MUTANT__: '0' } });
     });
 
     it('should convert exit code 0 to a survived mutant', async () => {
@@ -103,7 +99,7 @@ describe(CommandTestRunner.name, () => {
     it('should convert exit code 1 to a killed mutant', async () => {
       const result = await actMutantRun(createSut(), { exitCode: 1 });
       assertions.expectKilled(result);
-      expect(result.killedBy).eq('all');
+      expect(result.killedBy).deep.eq(['all']);
     });
   });
 
@@ -132,8 +128,9 @@ describe(CommandTestRunner.name, () => {
     });
   });
 
-  async function actDryRun(sut: CommandTestRunner = createSut(), exitCode = 0) {
+  async function actDryRun(sut: CommandTestRunner = createSut(), exitCode = 0, elapsedTimeMS = 0) {
     const resultPromise = sut.dryRun();
+    clock.tick(elapsedTimeMS);
     await actTestProcessEnds(exitCode);
     return resultPromise;
   }
@@ -152,11 +149,7 @@ describe(CommandTestRunner.name, () => {
     return new CommandTestRunner(workingDir, strykerOptions);
   }
 
-  function tick(): Promise<void> {
-    return new Promise((res) => setTimeout(res, 0));
-  }
   async function actTestProcessEnds(exitCode: number) {
-    await tick();
     childProcessMock.emit('exit', exitCode);
   }
 });

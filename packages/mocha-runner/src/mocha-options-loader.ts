@@ -3,13 +3,13 @@ import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { PropertyPathBuilder } from '@stryker-mutator/util';
+import { propertyPath } from '@stryker-mutator/util';
 
-import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options';
+import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options.js';
 
-import { LibWrapper } from './lib-wrapper';
-import { filterConfig, serializeMochaLoadOptionsArguments } from './utils';
-import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options';
+import { LibWrapper } from './lib-wrapper.js';
+import { filterConfig, serializeMochaLoadOptionsArguments } from './utils.js';
+import { MochaRunnerWithStrykerOptions } from './mocha-runner-with-stryker-options.js';
 
 /**
  * Subset of defaults for mocha options
@@ -55,9 +55,9 @@ export class MochaOptionsLoader {
 
   private loadMocha6Options(overrides: MochaOptions) {
     const args = serializeMochaLoadOptionsArguments(overrides);
-    const rawConfig = LibWrapper.loadOptions!(args) ?? {};
+    const rawConfig = LibWrapper.loadOptions(args) ?? {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${LibWrapper.loadOptions!.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(`Mocha: ${LibWrapper.loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
     }
     const options = filterConfig(rawConfig);
     return options;
@@ -76,7 +76,7 @@ export class MochaOptionsLoader {
         } else {
           this.log.debug(
             'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            PropertyPathBuilder.create<MochaRunnerOptions>().prop('mochaOptions').prop('opts').build()
+            propertyPath<MochaRunnerOptions>()('mochaOptions', 'opts')
           );
           return {};
         }

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { unaryOperatorMutator as sut } from '../../../src/mutators/unary-operator-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { unaryOperatorMutator as sut } from '../../../src/mutators/unary-operator-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "UnaryOperator"', () => {

@@ -1,17 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports, import/order
-const strykerPackage: { version: string; engines: { node: string } } = require('../../package.json');
-
 import semver from 'semver';
 
 guardMinimalNodeVersion();
 
-import commander from 'commander';
+import { Command } from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { initializerFactory } from './initializer';
-import { LogConfigurator } from './logging';
-import { Stryker } from './stryker';
-import { defaultOptions } from './config/options-validator';
+import { initializerFactory } from './initializer/index.js';
+import { LogConfigurator } from './logging/index.js';
+import { Stryker } from './stryker.js';
+import { defaultOptions } from './config/index.js';
+import { strykerEngines, strykerVersion } from './stryker-package.js';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -42,16 +40,15 @@ export class StrykerCli {
 
   constructor(
     private readonly argv: string[],
-    private readonly program: commander.Command = new commander.Command(),
+    private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest()
   ) {}
 
   public run(): void {
     const dashboard: Partial<DashboardOptions> = {};
-    const defaultValues = defaultOptions();
     this.program
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      .version(strykerPackage.version)
+      .version(strykerVersion)
       .usage('<command> [options] [configFile]')
       .description(
         `Possible commands:
@@ -75,6 +72,7 @@ export class StrykerCli {
         'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
+      .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
       .option(
         '-m, --mutate <filesToMutate>',
         'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
@@ -92,7 +90,7 @@ export class StrykerCli {
       )
       .option('--checkerNodeArgs <listOfNodeArgs>', 'A list of node args to be passed to checker child processes.', createSplitter(' '))
       .option(
-        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultValues.coverageAnalysis}"`
+        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
@@ -124,11 +122,11 @@ export class StrykerCli {
       )
       .option(
         '--logLevel <level>',
-        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.logLevel}"`
+        `Set the log level for the console. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.logLevel}"`
       )
       .option(
         '--fileLogLevel <level>',
-        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultValues.fileLogLevel}"`
+        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.fileLogLevel}"`
       )
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(
@@ -148,12 +146,12 @@ export class StrykerCli {
       )
       .option(
         '--dashboard.baseUrl <url>',
-        `Indicates which baseUrl to use when reporting to the stryker dashboard. Default: "${defaultValues.dashboard.baseUrl}"`,
+        `Indicates which baseUrl to use when reporting to the stryker dashboard. Default: "${defaultOptions.dashboard.baseUrl}"`,
         deepOption(dashboard, 'baseUrl')
       )
       .option(
         `--dashboard.reportType <${ALL_REPORT_TYPES.join('|')}>`,
-        `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultValues.dashboard.reportType}`,
+        `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultOptions.dashboard.reportType}`,
         deepOption(dashboard, 'reportType')
       )
       .option(
@@ -166,7 +164,7 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true/false>',
-        `Choose whether or not to clean the temp dir (which is "${defaultValues.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
+        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
       .showSuggestionAfterError()
@@ -207,9 +205,9 @@ export class StrykerCli {
 
 export function guardMinimalNodeVersion(processVersion = process.version): void {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  if (!semver.satisfies(processVersion, strykerPackage.engines.node)) {
+  if (!semver.satisfies(processVersion, strykerEngines.node)) {
     throw new Error(
-      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerPackage.engines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
+      `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerEngines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`
     );
   }
 }

@@ -5,15 +5,15 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { NpmClient } from './npm-client';
-import { PackageInfo } from './package-info';
-import { Preset } from './presets/preset';
-import { PromptOption } from './prompt-option';
-import { StrykerConfigWriter } from './stryker-config-writer';
-import { StrykerInquirer } from './stryker-inquirer';
-import { GitignoreWriter } from './gitignore-writer';
+import { NpmClient } from './npm-client.js';
+import { PackageInfo } from './package-info.js';
+import { Preset } from './presets/preset.js';
+import { PromptOption } from './prompt-option.js';
+import { StrykerConfigWriter } from './stryker-config-writer.js';
+import { StrykerInquirer } from './stryker-inquirer.js';
+import { GitignoreWriter } from './gitignore-writer.js';
 
-import { initializerTokens } from '.';
+import { initializerTokens } from './index.js';
 
 const enum PackageManager {
   Npm = 'npm',
@@ -45,7 +45,7 @@ export class StrykerInitializer {
    * @function
    */
   public async initialize(): Promise<void> {
-    this.configWriter.guardForExistingConfig();
+    await this.configWriter.guardForExistingConfig();
     this.patchProxies();
     const selectedPreset = await this.selectPreset();
     let configFileName: string;

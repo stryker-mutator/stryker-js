@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator';
-import { expectJSMutation } from '../../helpers/expect-mutation';
+import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator.js';
+import { expectJSMutation } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "ArithmeticOperator"', () => {

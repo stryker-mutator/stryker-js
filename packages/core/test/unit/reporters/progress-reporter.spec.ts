@@ -4,9 +4,9 @@ import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
 import { MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
 
-import * as progressBarModule from '../../../src/reporters/progress-bar';
-import { ProgressBarReporter } from '../../../src/reporters/progress-reporter';
-import { Mock, mock } from '../../helpers/producers';
+import { progressBarWrapper } from '../../../src/reporters/progress-bar.js';
+import { ProgressBarReporter } from '../../../src/reporters/progress-reporter.js';
+import { Mock, mock } from '../../helpers/producers.js';
 
 const SECOND = 1000;
 const TEN_SECONDS = SECOND * 10;
@@ -18,6 +18,7 @@ describe(ProgressBarReporter.name, () => {
   let sut: ProgressBarReporter;
   let mutants: MutantTestCoverage[];
   let progressBar: Mock<ProgressBar>;
+  let progressBarConstructorStub: sinon.SinonStub;
   const progressBarContent =
     'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:total tested (:survived survived, :timedOut timed out)';
 
@@ -25,7 +26,8 @@ describe(ProgressBarReporter.name, () => {
     sinon.useFakeTimers();
     sut = new ProgressBarReporter();
     progressBar = mock(ProgressBar);
-    sinon.stub(progressBarModule, 'ProgressBar').returns(progressBar);
+    progressBarConstructorStub = sinon.stub(progressBarWrapper, 'ProgressBar');
+    progressBarConstructorStub.returns(progressBar);
   });
 
   describe('onAllMutantsMatchedWithTests()', () => {
@@ -38,7 +40,7 @@ describe(ProgressBarReporter.name, () => {
 
       sut.onAllMutantsMatchedWithTests(mutants);
 
-      expect(progressBarModule.ProgressBar).calledWithMatch(progressBarContent, { total: 3 });
+      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 3 });
     });
 
     it('should show a progress bar for 2 mutants when 3 mutants are presented of which 2 have coverage', () => {
@@ -49,7 +51,7 @@ describe(ProgressBarReporter.name, () => {
       ];
 
       sut.onAllMutantsMatchedWithTests(mutants);
-      expect(progressBarModule.ProgressBar).calledWithMatch(progressBarContent, { total: 2 });
+      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 2 });
     });
 
     it('should show a progress bar of 2 mutants when 3 mutants are presented of which 1 is static and 1 has coverage', () => {
@@ -60,7 +62,7 @@ describe(ProgressBarReporter.name, () => {
       ];
 
       sut.onAllMutantsMatchedWithTests(mutants);
-      expect(progressBarModule.ProgressBar).calledWithMatch(progressBarContent, { total: 2 });
+      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 2 });
     });
   });
 

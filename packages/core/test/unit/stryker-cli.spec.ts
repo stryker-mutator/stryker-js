@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { LogConfigurator } from '../../src/logging';
-import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli';
+import { LogConfigurator } from '../../src/logging/index.js';
+import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
@@ -49,6 +49,7 @@ describe(StrykerCli.name, () => {
       [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--inPlace'], { inPlace: true }],
+      [['--ignoreStatic'], { ignoreStatic: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
       [['-c', '6'], { concurrency: 6 }],
@@ -100,13 +101,13 @@ describe(StrykerCli.name, () => {
   });
 
   describe(guardMinimalNodeVersion.name, () => {
-    it('should fail for < v12.17', () => {
-      expect(() => guardMinimalNodeVersion('v12.16.0')).throws(
-        'Node.js version v12.16.0 detected. StrykerJS requires version to match >=12.17. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
+    it('should fail for < v14.18.0', () => {
+      expect(() => guardMinimalNodeVersion('v14.17.0')).throws(
+        'Node.js version v14.17.0 detected. StrykerJS requires version to match >=14.18.0. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
       );
     });
-    it('should not fail for >= v12.17', () => {
-      expect(() => guardMinimalNodeVersion('v12.17.0')).not.throws();
+    it('should not fail for >= v14.18.0', () => {
+      expect(() => guardMinimalNodeVersion('v14.18.0')).not.throws();
     });
   });
 

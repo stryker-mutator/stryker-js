@@ -1,8 +1,8 @@
-import { Ast, AstFormat } from '../syntax';
+import { Ast, AstFormat } from '../syntax/index.js';
 
-import { print as htmlPrint } from './html-printer';
-import { print as jsPrint } from './js-printer';
-import { print as tsPrint } from './ts-printer';
+import { print as htmlPrint } from './html-printer.js';
+import { print as jsPrint } from './js-printer.js';
+import { print as tsPrint } from './ts-printer.js';
 
 export type Printer<T extends Ast> = (file: T, context: PrinterContext) => string;
 

@@ -1,8 +1,8 @@
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 
-import { MutantResult, MutantTestCoverage, schema } from '../core';
+import { MutantResult, MutantTestCoverage, schema } from '../core/index.js';
 
-import { SourceFile } from './source-file';
+import { SourceFile } from './source-file.js';
 
 /**
  * Represents a reporter which can report during or after a Stryker run

@@ -1,4 +1,4 @@
-import { notEmpty } from './not-empty';
+import { notEmpty } from './not-empty.js';
 
 export interface UnserializableDescription {
   path: string[];

@@ -14,25 +14,26 @@ import {
   TestStatus,
   DryRunOptions,
   BaseTestResult,
+  TestRunnerCapabilities,
   determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty, requireResolve } from '@stryker-mutator/util';
+import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
 import { SerializableError } from '@jest/types/build/TestResult';
 
-import { JestOptions } from '../src-generated/jest-runner-options';
+import { JestOptions } from '../src-generated/jest-runner-options.js';
 
-import { jestTestAdapterFactory } from './jest-test-adapters';
-import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter';
-import { JestConfigLoader } from './config-loaders/jest-config-loader';
-import { withCoverageAnalysis, withHitLimit } from './jest-plugins';
-import * as pluginTokens from './plugin-tokens';
-import { configLoaderFactory } from './config-loaders';
-import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options';
-import { JEST_OVERRIDE_OPTIONS } from './jest-override-options';
-import { jestWrapper, verifyAllTestFilesHaveCoverage } from './utils';
-import { state } from './messaging';
+import { jestTestAdapterFactory } from './jest-test-adapters/index.js';
+import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter.js';
+import { JestConfigLoader } from './config-loaders/jest-config-loader.js';
+import { withCoverageAnalysis, withHitLimit } from './jest-plugins/index.js';
+import * as pluginTokens from './plugin-tokens.js';
+import { configLoaderFactory } from './config-loaders/index.js';
+import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options.js';
+import { JEST_OVERRIDE_OPTIONS } from './jest-override-options.js';
+import { jestWrapper, verifyAllTestFilesHaveCoverage } from './utils/index.js';
+import { state } from './jest-plugins/cjs/messaging.js';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;
@@ -41,7 +42,6 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
   jestTestRunnerFactory.inject = tokens(commonTokens.injector);
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
     return injector
-      .provideValue(pluginTokens.processEnv, process.env)
       .provideValue(pluginTokens.jestVersion, jestWrapper.getVersion())
       .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
       .provideFactory(pluginTokens.configLoader, configLoaderFactory)
@@ -61,7 +61,6 @@ export class JestTestRunner implements TestRunner {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    pluginTokens.processEnv,
     pluginTokens.jestTestAdapter,
     pluginTokens.configLoader,
     pluginTokens.globalNamespace
@@ -70,7 +69,6 @@ export class JestTestRunner implements TestRunner {
   constructor(
     private readonly log: Logger,
     options: StrykerOptions,
-    private readonly processEnvRef: NodeJS.ProcessEnv,
     private readonly jestTestAdapter: JestTestAdapter,
     configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
@@ -90,6 +88,10 @@ export class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
+  }
+
+  public capabilities(): TestRunnerCapabilities {
+    return { reloadEnvironment: true };
   }
 
   public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
@@ -199,25 +201,8 @@ export class JestTestRunner implements TestRunner {
   }
 
   private setEnv() {
-    // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here
-    // https://github.com/facebook/jest/blob/master/packages/jest-cli/bin/jest.js#L12-L14
-    if (!this.processEnvRef.NODE_ENV) {
-      this.processEnvRef.NODE_ENV = 'test';
-    }
-
     // Force colors off: https://github.com/chalk/supports-color#info
     process.env.FORCE_COLOR = '0';
-
-    if (this.jestOptions.projectType === 'create-react-app') {
-      try {
-        requireResolve('react-scripts/config/env.js');
-      } catch (err) {
-        this.log.warn(
-          'Unable to load environment variables using "react-scripts/config/env.js". The environment variables might differ from expected. Please open an issue if you think this is a bug: https://github.com/stryker-mutator/stryker-js/issues/new/choose.'
-        );
-        this.log.debug('Inner error', err);
-      }
-    }
   }
 
   private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {

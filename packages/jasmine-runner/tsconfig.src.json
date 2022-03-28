@@ -4,22 +4,15 @@
     "outDir": "dist",
     "rootDir": ".",
     "noImplicitThis": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
-  "include": [
-    "src",
-    "src-generated",
-    "typings",
-    "schema/*.json"
-  ],
+  "include": ["src", "src-generated", "typings", "schema/*.json"],
   "references": [
     {
-      "path": "../api/tsconfig.src.json",
+      "path": "../api/tsconfig.src.json"
     },
     {
-      "path": "../util/tsconfig.src.json",
+      "path": "../util/tsconfig.src.json"
     }
   ]
 }

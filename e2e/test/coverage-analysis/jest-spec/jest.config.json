@@ -1,5 +1,0 @@
-{
-  "testEnvironment": "node",
-  "rootDir": "..",
-  "testMatch": ["<rootDir>/jest-spec/*.spec.js"]
-}

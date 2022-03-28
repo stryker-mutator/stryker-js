@@ -1,5 +1,5 @@
-var expect = require('chai').expect;
-var MyMath = require('./MyMath');
+import { expect } from 'chai';
+import MyMath from './MyMath.js';
 
 describe('MyMath', function () {
   var myMath;

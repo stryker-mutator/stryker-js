@@ -1,15 +1,15 @@
 import os from 'os';
+import path from 'path';
 
 import sinon from 'sinon';
 import { LogLevel, ReportType, strykerCoreSchema, StrykerOptions } from '@stryker-mutator/api/core';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { propertyPath } from '@stryker-mutator/util';
-
-import { OptionsValidator, validateOptions } from '../../../src/config/options-validator';
-import { coreTokens } from '../../../src/di';
-import { createCpuInfo } from '../../helpers/producers';
+import { OptionsValidator } from '../../../src/config/options-validator.js';
+import { coreTokens } from '../../../src/di/index.js';
+import { createCpuInfo } from '../../helpers/producers.js';
+import { optionsPath } from '../../../src/utils/index.js';
 
 describe(OptionsValidator.name, () => {
   let sut: OptionsValidator;
@@ -35,6 +35,7 @@ describe(OptionsValidator.name, () => {
         cleanTempDir: true,
         inPlace: false,
         ignorePatterns: [],
+        ignoreStatic: false,
         checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,
@@ -57,6 +58,9 @@ describe(OptionsValidator.name, () => {
         fileLogLevel: LogLevel.Off,
         jsonReporter: {
           fileName: 'reports/mutation/mutation.json',
+        },
+        htmlReporter: {
+          fileName: 'reports/mutation/mutation.html',
         },
         logLevel: LogLevel.Information,
         maxConcurrentTestRunners: 9007199254740991,
@@ -103,13 +107,13 @@ describe(OptionsValidator.name, () => {
       );
     });
 
-    it(`should rewrite them to "${propertyPath<StrykerOptions>('ignorePatterns')}"`, () => {
+    it(`should rewrite them to "${optionsPath('ignorePatterns')}"`, () => {
       testInjector.options.files = ['src/**/*.js', '!src/index.js'];
       sut.validate(testInjector.options);
       expect(testInjector.options.ignorePatterns).deep.eq(['**', '!src/**/*.js', 'src/index.js']);
     });
 
-    it(`should not clear existing "${propertyPath<StrykerOptions>('ignorePatterns')}" when rewritting "files"`, () => {
+    it(`should not clear existing "${optionsPath('ignorePatterns')}" when rewritting "files"`, () => {
       testInjector.options.files = ['src/**/*.js'];
       testInjector.options.ignorePatterns = ['src/index.js'];
       sut.validate(testInjector.options);
@@ -169,9 +173,26 @@ describe(OptionsValidator.name, () => {
     testInjector.options.jest = { enableBail: false };
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
-      'DEPRECATED. Use of "jest.enableBail" inside deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+      'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
     );
     expect(testInjector.options.disableBail).true;
+  });
+
+  describe('htmlReporter.baseDir', () => {
+    it('should report a deprecation warning and set fileName', () => {
+      breakConfig('htmlReporter', { baseDir: 'some/base/dir' }, false);
+      sut.validate(testInjector.options);
+      expect(testInjector.logger.warn).calledWith(
+        'DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "htmlReporter.fileName" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string'
+      );
+      expect(testInjector.options.htmlReporter.fileName).eq(path.join('some', 'base', 'dir', 'index.html'));
+    });
+
+    it('should not override the fileName if a fileName is already set', () => {
+      breakConfig('htmlReporter', { baseDir: 'some/base/dir', fileName: 'some-other.file.html' });
+      sut.validate(testInjector.options);
+      expect(testInjector.options.htmlReporter.fileName).eq('some-other.file.html');
+    });
   });
 
   describe('plugins', () => {
@@ -336,6 +357,14 @@ describe(OptionsValidator.name, () => {
     );
   });
 
+  it('should be invalid when combining --ignoreStatic with something else then "perTest" coverage analysis', () => {
+    testInjector.options.ignoreStatic = true;
+    testInjector.options.coverageAnalysis = 'all';
+    actValidationErrors(
+      'Config option "ignoreStatic" is not supported with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".'
+    );
+  });
+
   describe('transpilers', () => {
     it('should report a deprecation warning', () => {
       testInjector.options.transpilers = ['stryker-jest'];
@@ -349,6 +378,86 @@ describe(OptionsValidator.name, () => {
   it('should be invalid with invalid coverageAnalysis', () => {
     breakConfig('coverageAnalysis', 'invalid');
     actValidationErrors('Config option "coverageAnalysis" should be one of the allowed values ("off", "all", "perTest"), but was "invalid".');
+  });
+
+  describe('unknown options', () => {
+    it('should not warn when there are no unknown properties', () => {
+      testInjector.options.htmlReporter = {
+        fileName: 'test.html',
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn when unknown properties are postfixed with "_comment"', () => {
+      testInjector.options.maxConcurrentTestRunners_comment = 'Recommended to use half of your cores';
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should warn about unknown properties', () => {
+      testInjector.options.karma = {};
+      testInjector.options.jest = {};
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledThrice;
+      expect(testInjector.logger.warn).calledWith('Unknown stryker config option "karma".');
+      expect(testInjector.logger.warn).calledWith('Unknown stryker config option "jest".');
+      expect(testInjector.logger.warn).calledWithMatch('Possible causes');
+    });
+
+    it('should not warn about unknown options when mark = false', () => {
+      testInjector.options.jest = {};
+      sut.validate(testInjector.options, false);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn about unknown properties when warnings are disabled', () => {
+      testInjector.options.karma = {};
+      testInjector.options.warnings = factory.warningOptions({ unknownOptions: false });
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+    it('should ignore options added by Stryker itself', () => {
+      testInjector.options.set = {};
+      testInjector.options.configFile = {};
+      testInjector.options.$schema = '';
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+  });
+
+  describe('unserializable values', () => {
+    it('should warn about unserializable values', () => {
+      testInjector.options.karma = {
+        config: {
+          webpack: {
+            transformPath() {
+              /* idle */
+            },
+          },
+        },
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledWith(
+        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.'
+      );
+    });
+    it('should not warn about unserializable values when the warning is disabled', () => {
+      testInjector.options.warnings = factory.warningOptions({ unserializableOptions: false, unknownOptions: false });
+      testInjector.options.myCustomReporter = {
+        filter: /some-regex/,
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should hint to disable the warning', () => {
+      testInjector.options.myCustomReporter = {
+        filter: /some-regex/,
+      };
+      sut.validate(testInjector.options, true);
+      expect(testInjector.logger.warn).calledWith('(disable warnings.unserializableOptions to ignore this warning)');
+    });
   });
 
   function actValidationErrors(...expectedErrors: string[]) {
@@ -366,27 +475,12 @@ describe(OptionsValidator.name, () => {
     expect(testInjector.logger.warn).not.called;
   }
 
-  function breakConfig(key: keyof StrykerOptions, value: any): void {
+  function breakConfig(key: keyof StrykerOptions, value: any, mergeObjects = true): void {
     const original = testInjector.options[key];
-    if (typeof original === 'object' && !Array.isArray(original)) {
+    if (typeof original === 'object' && !Array.isArray(original) && mergeObjects) {
       testInjector.options[key] = { ...original, ...value };
     } else {
       testInjector.options[key] = value;
     }
   }
-});
-
-describe(validateOptions.name, () => {
-  let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
-
-  beforeEach(() => {
-    optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
-  });
-
-  it('should validate the options using given optionsValidator', () => {
-    const options = { foo: 'bar' };
-    const output = validateOptions(options, optionsValidatorMock as unknown as OptionsValidator);
-    expect(options).deep.eq(output);
-    expect(optionsValidatorMock.validate).calledWith(options);
-  });
 });

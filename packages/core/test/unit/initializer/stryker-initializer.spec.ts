@@ -1,23 +1,26 @@
 import childProcess from 'child_process';
 import fs from 'fs';
+import { syncBuiltinESMExports } from 'module';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
-import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest-client/RestClient.js';
 
-import { initializerTokens } from '../../../src/initializer';
-import { NpmClient } from '../../../src/initializer/npm-client';
-import { PackageInfo } from '../../../src/initializer/package-info';
-import { Preset } from '../../../src/initializer/presets/preset';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration';
-import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer';
-import { StrykerInitializer } from '../../../src/initializer/stryker-initializer';
-import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer';
-import { Mock } from '../../helpers/producers';
-import { GitignoreWriter } from '../../../src/initializer/gitignore-writer';
+import { fileUtils } from '../../../src/utils/file-utils.js';
+import { initializerTokens } from '../../../src/initializer/index.js';
+import { NpmClient } from '../../../src/initializer/npm-client.js';
+import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { Preset } from '../../../src/initializer/presets/preset.js';
+import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
+import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
+import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
+import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
+import { Mock } from '../../helpers/producers.js';
+import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
+import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -25,7 +28,7 @@ describe(StrykerInitializer.name, () => {
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
-  let fsExistsSync: sinon.SinonStub;
+  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
   let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
@@ -44,10 +47,11 @@ describe(StrykerInitializer.name, () => {
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
-    fsExistsSync = sinon.stub(fs, 'existsSync');
-    restClientSearch = sinon.createStubInstance(RestClient);
-    restClientPackage = sinon.createStubInstance(RestClient);
+    existsStub = sinon.stub(fileUtils, 'exists');
+    restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
+    restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
+    syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
       .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
@@ -139,13 +143,13 @@ describe(StrykerInitializer.name, () => {
         config,
         guideUrl,
       });
-      const expectedOutput = `/**
-         * @type {import('@stryker-mutator/api/core').StrykerOptions}
-         */  
-        module.exports = {
+      const expectedOutput = `// @ts-check
+        /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */  
+        const config =  {
           "_comment": "This config was generated using 'stryker init'. Please see the guide for more information: https://awesome-preset.org",
           "awesomeConf": "${config.awesomeConf}"
-        };`;
+        };
+        export default config;`;
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
@@ -153,7 +157,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
-      expect(childExec).calledWith('npx prettier --write stryker.conf.js');
+      expect(childExec).calledWith('npx prettier --write stryker.conf.mjs');
     });
 
     it('should handle errors when formatting fails', async () => {
@@ -254,7 +258,7 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
     });
 
-    it('should configure the additional settings from the plugins', async () => {
+    it('should annotate the config file with the docs url', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: [],
@@ -418,13 +422,24 @@ describe(StrykerInitializer.name, () => {
     });
   });
 
-  it('should log an error and quit when `stryker.conf.js` file already exists', async () => {
-    fsExistsSync.resolves(true);
+  SUPPORTED_CONFIG_FILE_EXTENSIONS.forEach((ext) => {
+    it(`should log an error and quit when \`stryker.conf${ext}\` file already exists`, async () => {
+      existsStub.withArgs(`stryker.conf${ext}`).resolves(true);
 
-    expect(sut.initialize()).to.be.rejected;
-    expect(testInjector.logger.error).calledWith(
-      'Stryker config file "stryker.conf.js" already exists in the current directory. Please remove it and try again.'
-    );
+      await expect(sut.initialize()).to.be.rejected;
+      expect(testInjector.logger.error).calledWith(
+        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+      );
+    });
+
+    it(`should log an error and quit when \`.stryker.conf${ext}\` file already exists`, async () => {
+      existsStub.withArgs(`.stryker.conf${ext}`).resolves(true);
+
+      await expect(sut.initialize()).to.be.rejected;
+      expect(testInjector.logger.error).calledWith(
+        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+      );
+    });
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
@@ -502,7 +517,7 @@ describe(StrykerInitializer.name, () => {
 
   function expectStrykerConfWritten(expectedRawConfig: string) {
     const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
-    expect(fileName).eq('stryker.conf.js');
-    expect(normalizeWhitespaces(actualConfig as string)).deep.eq(normalizeWhitespaces(expectedRawConfig));
+    expect(fileName).eq('stryker.conf.mjs');
+    expect(normalizeWhitespaces(actualConfig as string)).eq(normalizeWhitespaces(expectedRawConfig));
   }
 });
