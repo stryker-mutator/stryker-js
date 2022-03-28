@@ -309,7 +309,7 @@ describe(MutantTestPlanner.name, () => {
         static: false,
         coveredBy: [],
       };
-      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedSecondMatch), sinon.match(expectedFirstMatch)]);
+      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
   });
 

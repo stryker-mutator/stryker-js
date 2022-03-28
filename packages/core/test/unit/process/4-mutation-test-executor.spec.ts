@@ -33,7 +33,7 @@ function mutantRunPlan(overrides?: Partial<MutantRunOptions & MutantTestCoverage
   });
 }
 
-describe(MutationTestExecutor.name, () => {
+describe.only(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;
   let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
   let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
@@ -318,6 +318,25 @@ describe(MutationTestExecutor.name, () => {
       expect(testRunnerPoolMock.schedule).calledOnce;
       expect(testRunner.mutantRun).calledWithExactly(plan1.runOptions);
       expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
+    });
+
+    it('should sort the mutants that reload the environment last', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan1 = mutantRunPlan({ id: '1', reloadEnvironment: true });
+      const plan2 = mutantRunPlan({ id: '2', reloadEnvironment: false });
+      const plan3 = mutantRunPlan({ id: '3', reloadEnvironment: true });
+      mutantTestPlans.push(plan1, plan2, plan3);
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      sinon.assert.callOrder(
+        testRunner.mutantRun.withArgs(plan2.runOptions),
+        testRunner.mutantRun.withArgs(plan1.runOptions),
+        testRunner.mutantRun.withArgs(plan3.runOptions)
+      );
     });
 
     it('should report mutant run results', async () => {
