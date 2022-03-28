@@ -320,6 +320,25 @@ describe(MutationTestExecutor.name, () => {
       expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
     });
 
+    it('should sort the mutants that reload the environment last', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan1 = mutantRunPlan({ id: '1', reloadEnvironment: true });
+      const plan2 = mutantRunPlan({ id: '2', reloadEnvironment: false });
+      const plan3 = mutantRunPlan({ id: '3', reloadEnvironment: true });
+      mutantTestPlans.push(plan1, plan2, plan3);
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      sinon.assert.callOrder(
+        testRunner.mutantRun.withArgs(plan2.runOptions),
+        testRunner.mutantRun.withArgs(plan1.runOptions),
+        testRunner.mutantRun.withArgs(plan3.runOptions)
+      );
+    });
+
     it('should report mutant run results', async () => {
       // Arrange
       const plan = mutantRunPlan({ static: true });
