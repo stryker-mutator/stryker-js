@@ -63,7 +63,6 @@
     "release": "lerna version"
   },
   "engines": {
-    "node": ">=12",
-    "npm": ">=5"
+    "node": ">=14.18.0"
   }
 }
