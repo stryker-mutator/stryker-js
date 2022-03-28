@@ -11,7 +11,7 @@ jobs:
   core:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Install & Build
         run: |
           npm install
@@ -24,7 +24,7 @@ jobs:
   dependencies_and_plugins:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Install & Build
         run: |
           npm install
@@ -37,7 +37,7 @@ jobs:
   typescript-checker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - name: Install & Build
         run: |
           npm install
