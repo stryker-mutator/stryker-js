@@ -33,7 +33,7 @@ function mutantRunPlan(overrides?: Partial<MutantRunOptions & MutantTestCoverage
   });
 }
 
-describe.only(MutationTestExecutor.name, () => {
+describe(MutationTestExecutor.name, () => {
   let reporterMock: Required<Reporter>;
   let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
   let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
