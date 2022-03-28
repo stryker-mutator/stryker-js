@@ -103,25 +103,33 @@ It is easy to test your plugin on a test project by loading it via the plugins s
 For example, when your test project resides next to your plugin implementation:
 
 ```js
-// stryker.conf.json
 {
-  "testRunner": 'foo', // name of your test runner
-  "plugins": ["@stryker-mutator/*", "../my-plugin/index.js"], // load your test runner here
-  "timeoutMS": 99999, // useful for debugging your  
-  "concurrency": 1, // useful for debugging your 
-  "testRunnerNodeArgs": ["--inspect"] // useful for debugging your test runner plugin
+  // name of your test runner
+  "testRunner": "foo", 
+  // name of your checker
+  "checkers": ["bar"], 
+  // name your reporter
+  "reporters": ["progress", "my-reporter"], 
+  // load your test runner, reporter or checker plugin here
+  "plugins": ["@stryker-mutator/*", "../my-plugin"], 
+  // useful for debugging your 
+  "concurrency": 1, 
+  // useful for debugging your test runner plugin
+  "testRunnerNodeArgs": ["--inspect"], 
+  // useful for debugging your checker plugin
+  "checkerNodeArgs": ["--inspect"]
 };
 ```
 
 **Note: Be sure you have compiled your TypeScript correctly.**
 
-You can test it out with Stryker:
+You can test it out with StrykerJS:
 
 ```shell
 npx stryker run
 ```
 
-Test runner and checker plugins are actually created in its own child process. Therefore you cannot debug them directly. Instead you can use the `testRunnerNodeArgs: ['--inspect']` to debug your test runner plugin (an equivalent for the checker plugin isn't created yet, please let us know if you need it).
+Test runner and checker plugins are actually created in its own child process. Therefore you cannot debug them directly. Instead you can use the `testRunnerNodeArgs: ['--inspect']` or `checkerNodeArgs: ['--inspect']` to debug your test runner or respectively plugin respectively.
 
 After you've verified that your plugin loads correctly, it is recommended to create your own integration tests and not rely on Stryker to test it out each time. This will allow you to develop your plugin faster.
 

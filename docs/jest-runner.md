@@ -107,17 +107,17 @@ Becomes:
 
 ```js
 /**
- * @jest-environment @stryker-mutator/jest-runner/jest-env/jsom
+ * @jest-environment @stryker-mutator/jest-runner/jest-env/jsdom
  */
 ```
 
 This is the list of jest environments that are shipped with @stryker-mutator/jest-runner.
 
-| Jest test environment          | @stryker-mutator/jest-runner override              |
-| ------------------------------ | -------------------------------------------------- |
-| node                           | @stryker-mutator/jest-runner/jest-env/node         |
-| jsdom                          | @stryker-mutator/jest-runner/jest-env/jsom         |
-| jest-environment-jsdom-sixteen | @stryker-mutator/jest-runner/jest-env/jsom-sixteen |
+| Jest test environment          | @stryker-mutator/jest-runner override               |
+| ------------------------------ | --------------------------------------------------- |
+| node                           | @stryker-mutator/jest-runner/jest-env/node          |
+| jsdom                          | @stryker-mutator/jest-runner/jest-env/jsdom         |
+| jest-environment-jsdom-sixteen | @stryker-mutator/jest-runner/jest-env/jsdom-sixteen |
 
 Don't worry; using Stryker's alternative is harmless during regular unit testing.
 
