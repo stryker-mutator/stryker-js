@@ -1,4 +1,5 @@
 import { ESLint } from 'eslint';
+import { CosmiconfigResult } from 'cosmiconfig/dist/types';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker-js/issues/391 for more info
@@ -22,10 +23,17 @@ export function overrideOptions(parsedConfig: { config?: any }): ESLint.Options[
   };
 }
 
-export async function getConfig(fileName?: string): Promise<ESLint.Options['overrideConfig']> {
+interface ConfigLoader {
+  load(filename: string): Promise<CosmiconfigResult>;
+}
+
+export async function getConfig(explorer: ConfigLoader, fileName?: string): Promise<ESLint.Options['overrideConfig']> {
   if (fileName) {
-    const { default: parsedConfig } = await import(fileName);
-    return overrideOptions({ config: parsedConfig });
+    const parsedConfig = await explorer.load(fileName);
+    if (parsedConfig === null) {
+      throw new Error(`Unable to parse ${fileName}, appears to be null`);
+    }
+    return overrideOptions(parsedConfig);
   }
   return overrideOptions({});
 }

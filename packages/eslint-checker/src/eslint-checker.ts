@@ -1,15 +1,18 @@
 import fs from 'fs';
 
-import fg from 'fast-glob';
+import { cosmiconfig } from 'cosmiconfig';
 import { ESLint } from 'eslint';
+import fg from 'fast-glob';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 
 import { ScriptFile } from './script-file.js';
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
 import { getConfig } from './esconfig-helpers.js';
+
+const configLoader = cosmiconfig('eslint');
 
 export class LintChecker implements Checker {
   private linter: ESLint;
@@ -32,7 +35,7 @@ export class LintChecker implements Checker {
   }
 
   public async init(): Promise<void> {
-    const overrideConfig = await getConfig(this.options.lintConfigFile as string | undefined);
+    const overrideConfig = await getConfig(configLoader, this.options.lintConfigFile as string | undefined);
     this.linter = new ESLint({ overrideConfig });
     this.logger.info('starting initial lint dry-run');
     const files = await fg(this.options.mutate);
