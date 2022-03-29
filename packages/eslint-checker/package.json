@@ -1,0 +1,39 @@
+{
+  "name": "eslint-checker",
+  "version": "6.0.0-beta.0",
+  "description": "An eslint checker plugin to be used in Stryker, the JavaScript mutation testing framework",
+  "type": "module",
+  "keywords": [
+    "eslint",
+    "sstryker",
+    "checker",
+    "plugin"
+  ],
+  "author": "Tim Lehner <timothy.lehner.2011@live.rhul.ac.uk>",
+  "homepage": "https://github.com/TimLehner/stryker-js#readme",
+  "license": "ISC",
+  "main": "dist/src/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimLehner/stryker-js.git"
+  },
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "mocha": "mocha",
+    "test:all": "npm run test:unit",
+    "test:unit": "mocha 'dist/test/unit/**/*.spec.js'"
+  },
+  "bugs": {
+    "url": "https://github.com/TimLehner/stryker-js/issues"
+  },
+  "devDependencies": {
+    "@types/mocha": "^9.1.0"
+  }
+}

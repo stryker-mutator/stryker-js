@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "types": ["node"]
+  },
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ],
+  "include": ["src/**/*.ts", "src-generated/**/*.ts", "schema/typescript-checker-options.json", "test/unit/eslint-checker.spec.ts"]
+}
