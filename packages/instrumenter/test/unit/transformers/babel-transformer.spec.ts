@@ -133,7 +133,7 @@ describe('babel-transformer', () => {
 
   describe('skips', () => {
     it('should skip type annotations', () => {
-      const ast = createTSAst({ rawContent: 'const bar: foo;' });
+      const ast = createTSAst({ rawContent: 'let bar: foo;' });
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
