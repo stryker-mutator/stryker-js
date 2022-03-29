@@ -44,4 +44,17 @@ describe('adjustConfigFile', () => {
     const config = await getConfig(defaultLoader, filename);
     expect(config).has.deep.property('ignorePatterns', ['src/**/*.test.ts', 'src/frontend/generated/*']);
   });
+
+  it('should throw an error if it cannot find the file', async () => {
+    await expect(getConfig(defaultLoader, 'foo')).rejectedWith('no such file');
+  });
+
+  it('should handle null', async () => {
+    // Not sure in what instance cosmiconfig().load() returns null, but the Types suggest it can
+    const nullLoader = {
+      load: async () => null,
+    };
+    const filename = resolveTestResource('null.cjs');
+    await expect(getConfig(nullLoader, filename)).rejectedWith('appears to be null');
+  });
 });
