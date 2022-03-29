@@ -282,6 +282,25 @@ describe(MutationTestExecutor.name, () => {
       sinon.assert.calledWithExactly(checker.check, 'foo', [plan2]);
     });
 
+    it('should report failed check mutants only once (#3461)', async () => {
+      // Arrange
+      const plan1 = mutantRunPlan({ id: '1' });
+      const plan2 = mutantRunPlan({ id: '2' });
+      const failedCheckResult = factory.failedCheckResult();
+      arrangeScenario({ checkResult: failedCheckResult });
+      checker.group.resolves([[plan1], [plan2]]);
+      mutantTestPlans.push(plan1);
+      mutantTestPlans.push(plan2);
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(mutationTestReportHelperMock.reportCheckFailed).calledTwice;
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
+    });
+
     it('should free checker resources after checking stage is complete', async () => {
       // Arrange
       const plan = mutantRunPlan({ id: '1' });
