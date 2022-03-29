@@ -9,7 +9,7 @@ import { CheckerResource } from '../../../src/checker/index.js';
 
 import { createMutantRunPlan } from '../../helpers/producers.js';
 
-describe.only(CheckerFacade.name, () => {
+describe(CheckerFacade.name, () => {
   let innerChecker: sinon.SinonStubbedInstance<CheckerResource>;
   let sut: CheckerFacade;
 
