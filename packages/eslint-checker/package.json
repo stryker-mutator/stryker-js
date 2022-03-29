@@ -28,7 +28,8 @@
     "test": "c8 npm run test:all",
     "mocha": "mocha",
     "test:all": "npm run test:unit",
-    "test:unit": "mocha 'dist/test/unit/**/*.spec.js'"
+    "test:unit": "mocha 'dist/test/unit/**/*.spec.js'",
+    "test:integration": "mocha 'dist/test/integration/**/*.js'"
   },
   "bugs": {
     "url": "https://github.com/TimLehner/stryker-js/issues"
@@ -40,11 +41,12 @@
     "typescript": "^4.6.3"
   },
   "devDependencies": {
+    "@stryker-mutator/test-helpers": "file:../test-helpers",
     "@types/eslint": "^8.4.1",
     "@types/mocha": "^9.1.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~6.0.0-beta.0",
-    "eslint": "^7.32.0"
+    "eslint": "^8.12.0"
   }
 }

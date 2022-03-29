@@ -9,6 +9,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 import { ScriptFile } from './script-file.js';
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
+import { overrideOptions } from './esconfig-helpers.js';
 
 export class LintChecker implements Checker {
   private linter: ESLint;
@@ -18,8 +19,8 @@ export class LintChecker implements Checker {
     this.linter = new ESLint();
   }
 
-  private async lintFileContent(fileText?: string): Promise<CheckResult> {
-    this.logger.debug('Now linting file with text');
+  private async lintFileContent(filename: string, fileText?: string): Promise<CheckResult> {
+    this.logger.debug(`Now linting file: ${filename} with text`);
     this.logger.debug(fileText ?? '');
     if (!fileText) {
       this.logger.debug(CheckStatus.Passed);
@@ -31,21 +32,19 @@ export class LintChecker implements Checker {
   }
 
   public async init(): Promise<void> {
-    console.log(this.options.lintConfig);
-    this.linter = new ESLint({
-      overrideConfig: {
-        rules: {
-          'import/no-unresolved': 'off',
-        },
-      },
-    });
+    const overrideConfig = await this.adjustConfigFile(this.options.lintConfigFile as string);
+    this.linter = new ESLint({ overrideConfig });
     this.logger.info('starting initial lint dry-run');
     const files = await fg(this.options.mutate);
-    const allResults = await Promise.all(files.map((filename) => this.lintFileContent(fs.readFileSync(filename).toString())));
+    const allResults = await Promise.all(
+      files.map((filename) => {
+        return this.lintFileContent(filename, fs.readFileSync(filename).toString());
+      })
+    );
     const errors = allResults.filter(isFailedResult);
     if (errors.length > 0) {
-      this.logger.error(errors.map((e) => e.reason).join('\n'));
-      throw new Error('lint had errors on dry-run');
+      const errorReasons = errors.map((e) => e.reason);
+      throw new Error(['Lint error(s) found in dry run compilation:', ...errorReasons].join('\n'));
     }
     this.logger.info('lint check dry-run completed');
   }
@@ -66,10 +65,23 @@ export class LintChecker implements Checker {
     const contents = fs.readFileSync(mutant.fileName).toString();
     const asScriptFile = new ScriptFile(contents, mutant.fileName);
     asScriptFile.mutate(mutant);
-
+    const result = await this.lintFileContent(mutant.fileName, asScriptFile.content);
     return {
-      [mutant.id]: await this.lintFileContent(asScriptFile.content),
+      [mutant.id]: result,
     };
+  }
+
+  /**
+   * Post processes the content of a eslint config file. Adjusts some options for speed and alters quality options.
+   * @param fileName The eslint file name
+   * @param content The eslint content
+   */
+  private async adjustConfigFile(fileName?: string): Promise<ESLint.Options['overrideConfig']> {
+    if (fileName) {
+      const { default: parsedConfig } = await import(fileName);
+      return overrideOptions({ config: parsedConfig });
+    }
+    return {};
   }
 }
 
