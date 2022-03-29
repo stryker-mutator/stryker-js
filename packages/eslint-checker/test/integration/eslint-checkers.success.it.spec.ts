@@ -31,7 +31,6 @@ describe('Lint checker errors', () => {
     testInjector.options.lintConfigFile = resolveTestResource('.eslintrc.cjs');
     testInjector.options.mutate = ['*.js'];
     process.chdir(testProjectRoot);
-    // @ts-expect-error
     sut = testInjector.injector.injectFunction(createLintChecker);
     return sut.init();
   });

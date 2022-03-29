@@ -27,7 +27,6 @@ describe('Lint checker errors', () => {
     testInjector.options.lintConfigFile = resolveTestResource('compile-error', '.eslintrc.cjs');
     testInjector.options.mutate = ['*.js'];
     process.chdir(testProjectRoot);
-    // @ts-expect-error
     const sut = testInjector.injector.injectFunction(createLintChecker);
     await expect(sut.init()).rejectedWith('no-empty-function');
   });
