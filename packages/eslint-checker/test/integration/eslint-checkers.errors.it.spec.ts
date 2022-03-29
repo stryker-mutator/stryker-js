@@ -1,5 +1,4 @@
 import path from 'path';
-
 import { fileURLToPath } from 'url';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
