@@ -9,7 +9,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 import { ScriptFile } from './script-file.js';
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
-import { overrideOptions } from './esconfig-helpers.js';
+import { getConfig } from './esconfig-helpers.js';
 
 export class LintChecker implements Checker {
   private linter: ESLint;
@@ -32,7 +32,7 @@ export class LintChecker implements Checker {
   }
 
   public async init(): Promise<void> {
-    const overrideConfig = await this.adjustConfigFile(this.options.lintConfigFile as string);
+    const overrideConfig = await getConfig(this.options.lintConfigFile as string | undefined);
     this.linter = new ESLint({ overrideConfig });
     this.logger.info('starting initial lint dry-run');
     const files = await fg(this.options.mutate);
@@ -69,19 +69,6 @@ export class LintChecker implements Checker {
     return {
       [mutant.id]: result,
     };
-  }
-
-  /**
-   * Post processes the content of a eslint config file. Adjusts some options for speed and alters quality options.
-   * @param fileName The eslint file name
-   * @param content The eslint content
-   */
-  private async adjustConfigFile(fileName?: string): Promise<ESLint.Options['overrideConfig']> {
-    if (fileName) {
-      const { default: parsedConfig } = await import(fileName);
-      return overrideOptions({ config: parsedConfig });
-    }
-    return {};
   }
 }
 

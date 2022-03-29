@@ -21,3 +21,11 @@ export function overrideOptions(parsedConfig: { config?: any }): ESLint.Options[
     rules,
   };
 }
+
+export async function getConfig(fileName?: string): Promise<ESLint.Options['overrideConfig']> {
+  if (fileName) {
+    const { default: parsedConfig } = await import(fileName);
+    return overrideOptions({ config: parsedConfig });
+  }
+  return overrideOptions({});
+}
