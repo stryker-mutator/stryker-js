@@ -5,6 +5,8 @@ import { CosmiconfigResult } from 'cosmiconfig/dist/types';
 // See https://github.com/stryker-mutator/stryker-js/issues/391 for more info
 const LINT_RULES_OVERRIDES: Readonly<Partial<Record<string, string>>> = Object.freeze({
   'import/no-unresolved': 'off',
+  '@typescript-eslint/no-unused-vars': 'off',
+  '@typescript-eslint/no-empty-function': 'off',
 });
 
 /**
