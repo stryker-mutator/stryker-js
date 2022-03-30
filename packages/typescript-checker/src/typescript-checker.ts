@@ -68,7 +68,6 @@ export class TypescriptChecker implements Checker {
         {
           ...ts.sys,
           readFile: (fileName) => {
-            console.log(fileName);
             const content = this.fs.getFile(fileName)?.content;
             if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
               return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
