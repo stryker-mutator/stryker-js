@@ -190,8 +190,9 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
+export function testRunner(index = 0): sinon.SinonStubbedInstance<Required<TestRunner> & { index: number }> {
   return {
+    index,
     capabilities: sinon.stub(),
     init: sinon.stub(),
     dryRun: sinon.stub(),
