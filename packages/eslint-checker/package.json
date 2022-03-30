@@ -27,7 +27,7 @@
   "scripts": {
     "test": "c8 npm run test:all",
     "mocha": "mocha",
-    "test:all": "npm run test:unit",
+    "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha 'dist/test/unit/**/*.spec.js'",
     "test:integration": "mocha 'dist/test/integration/**/*.js'"
   },
