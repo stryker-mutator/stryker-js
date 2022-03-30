@@ -1,10 +1,10 @@
 import { EOL } from 'os';
 
-import { Injector } from 'typed-inject';
 import { I, requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
+import { commonTokens, tokens, Injector } from '@stryker-mutator/api/plugin';
 import { StrykerOptions, Mutant } from '@stryker-mutator/api/core';
+import { DryRunCompletedEvent, RunTiming } from '@stryker-mutator/api/report';
 import {
   DryRunResult,
   TestRunner,
@@ -28,6 +28,7 @@ import { FileMatcher } from '../config/index.js';
 import { InputFileCollection } from '../input/input-file-collection.js';
 import { MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
+import { StrictReporter } from '../reporters/index.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
@@ -42,26 +43,6 @@ export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.inputFiles]: InputFileCollection;
 }
 
-/**
- * A small object that keeps the timing variables of a test run.
- */
-interface Timing {
-  /**
-   * The time that the test runner was actually executing tests in milliseconds.
-   */
-  net: number;
-  /**
-   * the time that was spend not executing tests in milliseconds.
-   * So the time it took to start the test runner and to report the result.
-   */
-  overhead: number;
-
-  /**
-   * The total time spent (net + overhead) in a human readable format
-   */
-  humanReadableTimeElapsed: string;
-}
-
 function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
   return testResult.status === TestStatus.Failed;
 }
@@ -73,7 +54,8 @@ export class DryRunExecutor {
     commonTokens.options,
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
-    coreTokens.sandbox
+    coreTokens.sandbox,
+    coreTokens.reporter
   );
 
   constructor(
@@ -82,7 +64,8 @@ export class DryRunExecutor {
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
-    public readonly sandbox: I<Sandbox>
+    private readonly sandbox: I<Sandbox>,
+    private readonly reporter: StrictReporter
   ) {}
 
   public async execute(): Promise<Injector<MutationTestContext>> {
@@ -91,15 +74,15 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const { dryRunResult, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)));
+    const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)));
 
-    this.logInitialTestRunSucceeded(dryRunResult.tests, timing);
-    if (!dryRunResult.tests.length) {
+    this.logInitialTestRunSucceeded(result.tests, timing);
+    if (!result.tests.length) {
       throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     }
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
-      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.dryRunResult, result)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
       .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
@@ -124,7 +107,7 @@ export class DryRunExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private async timeDryRun(testRunner: TestRunner): Promise<{ dryRunResult: CompleteDryRunResult; timing: Timing }> {
+  private async timeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     const inputFiles = this.injector.resolve(coreTokens.inputFiles);
     const dryRunFiles = inputFiles.filesToMutate.map((file) => this.sandbox.sandboxFileFor(file.name));
@@ -133,19 +116,20 @@ export class DryRunExecutor {
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
     );
     this.log.debug(`Using timeout of ${dryRunTimeout} ms.`);
-    const dryRunResult = await testRunner.dryRun({
+    const result = await testRunner.dryRun({
       timeout: dryRunTimeout,
       coverageAnalysis: this.options.coverageAnalysis,
       disableBail: this.options.disableBail,
       files: dryRunFiles,
     });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
-    const humanReadableTimeElapsed = this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER);
-    this.validateResultCompleted(dryRunResult);
+    this.validateResultCompleted(result);
 
-    this.remapSandboxFilesToOriginalFiles(dryRunResult);
-    const timing = this.calculateTiming(grossTimeMS, humanReadableTimeElapsed, dryRunResult.tests);
-    return { dryRunResult, timing };
+    this.remapSandboxFilesToOriginalFiles(result);
+    const timing = this.calculateTiming(grossTimeMS, result.tests);
+    const dryRunCompleted = { result, timing };
+    this.reporter.onDryRunCompleted(dryRunCompleted);
+    return dryRunCompleted;
   }
 
   /**
@@ -168,11 +152,11 @@ export class DryRunExecutor {
     });
   }
 
-  private logInitialTestRunSucceeded(tests: TestResult[], timing: Timing) {
+  private logInitialTestRunSucceeded(tests: TestResult[], timing: RunTiming) {
     this.log.info(
       'Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
       tests.length,
-      timing.humanReadableTimeElapsed,
+      this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER),
       timing.net,
       timing.overhead
     );
@@ -185,13 +169,12 @@ export class DryRunExecutor {
    * The overhead time is used to calculate exact timeout values during mutation testing.
    * See timeoutMS setting in README for more information on this calculation
    */
-  private calculateTiming(grossTimeMS: number, humanReadableTimeElapsed: string, tests: readonly TestResult[]): Timing {
+  private calculateTiming(grossTimeMS: number, tests: readonly TestResult[]): RunTiming {
     const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
       net: netTimeMS,
       overhead: overheadTimeMS < 0 ? 0 : overheadTimeMS,
-      humanReadableTimeElapsed,
     };
   }
 

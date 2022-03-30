@@ -7,23 +7,13 @@ import { filter, map, mergeMap, toArray } from 'rxjs/operators';
 import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { SourceFile } from '@stryker-mutator/api/report';
 import { isErrnoException, notEmpty } from '@stryker-mutator/util';
 import minimatch, { type IMinimatch } from 'minimatch';
 
-import { coreTokens } from '../di/index.js';
-import { StrictReporter } from '../reporters/strict-reporter.js';
 import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';
 import { defaultOptions, FileMatcher } from '../config/index.js';
 
 import { InputFileCollection } from './input-file-collection.js';
-
-function toReportSourceFile(file: File): SourceFile {
-  return {
-    content: file.textContent,
-    path: file.name,
-  };
-}
 
 const { Minimatch } = minimatch;
 
@@ -36,8 +26,8 @@ export class InputFileResolver {
   private readonly mutatePatterns: readonly string[];
   private readonly ignoreRules: readonly string[];
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.reporter);
-  constructor(private readonly log: Logger, { mutate, tempDirName, ignorePatterns }: StrykerOptions, private readonly reporter: StrictReporter) {
+  public static inject = tokens(commonTokens.logger, commonTokens.options);
+  constructor(private readonly log: Logger, { mutate, tempDirName, ignorePatterns }: StrykerOptions) {
     this.mutatePatterns = mutate;
     this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, ...ignorePatterns];
   }
@@ -48,7 +38,6 @@ export class InputFileResolver {
     const mutationRange = this.resolveMutationRange();
     const files: File[] = await this.readFiles(inputFileNames);
     const inputFileCollection = new InputFileCollection(files, mutateFiles, mutationRange);
-    this.reportAllSourceFilesRead(files);
     inputFileCollection.logFiles(this.log, this.ignoreRules);
     return inputFileCollection;
   }
@@ -165,14 +154,6 @@ export class InputFileResolver {
     return files;
   }
 
-  private reportAllSourceFilesRead(allFiles: File[]) {
-    this.reporter.onAllSourceFilesRead(allFiles.map(toReportSourceFile));
-  }
-
-  private reportSourceFilesRead(textFile: File) {
-    this.reporter.onSourceFileRead(toReportSourceFile(textFile));
-  }
-
   private async readFiles(fileNames: string[]): Promise<File[]> {
     const files$ = from(fileNames).pipe(
       mergeMap((fileName) => {
@@ -190,7 +171,6 @@ export class InputFileResolver {
     try {
       const content = await fsPromises.readFile(fileName);
       const file = new File(fileName, content);
-      this.reportSourceFilesRead(file);
       return file;
     } catch (error) {
       if (isErrnoException(error) && (error.code === 'ENOENT' || error.code === 'EISDIR')) {

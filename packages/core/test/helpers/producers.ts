@@ -1,15 +1,13 @@
 import { CpuInfo } from 'os';
 
-import { ClearTextReporterOptions, MutantStatus } from '@stryker-mutator/api/core';
+import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { I } from '@stryker-mutator/util';
-import { factory } from '@stryker-mutator/test-helpers';
 
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
-import { MutantEarlyResultPlan, MutantRunPlan, PlanKind } from '../../src/mutants/index.js';
 import { CheckerFacade } from '../../src/checker/index.js';
 
 export type Mutable<T> = {
@@ -63,23 +61,6 @@ export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<I<Che
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub<any>(),
-  };
-}
-
-export function createMutantRunPlan(overrides?: Partial<MutantRunPlan>): MutantRunPlan {
-  return {
-    plan: PlanKind.Run,
-    mutant: factory.mutantTestCoverage(),
-    runOptions: factory.mutantRunOptions(),
-    ...overrides,
-  };
-}
-
-export function createMutantEarlyResultPlan(overrides?: Partial<MutantEarlyResultPlan>): MutantEarlyResultPlan {
-  return {
-    plan: PlanKind.EarlyResult,
-    mutant: { ...factory.mutantTestCoverage(), status: MutantStatus.Ignored },
-    ...overrides,
   };
 }
 

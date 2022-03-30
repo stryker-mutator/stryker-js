@@ -1,30 +1,25 @@
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 
-import { MutantResult, MutantTestCoverage, schema } from '../core/index.js';
+import { MutantResult, schema } from '../core/index.js';
 
-import { SourceFile } from './source-file.js';
+import { DryRunCompletedEvent } from './dry-run-completed-event.js';
+import { MutationTestingPlanReadyEvent } from './mutation-testing-plan-ready-event.js';
 
 /**
  * Represents a reporter which can report during or after a Stryker run
  */
 export interface Reporter {
   /**
-   * Called when a source file was loaded
-   * @param file The immutable source file
+   * An event emitted when the dry run completed successfully.
+   * @param event The dry run completed event
    */
-  onSourceFileRead?(file: Readonly<SourceFile>): void;
+  onDryRunCompleted?(event: DryRunCompletedEvent): void;
 
   /**
-   * Called when all source files were loaded
-   * @param files The immutable source files
+   * An event emitted when the mutant test plan is calculated.
+   * @param event The mutant test plan ready event
    */
-  onAllSourceFilesRead?(files: ReadonlyArray<Readonly<SourceFile>>): void;
-
-  /**
-   * Called when mutants are matched with tests
-   * @param results The immutable array of mutants
-   */
-  onAllMutantsMatchedWithTests?(results: ReadonlyArray<Readonly<MutantTestCoverage>>): void;
+  onMutationTestingPlanReady?(event: MutationTestingPlanReadyEvent): void;
 
   /**
    * Called when a mutant was tested

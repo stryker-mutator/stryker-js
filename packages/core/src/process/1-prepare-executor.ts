@@ -1,8 +1,6 @@
 import { StrykerOptions, PartialStrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
-
 import { deepFreeze } from '@stryker-mutator/util';
-
 import { execaCommand } from 'execa';
 
 import { ConfigReader } from '../config/config-reader.js';

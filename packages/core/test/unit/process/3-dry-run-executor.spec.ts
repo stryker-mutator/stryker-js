@@ -5,9 +5,7 @@ import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers
 import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
-import { Observable } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-
+import { Observable, mergeMap } from 'rxjs';
 import { I } from '@stryker-mutator/util';
 import { File } from '@stryker-mutator/api/core';
 
@@ -19,6 +17,7 @@ import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js
 import { createTestRunnerPoolMock } from '../../helpers/producers.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { InputFileCollection } from '../../../src/input/input-file-collection.js';
+import { StrictReporter } from '../../../src/reporters/strict-reporter.js';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
@@ -29,8 +28,10 @@ describe(DryRunExecutor.name, () => {
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandbox: sinon.SinonStubbedInstance<Sandbox>;
   let inputFiles: InputFileCollection;
+  let reporterStub: sinon.SinonStubbedInstance<StrictReporter>;
 
   beforeEach(() => {
+    reporterStub = factory.reporter();
     timerMock = sinon.createStubInstance(Timer);
     testRunnerMock = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
@@ -52,7 +53,8 @@ describe(DryRunExecutor.name, () => {
       testInjector.options,
       timerMock,
       concurrencyTokenProviderMock,
-      sandbox
+      sandbox,
+      reporterStub
     );
   });
 
@@ -62,7 +64,7 @@ describe(DryRunExecutor.name, () => {
     await expect(sut.execute()).rejectedWith(expectedError);
   });
 
-  describe('check timeout', () => {
+  describe('timeout', () => {
     let runResult: CompleteDryRunResult;
 
     beforeEach(() => {
@@ -148,6 +150,26 @@ describe(DryRunExecutor.name, () => {
       expect(testInjector.logger.info).calledWith(
         'Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.'
       );
+    });
+
+    it('should report "onDryRunCompleted" with expected timing', async () => {
+      // Arrange
+      const expectedOverHeadTimeMs = 90;
+      const expectedNetTime = 90;
+      runResult.tests.push(factory.successTestResult({ timeSpentMs: expectedNetTime }));
+      timerMock.elapsedMs.returns(expectedOverHeadTimeMs + expectedNetTime);
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(reporterStub.onDryRunCompleted, {
+        result: runResult,
+        timing: {
+          overhead: expectedOverHeadTimeMs,
+          net: expectedNetTime,
+        },
+      });
     });
 
     describe('with successful tests', () => {
