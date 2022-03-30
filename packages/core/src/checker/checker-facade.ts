@@ -35,7 +35,7 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
 
     if (mutantRunPlans.length > results.length) {
       const resultIds = new Set(results.map(([{ mutant }]) => mutant.id));
-      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => resultIds.has(id));
+      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => !resultIds.has(id));
       throw new Error(
         `Checker "${checkerName}" was missing check results for mutant ids "${missingIds.join(',')}", while Stryker asked to check them`
       );
@@ -68,7 +68,7 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
       })
     );
     if (mutantRunPlans.length > groupedMutantIds.size) {
-      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => groupedMutantIds.has(id));
+      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => !groupedMutantIds.has(id));
       throw new Error(
         `Checker "${checkerName}" was missing group results for mutant ids "${missingIds.join(',')}", while Stryker asked to group them!`
       );
