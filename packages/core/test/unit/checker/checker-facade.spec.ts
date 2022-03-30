@@ -20,89 +20,92 @@ describe(CheckerFacade.name, () => {
       check: sinon.stub(),
       dispose: sinon.stub(),
     };
-    const checkers = [innerChecker];
-    sut = new CheckerFacade(() => checkers.shift()!);
+    sut = new CheckerFacade(() => innerChecker);
   });
 
-  it('check() should return checker result', async () => {
-    const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-    const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+  describe('check', () => {
+    it('should return checker result', async () => {
+      const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
+      const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
 
-    innerChecker.check.returns(
-      Promise.resolve({
-        [mutant1.mutant.id]: { status: CheckStatus.Passed },
-        [mutant2.mutant.id]: { status: CheckStatus.CompileError, reason: 'Test' },
-      })
-    );
+      innerChecker.check.returns(
+        Promise.resolve({
+          [mutant1.mutant.id]: { status: CheckStatus.Passed },
+          [mutant2.mutant.id]: { status: CheckStatus.CompileError, reason: 'Test' },
+        })
+      );
 
-    const result = await sut.check('test-checker', [mutant1, mutant2]);
+      const result = await sut.check('test-checker', [mutant1, mutant2]);
 
-    expect(result).to.deep.equal([
-      [mutant1, { status: CheckStatus.Passed }],
-      [mutant2, { status: CheckStatus.CompileError, reason: 'Test' }],
-    ]);
+      expect(result).to.deep.equal([
+        [mutant1, { status: CheckStatus.Passed }],
+        [mutant2, { status: CheckStatus.CompileError, reason: 'Test' }],
+      ]);
+    });
+
+    it('should throw an error when checker does not return all mutants', async () => {
+      innerChecker.check.returns(Promise.resolve({ '1': { status: CheckStatus.Passed } }));
+
+      await expect(
+        sut.check('test-checker', [
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
+        ])
+      ).to.be.rejectedWith('Checker "test-checker" was missing check results for mutant ids "2,3", while Stryker asked to check them');
+    });
+
+    it('should throw an error when checker returns to many mutants', async () => {
+      innerChecker.check.returns(
+        Promise.resolve({ '1': { status: CheckStatus.Passed }, '2': { status: CheckStatus.Passed }, '3': { status: CheckStatus.Passed } })
+      );
+
+      await expect(
+        sut.check('test-checker', [
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+        ])
+      ).to.be.rejectedWith(
+        'Checker "test-checker" returned a check result for mutant id "3", but a check wasn\'t requested for it. Stryker asked to check mutant ids: 1,2'
+      );
+    });
   });
 
-  it('check() should throw an error when checker does not return all mutants', async () => {
-    innerChecker.check.returns(Promise.resolve({ '1': { status: CheckStatus.Passed } }));
+  describe('group', () => {
+    it('should return group result', async () => {
+      const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
+      const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
 
-    await expect(
-      sut.check('test-checker', [
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
-      ])
-    ).to.be.rejectedWith('Checker "test-checker" was missing check results for mutant ids "2,3", while Stryker asked to check them');
-  });
+      innerChecker.group.returns(Promise.resolve([[mutant1.mutant.id, mutant2.mutant.id]]));
 
-  it('check() should throw an error when checker returns to many mutants', async () => {
-    innerChecker.check.returns(
-      Promise.resolve({ '1': { status: CheckStatus.Passed }, '2': { status: CheckStatus.Passed }, '3': { status: CheckStatus.Passed } })
-    );
+      const result = await sut.group('test-checker', [mutant1, mutant2]);
 
-    await expect(
-      sut.check('test-checker', [
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-      ])
-    ).to.be.rejectedWith(
-      'Checker "test-checker" returned a check result for mutant id "3", but a check wasn\'t requested for it. Stryker asked to check mutant ids: 1,2'
-    );
-  });
+      expect(result).to.deep.equal([[mutant1, mutant2]]);
+    });
 
-  it('group() should return group result', async () => {
-    const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-    const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+    it('should throw an error when group returns to many mutants', async () => {
+      innerChecker.group.returns(Promise.resolve([['1', '2', '3']]));
 
-    innerChecker.group.returns(Promise.resolve([[mutant1.mutant.id, mutant2.mutant.id]]));
+      await expect(
+        sut.group('test-checker', [
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+        ])
+      ).to.be.rejectedWith(
+        'Checker "test-checker" returned a group result for mutant id "3", but a group wasn\'t requested for it. Stryker asked to group mutant ids: 1,2!'
+      );
+    });
 
-    const result = await sut.group('test-checker', [mutant1, mutant2]);
+    it('should throw an error when checker returns not all mutants', async () => {
+      innerChecker.group.returns(Promise.resolve([['1']]));
 
-    expect(result).to.deep.equal([[mutant1, mutant2]]);
-  });
-
-  it('group() should throw an error when group returns to many mutants', async () => {
-    innerChecker.group.returns(Promise.resolve([['1', '2', '3']]));
-
-    await expect(
-      sut.group('test-checker', [
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-      ])
-    ).to.be.rejectedWith(
-      'Checker "test-checker" returned a group result for mutant id "3", but a group wasn\'t requested for it. Stryker asked to group mutant ids: 1,2!'
-    );
-  });
-
-  it('group() should throw an error when checker returns not all mutants', async () => {
-    innerChecker.group.returns(Promise.resolve([['1']]));
-
-    await expect(
-      sut.group('test-checker', [
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-        createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
-      ])
-    ).to.be.rejectedWith('Checker "test-checker" was missing group results for mutant ids "2,3", while Stryker asked to group them!');
+      await expect(
+        sut.group('test-checker', [
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
+        ])
+      ).to.be.rejectedWith('Checker "test-checker" was missing group results for mutant ids "2,3", while Stryker asked to group them!');
+    });
   });
 });
