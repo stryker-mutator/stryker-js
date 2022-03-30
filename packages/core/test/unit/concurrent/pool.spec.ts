@@ -17,8 +17,8 @@ describe(Pool.name, () => {
 
   beforeEach(() => {
     concurrencyToken$ = new ReplaySubject();
-    worker1 = factory.testRunner();
-    worker2 = factory.testRunner();
+    worker1 = factory.testRunner(1);
+    worker2 = factory.testRunner(2);
     genericWorkerForAllSubsequentCreates = factory.testRunner();
     createWorkerStub = sinon.stub();
   });
@@ -140,6 +140,48 @@ describe(Pool.name, () => {
         [2, worker1],
       ]);
       await onGoingWork;
+    });
+
+    it.only('should allow for parallel schedules, without interference', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(2);
+      const actualScheduledWork: Array<[number, Required<Resource>]> = [];
+      sut = createSut();
+      const onGoingWork: Array<Promise<unknown>> = [];
+      onGoingWork.push(
+        lastValueFrom(
+          sut.schedule(range(0, 3), async (worker, input) => {
+            await tick();
+            actualScheduledWork.push([input, worker]);
+          })
+        )
+      );
+      onGoingWork.push(
+        lastValueFrom(
+          sut.schedule(range(3, 3), async (worker, input) => {
+            await tick();
+            actualScheduledWork.push([input, worker]);
+          })
+        )
+      );
+
+      await tick(10);
+      await Promise.all(onGoingWork);
+
+      // Act
+      await sut.dispose();
+
+      // Assert
+      expect(actualScheduledWork).lengthOf(6);
+      expect(actualScheduledWork).deep.eq([
+        [0, worker1],
+        [3, worker2],
+        [1, worker1],
+        [4, worker2],
+        [2, worker1],
+        [5, worker2],
+      ]);
     });
   });
 
