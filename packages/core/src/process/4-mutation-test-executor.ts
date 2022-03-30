@@ -126,7 +126,10 @@ export class MutationTestExecutor {
     let passedMutant$ = input$;
     for (const checkerName of this.options.checkers) {
       // Use this checker
-      const [checkFailedResult$, checkPassedResult$] = partition(this.executeSingleChecker(checkerName, passedMutant$), isEarlyResult);
+      const [checkFailedResult$, checkPassedResult$] = partition(
+        this.executeSingleChecker(checkerName, passedMutant$).pipe(shareReplay()),
+        isEarlyResult
+      );
 
       // Prepare for the next one
       passedMutant$ = checkPassedResult$;
@@ -159,7 +162,6 @@ export class MutationTestExecutor {
       .schedule(group$, (checker, group) => checker.check(checkerName, group))
       .pipe(
         mergeMap((mutantGroupResults) => mutantGroupResults),
-        shareReplay(),
         map(([mutantRunPlan, checkResult]) =>
           checkResult.status === CheckStatus.Passed
             ? mutantRunPlan
