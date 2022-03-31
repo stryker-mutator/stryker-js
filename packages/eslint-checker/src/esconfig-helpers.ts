@@ -1,4 +1,4 @@
-import { ESLint } from 'eslint';
+import { ESLint, Linter } from 'eslint';
 import { CosmiconfigResult } from 'cosmiconfig/dist/types';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
@@ -13,16 +13,25 @@ const LINT_RULES_OVERRIDES: Readonly<Partial<Record<string, string>>> = Object.f
  * Overrides some options to speed up compilation and disable some code quality checks we don't want during mutation testing
  * @param parsedConfig The parsed config file
  */
-export function overrideOptions(parsedConfig: { config?: any }): ESLint.Options['overrideConfig'] {
+function overrideOptions(parsedConfig: { config?: any }): Omit<Linter.Config, 'extends' | 'plugins'> {
   const rules = {
     ...parsedConfig.config?.rules,
     ...LINT_RULES_OVERRIDES,
   };
 
-  return {
+  const config = {
     ...parsedConfig.config,
     rules,
   };
+
+  if (config.extends) {
+    delete config.extends;
+  }
+  if (config.plugins) {
+    delete config.plugins;
+  }
+
+  return config;
 }
 
 interface ConfigLoader {
