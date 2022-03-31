@@ -13,5 +13,5 @@
       "path": "../util/tsconfig.src.json"
     }
   ],
-  "include": ["src/**/*.ts", "src-generated/**/*.ts", "schema/typescript-checker-options.json"]
+  "include": ["src/**/*.ts", "src-generated/**/*.ts", "schema/*.json"]
 }

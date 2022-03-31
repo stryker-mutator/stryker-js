@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LintCheckerOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "lintConfigFile": {
+      "description": "Specify your [eslint configuration file](https://eslnt.org/docs/user-guide/configuring/configuration-files) to be loaded. Leaving this blank will result in the eslint looking for a configuration file of the form `.eslintrc.*`. Note the properties `plugins` and `extends` are ignored and will match the project's root eslint config.",
+      "type": "string"
+    }
+  }
+}
