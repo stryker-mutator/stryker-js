@@ -1,7 +1,7 @@
 import { cosmiconfig } from 'cosmiconfig';
 import { ESLint } from 'eslint';
 import fg from 'fast-glob';
-import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
+import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
@@ -23,9 +23,6 @@ export class LintChecker implements Checker {
 
   private async lintFileContent(filename: string): Promise<CheckResult> {
     const fileText = await this.fs.getFile(filename);
-    if (!fileText) {
-      return { status: CheckStatus.Passed };
-    }
     const results = await this.linter.lintText(fileText.content);
     const formatter = await this.linter.loadFormatter();
     return await makeResultFromLintReport(results, formatter);
@@ -51,16 +48,8 @@ export class LintChecker implements Checker {
     const mutant = mutants[0];
 
     const asScriptFile = await this.fs.getFile(mutant.fileName);
-    if (!asScriptFile) {
-      // We couldn't find this file in the initial load? Skip this check
-      return {
-        [mutant.id]: {
-          status: CheckStatus.Passed,
-        },
-      };
-    }
-
     asScriptFile.mutate(mutant);
+
     const result = await this.lintFileContent(mutant.fileName);
     return {
       [mutant.id]: result,

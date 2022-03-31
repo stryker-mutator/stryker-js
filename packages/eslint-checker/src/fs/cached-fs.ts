@@ -11,7 +11,7 @@ export class CachedFs {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  private async readRawFile(fileName: string): Promise<ScriptFile | undefined> {
+  private async readRawFile(fileName: string): Promise<ScriptFile> {
     this.log.debug(`reading file ${fileName}`);
     const content = await fs.readFile(fileName, { encoding: 'utf-8' });
     const file = new ScriptFile(content, fileName);
@@ -19,7 +19,7 @@ export class CachedFs {
     return file;
   }
 
-  public async getFile(fileName: string): Promise<ScriptFile | undefined> {
+  public async getFile(fileName: string): Promise<ScriptFile> {
     const cached = this.files.get(fileName);
     if (cached) {
       this.log.trace('using file from cache');
