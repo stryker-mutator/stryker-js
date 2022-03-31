@@ -22,7 +22,7 @@ const resolveTestResource = path.resolve.bind(
   'success'
 ) as unknown as typeof path.resolve;
 
-describe('Lint checker errors', () => {
+describe('Lint checker success', () => {
   let sut: LintChecker;
 
   beforeEach(() => {
