@@ -2,9 +2,9 @@ import { cosmiconfig } from 'cosmiconfig';
 import { ESLint } from 'eslint';
 import fg from 'fast-glob';
 import { Checker, CheckResult } from '@stryker-mutator/api/check';
-import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
-import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
+import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
 import { getConfig } from './esconfig-helpers.js';
@@ -56,19 +56,7 @@ export class LintChecker implements Checker {
     };
   }
 }
-
-lintCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-// eslint-disable-next-line @typescript-eslint/ban-types
-function lintCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
-  const targetName = target?.name ?? LintChecker.name;
-  const category = targetName === LintChecker.name ? LintChecker.name : `${LintChecker.name}.${targetName}`;
-  return loggerFactory(category);
-}
-
 create.inject = tokens(commonTokens.injector);
 export function create(injector: Injector<PluginContext>): LintChecker {
-  return injector
-    .provideFactory(commonTokens.logger, lintCheckerLoggerFactory, Scope.Transient)
-    .provideClass(pluginTokens.fs, CachedFs)
-    .injectClass(LintChecker);
+  return injector.provideClass(pluginTokens.fs, CachedFs).injectClass(LintChecker);
 }
