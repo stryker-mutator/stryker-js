@@ -8,7 +8,7 @@ import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 
-import { ScriptFile } from './script-file.js';
+import { ScriptFile } from './fs/script-file.js';
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
 import { getConfig } from './esconfig-helpers.js';
 

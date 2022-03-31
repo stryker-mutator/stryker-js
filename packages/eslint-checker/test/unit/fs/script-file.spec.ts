@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { Mutant } from '@stryker-mutator/api/core';
 
-import { ScriptFile } from '../../src/script-file.js';
+import { ScriptFile } from '../../../src/fs/script-file.js';
 
 describe('ScriptFile unit tests', () => {
   const initialContents = 'add(x, y) { return x + y; }';
