@@ -29,7 +29,8 @@
     "mocha": "mocha",
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha 'dist/test/unit/**/*.spec.js'",
-    "test:integration": "mocha 'dist/test/integration/**/*.js'"
+    "test:integration": "mocha 'dist/test/integration/**/*.js'",
+    "stryker": "node ../core/bin/stryker.js run"
   },
   "bugs": {
     "url": "https://github.com/TimLehner/stryker-js/issues"
