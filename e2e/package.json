@@ -67,6 +67,7 @@
     "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
     "@stryker-mutator/cucumber-runner": "../packages/cucumber-runner",
     "@stryker-mutator/util": "../packages/util",
+    "@stryker-mutator/eslint-checker": "../packages/eslint-checker",
     "@stryker-mutator/typescript-checker": "../packages/typescript-checker"
   }
 }
