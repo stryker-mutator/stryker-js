@@ -1,0 +1,16 @@
+stryker.conf.js
+test
+dist/test
+/schema
+/reports
+/coverage
+/testResources
+/typings
+/.nyc_output
+.vscode
+.nycrc.json
+*.tsbuildinfo
+tsconfig?(.*).json
+.mocharc.jsonc
+.nyc_output
+.gitattributes
