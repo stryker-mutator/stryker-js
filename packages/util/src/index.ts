@@ -1,3 +1,4 @@
+export * from './fs/index.js';
 export { childProcessAsPromised } from './child-process-as-promised.js';
 export { StrykerError } from './stryker-error.js';
 export * from './errors.js';
