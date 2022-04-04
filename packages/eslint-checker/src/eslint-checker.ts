@@ -5,11 +5,11 @@ import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { Logger } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
+import { HybridFileSystem } from '@stryker-mutator/util';
 
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
 import { getConfig } from './esconfig-helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
-import { CachedFs } from './fs/cached-fs.js';
 
 const configLoader = cosmiconfig('eslint');
 
@@ -17,12 +17,22 @@ export class LintChecker implements Checker {
   private linter: ESLint;
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
 
-  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly fs: CachedFs) {
+  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
     this.linter = new ESLint();
   }
 
+  private readonly getFile = async (filename: string) => {
+    const scriptFile = await this.fs.getFile(filename);
+    if (scriptFile === undefined) throw new Error(`Unable to open file ${filename}`);
+
+    scriptFile.watcher = () => {
+      // no need to watch files with eslint
+    };
+    return scriptFile;
+  };
+
   private async lintFileContent(filename: string): Promise<CheckResult> {
-    const fileText = await this.fs.getFile(filename);
+    const fileText = await this.getFile(filename);
     const results = await this.linter.lintText(fileText.content);
     const formatter = await this.linter.loadFormatter();
     return await makeResultFromLintReport(results, formatter);
@@ -47,7 +57,7 @@ export class LintChecker implements Checker {
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     const mutant = mutants[0];
 
-    const asScriptFile = await this.fs.getFile(mutant.fileName);
+    const asScriptFile = await this.getFile(mutant.fileName);
     asScriptFile.mutate(mutant);
 
     const result = await this.lintFileContent(mutant.fileName);
@@ -58,5 +68,5 @@ export class LintChecker implements Checker {
 }
 create.inject = tokens(commonTokens.injector);
 export function create(injector: Injector<PluginContext>): LintChecker {
-  return injector.provideClass(pluginTokens.fs, CachedFs).injectClass(LintChecker);
+  return injector.provideClass(pluginTokens.fs, HybridFileSystem).injectClass(LintChecker);
 }
