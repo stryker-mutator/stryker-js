@@ -1,5 +1,17 @@
-import { lastValueFrom, Observable, Subject, merge, zip } from 'rxjs';
-import { mergeMap, filter, shareReplay, tap } from 'rxjs/operators';
+import {
+  mergeMap,
+  filter,
+  shareReplay,
+  switchMap,
+  lastValueFrom,
+  Observable,
+  Subject,
+  merge,
+  zip,
+  Observer,
+  ignoreElements,
+  Subscription,
+} from 'rxjs';
 import { notEmpty } from '@stryker-mutator/util';
 import { Disposable, tokens } from 'typed-inject';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
@@ -35,11 +47,21 @@ export function createCheckerPool(factory: () => CheckerFacade, concurrencyToken
  * Also takes care of the initialing of the resources (with `init()`)
  */
 export class Pool<TResource extends Resource> implements Disposable {
+  private readonly recycledResource$ = new Subject<TResource>();
   private readonly createdResources: TResource[] = [];
-  private readonly resource$: Observable<TResource>;
+  private readonly createdResource$: Observable<TResource>;
+  private readonly freeResource$: Observable<TResource>;
+  private readonly queuedWorkItem$ = new Subject<{
+    execute(resource: TResource): any;
+    observer: Observer<any>;
+  }>();
+
+  private readonly subscription = new Subscription();
+
+  private readonly doWork$: Observable<unknown>;
 
   constructor(factory: () => TResource, concurrencyToken$: Observable<number>) {
-    this.resource$ = concurrencyToken$.pipe(
+    this.createdResource$ = concurrencyToken$.pipe(
       mergeMap(async () => {
         if (this.isDisposed) {
           return null;
@@ -55,6 +77,21 @@ export class Pool<TResource extends Resource> implements Disposable {
       // https://www.learnrxjs.io/learn-rxjs/operators/multicasting/sharereplay
       shareReplay()
     );
+    this.freeResource$ = merge(this.createdResource$, this.recycledResource$);
+    this.doWork$ = zip(this.freeResource$, this.queuedWorkItem$).pipe(
+      switchMap(async ([resource, work]) => {
+        try {
+          const result = await work.execute(resource);
+          work.observer.next(result);
+          work.observer.complete();
+        } catch (err) {
+          work.observer.error(err);
+        }
+        this.recycledResource$.next(resource);
+      }),
+      ignoreElements()
+    );
+    this.subscription.add(this.doWork$.subscribe());
   }
 
   /**
@@ -62,7 +99,7 @@ export class Pool<TResource extends Resource> implements Disposable {
    * This is optional, resources will get initialized either way.
    */
   public async init(): Promise<void> {
-    await lastValueFrom(this.resource$);
+    await lastValueFrom(this.createdResource$);
   }
 
   /**
@@ -71,17 +108,16 @@ export class Pool<TResource extends Resource> implements Disposable {
    * @param task The task to execute on each resource
    */
   public schedule<TIn, TOut>(input$: Observable<TIn>, task: (resource: TResource, input: TIn) => Promise<TOut> | TOut): Observable<TOut> {
-    const recycleBin = new Subject<TResource>();
-    const resource$ = merge(recycleBin, this.resource$);
-
-    return zip(resource$, input$).pipe(
-      mergeMap(async ([resource, input]) => {
-        const output = await task(resource, input);
-        //  Recycles a resource so its re-emitted from the `resource$` observable.
-        recycleBin.next(resource);
-        return output;
-      }),
-      tap({ complete: () => recycleBin.complete() })
+    return input$.pipe(
+      //you can use mergeMap here as well, depends on how fast you want to consume inputs
+      mergeMap((input) => {
+        const work = {
+          execute: (r: TResource) => task(r, input),
+          observer: new Subject<TOut>(),
+        };
+        this.queuedWorkItem$.next(work);
+        return work.observer;
+      })
     );
   }
 
@@ -92,6 +128,7 @@ export class Pool<TResource extends Resource> implements Disposable {
    */
   public async dispose(): Promise<void> {
     this.isDisposed = true;
+    this.subscription.unsubscribe();
     await Promise.all(this.createdResources.map((resource) => resource.dispose?.()));
   }
 }

@@ -1,13 +1,12 @@
 import { expect } from 'chai';
-import { toArray } from 'rxjs/operators';
 import sinon from 'sinon';
 import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
-import { lastValueFrom, range, ReplaySubject } from 'rxjs';
+import { toArray, mergeWith, lastValueFrom, range, ReplaySubject } from 'rxjs';
 
 import { Pool, Resource } from '../../../src/concurrent/index.js';
 
-describe(Pool.name, () => {
+describe.only(Pool.name, () => {
   let worker1: sinon.SinonStubbedInstance<Required<Resource>>;
   let worker2: sinon.SinonStubbedInstance<Required<Resource>>;
   let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Resource>>;
@@ -142,46 +141,26 @@ describe(Pool.name, () => {
       await onGoingWork;
     });
 
-    it.only('should allow for parallel schedules, without interference', async () => {
+    it('should allow for parallel schedules, without interference', async () => {
       // Arrange
       arrangeWorkers();
       setConcurrency(2);
-      const actualScheduledWork: Array<[number, Required<Resource>]> = [];
       sut = createSut();
-      const onGoingWork: Array<Promise<unknown>> = [];
-      onGoingWork.push(
-        lastValueFrom(
-          sut.schedule(range(0, 3), async (worker, input) => {
-            await tick();
-            actualScheduledWork.push([input, worker]);
-          })
-        )
-      );
-      onGoingWork.push(
-        lastValueFrom(
-          sut.schedule(range(3, 3), async (worker, input) => {
-            await tick();
-            actualScheduledWork.push([input, worker]);
-          })
-        )
-      );
-
-      await tick(10);
-      await Promise.all(onGoingWork);
+      const countParallelTasks = async () => {
+        nrOfParallelTasks++;
+        maxNrOfParallelTasks = Math.max(nrOfParallelTasks, maxNrOfParallelTasks);
+        await tick();
+        nrOfParallelTasks--;
+      };
+      let nrOfParallelTasks = 0;
+      let maxNrOfParallelTasks = 0;
 
       // Act
+      await lastValueFrom(sut.schedule(range(0, 3), countParallelTasks).pipe(mergeWith(sut.schedule(range(3, 3), countParallelTasks))));
       await sut.dispose();
 
       // Assert
-      expect(actualScheduledWork).lengthOf(6);
-      expect(actualScheduledWork).deep.eq([
-        [0, worker1],
-        [3, worker2],
-        [1, worker1],
-        [4, worker2],
-        [2, worker1],
-        [5, worker2],
-      ]);
+      expect(maxNrOfParallelTasks).eq(2);
     });
   });
 
