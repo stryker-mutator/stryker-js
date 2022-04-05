@@ -2,20 +2,20 @@
 
 exports[`Verify stryker has ran correctly should report correct score 1`] = `
 Object {
-  "compileErrors": 0,
+  "compileErrors": 5,
   "ignored": 0,
-  "killed": 26,
-  "mutationScore": 74.28571428571429,
-  "mutationScoreBasedOnCoveredCode": 96.29629629629629,
+  "killed": 21,
+  "mutationScore": 70,
+  "mutationScoreBasedOnCoveredCode": 95.45454545454545,
   "noCoverage": 8,
   "runtimeErrors": 0,
   "survived": 1,
   "timeout": 0,
-  "totalCovered": 27,
-  "totalDetected": 26,
-  "totalInvalid": 0,
+  "totalCovered": 22,
+  "totalDetected": 21,
+  "totalInvalid": 5,
   "totalMutants": 35,
   "totalUndetected": 9,
-  "totalValid": 35,
+  "totalValid": 30,
 }
 `;
