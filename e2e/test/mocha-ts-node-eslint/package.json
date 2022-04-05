@@ -1,0 +1,8 @@
+{
+  "name": "mocha-ts-node-eslint",
+  "description": "A test for mocha using eslint + typescript (no transpiler)",
+  "scripts": {
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}
