@@ -33,7 +33,7 @@ export class LintChecker implements Checker {
 
   private async lintFileContent(filename: string): Promise<CheckResult> {
     const fileText = await this.getFile(filename);
-    const results = await this.linter.lintText(fileText.content);
+    const results = await this.linter.lintText(fileText.content, { filePath: filename });
     const formatter = await this.linter.loadFormatter();
     return await makeResultFromLintReport(results, formatter);
   }
