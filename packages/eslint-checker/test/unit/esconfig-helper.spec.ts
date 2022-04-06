@@ -24,6 +24,7 @@ describe('adjustConfigFile', () => {
 
     expect(config).has.deep.property('rules', {
       'import/no-unresolved': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-empty-function': 'off',
     });
