@@ -57,7 +57,7 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
   return ast;
 }
 
-export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (nodePath: NodePath<types.Node>) => boolean): NodePath<T> {
+export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (nodePath: NodePath) => boolean): NodePath<T> {
   let theNode: NodePath<T> | undefined;
   traverse(ast, {
     noScope: true,
