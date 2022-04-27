@@ -63,6 +63,6 @@ function isTestOfCondition(path: NodePath): boolean {
   return parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
 }
 
-function isBooleanExpression(path: NodePath<babel.types.Node>) {
+function isBooleanExpression(path: NodePath) {
   return (path.isBinaryExpression() || path.isLogicalExpression()) && booleanOperators.includes(path.node.operator);
 }
