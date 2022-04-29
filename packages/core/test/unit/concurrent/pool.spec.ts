@@ -6,7 +6,7 @@ import { toArray, mergeWith, lastValueFrom, range, ReplaySubject } from 'rxjs';
 
 import { Pool, Resource } from '../../../src/concurrent/index.js';
 
-describe.only(Pool.name, () => {
+describe(Pool.name, () => {
   let worker1: sinon.SinonStubbedInstance<Required<Resource>>;
   let worker2: sinon.SinonStubbedInstance<Required<Resource>>;
   let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Resource>>;
@@ -36,7 +36,7 @@ describe.only(Pool.name, () => {
   }
 
   function setConcurrency(n: number) {
-    Array.from({ length: n }).forEach((_, i) => concurrencyToken$.next(i));
+    range(0, n).subscribe(concurrencyToken$.next.bind(concurrencyToken$));
   }
 
   describe('schedule', () => {
@@ -72,7 +72,7 @@ describe.only(Pool.name, () => {
       arrangeWorkers();
       setConcurrency(8);
       sut = createSut();
-      const result = await captureWorkers(sut, 8);
+      const result = await captureWorkers(8);
       expect(result).lengthOf(8);
       expect(result).deep.eq([
         worker1,
@@ -91,7 +91,7 @@ describe.only(Pool.name, () => {
       const expectedError = new Error('foo error');
       createWorkerStub.throws(expectedError);
       sut = createSut();
-      await expect(captureWorkers(sut, 1)).rejectedWith(expectedError);
+      await expect(captureWorkers(1)).rejectedWith(expectedError);
     });
 
     it('should share workers across subscribers (for sharing between dry runner and mutation test runner)', async () => {
@@ -141,19 +141,19 @@ describe.only(Pool.name, () => {
       await onGoingWork;
     });
 
-    it('should allow for parallel schedules, without interference', async () => {
+    it('should allow for parallel schedules, without interference (#3473)', async () => {
       // Arrange
       arrangeWorkers();
       setConcurrency(2);
       sut = createSut();
+      let nrOfParallelTasks = 0;
+      let maxNrOfParallelTasks = 0;
       const countParallelTasks = async () => {
         nrOfParallelTasks++;
         maxNrOfParallelTasks = Math.max(nrOfParallelTasks, maxNrOfParallelTasks);
         await tick();
         nrOfParallelTasks--;
       };
-      let nrOfParallelTasks = 0;
-      let maxNrOfParallelTasks = 0;
 
       // Act
       await lastValueFrom(sut.schedule(range(0, 3), countParallelTasks).pipe(mergeWith(sut.schedule(range(3, 3), countParallelTasks))));
@@ -161,6 +161,25 @@ describe.only(Pool.name, () => {
 
       // Assert
       expect(maxNrOfParallelTasks).eq(2);
+    });
+
+    it('should reject when an error occurs', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(2);
+      sut = createSut();
+
+      // Act
+      const expectedError = new Error('Expected error');
+      await expect(
+        lastValueFrom(
+          sut.schedule(range(0, 3), (_, n) => {
+            if (n === 1) {
+              throw expectedError;
+            }
+          })
+        )
+      ).rejectedWith(expectedError);
     });
   });
 
@@ -196,7 +215,7 @@ describe.only(Pool.name, () => {
       // Act
       await sut.init();
       await sut.init();
-      const allWorkers = await captureWorkers(sut, 1);
+      const allWorkers = await captureWorkers(1);
 
       // Assert
       expect(createWorkerStub).calledOnce;
@@ -237,15 +256,32 @@ describe.only(Pool.name, () => {
   });
 
   describe('dispose', () => {
-    it('should have disposed all testRunners', async () => {
+    it('should have disposed all workers', async () => {
       setConcurrency(8);
       arrangeWorkers();
       sut = createSut();
-      await captureWorkers(sut, 9);
+      await captureWorkers(9);
       await sut.dispose();
       expect(worker1.dispose).called;
       expect(worker2.dispose).called;
       expect(genericWorkerForAllSubsequentCreates.dispose).called;
+    });
+
+    it('should dispose workers only once', async () => {
+      // Arrange
+      setConcurrency(2);
+      arrangeWorkers();
+      concurrencyToken$.complete();
+      sut = createSut();
+      await sut.init();
+
+      // Act
+      await sut.dispose();
+      await sut.dispose();
+
+      // Assert
+      expect(worker1.dispose).calledOnce;
+      expect(worker2.dispose).calledOnce;
     });
 
     it('should not do anything if no workers were created', async () => {
@@ -271,6 +307,8 @@ describe.only(Pool.name, () => {
       await sut.dispose();
       task2.resolve();
       concurrencyToken$.complete();
+
+      // Assert
       await resultPromise;
       expect(worker1.dispose).called;
       expect(worker2.dispose).called;
@@ -287,23 +325,23 @@ describe.only(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const actualTestRunnersPromise = lastValueFrom(sut.schedule(range(0, 3), (worker) => worker).pipe(toArray()));
+      const actualWorkers = lastValueFrom(sut.schedule(range(0, 3), (worker) => worker).pipe(toArray()));
       const disposePromise = sut.dispose();
       task.resolve();
       task2.resolve();
       await disposePromise;
       concurrencyToken$.complete();
-      await actualTestRunnersPromise;
+      await actualWorkers;
 
       // Assert
       expect(createWorkerStub).calledTwice;
     });
   });
 
-  async function captureWorkers(suite: Pool<Required<Resource>>, inputCount: number) {
+  async function captureWorkers(inputCount: number) {
     // Eagerly get all test runners
     const createAllPromise = lastValueFrom(
-      suite
+      sut
         .schedule(range(0, inputCount), async (worker) => {
           await tick();
           return worker;
@@ -313,10 +351,10 @@ describe.only(Pool.name, () => {
 
     // But don't await yet, until after dispose.
     // Allow processes to be created
-    await tick(inputCount);
+    await tick(inputCount + 1);
 
     // Dispose completes the internal recycle bin subject, which in turn will complete.
-    await suite.dispose();
+    await sut.dispose();
     concurrencyToken$.complete();
     return createAllPromise;
   }
