@@ -1,6 +1,6 @@
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { notEmpty, Task } from '@stryker-mutator/util';
-import { filter, ignoreElements, mergeMap, Observable, ReplaySubject, Subject, Subscription, tap, zip } from 'rxjs';
+import { filter, ignoreElements, lastValueFrom, mergeMap, Observable, ReplaySubject, Subject, Subscription, tap, zip } from 'rxjs';
 import { Disposable, tokens } from 'typed-inject';
 
 import { CheckerFacade } from '../checker/index.js';
@@ -66,9 +66,10 @@ class WorkItem<TResource extends Resource, TIn, TOut> {
  * Also takes care of the initialing of the resources (with `init()`)
  */
 export class Pool<TResource extends Resource> implements Disposable {
-  private readonly initTask = new Task<void>();
+  // The init subject. Using an RxJS subject instead of a promise, so errors are silently ignored when nobody is listening
+  private readonly initSubject = new Subject();
   private readonly createdResources: TResource[] = [];
-  // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after being picked up
+  // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after it was picked up
   private readonly todoSubject = new ReplaySubject<WorkItem<TResource, any, any>>();
 
   private readonly subscription: Subscription;
@@ -103,10 +104,10 @@ export class Pool<TResource extends Resource> implements Disposable {
         filter(notEmpty),
         tap({
           complete: () => {
-            this.initTask.resolve();
+            this.initSubject.complete();
           },
           error: (err) => {
-            this.initTask.reject(err);
+            this.initSubject.error(err);
           },
         })
       )
@@ -121,7 +122,7 @@ export class Pool<TResource extends Resource> implements Disposable {
    * This is optional, resources will get initialized either way.
    */
   public async init(): Promise<void> {
-    return this.initTask.promise;
+    await lastValueFrom(this.initSubject);
   }
 
   /**
