@@ -1,7 +1,7 @@
-import { MutantTestCoverage, MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
@@ -52,16 +52,11 @@ export class BroadcastReporter implements StrictReporter {
     );
   }
 
-  public onSourceFileRead(file: SourceFile): void {
-    this.broadcast('onSourceFileRead', file);
+  public onDryRunCompleted(event: DryRunCompletedEvent): void {
+    this.broadcast('onDryRunCompleted', event);
   }
-
-  public onAllSourceFilesRead(files: SourceFile[]): void {
-    this.broadcast('onAllSourceFilesRead', files);
-  }
-
-  public onAllMutantsMatchedWithTests(results: readonly MutantTestCoverage[]): void {
-    this.broadcast('onAllMutantsMatchedWithTests', results);
+  public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
+    this.broadcast('onMutationTestingPlanReady', event);
   }
 
   public onMutantTested(result: MutantResult): void {

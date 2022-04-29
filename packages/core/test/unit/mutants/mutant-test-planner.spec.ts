@@ -2,13 +2,12 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
 import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind } from '../../../src/mutants/index.js';
 
 const TIME_OVERHEAD_MS = 501;
 
@@ -89,6 +88,36 @@ describe(MutantTestPlanner.name, () => {
     expect(result.runOptions.disableBail).true;
   });
 
+  it('should report onMutationTestingPlanReady', () => {
+    // Arrange
+    const mutants = [
+      factory.mutant({
+        id: '1',
+        fileName: 'foo.js',
+        mutatorName: 'fooMutator',
+        replacement: '<=',
+        location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
+      }),
+      factory.mutant({
+        id: '2',
+        fileName: 'bar.js',
+        mutatorName: 'barMutator',
+        replacement: '{}',
+        location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
+      }),
+    ];
+    const dryRunResult = factory.completeDryRunResult({
+      tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
+      mutantCoverage: undefined,
+    });
+
+    // Act
+    const mutantPlans = act(dryRunResult, mutants);
+
+    // Assert
+    sinon.assert.calledOnceWithExactly(reporterMock.onMutationTestingPlanReady, { mutantPlans });
+  });
+
   describe('without mutant coverage data', () => {
     it('should disable the test filter', () => {
       // Arrange
@@ -139,53 +168,6 @@ describe(MutantTestPlanner.name, () => {
       // Assert
       assertIsRunPlan(result);
       expect(result.runOptions.timeout).eq(calculateTimeout(42));
-    });
-
-    it('should report onAllMutantsMatchedWithTests', () => {
-      // Arrange
-      const mutants = [
-        factory.mutant({
-          id: '1',
-          fileName: 'foo.js',
-          mutatorName: 'fooMutator',
-          replacement: '<=',
-          location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
-        }),
-        factory.mutant({
-          id: '2',
-          fileName: 'bar.js',
-          mutatorName: 'barMutator',
-          replacement: '{}',
-          location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
-        }),
-      ];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
-        mutantCoverage: undefined,
-      });
-
-      // Act
-      act(dryRunResult, mutants);
-
-      // Assert
-      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithExactly([
-        factory.mutantTestCoverage({
-          id: '1',
-          fileName: 'foo.js',
-          mutatorName: 'fooMutator',
-          replacement: '<=',
-          static: undefined,
-          location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
-        }),
-        factory.mutantTestCoverage({
-          id: '2',
-          fileName: 'bar.js',
-          mutatorName: 'barMutator',
-          replacement: '{}',
-          static: undefined,
-          location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
-        }),
-      ]);
     });
   });
 
@@ -286,31 +268,6 @@ describe(MutantTestPlanner.name, () => {
       assertIsRunPlan(result);
       expect(result.runOptions.timeout).eq(calculateTimeout(42));
     });
-
-    it('should report onAllMutantsMatchedWithTests with correct `static` value', () => {
-      // Arrange
-      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [factory.successTestResult()],
-        mutantCoverage: { static: { 1: 1 }, perTest: {} }, // mutant 2 has no coverage
-      });
-
-      // Act
-      act(dryRunResult, mutants);
-
-      // Assert
-      const expectedFirstMatch: Partial<MutantTestCoverage> = {
-        id: '1',
-        static: true,
-        coveredBy: [],
-      };
-      const expectedSecondMatch: Partial<MutantTestCoverage> = {
-        id: '2',
-        static: false,
-        coveredBy: [],
-      };
-      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
-    });
   });
 
   describe('with hybrid coverage', () => {
@@ -404,31 +361,6 @@ describe(MutantTestPlanner.name, () => {
       assertIsRunPlan(plan2);
       expect(plan1.runOptions.timeout).eq(calculateTimeout(42)); // spec1 + spec3
       expect(plan2.runOptions.timeout).eq(calculateTimeout(10)); // spec2
-    });
-
-    it('should report onAllMutantsMatchedWithTests with correct `testFilter` value', () => {
-      // Arrange
-      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 })],
-        mutantCoverage: { static: { 1: 0 }, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
-      });
-
-      // Act
-      act(dryRunResult, mutants);
-
-      // Assert
-      const expectedFirstMatch: Partial<MutantTestCoverage> = {
-        id: '1',
-        static: false,
-        coveredBy: ['spec1'],
-      };
-      const expectedSecondMatch: Partial<MutantTestCoverage> = {
-        id: '2',
-        static: false,
-        coveredBy: ['spec2'],
-      };
-      expect(reporterMock.onAllMutantsMatchedWithTests).calledWithMatch([sinon.match(expectedFirstMatch), sinon.match(expectedSecondMatch)]);
     });
 
     it('should allow for non-existing tests (#2485)', () => {

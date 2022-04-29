@@ -51,7 +51,7 @@ jobs:
       run: npm run build
     - name: Run e2e tests
       run: npm run e2e
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: e2e-reports

@@ -12,9 +12,12 @@ import {
   MutantCoverage,
   schema,
   MutantStatus,
+  MutantRunPlan,
+  PlanKind,
+  MutantEarlyResultPlan,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Reporter, SourceFile } from '@stryker-mutator/api/report';
+import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
 import { calculateMutationTestMetrics, Metrics, MetricsResult, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
@@ -75,6 +78,8 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.Killed, killedBy: ['45'], testsCompleted: 2 });
+export const survivedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
+  mutantResult({ ...overrides, status: MutantStatus.Survived, killedBy: ['45'], testsCompleted: 2 });
 export const timeoutMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
   mutantResult({ ...overrides, status: MutantStatus.Timeout, statusReason: 'expected error' });
 export const runtimeErrorMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
@@ -315,9 +320,8 @@ export const strykerWithPluginOptions = <T>(pluginOptions: T): StrykerOptions & 
 };
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
-  'onSourceFileRead',
-  'onAllSourceFilesRead',
-  'onAllMutantsMatchedWithTests',
+  'onDryRunCompleted',
+  'onMutationTestingPlanReady',
   'onMutantTested',
   'onAllMutantsTested',
   'onMutationTestReportReady',
@@ -340,6 +344,42 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   location: location(),
 }));
 
+export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { status: MutantStatus.Ignored }>(() => ({
+  status: MutantStatus.Ignored,
+  coveredBy: undefined,
+  fileName: '',
+  id: '1',
+  mutatorName: '',
+  static: false,
+  replacement: '',
+  location: location(),
+}));
+
+export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
+  plan: PlanKind.Run,
+  mutant: mutantTestCoverage(),
+  runOptions: mutantRunOptions(),
+}));
+
+export const mutantEarlyResultPlan = factoryMethod<MutantEarlyResultPlan>(() => ({
+  plan: PlanKind.EarlyResult,
+  mutant: { ...mutantTestCoverage(), status: MutantStatus.Ignored },
+}));
+
+export const mutationTestingPlanReadyEvent = factoryMethod<MutationTestingPlanReadyEvent>(() => ({
+  mutantPlans: [mutantRunPlan()],
+}));
+
+export const runTiming = factoryMethod<RunTiming>(() => ({
+  net: 1000,
+  overhead: 765,
+}));
+
+export const dryRunCompletedEvent = factoryMethod<DryRunCompletedEvent>(() => ({
+  result: completeDryRunResult(),
+  timing: runTiming(),
+}));
+
 export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {
   const injectorMock: sinon.SinonStubbedInstance<Injector<T>> = {
     dispose: sinon.stub(),
@@ -359,11 +399,6 @@ export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>>
 export function file(): File {
   return new File('', '');
 }
-
-export const sourceFile = factoryMethod<SourceFile>(() => ({
-  content: 'foo.bar()',
-  path: 'foo.js',
-}));
 
 export function fileNotFoundError(): NodeJS.ErrnoException {
   return createErrnoException('ENOENT');

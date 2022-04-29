@@ -10,6 +10,7 @@ import { HtmlReporter } from './html-reporter.js';
 import { JsonReporter } from './json-reporter.js';
 
 export { BroadcastReporter } from './broadcast-reporter.js';
+export type { StrictReporter } from './strict-reporter.js';
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),

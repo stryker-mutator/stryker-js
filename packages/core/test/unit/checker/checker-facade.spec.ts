@@ -7,8 +7,6 @@ import sinon from 'sinon';
 import { CheckerFacade } from '../../../src/checker/checker-facade.js';
 import { CheckerResource } from '../../../src/checker/index.js';
 
-import { createMutantRunPlan } from '../../helpers/producers.js';
-
 describe(CheckerFacade.name, () => {
   let innerChecker: sinon.SinonStubbedInstance<CheckerResource>;
   let sut: CheckerFacade;
@@ -25,8 +23,8 @@ describe(CheckerFacade.name, () => {
 
   describe('check', () => {
     it('should return checker result', async () => {
-      const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-      const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+      const mutant1 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
+      const mutant2 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
 
       innerChecker.check.returns(
         Promise.resolve({
@@ -48,9 +46,9 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.check('test-checker', [
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
         ])
       ).to.be.rejectedWith('Checker "test-checker" was missing check results for mutant ids "2,3", while Stryker asked to check them');
     });
@@ -62,8 +60,8 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.check('test-checker', [
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
         ])
       ).to.be.rejectedWith(
         'Checker "test-checker" returned a check result for mutant id "3", but a check wasn\'t requested for it. Stryker asked to check mutant ids: 1,2'
@@ -73,8 +71,8 @@ describe(CheckerFacade.name, () => {
 
   describe('group', () => {
     it('should return group result', async () => {
-      const mutant1 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-      const mutant2 = createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+      const mutant1 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
+      const mutant2 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
 
       innerChecker.group.returns(Promise.resolve([[mutant1.mutant.id, mutant2.mutant.id]]));
 
@@ -88,8 +86,8 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.group('test-checker', [
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
         ])
       ).to.be.rejectedWith(
         'Checker "test-checker" returned a group result for mutant id "3", but a group wasn\'t requested for it. Stryker asked to group mutant ids: 1,2!'
@@ -101,9 +99,9 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.group('test-checker', [
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-          createMutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
         ])
       ).to.be.rejectedWith('Checker "test-checker" was missing group results for mutant ids "2,3", while Stryker asked to group them!');
     });

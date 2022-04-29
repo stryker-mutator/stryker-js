@@ -32,7 +32,7 @@ export interface MutantRunOptions extends RunOptions {
   /**
    * Determine when to active the mutant.
    * - 'runtime'. The test environment should first load all tests and sut files before activating the mutant. Mutant is only active during runtime.
-   * - 'static'. The test enviornment should load _while the mutant is active_. Mutant may be active during the entire lifetime of the process.
+   * - 'static'. The test environment should load _while the mutant is active_. Mutant may be active during the entire lifetime of the process.
    * See https://github.com/stryker-mutator/stryker-js/issues/3442 for more details
    */
   mutantActivation: MutantActivation;

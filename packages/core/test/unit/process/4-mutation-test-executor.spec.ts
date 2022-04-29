@@ -6,28 +6,28 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantStatus, MutantTestCoverage } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, MutantTestCoverage, MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { createTestRunnerPoolMock, createCheckerPoolMock, createMutantRunPlan, createMutantEarlyResultPlan } from '../../helpers/producers.js';
+import { createTestRunnerPoolMock, createCheckerPoolMock } from '../../helpers/producers.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { Timer } from '../../../src/utils/timer.js';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, MutantTestPlanner } from '../../../src/mutants/index.js';
+import { MutantTestPlanner } from '../../../src/mutants/index.js';
 import { CheckerFacade } from '../../../src/checker/checker-facade.js';
 
 function ignoredEarlyResultPlan(overrides?: Partial<Mutant>): MutantEarlyResultPlan {
-  return createMutantEarlyResultPlan({
+  return factory.mutantEarlyResultPlan({
     mutant: { ...factory.mutant(overrides), status: MutantStatus.Ignored },
   });
 }
 
 function mutantRunPlan(overrides?: Partial<MutantRunOptions & MutantTestCoverage>): MutantRunPlan {
   const mutant = factory.mutantTestCoverage(overrides);
-  return createMutantRunPlan({
+  return factory.mutantRunPlan({
     runOptions: factory.mutantRunOptions({ ...overrides, activeMutant: mutant }),
     mutant,
   });
@@ -280,6 +280,25 @@ describe(MutationTestExecutor.name, () => {
       expect(checker.check).calledTwice;
       sinon.assert.calledWithExactly(checker.check, 'foo', [plan1]);
       sinon.assert.calledWithExactly(checker.check, 'foo', [plan2]);
+    });
+
+    it('should report failed check mutants only once (#3461)', async () => {
+      // Arrange
+      const plan1 = mutantRunPlan({ id: '1' });
+      const plan2 = mutantRunPlan({ id: '2' });
+      const failedCheckResult = factory.failedCheckResult();
+      arrangeScenario({ checkResult: failedCheckResult });
+      checker.group.resolves([[plan1], [plan2]]);
+      mutantTestPlans.push(plan1);
+      mutantTestPlans.push(plan2);
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(mutationTestReportHelperMock.reportCheckFailed).calledTwice;
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
     });
 
     it('should free checker resources after checking stage is complete', async () => {

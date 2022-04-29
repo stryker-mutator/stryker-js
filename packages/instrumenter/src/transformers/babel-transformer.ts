@@ -131,7 +131,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   /**
    * Place mutants that are assigned to the current node path (on exit)
    */
-  function placeMutantsIfNeeded(path: NodePath<types.Node>) {
+  function placeMutantsIfNeeded(path: NodePath) {
     const mutantsPlacement = placementMap.get(path.node);
     if (mutantsPlacement?.appliedMutants.size) {
       try {

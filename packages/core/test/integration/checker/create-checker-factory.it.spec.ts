@@ -10,8 +10,6 @@ import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.
 import { coreTokens } from '../../../src/di/index.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
 
-import { createMutantRunPlan } from '../../helpers/producers.js';
-
 import { TwoTimesTheCharm } from './additional-checkers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
@@ -52,7 +50,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
   }
 
   it('should pass along the check result', async () => {
-    const mutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ id: '1' }) });
+    const mutantRunPlan = factory.mutantRunPlan({ mutant: factory.mutant({ id: '1' }) });
     await arrangeSut('healthy');
     const expected: CheckResult = { status: CheckStatus.Passed };
     expect(await sut.check('healthy', [mutantRunPlan])).deep.eq([[mutantRunPlan, expected]]);
@@ -60,11 +58,11 @@ describe(`${createCheckerFactory.name} integration`, () => {
 
   it('should reject when the checker behind rejects', async () => {
     await arrangeSut('crashing');
-    await expect(sut.check('crashing', [createMutantRunPlan()])).rejectedWith('Always crashing');
+    await expect(sut.check('crashing', [factory.mutantRunPlan()])).rejectedWith('Always crashing');
   });
 
   it('should recover when the checker behind rejects', async () => {
-    const mutantRunPlan = createMutantRunPlan();
+    const mutantRunPlan = factory.mutantRunPlan();
     await fs.promises.writeFile(TwoTimesTheCharm.COUNTER_FILE, '0', 'utf-8');
     await arrangeSut('two-times-the-charm');
     const actual = await sut.check('two-times-the-charm', [mutantRunPlan]);
@@ -74,8 +72,8 @@ describe(`${createCheckerFactory.name} integration`, () => {
 
   it('should provide the nodeArgs', async () => {
     // Arrange
-    const passingMutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ fileName: 'shouldProvideNodeArgs' }) });
-    const failingMutantRunPlan = createMutantRunPlan({ mutant: factory.mutant({ fileName: 'somethingElse' }) });
+    const passingMutantRunPlan = factory.mutantRunPlan({ mutant: factory.mutant({ fileName: 'shouldProvideNodeArgs' }) });
+    const failingMutantRunPlan = factory.mutantRunPlan({ mutant: factory.mutant({ fileName: 'somethingElse' }) });
     testInjector.options.checkerNodeArgs = ['--title=shouldProvideNodeArgs'];
 
     // Act

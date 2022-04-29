@@ -1,17 +1,22 @@
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import { Mutant, CoveragePerTestId, MutantCoverage, StrykerOptions, MutantStatus } from '@stryker-mutator/api/core';
+import {
+  MutantRunPlan,
+  MutantTestPlan,
+  PlanKind,
+  Mutant,
+  CoveragePerTestId,
+  MutantCoverage,
+  StrykerOptions,
+  MutantStatus,
+  MutantEarlyResultPlan,
+} from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-
 import { I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { Sandbox } from '../sandbox/index.js';
-
-import { MutantRunPlan, MutantTestPlan } from './mutant-test-plan.js';
-
-import { MutantEarlyResultPlan, PlanKind } from './index.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -53,9 +58,9 @@ export class MutantTestPlanner {
   }
 
   public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantTestPlans = mutants.map((mutant) => this.planMutant(mutant));
-    this.reporter.onAllMutantsMatchedWithTests(mutantTestPlans.map(({ mutant }) => mutant));
-    return mutantTestPlans;
+    const mutantPlans = mutants.map((mutant) => this.planMutant(mutant));
+    this.reporter.onMutationTestingPlanReady({ mutantPlans });
+    return mutantPlans;
   }
 
   private planMutant(mutant: Mutant): MutantTestPlan {

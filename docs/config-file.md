@@ -49,7 +49,7 @@ You can use your editor's autocompletion to help you author your configuration f
 
 ## Usage
 
-By default, Stryker will look for a config file in te current working directory. The default config file names are:
+By default, Stryker will look for a config file in the current working directory. The default config file names are:
 - `stryker.conf.json`
 - `stryker.conf.js`
 - `stryker.conf.cjs`
