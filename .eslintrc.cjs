@@ -62,7 +62,7 @@ module.exports = {
 
     // disabled typescript-eslint rules we should enable in some way
 
-    // fix - serparate PR
+    // fix - separate PR
     '@typescript-eslint/naming-convention': 'off',
 
     // fix - separate PR
@@ -80,12 +80,13 @@ module.exports = {
     // fix - separate PR
     '@typescript-eslint/no-base-to-string': 'off',
 
-    // fix - serarate PR
+    // fix - separate PR
     '@typescript-eslint/init-declarations': 'off',
 
     // Long term to fix
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-magic-numbers': 'off',
+    '@typescript-eslint/no-magic-numbers': 'off',  
+    '@typescript-eslint/parameter-properties': 'off',
 
     // disabled typescript-eslint rules
 
