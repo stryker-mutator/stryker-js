@@ -11,20 +11,20 @@ describe(Pool.name, () => {
   let worker2: sinon.SinonStubbedInstance<Required<Resource>>;
   let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Resource>>;
   let createWorkerStub: sinon.SinonStub;
-  let concurrencyToken$: ReplaySubject<number>;
+  let concurrencyTokenSubject: ReplaySubject<number>;
   let sut: Pool<Required<Resource>>;
 
   beforeEach(() => {
-    concurrencyToken$ = new ReplaySubject();
+    concurrencyTokenSubject = new ReplaySubject();
     worker1 = factory.testRunner(1);
     worker2 = factory.testRunner(2);
     genericWorkerForAllSubsequentCreates = factory.testRunner();
     createWorkerStub = sinon.stub();
   });
 
-  afterEach(() => {
-    concurrencyToken$.complete();
-    sut.dispose();
+  afterEach(async () => {
+    concurrencyTokenSubject.complete();
+    await sut.dispose();
   });
 
   function arrangeWorkers() {
@@ -32,11 +32,11 @@ describe(Pool.name, () => {
   }
 
   function createSut() {
-    return new Pool<Required<Resource>>(createWorkerStub, concurrencyToken$);
+    return new Pool<Required<Resource>>(createWorkerStub, concurrencyTokenSubject);
   }
 
   function setConcurrency(n: number) {
-    range(0, n).subscribe(concurrencyToken$.next.bind(concurrencyToken$));
+    range(0, n).subscribe(concurrencyTokenSubject.next.bind(concurrencyTokenSubject));
   }
 
   describe('schedule', () => {
@@ -196,7 +196,7 @@ describe(Pool.name, () => {
       // Act
       const timeoutResult = await ExpirableTask.timeout(sut.init(), 20);
       initWorker2Task.resolve();
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
       await sut.init();
 
       // Assert
@@ -210,7 +210,7 @@ describe(Pool.name, () => {
       arrangeWorkers();
       setConcurrency(1);
       sut = createSut();
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
 
       // Act
       await sut.init();
@@ -232,7 +232,7 @@ describe(Pool.name, () => {
 
       // Act
       const timeoutResult = await ExpirableTask.timeout(sut.init(), 20);
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
 
       // Assert
       expect(timeoutResult).eq(ExpirableTask.TimeoutExpired);
@@ -251,7 +251,7 @@ describe(Pool.name, () => {
 
       // Act & Assert
       await expect(sut.init()).rejectedWith(expectedError);
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
     });
   });
 
@@ -271,7 +271,7 @@ describe(Pool.name, () => {
       // Arrange
       setConcurrency(2);
       arrangeWorkers();
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
       sut = createSut();
       await sut.init();
 
@@ -306,7 +306,7 @@ describe(Pool.name, () => {
       task.resolve();
       await sut.dispose();
       task2.resolve();
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
 
       // Assert
       await resultPromise;
@@ -330,7 +330,7 @@ describe(Pool.name, () => {
       task.resolve();
       task2.resolve();
       await disposePromise;
-      concurrencyToken$.complete();
+      concurrencyTokenSubject.complete();
       await actualWorkers;
 
       // Assert
@@ -355,7 +355,7 @@ describe(Pool.name, () => {
 
     // Dispose completes the internal recycle bin subject, which in turn will complete.
     await sut.dispose();
-    concurrencyToken$.complete();
+    concurrencyTokenSubject.complete();
     return createAllPromise;
   }
 });

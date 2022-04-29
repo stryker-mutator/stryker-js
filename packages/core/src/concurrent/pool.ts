@@ -67,7 +67,7 @@ class WorkItem<TResource extends Resource, TIn, TOut> {
  */
 export class Pool<TResource extends Resource> implements Disposable {
   // The init subject. Using an RxJS subject instead of a promise, so errors are silently ignored when nobody is listening
-  private readonly initSubject = new Subject();
+  private readonly initSubject = new ReplaySubject<void>();
   private readonly createdResources: TResource[] = [];
   // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after it was picked up
   private readonly todoSubject = new ReplaySubject<WorkItem<TResource, any, any>>();
@@ -104,6 +104,7 @@ export class Pool<TResource extends Resource> implements Disposable {
         filter(notEmpty),
         tap({
           complete: () => {
+            this.initSubject.next();
             this.initSubject.complete();
           },
           error: (err) => {
