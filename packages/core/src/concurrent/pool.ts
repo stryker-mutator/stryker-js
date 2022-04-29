@@ -1,5 +1,5 @@
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-import { notEmpty, Task } from '@stryker-mutator/util';
+import { notEmpty } from '@stryker-mutator/util';
 import { filter, ignoreElements, lastValueFrom, mergeMap, Observable, ReplaySubject, Subject, Subscription, tap, zip } from 'rxjs';
 import { Disposable, tokens } from 'typed-inject';
 
