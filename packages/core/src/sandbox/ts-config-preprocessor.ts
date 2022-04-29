@@ -1,8 +1,9 @@
 import path from 'path';
 
-import { StrykerOptions, File } from '@stryker-mutator/api/core';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
+import { File } from '@stryker-mutator/util';
 
 import { FilePreprocessor } from './file-preprocessor.js';
 

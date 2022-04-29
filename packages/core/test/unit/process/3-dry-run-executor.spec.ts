@@ -7,7 +7,7 @@ import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResul
 import { expect } from 'chai';
 import { Observable, mergeMap } from 'rxjs';
 import { I } from '@stryker-mutator/util';
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 import { Timer } from '../../../src/utils/timer.js';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';

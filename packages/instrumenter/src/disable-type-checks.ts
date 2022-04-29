@@ -1,6 +1,5 @@
 import type { types } from '@babel/core';
-import { File } from '@stryker-mutator/api/core';
-import { notEmpty } from '@stryker-mutator/util';
+import { notEmpty, File } from '@stryker-mutator/util';
 
 import { createParser, getFormat, ParserOptions } from './parsers/index.js';
 import { AstFormat, HtmlAst, ScriptAst } from './syntax/index.js';

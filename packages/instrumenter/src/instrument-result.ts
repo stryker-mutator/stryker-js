@@ -1,4 +1,5 @@
-import { File, Mutant } from '@stryker-mutator/api/core';
+import { Mutant } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 export interface InstrumentResult {
   files: readonly File[];

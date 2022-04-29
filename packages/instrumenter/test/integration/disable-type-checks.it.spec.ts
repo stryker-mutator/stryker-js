@@ -3,7 +3,7 @@ import { promises as fsPromises } from 'fs';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 import { disableTypeChecks } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';

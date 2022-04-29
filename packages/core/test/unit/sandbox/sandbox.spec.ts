@@ -6,7 +6,7 @@ import { npmRunPathEnv } from 'npm-run-path';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector, tick, factory } from '@stryker-mutator/test-helpers';
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import { I, normalizeWhitespaces, Task } from '@stryker-mutator/util';
 
 import { Sandbox } from '../../../src/sandbox/sandbox.js';

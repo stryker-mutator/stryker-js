@@ -16,8 +16,15 @@ import {
   TestStatus,
   TimeoutMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { File } from '@stryker-mutator/api/core';
 import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/api/check';
+
+/**
+ * Simple file interface, since we cannot use the File class directly because that would result in a dependency cycle
+ */
+interface File {
+  name: string;
+  textContent: string;
+}
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
   assert.strictEqual(result.status, MutantRunStatus.Killed, result.status === MutantRunStatus.Error ? result.errorMessage : '');

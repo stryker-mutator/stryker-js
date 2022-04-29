@@ -1,4 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 /**
  * A preprocessor changes files before writing them to the sandbox.

@@ -1,4 +1,4 @@
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import { assertions } from '@stryker-mutator/test-helpers';
 
 import { disableTypeChecks } from '../../src/index.js';

@@ -1,4 +1,5 @@
-import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 export interface PresetConfiguration {
   config: PartialStrykerOptions;

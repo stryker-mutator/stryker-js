@@ -2,7 +2,8 @@ import path from 'path';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { File, MutationRange } from '@stryker-mutator/api/core';
+import { MutationRange } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
