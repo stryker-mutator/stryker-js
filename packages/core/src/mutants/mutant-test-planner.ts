@@ -17,6 +17,8 @@ import { I } from '@stryker-mutator/util';
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { Sandbox } from '../sandbox/index.js';
+import { objectUtils } from '../utils/object-utils.js';
+import { optionsPath } from '../utils/index.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -50,20 +52,22 @@ export class MutantTestPlanner {
     private readonly sandbox: I<Sandbox>,
     private readonly timeOverheadMS: number,
     private readonly options: StrykerOptions,
-    logger: Logger
+    private readonly logger: Logger
   ) {
-    this.testsByMutantId = findTestsByMutant(this.dryRunResult.mutantCoverage?.perTest, dryRunResult.tests, logger);
+    this.testsByMutantId = this.findTestsByMutant(this.dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
     this.hitsByMutantId = findHitsByMutantId(this.dryRunResult.mutantCoverage);
     this.timeSpentAllTests = calculateTotalTime(this.dryRunResult.tests);
   }
 
   public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantPlans = mutants.map((mutant) => this.planMutant(mutant));
+    const mutantPlansWithNetTime = mutants.map((mutant) => this.planMutant(mutant));
+    const mutantPlans = mutantPlansWithNetTime.map(({ plan }) => plan);
     this.reporter.onMutationTestingPlanReady({ mutantPlans });
+    this.warnAboutStaticIfNeeded(mutantPlansWithNetTime);
     return mutantPlans;
   }
 
-  private planMutant(mutant: Mutant): MutantTestPlan {
+  private planMutant(mutant: Mutant): { plan: MutantTestPlan; netTime: number } {
     // If mutant was already ignored, pass that along
     const isStatic = this.dryRunResult.mutantCoverage && this.dryRunResult.mutantCoverage.static[mutant.id] > 0;
     if (mutant.status) {
@@ -104,16 +108,19 @@ export class MutantTestPlanner {
       statusReason,
       coveredBy,
     }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[] }
-  ): MutantEarlyResultPlan {
+  ): { plan: MutantEarlyResultPlan; netTime: number } {
     return {
-      plan: PlanKind.EarlyResult,
-      mutant: {
-        ...mutant,
-        status,
-        static: isStatic,
-        statusReason,
-        coveredBy,
+      plan: {
+        plan: PlanKind.EarlyResult,
+        mutant: {
+          ...mutant,
+          status,
+          static: isStatic,
+          statusReason,
+          coveredBy,
+        },
       },
+      netTime: 0,
     };
   }
 
@@ -125,63 +132,91 @@ export class MutantTestPlanner {
       isStatic,
       coveredBy,
     }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined }
-  ): MutantRunPlan {
+  ): { plan: MutantRunPlan; netTime: number } {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
     const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
     const hitCount = this.hitsByMutantId.get(mutant.id);
     const hitLimit = hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
 
     return {
-      plan: PlanKind.Run,
-      mutant: {
-        ...mutant,
-        coveredBy,
-        static: isStatic,
-      },
-      runOptions: {
-        // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
-        activeMutant: {
-          id: mutant.id,
-          fileName: mutant.fileName,
-          location: mutant.location,
-          mutatorName: mutant.mutatorName,
-          replacement: mutant.replacement,
+      netTime,
+      plan: {
+        plan: PlanKind.Run,
+        mutant: {
+          ...mutant,
+          coveredBy,
+          static: isStatic,
         },
-        mutantActivation: testFilter ? 'runtime' : 'static',
-        timeout,
-        testFilter,
-        sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
-        hitLimit,
-        disableBail,
-        reloadEnvironment: !testFilter,
+        runOptions: {
+          // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
+          activeMutant: {
+            id: mutant.id,
+            fileName: mutant.fileName,
+            location: mutant.location,
+            mutatorName: mutant.mutatorName,
+            replacement: mutant.replacement,
+          },
+          mutantActivation: testFilter ? 'runtime' : 'static',
+          timeout,
+          testFilter,
+          sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
+          hitLimit,
+          disableBail,
+          reloadEnvironment: !testFilter,
+        },
       },
     };
   }
-}
-function findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTests: TestResult[], logger: Logger) {
-  const testsByMutantId = new Map<string, Set<TestResult>>();
-  const testsById = allTests.reduce((acc, test) => acc.set(test.id, test), new Map<string, TestResult>());
-  coveragePerTest &&
-    Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
-      const foundTest = testsById.get(testId);
-      if (!foundTest) {
-        logger.warn(
-          `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.`
-        );
-        return;
-      }
-      Object.entries(mutantCoverage).forEach(([mutantId, count]) => {
-        if (count > 0) {
-          let tests = testsByMutantId.get(mutantId);
-          if (!tests) {
-            tests = new Set();
-            testsByMutantId.set(mutantId, tests);
-          }
-          tests.add(foundTest);
+  private findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTests: TestResult[]) {
+    const testsByMutantId = new Map<string, Set<TestResult>>();
+    const testsById = allTests.reduce((acc, test) => acc.set(test.id, test), new Map<string, TestResult>());
+    coveragePerTest &&
+      Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
+        const foundTest = testsById.get(testId);
+        if (!foundTest) {
+          this.logger.warn(
+            `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.`
+          );
+          return;
         }
+        Object.entries(mutantCoverage).forEach(([mutantId, count]) => {
+          if (count > 0) {
+            let tests = testsByMutantId.get(mutantId);
+            if (!tests) {
+              tests = new Set();
+              testsByMutantId.set(mutantId, tests);
+            }
+            tests.add(foundTest);
+          }
+        });
       });
-    });
-  return testsByMutantId;
+    return testsByMutantId;
+  }
+
+  private warnAboutStaticIfNeeded(mutantPlans: Array<{ netTime: number; plan: MutantTestPlan }>) {
+    if (!this.options.ignoreStatic && objectUtils.isWarningEnabled('slow', this.options.warnings)) {
+      const WARN_IGNORE_STATIC_CUT_OFF_POINT = 0.4;
+      const runPlans = mutantPlans.filter(({ plan }) => isRunPlan(plan));
+      const staticRunPlans = runPlans.filter(({ plan }) => plan.mutant.static);
+      const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime + this.timeOverheadMS, 0);
+      const estimatedTimeForRunTimeMutants = runPlans.filter(({ plan }) => !plan.mutant.static).reduce((acc, { netTime }) => acc + netTime, 0);
+      const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
+      const relativeTimeForStaticMutants = estimatedTimeForStaticMutants / estimatedTotalTime;
+      if (relativeTimeForStaticMutants > WARN_IGNORE_STATIC_CUT_OFF_POINT) {
+        const percentage = (perunage: number) => Math.round(perunage * 100);
+        this.logger.warn(
+          `Detected ${staticRunPlans.length} static mutants (${percentage(
+            staticRunPlans.length / runPlans.length
+          )}% of total) that are estimated to take ${percentage(
+            relativeTimeForStaticMutants
+          )}% of the time running the tests!\n  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. \n  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants.\n  (disable "${optionsPath(
+            'warnings',
+            'slow'
+          )}" to ignore this warning)`
+        );
+      }
+    }
+  }
 }
 
 function calculateTotalTime(testResults: Iterable<TestResult>): number {
@@ -217,4 +252,11 @@ function findHitsByMutantId(coverageData: MutantCoverage | undefined): Map<strin
     });
   }
   return hitsByMutant;
+}
+
+export function isEarlyResult(mutantPlan: MutantTestPlan): mutantPlan is MutantEarlyResultPlan {
+  return mutantPlan.plan === PlanKind.EarlyResult;
+}
+export function isRunPlan(mutantPlan: MutantTestPlan): mutantPlan is MutantRunPlan {
+  return mutantPlan.plan === PlanKind.Run;
 }
