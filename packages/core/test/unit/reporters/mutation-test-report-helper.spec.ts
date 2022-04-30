@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import { File, Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
+import { Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import type { requireResolve } from '@stryker-mutator/util';
+import { File, type requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';

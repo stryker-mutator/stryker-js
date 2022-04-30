@@ -1,4 +1,3 @@
-export { File } from './file.js';
 export type { Position } from './position.js';
 export type { Location } from './location.js';
 export * from './mutant.js';

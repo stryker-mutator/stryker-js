@@ -1,9 +1,9 @@
 import path from 'path';
 import { Dirent, promises as fsPromises } from 'fs';
 
-import { File, MutationRange } from '@stryker-mutator/api/core';
+import { MutationRange } from '@stryker-mutator/api/core';
 import { assertions, factory, testInjector, tick } from '@stryker-mutator/test-helpers';
-import { Task } from '@stryker-mutator/util';
+import { File, Task } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 

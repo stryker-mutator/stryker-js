@@ -1,6 +1,5 @@
 import Ajv from 'ajv';
 import {
-  File,
   Location,
   MutationScoreThresholds,
   StrykerOptions,
@@ -393,10 +392,6 @@ export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>>
   injectorMock.provideFactory.returnsThis();
   injectorMock.provideValue.returnsThis();
   return injectorMock;
-}
-
-export function file(): File {
-  return new File('', '');
 }
 
 export function fileNotFoundError(): NodeJS.ErrnoException {

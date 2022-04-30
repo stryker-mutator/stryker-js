@@ -14,3 +14,4 @@ export * from './require-resolve.js';
 export * from './deep-merge.js';
 export * from './find-unserializables.js';
 export * from './platform.js';
+export * from './file.js';

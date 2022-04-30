@@ -4,10 +4,10 @@ import { isDeepStrictEqual } from 'util';
 
 import { from, lastValueFrom } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
-import { File, StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { isErrnoException, notEmpty } from '@stryker-mutator/util';
+import { File, isErrnoException, notEmpty } from '@stryker-mutator/util';
 import minimatch, { type IMinimatch } from 'minimatch';
 
 import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';

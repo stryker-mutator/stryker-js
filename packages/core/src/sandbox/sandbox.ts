@@ -3,8 +3,8 @@ import { promises as fsPromises } from 'fs';
 
 import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
-import { StrykerOptions, File } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, I } from '@stryker-mutator/util';
+import { StrykerOptions } from '@stryker-mutator/api/core';
+import { normalizeWhitespaces, I, File } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 import { mergeMap, toArray } from 'rxjs/operators';

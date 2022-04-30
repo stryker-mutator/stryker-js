@@ -1,6 +1,6 @@
-import { File, MutationRange } from '@stryker-mutator/api/core';
+import { MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { normalizeWhitespaces } from '@stryker-mutator/util';
+import { File, normalizeWhitespaces } from '@stryker-mutator/util';
 
 export class InputFileCollection {
   public readonly files: readonly File[];

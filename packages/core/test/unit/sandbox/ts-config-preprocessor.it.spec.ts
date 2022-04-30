@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
 
 import { TSConfig, TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor.js';

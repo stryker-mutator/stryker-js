@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import { assertions, testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 
