@@ -21,8 +21,8 @@ export class LintChecker implements Checker {
     this.linter = new ESLint();
   }
 
-  private readonly getFile = async (filename: string) => {
-    const scriptFile = await this.fs.getFile(filename);
+  private readonly getFile = (filename: string) => {
+    const scriptFile = this.fs.getFile(filename);
     if (scriptFile === undefined) throw new Error(`Unable to open file ${filename}`);
 
     scriptFile.watcher = () => {
@@ -61,7 +61,7 @@ export class LintChecker implements Checker {
 
     const mutant = mutants[0];
 
-    const asScriptFile = await this.getFile(mutant.fileName);
+    const asScriptFile = this.getFile(mutant.fileName);
     asScriptFile.mutate(mutant);
 
     const result = await this.lintFileContent(mutant.fileName);
