@@ -55,6 +55,10 @@ export class LintChecker implements Checker {
   }
 
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+    if (mutants.length > 1) {
+      throw new Error('Stryker implementation has changed and can now call check with multiple mutants. Please update eslint-checker');
+    }
+
     const mutant = mutants[0];
 
     const asScriptFile = await this.getFile(mutant.fileName);
