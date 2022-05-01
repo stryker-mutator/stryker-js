@@ -11,11 +11,12 @@
     "plugin"
   ],
   "author": "Tim Lehner <timothy.lehner.2011@live.rhul.ac.uk>",
-  "homepage": "https://github.com/TimLehner/stryker-js#readme",
+  "homepage": "https://github.com/stryker-mutator/stryker-js/eslint-checker",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TimLehner/stryker-js.git"
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/eslint-checker"
   },
   "scripts": {
     "test": "c8 npm run test:all",
@@ -26,7 +27,7 @@
     "stryker": "node ../core/bin/stryker.js run"
   },
   "bugs": {
-    "url": "https://github.com/TimLehner/stryker-js/issues"
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
   "dependencies": {
     "@stryker-mutator/api": "^6.0.0-beta.0",
