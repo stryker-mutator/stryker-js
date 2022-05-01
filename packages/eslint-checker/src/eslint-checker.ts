@@ -14,12 +14,10 @@ import * as pluginTokens from './plugin-tokens.js';
 const configLoader = cosmiconfig('eslint');
 
 export class LintChecker implements Checker {
-  private linter: ESLint;
+  private linter!: ESLint;
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
 
-  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
-    this.linter = new ESLint();
-  }
+  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {}
 
   private readonly getFile = (filename: string) => {
     const scriptFile = this.fs.getFile(filename);
