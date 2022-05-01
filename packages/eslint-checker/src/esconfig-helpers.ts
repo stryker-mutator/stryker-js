@@ -25,12 +25,8 @@ function overrideOptions(parsedConfig: { config?: any }): Omit<Linter.Config, 'e
     rules,
   };
 
-  if (config.extends) {
-    delete config.extends;
-  }
-  if (config.plugins) {
-    delete config.plugins;
-  }
+  delete config.extends;
+  delete config.plugins;
 
   return config;
 }
