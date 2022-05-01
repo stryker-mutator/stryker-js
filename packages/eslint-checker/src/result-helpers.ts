@@ -6,7 +6,7 @@ export function isFailedResult(result: CheckResult): result is FailedCheckResult
 }
 
 export async function makeResultFromLintReport(reports: ESLint.LintResult[], formatter: ESLint.Formatter): Promise<CheckResult> {
-  const failures = reports.filter((_result) => _result.errorCount > 0);
+  const failures = reports.filter((result) => result.errorCount > 0);
 
   if (failures.length > 0) {
     const reason = await formatter.format(failures);
