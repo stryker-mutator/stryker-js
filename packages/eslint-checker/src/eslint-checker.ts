@@ -1,4 +1,3 @@
-import { cosmiconfig } from 'cosmiconfig';
 import { ESLint } from 'eslint';
 import fg from 'fast-glob';
 import { Checker, CheckResult } from '@stryker-mutator/api/check';
@@ -8,10 +7,8 @@ import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/
 import { HybridFileSystem } from '@stryker-mutator/util';
 
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
-import { getConfig } from './esconfig-helpers.js';
+import { LINT_RULES_OVERRIDES } from './esconfig-helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
-
-const configLoader = cosmiconfig('eslint');
 
 export class LintChecker implements Checker {
   private linter!: ESLint;
@@ -38,8 +35,12 @@ export class LintChecker implements Checker {
 
   public async init(): Promise<void> {
     this.logger.debug('Running initial lint check');
-    const overrideConfig = await getConfig(configLoader, this.options.lintConfigFile as string | undefined);
-    this.linter = new ESLint({ overrideConfig });
+    this.linter = new ESLint({
+      overrideConfig: {
+        rules: LINT_RULES_OVERRIDES,
+      },
+      overrideConfigFile: this.options.lintConfigfile as string | undefined,
+    });
 
     const fileNames = await fg(this.options.mutate);
     const allResults = await Promise.all(fileNames.map((fileName) => this.lintFileContent(fileName)));
