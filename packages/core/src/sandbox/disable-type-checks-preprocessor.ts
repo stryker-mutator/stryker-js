@@ -1,9 +1,10 @@
 import path from 'path';
 
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import type { disableTypeChecks } from '@stryker-mutator/instrumenter';
 import { Logger } from '@stryker-mutator/api/logging';
+import { File } from '@stryker-mutator/util';
 
 import { optionsPath } from '../utils/index.js';
 import { coreTokens } from '../di/index.js';

@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import { expect } from 'chai';
 
 import { MultiPreprocessor } from '../../../src/sandbox/multi-preprocessor.js';

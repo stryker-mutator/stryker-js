@@ -5,7 +5,7 @@ import { promises as fsPromises } from 'fs';
 import mkdirp from 'mkdirp';
 
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 import nodeGlob from 'glob';
 import { assertions } from '@stryker-mutator/test-helpers';
 

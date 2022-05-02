@@ -1,10 +1,9 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/api/core';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions, createInstrumenter } from '@stryker-mutator/instrumenter';
-import { I } from '@stryker-mutator/util';
+import { I, File } from '@stryker-mutator/util';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
 import { InputFileCollection } from '../../../src/input/index.js';

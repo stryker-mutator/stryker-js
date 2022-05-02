@@ -5,8 +5,9 @@ import { JSONSchema7 } from 'json-schema';
 import { Injector } from 'typed-inject';
 import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { PartialStrykerOptions, File, LogLevel } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { BaseContext } from '@stryker-mutator/api/plugin';
+import { File } from '@stryker-mutator/util';
 
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';

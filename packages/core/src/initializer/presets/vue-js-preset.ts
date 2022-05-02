@@ -1,5 +1,6 @@
 import inquirer from 'inquirer';
-import { File, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { File } from '@stryker-mutator/util';
 
 import { Preset } from './preset.js';
 import { PresetConfiguration } from './preset-configuration.js';

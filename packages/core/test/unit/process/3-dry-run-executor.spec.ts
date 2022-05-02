@@ -6,8 +6,7 @@ import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable, mergeMap } from 'rxjs';
-import { I } from '@stryker-mutator/util';
-import { File } from '@stryker-mutator/api/core';
+import { File, I } from '@stryker-mutator/util';
 
 import { Timer } from '../../../src/utils/timer.js';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';

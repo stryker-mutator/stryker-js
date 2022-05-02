@@ -1,22 +1,17 @@
+import { execaCommand } from 'execa';
 import { Injector, tokens, commonTokens, BaseContext } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
-import { File, StrykerOptions } from '@stryker-mutator/api/core';
-
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/src/report';
-
-import { I } from '@stryker-mutator/util';
-
-import { execaCommand } from 'execa';
+import { File, I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { InputFileCollection } from '../input/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 import { LoggingClientContext } from '../logging/index.js';
-
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
 import { createCheckerFactory } from '../checker/index.js';
 import { createPreprocessor } from '../sandbox/index.js';
-
 import { Timer } from '../utils/timer.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
