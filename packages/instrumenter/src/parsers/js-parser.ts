@@ -31,6 +31,7 @@ const defaultPlugins: ParserPlugin[] = [
   'v8intrinsic',
   'partialApplication',
   ['decorators', { decoratorsBeforeExport: false }],
+  'jsx',
 ];
 
 export function createParser({ plugins: pluginsOverride }: ParserOptions) {
