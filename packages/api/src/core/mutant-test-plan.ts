@@ -47,4 +47,10 @@ export interface MutantRunPlan {
    * The run options that will be used to test this mutant
    */
   runOptions: MutantRunOptions;
+
+  /**
+   * Estimated net time to run this mutant when it would survive in ms (which should be the worst case).
+   * This is used as input to calculate the runOptions.timeout
+   */
+  netTime: number;
 }

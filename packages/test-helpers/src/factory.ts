@@ -73,6 +73,7 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
   preprocessorErrors: true,
   unserializableOptions: true,
+  slow: true,
 }));
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
@@ -355,6 +356,7 @@ export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { st
 
 export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
   plan: PlanKind.Run,
+  netTime: 20,
   mutant: mutantTestCoverage(),
   runOptions: mutantRunOptions(),
 }));
