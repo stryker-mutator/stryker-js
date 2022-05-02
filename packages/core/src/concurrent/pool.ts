@@ -1,6 +1,6 @@
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { notEmpty } from '@stryker-mutator/util';
-import { filter, ignoreElements, lastValueFrom, mergeMap, Observable, ReplaySubject, Subject, Subscription, tap, zip } from 'rxjs';
+import { BehaviorSubject, filter, ignoreElements, lastValueFrom, mergeMap, Observable, ReplaySubject, Subject, takeUntil, tap, zip } from 'rxjs';
 import { Disposable, tokens } from 'typed-inject';
 
 import { CheckerFacade } from '../checker/index.js';
@@ -68,42 +68,55 @@ class WorkItem<TResource extends Resource, TIn, TOut> {
 export class Pool<TResource extends Resource> implements Disposable {
   // The init subject. Using an RxJS subject instead of a promise, so errors are silently ignored when nobody is listening
   private readonly initSubject = new ReplaySubject<void>();
+
+  // The disposedSubject emits true when it is disposed, and false when not disposed yet
+  private readonly disposedSubject = new BehaviorSubject(false);
+
+  // The dispose$ only emits one `true` value when disposed (never emits `false`). Useful for `takeUntil`
+  private readonly dispose$ = this.disposedSubject.pipe(filter((isDisposed) => isDisposed));
+
   private readonly createdResources: TResource[] = [];
   // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after it was picked up
   private readonly todoSubject = new ReplaySubject<WorkItem<TResource, any, any>>();
 
-  private readonly subscription: Subscription;
-  private readonly workItem$: Observable<unknown>;
-
   constructor(factory: () => TResource, concurrencyToken$: Observable<number>) {
-    const resource$ = new Subject<TResource>();
-    this.workItem$ = zip(resource$, this.todoSubject).pipe(
-      mergeMap(async ([resource, workItem]) => {
-        await workItem.execute(resource);
-        resource$.next(resource);
-      }),
-      ignoreElements()
-    );
-    this.subscription = this.workItem$.subscribe({
-      error: (error) => {
-        this.todoSubject.subscribe((workItem) => workItem.reject(error));
-      },
-    });
+    // Stream resources that are ready to pick up work
+    const resourcesSubject = new Subject<TResource>();
+
+    // Stream ongoing work.
+    zip(resourcesSubject, this.todoSubject)
+      .pipe(
+        mergeMap(async ([resource, workItem]) => {
+          await workItem.execute(resource);
+          resourcesSubject.next(resource); // recycle resource so it can pick up more work
+        }),
+        ignoreElements(),
+        takeUntil(this.dispose$)
+      )
+      .subscribe({
+        error: (error) => {
+          this.todoSubject.subscribe((workItem) => workItem.reject(error));
+        },
+      });
+
+    // Create resources
     concurrencyToken$
       .pipe(
+        takeUntil(this.dispose$),
         mergeMap(async () => {
-          if (this.isDisposed) {
-            return null;
-          } else {
-            const resource = factory();
-            this.createdResources.push(resource);
-            await resource.init?.();
-            return resource;
+          if (this.disposedSubject.value) {
+            // Don't create new resources when disposed
+            return;
           }
+          const resource = factory();
+          this.createdResources.push(resource);
+          await resource.init?.();
+          return resource;
         }, MAX_CONCURRENT_INIT),
         filter(notEmpty),
         tap({
           complete: () => {
+            // Signal init complete
             this.initSubject.next();
             this.initSubject.complete();
           },
@@ -113,8 +126,8 @@ export class Pool<TResource extends Resource> implements Disposable {
         })
       )
       .subscribe({
-        next: (resource) => resource$.next(resource),
-        error: (err) => resource$.error(err),
+        next: (resource) => resourcesSubject.next(resource),
+        error: (err) => resourcesSubject.error(err),
       });
   }
 
@@ -141,15 +154,12 @@ export class Pool<TResource extends Resource> implements Disposable {
     );
   }
 
-  private isDisposed = false;
-
   /**
    * Dispose the pool
    */
   public async dispose(): Promise<void> {
-    if (!this.isDisposed) {
-      this.isDisposed = true;
-      this.subscription.unsubscribe();
+    if (!this.disposedSubject.value) {
+      this.disposedSubject.next(true);
       this.todoSubject.subscribe((workItem) => workItem.complete());
       this.todoSubject.complete();
       await Promise.all(this.createdResources.map((resource) => resource.dispose?.()));
