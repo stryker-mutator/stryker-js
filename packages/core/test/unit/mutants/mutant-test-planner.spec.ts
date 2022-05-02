@@ -153,7 +153,7 @@ describe(MutantTestPlanner.name, () => {
       expect(result.runOptions.hitLimit).undefined;
     });
 
-    it('should calculate timeout using the sum of all tests', () => {
+    it('should calculate timeout and net time using the sum of all tests', () => {
       // Arrange
       const mutant1 = factory.mutant({ id: '1' });
       const mutants = [mutant1];
@@ -168,6 +168,7 @@ describe(MutantTestPlanner.name, () => {
       // Assert
       assertIsRunPlan(result);
       expect(result.runOptions.timeout).eq(calculateTimeout(42));
+      expect(result.netTime).eq(42);
     });
   });
 
@@ -252,7 +253,7 @@ describe(MutantTestPlanner.name, () => {
       expect(result.runOptions.hitLimit).deep.eq(600);
     });
 
-    it('should calculate timeout with the sum of all tests', () => {
+    it('should calculate timeout and net time using the sum of all tests', () => {
       // Arrange
       const mutant = factory.mutant({ id: '1' });
       const mutants = [mutant];
@@ -267,6 +268,7 @@ describe(MutantTestPlanner.name, () => {
       // Assert
       assertIsRunPlan(result);
       expect(result.runOptions.timeout).eq(calculateTimeout(42));
+      expect(result.netTime).eq(42);
     });
   });
 
@@ -341,7 +343,7 @@ describe(MutantTestPlanner.name, () => {
       expect(mutant2.static).false;
     });
 
-    it('should calculate timeout using the sum of covered tests', () => {
+    it('should calculate timeout and net time using the sum of covered tests', () => {
       // Arrange
       const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
       const dryRunResult = factory.completeDryRunResult({
@@ -359,6 +361,8 @@ describe(MutantTestPlanner.name, () => {
       // Assert
       assertIsRunPlan(plan1);
       assertIsRunPlan(plan2);
+      expect(plan1.netTime).eq(42); // spec1 + spec3
+      expect(plan2.netTime).eq(10); // spec2
       expect(plan1.runOptions.timeout).eq(calculateTimeout(42)); // spec1 + spec3
       expect(plan2.runOptions.timeout).eq(calculateTimeout(10)); // spec2
     });
@@ -382,6 +386,128 @@ describe(MutantTestPlanner.name, () => {
       expect(testInjector.logger.warn).calledWith(
         'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.'
       );
+    });
+  });
+
+  describe('static mutants warning', () => {
+    function arrangeStaticWarning() {
+      const mutants = [
+        factory.mutant({ id: '1' }),
+        factory.mutant({ id: '2' }),
+        factory.mutant({ id: '3' }),
+        factory.mutant({ id: '4' }), // static
+        factory.mutant({ id: '8' }),
+        factory.mutant({ id: '9' }),
+        factory.mutant({ id: '10' }),
+      ];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec4', timeSpentMs: 10 }),
+        ],
+        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
+      });
+      return { mutants, dryRunResult };
+    }
+
+    it('should warn when the estimated time to run all static mutants exceeds 40% and the performance impact of a static mutant is estimated to be twice that of other mutants', () => {
+      // Arrange
+      testInjector.options.ignoreStatic = false;
+      const { mutants, dryRunResult } = arrangeStaticWarning();
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(testInjector.logger.warn)
+        .calledWithMatch('Detected 1 static mutants (14% of total) that are estimated to take 40% of the time running the tests!')
+        .and.calledWithMatch('(disable "warnings.slow" to ignore this warning)');
+    });
+
+    it('should not warn when ignore static is enabled', () => {
+      // Arrange
+      testInjector.options.ignoreStatic = true;
+      const { mutants, dryRunResult } = arrangeStaticWarning();
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn when "warning.slow" is disabled', () => {
+      // Arrange
+      testInjector.options.ignoreStatic = false;
+      testInjector.options.warnings = factory.warningOptions({ slow: false });
+      const { mutants, dryRunResult } = arrangeStaticWarning();
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn when all static mutants is not estimated to exceed 40%', () => {
+      // Arrange
+      const mutants = [
+        factory.mutant({ id: '1' }),
+        factory.mutant({ id: '2' }),
+        factory.mutant({ id: '3' }),
+        factory.mutant({ id: '4' }), // static
+        factory.mutant({ id: '8' }),
+        factory.mutant({ id: '9' }),
+        factory.mutant({ id: '10' }),
+      ];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec4', timeSpentMs: 9 }),
+        ],
+        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
+      });
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should not warn when the performance impact of a static mutant is estimated to be twice that of other mutants', () => {
+      // Arrange
+      const mutants = [
+        factory.mutant({ id: '1' }),
+        factory.mutant({ id: '2' }),
+        factory.mutant({ id: '3' }),
+        factory.mutant({ id: '4' }), // static
+        factory.mutant({ id: '5' }), // static
+        factory.mutant({ id: '6' }), // static
+        factory.mutant({ id: '7' }), // static
+        factory.mutant({ id: '8' }),
+        factory.mutant({ id: '9' }),
+        factory.mutant({ id: '10' }),
+      ];
+      const dryRunResult = factory.completeDryRunResult({
+        tests: [
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec4', timeSpentMs: 9 }),
+        ],
+        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
+      });
+
+      // Act
+      act(dryRunResult, mutants);
+
+      // Assert
+      expect(testInjector.logger.warn).not.called;
     });
   });
 });

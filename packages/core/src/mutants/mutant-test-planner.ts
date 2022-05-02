@@ -60,14 +60,13 @@ export class MutantTestPlanner {
   }
 
   public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantPlansWithNetTime = mutants.map((mutant) => this.planMutant(mutant));
-    const mutantPlans = mutantPlansWithNetTime.map(({ plan }) => plan);
+    const mutantPlans = mutants.map((mutant) => this.planMutant(mutant));
     this.reporter.onMutationTestingPlanReady({ mutantPlans });
-    this.warnAboutStaticIfNeeded(mutantPlansWithNetTime);
+    this.warnAboutSlow(mutantPlans);
     return mutantPlans;
   }
 
-  private planMutant(mutant: Mutant): { plan: MutantTestPlan; netTime: number } {
+  private planMutant(mutant: Mutant): MutantTestPlan {
     // If mutant was already ignored, pass that along
     const isStatic = this.dryRunResult.mutantCoverage && this.dryRunResult.mutantCoverage.static[mutant.id] > 0;
     if (mutant.status) {
@@ -108,19 +107,16 @@ export class MutantTestPlanner {
       statusReason,
       coveredBy,
     }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[] }
-  ): { plan: MutantEarlyResultPlan; netTime: number } {
+  ): MutantEarlyResultPlan {
     return {
-      plan: {
-        plan: PlanKind.EarlyResult,
-        mutant: {
-          ...mutant,
-          status,
-          static: isStatic,
-          statusReason,
-          coveredBy,
-        },
+      plan: PlanKind.EarlyResult,
+      mutant: {
+        ...mutant,
+        status,
+        static: isStatic,
+        statusReason,
+        coveredBy,
       },
-      netTime: 0,
     };
   }
 
@@ -132,38 +128,36 @@ export class MutantTestPlanner {
       isStatic,
       coveredBy,
     }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined }
-  ): { plan: MutantRunPlan; netTime: number } {
+  ): MutantRunPlan {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
     const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
     const hitCount = this.hitsByMutantId.get(mutant.id);
     const hitLimit = hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
 
     return {
+      plan: PlanKind.Run,
       netTime,
-      plan: {
-        plan: PlanKind.Run,
-        mutant: {
-          ...mutant,
-          coveredBy,
-          static: isStatic,
+      mutant: {
+        ...mutant,
+        coveredBy,
+        static: isStatic,
+      },
+      runOptions: {
+        // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
+        activeMutant: {
+          id: mutant.id,
+          fileName: mutant.fileName,
+          location: mutant.location,
+          mutatorName: mutant.mutatorName,
+          replacement: mutant.replacement,
         },
-        runOptions: {
-          // Copy over relevant mutant fields, we don't want to copy over "static" and "coveredBy", test runners should only care about the testFilter
-          activeMutant: {
-            id: mutant.id,
-            fileName: mutant.fileName,
-            location: mutant.location,
-            mutatorName: mutant.mutatorName,
-            replacement: mutant.replacement,
-          },
-          mutantActivation: testFilter ? 'runtime' : 'static',
-          timeout,
-          testFilter,
-          sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
-          hitLimit,
-          disableBail,
-          reloadEnvironment: !testFilter,
-        },
+        mutantActivation: testFilter ? 'runtime' : 'static',
+        timeout,
+        testFilter,
+        sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
+        hitLimit,
+        disableBail,
+        reloadEnvironment: !testFilter,
       },
     };
   }
@@ -193,16 +187,23 @@ export class MutantTestPlanner {
     return testsByMutantId;
   }
 
-  private warnAboutStaticIfNeeded(mutantPlans: Array<{ netTime: number; plan: MutantTestPlan }>) {
+  private warnAboutSlow(mutantPlans: readonly MutantTestPlan[]) {
     if (!this.options.ignoreStatic && objectUtils.isWarningEnabled('slow', this.options.warnings)) {
-      const WARN_IGNORE_STATIC_CUT_OFF_POINT = 0.4;
-      const runPlans = mutantPlans.filter(({ plan }) => isRunPlan(plan));
-      const staticRunPlans = runPlans.filter(({ plan }) => plan.mutant.static);
-      const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime + this.timeOverheadMS, 0);
-      const estimatedTimeForRunTimeMutants = runPlans.filter(({ plan }) => !plan.mutant.static).reduce((acc, { netTime }) => acc + netTime, 0);
+      // Only warn when the estimated time to run all static mutants exceeds 40%
+      // ... and when the average performance impact of a static mutant is estimated to be twice that of a non-static mutant
+      const ABSOLUTE_CUT_OFF_PERUNAGE = 0.4;
+      const RELATIVE_CUT_OFF_FACTOR = 2;
+      const runPlans = mutantPlans.filter(isRunPlan);
+      const staticRunPlans = runPlans.filter(({ mutant }) => mutant.static);
+      const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
+      const estimatedTimeForRunTimeMutants = runPlans.filter(({ mutant }) => !mutant.static).reduce((acc, { netTime }) => acc + netTime, 0);
       const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
       const relativeTimeForStaticMutants = estimatedTimeForStaticMutants / estimatedTotalTime;
-      if (relativeTimeForStaticMutants > WARN_IGNORE_STATIC_CUT_OFF_POINT) {
+      const relativeNumberOfStaticMutants = staticRunPlans.length / runPlans.length;
+      if (
+        relativeNumberOfStaticMutants * RELATIVE_CUT_OFF_FACTOR < relativeTimeForStaticMutants &&
+        relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE
+      ) {
         const percentage = (perunage: number) => Math.round(perunage * 100);
         this.logger.warn(
           `Detected ${staticRunPlans.length} static mutants (${percentage(

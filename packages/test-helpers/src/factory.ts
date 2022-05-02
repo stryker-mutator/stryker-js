@@ -356,6 +356,7 @@ export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { st
 
 export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
   plan: PlanKind.Run,
+  netTime: 20,
   mutant: mutantTestCoverage(),
   runOptions: mutantRunOptions(),
 }));

@@ -106,6 +106,7 @@
       "mutables",
       "mutators",
       "nocheck",
+      "perunage",
       "preprocessors",
       "promisified",
       "quasis",
