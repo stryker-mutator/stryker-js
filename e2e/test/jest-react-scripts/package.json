@@ -12,7 +12,8 @@
   "sideEffects": false,
   "scripts": {
     "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
-    "test": "stryker run"
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "repository": {
     "type": "git",

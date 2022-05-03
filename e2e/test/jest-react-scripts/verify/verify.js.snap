@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`After running stryker on jest-react project should report expected scores 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 31,
+  "mutationScore": 65.95744680851064,
+  "mutationScoreBasedOnCoveredCode": 67.3913043478261,
+  "noCoverage": 1,
+  "runtimeErrors": 0,
+  "survived": 15,
+  "timeout": 0,
+  "totalCovered": 46,
+  "totalDetected": 31,
+  "totalInvalid": 0,
+  "totalMutants": 47,
+  "totalUndetected": 16,
+  "totalValid": 47,
+}
+`;
