@@ -226,6 +226,11 @@
           "description": "decide whether or not to log warnings when a configuration options are unserializable. For example, using a `/regex/` or `function` in your configuration options.",
           "type": "boolean",
           "default": true
+        },
+        "slow": {
+          "description": "decide whether or not to log warnings when Stryker detects a slow part of mutation that can be sped up by changing some configuration. For example using `--ignoreStatic`.",
+          "type": "boolean",
+          "default": true
         }
       }
     }

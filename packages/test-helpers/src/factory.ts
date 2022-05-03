@@ -73,6 +73,7 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
   preprocessorErrors: true,
   unserializableOptions: true,
+  slow: true,
 }));
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
@@ -194,8 +195,9 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
+export function testRunner(index = 0): sinon.SinonStubbedInstance<Required<TestRunner> & { index: number }> {
   return {
+    index,
     capabilities: sinon.stub(),
     init: sinon.stub(),
     dryRun: sinon.stub(),
@@ -355,6 +357,7 @@ export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { st
 
 export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
   plan: PlanKind.Run,
+  netTime: 20,
   mutant: mutantTestCoverage(),
   runOptions: mutantRunOptions(),
 }));

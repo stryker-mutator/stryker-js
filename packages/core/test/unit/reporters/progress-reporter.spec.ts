@@ -47,16 +47,19 @@ describe(ProgressBarReporter.name, () => {
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+              netTime: 10,
             }),
             // Run test 2, takes 5ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '3' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+              netTime: 5,
             }),
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
               runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              netTime: 15,
             }),
           ],
         })
@@ -87,16 +90,19 @@ describe(ProgressBarReporter.name, () => {
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+              netTime: 10,
             }),
             // Run test 2, takes 5ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '3' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+              netTime: 5,
             }),
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
               runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              netTime: 15,
             }),
           ],
         })
@@ -143,16 +149,19 @@ describe(ProgressBarReporter.name, () => {
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
+              netTime: 10,
             }),
             // Run test 2, takes 5ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '3' }),
               runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
+              netTime: 5,
             }),
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
               runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              netTime: 15,
             }),
           ],
         })
