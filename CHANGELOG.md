@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.0-beta.0...v6.0.0) (2022-05-03)
+
+
+### Bug Fixes
+
+* **core:** allow parallel schedules ([#3485](https://github.com/stryker-mutator/stryker-js/issues/3485)) ([bbbd514](https://github.com/stryker-mutator/stryker-js/commit/bbbd51424ee03a0df08c915fbfdfbacd1d733f0e))
+* **html-report:** set correct background color for html report ([#3456](https://github.com/stryker-mutator/stryker-js/issues/3456)) ([a72ecf1](https://github.com/stryker-mutator/stryker-js/commit/a72ecf180f133de09c5f53c5091c586c91a522df))
+* **karma-runner:** allow dispose during init ([#3487](https://github.com/stryker-mutator/stryker-js/issues/3487)) ([4fcf148](https://github.com/stryker-mutator/stryker-js/commit/4fcf14837ae466e47653e5e88f1b5b79cd936746))
+* **reporter:** report progress of failed check results only once ([#3472](https://github.com/stryker-mutator/stryker-js/issues/3472)) ([dce5882](https://github.com/stryker-mutator/stryker-js/commit/dce5882f103097fe7ec9aba56b5bd7cedfb22877))
+* **stryker-cli:** allow stryker-cli integration ([330ef6c](https://github.com/stryker-mutator/stryker-js/commit/330ef6c9763db5bf47d23de64a6c72073bc44bc7))
+
+
+### chore
+
+* **node:** drop support for Node 12 ([10d874e](https://github.com/stryker-mutator/stryker-js/commit/10d874e4c46335d9ea457634d3061af35fa8f854))
+
+
+### Code Refactoring
+
+* **file:** move `File` from `api` to `util` ([#3489](https://github.com/stryker-mutator/stryker-js/issues/3489)) ([ac4bcca](https://github.com/stryker-mutator/stryker-js/commit/ac4bcca133930a046e0abf28abad24a5af1dbd22))
+
+
+### Features
+
+* **config file:** accept hidden config file by default. ([#3457](https://github.com/stryker-mutator/stryker-js/issues/3457)) ([701374f](https://github.com/stryker-mutator/stryker-js/commit/701374fe11936c83bfeab4f7b67846533ad6f026))
+* **mocha-runner:** widen mocha peer dependency to include v10 ([#3492](https://github.com/stryker-mutator/stryker-js/issues/3492)) ([0dde30f](https://github.com/stryker-mutator/stryker-js/commit/0dde30f95c3cde3de7df6babfde71593534b8569))
+* **mutation testing:** sort tests to improve performance ([#3467](https://github.com/stryker-mutator/stryker-js/issues/3467)) ([47344d3](https://github.com/stryker-mutator/stryker-js/commit/47344d37f26a694e95bc6745c1c66d5d7b9fe00c))
+* **progress:** improve progressbar ETC estimate ([#3469](https://github.com/stryker-mutator/stryker-js/issues/3469)) ([ec63d93](https://github.com/stryker-mutator/stryker-js/commit/ec63d9397a0cf23e5fb91b9f6e3ae68ab2d3b2e0))
+* **react:** support react 18 projects by default ([#3491](https://github.com/stryker-mutator/stryker-js/issues/3491)) ([82d9bce](https://github.com/stryker-mutator/stryker-js/commit/82d9bce0f351ce8b0c852684665bcec129846ee3))
+* **warn slow:** warn users for slow runs ([#3490](https://github.com/stryker-mutator/stryker-js/issues/3490)) ([1103958](https://github.com/stryker-mutator/stryker-js/commit/1103958c02fc32a1131c2ad6504bee892c250261))
+
+
+### BREAKING CHANGES
+
+* **file:** The `File` class is no longer part of the public api and is thus no longer exported from `@stryker-mutator/api`. Plugin creators shouldn't rely on it anymore.
+* **progress:** Reporter API method `onAllMutantsMatchedWithTests` has been replaced by `onMutationTestingPlanReady`. Please use that for your reporter plugin instead.
+* **progress:** Reporter API method `onAllSourceFilesRead` has been removed, please use `onMutationTestReportReady` to retrieve the source files.
+* **progress:** Reporter API method `onSourceFileRead` has been removed, please use `onMutationTestReportReady` to retrieve the source files.
+* **node:** Drop support for Node 12. Minimal version is now Node 14.18.0.
+
+
+
+
+
 # [6.0.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v5.6.1...v6.0.0-beta.0) (2022-03-02)
 
 

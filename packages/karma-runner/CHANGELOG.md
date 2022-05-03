@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.0-beta.0...v6.0.0) (2022-05-03)
+
+
+### Bug Fixes
+
+* **karma-runner:** allow dispose during init ([#3487](https://github.com/stryker-mutator/stryker-js/issues/3487)) ([4fcf148](https://github.com/stryker-mutator/stryker-js/commit/4fcf14837ae466e47653e5e88f1b5b79cd936746))
+
+
+### chore
+
+* **node:** drop support for Node 12 ([10d874e](https://github.com/stryker-mutator/stryker-js/commit/10d874e4c46335d9ea457634d3061af35fa8f854))
+
+
+### BREAKING CHANGES
+
+* **node:** Drop support for Node 12. Minimal version is now Node 14.18.0.
+
+
+
+
+
 # [6.0.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v5.6.1...v6.0.0-beta.0) (2022-03-02)
 
 
