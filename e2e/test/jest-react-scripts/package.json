@@ -1,65 +1,43 @@
 {
   "name": "jest-react-scripts",
-  "version": "6.5.0",
-  "description": "React Bootstrap 4 components",
-  "main": "dist/reactstrap.cjs.js",
-  "jsnext:main": "dist/reactstrap.es.js",
-  "module": "dist/reactstrap.es.js",
-  "jsdelivr": "dist/reactstrap.min.js",
-  "unpkg": "dist/reactstrap.min.js",
-  "cdn": "dist/reactstrap.min.js",
-  "esnext": "src",
-  "sideEffects": false,
-  "scripts": {
-    "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=jsdom",
-    "test": "stryker run"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/reactstrap/reactstrap.git"
-  },
-  "files": [
-    "LICENSE",
-    "README.md",
-    "CHANGELOG.md",
-    "lib",
-    "dist",
-    "src"
-  ],
-  "keywords": [
-    "reactstrap",
-    "bootstrap",
-    "react",
-    "component",
-    "components",
-    "react-component",
-    "ui"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/reactstrap/reactstrap/issues"
-  },
-  "homepage": "https://github.com/reactstrap/reactstrap#readme",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "classnames": "~2.3.1",
-    "prop-types": "~15.7.2",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-transition-group": "~4.4.2"
+    "@testing-library/user-event": "^13.5.0",
+    "classnames": "^2.3.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0",
+    "react-scripts": "5.0.1",
+    "react-transition-group": "^4.4.2",
+    "web-vitals": "^2.1.4"
   },
-  "peerDependencies": {
-    "react": "~17.0.2",
-    "react-dom": "~17.0.2"
+  "scripts": {
+    "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@babel/core": "^7.15.0",
-    "@babel/plugin-proposal-export-default-from": "^7.14.5",
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "@babel/preset-react": "^7.14.5",
-    "enzyme": "~3.11.0",
-    "enzyme-adapter-react-16": "~1.15.6",
-    "react-scripts": "~4.0.3"
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.1.1"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
