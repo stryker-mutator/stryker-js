@@ -48,7 +48,7 @@
     "@types/node": "^17.0.0"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~6.0.0-beta.0",
+    "@stryker-mutator/core": "~6.0.0",
     "mocha": ">= 7.2 < 11"
   }
 }
