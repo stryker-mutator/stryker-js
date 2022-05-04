@@ -7,6 +7,7 @@ import { tokens, commonTokens, Plugin, PluginKind } from '@stryker-mutator/api/p
 import { notEmpty, propertyPath } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
+import { defaultOptions } from '../config/options-validator.js';
 
 const IGNORED_PACKAGES = ['core', 'api', 'util', 'instrumenter'];
 
@@ -115,7 +116,7 @@ export class PluginLoader {
     const plugins = (await fs.promises.readdir(pluginDirectory))
       .filter((pluginName) => !IGNORED_PACKAGES.includes(pluginName) && regexp.test(pluginName))
       .map((pluginName) => `${org.length ? `${org}/` : ''}${pluginName}`);
-    if (plugins.length === 0) {
+    if (plugins.length === 0 && !defaultOptions.plugins.includes(pluginExpression)) {
       this.log.warn('Expression "%s" not resulted in plugins to load.', pluginExpression);
     }
     plugins.forEach((plugin) => this.log.debug('Loading plugin "%s" (matched with expression %s)', plugin, pluginExpression));

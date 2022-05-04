@@ -11,6 +11,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { PluginLoader } from '../../../src/di/index.js';
 import { fileUtils } from '../../../src/utils/file-utils.js';
 import { resolveFromRoot } from '../../helpers/test-utils.js';
+import { defaultOptions } from '../../../src/config/index.js';
 
 describe(PluginLoader.name, () => {
   let sut: PluginLoader;
@@ -77,6 +78,12 @@ describe(PluginLoader.name, () => {
     readdirStub.resolves(['karma-runner', 'some-other-package']);
     await sut.load(['my-prefix-*']);
     expect(testInjector.logger.warn).calledWithExactly('Expression "%s" not resulted in plugins to load.', 'my-prefix-*');
+  });
+
+  it('should not log a warning when the default glob expression does not yield modules', async () => {
+    readdirStub.resolves([]);
+    await sut.load(defaultOptions.plugins);
+    expect(testInjector.logger.warn).not.called;
   });
 
   it('should log debug information when for glob expression', async () => {
