@@ -14,6 +14,7 @@ export class JestGreaterThan25TestAdapter implements JestTestAdapter {
         config,
         runInBand: true,
         silent: true,
+        passWithNoTests: true,
         testNamePattern,
         testLocationInResults,
       },
