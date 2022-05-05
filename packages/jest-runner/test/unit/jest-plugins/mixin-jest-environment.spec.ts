@@ -1,18 +1,19 @@
-import { EnvironmentContext } from '@jest/environment';
-import JestEnvironmentNode from 'jest-environment-node';
+import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment';
+
 import sinon from 'sinon';
-import { Circus, Config } from '@jest/types';
+import { Circus } from '@jest/types';
 import { expect } from 'chai';
 
 import * as producers from '../../helpers/producers.js';
-
 import { mixinJestEnvironment } from '../../../src/jest-plugins/index.js';
 import { state } from '../../../src/jest-plugins/cjs/messaging.js';
 
+import { JestEnvironmentNode } from './cjs/jest-environment-node.js';
+
 describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   class TestJestEnvironment extends JestEnvironmentNode {
-    constructor(config: Config.ProjectConfig, _context: EnvironmentContext) {
-      super(config);
+    constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
+      super(config, context);
       this.global.__strykerGlobalNamespace__ = '__stryker2__';
     }
     public async handleTestEvent(_event: Circus.Event, _eventState: Circus.State) {
@@ -31,7 +32,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       state.clear();
 
       // Act
-      const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+      const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
 
       // Assert
       expect(sut.global.__stryker2__).eq(state.instrumenterContext);
@@ -42,7 +43,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       state.clear();
 
       // Act
-      new Sut(producers.createProjectConfig(), producers.createEnvironmentContext({ testPath: 'foo/bar.js' }));
+      new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext({ testPath: 'foo/bar.js' }));
 
       // Act
       expect(state.testFilesWithStrykerEnvironment).lengthOf(1);
@@ -55,7 +56,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       it('should set the currentTestId with perTest coverage analysis', async () => {
         // Arrange
         state.coverageAnalysis = 'perTest';
-        const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+        const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
 
         // Act
         await sut.handleTestEvent(
@@ -75,7 +76,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       it('should choose correct test name when it is not situated in a describe block', async () => {
         // Arrange
         state.coverageAnalysis = 'perTest';
-        const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+        const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
 
         // Act
         await sut.handleTestEvent(
@@ -94,7 +95,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
 
       it('should not set the currentTestId if coverage analysis is not perTest', async () => {
         state.coverageAnalysis = 'all';
-        const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+        const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
 
         await sut.handleTestEvent(producers.createCircusTestStartEvent(), producers.createCircusState());
 
@@ -106,7 +107,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       it('should clear the currentTestId', async () => {
         // Arrange
         state.coverageAnalysis = 'perTest';
-        const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+        const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
         sut.global.__stryker2__!.currentTestId = 'foo should bar';
 
         // Act
@@ -121,7 +122,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       it('should call super.handleTestEvent', async () => {
         // Arrange
         const spy = sinon.spy(TestJestEnvironment.prototype, 'handleTestEvent');
-        const sut = new Sut(producers.createProjectConfig(), producers.createEnvironmentContext());
+        const sut = new Sut(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
         const event = producers.createCircusRunStartEvent();
         const producersState = producers.createCircusState();
 

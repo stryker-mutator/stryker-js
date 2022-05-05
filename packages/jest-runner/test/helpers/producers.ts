@@ -1,5 +1,5 @@
 import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
-import type { EnvironmentContext } from '@jest/environment';
+import type { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import { Circus, Config } from '@jest/types';
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -169,6 +169,11 @@ export const createEnvironmentContext = (overrides?: Partial<EnvironmentContext>
     testPath: 'foo.js',
     ...overrides,
   } as EnvironmentContext); // Do this cast to prevent breaking builds when unused options are added
+
+export const createEnvironmentConfig = (): JestEnvironmentConfig => ({
+  globalConfig: createGlobalConfig(),
+  projectConfig: createProjectConfig(),
+});
 
 export const createProjectConfig = (): Config.ProjectConfig =>
   ({

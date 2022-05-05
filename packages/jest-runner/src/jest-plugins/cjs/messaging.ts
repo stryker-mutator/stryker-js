@@ -14,7 +14,7 @@ class State {
     this.testFilesWithStrykerEnvironment.clear();
     this.instrumenterContext = {};
     this.coverageAnalysis = 'off';
-    this.jestEnvironment = 'jest-circus/runner';
+    this.jestEnvironment = 'jest-environment-node';
   }
 }
 

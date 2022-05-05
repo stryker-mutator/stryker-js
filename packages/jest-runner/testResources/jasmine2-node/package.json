@@ -7,6 +7,8 @@
     "moduleFileExtensions": ["js", "json", "jsx", "node"],
     "testEnvironment": "node",
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
-    "testURL": "http://localhost"
+    "testEnvironmentOptions": {
+      "url": "http://localhost"
+    }
   }
 }

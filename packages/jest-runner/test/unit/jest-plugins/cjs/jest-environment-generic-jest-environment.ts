@@ -1,16 +1,16 @@
 import NodeEnvironment from 'jest-environment-node';
-import type { Event } from '@jest/types/build/Circus';
-import type { Config } from '@jest/types';
+import type { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment';
+import type { Circus } from '@jest/types';
 
 class JestTestEnvironment extends NodeEnvironment {
   public events: string[] = [];
 
-  constructor(config: Config.ProjectConfig) {
-    super(config);
+  constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
+    super(config, context);
     this.global.__strykerGlobalNamespace__ = '__stryker2__';
   }
 
-  public handleTestEvent(event: Event): void {
+  public handleTestEvent(event: Circus.Event): void {
     this.events.push(event.name);
   }
 }

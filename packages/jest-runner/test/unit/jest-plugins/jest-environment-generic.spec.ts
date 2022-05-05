@@ -14,7 +14,7 @@ describe(jestEnvironmentGeneric.name, () => {
     state.jestEnvironment = fileURLToPath(new URL('./cjs/jest-environment-generic-jest-environment.js', import.meta.url));
 
     // Act
-    const jestEnv = jestEnvironmentGeneric(producers.createProjectConfig(), producers.createEnvironmentContext());
+    const jestEnv = jestEnvironmentGeneric(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
     await jestEnv.handleTestEvent?.(producers.createCircusRunStartEvent(), producers.createCircusState());
 
     // Assert
@@ -27,7 +27,7 @@ describe(jestEnvironmentGeneric.name, () => {
     state.jestEnvironment = fileURLToPath(new URL('./cjs/jest-environment-generic-jest-environment.js', import.meta.url));
 
     // Act
-    const jestEnv = jestEnvironmentGeneric(producers.createProjectConfig(), producers.createEnvironmentContext({ testPath: 'foo.spec.js' }));
+    const jestEnv = jestEnvironmentGeneric(producers.createEnvironmentConfig(), producers.createEnvironmentContext({ testPath: 'foo.spec.js' }));
     await jestEnv.teardown();
 
     // Assert
