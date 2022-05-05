@@ -8,10 +8,12 @@
     "testEnvironment": "node",
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
     "testRunner": "jest-jasmine2",
-    "testURL": "http://localhost",
     "collectCoverage": true,
     "verbose": true,
     "bail": false,
-    "notify": true
+    "notify": true,
+    "testEnvironmentOptions": {
+      "url": "http://localhost"
+    }
   }
 }

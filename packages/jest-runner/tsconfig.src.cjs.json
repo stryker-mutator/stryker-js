@@ -6,6 +6,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "module": "commonjs",
+    "skipLibCheck": true,
     "rootDir": "."
   },
   "include": ["typings", "src/jest-plugins/cjs", "src/jest-plugins/cjs/package.json"],

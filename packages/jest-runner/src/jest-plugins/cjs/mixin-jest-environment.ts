@@ -1,5 +1,5 @@
-import type { JestEnvironment, EnvironmentContext } from '@jest/environment';
-import type { Config, Circus } from '@jest/types';
+import type { JestEnvironment, EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
+import type { Circus } from '@jest/types';
 import { InstrumenterContext } from '@stryker-mutator/api/core';
 
 import { state } from './messaging.js';
@@ -34,10 +34,10 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
 
       public static readonly [STRYKER_JEST_ENV] = true;
 
-      constructor(config: Config.ProjectConfig, context?: EnvironmentContext) {
+      constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
         super(config, context);
         this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = state.instrumenterContext;
-        state.testFilesWithStrykerEnvironment.add(context!.testPath);
+        state.testFilesWithStrykerEnvironment.add(context.testPath);
       }
 
       public handleTestEvent: Circus.EventHandler = async (event: Circus.Event, eventState: Circus.State) => {

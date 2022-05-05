@@ -20,7 +20,6 @@ import {
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 import type * as jest from '@jest/types';
 import type * as jestTestResult from '@jest/test-result';
-import { SerializableError } from '@jest/types/build/TestResult';
 
 import { JestOptions } from '../src-generated/jest-runner-options.js';
 
@@ -196,7 +195,7 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  private collectSerializableErrorText(error: SerializableError | undefined): string | undefined {
+  private collectSerializableErrorText(error?: jest.TestResult.SerializableError): string | undefined {
     return error && `${error.code && `${error.code} `}${error.message} ${error.stack}`;
   }
 
