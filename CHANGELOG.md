@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
+
+
+### Bug Fixes
+
+* **jest-runner:** support jest@28 ([#3501](https://github.com/stryker-mutator/stryker-js/issues/3501)) ([f312ad6](https://github.com/stryker-mutator/stryker-js/commit/f312ad6aee555f34f45b07de9d5ea8e7b253779c))
+
+
+
+
+
 ## [6.0.1](https://github.com/stryker-mutator/stryker-js/compare/v6.0.0...v6.0.1) (2022-05-04)
 
 
