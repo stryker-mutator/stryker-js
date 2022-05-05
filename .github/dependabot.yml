@@ -11,12 +11,12 @@ updates:
   - package-ecosystem: npm
     # Only scan `/packages` because we don't want e2e/test directories to be updated
     # See https://github.com/dependabot/dependabot-core/issues/4364#issuecomment-1038194085
-    directory: '/packages'
+    directory: '/packages/*'
     schedule:
       interval: daily
       time: '03:00'
     open-pull-requests-limit: 10
-    target-branch: master
+    target-branch: chore/sigh-dependabot
     commit-message:
       prefix: 'build'
       prefix-development: 'build'
