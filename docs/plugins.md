@@ -36,7 +36,7 @@ Stryker already comes with the most useful reporters included:
 - dots: Report progress as dots during mutation testing.
 - clear-text: A clear text report at the end of the mutation testing phase.
 - html: An HTML report. See [Stryker's own report](https://dashboard.stryker-mutator.io/reports/github.com/stryker-mutator/stryker-js/master) for an example.
-- dashboard: Upload your mutation testing report to the [Stryker dashboard](https://dashboard.stryker-mutator.io). See the [dashboard docs](./General/dashboard.md) for more information.
+- dashboard: Upload your mutation testing report to the [Stryker dashboard](https://dashboard.stryker-mutator.io). See the [dashboard docs](../General/dashboard.md) for more information.
 - event-recorder: Write all events to disk. Useful for debug purposes.
 
 ## Checkers
