@@ -1,6 +1,6 @@
 {
   "$schema": "../../../packages/core/schema/stryker-schema.json",
-  "_comment": "This config was generated using a preset. Please see the handbook for more information: https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/guides/angular.md#angular",
+  "_comment": "This config was generated using a preset. Please see the handbook for more information: https://stryker-mutator.io/docs/stryker-js/guides/angular/",
   "mutate": [
     "src/app/catalogus/*.ts",
     "src/app/shopping-cart/*.ts",

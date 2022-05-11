@@ -22,4 +22,4 @@ All extension points work in the same basic way.
 1. Create a `constructor function` (or `class`)
 2. Register the `constructor function` to the correct `Factory`.
 
-For more info, please take a look at the [Stryker handbook](https://github.com/stryker-mutator/stryker-handbook/blob/master/stryker/api/plugins.md#plugins).
+For more info, please take a look at the [Stryker website section on plugins](https://stryker-mutator.io/docs/stryker-js/plugins).

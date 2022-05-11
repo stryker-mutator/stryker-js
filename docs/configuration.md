@@ -270,7 +270,7 @@ Config file: `"mutator": { "plugins": ["classProperties"], "excludedMutations": 
 - `plugins`: allows you to override the default [babel plugins](https://babeljs.io/docs/en/plugins) to use for JavaScript files.
   By default, Stryker uses [a default list of babel plugins to parse your JS file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/instrumenter/src/parsers/js-parser.ts#L8-L32). It also loads any plugins or presets you might have configured yourself with `.babelrc` or `babel.config.js` files.
   In the rare situation where the plugins Stryker loads conflict with your own local plugins (for example, when using the decorators and decorators-legacy plugins together), you can override the `plugins` here to `[]`.
-- `excludedMutations`: allow you to specify a [list of mutator names](https://github.com/stryker-mutator/stryker-handbook/blob/master/mutator-types.md#supported-mutators) to be excluded (`ignored`) from the test run. See [Disable mutants](./disable-mutants) for more options of how to disable specific mutants.
+- `excludedMutations`: allow you to specify a [list of mutator names](https://stryker-mutator.io/docs/mutation-testing-elements/supported-mutators/#supported-mutators) to be excluded (`ignored`) from the test run. See [Disable mutants](./disable-mutants.md) for more options of how to disable specific mutants.
 
 _Note: prior to Stryker version 4, the mutator also needed a `name` (or be defined as `string`). This is removed in version 4. Stryker now supports mutating of JavaScript and friend files out of the box, without the need for a mutator plugin._
 

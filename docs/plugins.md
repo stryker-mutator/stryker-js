@@ -12,7 +12,7 @@ Don't worry about plugins if you're just getting started. The needed plugins wil
 ## Test runners
 
 A test runner plugin can hook into your test runner support coverage analysis or improve performance. If your test runner isn't listed here, you can probably still use the
-[command test runner](./configuration#testrunner-string).
+[command test runner](./configuration.md#testrunner-string).
 
 - [cucumber](./cucumber-runner.md) ([@stryker-mutator/cucumber-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/cucumber-runner))
 - [Jasmine](./jasmine-runner.md) ([@stryker-mutator/jasmine-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jasmine-runner))
@@ -43,7 +43,7 @@ Stryker already comes with the most useful reporters included:
 
 A checker plugin can _check_ a mutant before it is mutation tested. The check can _fail_ or _pass_; when a check fails, the mutant is not mutation tested.
 
-- **[TypeScript](./typescript-checker) (@stryker-mutator/typescript-checker)**: This checker will check each mutant for typescript compile errors.
+- **[TypeScript](./typescript-checker.md) (@stryker-mutator/typescript-checker)**: This checker will check each mutant for typescript compile errors.
 
 ## &lt;Your plugin here&gt;
 
