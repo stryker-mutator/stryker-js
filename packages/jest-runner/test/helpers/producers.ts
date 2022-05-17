@@ -178,6 +178,7 @@ export const createEnvironmentConfig = (): JestEnvironmentConfig => ({
 export const createProjectConfig = (): Config.ProjectConfig =>
   ({
     detectLeaks: true,
+    testEnvironmentOptions: {},
   } as Config.ProjectConfig); // Do this cast to prevent breaking builds when unused options are added
 
 export const createCircusDescribeBlock = (overrides?: Partial<Circus.DescribeBlock>): Circus.DescribeBlock =>
