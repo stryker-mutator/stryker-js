@@ -55,10 +55,10 @@ To enable Stryker with your vue-cli project, we will have to rebuild parts of th
 Follow these steps to be able "manually" run webpack and mocha.
 
 1. Install `webpack-cli` and `glob`: `npm i -D webpack-cli glob` or `yarn add --dev webpack-cli glob`.
-2. Create a `webpack.stryker.config.js` file with the following content:
+2. Create a `webpack.config.stryker.js` file with the following content:
 
    ```js
-   // webpack.stryker.config.js
+   // webpack.config.stryker.js
    const glob = require('glob');
 
    // Set env
@@ -80,13 +80,12 @@ Follow these steps to be able "manually" run webpack and mocha.
    module.exports = conf;
    ```
 
-3. Try it out: `npx webpack --config webpack.stryker.config.js`. This should create a `dist` directory with these files `dist/js/chunk-vendors.js` and `dist/js/tests.js`.
+3. Try it out: `npx webpack --config webpack.config.stryker.js`. This should create a `dist` directory with these files `dist/js/chunk-vendors.js` and `dist/js/tests.js`.
 
    ```
-   $ npx webpack --config webpack.stryker.config.js
+   $ npx webpack --config webpack.config.stryker.js
    Starting type checking service...
    Using 1 worker with 2048MB memory limit
-
 
     DONE  Compiled successfully in 5343ms
 
@@ -104,7 +103,7 @@ Follow these steps to be able "manually" run webpack and mocha.
 
 4. Now test out a test run with `mocha`. Run `npx mocha --require @vue/cli-plugin-unit-mocha/setup.js dist/js/chunk-vendors.js dist/js/tests.js`.
 
-This needs to work first before progressing to the next step. You might need to tweak your `webpack.stryker.config.js` file in order to make this work.
+This needs to work first before progressing to the next step. You might need to tweak your `webpack.config.stryker.js` file in order to make this work.
 
 ### Configure and run Stryker
 
@@ -119,7 +118,7 @@ Once mocha runs succesfully on the webpack output, you're ready to install and r
      "concurrency": 2,
      "coverageAnalysis": "perTest",
      "symlinkNodeModules": false,
-     "buildCommand": "webpack --config webpack.stryker.config.js",
+     "buildCommand": "webpack --config webpack.config.stryker.js",
      "mutator": {
        "plugins": []
      },
