@@ -21,7 +21,9 @@ const replacements = new Map([
 ]);
 
 for (const [key, value] of Array.from(replacements)) {
-  replacements.set(key, value);
+  if (value) {
+    replacements.set(value, key);
+  }
 }
 
 export const methodExpressionMutator: NodeMutator = {
