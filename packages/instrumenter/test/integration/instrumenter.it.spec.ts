@@ -33,6 +33,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument optional chains', async () => {
     await arrangeAndActAssert('optional-chains.ts');
   });
+  it('should be able to instrument functional chains', async () => {
+    await arrangeAndActAssert('functional-chains.js');
+  });
   it('should be able to instrument a vue sample', async () => {
     await arrangeAndActAssert('vue-sample.vue');
   });
