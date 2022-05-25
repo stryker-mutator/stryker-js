@@ -1,8 +1,8 @@
-import babel, { type types as t } from '@babel/core';
+import { type types as t } from '@babel/core';
+
+import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './index.js';
-
-const { types } = babel;
 
 enum AssignmentOperators {
   '+=' = '-=',
@@ -28,7 +28,7 @@ export const assignmentOperatorMutator: NodeMutator = {
   *mutate(path) {
     if (path.isAssignmentExpression() && isSupportedAssignmentOperator(path.node.operator) && isSupported(path.node)) {
       const mutatedOperator = AssignmentOperators[path.node.operator];
-      const replacement = types.cloneNode(path.node, false);
+      const replacement = deepCloneNode(path.node);
       replacement.operator = mutatedOperator;
       yield replacement;
     }

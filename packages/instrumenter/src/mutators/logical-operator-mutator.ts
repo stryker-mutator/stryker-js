@@ -1,8 +1,6 @@
-import babel from '@babel/core';
+import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './index.js';
-
-const { types } = babel;
 
 enum LogicalOperatorMutationMap {
   '&&' = '||',
@@ -17,7 +15,7 @@ export const logicalOperatorMutator: NodeMutator = {
     if (path.isLogicalExpression() && isSupported(path.node.operator)) {
       const mutatedOperator = LogicalOperatorMutationMap[path.node.operator];
 
-      const replacement = types.cloneNode(path.node, true);
+      const replacement = deepCloneNode(path.node);
       replacement.operator = mutatedOperator;
       yield replacement;
     }
