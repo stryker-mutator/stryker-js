@@ -1,5 +1,7 @@
 import babel from '@babel/core';
 
+import { deepCloneNode } from '../util/index.js';
+
 const { types } = babel;
 
 import { NodeMutator } from './index.js';
@@ -12,7 +14,7 @@ export const booleanLiteralMutator: NodeMutator = {
       yield types.booleanLiteral(!path.node.value);
     }
     if (path.isUnaryExpression() && path.node.operator === '!' && path.node.prefix) {
-      yield types.cloneNode(path.node.argument, true);
+      yield deepCloneNode(path.node.argument);
     }
   },
 };
