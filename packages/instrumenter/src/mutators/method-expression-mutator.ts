@@ -28,7 +28,7 @@ export const methodExpressionMutator: NodeMutator = {
   name: 'MethodExpression',
 
   *mutate(path) {
-    if (!(path.isCallExpression() || path.isOptionalCallExpression()) || path.parent) {
+    if (!(path.isCallExpression() || path.isOptionalCallExpression())) {
       return;
     }
 
