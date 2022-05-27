@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "rxjs": "~7.5.4",
-    "typescript": "^4.5.5"
+    "rxjs": "7.5.4",
+    "typescript": "4.5.5"
   },
   "scripts": {
     "postinstall": "npm run merge-config && npm run bootstrap",
