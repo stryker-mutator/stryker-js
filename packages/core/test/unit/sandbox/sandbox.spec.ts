@@ -227,12 +227,12 @@ describe(Sandbox.name, () => {
       );
     });
 
-    it('should not symlink node modules in sandbox directory if no node_modules exist', async () => {
+    it('should not symlink node_modules in sandbox directory if no node_modules exist', async () => {
       findNodeModulesListStub.resolves([]);
       const sut = createSut();
       await sut.init();
-      expect(testInjector.logger.warn).calledWithMatch('Could not find a node_modules');
-      expect(testInjector.logger.warn).calledWithMatch(process.cwd());
+      expect(testInjector.logger.debug).calledWithMatch('Could not find a node_modules');
+      expect(testInjector.logger.debug).calledWithMatch(process.cwd());
       expect(symlinkJunctionStub).not.called;
     });
 
