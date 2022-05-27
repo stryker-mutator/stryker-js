@@ -115,7 +115,7 @@ export class Sandbox implements Disposable {
             });
         }
       } else {
-        this.log.warn(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
+        this.log.debug(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);
       }
     }
   }
