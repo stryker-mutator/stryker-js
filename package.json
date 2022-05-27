@@ -36,7 +36,6 @@
     "jasmine-core": "4.1.0",
     "json-schema-to-typescript": "10.1.5",
     "lerna": "4.0.0",
-    "link-parent-bin": "2.0.0",
     "minimatch": "5.0.1",
     "mocha": "10.0.0",
     "prettier": "2.6.2",
@@ -48,7 +47,7 @@
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
-    "postinstall": "lerna bootstrap --no-ci -- --legacy-peer-deps && link-parent-bin",
+    "postinstall": "lerna bootstrap --no-ci -- --legacy-peer-deps",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.js",
     "lint:fix": "npm run lint -- --fix",
     "clean": "rimraf \"packages/*/{package-lock.json,.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
