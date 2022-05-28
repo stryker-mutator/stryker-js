@@ -38,7 +38,7 @@
     "mocha": "10.0.0",
     "mutation-testing-metrics": "1.7.10",
     "mutation-testing-report-schema": "1.7.10",
-    "rxjs": "7.4.0",
+    "rxjs": "7.5.5",
     "semver": "7.3.5",
     "ts-jest": "28.0.1",
     "ts-loader": "9.2.6",
