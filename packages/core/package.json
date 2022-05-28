@@ -65,7 +65,7 @@
     "commander": "~9.3.0",
     "execa": "~6.1.0",
     "file-url": "~3.0.0",
-    "get-port": "~6.0.0",
+    "get-port": "~6.1.0",
     "glob": "~7.2.0",
     "inquirer": "~8.2.0",
     "lodash.flatmap": "~4.5.0",
