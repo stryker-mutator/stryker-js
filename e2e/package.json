@@ -30,7 +30,7 @@
     "karma": "6.3.20",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.1.1",
-    "karma-jasmine": "4.0.2",
+    "karma-jasmine": "5.0.1",
     "karma-mocha": "2.0.1",
     "karma-sourcemap-loader": "0.3.8",
     "karma-webpack": "5.0.0",
