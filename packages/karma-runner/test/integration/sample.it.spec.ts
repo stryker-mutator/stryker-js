@@ -54,7 +54,7 @@ describe('Sample project', () => {
         id: 'spec6',
         name: 'Add this test should fail',
         status: TestStatus.Failed,
-        failureMessage: 'Error: Expected 7 to be 0.',
+        failureMessage: 'Expected 7 to be 0.',
       },
     ];
     expectTestResults(result, expectedTestResults);
