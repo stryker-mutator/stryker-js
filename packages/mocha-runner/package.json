@@ -40,12 +40,12 @@
   "dependencies": {
     "@stryker-mutator/api": "6.0.2",
     "@stryker-mutator/util": "6.0.2",
-    "tslib": "~2.3.0"
+    "tslib": "~2.4.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.0.2",
-    "@types/glob": "~7.2.0",
-    "@types/node": "^17.0.0"
+    "@types/glob": "7.2.0",
+    "@types/node": "17.0.31"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~6.0.0",

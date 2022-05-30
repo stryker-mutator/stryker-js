@@ -2,14 +2,17 @@ import os from 'os';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
 
-import mkdirp from 'mkdirp';
+import { promisify } from 'util';
 
+import mkdirp from 'mkdirp';
 import { expect } from 'chai';
-import { File } from '@stryker-mutator/util';
 import nodeGlob from 'glob';
+import { File } from '@stryker-mutator/util';
 import { assertions } from '@stryker-mutator/test-helpers';
 
 import { fileUtils } from '../../../src/utils/file-utils.js';
+
+const glob = promisify(nodeGlob);
 
 describe('fileUtils', () => {
   describe('moveDirectoryRecursiveSync', () => {
@@ -68,23 +71,18 @@ describe('fileUtils', () => {
   });
 
   async function readDirRecursive(dir: string): Promise<File[]> {
-    return new Promise<File[]>((res, rej) => {
-      nodeGlob(path.join(dir, '**/*'), { nodir: true }, (err, matches) => {
-        if (err) {
-          rej(err);
-        }
-        // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
-        matches.sort();
-        res(
-          Promise.all(
-            matches.map(async (fileName) => {
-              const content = await fsPromises.readFile(fileName);
-              return new File(path.normalize(fileName), content);
-            })
-          )
-        );
-      });
-    });
+    const fileNames = await glob('**/*', { cwd: dir, nodir: true });
+    const files = Promise.all(
+      // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+      fileNames
+        .sort()
+        .map((fileName) => path.resolve(dir, fileName))
+        .map(async (fileName) => {
+          const content = await fsPromises.readFile(fileName);
+          return new File(path.normalize(fileName), content);
+        })
+    );
+    return files;
   }
 
   async function writeAll(...files: File[]): Promise<void> {
