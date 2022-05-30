@@ -4,20 +4,20 @@ import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './node-mutator.js';
 
-enum ArithmeticOperators {
-  '+' = '-',
-  '-' = '+',
-  '*' = '/',
-  '/' = '*',
-  '%' = '*',
-}
+const arithmeticOperatorReplacements = Object.freeze({
+  '+': '-',
+  '-': '+',
+  '*': '/',
+  '/': '*',
+  '%': '*',
+} as const);
 
 export const arithmeticOperatorMutator: NodeMutator = {
   name: 'ArithmeticOperator',
 
   *mutate(path) {
     if (path.isBinaryExpression() && isSupported(path.node.operator, path.node)) {
-      const mutatedOperator = ArithmeticOperators[path.node.operator];
+      const mutatedOperator = arithmeticOperatorReplacements[path.node.operator];
       const replacement = deepCloneNode(path.node);
       replacement.operator = mutatedOperator;
       yield replacement;
@@ -25,8 +25,8 @@ export const arithmeticOperatorMutator: NodeMutator = {
   },
 };
 
-function isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof ArithmeticOperators {
-  if (!Object.keys(ArithmeticOperators).includes(operator)) {
+function isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof arithmeticOperatorReplacements {
+  if (!Object.keys(arithmeticOperatorReplacements).includes(operator)) {
     return false;
   }
 
