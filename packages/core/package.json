@@ -70,7 +70,7 @@
     "inquirer": "~8.2.0",
     "lodash.flatmap": "~4.5.0",
     "lodash.groupby": "~4.6.0",
-    "log4js": "~6.4.1",
+    "log4js": "~6.5.0",
     "minimatch": "~5.1.0",
     "mkdirp": "~1.0.3",
     "mutation-testing-elements": "1.7.10",
