@@ -1,5 +1,7 @@
 import babel from '@babel/core';
 
+import { deepCloneNode } from '../util/syntax-helpers.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
@@ -45,15 +47,17 @@ export const methodExpressionMutator: NodeMutator = {
     }
 
     if (newName === null) {
-      yield types.cloneNode(callee.object, true);
+      // Remove the method expression. I.e. `foo.trim()` => `foo`
+      yield deepCloneNode(callee.object);
       return;
     }
 
-    const nodeArguments = path.node.arguments.map((argumentNode) => types.cloneNode(argumentNode, true));
+    // Replace the method expression. I.e. `foo.toLowerCase()` => `foo.toUpperCase`
+    const nodeArguments = path.node.arguments.map((argumentNode) => deepCloneNode(argumentNode));
 
     const mutatedCallee = types.isMemberExpression(callee)
-      ? types.memberExpression(callee.object, types.identifier(newName), false, callee.optional)
-      : types.optionalMemberExpression(callee.object, types.identifier(newName), false, callee.optional);
+      ? types.memberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional)
+      : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional);
 
     yield types.isCallExpression(path.node)
       ? types.callExpression(mutatedCallee, nodeArguments)

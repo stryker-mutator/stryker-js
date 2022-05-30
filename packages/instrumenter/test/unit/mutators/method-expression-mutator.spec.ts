@@ -30,6 +30,7 @@ describe(sut.name, () => {
       ['text?.startsWith();', 'text?.endsWith();', 'replaced, optional member'],
       ['text.startsWith?.();', 'text.endsWith?.();', 'replaced, optional call'],
       ['text?.startsWith?.();', 'text?.endsWith?.();', 'replaced, optional member, optional call'],
+      ['text.startsWith("foo").valueOf();', 'text.endsWith("foo").valueOf();', 'replaced in the middle of a chain'],
       ['parent.text?.startsWith();', 'parent.text?.endsWith();', 'replaced, optional member in a non-optional parent'],
       ['parent.text.startsWith?.();', 'parent.text.endsWith?.();', 'replaced, optional call in a non-optional parent'],
       ['parent.text?.startsWith?.();', 'parent.text?.endsWith?.();', 'replaced, optional member, optional call in a non-optional parent'],
@@ -68,6 +69,7 @@ describe(sut.name, () => {
       ['text?.trim(abc, def);', 'text;', 'removed, optional member with multiple arguments'],
       ['text.trim?.(abc, def);', 'text;', 'removed, optional call with multiple arguments'],
       ['text?.trim?.(abc, def);', 'text;', 'removed, optional member, optional call with multiple arguments'],
+      ['text.trim().length;', 'text.length;', 'removed in the middle of a chain'],
       ['parent.text?.trim(abc, def);', 'parent.text;', 'removed, optional member in a non-optional parent with multiple arguments'],
       ['parent.text.trim?.(abc, def);', 'parent.text;', 'removed, optional call in a non-optional parent with multiple arguments'],
       ['parent.text?.trim?.(abc, def);', 'parent.text;', 'removed, optional member, optional call in a non-optional parent with multiple arguments'],
@@ -109,7 +111,7 @@ describe(sut.name, () => {
         'replaced, optional member, optional call in an optional parent with multiple arguments',
       ],
     ]) {
-      it(`should mutate a ${description} method`, () => {
+      it(`should be ${description}`, () => {
         expectJSMutation(sut, input, output);
       });
     }
