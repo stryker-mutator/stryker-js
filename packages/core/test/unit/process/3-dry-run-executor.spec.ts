@@ -15,7 +15,7 @@ import { ConfigError } from '../../../src/errors.js';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
 import { createTestRunnerPoolMock } from '../../helpers/producers.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
-import { InputFileCollection } from '../../../src/input/input-file-collection.js';
+import { InputFileCollector } from '../../../src/input/input-file-collector.js';
 import { StrictReporter } from '../../../src/reporters/strict-reporter.js';
 
 describe(DryRunExecutor.name, () => {
@@ -26,7 +26,7 @@ describe(DryRunExecutor.name, () => {
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandbox: sinon.SinonStubbedInstance<Sandbox>;
-  let inputFiles: InputFileCollection;
+  let inputFiles: InputFileCollector;
   let reporterStub: sinon.SinonStubbedInstance<StrictReporter>;
 
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe(DryRunExecutor.name, () => {
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
-    inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);
+    inputFiles = new InputFileCollector([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);
     injectorMock.resolve.withArgs(coreTokens.inputFiles).returns(inputFiles);
     sut = new DryRunExecutor(
       injectorMock as Injector<DryRunContext>,

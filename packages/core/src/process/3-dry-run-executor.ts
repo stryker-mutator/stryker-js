@@ -25,7 +25,7 @@ import { MutationTestReportHelper } from '../reporters/mutation-test-report-help
 import { ConfigError } from '../errors.js';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
-import { InputFileCollection } from '../input/input-file-collection.js';
+import { InputFileCollector } from '../input/input-file-collector.js';
 import { MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
@@ -40,7 +40,7 @@ export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.mutants]: readonly Mutant[];
   [coreTokens.checkerPool]: I<Pool<I<CheckerFacade>>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
-  [coreTokens.inputFiles]: InputFileCollection;
+  [coreTokens.inputFiles]: InputFileCollector;
 }
 
 function isFailedTest(testResult: TestResult): testResult is FailedTestResult {

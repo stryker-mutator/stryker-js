@@ -11,7 +11,7 @@ import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/ap
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
-import { InputFileCollection } from '../input/index.js';
+import { InputFileCollector } from '../input/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
@@ -41,7 +41,7 @@ export class MutationTestReportHelper {
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
-    private readonly inputFiles: InputFileCollection,
+    private readonly inputFiles: InputFileCollector,
     private readonly log: Logger,
     private readonly dryRunResult: CompleteDryRunResult,
     private readonly requireFromCwd: typeof requireResolve

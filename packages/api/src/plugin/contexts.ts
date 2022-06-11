@@ -17,4 +17,5 @@ export interface BaseContext {
  */
 export interface PluginContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
+  [commonTokens.inputFiles]: 
 }

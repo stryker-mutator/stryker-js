@@ -12,7 +12,7 @@ import { File } from '@stryker-mutator/util';
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
-import { InputFileResolver, InputFileCollection } from '../../../src/input/index.js';
+import { InputFileResolver, InputFileCollector } from '../../../src/input/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 import { ConfigError } from '../../../src/errors.js';
 import { ConfigReader, OptionsValidator, MetaSchemaBuilder } from '../../../src/config/index.js';
@@ -35,13 +35,13 @@ describe(PrepareExecutor.name, () => {
   let configureLoggingServerStub: sinon.SinonStub;
   let injectorMock: sinon.SinonStubbedInstance<Injector<AllContext>>;
   let inputFileResolverMock: sinon.SinonStubbedInstance<InputFileResolver>;
-  let inputFiles: InputFileCollection;
+  let inputFiles: InputFileCollector;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let loadedPlugins: LoadedPlugins;
   let sut: PrepareExecutor;
 
   beforeEach(() => {
-    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
+    inputFiles = new InputFileCollector([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
     cliOptions = {};
     configReaderMock = sinon.createStubInstance(ConfigReader);
     configReaderMock.readConfig.resolves(testInjector.options);
@@ -164,12 +164,12 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should reject when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollector([], [], []));
     await expect(sut.execute(cliOptions)).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
+    inputFileResolverMock.resolve.resolves(new InputFileCollector([], [], []));
     await expect(sut.execute(cliOptions)).rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });

@@ -111,6 +111,7 @@
       "promisified",
       "quasis",
       "serializable",
+      "stryker",
       "Unserializable",
       "Unserializables",
       "Whitespaces"

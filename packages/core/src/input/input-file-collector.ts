@@ -2,7 +2,7 @@ import { MutationRange } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { File, normalizeWhitespaces } from '@stryker-mutator/util';
 
-export class InputFileCollection {
+export class InputFileCollector {
   public readonly files: readonly File[];
   public readonly filesToMutate: readonly File[];
   public readonly mutationRanges: readonly MutationRange[];

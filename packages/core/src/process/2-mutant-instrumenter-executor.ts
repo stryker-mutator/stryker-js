@@ -6,7 +6,7 @@ import { Reporter } from '@stryker-mutator/api/src/report';
 import { File, I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
-import { InputFileCollection } from '../input/index.js';
+import { InputFileCollector } from '../input/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 import { LoggingClientContext } from '../logging/index.js';
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
@@ -20,7 +20,7 @@ import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutantInstrumenterContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
-  [coreTokens.inputFiles]: InputFileCollection;
+  [coreTokens.inputFiles]: InputFileCollector;
   [coreTokens.loggingContext]: LoggingClientContext;
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.timer]: I<Timer>;
@@ -35,7 +35,7 @@ export class MutantInstrumenterExecutor {
   public static readonly inject = tokens(commonTokens.injector, coreTokens.inputFiles, commonTokens.options);
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
-    private readonly inputFiles: InputFileCollection,
+    private readonly inputFiles: InputFileCollector,
     private readonly options: StrykerOptions
   ) {}
 

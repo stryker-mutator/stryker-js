@@ -4,7 +4,7 @@ import { promises as fsPromises } from 'fs';
 import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, I, File } from '@stryker-mutator/util';
+import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 import { mergeMap, toArray } from 'rxjs/operators';
@@ -14,6 +14,7 @@ import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { MAX_CONCURRENT_FILE_IO, fileUtils } from '../utils/file-utils.js';
 import { coreTokens } from '../di/index.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
+import { File } from '../fs/index.js';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();

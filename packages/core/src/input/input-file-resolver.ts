@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'util';
 
 import { from, lastValueFrom } from 'rxjs';
 import { filter, map, mergeMap, toArray } from 'rxjs/operators';
-import { StrykerOptions, MutationRange } from '@stryker-mutator/api/core';
+import { StrykerOptions, MutationRange, InputFiles, InputFile } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { File, isErrnoException, notEmpty } from '@stryker-mutator/util';
@@ -13,13 +13,20 @@ import minimatch, { type IMinimatch } from 'minimatch';
 import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils.js';
 import { defaultOptions, FileMatcher } from '../config/index.js';
 
-import { InputFileCollection } from './input-file-collection.js';
+import { InputFileCollector } from './input-file-collector.js';
 
 const { Minimatch } = minimatch;
 
 const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '/reports', '*.tsbuildinfo', '/stryker.log']);
 
 export const IGNORE_PATTERN_CHARACTER = '!';
+/**
+ * @see https://stryker-mutator.io/docs/stryker-js/configuration/#mutate-string
+ * @example
+ * * "src/app.js:1-11" will mutate lines 1 through 11 inside app.js.
+ * * "src/app.js:5:4-6:4" will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
+ * * "src/app.js:5-6:4" will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
+ */
 export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 
 export class InputFileResolver {
@@ -32,14 +39,62 @@ export class InputFileResolver {
     this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, ...ignorePatterns];
   }
 
-  public async resolve(): Promise<InputFileCollection> {
-    const inputFileNames = await this.resolveInputFiles();
-    const mutateFiles = this.resolveMutateFiles(inputFileNames);
-    const mutationRange = this.resolveMutationRange();
+  public async resolve(): Promise<InputFileCollector> {
+    const inputFileNames = await this.resolveInputFileNames();
+    const mutateInputFiles = this.resolveMutateInputFiles(inputFileNames);
+    
     const files: File[] = await this.readFiles(inputFileNames);
-    const inputFileCollection = new InputFileCollection(files, mutateFiles, mutationRange);
+    const inputFileCollection = new InputFileCollector(files, mutateFiles, mutationRange);
     inputFileCollection.logFiles(this.log, this.ignoreRules);
     return inputFileCollection;
+  }
+
+  private resolveMutateInputFiles(inputFileNames: string[]): InputFiles {
+    // Only log about useless patterns when the user actually configured it
+    const logAboutUselessPatterns = !isDeepStrictEqual(this.mutatePatterns, defaultOptions.mutate);
+
+    const mutateInputFileMap = new Map<string, InputFile>();
+    for (const pattern of this.mutatePatterns) {
+      if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
+        const files = this.filterMutatePattern(mutateInputFileMap.keys(), pattern.substring(1));
+        if (logAboutUselessPatterns && files.size === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not exclude any files.`);
+        }
+        for (const fileName of files.keys()) {
+          mutateInputFileMap.delete(fileName);
+        }
+      } else {
+        const files = this.filterMutatePattern(inputFileNames, pattern);
+        if (logAboutUselessPatterns && files.size === 0) {
+          this.log.warn(`Glob pattern "${pattern}" did not result in any files.`);
+        }
+        for (const [fileName, file] of files) {
+          mutateInputFileMap.set(fileName, file);
+        }
+      }
+    }
+    return Object.fromEntries(mutateInputFileMap);
+  }
+
+  private filterMutatePattern(fileNames: Iterable<string>, pattern: string): Map<string, InputFile> {
+    const match = MUTATION_RANGE_REGEX.exec(pattern);
+    let mutate: InputFile['mutate'] = true;
+    if (match) {
+      const [_, newPattern, _mutationRange, startLine, startColumn = '0', endLine, endColumn = Number.MAX_SAFE_INTEGER.toString()] = match;
+      pattern = newPattern;
+      mutate = {
+        start: { line: parseInt(startLine) - 1, column: parseInt(startColumn) },
+        end: { line: parseInt(endLine) - 1, column: parseInt(endColumn) },
+      };
+    }
+    const matcher = new FileMatcher(pattern);
+    const inputFiles = new Map<string, InputFile>();
+    for (const fileName in fileNames) {
+      if (matcher.matches(fileName)) {
+        inputFiles.set(fileName, { mutate });
+      }
+    }
+    return inputFiles;
   }
 
   private resolveMutateFiles(inputFileNames: string[]) {
@@ -96,7 +151,7 @@ export class InputFileResolver {
     return filteredFileNames;
   }
 
-  private async resolveInputFiles(): Promise<string[]> {
+  private async resolveInputFileNames(): Promise<string[]> {
     const ignoreRules = this.ignoreRules.map((pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }));
 
     /**

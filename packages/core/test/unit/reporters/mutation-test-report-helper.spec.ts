@@ -9,14 +9,14 @@ import { CheckStatus } from '@stryker-mutator/api/check';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
 import { coreTokens } from '../../../src/di/index.js';
-import { InputFileCollection } from '../../../src/input/index.js';
+import { InputFileCollector } from '../../../src/input/index.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { objectUtils } from '../../../src/utils/object-utils.js';
 import { strykerVersion } from '../../../src/stryker-package.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
-  let inputFiles: InputFileCollection;
+  let inputFiles: InputFileCollector;
   let files: File[];
   let setExitCodeStub: sinon.SinonStub;
   let dryRunResult: CompleteDryRunResult;
@@ -423,7 +423,7 @@ describe(MutationTestReportHelper.name, () => {
 
   describe('reportOne', () => {
     beforeEach(() => {
-      inputFiles = new InputFileCollection([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js'], []);
+      inputFiles = new InputFileCollector([new File('add.js', 'function add(a, b) {\n  return a + b;\n}\n')], ['add.js'], []);
     });
 
     describe(MutationTestReportHelper.prototype.reportCheckFailed.name, () => {

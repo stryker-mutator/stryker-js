@@ -1,7 +1,8 @@
+import { InputFile } from '@stryker-mutator/api/core'
 /**
  * Represents a file within Stryker. Could be a strictly in-memory file.
  */
-export class File {
+export class File implements InputFile {
   private _textContent: string | undefined;
   private readonly _content: Buffer;
 
