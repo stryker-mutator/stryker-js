@@ -11,7 +11,7 @@ export function expectTestResultsToEqual(actualTestResults: TestResult[], expect
   expectedResults.forEach((expectedResult) => {
     const actualTestResult = actualTestResults.find((testResult) => testResult.name === expectedResult.name);
     if (actualTestResult) {
-      const { timeSpentMs, ...actualWithoutTiming } = actualTestResult;
+      const { timeSpentMs: _, ...actualWithoutTiming } = actualTestResult;
       expect(actualWithoutTiming).deep.equal(expectedResult);
     } else {
       expect.fail(

@@ -59,6 +59,7 @@ module.exports = {
         allowedNames: ['self'],
       },
     ],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', varsIgnorePattern: '^_' }],
 
     // disabled typescript-eslint rules we should enable in some way
 
@@ -85,7 +86,7 @@ module.exports = {
 
     // Long term to fix
     '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-magic-numbers': 'off',  
+    '@typescript-eslint/no-magic-numbers': 'off',
     '@typescript-eslint/parameter-properties': 'off',
 
     // disabled typescript-eslint rules
@@ -113,7 +114,6 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'off',
 
     // we do not care
-    '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/prefer-enum-initializers': 'off',
@@ -131,7 +131,7 @@ module.exports = {
       rules: {
         // These do not work with jsdoc: https://github.com/typescript-eslint/typescript-eslint/issues/906
         '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/explicit-member-accessibility': 'off'
+        '@typescript-eslint/explicit-member-accessibility': 'off',
       },
     },
   ],

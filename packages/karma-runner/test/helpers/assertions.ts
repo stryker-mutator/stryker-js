@@ -11,7 +11,7 @@ export type TimelessTestResult =
  */
 export function expectTestResults(result: CompleteDryRunResult, expectedTestResults: TimelessTestResult[]): void {
   const actualTestResults: TimelessTestResult[] = result.tests.map((test) => {
-    const { timeSpentMs, ...timeless } = test;
+    const { timeSpentMs: _, ...timeless } = test;
     if (timeless.status === TestStatus.Failed) {
       timeless.failureMessage = timeless.failureMessage.split('\n')[0];
     }
