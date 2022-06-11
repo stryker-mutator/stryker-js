@@ -59,7 +59,7 @@ module.exports = {
         allowedNames: ['self'],
       },
     ],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', varsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
 
     // disabled typescript-eslint rules we should enable in some way
 
