@@ -32,7 +32,7 @@ Optionally, you could also install Stryker directly yourself.
 npm install --save-dev @stryker-mutator/core
 ```
 
-If you choose to not install the stryker-cli, use `npx stryker` (after installing `@stryker-mutator/core` locally) instead of `stryker` for the rest of the quickstart.
+If you choose to not install the stryker-cli, use `npx stryker-cli` (after installing `@stryker-mutator/core` locally) instead of `stryker` for the rest of the quickstart.
 
 ---
 
