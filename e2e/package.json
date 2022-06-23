@@ -5,7 +5,7 @@
   "type": "module",
   "devDependencies": {
     "@babel/cli": "7.17.10",
-    "@babel/core": "7.18.2",
+    "@babel/core": "7.18.5",
     "@babel/plugin-proposal-class-properties": "7.17.12",
     "@babel/plugin-proposal-pipeline-operator": "7.18.2",
     "@babel/preset-env": "7.18.2",
