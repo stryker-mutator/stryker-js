@@ -32,6 +32,17 @@ describe(disableTypeChecks.name, () => {
           content: '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();',
         });
       });
+
+      it('should insert `// @ts-nocheck` after the jest directive also for the second file (#3583)', async () => {
+        const inputFile = { name: 'foo.js', content: '/**\n* @jest-environment jsdom\n*/\nfoo.bar();', mutate: true };
+        const inputFile2 = { name: 'foo.js', content: '/**\n* @jest-environment jsdom\n*/\nfoo.bar();', mutate: true };
+        await disableTypeChecks(inputFile, { plugins: null });
+        const actual = await disableTypeChecks(inputFile2, { plugins: null });
+        assertions.expectTextFileEqual(actual, {
+          name: 'foo.js',
+          content: '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();',
+        });
+      });
     });
 
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {

@@ -44,14 +44,15 @@ function prefixWithNoCheck(code: string): string {
     // first line has a shebang (#!/usr/bin/env node)
     const newLineIndex = code.indexOf('\n');
     if (newLineIndex > 0) {
-      return `${code.substr(0, newLineIndex)}\n// @ts-nocheck\n${code.substring(newLineIndex + 1)}`;
+      return `${code.substr(0, newLineIndex)}\n// @ts-nocheck\n${code.substr(newLineIndex + 1)}`;
     } else {
       return code;
     }
   } else {
     // We should leave comments, like `/** @jest-env jsdom */ at the top of the file, see #2569
+    startingCommentRegex.lastIndex = 0;
     const commentMatch = startingCommentRegex.exec(code);
-    return `${commentMatch?.[1].concat('\n') ?? ''}// @ts-nocheck\n${code.substring(commentMatch?.[1].length ?? 0)}`;
+    return `${commentMatch?.[1].concat('\n') ?? ''}// @ts-nocheck\n${code.substr(commentMatch?.[1].length ?? 0)}`;
   }
 }
 
