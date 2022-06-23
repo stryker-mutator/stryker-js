@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { LoggingClientContext } from '../logging/index.js';
 
@@ -46,6 +46,7 @@ export interface InitMessage {
   kind: WorkerMessageKind.Init;
   loggingContext: LoggingClientContext;
   options: StrykerOptions;
+  fileDescriptions: FileDescriptions;
   pluginModulePaths: readonly string[];
   workingDirectory: string;
   namedExport: string;

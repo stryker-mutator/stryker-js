@@ -1,6 +1,6 @@
 import { URL } from 'url';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
@@ -21,6 +21,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
 
   constructor(
     options: StrykerOptions,
+    fileDescriptions: FileDescriptions,
     sandboxWorkingDirectory: string,
     loggingContext: LoggingClientContext,
     pluginModulePaths: readonly string[],
@@ -30,6 +31,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
       new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
+      fileDescriptions,
       pluginModulePaths,
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker,

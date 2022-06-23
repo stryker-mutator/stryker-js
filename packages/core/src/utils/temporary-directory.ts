@@ -1,5 +1,5 @@
 import path from 'path';
-import { createReadStream, createWriteStream } from 'fs';
+import fs from 'fs';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -22,7 +22,7 @@ export class TemporaryDirectory implements Disposable {
 
   public async initialize(): Promise<void> {
     this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
-    await fileUtils.mkdirp(this.temporaryDirectory);
+    await fs.promises.mkdir(this.temporaryDirectory, { recursive: true });
     this.isInitialized = true;
   }
 
@@ -38,28 +38,7 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    await fileUtils.mkdirp(path.resolve(this.temporaryDirectory, name));
-  }
-
-  /**
-   * Copies a file.
-   * @param fromFilename The path to the existing file.
-   * @param toFilename The path to copy the file to.
-   * @param instrumenter An optional additional instrumenter to stream the file through
-   * @returns A promise to eventually copy the file.
-   */
-  public copyFile(fromFilename: string, toFilename: string, instrumenter: NodeJS.ReadWriteStream | null): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      let readStream: NodeJS.ReadableStream = createReadStream(fromFilename, { encoding: 'utf8' });
-      const writeStream = createWriteStream(toFilename);
-      readStream.on('error', reject);
-      writeStream.on('error', reject);
-      if (instrumenter) {
-        readStream = readStream.pipe(instrumenter);
-      }
-      readStream.pipe(writeStream);
-      readStream.on('end', () => resolve());
-    });
+    await fs.promises.mkdir(path.resolve(this.temporaryDirectory, name), { recursive: true });
   }
 
   /**

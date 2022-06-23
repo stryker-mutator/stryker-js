@@ -70,7 +70,7 @@ export class MutationTestExecutor {
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
     const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, ignoredResult$).pipe(toArray()));
-    this.mutationTestReportHelper.reportAll(results);
+    await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
     return results;
@@ -130,8 +130,8 @@ export class MutationTestExecutor {
       checkResult$,
       passedMutant$: passedMutant$.pipe(
         tap({
-          complete: () => {
-            this.checkerPool.dispose();
+          complete: async () => {
+            await this.checkerPool.dispose();
             this.concurrencyTokenProvider.freeCheckers();
           },
         })

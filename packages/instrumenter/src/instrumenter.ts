@@ -2,8 +2,7 @@ import path from 'path';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { MutationRange } from '@stryker-mutator/api/core';
-import { File } from '@stryker-mutator/util';
+import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
@@ -11,6 +10,7 @@ import { print } from './printers/index.js';
 import { InstrumentResult } from './instrument-result.js';
 import { InstrumenterOptions } from './instrumenter-options.js';
 import { instrumenterTokens } from './instrumenter-tokens.js';
+import { File } from './file.js';
 
 /**
  * The instrumenter is responsible for
@@ -35,15 +35,19 @@ export class Instrumenter {
     const outFiles: File[] = [];
     let mutantCount = 0;
     const parse = this._createParser(options);
-    for await (const file of files) {
-      const ast = await parse(file.textContent, file.name);
-      this._transform(ast, mutantCollector, { options: { ...options, mutationRanges: options.mutationRanges.map(toBabelLineNumber) } });
+    for await (const { name, mutate, content } of files) {
+      const ast = await parse(content, name);
+      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate) });
       const mutatedContent = this._print(ast);
-      outFiles.push(new File(file.name, mutatedContent));
+      outFiles.push({
+        name,
+        mutate,
+        content: mutatedContent,
+      });
       if (this.logger.isDebugEnabled()) {
         const nrOfMutantsInFile = mutantCollector.mutants.length - mutantCount;
         mutantCount = mutantCollector.mutants.length;
-        this.logger.debug(`Instrumented ${path.relative(process.cwd(), file.name)} (${nrOfMutantsInFile} mutant(s))`);
+        this.logger.debug(`Instrumented ${path.relative(process.cwd(), name)} (${nrOfMutantsInFile} mutant(s))`);
       }
     }
     const mutants = mutantCollector.mutants.map((mutant) => mutant.toApiMutant());
@@ -55,19 +59,19 @@ export class Instrumenter {
   }
 }
 
-function toBabelLineNumber(range: MutationRange): MutationRange {
-  const start: number = range.start.line;
-  const end: number = range.end.line;
-
-  return {
-    ...range,
-    end: {
-      ...range.end,
-      line: end + 1,
-    },
-    start: {
-      ...range.start,
-      line: start + 1,
-    },
-  };
+function toBabelLineNumber(range: MutateDescription): MutateDescription {
+  if (typeof range === 'boolean') {
+    return range;
+  } else {
+    return range.map(({ start, end }) => ({
+      start: {
+        column: start.column,
+        line: start.line + 1,
+      },
+      end: {
+        column: end.column,
+        line: end.line + 1,
+      },
+    }));
+  }
 }

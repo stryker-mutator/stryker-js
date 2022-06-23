@@ -13,7 +13,7 @@ import { coreTokens } from '../di/index.js';
 import { ConfigError } from '../errors.js';
 import { objectUtils, optionsPath } from '../utils/index.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
-import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../input/index.js';
+import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../fs/index.js';
 
 import { describeErrors } from './validation-errors.js';
 

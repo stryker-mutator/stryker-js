@@ -7,7 +7,6 @@ import { ConfigReader } from '../config/config-reader.js';
 import { LogConfigurator } from '../logging/index.js';
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
-import { InputFileResolver } from '../input/index.js';
 import { ConfigError } from '../errors.js';
 import { PluginLoader } from '../di/plugin-loader.js';
 import { reporterPluginsFileUrl } from '../reporters/index.js';
@@ -15,6 +14,8 @@ import { Timer } from '../utils/timer.js';
 import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
 import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
+
+import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
 
@@ -58,24 +59,27 @@ export class PrepareExecutor {
     const inputFileResolverInjector = optionsValidatorInjector
       .provideValue(commonTokens.options, options)
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
-      .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind)
-      .provideClass(coreTokens.pluginCreator, PluginCreator)
-      .provideClass(coreTokens.reporter, BroadcastReporter);
-    const inputFiles = await inputFileResolverInjector.injectClass(InputFileResolver).resolve();
+      .provideClass(coreTokens.fs, FileSystem)
+      .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
+    const project = await inputFileResolverInjector.injectClass(ProjectReader).read();
 
-    if (inputFiles.files.length) {
+    if (project.isEmpty) {
+      throw new ConfigError('No input files found.');
+    } else {
       // Done preparing, finish up and return
       await inputFileResolverInjector.resolve(coreTokens.temporaryDirectory).initialize();
       return inputFileResolverInjector
+        .provideValue(coreTokens.project, project)
+        .provideValue(commonTokens.fileDescriptions, project.fileDescriptions)
+        .provideClass(coreTokens.pluginCreator, PluginCreator)
+        .provideClass(coreTokens.reporter, BroadcastReporter)
         .provideValue(coreTokens.timer, timer)
-        .provideValue(coreTokens.inputFiles, inputFiles)
+        .provideValue(coreTokens.project, project)
         .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
         .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths);
-    } else {
-      throw new ConfigError('No input files found.');
     }
   }
 }

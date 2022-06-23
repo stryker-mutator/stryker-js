@@ -1,11 +1,10 @@
 import { promises as fsPromises } from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { File } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-import { createInstrumenter, Instrumenter } from '../../src/index.js';
+import { createInstrumenter, File, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
@@ -75,28 +74,22 @@ describe('instrumenter integration', () => {
 
   describe('with mutation ranges', () => {
     it('should only mutate specific mutants for the given file', async () => {
-      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
-
-      await arrangeAndActAssert('specific-mutants.ts', {
-        ...createInstrumenterOptions(),
-        mutationRanges: [
+      await arrangeAndActAssert({
+        name: 'specific-mutants.ts',
+        mutate: [
           {
-            fileName: fullFileName,
             start: { line: 0, column: 10 },
             end: { line: 0, column: 15 },
           },
           {
-            fileName: fullFileName,
             start: { line: 3, column: 4 },
             end: { line: 3, column: 11 },
           },
           {
-            fileName: fullFileName,
             start: { line: 7, column: 15 },
             end: { line: 7, column: 22 },
           },
           {
-            fileName: fullFileName,
             start: { line: 18, column: 2 },
             end: { line: 19, column: 75 },
           },
@@ -104,28 +97,22 @@ describe('instrumenter integration', () => {
       });
     });
 
-    it('should not make any mutations in a file not found in the specific mutants', async () => {
-      const fullFileName = resolveTestResource('instrumenter', 'specific-mutants.ts');
-
-      await arrangeAndActAssert('specific-no-mutants.ts', {
-        ...createInstrumenterOptions(),
-        mutationRanges: [
-          {
-            fileName: fullFileName,
-            start: { line: 1, column: 10 },
-            end: { line: 1, column: 15 },
-          },
-        ],
-      });
+    it('should not make any mutations in a file with mutate = []', async () => {
+      await arrangeAndActAssert({ name: 'specific-no-mutants.ts', mutate: [] });
     });
   });
 
-  async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
-    const fullFileName = resolveTestResource('instrumenter', fileName);
-    const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
-    const result = await sut.instrument([file], options);
+  async function arrangeAndActAssert(file: Omit<File, 'content'> | string, options = createInstrumenterOptions()) {
+    if (typeof file === 'string') {
+      file = {
+        name: file,
+        mutate: true,
+      };
+    }
+    file.name = resolveTestResource('instrumenter', file.name);
+    const result = await sut.instrument([{ ...file, content: await fsPromises.readFile(file.name, 'utf-8') }], options);
     expect(result.files).lengthOf(1);
-    chaiJestSnapshot.setFilename(resolveTestResource('instrumenter', `${fileName}.out.snap`));
-    expect(result.files[0].textContent).matchSnapshot();
+    chaiJestSnapshot.setFilename(resolveTestResource('instrumenter', `${file.name}.out.snap`));
+    expect(result.files[0].content).matchSnapshot();
   }
 });

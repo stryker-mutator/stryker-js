@@ -21,6 +21,7 @@ export function printerContextStub(): sinon.SinonStubbedInstance<PrinterContext>
 export function transformerContextStub(): sinon.SinonStubbedInstance<TransformerContext> {
   return {
     transform: sinon.stub(),
+    mutateDescription: true,
     options: createTransformerOptions(),
   };
 }

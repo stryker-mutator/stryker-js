@@ -3,9 +3,7 @@ import { promises as fsPromises } from 'fs';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-import { File } from '@stryker-mutator/util';
-
-import { disableTypeChecks } from '../../src/index.js';
+import { disableTypeChecks, File } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
@@ -25,9 +23,9 @@ describe(`${disableTypeChecks.name} integration`, () => {
 
   async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
     const fullFileName = resolveTestResource('disable-type-checks', fileName);
-    const file = new File(fullFileName, await fsPromises.readFile(fullFileName));
+    const file: File = { name: fullFileName, content: await fsPromises.readFile(fullFileName, 'utf-8'), mutate: true };
     const result = await disableTypeChecks(file, options);
     chaiJestSnapshot.setFilename(resolveTestResource('disable-type-checks', `${fileName}.out.snap`));
-    expect(result.textContent).matchSnapshot();
+    expect(result.content).matchSnapshot();
   }
 });

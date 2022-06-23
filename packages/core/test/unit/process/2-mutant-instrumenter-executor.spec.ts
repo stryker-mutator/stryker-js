@@ -3,19 +3,21 @@ import { expect } from 'chai';
 import { Injector } from 'typed-inject';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions, createInstrumenter } from '@stryker-mutator/instrumenter';
-import { I, File } from '@stryker-mutator/util';
+import { I } from '@stryker-mutator/util';
+import { FileDescriptions } from '@stryker-mutator/api/core';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
-import { InputFileCollection } from '../../../src/input/index.js';
+import { Project } from '../../../src/fs/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
 import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
 import { Pool } from '../../../src/concurrent/index.js';
+import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
   let sut: MutantInstrumenterExecutor;
-  let inputFiles: InputFileCollection;
+  let project: Project;
   let injectorMock: sinon.SinonStubbedInstance<Injector<DryRunContext>>;
   let instrumenterMock: sinon.SinonStubbedInstance<Instrumenter>;
   let sandboxFilePreprocessorMock: sinon.SinonStubbedInstance<FilePreprocessor>;
@@ -23,19 +25,16 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
-  let mutatedFile: File;
-  let originalFile: File;
-  let testFile: File;
 
   beforeEach(() => {
-    mutatedFile = new File('foo.js', 'console.log(global.activeMutant === 1? "": "bar")');
-    originalFile = new File('foo.js', 'console.log("bar")');
-    testFile = new File('foo.spec.js', '');
+    const fsTestDouble = new FileSystemTestDouble({ 'foo.js': 'console.log("bar")', 'foo.spec.js': '' });
+    const fileDescriptions: FileDescriptions = { 'foo.js': { mutate: true }, 'foo.spec.js': { mutate: false } };
+    project = new Project(fsTestDouble, fileDescriptions);
     concurrencyTokenProviderMock = createConcurrencyTokenProviderMock();
     checkerPoolMock = createCheckerPoolMock();
 
     instrumentResult = {
-      files: [mutatedFile],
+      files: [{ name: 'foo.js', content: 'console.log(global.activeMutant === 1? "": "bar")', mutate: true }],
       mutants: [factory.mutant({ id: '1', replacement: 'bar' })],
     };
     sandboxMock = sinon.createStubInstance(Sandbox);
@@ -43,10 +42,9 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxFilePreprocessorMock = {
       preprocess: sinon.stub(),
     };
-    sandboxFilePreprocessorMock.preprocess.resolves([mutatedFile, testFile]);
-    inputFiles = new InputFileCollection([originalFile, testFile], [mutatedFile.name], []);
+    sandboxFilePreprocessorMock.preprocess.resolves();
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
-    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, inputFiles, testInjector.options);
+    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, project, testInjector.options);
     injectorMock.injectFunction.withArgs(createInstrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.resolve.withArgs(coreTokens.sandbox).returns(sandboxMock);
@@ -62,8 +60,12 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, mutationRanges: [] };
-    expect(instrumenterMock.instrument).calledOnceWithExactly([originalFile], expectedInstrumenterOptions);
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator };
+    sinon.assert.calledOnceWithExactly(
+      instrumenterMock.instrument,
+      [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
+      expectedInstrumenterOptions
+    );
   });
 
   it('result in the new injector', async () => {
@@ -73,14 +75,8 @@ describe(MutantInstrumenterExecutor.name, () => {
 
   it('should preprocess files before initializing the sandbox', async () => {
     await sut.execute();
-    expect(sandboxFilePreprocessorMock.preprocess).calledWithExactly([mutatedFile, testFile]);
+    expect(sandboxFilePreprocessorMock.preprocess).calledWithExactly(project);
     expect(sandboxFilePreprocessorMock.preprocess).calledBefore(sandboxMock.init);
-  });
-
-  it('should provide the mutated files to the sandbox', async () => {
-    await sut.execute();
-    expect(injectorMock.provideValue).calledWithExactly(coreTokens.files, [mutatedFile, testFile]);
-    expect(injectorMock.provideValue.withArgs(coreTokens.files, sinon.match.any)).calledBefore(sandboxMock.init);
   });
 
   it('should provide checkerToken$ to the checker pool', async () => {

@@ -66,3 +66,8 @@ function stryMutAct_9fa48(id) {
 const a = stryMutAct_9fa48(\\"0\\") ? 1 - 1 : (stryCov_9fa48(\\"0\\"), 1 + 1);
 const b = stryMutAct_9fa48(\\"1\\") ? 1 + 1 : (stryCov_9fa48(\\"1\\"), 1 - 1);"
 `;
+
+exports[`instrumenter integration with mutation ranges should not make any mutations in a file with mutate = [] 1`] = `
+"const a = 1 + 1;
+const b = 1 - 1;"
+`;

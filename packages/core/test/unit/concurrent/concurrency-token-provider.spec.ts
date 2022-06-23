@@ -2,10 +2,8 @@ import os from 'os';
 
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { toArray } from 'rxjs/operators';
+import { lastValueFrom, toArray } from 'rxjs';
 import { testInjector } from '@stryker-mutator/test-helpers';
-
-import { lastValueFrom } from 'rxjs';
 
 import { ConcurrencyTokenProvider } from '../../../src/concurrent/index.js';
 import { createCpuInfo } from '../../helpers/producers.js';

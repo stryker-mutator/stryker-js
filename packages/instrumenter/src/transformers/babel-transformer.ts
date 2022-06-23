@@ -27,16 +27,13 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
-  { options },
+  { options, mutateDescription },
   mutators = allMutators,
   mutantPlacers = allMutantPlacers
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
-
-  // Range filters that are in scope for the current file
-  const mutantRangesForCurrentFile = options.mutationRanges.filter((mutantRange) => mutantRange.fileName === originFileName);
 
   // Create a placementMap for the mutation switching bookkeeping
   const placementMap: PlacementMap = new Map();
@@ -65,7 +62,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         path.skip();
       } else {
         addToPlacementMapIfPossible(path);
-        if (!mutantRangesForCurrentFile.length || mutantRangesForCurrentFile.some((range) => locationIncluded(range, path.node.loc!))) {
+        if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
           if (mutantsToPlace.length) {
             registerInPlacementMap(path, mutantsToPlace);
@@ -124,7 +121,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       isTypeNode(path) ||
       isImportDeclaration(path) ||
       path.isDecorator() ||
-      (mutantRangesForCurrentFile.length && mutantRangesForCurrentFile.every((range) => !locationOverlaps(range, path.node.loc!)))
+      !mutateDescription ||
+      (Array.isArray(mutateDescription) && mutateDescription.every((range) => !locationOverlaps(range, path.node.loc!)))
+    );
+  }
+
+  function shouldMutate(path: NodePath) {
+    return (
+      mutateDescription === true || (Array.isArray(mutateDescription) && mutateDescription.some((range) => locationIncluded(range, path.node.loc!)))
     );
   }
 
