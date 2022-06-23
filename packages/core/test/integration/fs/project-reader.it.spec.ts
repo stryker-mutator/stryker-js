@@ -2,18 +2,21 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { coreTokens } from '../../../src/di/index.js';
-import { InputFileResolver } from '../../../src/input/index.js';
+import { FileSystem, ProjectReader } from '../../../src/fs/index.js';
 import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'input-files');
 
-describe(`${InputFileResolver.name} integration`, () => {
-  let sut: InputFileResolver;
+describe(`${ProjectReader.name} integration`, () => {
+  let sut: ProjectReader;
   let originalCwd: string;
 
   beforeEach(() => {
     originalCwd = process.cwd();
-    sut = testInjector.injector.provideValue(coreTokens.reporter, factory.reporter()).injectClass(InputFileResolver);
+    sut = testInjector.injector
+      .provideClass(coreTokens.fs, FileSystem)
+      .provideValue(coreTokens.reporter, factory.reporter())
+      .injectClass(ProjectReader);
   });
 
   afterEach(() => {
@@ -22,8 +25,8 @@ describe(`${InputFileResolver.name} integration`, () => {
 
   it('should by default resolve reasonable project source files to be mutated', async () => {
     process.chdir(resolveTestResource());
-    const inputFiles = await sut.resolve();
-    expect(inputFiles.filesToMutate.map((file) => file.name)).deep.eq([
+    const project = await sut.read();
+    expect([...project.filesToMutate.keys()]).deep.eq([
       resolveTestResource('lib', 'string-utils.js'),
       resolveTestResource('src', 'app.ts'),
       resolveTestResource('src', 'components', 'calculator', 'calculator.component.tsx'),

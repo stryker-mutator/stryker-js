@@ -1,5 +1,5 @@
 import { TestRunner } from '@stryker-mutator/api/test-runner';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
@@ -16,6 +16,7 @@ import { ReloadEnvironmentDecorator } from './reload-environment-decorator.js';
 
 createTestRunnerFactory.inject = tokens(
   commonTokens.options,
+  commonTokens.fileDescriptions,
   coreTokens.sandbox,
   coreTokens.loggingContext,
   commonTokens.getLogger,
@@ -23,6 +24,7 @@ createTestRunnerFactory.inject = tokens(
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
+  fileDescriptions: FileDescriptions,
   sandbox: Pick<Sandbox, 'workingDirectory'>,
   loggingContext: LoggingClientContext,
   getLogger: LoggerFactoryMethod,
@@ -42,6 +44,7 @@ export function createTestRunnerFactory(
                     () =>
                       new ChildProcessTestRunnerProxy(
                         options,
+                        fileDescriptions,
                         sandbox.workingDirectory,
                         loggingContext,
                         pluginModulePaths,

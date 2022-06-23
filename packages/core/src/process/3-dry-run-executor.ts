@@ -25,10 +25,11 @@ import { MutationTestReportHelper } from '../reporters/mutation-test-report-help
 import { ConfigError } from '../errors.js';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
-import { InputFileCollector } from '../input/input-file-collector.js';
 import { MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
+
+import { objectUtils } from '../utils/object-utils.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
@@ -40,7 +41,6 @@ export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.mutants]: readonly Mutant[];
   [coreTokens.checkerPool]: I<Pool<I<CheckerFacade>>>;
   [coreTokens.concurrencyTokenProvider]: I<ConcurrencyTokenProvider>;
-  [coreTokens.inputFiles]: InputFileCollector;
 }
 
 function isFailedTest(testResult: TestResult): testResult is FailedTestResult {
@@ -74,7 +74,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.timeDryRun(testRunner)));
+    const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.executeDryRun(testRunner)));
 
     this.logInitialTestRunSucceeded(result.tests, timing);
     if (!result.tests.length) {
@@ -107,10 +107,10 @@ export class DryRunExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private async timeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
+  private async executeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
-    const inputFiles = this.injector.resolve(coreTokens.inputFiles);
-    const dryRunFiles = inputFiles.filesToMutate.map((file) => this.sandbox.sandboxFileFor(file.name));
+    const project = this.injector.resolve(coreTokens.project);
+    const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) => this.sandbox.sandboxFileFor(name));
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`

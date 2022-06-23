@@ -129,7 +129,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   });
 
   it('should still shutdown the child process, even when test runner dispose rejects', async () => {
-    arrangeSut('errored');
+    await arrangeSut('errored');
     await sut.dispose?.();
   });
 

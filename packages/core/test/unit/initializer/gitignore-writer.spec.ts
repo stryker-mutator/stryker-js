@@ -28,9 +28,9 @@ describe(GitignoreWriter.name, () => {
   });
 
   describe('addStrykerTempFolder', () => {
-    it('should check if the .gitignore file exists', () => {
+    it('should check if the .gitignore file exists', async () => {
       // Act
-      sut.addStrykerTempFolder();
+      await sut.addStrykerTempFolder();
 
       // Assert
       expect(fsExistsSync).calledOnceWith(GITIGNORE_FILE);
@@ -78,9 +78,9 @@ describe(GitignoreWriter.name, () => {
         fsExistsSync.returns(false);
       });
 
-      it('should output a message to inform the user to change their .gitignore file', () => {
+      it('should output a message to inform the user to change their .gitignore file', async () => {
         // Act
-        sut.addStrykerTempFolder();
+        await sut.addStrykerTempFolder();
 
         // Assert
         expect(out).calledWithExactly('No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp');

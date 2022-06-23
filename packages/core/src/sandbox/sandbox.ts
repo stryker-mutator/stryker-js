@@ -1,5 +1,4 @@
 import path from 'path';
-import { promises as fsPromises } from 'fs';
 
 import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
@@ -7,26 +6,37 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 import { normalizeWhitespaces, I } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
-import { mergeMap, toArray } from 'rxjs/operators';
-import { from, lastValueFrom } from 'rxjs';
 
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
-import { MAX_CONCURRENT_FILE_IO, fileUtils } from '../utils/file-utils.js';
+import { fileUtils } from '../utils/file-utils.js';
 import { coreTokens } from '../di/index.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
-import { File } from '../fs/index.js';
+import { ProjectFile } from '../fs/index.js';
+import { Project } from '../fs/project.js';
+import { objectUtils } from '../utils/index.js';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();
+
+  /**
+   * The working directory for this sandbox
+   * Either an actual sandbox directory, or the cwd when running in --inPlace mode
+   */
   public readonly workingDirectory: string;
+  /**
+   * The backup directory when running in --inPlace mode
+   */
   private readonly backupDirectory: string = '';
-  private readonly tempDirectoryName: string;
+  /**
+   * The sandbox dir or the backup dir when running in `--inPlace` mode
+   */
+  private readonly tempDirectory: string;
 
   public static readonly inject = tokens(
     commonTokens.options,
     commonTokens.logger,
     coreTokens.temporaryDirectory,
-    coreTokens.files,
+    coreTokens.project,
     coreTokens.execa,
     coreTokens.unexpectedExitRegistry
   );
@@ -35,14 +45,14 @@ export class Sandbox implements Disposable {
     private readonly options: StrykerOptions,
     private readonly log: Logger,
     private readonly temporaryDirectory: I<TemporaryDirectory>,
-    private readonly files: readonly File[],
+    private readonly project: Project,
     private readonly execCommand: typeof execaCommand,
     unexpectedExitHandler: I<UnexpectedExitHandler>
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
       this.backupDirectory = temporaryDirectory.getRandomDirectory('backup');
-      this.tempDirectoryName = this.backupDirectory;
+      this.tempDirectory = this.backupDirectory;
       this.log.info(
         'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
         path.relative(process.cwd(), this.backupDirectory)
@@ -50,13 +60,13 @@ export class Sandbox implements Disposable {
       unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
     } else {
       this.workingDirectory = temporaryDirectory.getRandomDirectory('sandbox');
-      this.tempDirectoryName = this.workingDirectory;
+      this.tempDirectory = this.workingDirectory;
       this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     }
   }
 
   public async init(): Promise<void> {
-    await this.temporaryDirectory.createDirectory(this.tempDirectoryName);
+    await this.temporaryDirectory.createDirectory(this.tempDirectory);
     await this.fillSandbox();
     await this.runBuildCommand();
     await this.symlinkNodeModulesIfNeeded();
@@ -74,12 +84,8 @@ export class Sandbox implements Disposable {
     return path.resolve(sandboxFileName).replace(this.workingDirectory, process.cwd());
   }
 
-  private fillSandbox(): Promise<void[]> {
-    const files$ = from(this.files).pipe(
-      mergeMap((file) => this.fillFile(file), MAX_CONCURRENT_FILE_IO),
-      toArray()
-    );
-    return lastValueFrom(files$);
+  private async fillSandbox(): Promise<void> {
+    await Promise.all(objectUtils.map(this.project.files, (file, name) => this.sandboxFile(name, file)));
   }
 
   private async runBuildCommand() {
@@ -121,25 +127,23 @@ export class Sandbox implements Disposable {
     }
   }
 
-  private async fillFile(file: File): Promise<void> {
-    const relativePath = path.relative(process.cwd(), file.name);
+  /**
+   * Sandboxes a file (writes it to the sandbox). Either in-place, or an actual sandbox directory.
+   * @param name The name of the file
+   * @param file The file reference
+   */
+  private async sandboxFile(name: string, file: ProjectFile): Promise<void> {
     if (this.options.inPlace) {
-      this.fileMap.set(file.name, file.name);
-      const originalContent = await fsPromises.readFile(file.name);
-      if (!originalContent.equals(file.content)) {
+      if (file.hasChanges) {
         // File is changed (either mutated or by a preprocessor), make a backup and replace in-place
-        const backupFileName = path.join(this.backupDirectory, relativePath);
-        await fileUtils.mkdirp(path.dirname(backupFileName));
-        await fsPromises.writeFile(backupFileName, originalContent);
+        const backupFileName = await file.backupTo(this.backupDirectory);
         this.log.debug('Stored backup file at %s', backupFileName);
-        await fsPromises.writeFile(file.name, file.content);
+        await file.writeInPlace();
       }
+      this.fileMap.set(name, name);
     } else {
-      const folderName = path.join(this.workingDirectory, path.dirname(relativePath));
-      await fileUtils.mkdirp(folderName);
-      const targetFileName = path.join(folderName, path.basename(relativePath));
-      this.fileMap.set(file.name, targetFileName);
-      await fsPromises.writeFile(targetFileName, file.content);
+      const targetFileName = await file.writeToSandbox(this.workingDirectory);
+      this.fileMap.set(name, targetFileName);
     }
   }
 

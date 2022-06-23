@@ -1,4 +1,4 @@
-import { StrykerOptions } from '../core/index.js';
+import { FileDescriptions, StrykerOptions } from '../core/index.js';
 import { Logger, LoggerFactoryMethod } from '../logging/index.js';
 
 import { commonTokens } from './tokens.js';
@@ -17,5 +17,5 @@ export interface BaseContext {
  */
 export interface PluginContext extends BaseContext {
   [commonTokens.options]: StrykerOptions;
-  [commonTokens.inputFiles]: 
+  [commonTokens.fileDescriptions]: FileDescriptions;
 }

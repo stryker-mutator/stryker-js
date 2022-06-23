@@ -89,7 +89,7 @@ export class StrykerInitializer {
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
     if (presetConfig.additionalConfigFiles) {
-      await Promise.all(presetConfig.additionalConfigFiles.map(({ name, content }) => fsPromises.writeFile(name, content)));
+      await Promise.all(Object.entries(presetConfig.additionalConfigFiles).map(([name, content]) => fsPromises.writeFile(name, content)));
     }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);

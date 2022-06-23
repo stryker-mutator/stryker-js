@@ -11,8 +11,8 @@ import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/ap
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
-import { InputFileCollector } from '../input/index.js';
 import { objectUtils } from '../utils/object-utils.js';
+import { Project } from '../fs/project.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',
@@ -32,7 +32,7 @@ export class MutationTestReportHelper {
   public static inject = tokens(
     coreTokens.reporter,
     commonTokens.options,
-    coreTokens.inputFiles,
+    coreTokens.project,
     commonTokens.logger,
     coreTokens.dryRunResult,
     coreTokens.requireFromCwd
@@ -41,7 +41,7 @@ export class MutationTestReportHelper {
   constructor(
     private readonly reporter: Required<Reporter>,
     private readonly options: StrykerOptions,
-    private readonly inputFiles: InputFileCollector,
+    private readonly project: Project,
     private readonly log: Logger,
     private readonly dryRunResult: CompleteDryRunResult,
     private readonly requireFromCwd: typeof requireResolve
@@ -106,8 +106,8 @@ export class MutationTestReportHelper {
     }
   }
 
-  public reportAll(results: MutantResult[]): void {
-    const report = this.mutationTestReport(results);
+  public async reportAll(results: MutantResult[]): Promise<void> {
+    const report = await this.mutationTestReport(results);
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report, metrics);
@@ -133,7 +133,7 @@ export class MutationTestReportHelper {
     }
   }
 
-  private mutationTestReport(results: readonly MutantResult[]): schema.MutationTestResult {
+  private async mutationTestReport(results: readonly MutantResult[]): Promise<schema.MutationTestResult> {
     // Mocha, jest and karma use test titles as test ids.
     // This can mean a lot of duplicate strings in the json report.
     // Therefore we remap the test ids here to numbers.
@@ -142,10 +142,10 @@ export class MutationTestReportHelper {
     const remapTestIds = (ids: string[] | undefined): string[] | undefined => ids?.map(remapTestId);
 
     return {
-      files: this.toFileResults(results, remapTestIds),
+      files: await this.toFileResults(results, remapTestIds),
       schemaVersion: '1.0',
       thresholds: this.options.thresholds,
-      testFiles: this.toTestFiles(remapTestId),
+      testFiles: await this.toTestFiles(remapTestId),
       projectRoot: process.cwd(),
       config: this.options,
       framework: {
@@ -155,36 +155,50 @@ export class MutationTestReportHelper {
     };
   }
 
-  private toFileResults(
+  private async toFileResults(
     results: readonly MutantResult[],
     remapTestIds: (ids: string[] | undefined) => string[] | undefined
-  ): schema.FileResultDictionary {
+  ): Promise<schema.FileResultDictionary> {
+    const fileResultsByName = new Map<string, schema.FileResult>(
+      await Promise.all(
+        [...new Set(results.map(({ fileName }) => fileName))].map(async (fileName) => [fileName, await this.toFileResult(fileName)] as const)
+      )
+    );
+
     return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
-      const fileResult = acc[mutantResult.fileName] ?? (acc[mutantResult.fileName] = this.toFileResult(mutantResult.fileName));
+      const fileResult = acc[mutantResult.fileName] ?? (acc[mutantResult.fileName] = fileResultsByName.get(mutantResult.fileName)!);
       fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
       return acc;
     }, {});
   }
 
-  private toTestFiles(remapTestId: (id: string) => string): schema.TestFileDefinitionDictionary {
+  private async toTestFiles(remapTestId: (id: string) => string): Promise<schema.TestFileDefinitionDictionary> {
+    const testResultsByName = new Map<string, schema.TestFile>(
+      await Promise.all(
+        [...new Set(this.dryRunResult.tests.map(({ fileName }) => fileName))].map(
+          async (fileName) => [fileName ?? '', await this.toTestFile(fileName)] as const
+        )
+      )
+    );
+
     return this.dryRunResult.tests.reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
       const fileName = testResult.fileName ?? ''; // by default we accumulate tests under the '' key
-      const testFile = acc[fileName] ?? (acc[fileName] = this.toTestFile(fileName));
+      const testFile = acc[fileName] ?? (acc[fileName] = testResultsByName.get(fileName)!);
       testFile.tests.push(test);
       return acc;
     }, {});
   }
 
-  private toFileResult(fileName: string): schema.FileResult {
+  private async toFileResult(fileName: string): Promise<schema.FileResult> {
     const fileResult: schema.FileResult = {
       language: this.determineLanguage(fileName),
       mutants: [],
       source: '',
     };
-    const sourceFile = this.inputFiles.files.find((file) => file.name === fileName);
+    const sourceFile = this.project.files.get(fileName);
     if (sourceFile) {
-      fileResult.source = sourceFile.textContent;
+      fileResult.source = await sourceFile.readOriginal();
     } else {
       this.log.warn(
         normalizeWhitespaces(`File "${fileName}" not found
@@ -194,12 +208,12 @@ export class MutationTestReportHelper {
     return fileResult;
   }
 
-  private toTestFile(fileName: string | undefined): schema.TestFile {
+  private async toTestFile(fileName: string | undefined): Promise<schema.TestFile> {
     const testFile: schema.TestFile = { tests: [] };
     if (fileName) {
-      const sourceFile = this.inputFiles.files.find((file) => file.name === fileName);
-      if (sourceFile) {
-        testFile.source = sourceFile.textContent;
+      const file = this.project.files.get(fileName);
+      if (file) {
+        testFile.source = await file.readOriginal();
       } else {
         this.log.warn(
           normalizeWhitespaces(`Test file "${fileName}" not found

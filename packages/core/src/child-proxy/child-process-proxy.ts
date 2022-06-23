@@ -2,7 +2,7 @@ import childProcess from 'child_process';
 import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { isErrnoException, Task, ExpirableTask, StrykerError } from '@stryker-mutator/util';
 import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
@@ -48,6 +48,7 @@ export class ChildProcessProxy<T> implements Disposable {
     namedExport: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
+    fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     workingDirectory: string,
     execArgv: string[]
@@ -63,6 +64,7 @@ export class ChildProcessProxy<T> implements Disposable {
       kind: WorkerMessageKind.Init,
       loggingContext,
       options,
+      fileDescriptions,
       pluginModulePaths,
       namedExport: namedExport,
       modulePath: modulePath,
@@ -81,12 +83,22 @@ export class ChildProcessProxy<T> implements Disposable {
     modulePath: string,
     loggingContext: LoggingClientContext,
     options: StrykerOptions,
+    fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     workingDirectory: string,
     injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
     execArgv: string[]
   ): ChildProcessProxy<R> {
-    return new ChildProcessProxy(modulePath, injectableClass.name, loggingContext, options, pluginModulePaths, workingDirectory, execArgv);
+    return new ChildProcessProxy(
+      modulePath,
+      injectableClass.name,
+      loggingContext,
+      options,
+      fileDescriptions,
+      pluginModulePaths,
+      workingDirectory,
+      execArgv
+    );
   }
 
   private send(message: WorkerMessage) {
@@ -162,7 +174,7 @@ export class ChildProcessProxy<T> implements Disposable {
         case ParentMessageKind.InitError:
           this.fatalError = new StrykerError(message.error);
           this.reportError(this.fatalError);
-          this.dispose();
+          void this.dispose();
           break;
         default:
           this.logUnidentifiedMessage(message);

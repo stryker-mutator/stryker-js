@@ -1,6 +1,5 @@
 import inquirer from 'inquirer';
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { File } from '@stryker-mutator/util';
 
 import { Preset } from './preset.js';
 import { PresetConfiguration } from './preset-configuration.js';
@@ -66,12 +65,10 @@ export class VueJsPreset implements Preset {
     }
   }
 
-  private getAdditionalConfigFiles(testRunner: string): File[] | undefined {
+  private getAdditionalConfigFiles(testRunner: string): Record<string, string> | undefined {
     if (testRunner === 'mocha') {
-      return [
-        new File(
-          'webpack.config.stryker.js',
-          `
+      return {
+        'webpack.config.stryker.js': `
 const glob = require('glob');
 
 // Set env
@@ -90,12 +87,10 @@ conf.entry = {
 };
 
 module.exports = conf;
-`
-        ),
-      ];
-    } else {
-      return;
+`,
+      };
     }
+    return;
   }
 
   private createDependencies(testRunner: string): string[] {

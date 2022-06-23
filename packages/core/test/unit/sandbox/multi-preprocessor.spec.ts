@@ -1,30 +1,28 @@
 import sinon from 'sinon';
-import { File } from '@stryker-mutator/util';
-import { expect } from 'chai';
 
 import { MultiPreprocessor } from '../../../src/sandbox/multi-preprocessor.js';
 import { FilePreprocessor } from '../../../src/sandbox/index.js';
+import { Project } from '../../../src/fs/project.js';
+import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 
 describe(MultiPreprocessor.name, () => {
   describe(MultiPreprocessor.prototype.preprocess.name, () => {
     it('should call preprocess on each preprocessor in order', async () => {
       // Arrange
-      const input = [new File('foo.js', 'input')];
-      const firstResult = [new File('foo.js', 'first')];
-      const secondResult = [new File('foo.js', 'second')];
+      const project = new Project(new FileSystemTestDouble({}), {});
       const first = createFilePreprocessorMock();
       const second = createFilePreprocessorMock();
-      first.preprocess.resolves(firstResult);
-      second.preprocess.resolves(secondResult);
+      first.preprocess.resolves();
+      second.preprocess.resolves();
       const sut = new MultiPreprocessor([first, second]);
 
       // Act
-      const actual = await sut.preprocess(input);
+      await sut.preprocess(project);
 
       // Assert
-      expect(actual).eq(secondResult);
-      expect(first.preprocess).calledWith(input);
-      expect(second.preprocess).calledWith(firstResult);
+      sinon.assert.calledOnceWithExactly(first.preprocess, project);
+      sinon.assert.calledOnceWithExactly(second.preprocess, project);
+      sinon.assert.callOrder(first.preprocess, second.preprocess);
     });
   });
 

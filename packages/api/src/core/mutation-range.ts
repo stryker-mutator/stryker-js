@@ -12,5 +12,5 @@ export interface MutationRange {
   /**
    * The end of the range to instrument, by line and number, inclusive
    */
-  end?: Position;
+  end: Position;
 }

@@ -107,7 +107,7 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      sut.dryRun();
+      await sut.dryRun();
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
@@ -123,7 +123,7 @@ describe(CommandTestRunner.name, () => {
     it('should not kill anything if running process was already resolved', async () => {
       const sut = createSut();
       await actDryRun(sut);
-      sut.dispose();
+      await sut.dispose();
       expect(killStub).not.called;
     });
   });

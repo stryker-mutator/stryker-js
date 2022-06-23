@@ -23,7 +23,7 @@ import { CheckResult, FailedCheckResult, CheckStatus } from '@stryker-mutator/ap
  */
 interface File {
   name: string;
-  textContent: string;
+  content: string;
 }
 
 export function expectKilled(result: MutantRunResult): asserts result is KilledMutantRunResult {
@@ -67,7 +67,7 @@ export function expectTextFilesEqual(actual: readonly File[], expected: readonly
 function fileToJson(file: File) {
   return {
     name: file.name,
-    textContent: file.textContent,
+    content: file.content,
   };
 }
 

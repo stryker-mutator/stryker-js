@@ -4,13 +4,12 @@ import { Task } from '@stryker-mutator/util';
 import { mergeMap, Subject } from 'rxjs';
 import { Disposable } from 'typed-inject';
 
-import { MAX_CONCURRENT_FILE_IO } from '../utils/file-utils';
+const MAX_CONCURRENT_FILE_IO = 256;
 
 class FileSystemAction<TOut> {
-  private readonly task = new Task<TOut>();
+  public readonly task = new Task<TOut>();
 
   /**
-   * @param input The input to the ask
    * @param work The task, where a resource and input is presented
    */
   constructor(private readonly work: () => Promise<TOut>) {}
@@ -25,6 +24,11 @@ class FileSystemAction<TOut> {
   }
 }
 
+/**
+ * A wrapper around nodejs's 'fs' core module, for dependency injection purposes.
+ *
+ * Also has but with build-in buffering with a concurrency limit (like graceful-fs).
+ */
 export class FileSystem implements Disposable {
   private readonly todoSubject = new Subject<FileSystemAction<any>>();
   private readonly subscription = this.todoSubject
@@ -35,15 +39,21 @@ export class FileSystem implements Disposable {
     )
     .subscribe();
 
-  public async dispose(): Promise<void> {
+  public dispose(): void {
     this.subscription.unsubscribe();
   }
 
   public readonly readFile = this.forward('readFile');
   public readonly copyFile = this.forward('copyFile');
   public readonly writeFile = this.forward('writeFile');
+  public readonly mkdir = this.forward('mkdir');
+  public readonly readdir = this.forward('readdir');
 
   private forward<TMethod extends keyof typeof fs.promises>(method: TMethod): typeof fs.promises[TMethod] {
-    return (...args: any[]) => this.todoSubject.next(new FileSystemAction(() => (fs.promises[method] as any)(...args))) as any;
+    return (...args: any[]) => {
+      const action = new FileSystemAction(() => (fs.promises[method] as any)(...args));
+      this.todoSubject.next(action);
+      return action.task.promise as any;
+    };
   }
 }

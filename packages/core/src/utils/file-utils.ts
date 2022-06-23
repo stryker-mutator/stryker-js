@@ -2,24 +2,19 @@ import path from 'path';
 import fs from 'fs';
 import { promisify } from 'util';
 
-import mkdirpModule from 'mkdirp';
 import rimraf from 'rimraf';
 import { isErrnoException } from '@stryker-mutator/util';
 
-export const MAX_CONCURRENT_FILE_IO = 256;
-
 export const fileUtils = {
-  mkdirp: mkdirpModule,
-
   deleteDir: promisify(rimraf),
 
   async cleanFolder(folderName: string): Promise<string | undefined> {
     try {
       await fs.promises.lstat(folderName);
       await this.deleteDir(folderName);
-      return fileUtils.mkdirp(folderName);
+      return fs.promises.mkdir(folderName, { recursive: true });
     } catch (e) {
-      return fileUtils.mkdirp(folderName);
+      return fs.promises.mkdir(folderName, { recursive: true });
     }
   },
 

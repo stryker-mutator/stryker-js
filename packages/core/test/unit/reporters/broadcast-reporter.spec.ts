@@ -72,23 +72,27 @@ describe(BroadcastReporter.name, () => {
       sut = createSut();
     });
 
-    it('should forward "onDryRunCompleted"', () => {
-      actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
+    it('should forward "onDryRunCompleted"', async () => {
+      await actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
     });
-    it('should forward "onMutationTestingPlanReady"', () => {
-      actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
+    it('should forward "onMutationTestingPlanReady"', async () => {
+      await actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
     });
-    it('should forward "onMutantTested"', () => {
-      actAssertShouldForward('onMutantTested', factory.mutantResult());
+    it('should forward "onMutantTested"', async () => {
+      await actAssertShouldForward('onMutantTested', factory.mutantResult());
     });
-    it('should forward "onAllMutantsTested"', () => {
-      actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
+    it('should forward "onAllMutantsTested"', async () => {
+      await actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
     });
-    it('should forward "onMutationTestReportReady"', () => {
-      actAssertShouldForward('onMutationTestReportReady', factory.mutationTestReportSchemaMutationTestResult(), factory.mutationTestMetricsResult());
+    it('should forward "onMutationTestReportReady"', async () => {
+      await actAssertShouldForward(
+        'onMutationTestReportReady',
+        factory.mutationTestReportSchemaMutationTestResult(),
+        factory.mutationTestMetricsResult()
+      );
     });
-    it('should forward "wrapUp"', () => {
-      actAssertShouldForward('wrapUp');
+    it('should forward "wrapUp"', async () => {
+      await actAssertShouldForward('wrapUp');
     });
 
     describe('when "wrapUp" returns promises', () => {
@@ -142,27 +146,27 @@ describe(BroadcastReporter.name, () => {
         factory.ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
       });
 
-      it('should still broadcast "onDryRunCompleted"', () => {
-        actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
+      it('should still broadcast "onDryRunCompleted"', async () => {
+        await actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
       });
-      it('should still broadcast "onMutationTestingPlanReady"', () => {
-        actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
+      it('should still broadcast "onMutationTestingPlanReady"', async () => {
+        await actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
       });
-      it('should still broadcast "onMutantTested"', () => {
-        actAssertShouldForward('onMutantTested', factory.mutantResult());
+      it('should still broadcast "onMutantTested"', async () => {
+        await actAssertShouldForward('onMutantTested', factory.mutantResult());
       });
-      it('should still broadcast "onAllMutantsTested"', () => {
-        actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
+      it('should still broadcast "onAllMutantsTested"', async () => {
+        await actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
       });
-      it('should still broadcast "onMutationTestReportReady"', () => {
-        actAssertShouldForward(
+      it('should still broadcast "onMutationTestReportReady"', async () => {
+        await actAssertShouldForward(
           'onMutationTestReportReady',
           factory.mutationTestReportSchemaMutationTestResult(),
           factory.mutationTestMetricsResult()
         );
       });
-      it('should still broadcast "wrapUp"', () => {
-        actAssertShouldForward('wrapUp');
+      it('should still broadcast "wrapUp"', async () => {
+        await actAssertShouldForward('wrapUp');
       });
 
       it('should log each error', () => {
@@ -190,8 +194,8 @@ describe(BroadcastReporter.name, () => {
     process.stdout.isTTY = val;
   }
 
-  function actAssertShouldForward<TMethod extends keyof Reporter>(method: TMethod, ...input: Parameters<Required<Reporter>[TMethod]>) {
-    (sut[method] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)(...input);
+  async function actAssertShouldForward<TMethod extends keyof Reporter>(method: TMethod, ...input: Parameters<Required<Reporter>[TMethod]>) {
+    await (sut[method] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)(...input);
     expect(rep1[method]).calledWithExactly(...input);
     expect(rep2[method]).calledWithExactly(...input);
   }

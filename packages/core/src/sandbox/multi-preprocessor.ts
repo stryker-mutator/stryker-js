@@ -1,14 +1,13 @@
-import { File } from '@stryker-mutator/util';
+import { Project } from '../fs/project.js';
 
 import { FilePreprocessor } from './file-preprocessor.js';
 
 export class MultiPreprocessor implements FilePreprocessor {
   constructor(private readonly preprocessors: FilePreprocessor[]) {}
 
-  public async preprocess(files: File[]): Promise<File[]> {
+  public async preprocess(project: Project): Promise<void> {
     for await (const preprocessor of this.preprocessors) {
-      files = await preprocessor.preprocess(files);
+      await preprocessor.preprocess(project);
     }
-    return files;
   }
 }
