@@ -107,7 +107,7 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      await sut.dryRun();
+      void sut.dryRun();
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
