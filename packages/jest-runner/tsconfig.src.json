@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "skipLibCheck": true
   },
   "include": ["src", "src-generated", "typings", "schema/*.json"],
   "exclude": ["src/jest-plugins/cjs"],

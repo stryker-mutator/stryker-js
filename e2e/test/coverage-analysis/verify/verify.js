@@ -89,10 +89,7 @@ describe('Coverage analysis', () => {
       beforeEach(() => {
         karmaConfigOverrides.frameworks = ['chai', 'jasmine'];
       });
-      describeTests({
-        perTest: 22,
-        ignoreStatic: 20,
-      });
+      describeTests();
     });
   });
 

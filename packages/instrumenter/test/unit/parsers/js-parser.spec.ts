@@ -27,6 +27,7 @@ describe('js-parser', () => {
       itShouldSupportAst('import-meta', 'console.log(import.meta);', (t) => t.isMetaProperty());
       itShouldSupportAst('big-int', 'const theBiggestInt = 9007199254740991n', (t) => t.isBigIntLiteral());
       itShouldSupportAst('logical-assignment-operators', 'a &&= b;', (t) => t.isAssignmentExpression() && t.node.operator === '&&=');
+      itShouldSupportAst('jsx', '<h1>The car has { 2 + 2 } wheels</h1>', (t) => t.isJSXExpressionContainer());
     });
 
     describe('with experimental features', () => {

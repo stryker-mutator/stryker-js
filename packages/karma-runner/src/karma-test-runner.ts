@@ -31,6 +31,7 @@ const MIN_KARMA_VERSION = '6.3.0';
 export class KarmaTestRunner implements TestRunner {
   private exitPromise: Promise<number> | undefined;
   private runConfig!: Config;
+  private isDisposed = false;
 
   public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options, pluginTokens.projectStarter);
   constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions, private readonly starter: ProjectStarter) {
@@ -57,9 +58,11 @@ export class KarmaTestRunner implements TestRunner {
     this.exitPromise = exitPromise;
     const maybeExitCode = await Promise.race([browsersReadyPromise, exitPromise]);
     if (typeof maybeExitCode === 'number') {
-      throw new Error(
-        `Karma exited prematurely with exit code ${maybeExitCode}. Please run stryker with \`--logLevel trace\` to see the karma logging and figure out what's wrong.`
-      );
+      if (!this.isDisposed) {
+        throw new Error(
+          `Karma exited prematurely with exit code ${maybeExitCode}. Please run stryker with \`--logLevel trace\` to see the karma logging and figure out what's wrong.`
+        );
+      }
     } else {
       // Create new run config. Older versions of karma will always parse the config again when you provide it in `karma.runner.run
       // which results in the karma config file being executed again, which has very bad side effects (all files would be loaded twice and such)
@@ -90,6 +93,7 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
+    this.isDisposed = true;
     if (StrykerReporter.instance.karmaServer) {
       await StrykerReporter.instance.karmaServer.stop();
       await this.exitPromise;

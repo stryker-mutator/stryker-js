@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/cucumber-runner",
-  "version": "6.0.0-beta.0",
+  "version": "6.0.2",
   "description": "A plugin to use the cucumber test runner in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "type": "module",
@@ -34,16 +34,16 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "^7.3.0",
-    "@stryker-mutator/test-helpers": "6.0.0-beta.0"
+    "@cucumber/cucumber": "7.3.2",
+    "@stryker-mutator/test-helpers": "6.0.2"
   },
   "peerDependencies": {
     "@cucumber/cucumber": "^7.2.0",
-    "@stryker-mutator/core": "~6.0.0-beta.0"
+    "@stryker-mutator/core": "~6.0.0"
   },
   "dependencies": {
-    "@cucumber/messages": "^17.0.0",
-    "@stryker-mutator/api": "6.0.0-beta.0",
-    "@stryker-mutator/util": "6.0.0-beta.0"
+    "@cucumber/messages": "^19.0.0",
+    "@stryker-mutator/api": "6.0.2",
+    "@stryker-mutator/util": "6.0.2"
   }
 }

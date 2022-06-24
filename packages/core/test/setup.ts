@@ -9,7 +9,8 @@ chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
 export const mochaHooks = {
-  afterEach(): void {
+  async afterEach(): Promise<void> {
+    await testInjector.injector.dispose();
     sinon.restore();
     testInjector.reset();
   },

@@ -1,35 +1,33 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { Breadcrumb } from '../';
 
 describe('Breadcrumb', () => {
   it('should render children', () => {
-    const wrapper = shallow(<Breadcrumb>Yo!</Breadcrumb>);
+    const { container } = render(<Breadcrumb>Yo!</Breadcrumb>);
 
-    expect(wrapper.text()).toBe('Yo!');
+    expect(container.querySelector('ol').innerHTML).toBe('Yo!');
   });
 
   it('should render "nav" by default', () => {
-    const wrapper = shallow(<Breadcrumb>Yo!</Breadcrumb>);
-
-    expect(wrapper.type()).toBe('nav');
+    render(<Breadcrumb>Yo!</Breadcrumb>);
+    expect(screen.getByTestId('breadcrumb').nodeName).toBe('NAV');
   });
 
   it('should render "ol" by default', () => {
-    const wrapper = shallow(<Breadcrumb>Yo!</Breadcrumb>);
-
-    expect(wrapper.children().type()).toBe('ol');
+    render(<Breadcrumb>Yo!</Breadcrumb>);
+    expect(screen.getByTestId('breadcrumb').firstChild.nodeName).toBe('OL');
   });
 
   it('should render with the "breadcrumb" class', () => {
-    const wrapper = shallow(<Breadcrumb>Default Breadcrumb</Breadcrumb>);
-
-    expect(wrapper.children().hasClass('breadcrumb')).toBe(true);
+    render(<Breadcrumb>Default Breadcrumb</Breadcrumb>);
+    const sut = screen.getByTestId('breadcrumb');
+    expect(sut.firstChild.classList.contains('breadcrumb')).toBe(true);
   });
 
   it('should render custom tag', () => {
-    const wrapper = shallow(<Breadcrumb tag="main">Yo!</Breadcrumb>);
-
-    expect(wrapper.type()).toBe('main');
+    render(<Breadcrumb tag="main">Yo!</Breadcrumb>);
+    const sut = screen.getByTestId('breadcrumb');
+    expect(sut.nodeName).toBe('MAIN');
   });
 });

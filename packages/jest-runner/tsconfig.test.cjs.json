@@ -6,7 +6,8 @@
     "outDir": "dist",
     "rootDir": ".",
     "module": "commonjs",
-    "types": ["mocha", "node"]
+    "types": ["mocha", "node"],
+    "skipLibCheck": true
   },
   "include": ["test/unit/jest-plugins/cjs", "test/unit/jest-plugins/cjs/package.json", "typings"],
   "references": [

@@ -1,6 +1,5 @@
 import Ajv from 'ajv';
 import {
-  File,
   Location,
   MutationScoreThresholds,
   StrykerOptions,
@@ -74,6 +73,7 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
   preprocessorErrors: true,
   unserializableOptions: true,
+  slow: true,
 }));
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
@@ -195,8 +195,9 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testRunner(): sinon.SinonStubbedInstance<Required<TestRunner>> {
+export function testRunner(index = 0): sinon.SinonStubbedInstance<Required<TestRunner> & { index: number }> {
   return {
+    index,
     capabilities: sinon.stub(),
     init: sinon.stub(),
     dryRun: sinon.stub(),
@@ -356,6 +357,7 @@ export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { st
 
 export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
   plan: PlanKind.Run,
+  netTime: 20,
   mutant: mutantTestCoverage(),
   runOptions: mutantRunOptions(),
 }));
@@ -393,10 +395,6 @@ export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>>
   injectorMock.provideFactory.returnsThis();
   injectorMock.provideValue.returnsThis();
   return injectorMock;
-}
-
-export function file(): File {
-  return new File('', '');
 }
 
 export function fileNotFoundError(): NodeJS.ErrnoException {

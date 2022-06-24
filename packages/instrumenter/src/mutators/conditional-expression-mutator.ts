@@ -1,5 +1,7 @@
 import babel, { type NodePath } from '@babel/core';
 
+import { deepCloneNode } from '../util/index.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
@@ -35,12 +37,12 @@ export const conditionalExpressionMutator: NodeMutator = {
       yield types.booleanLiteral(true);
       yield types.booleanLiteral(false);
     } else if (path.isForStatement() && !path.node.test) {
-      const replacement = types.cloneNode(path.node, /* deep */ true);
+      const replacement = deepCloneNode(path.node);
       replacement.test = types.booleanLiteral(false);
       yield replacement;
     } else if (path.isSwitchCase() && path.node.consequent.length > 0) {
       // if not a fallthrough case
-      const replacement = types.cloneNode(path.node);
+      const replacement = deepCloneNode(path.node);
       replacement.consequent = [];
       yield replacement;
     }

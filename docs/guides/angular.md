@@ -31,7 +31,7 @@ We highly suggest using a headless browser when testing using Stryker.
 ```json
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "_comment": "This config was generated using a preset. Please see website for more information: https://stryker-mutator.io/docs/guides/angular",
+  "_comment": "This config was generated using a preset. Please see website for more information: https://stryker-mutator.io/docs/stryker-js/guides/angular",
   "mutate": ["src/**/*.ts", "!src/**/*.spec.ts", "!src/test.ts", "!src/environments/*.ts"],
   "testRunner": "karma",
   "karma": {

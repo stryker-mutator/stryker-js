@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "types": ["mocha", "node"]
+    "types": ["mocha", "node"],
+    "skipLibCheck": true
   },
   "include": ["test", "typings"],
   "exclude": ["test/unit/jest-plugins/cjs"],

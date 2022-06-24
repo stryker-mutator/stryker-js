@@ -87,9 +87,6 @@
       "javascript",
       "typescript"
     ],
-    "grunt.autoDetect": "off",
-    "gulp.autoDetect": "off",
-    "jake.autoDetect": "off",
     "task.autoDetect": "off",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
@@ -97,23 +94,28 @@
     "cSpell.words": [
       "Appender",
       "Appenders",
+      "dirents",
       "Errored",
       "execa",
       "Expirable",
       "globbing",
+      "instrumenter",
       "Instrumenter",
       "memfs",
       "mutables",
       "mutators",
       "nocheck",
+      "perunage",
       "preprocessors",
       "promisified",
       "quasis",
       "serializable",
+      "stryker",
       "Unserializable",
       "Unserializables",
       "Whitespaces"
-    ]
+    ],
+    "cSpell.language": "en"
   },
   "extensions": {
     "recommendations": [

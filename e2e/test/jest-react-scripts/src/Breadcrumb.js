@@ -41,7 +41,7 @@ const Breadcrumb = (props) => {
   ), cssModule);
 
   return (
-    <Tag {...attributes} className={classes} aria-label={label}>
+    <Tag {...attributes} className={classes} aria-label={label} data-testid="breadcrumb">
       <ListTag className={listClasses}>
         {children}
       </ListTag>

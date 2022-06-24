@@ -13,7 +13,7 @@ export enum PluginKind {
 }
 ```
 
-They are loaded using the [`plugins` configuration option](../configuration#plugins-string)
+They are loaded using the [`plugins` configuration option](../configuration.md#plugins-string)
 
 Each plugin has it's own job to do. For inspiration, check out the [stryker monorepo](https://github.com/stryker-mutator/stryker-js/tree/master/packages).
 
@@ -206,4 +206,3 @@ This is type-safe. When you declare your plugin, TypedInject will validate that 
 If you have a plugin that you think other users might be able to benefit from, or you simply need some help, please let us know on [Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM). 
 
 We're always looking to promote user-created plugins 💗
-

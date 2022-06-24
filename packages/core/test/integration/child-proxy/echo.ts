@@ -1,13 +1,13 @@
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
 export class Echo {
-  public static inject = tokens(commonTokens.logger, commonTokens.options);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions);
 
   public readonly testRunnerName: string;
 
-  constructor(private readonly logger: Logger, options: StrykerOptions) {
+  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly fileDescriptions: FileDescriptions) {
     this.testRunnerName = options.testRunner;
   }
 
@@ -23,11 +23,12 @@ export class Echo {
     });
   }
 
+  public echoFiles(): FileDescriptions {
+    return this.fileDescriptions;
+  }
+
   public exit(code: number): Promise<unknown> {
     process.exit(code);
-    return new Promise(() => {
-      /* Never resolve */
-    });
   }
 
   public warning(): void {

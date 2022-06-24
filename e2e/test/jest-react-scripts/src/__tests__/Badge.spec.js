@@ -1,47 +1,47 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { Badge } from '../';
 
 describe('Badge', () => {
   it('should render a span by default', () => {
-    const wrapper = shallow(<Badge>Yo!</Badge>);
-
-    expect(wrapper.type()).toBe('span');
+    render(<Badge>Yo!</Badge>);
+    
+    expect(screen.getByText('Yo!').tagName).toBe('SPAN');
   });
 
   it('should render an anchor when when href is provided', () => {
-    const wrapper = shallow(<Badge href="#">Yo!</Badge>);
+    render(<Badge href="#">Yo!</Badge>);
 
-    expect(wrapper.type()).toBe('a');
+    expect(screen.getByText('Yo!').tagName).toBe('A');
   });
 
   it('should render a custom tag when provided', () => {
-    const wrapper = shallow(<Badge tag="main">Yo!</Badge>);
+    render(<Badge tag="main">Yo!</Badge>);
 
-    expect(wrapper.type()).toBe('main');
+    expect(screen.getByText('Yo!').tagName).toBe('MAIN');
   });
 
   it('should render children', () => {
-    const wrapper = shallow(<Badge>Yo!</Badge>);
+    render(<Badge>Yo!</Badge>);
 
-    expect(wrapper.text()).toBe('Yo!');
+    expect(screen.getByText('Yo!').innerHTML).toBe('Yo!');
   });
 
   it('should render badges with secondary color', () => {
-    const wrapper = shallow(<Badge>Default Badge</Badge>);
+    render(<Badge>Badge</Badge>);
 
-    expect(wrapper.hasClass('badge-secondary')).toBe(true);
+    expect(screen.getByText('Badge').classList.contains('badge-secondary')).toBe(true);
   });
 
   it('should render Badges with other colors', () => {
-    const wrapper = shallow(<Badge color="danger">Danger Badge</Badge>);
+    render(<Badge color="danger">Danger Badge</Badge>);
 
-    expect(wrapper.hasClass('badge-danger')).toBe(true);
+    expect(screen.getByText('Danger Badge').classList.contains('badge-danger')).toBe(true);
   });
 
   it('should render Badges as pills', () => {
-    const wrapper = shallow(<Badge pill>Pill Badge</Badge>);
+    render(<Badge pill>Pill Badge</Badge>);
 
-    expect(wrapper.hasClass('badge-pill')).toBe(true);
+    expect(screen.getByText('Pill Badge').classList.contains('badge-pill')).toBe(true);
   });
 });

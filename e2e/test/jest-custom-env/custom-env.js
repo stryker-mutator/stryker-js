@@ -1,4 +1,4 @@
-const { mixinJestEnvironment} = require('@stryker-mutator/jest-runner');
-const NodeEnvironment = require('jest-environment-node');
+const { mixinJestEnvironment } = require('@stryker-mutator/jest-runner');
+const { TestEnvironment } = require('jest-environment-node');
 
-module.exports = mixinJestEnvironment(NodeEnvironment);
+module.exports = mixinJestEnvironment(TestEnvironment);

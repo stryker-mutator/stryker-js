@@ -1,5 +1,5 @@
 import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
-import type { EnvironmentContext } from '@jest/environment';
+import type { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import { Circus, Config } from '@jest/types';
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -170,9 +170,15 @@ export const createEnvironmentContext = (overrides?: Partial<EnvironmentContext>
     ...overrides,
   } as EnvironmentContext); // Do this cast to prevent breaking builds when unused options are added
 
+export const createEnvironmentConfig = (): JestEnvironmentConfig => ({
+  globalConfig: createGlobalConfig(),
+  projectConfig: createProjectConfig(),
+});
+
 export const createProjectConfig = (): Config.ProjectConfig =>
   ({
     detectLeaks: true,
+    testEnvironmentOptions: {},
   } as Config.ProjectConfig); // Do this cast to prevent breaking builds when unused options are added
 
 export const createCircusDescribeBlock = (overrides?: Partial<Circus.DescribeBlock>): Circus.DescribeBlock =>

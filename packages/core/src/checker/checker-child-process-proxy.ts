@@ -1,6 +1,6 @@
 import { URL } from 'url';
 
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Disposable } from 'typed-inject';
 
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
@@ -13,11 +13,17 @@ import { CheckerResource } from './checker-resource.js';
 export class CheckerChildProcessProxy implements CheckerResource, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
 
-  constructor(options: StrykerOptions, pluginModulePaths: readonly string[], loggingContext: LoggingClientContext) {
+  constructor(
+    options: StrykerOptions,
+    fileDescriptions: FileDescriptions,
+    pluginModulePaths: readonly string[],
+    loggingContext: LoggingClientContext
+  ) {
     this.childProcess = ChildProcessProxy.create(
       new URL('./checker-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
+      fileDescriptions,
       pluginModulePaths,
       process.cwd(),
       CheckerWorker,

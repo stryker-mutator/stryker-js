@@ -124,6 +124,20 @@ describe(KarmaTestRunner.name, () => {
       sinon.stub(karma, 'VERSION').value('6.2.9');
       await expect(sut.init()).rejectedWith('Your karma version (6.2.9) is not supported. Please install 6.3.0 or higher');
     });
+
+    it('should not reject when disposed early (#3486)', async () => {
+      // Arrange
+      const exitTask = new Task<number>();
+      projectStarterMock.start.resolves({ exitPromise: exitTask.promise });
+      const onGoingInit = sut.init();
+
+      // Act
+      sut.dispose();
+      exitTask.resolve(0);
+
+      // Assert
+      await expect(onGoingInit).not.rejected;
+    });
   });
 
   describe('dryRun', () => {

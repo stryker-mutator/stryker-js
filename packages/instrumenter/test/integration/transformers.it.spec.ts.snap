@@ -4960,8 +4960,7 @@ Object {
                   "type": "SequenceExpression",
                 },
                 "consequent": Object {
-                  "left": Node {
-                    "end": 14,
+                  "left": Object {
                     "extra": Object {
                       "raw": "40",
                       "rawValue": 40,
@@ -4980,7 +4979,6 @@ Object {
                         "line": 1,
                       },
                     },
-                    "start": 12,
                     "type": "NumericLiteral",
                     "value": 40,
                   },
@@ -4999,8 +4997,7 @@ Object {
                     },
                   },
                   "operator": "-",
-                  "right": Node {
-                    "end": 18,
+                  "right": Object {
                     "extra": Object {
                       "raw": "2",
                       "rawValue": 2,
@@ -5019,7 +5016,6 @@ Object {
                         "line": 1,
                       },
                     },
-                    "start": 17,
                     "type": "NumericLiteral",
                     "value": 2,
                   },
@@ -10106,8 +10102,7 @@ Object {
                   "type": "SequenceExpression",
                 },
                 "consequent": Object {
-                  "left": Node {
-                    "end": 22,
+                  "left": Object {
                     "extra": Object {
                       "raw": "40",
                       "rawValue": 40,
@@ -10126,7 +10121,6 @@ Object {
                         "line": 1,
                       },
                     },
-                    "start": 20,
                     "type": "NumericLiteral",
                     "value": 40,
                   },
@@ -10145,8 +10139,7 @@ Object {
                     },
                   },
                   "operator": "-",
-                  "right": Node {
-                    "end": 26,
+                  "right": Object {
                     "extra": Object {
                       "raw": "2",
                       "rawValue": 2,
@@ -10165,7 +10158,6 @@ Object {
                         "line": 1,
                       },
                     },
-                    "start": 25,
                     "type": "NumericLiteral",
                     "value": 2,
                   },
@@ -15220,8 +15212,7 @@ Object {
                         "type": "SequenceExpression",
                       },
                       "consequent": Object {
-                        "left": Node {
-                          "end": 14,
+                        "left": Object {
                           "extra": Object {
                             "raw": "40",
                             "rawValue": 40,
@@ -15240,7 +15231,6 @@ Object {
                               "line": 1,
                             },
                           },
-                          "start": 12,
                           "type": "NumericLiteral",
                           "value": 40,
                         },
@@ -15259,8 +15249,7 @@ Object {
                           },
                         },
                         "operator": "-",
-                        "right": Node {
-                          "end": 18,
+                        "right": Object {
                           "extra": Object {
                             "raw": "2",
                             "rawValue": 2,
@@ -15279,7 +15268,6 @@ Object {
                               "line": 1,
                             },
                           },
-                          "start": 17,
                           "type": "NumericLiteral",
                           "value": 2,
                         },

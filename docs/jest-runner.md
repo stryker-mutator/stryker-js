@@ -126,9 +126,11 @@ If you're using a custom test environment, you'll need to mixin the Stryker func
 ```js
 // my-custom-jest-environment.js
 const { mixinJestEnvironment } = require('@stryker-mutator/jest-runner');
-const NodeEnvironment = require('jest-environment-node');
+const { TestEnvironment } = require('jest-environment-node');
+// const TestEnvironment = require('jest-environment-node'); // 👈 Jest@27 or lower
 
-class MyCustomTestEnvironment extends NodeEnvironment {
+
+class MyCustomTestEnvironment extends TestEnvironment {
   // custom magic here ✨
 }
 
