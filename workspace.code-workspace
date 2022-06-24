@@ -37,6 +37,10 @@
       "path": "packages/cucumber-runner"
     },
     {
+      "name": "eslint-checker",
+      "path": "packages/eslint-checker"
+    },
+    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
     },

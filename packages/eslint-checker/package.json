@@ -30,13 +30,13 @@
     "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
   "dependencies": {
-    "@stryker-mutator/api": "6.0.0-beta.0",
-    "@stryker-mutator/util": "6.0.0-beta.0",
+    "@stryker-mutator/api": "6.0.2",
+    "@stryker-mutator/util": "6.0.2",
     "fast-glob": "~3.2.11",
     "typescript": "~4.6.3"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "6.0.0-beta.0",
+    "@stryker-mutator/test-helpers": "6.0.2",
     "@types/eslint": "~8.4.1",
     "@types/mocha": "~9.1.0"
   },
