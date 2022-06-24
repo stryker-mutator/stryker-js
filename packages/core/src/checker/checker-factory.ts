@@ -1,4 +1,4 @@
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
@@ -9,9 +9,16 @@ import { CheckerChildProcessProxy } from './checker-child-process-proxy.js';
 import { CheckerFacade } from './checker-facade.js';
 import { CheckerRetryDecorator } from './checker-retry-decorator.js';
 
-createCheckerFactory.inject = tokens(commonTokens.options, coreTokens.loggingContext, coreTokens.pluginModulePaths, commonTokens.getLogger);
+createCheckerFactory.inject = tokens(
+  commonTokens.options,
+  commonTokens.fileDescriptions,
+  coreTokens.loggingContext,
+  coreTokens.pluginModulePaths,
+  commonTokens.getLogger
+);
 export function createCheckerFactory(
   options: StrykerOptions,
+  fileDescriptions: FileDescriptions,
   loggingContext: LoggingClientContext,
   pluginModulePaths: readonly string[],
   getLogger: LoggerFactoryMethod
@@ -20,7 +27,7 @@ export function createCheckerFactory(
     new CheckerFacade(
       () =>
         new CheckerRetryDecorator(
-          () => new CheckerChildProcessProxy(options, pluginModulePaths, loggingContext),
+          () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingContext),
           getLogger(CheckerRetryDecorator.name)
         )
     );

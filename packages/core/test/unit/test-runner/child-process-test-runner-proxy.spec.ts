@@ -1,6 +1,6 @@
 import { URL } from 'url';
 
-import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
@@ -19,9 +19,11 @@ describe(ChildProcessTestRunnerProxy.name, () => {
   let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
   let clock: sinon.SinonFakeTimers;
+  let fileDescriptions: FileDescriptions;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
+    fileDescriptions = { 'foo.js': { mutate: true } };
     childProcessProxyMock = sinon.createStubInstance(ChildProcessProxy);
     proxyMock = (childProcessProxyMock as { proxy: Promisified<ChildProcessTestRunnerWorker> }).proxy =
       factory.testRunner() as sinon.SinonStubbedInstance<Promisified<ChildProcessTestRunnerWorker>>;
@@ -35,7 +37,14 @@ describe(ChildProcessTestRunnerProxy.name, () => {
   });
 
   function createSut(): ChildProcessTestRunnerProxy {
-    return new ChildProcessTestRunnerProxy(options, 'a working directory', loggingContext, ['plugin', 'paths'], testInjector.logger);
+    return new ChildProcessTestRunnerProxy(
+      options,
+      fileDescriptions,
+      'a working directory',
+      loggingContext,
+      ['plugin', 'paths'],
+      testInjector.logger
+    );
   }
 
   it('should create the child process proxy', () => {
@@ -46,6 +55,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       new URL('../../../src/test-runner/child-process-test-runner-worker.js', import.meta.url).toString(),
       loggingContext,
       options,
+      fileDescriptions,
       ['plugin', 'paths'],
       'a working directory',
       ChildProcessTestRunnerWorker,

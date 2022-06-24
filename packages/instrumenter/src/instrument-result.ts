@@ -1,5 +1,6 @@
 import { Mutant } from '@stryker-mutator/api/core';
-import { File } from '@stryker-mutator/util';
+
+import { File } from './file.js';
 
 export interface InstrumentResult {
   files: readonly File[];

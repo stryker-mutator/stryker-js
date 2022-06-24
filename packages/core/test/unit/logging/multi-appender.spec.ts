@@ -30,6 +30,9 @@ describe('MultiAppender', () => {
       data: ['foo data'],
       level: log4js.levels.DEBUG,
       pid: 42,
+      serialise() {
+        return JSON.stringify(this);
+      },
       startTime: new Date(42),
     };
     sut(loggingEvent);

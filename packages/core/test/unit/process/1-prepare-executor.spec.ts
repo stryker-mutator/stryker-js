@@ -7,17 +7,17 @@ import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { BaseContext } from '@stryker-mutator/api/plugin';
-import { File } from '@stryker-mutator/util';
 
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
 import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
-import { InputFileResolver, InputFileCollection } from '../../../src/input/index.js';
+import { Project, ProjectReader } from '../../../src/fs/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 import { ConfigError } from '../../../src/errors.js';
 import { ConfigReader, OptionsValidator, MetaSchemaBuilder } from '../../../src/config/index.js';
 import { BroadcastReporter, reporterPluginsFileUrl } from '../../../src/reporters/index.js';
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
+import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 
 interface AllContext extends MutantInstrumenterContext {
   [coreTokens.validationSchema]: unknown;
@@ -34,14 +34,15 @@ describe(PrepareExecutor.name, () => {
   let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
   let configureLoggingServerStub: sinon.SinonStub;
   let injectorMock: sinon.SinonStubbedInstance<Injector<AllContext>>;
-  let inputFileResolverMock: sinon.SinonStubbedInstance<InputFileResolver>;
-  let inputFiles: InputFileCollection;
+  let projectReaderMock: sinon.SinonStubbedInstance<ProjectReader>;
+  let project: Project;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let loadedPlugins: LoadedPlugins;
   let sut: PrepareExecutor;
 
   beforeEach(() => {
-    inputFiles = new InputFileCollection([new File('index.js', 'console.log("hello world");')], ['index.js'], []);
+    const fsTestDouble = new FileSystemTestDouble({ 'index.js': 'console.log("hello world");' });
+    project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
     cliOptions = {};
     configReaderMock = sinon.createStubInstance(ConfigReader);
     configReaderMock.readConfig.resolves(testInjector.options);
@@ -51,7 +52,7 @@ describe(PrepareExecutor.name, () => {
     loadedPlugins = { pluginModulePaths: [], pluginsByKind: new Map(), schemaContributions: [] };
     pluginLoaderMock.load.resolves(loadedPlugins);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    inputFileResolverMock = sinon.createStubInstance(InputFileResolver);
+    projectReaderMock = sinon.createStubInstance(ProjectReader);
     optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
     configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<AllContext>>;
@@ -65,9 +66,9 @@ describe(PrepareExecutor.name, () => {
       .returns(metaSchemaBuilderMock)
       .withArgs(ConfigReader)
       .returns(configReaderMock)
-      .withArgs(InputFileResolver)
-      .returns(inputFileResolverMock);
-    inputFileResolverMock.resolve.resolves(inputFiles);
+      .withArgs(ProjectReader)
+      .returns(projectReaderMock);
+    projectReaderMock.read.resolves(project);
     sut = new PrepareExecutor(injectorMock as Injector<BaseContext>);
   });
 
@@ -137,8 +138,8 @@ describe(PrepareExecutor.name, () => {
 
   it('should resolve input files', async () => {
     await sut.execute(cliOptions);
-    expect(inputFileResolverMock.resolve).called;
-    expect(injectorMock.provideValue).calledWithExactly(coreTokens.inputFiles, inputFiles);
+    expect(projectReaderMock.read).called;
+    expect(injectorMock.provideValue).calledWithExactly(coreTokens.project, project);
   });
 
   it('should provide the reporter the reporter', async () => {
@@ -159,17 +160,17 @@ describe(PrepareExecutor.name, () => {
 
   it('should reject when input file globbing results in a rejection', async () => {
     const expectedError = Error('expected error');
-    inputFileResolverMock.resolve.rejects(expectedError);
+    projectReaderMock.read.rejects(expectedError);
     await expect(sut.execute(cliOptions)).rejectedWith(expectedError);
   });
 
   it('should reject when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
+    projectReaderMock.read.resolves(new Project(new FileSystemTestDouble(), {}));
     await expect(sut.execute(cliOptions)).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
-    inputFileResolverMock.resolve.resolves(new InputFileCollection([], [], []));
+    projectReaderMock.read.resolves(new Project(new FileSystemTestDouble(), {}));
     await expect(sut.execute(cliOptions)).rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });

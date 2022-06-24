@@ -1,4 +1,4 @@
-import { File } from '@stryker-mutator/util';
+import { Project } from '../fs/project.js';
 
 /**
  * A preprocessor changes files before writing them to the sandbox.
@@ -6,5 +6,5 @@ import { File } from '@stryker-mutator/util';
  * This is a private api that we might want to open up in the future.
  */
 export interface FilePreprocessor {
-  preprocess(files: File[]): Promise<File[]>;
+  preprocess(files: Project): Promise<void>;
 }

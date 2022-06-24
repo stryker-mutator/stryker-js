@@ -13,7 +13,6 @@
     "allowJs": false,
     "resolveJsonModule": true,
     "importHelpers": true,
-    "noUnusedLocals": true,
     "noImplicitReturns": true,
     "types": [
       "node"

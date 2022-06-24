@@ -3,7 +3,8 @@ import path from 'path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { File } from '@stryker-mutator/util';
+
+import { Project } from '../fs/project.js';
 
 import { FilePreprocessor } from './file-preprocessor.js';
 
@@ -33,58 +34,48 @@ export interface TSConfig {
  * }
  */
 export class TSConfigPreprocessor implements FilePreprocessor {
-  private readonly touched: string[] = [];
-  private readonly fs = new Map<string, File>();
+  private readonly touched = new Set<string>();
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
 
-  public async preprocess(input: File[]): Promise<File[]> {
+  public async preprocess(project: Project): Promise<void> {
     if (this.options.inPlace) {
       // If stryker is running 'inPlace', we don't have to change the tsconfig file
-      return input;
+      return;
     } else {
-      const tsconfigFile = path.resolve(this.options.tsconfigFile);
-      if (input.find((file) => file.name === tsconfigFile)) {
-        this.fs.clear();
-        input.forEach((file) => {
-          this.fs.set(file.name, file);
-        });
-        await this.rewriteTSConfigFile(tsconfigFile);
-        return [...this.fs.values()];
-      } else {
-        return input;
-      }
+      this.touched.clear();
+      await this.rewriteTSConfigFile(project, path.resolve(this.options.tsconfigFile));
     }
   }
 
-  private async rewriteTSConfigFile(tsconfigFileName: string): Promise<void> {
-    if (!this.touched.includes(tsconfigFileName)) {
-      this.touched.push(tsconfigFileName);
-      const tsconfigFile = this.fs.get(tsconfigFileName);
+  private async rewriteTSConfigFile(project: Project, tsconfigFileName: string): Promise<void> {
+    if (!this.touched.has(tsconfigFileName)) {
+      this.touched.add(tsconfigFileName);
+      const tsconfigFile = project.files.get(tsconfigFileName);
       if (tsconfigFile) {
         this.log.debug('Rewriting file %s', tsconfigFile);
         const { default: ts } = await import('typescript');
-        const { config }: { config?: TSConfig } = ts.parseConfigFileTextToJson(tsconfigFile.name, tsconfigFile.textContent);
+        const { config }: { config?: TSConfig } = ts.parseConfigFileTextToJson(tsconfigFileName, await tsconfigFile.readContent());
         if (config) {
-          await this.rewriteExtends(config, tsconfigFileName);
-          await this.rewriteProjectReferences(config, tsconfigFileName);
+          await this.rewriteExtends(project, config, tsconfigFileName);
+          await this.rewriteProjectReferences(project, config, tsconfigFileName);
           this.rewriteFileArrayProperty(config, tsconfigFileName, 'include');
           this.rewriteFileArrayProperty(config, tsconfigFileName, 'exclude');
           this.rewriteFileArrayProperty(config, tsconfigFileName, 'files');
-          this.fs.set(tsconfigFileName, new File(tsconfigFileName, JSON.stringify(config, null, 2)));
+          tsconfigFile.setContent(JSON.stringify(config, null, 2));
         }
       }
     }
   }
 
-  private async rewriteExtends(config: TSConfig, tsconfigFileName: string): Promise<void> {
+  private async rewriteExtends(project: Project, config: TSConfig, tsconfigFileName: string): Promise<void> {
     const extend = config.extends;
     if (typeof extend === 'string') {
       const rewritten = this.tryRewriteReference(extend, tsconfigFileName);
       if (rewritten) {
         config.extends = rewritten;
       } else {
-        await this.rewriteTSConfigFile(path.resolve(path.dirname(tsconfigFileName), extend));
+        await this.rewriteTSConfigFile(project, path.resolve(path.dirname(tsconfigFileName), extend));
       }
     }
   }
@@ -103,7 +94,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
     }
   }
 
-  private async rewriteProjectReferences(config: TSConfig, originTSConfigFileName: string): Promise<void> {
+  private async rewriteProjectReferences(project: Project, config: TSConfig, originTSConfigFileName: string): Promise<void> {
     const { default: ts } = await import('typescript');
     if (Array.isArray(config.references)) {
       for (const reference of config.references) {
@@ -112,7 +103,7 @@ export class TSConfigPreprocessor implements FilePreprocessor {
         if (rewritten) {
           reference.path = rewritten;
         } else {
-          await this.rewriteTSConfigFile(path.resolve(path.dirname(originTSConfigFileName), referencePath));
+          await this.rewriteTSConfigFile(project, path.resolve(path.dirname(originTSConfigFileName), referencePath));
         }
       }
     }

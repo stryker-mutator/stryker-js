@@ -17,6 +17,7 @@ export const commonTokens = Object.freeze({
   injector,
   logger: stringLiteral('logger'),
   options: stringLiteral('options'),
+  fileDescriptions: stringLiteral('fileDescriptions'),
   target,
 });
 

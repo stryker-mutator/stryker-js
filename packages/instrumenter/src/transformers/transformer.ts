@@ -1,3 +1,4 @@
+import { MutateDescription } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
 
 import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
@@ -14,10 +15,14 @@ import { MutantCollector } from './mutant-collector.js';
  * @param mutantCollector the mutant collector that will be used to register and administer mutants
  * @param transformerContext the options used during transforming
  */
-export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transformerContext: Pick<TransformerContext, 'options'>): void {
+export function transform(
+  ast: Ast,
+  mutantCollector: I<MutantCollector>,
+  transformerContext: Pick<TransformerContext, 'mutateDescription' | 'options'>
+): void {
   const context: TransformerContext = {
+    ...transformerContext,
     transform,
-    options: transformerContext.options,
   };
   switch (ast.format) {
     case AstFormat.Html:
@@ -36,4 +41,5 @@ export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCo
 export interface TransformerContext {
   transform: AstTransformer<AstFormat>;
   options: TransformerOptions;
+  mutateDescription: MutateDescription;
 }

@@ -1,53 +1,66 @@
-import { File } from '@stryker-mutator/util';
 import { assertions } from '@stryker-mutator/test-helpers';
 
-import { disableTypeChecks } from '../../src/index.js';
+import { disableTypeChecks, File } from '../../src/index.js';
 
 describe(disableTypeChecks.name, () => {
   describe('with TS or JS AST format', () => {
     it('should prefix the file with `// @ts-nocheck`', async () => {
-      const inputFile = new File('foo.js', 'foo.bar();');
+      const inputFile = { name: 'foo.js', content: 'foo.bar();', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\nfoo.bar();'));
+      assertions.expectTextFileEqual(actual, { name: 'foo.js', content: '// @ts-nocheck\nfoo.bar();' });
     });
 
     describe('with shebang (`#!/usr/bin/env node`)', () => {
       it('should insert `// @ts-nocheck` after the new line', async () => {
-        const inputFile = new File('foo.js', '#!/usr/bin/env node\nfoo.bar();');
+        const inputFile = { name: 'foo.js', content: '#!/usr/bin/env node\nfoo.bar();', mutate: true };
         const actual = await disableTypeChecks(inputFile, { plugins: null });
-        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node\n// @ts-nocheck\nfoo.bar();'));
+        assertions.expectTextFileEqual(actual, { name: 'foo.js', content: '#!/usr/bin/env node\n// @ts-nocheck\nfoo.bar();' });
       });
       it('should not insert if there is no code', async () => {
-        const inputFile = new File('foo.js', '#!/usr/bin/env node');
+        const inputFile = { name: 'foo.js', content: '#!/usr/bin/env node', mutate: true };
         const actual = await disableTypeChecks(inputFile, { plugins: null });
-        assertions.expectTextFileEqual(actual, new File('foo.js', '#!/usr/bin/env node'));
+        assertions.expectTextFileEqual(actual, { name: 'foo.js', content: '#!/usr/bin/env node' });
       });
     });
 
     describe('with jest directive (`@jest-environment`)', () => {
       it('should insert `// @ts-nocheck` after the jest directive', async () => {
-        const inputFile = new File('foo.js', '/**\n* @jest-environment jsdom\n*/\nfoo.bar();');
+        const inputFile = { name: 'foo.js', content: '/**\n* @jest-environment jsdom\n*/\nfoo.bar();', mutate: true };
         const actual = await disableTypeChecks(inputFile, { plugins: null });
-        assertions.expectTextFileEqual(actual, new File('foo.js', '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();'));
+        assertions.expectTextFileEqual(actual, {
+          name: 'foo.js',
+          content: '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();',
+        });
+      });
+
+      it('should insert `// @ts-nocheck` after the jest directive also for the second file (#3583)', async () => {
+        const inputFile = { name: 'foo.js', content: '/**\n* @jest-environment jsdom\n*/\nfoo.bar();', mutate: true };
+        const inputFile2 = { name: 'foo.js', content: '/**\n* @jest-environment jsdom\n*/\nfoo.bar();', mutate: true };
+        await disableTypeChecks(inputFile, { plugins: null });
+        const actual = await disableTypeChecks(inputFile2, { plugins: null });
+        assertions.expectTextFileEqual(actual, {
+          name: 'foo.js',
+          content: '/**\n* @jest-environment jsdom\n*/\n// @ts-nocheck\n\nfoo.bar();',
+        });
       });
     });
 
     it('should not even parse the file if "@ts-" can\'t be found anywhere in the file (performance optimization)', async () => {
-      const inputFile = new File('foo.js', 'some garbage that cannot be parsed');
+      const inputFile = { name: 'foo.js', content: 'some garbage that cannot be parsed', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\nsome garbage that cannot be parsed'));
+      assertions.expectTextFileEqual(actual, { name: 'foo.js', content: '// @ts-nocheck\nsome garbage that cannot be parsed' });
     });
 
     it('should remove @ts directives from a JS file', async () => {
-      const inputFile = new File('foo.js', '// @ts-check\nfoo.bar();');
+      const inputFile = { name: 'foo.js', content: '// @ts-check\nfoo.bar();', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.js', '// @ts-nocheck\n// \nfoo.bar();'));
+      assertions.expectTextFileEqual(actual, { name: 'foo.js', content: '// @ts-nocheck\n// \nfoo.bar();' });
     });
 
     it('should remove @ts directives from a TS file', async () => {
-      const inputFile = new File('foo.ts', '// @ts-check\nfoo.bar();');
+      const inputFile = { name: 'foo.ts', content: '// @ts-check\nfoo.bar();', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.ts', '// @ts-nocheck\n// \nfoo.bar();'));
+      assertions.expectTextFileEqual(actual, { name: 'foo.ts', content: '// @ts-nocheck\n// \nfoo.bar();' });
     });
 
     it('should remove @ts directive from single line', async () => {
@@ -105,32 +118,39 @@ describe(disableTypeChecks.name, () => {
     });
 
     async function arrangeActAssert(input: string, expectedOutput = input) {
-      const inputFile = new File('foo.tsx', input);
+      const inputFile: File = { name: 'foo.tsx', content: input, mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.tsx', `// @ts-nocheck\n${expectedOutput}`));
+      assertions.expectTextFileEqual(actual, { name: 'foo.tsx', content: `// @ts-nocheck\n${expectedOutput}` });
     }
   });
 
   describe('with HTML ast format', () => {
     it('should prefix the script tags with `// @ts-nocheck`', async () => {
-      const inputFile = new File('foo.vue', '<template></template><script>foo.bar();</script>');
+      const inputFile = { name: 'foo.vue', content: '<template></template><script>foo.bar();</script>', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.vue', '<template></template><script>\n// @ts-nocheck\nfoo.bar();\n</script>'));
+      assertions.expectTextFileEqual(actual, {
+        name: 'foo.vue',
+        content: '<template></template><script>\n// @ts-nocheck\nfoo.bar();\n</script>',
+      });
     });
 
     it('should remove `// @ts` directives from script tags', async () => {
-      const inputFile = new File('foo.html', '<template></template><script>// @ts-expect-error\nconst foo = "bar"-"baz";</script>');
+      const inputFile = {
+        name: 'foo.html',
+        content: '<template></template><script>// @ts-expect-error\nconst foo = "bar"-"baz";</script>',
+        mutate: true,
+      };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(
-        actual,
-        new File('foo.html', '<template></template><script>\n// @ts-nocheck\n// \nconst foo = "bar"-"baz";\n</script>')
-      );
+      assertions.expectTextFileEqual(actual, {
+        name: 'foo.html',
+        content: '<template></template><script>\n// @ts-nocheck\n// \nconst foo = "bar"-"baz";\n</script>',
+      });
     });
 
     it('should not remove `// @ts` from the html itself', async () => {
-      const inputFile = new File('foo.vue', '<template>\n// @ts-expect-error\n</template>');
+      const inputFile = { name: 'foo.vue', content: '<template>\n// @ts-expect-error\n</template>', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
-      assertions.expectTextFileEqual(actual, new File('foo.vue', '<template>\n// @ts-expect-error\n</template>'));
+      assertions.expectTextFileEqual(actual, { name: 'foo.vue', content: '<template>\n// @ts-expect-error\n</template>' });
     });
   });
 });

@@ -66,12 +66,12 @@
     "execa": "~6.1.0",
     "file-url": "~4.0.0",
     "get-port": "~6.1.0",
-    "glob": "~7.2.0",
+    "glob": "~8.0.0",
     "inquirer": "~8.2.0",
     "lodash.flatmap": "~4.5.0",
     "lodash.groupby": "~4.6.0",
-    "log4js": "~6.4.1",
-    "minimatch": "~3.1.0",
+    "log4js": "~6.5.0",
+    "minimatch": "~5.1.0",
     "mkdirp": "~1.0.3",
     "mutation-testing-elements": "1.7.10",
     "mutation-testing-metrics": "1.7.10",
@@ -95,7 +95,7 @@
     "@types/minimatch": "3.0.5",
     "@types/node": "17.0.31",
     "@types/progress": "2.0.5",
-    "@types/semver": "7.3.9",
+    "@types/semver": "7.3.10",
     "flatted": "3.2.5"
   }
 }

@@ -41,10 +41,12 @@ export class ChildProcessProxyWorker {
     const message = deserialize<WorkerMessage>(String(serializedMessage));
     switch (message.kind) {
       case WorkerMessageKind.Init:
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises -- No handle needed, handleInit has try catch
         this.handleInit(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
       case WorkerMessageKind.Call:
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises -- No handle needed, handleCall has try catch
         this.handleCall(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
@@ -64,7 +66,9 @@ export class ChildProcessProxyWorker {
       this.handlePromiseRejections();
 
       // Load plugins in the child process
-      const pluginInjector = provideLogger(this.injectorFactory()).provideValue(commonTokens.options, message.options);
+      const pluginInjector = provideLogger(this.injectorFactory())
+        .provideValue(commonTokens.options, message.options)
+        .provideValue(commonTokens.fileDescriptions, message.fileDescriptions);
       const pluginLoader = pluginInjector.injectClass(PluginLoader);
       const { pluginsByKind } = await pluginLoader.load(message.pluginModulePaths);
       const injector: Injector<ChildProcessContext> = pluginInjector

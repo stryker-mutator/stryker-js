@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable, mergeMap } from 'rxjs';
-import { File, I } from '@stryker-mutator/util';
+import { I } from '@stryker-mutator/util';
 
 import { Timer } from '../../../src/utils/timer.js';
 import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';
@@ -15,8 +15,9 @@ import { ConfigError } from '../../../src/errors.js';
 import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
 import { createTestRunnerPoolMock } from '../../helpers/producers.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
-import { InputFileCollection } from '../../../src/input/input-file-collection.js';
+import { Project } from '../../../src/fs/index.js';
 import { StrictReporter } from '../../../src/reporters/strict-reporter.js';
+import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
@@ -26,7 +27,7 @@ describe(DryRunExecutor.name, () => {
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandbox: sinon.SinonStubbedInstance<Sandbox>;
-  let inputFiles: InputFileCollection;
+  let project: Project;
   let reporterStub: sinon.SinonStubbedInstance<StrictReporter>;
 
   beforeEach(() => {
@@ -44,8 +45,9 @@ describe(DryRunExecutor.name, () => {
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
     injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
-    inputFiles = new InputFileCollection([new File('bar.js', 'console.log("bar")')], ['bar.js'], []);
-    injectorMock.resolve.withArgs(coreTokens.inputFiles).returns(inputFiles);
+    const fsTestDouble = new FileSystemTestDouble({ 'bar.js': 'console.log("bar")' });
+    project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
+    injectorMock.resolve.withArgs(coreTokens.project).returns(project);
     sut = new DryRunExecutor(
       injectorMock as Injector<DryRunContext>,
       testInjector.logger,
@@ -120,7 +122,7 @@ describe(DryRunExecutor.name, () => {
     let runResult: CompleteDryRunResult;
 
     beforeEach(() => {
-      sandbox.sandboxFileFor.withArgs(inputFiles.filesToMutate[0].name).returns(dryRunFileName);
+      sandbox.sandboxFileFor.returns(dryRunFileName);
 
       runResult = factory.completeDryRunResult();
       testRunnerMock.dryRun.resolves(runResult);
@@ -129,7 +131,7 @@ describe(DryRunExecutor.name, () => {
 
     it('should test only for files to mutate', async () => {
       await sut.execute();
-      expect(testRunnerMock.dryRun).calledWithMatch({
+      sinon.assert.calledWithMatch(testRunnerMock.dryRun, {
         files: [dryRunFileName],
       });
     });

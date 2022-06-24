@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
-import { LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { factory, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -108,6 +108,7 @@ describe(ChildProcessProxy.name, () => {
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
         options: factory.strykerOptions({ testRunner: 'Hello' }),
+        fileDescriptions: { 'foo.js': { mutate: true } },
         pluginModulePaths: ['foo'],
         namedExport: 'HelloClass',
         modulePath: 'foobar',
@@ -350,6 +351,7 @@ function createSut({
   loggingContext = LOGGING_CONTEXT,
   options = {},
   workingDir = 'workingDir',
+  fileDescriptions = { 'foo.js': { mutate: true } },
   pluginModulePaths = ['plugin', 'path'],
   execArgv = [],
 }: {
@@ -357,8 +359,18 @@ function createSut({
   loggingContext?: LoggingClientContext;
   options?: Partial<StrykerOptions>;
   workingDir?: string;
+  fileDescriptions?: FileDescriptions;
   pluginModulePaths?: readonly string[];
   execArgv?: string[];
 } = {}): ChildProcessProxy<HelloClass> {
-  return ChildProcessProxy.create(requirePath, loggingContext, factory.strykerOptions(options), pluginModulePaths, workingDir, HelloClass, execArgv);
+  return ChildProcessProxy.create(
+    requirePath,
+    loggingContext,
+    factory.strykerOptions(options),
+    fileDescriptions,
+    pluginModulePaths,
+    workingDir,
+    HelloClass,
+    execArgv
+  );
 }
