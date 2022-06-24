@@ -6,7 +6,8 @@
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
-      "automergeStrategy": "squash"
+      "automergeStrategy": "squash",
+      "platformAutomerge": true
     }
   ]
 }
