@@ -238,7 +238,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
         assertions.expectKilled(result);
         expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
-        expect(result.failureMessage.split('\n')[0]).eq('Assertionexpected undefined to equal 7');
+        expect(result.failureMessage.split('\n')[0]).eq('AssertionError: expected undefined to equal 7');
       });
 
       it('should bail after first failing test', async () => {
@@ -272,7 +272,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         const expected: KilledMutantRunResult = {
           killedBy: ['Add should be able 1 to a number'],
           status: MutantRunStatus.Killed,
-          failureMessage: 'Assertionexpected undefined to equal 3',
+          failureMessage: 'AssertionError: expected undefined to equal 3',
           nrOfTests: 1,
         };
         expect(result).deep.eq(expected);
