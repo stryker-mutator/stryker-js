@@ -126,6 +126,8 @@ export class CucumberTestRunner implements TestRunner {
       argv,
       cwd: process.cwd(),
       stdout: process.stdout,
+      stderr: process.stderr,
+      env: process.env,
     });
     if (this.logger.isDebugEnabled()) {
       this.logger.debug(
