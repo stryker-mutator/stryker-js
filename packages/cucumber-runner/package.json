@@ -34,11 +34,11 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "7.3.2",
+    "@cucumber/cucumber": "8.3.1",
     "@stryker-mutator/test-helpers": "6.0.2"
   },
   "peerDependencies": {
-    "@cucumber/cucumber": "^7.2.0",
+    "@cucumber/cucumber": "^7.2.0 || ^8.0.0",
     "@stryker-mutator/core": "~6.0.0"
   },
   "dependencies": {
