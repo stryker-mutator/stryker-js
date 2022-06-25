@@ -3,6 +3,7 @@ import path from 'path';
 import {
   assertions,
   factory,
+  TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -17,14 +18,20 @@ describe('Cucumber runner options integration', () => {
   let sut: CucumberTestRunner;
   const fooFeature = path.join('features', 'foo.feature');
   const barFeature = path.join('features', 'bar.feature');
+  let tempDir: TempTestDirectorySandbox;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
-    process.chdir(resolveTestResource('options'));
+    tempDir = new TempTestDirectorySandbox(resolveTestResource('options'));
+    await tempDir.init();
+
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await tempDir.dispose();
   });
 
   describe('tags', () => {
