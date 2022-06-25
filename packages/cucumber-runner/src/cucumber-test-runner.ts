@@ -1,5 +1,7 @@
 import { createRequire } from 'module';
+import fs from 'fs';
 
+import semver from 'semver';
 import { Logger } from '@stryker-mutator/api/logging';
 import {
   commonTokens,
@@ -32,7 +34,11 @@ import type { IConfiguration, IRunOptions } from '@cucumber/cucumber/api';
 import { CucumberSetup } from '../src-generated/cucumber-runner-options.js';
 
 import { CucumberRunnerWithStrykerOptions } from './cucumber-runner-with-stryker-options.js';
-import { runCucumber, loadConfiguration } from './cjs/cucumber-wrapper.js';
+import {
+  runCucumber,
+  loadConfiguration,
+  version as cucumberVersion,
+} from './cjs/cucumber-wrapper.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 cucumberTestRunnerFactory.inject = [commonTokens.injector];
@@ -81,6 +87,7 @@ export class CucumberTestRunner implements TestRunner {
     options: StrykerOptions,
     globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
+    guardForCucumberJSVersion();
     this.options = (options as CucumberRunnerWithStrykerOptions).cucumber;
     this.instrumenterContext =
       global[globalNamespace] ?? (global[globalNamespace] = {});
@@ -199,4 +206,16 @@ export class CucumberTestRunner implements TestRunner {
 }
 function hasFailed(test: TestResult): test is FailedTestResult {
   return test.status === TestStatus.Failed;
+}
+
+const pkg: { peerDependencies: { '@cucumber/cucumber': string } } = JSON.parse(
+  fs.readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')
+);
+
+export function guardForCucumberJSVersion(version = cucumberVersion): void {
+  if (!semver.satisfies(version, pkg.peerDependencies['@cucumber/cucumber'])) {
+    throw new Error(
+      `@stryker-mutator/cucumber-runner only supports @cucumber/cucumber@${pkg.peerDependencies['@cucumber/cucumber']}. Found v${version}`
+    );
+  }
 }

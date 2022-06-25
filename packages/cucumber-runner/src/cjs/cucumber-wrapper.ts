@@ -16,3 +16,4 @@ const cucumber: typeof import('@cucumber/cucumber') = require(require.resolve(
 export const runCucumber = cucumberApi.runCucumber;
 export const loadConfiguration = cucumberApi.loadConfiguration;
 export const Formatter = cucumber.Formatter;
+export const version = cucumber.version;
