@@ -1,5 +1,5 @@
 {
-  "name": "mocha-javascript-eslint",
+  "name": "eslint-ts-aware",
   "version": "0.0.0",
   "private": true,
   "description": "A module to perform an integration test",
