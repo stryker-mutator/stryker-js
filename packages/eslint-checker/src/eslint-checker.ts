@@ -1,20 +1,25 @@
 import { ESLint } from 'eslint';
-import fg from 'fast-glob';
 import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { Logger } from '@stryker-mutator/api/logging';
-import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { FileDescriptions, Mutant } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { HybridFileSystem } from '@stryker-mutator/util';
 
 import { isFailedResult, makeResultFromLintReport } from './result-helpers.js';
 import { LINT_RULES_OVERRIDES } from './esconfig-helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
+import { ESlintCheckerWithStrykerOptions } from './eslint-checker-with-stryker-options.js';
 
 export class LintChecker implements Checker {
   private linter!: ESLint;
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions, pluginTokens.fs);
 
-  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly options: ESlintCheckerWithStrykerOptions,
+    private readonly fileDescriptions: FileDescriptions,
+    private readonly fs: HybridFileSystem
+  ) {}
 
   private readonly getFile = (filename: string) => {
     const scriptFile = this.fs.getFile(filename);
@@ -39,10 +44,12 @@ export class LintChecker implements Checker {
       overrideConfig: {
         rules: LINT_RULES_OVERRIDES,
       },
-      overrideConfigFile: this.options.lintConfigfile as string | undefined,
+      overrideConfigFile: this.options.eslintConfigFile,
     });
 
-    const fileNames = await fg(this.options.mutate);
+    const fileNames = Object.entries(this.fileDescriptions)
+      .filter(([_, { mutate }]) => mutate)
+      .map(([fileName]) => fileName);
     const allResults = await Promise.all(fileNames.map((fileName) => this.lintFileContent(fileName)));
 
     const errors = allResults.filter(isFailedResult);

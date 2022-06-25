@@ -9,7 +9,6 @@ import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { expect } from 'chai';
 
 import { createLintChecker } from '../../src/index.js';
-import { mochaHooks } from '../setup.js';
 import { LintChecker } from '../../src/eslint-checker.js';
 
 const resolveTestResource = path.resolve.bind(
@@ -25,17 +24,14 @@ const resolveTestResource = path.resolve.bind(
 describe('Lint checker success', () => {
   let sut: LintChecker;
 
-  beforeEach(() => {
-    mochaHooks.beforeEach();
+  beforeEach(async () => {
     const testProjectRoot = resolveTestResource('.');
     testInjector.options.lintConfigFile = resolveTestResource('.eslintrc.cjs');
-    testInjector.options.mutate = ['*.js'];
     process.chdir(testProjectRoot);
+    testInjector.fileDescriptions[path.resolve('src', 'say-hello.js')] = { mutate: true };
     sut = testInjector.injector.injectFunction(createLintChecker);
-    return sut.init();
+    await sut.init();
   });
-
-  afterEach(mochaHooks.afterEach);
 
   it('should accept initialization if initial compilation has no errors', async () => {
     await expect(sut.init()).fulfilled;
