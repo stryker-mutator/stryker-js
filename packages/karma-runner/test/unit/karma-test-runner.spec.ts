@@ -132,7 +132,7 @@ describe(KarmaTestRunner.name, () => {
       const onGoingInit = sut.init();
 
       // Act
-      sut.dispose();
+      await sut.dispose();
       exitTask.resolve(0);
 
       // Assert

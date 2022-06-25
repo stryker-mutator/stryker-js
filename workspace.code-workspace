@@ -83,10 +83,8 @@
       "**/.DS_Store": true,
       "?(check).js": true
     },
-    "eslint.validate": [
-      "javascript",
-      "typescript"
-    ],
+    "eslint.validate": ["javascript", "typescript"],
+    "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
     "task.autoDetect": "off",
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": true
@@ -118,9 +116,6 @@
     "cSpell.language": "en"
   },
   "extensions": {
-    "recommendations": [
-      "dbaeumer.vscode-eslint",
-      "EditorConfig.EditorConfig"
-    ]
+    "recommendations": ["dbaeumer.vscode-eslint", "EditorConfig.EditorConfig"]
   }
 }
