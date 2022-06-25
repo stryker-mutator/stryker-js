@@ -2,13 +2,12 @@ import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@st
 import { expect } from 'chai';
 
 import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe(`${JasmineTestRunner.name} mutant activation`, () => {
   let sut: JasmineTestRunner;
   let sandbox: TempTestDirectorySandbox;
   beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox(resolveTestResource('mutant-activation'));
+    sandbox = new TempTestDirectorySandbox('mutant-activation');
     await sandbox.init();
     testInjector.options.jasmineConfigFile = 'jasmine.json';
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));

@@ -2,14 +2,13 @@ import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@st
 import { expect } from 'chai';
 
 import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: JasmineTestRunner;
   let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox(resolveTestResource('infinite-loop-instrumented'));
+    sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
     await sandbox.init();
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });

@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
 
 import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/index.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('JasmineRunner integration with code instrumentation', () => {
   let sut: JasmineTestRunner;
@@ -11,7 +10,7 @@ describe('JasmineRunner integration with code instrumentation', () => {
 
   beforeEach(async () => {
     // Since jasmine uses `import`, we need to make sure to work from a different directory each time
-    sandbox = new TempTestDirectorySandbox(resolveTestResource('jasmine-init-instrumented'));
+    sandbox = new TempTestDirectorySandbox('jasmine-init-instrumented');
     await sandbox.init();
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });

@@ -4,7 +4,6 @@ import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner.js';
 import { expectTestResultsToEqual } from '../helpers/assertions.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 import { jasmineInitSuccessResults } from './helpers.js';
 
@@ -18,7 +17,7 @@ describe('JasmineRunner integration', () => {
 
   describe('using the jasmine-init project', () => {
     beforeEach(async () => {
-      sandbox = new TempTestDirectorySandbox(resolveTestResource('jasmine-init'));
+      sandbox = new TempTestDirectorySandbox('jasmine-init');
       await sandbox.init();
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
@@ -40,7 +39,7 @@ describe('JasmineRunner integration', () => {
 
   describe('using a jasmine-project with errors', () => {
     beforeEach(async () => {
-      sandbox = new TempTestDirectorySandbox(resolveTestResource('errors'));
+      sandbox = new TempTestDirectorySandbox('errors');
       await sandbox.init();
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
@@ -56,7 +55,7 @@ describe('JasmineRunner integration', () => {
 
   describe('when it includes failed tests', () => {
     beforeEach(async () => {
-      sandbox = new TempTestDirectorySandbox(resolveTestResource('test-failures'));
+      sandbox = new TempTestDirectorySandbox('test-failures');
       await sandbox.init();
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });

@@ -13,7 +13,10 @@ import { fsPromisesCp } from './fs-promises-cp.js';
 export class TempTestDirectorySandbox {
   public tmpDir!: string;
   private originalWorkingDir: string | undefined;
-  constructor(private readonly from: string) {}
+  private readonly from: string;
+  constructor(from: string) {
+    this.from = path.resolve('testResources', from);
+  }
 
   /**
    * Copies all files `from` to the temp test directory
