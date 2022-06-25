@@ -26,7 +26,7 @@ describe('Lint checker success', () => {
 
   beforeEach(async () => {
     const testProjectRoot = resolveTestResource('.');
-    testInjector.options.lintConfigFile = resolveTestResource('.eslintrc.cjs');
+    testInjector.options.eslint = { configFile: resolveTestResource('.eslintrc.cjs') };
     process.chdir(testProjectRoot);
     testInjector.fileDescriptions[path.resolve('src', 'say-hello.js')] = { mutate: true };
     sut = testInjector.injector.injectFunction(createLintChecker);

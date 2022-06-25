@@ -19,7 +19,7 @@ const resolveTestResource = path.resolve.bind(
 describe('Lint checker errors', () => {
   it('should reject initialization if initial compilation failed', async () => {
     const testProjectRoot = resolveTestResource('compile-error');
-    testInjector.options.lintConfigFile = resolveTestResource('compile-error', '.eslintrc.cjs');
+    testInjector.options.eslint = { configFile: resolveTestResource('compile-error', '.eslintrc.cjs') };
     testInjector.fileDescriptions['example.js'] = { mutate: true };
     process.chdir(testProjectRoot);
     testInjector.fileDescriptions;

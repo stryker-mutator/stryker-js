@@ -4,9 +4,16 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "eslintConfigFile": {
-      "description": "Specify your [eslint configuration file](https://eslnt.org/docs/user-guide/configuring/configuration-files) to be loaded. Leaving this blank will result in the eslint looking for a configuration file of the form `.eslintrc.*`. Note the properties `plugins` and `extends` are ignored and will match the project's root eslint config.",
-      "type": "string"
+    "eslint": {
+      "type": "object",
+      "description": "Configuration for @stryker-mutator/eslint-checker",
+      "default": {},
+      "properties": {
+        "configFile": {
+          "type": "string",
+          "description": "Specify your [eslint configuration file](https://eslnt.org/docs/user-guide/configuring/configuration-files) to be loaded. Leaving this blank will result in the eslint looking for a configuration file of the form `.eslintrc.*`. Note the properties `plugins` and `extends` are ignored and will match the project's root eslint config."
+        }
+      }
     }
   }
 }

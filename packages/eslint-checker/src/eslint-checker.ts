@@ -1,7 +1,7 @@
 import { ESLint } from 'eslint';
 import { Checker, CheckResult } from '@stryker-mutator/api/check';
 import { Logger } from '@stryker-mutator/api/logging';
-import { FileDescriptions, Mutant } from '@stryker-mutator/api/core';
+import { FileDescriptions, Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 import { HybridFileSystem } from '@stryker-mutator/util';
 
@@ -12,14 +12,17 @@ import { ESlintCheckerWithStrykerOptions } from './eslint-checker-with-stryker-o
 
 export class LintChecker implements Checker {
   private linter!: ESLint;
+  private readonly options: ESlintCheckerWithStrykerOptions;
   public static inject = tokens(commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions, pluginTokens.fs);
 
   constructor(
     private readonly logger: Logger,
-    private readonly options: ESlintCheckerWithStrykerOptions,
+    options: StrykerOptions,
     private readonly fileDescriptions: FileDescriptions,
     private readonly fs: HybridFileSystem
-  ) {}
+  ) {
+    this.options = options as ESlintCheckerWithStrykerOptions;
+  }
 
   private readonly getFile = (filename: string) => {
     const scriptFile = this.fs.getFile(filename);
@@ -44,7 +47,7 @@ export class LintChecker implements Checker {
       overrideConfig: {
         rules: LINT_RULES_OVERRIDES,
       },
-      overrideConfigFile: this.options.eslintConfigFile,
+      overrideConfigFile: this.options.eslint.configFile,
     });
 
     const fileNames = Object.entries(this.fileDescriptions)
