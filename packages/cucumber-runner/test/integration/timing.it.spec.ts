@@ -9,16 +9,15 @@ import sinon from 'sinon';
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Cucumber runner timing', () => {
   let options: CucumberRunnerWithStrykerOptions;
   let sut: CucumberTestRunner;
-  let tempDir: TempTestDirectorySandbox;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    tempDir = new TempTestDirectorySandbox(resolveTestResource('timing'));
-    await tempDir.init();
+    sandbox = new TempTestDirectorySandbox('timing');
+    await sandbox.init();
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
@@ -26,7 +25,7 @@ describe('Cucumber runner timing', () => {
       .injectClass(CucumberTestRunner);
   });
   afterEach(async () => {
-    await tempDir.dispose();
+    await sandbox.dispose();
   });
 
   it('should report time correctly', async () => {

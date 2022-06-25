@@ -1,36 +1,32 @@
 import path from 'path';
 
+import { expect } from 'chai';
 import {
   assertions,
   factory,
   TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
-
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running in an instrumented example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
-  let tempDir: TempTestDirectorySandbox;
+  let sandbox: TempTestDirectorySandbox;
   const simpleMathFileName = path.join('features', 'simple_math.feature');
 
   beforeEach(async () => {
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
-    tempDir = new TempTestDirectorySandbox(
-      resolveTestResource('example-instrumented')
-    );
-    await tempDir.init();
+    sandbox = new TempTestDirectorySandbox('example-instrumented');
+    await sandbox.init();
   });
 
   afterEach(async () => {
-    await tempDir.dispose();
+    await sandbox.dispose();
   });
 
   function createSut(): CucumberTestRunner {

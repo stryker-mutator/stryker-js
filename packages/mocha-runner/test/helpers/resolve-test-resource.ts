@@ -11,11 +11,3 @@ export const resolveTestResource: typeof path.resolve = path.resolve.bind(
   '..' /* dist */,
   'testResources'
 );
-
-export const resolveTempTestResourceDirectory: typeof path.resolve = () => {
-  return path.resolve(dirname, '..' /* helpers */, '..' /* test */, '..' /* dist */, 'testResources', 'tmp', `workDir${random()}`);
-};
-
-function random(): number {
-  return Math.ceil(Math.random() * 10000000);
-}

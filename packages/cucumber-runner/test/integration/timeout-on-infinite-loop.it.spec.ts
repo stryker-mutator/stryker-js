@@ -11,18 +11,15 @@ import { expect } from 'chai';
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   const infiniteLoopFileName = path.join('features', 'infinite-loop.feature');
   let sut: CucumberTestRunner;
-  let tempDir: TempTestDirectorySandbox;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    tempDir = new TempTestDirectorySandbox(
-      resolveTestResource('infinite-loop-instrumented')
-    );
-    await tempDir.init();
+    sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
+    await sandbox.init();
 
     const options: CucumberRunnerWithStrykerOptions =
       testInjector.options as CucumberRunnerWithStrykerOptions;
@@ -32,7 +29,7 @@ describe('Infinite loop', () => {
       .injectClass(CucumberTestRunner);
   });
   afterEach(async () => {
-    await tempDir.dispose();
+    await sandbox.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {

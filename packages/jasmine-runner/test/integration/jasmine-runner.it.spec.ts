@@ -1,26 +1,24 @@
-import { factory, assertions, testInjector, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner.js';
 import { expectTestResultsToEqual } from '../helpers/assertions.js';
-import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 import { jasmineInitSuccessResults } from './helpers.js';
 
 describe('JasmineRunner integration', () => {
   let sut: JasmineTestRunner;
-  let tmpDir: string;
+  let sandbox: TempTestDirectorySandbox;
 
   afterEach(async () => {
-    process.chdir(resolveFromRoot());
+    await sandbox.dispose();
   });
 
   describe('using the jasmine-init project', () => {
     beforeEach(async () => {
-      tmpDir = resolveTempTestResourceDirectory();
-      await fsPromisesCp(resolveTestResource('jasmine-init'), tmpDir, { recursive: true });
-      process.chdir(tmpDir);
+      sandbox = new TempTestDirectorySandbox('jasmine-init');
+      await sandbox.init();
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
@@ -41,9 +39,8 @@ describe('JasmineRunner integration', () => {
 
   describe('using a jasmine-project with errors', () => {
     beforeEach(async () => {
-      tmpDir = resolveTempTestResourceDirectory();
-      await fsPromisesCp(resolveTestResource('errors'), tmpDir, { recursive: true });
-      process.chdir(tmpDir);
+      sandbox = new TempTestDirectorySandbox('errors');
+      await sandbox.init();
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
 
@@ -58,9 +55,8 @@ describe('JasmineRunner integration', () => {
 
   describe('when it includes failed tests', () => {
     beforeEach(async () => {
-      tmpDir = resolveTempTestResourceDirectory();
-      await fsPromisesCp(resolveTestResource('test-failures'), tmpDir, { recursive: true });
-      process.chdir(tmpDir);
+      sandbox = new TempTestDirectorySandbox('test-failures');
+      await sandbox.init();
       sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
     });
 

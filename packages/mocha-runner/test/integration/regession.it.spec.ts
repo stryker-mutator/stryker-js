@@ -1,14 +1,16 @@
+import path from 'path';
+
 import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { assertions, factory, fsPromisesCp, testInjector } from '@stryker-mutator/test-helpers';
+import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options.js';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('regression integration tests', () => {
   let options: MochaRunnerWithStrykerOptions;
   let sut: MochaTestRunner;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(() => {
     options = testInjector.options as MochaRunnerWithStrykerOptions;
@@ -17,13 +19,13 @@ describe('regression integration tests', () => {
 
   afterEach(async () => {
     await sut.dispose();
+    await sandbox.dispose();
   });
 
   describe('issue #2720', () => {
     beforeEach(async () => {
-      const tmpDir = resolveTempTestResourceDirectory();
-      await fsPromisesCp(resolveTestResource('regression', 'issue-2720'), tmpDir, { recursive: true });
-      process.chdir(tmpDir);
+      sandbox = new TempTestDirectorySandbox(path.join('regression', 'issue-2720'));
+      await sandbox.init();
     });
 
     it('should have report correct failing test when "beforeEach" fails', async () => {

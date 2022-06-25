@@ -14,16 +14,15 @@ import type { IConfiguration } from '@cucumber/cucumber/api';
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running in an example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
   let sut: CucumberTestRunner;
-  let tempDir: TempTestDirectorySandbox;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    tempDir = new TempTestDirectorySandbox(resolveTestResource('example'));
-    await tempDir.init();
+    sandbox = new TempTestDirectorySandbox('example');
+    await sandbox.init();
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
@@ -31,7 +30,7 @@ describe('Running in an example project', () => {
       .injectClass(CucumberTestRunner);
   });
   afterEach(async () => {
-    await tempDir.dispose();
+    await sandbox.dispose();
   });
 
   it('should be to run in the example', async () => {
