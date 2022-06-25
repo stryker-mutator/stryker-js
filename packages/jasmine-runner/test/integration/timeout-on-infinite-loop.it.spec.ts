@@ -1,21 +1,20 @@
-import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
-import { resolveFromRoot, resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: JasmineTestRunner;
-  let tmpDir: string;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    tmpDir = resolveTempTestResourceDirectory();
-    await fsPromisesCp(resolveTestResource('infinite-loop-instrumented'), tmpDir, { recursive: true });
-    process.chdir(tmpDir);
+    sandbox = new TempTestDirectorySandbox(resolveTestResource('infinite-loop-instrumented'));
+    await sandbox.init();
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });
   afterEach(async () => {
-    process.chdir(resolveFromRoot());
+    await sandbox.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {

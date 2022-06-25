@@ -33,7 +33,6 @@ describe(MochaTestRunner.name, () => {
   });
 
   afterEach(() => {
-    // These keys can be used to test the nodejs cache
     delete StrykerMochaReporter.log;
   });
 

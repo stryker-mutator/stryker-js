@@ -1,21 +1,21 @@
-import { factory, assertions, testInjector, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
-import { resolveTempTestResourceDirectory, resolveTestResource, resolveFromRoot } from '../helpers/resolve-test-resource.js';
+import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe(`${JasmineTestRunner.name} mutant activation`, () => {
   let sut: JasmineTestRunner;
+  let sandbox: TempTestDirectorySandbox;
   beforeEach(async () => {
-    const tmpDir = resolveTempTestResourceDirectory();
-    await fsPromisesCp(resolveTestResource('mutant-activation'), tmpDir, { recursive: true });
-    process.chdir(tmpDir);
+    sandbox = new TempTestDirectorySandbox(resolveTestResource('mutant-activation'));
+    await sandbox.init();
     testInjector.options.jasmineConfigFile = 'jasmine.json';
     sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
   });
 
   afterEach(async () => {
-    process.chdir(resolveFromRoot());
+    await sandbox.dispose();
   });
 
   it('should support static', async function () {
