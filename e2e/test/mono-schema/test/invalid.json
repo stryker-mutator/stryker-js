@@ -14,5 +14,8 @@
     "features": [32],
     "tags": "tag",
     "profile": 42
+  },
+  "eslint": {
+    "configFile": 42
   }
 }

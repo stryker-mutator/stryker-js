@@ -68,6 +68,13 @@ describe('The Stryker meta schema', () => {
       schemaPath: '#/properties/cucumber/properties/profile/type',
     },
     {
+      instancePath: '/eslint/configFile',
+      schemaPath: '#/properties/eslint/properties/configFile/type',
+      keyword: 'type',
+      params: { type: 'string' },
+      message: 'must be string',
+    },
+    {
       keyword: 'type',
       instancePath: '/jasmineConfigFile',
       schemaPath: '#/properties/jasmineConfigFile/type',
