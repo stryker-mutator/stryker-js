@@ -38,6 +38,23 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       expect(sut.global.__stryker2__).eq(state.instrumenterContext);
     });
 
+    it('should default to __stryker__ when there is no global stryker variable name configured', () => {
+      // Arrange
+      state.clear();
+
+      // Act
+      const sut = new (mixinJestEnvironment(
+        class extends JestEnvironmentNode {
+          public async handleTestEvent(_event: Circus.Event, _eventState: Circus.State) {
+            // Idle
+          }
+        }
+      ))(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
+
+      // Assert
+      expect(sut.global.__stryker__).eq(state.instrumenterContext);
+    });
+
     it('should add the testPath to the test files with stryker environment', async () => {
       // Arrange
       state.clear();
