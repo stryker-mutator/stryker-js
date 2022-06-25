@@ -7,7 +7,7 @@
   "scripts": {
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha 'dist/test/unit/**/*.js' || echo 'No unit tests yet'",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
     "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
     "stryker": "node ../core/bin/stryker.js run"
   },
@@ -35,7 +35,8 @@
   "license": "ISC",
   "devDependencies": {
     "@cucumber/cucumber": "8.3.1",
-    "@stryker-mutator/test-helpers": "6.0.2"
+    "@stryker-mutator/test-helpers": "6.0.2",
+    "@types/semver": "^7.3.10"
   },
   "peerDependencies": {
     "@cucumber/cucumber": "^8.0.0",
@@ -44,6 +45,7 @@
   "dependencies": {
     "@cucumber/messages": "^19.0.0",
     "@stryker-mutator/api": "6.0.2",
-    "@stryker-mutator/util": "6.0.2"
+    "@stryker-mutator/util": "6.0.2",
+    "semver": "^7.3.7"
   }
 }
