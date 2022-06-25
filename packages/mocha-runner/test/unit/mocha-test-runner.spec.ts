@@ -3,7 +3,7 @@ import Mocha from 'mocha';
 import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 import { KilledMutantRunResult, MutantRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
-import { DirectoryRequireCache, Task } from '@stryker-mutator/util';
+import { Task } from '@stryker-mutator/util';
 
 import { MochaTestRunner } from '../../src/mocha-test-runner.js';
 import { StrykerMochaReporter } from '../../src/stryker-mocha-reporter.js';
@@ -13,7 +13,6 @@ import { MochaOptionsLoader } from '../../src/mocha-options-loader.js';
 import { createMochaOptions } from '../helpers/factories.js';
 
 describe(MochaTestRunner.name, () => {
-  let directoryRequireCacheMock: sinon.SinonStubbedInstance<DirectoryRequireCache>;
   let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<Mocha.Suite>; dispose?: sinon.SinonStub };
   let mochaAdapterMock: sinon.SinonStubbedInstance<MochaAdapter>;
   let mochaOptionsLoaderMock: sinon.SinonStubbedInstance<MochaOptionsLoader>;
@@ -22,7 +21,6 @@ describe(MochaTestRunner.name, () => {
 
   beforeEach(() => {
     reporterMock = sinon.createStubInstance(StrykerMochaReporter);
-    directoryRequireCacheMock = sinon.createStubInstance(DirectoryRequireCache);
     reporterMock.tests = [];
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
@@ -43,7 +41,6 @@ describe(MochaTestRunner.name, () => {
     return testInjector.injector
       .provideValue(pluginTokens.mochaAdapter, mochaAdapterMock)
       .provideValue(pluginTokens.loader, mochaOptionsLoaderMock)
-      .provideValue(pluginTokens.directoryRequireCache, directoryRequireCacheMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(MochaTestRunner);
   }
