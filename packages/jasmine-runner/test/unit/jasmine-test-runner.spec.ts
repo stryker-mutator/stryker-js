@@ -99,10 +99,10 @@ describe(JasmineTestRunner.name, () => {
 
       // Assert
       expect(global.__stryker2__?.activeMutant).eq('23');
-      customReporter!.jasmineStarted!(createJasmineStartedInfo());
+      await customReporter!.jasmineStarted!(createJasmineStartedInfo());
       expect(global.__stryker2__?.activeMutant).eq('23');
       const doneInfo = createJasmineDoneInfo();
-      customReporter!.jasmineDone!(doneInfo);
+      await customReporter!.jasmineDone!(doneInfo);
       executeTask.resolve(doneInfo);
       await onGoingAct;
     });
@@ -123,10 +123,10 @@ describe(JasmineTestRunner.name, () => {
 
       // Assert
       expect(global.__stryker2__?.activeMutant).undefined;
-      customReporter!.jasmineStarted!(createJasmineStartedInfo());
+      await customReporter!.jasmineStarted!(createJasmineStartedInfo());
       expect(global.__stryker2__?.activeMutant).eq('23');
       const doneInfo = createJasmineDoneInfo();
-      customReporter!.jasmineDone!(doneInfo);
+      await customReporter!.jasmineDone!(doneInfo);
       executeTask.resolve(doneInfo);
       await onGoingAct;
     });
@@ -138,7 +138,7 @@ describe(JasmineTestRunner.name, () => {
       }
       jasmineEnvStub.addReporter.callsFake(addReporter);
       jasmineStub.execute.callsFake(async () => {
-        customReporter.jasmineDone!(createJasmineDoneInfo());
+        await customReporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
       return sut.mutantRun(factory.mutantRunOptions({ activeMutant, testFilter, timeout: 2000, sandboxFileName }));
@@ -151,10 +151,10 @@ describe(JasmineTestRunner.name, () => {
       clock.setSystemTime(new Date(2010, 1, 1));
       jasmineStub.execute.callsFake(async () => {
         const spec = createSpecResult();
-        reporter.specStarted!(spec);
+        await reporter.specStarted!(spec);
         clock.tick(10);
-        reporter.specDone!(spec);
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.specDone!(spec);
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 
@@ -169,7 +169,7 @@ describe(JasmineTestRunner.name, () => {
     it('should configure failFast: false when bail is disabled', async () => {
       // Arrange
       jasmineStub.execute.callsFake(async () => {
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 
@@ -191,7 +191,7 @@ describe(JasmineTestRunner.name, () => {
         };
         global.__stryker2__!.mutantCoverage = expectedMutationCoverage;
         jasmineStub.execute.callsFake(async () => {
-          reporter.jasmineDone!(createJasmineDoneInfo());
+          await reporter.jasmineDone!(createJasmineDoneInfo());
           return createJasmineDoneInfo();
         });
 
@@ -216,7 +216,7 @@ describe(JasmineTestRunner.name, () => {
       };
       global.__stryker2__!.mutantCoverage = expectedMutationCoverage;
       jasmineStub.execute.callsFake(async () => {
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 
@@ -239,13 +239,13 @@ describe(JasmineTestRunner.name, () => {
       jasmineStub.execute.callsFake(async () => {
         const spec0 = createSpecResult({ id: 'spec0' });
         const spec1 = createSpecResult({ id: 'spec23' });
-        reporter.specStarted!(spec0);
+        await reporter.specStarted!(spec0);
         firstCurrentTestId = global.__stryker2__!.currentTestId;
-        reporter.specDone!(spec0);
-        reporter.specStarted!(spec1);
+        await reporter.specDone!(spec0);
+        await reporter.specStarted!(spec1);
         secondCurrentTestId = global.__stryker2__!.currentTestId;
-        reporter.specDone!(spec1);
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.specDone!(spec1);
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 
@@ -262,10 +262,10 @@ describe(JasmineTestRunner.name, () => {
       let firstCurrentTestId: string | undefined;
       jasmineStub.execute.callsFake(async () => {
         const spec0 = createSpecResult({ id: 'spec0' });
-        reporter.specStarted!(spec0);
+        await reporter.specStarted!(spec0);
         firstCurrentTestId = global.__stryker2__!.currentTestId;
-        reporter.specDone!(spec0);
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.specDone!(spec0);
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 
@@ -279,8 +279,8 @@ describe(JasmineTestRunner.name, () => {
     it('should report completed specs', async () => {
       // Arrange
       jasmineStub.execute.callsFake(async () => {
-        reporter.specDone!(createSpecResult({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' }));
-        reporter.specDone!(
+        await reporter.specDone!(createSpecResult({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' }));
+        await reporter.specDone!(
           createSpecResult({
             id: 'spec1',
             fullName: 'bar spec',
@@ -289,10 +289,10 @@ describe(JasmineTestRunner.name, () => {
             description: 'string',
           })
         );
-        reporter.specDone!(createSpecResult({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' }));
-        reporter.specDone!(createSpecResult({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' }));
-        reporter.specDone!(createSpecResult({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' }));
-        reporter.jasmineDone!(createJasmineDoneInfo());
+        await reporter.specDone!(createSpecResult({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' }));
+        await reporter.specDone!(createSpecResult({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' }));
+        await reporter.specDone!(createSpecResult({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' }));
+        await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
 

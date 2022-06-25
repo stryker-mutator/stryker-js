@@ -33,7 +33,7 @@ module.exports = {
     // prettier rules
     'prettier/prettier': ['error'],
 
-    // customised typescript-eslint rules
+    // customized typescript-eslint rules
     '@typescript-eslint/array-type': [
       'error',
       {
@@ -60,6 +60,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-floating-promises': 'error',
 
     // disabled typescript-eslint rules we should enable in some way
 
@@ -72,7 +73,6 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/return-await': 'off',
     '@typescript-eslint/await-thenable': 'off',
-    '@typescript-eslint/no-floating-promises': 'off',
 
     // fix - separate PR
     '@typescript-eslint/unbound-method': 'off',
