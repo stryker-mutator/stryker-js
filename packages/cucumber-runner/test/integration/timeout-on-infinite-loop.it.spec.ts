@@ -4,6 +4,7 @@ import {
   testInjector,
   factory,
   assertions,
+  TempTestDirectorySandbox,
 } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -15,15 +16,23 @@ import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 describe('Infinite loop', () => {
   const infiniteLoopFileName = path.join('features', 'infinite-loop.feature');
   let sut: CucumberTestRunner;
+  let tempDir: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    process.chdir(resolveTestResource('infinite-loop-instrumented'));
+    tempDir = new TempTestDirectorySandbox(
+      resolveTestResource('infinite-loop-instrumented')
+    );
+    await tempDir.init();
+
     const options: CucumberRunnerWithStrykerOptions =
       testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await tempDir.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {

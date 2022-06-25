@@ -3,6 +3,7 @@ import path from 'path';
 import {
   assertions,
   factory,
+  TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -16,12 +17,20 @@ import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running in an instrumented example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
+  let tempDir: TempTestDirectorySandbox;
   const simpleMathFileName = path.join('features', 'simple_math.feature');
 
-  beforeEach(() => {
+  beforeEach(async () => {
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
-    process.chdir(resolveTestResource('example-instrumented'));
+    tempDir = new TempTestDirectorySandbox(
+      resolveTestResource('example-instrumented')
+    );
+    await tempDir.init();
+  });
+
+  afterEach(async () => {
+    await tempDir.dispose();
   });
 
   function createSut(): CucumberTestRunner {

@@ -26,12 +26,13 @@ import {
   INSTRUMENTER_CONSTANTS,
   StrykerOptions,
 } from '@stryker-mutator/api/core';
-import { DirectoryRequireCache } from '@stryker-mutator/util';
+import type { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types.js';
+import type { IConfiguration, IRunOptions } from '@cucumber/cucumber/api';
 
 import { CucumberSetup } from '../src-generated/cucumber-runner-options.js';
 
 import { CucumberRunnerWithStrykerOptions } from './cucumber-runner-with-stryker-options.js';
-import { Cli } from './cjs/cucumber-wrapper.js';
+import { runCucumber, loadConfiguration } from './cjs/cucumber-wrapper.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 cucumberTestRunnerFactory.inject = [commonTokens.injector];
@@ -53,6 +54,17 @@ const strykerFormatterFile = require_.resolve('./cjs/stryker-formatter');
 const StrykerFormatter: typeof import('./cjs/stryker-formatter').default =
   require_('./cjs/stryker-formatter.js').default;
 
+interface ResolvedConfiguration {
+  /**
+   * The final flat configuration object resolved from the configuration file/profiles plus any extra provided.
+   */
+  useConfiguration: IConfiguration;
+  /**
+   * The format that can be passed into `runCucumber`.
+   */
+  runConfiguration: IRunOptions;
+}
+
 export class CucumberTestRunner implements TestRunner {
   public static inject = tokens(
     commonTokens.logger,
@@ -60,6 +72,7 @@ export class CucumberTestRunner implements TestRunner {
     pluginTokens.globalNamespace
   );
 
+  private supportCodeLibrary?: ISupportCodeLibrary;
   private readonly options: CucumberSetup;
   private readonly instrumenterContext: InstrumenterContext;
 
@@ -74,10 +87,8 @@ export class CucumberTestRunner implements TestRunner {
     StrykerFormatter.instrumenterContext = this.instrumenterContext;
   }
 
-  private readonly directoryRequireCache = new DirectoryRequireCache();
-
   public capabilities(): TestRunnerCapabilities {
-    return { reloadEnvironment: true };
+    return { reloadEnvironment: false };
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -104,46 +115,44 @@ export class CucumberTestRunner implements TestRunner {
     disableBail: boolean,
     testFilter?: string[]
   ): Promise<DryRunResult> {
-    const testFilterArgs = this.determineFilterArgs(testFilter);
-    const tagsArgs = this.determineTagsArgs();
-    const profileArgs = this.determineProfileArgs();
-    const bailArgs = disableBail ? [] : ['--fail-fast'];
-    const argv = [
-      'node',
-      'cucumber-js',
-      '--retry',
-      '0',
-      '--parallel',
-      '0',
-      '--format',
-      strykerFormatterFile,
-      ...bailArgs,
-      ...tagsArgs,
-      ...profileArgs,
-      ...testFilterArgs,
-    ];
-    const cli = new Cli({
-      argv,
-      cwd: process.cwd(),
-      stdout: process.stdout,
-      stderr: process.stderr,
-      env: process.env,
-    });
+    const { runConfiguration, useConfiguration }: ResolvedConfiguration =
+      await loadConfiguration({
+        provided: {
+          format: [strykerFormatterFile],
+          retry: 0,
+          parallel: 0,
+          failFast: !disableBail,
+          tags: this.options.tags?.map((tag) => `(${tag})`).join(' and '),
+        },
+        profiles: this.options.profile ? [this.options.profile] : undefined,
+      });
+    const config: IRunOptions = runConfiguration;
+
+    // Override the tests to run. Don't provide these above in provide, as that will merge all together
+    config.sources.paths = this.determinePaths(
+      testFilter,
+      config.sources.paths
+    );
+
     if (this.logger.isDebugEnabled()) {
       this.logger.debug(
-        `${process.cwd()} ${argv.map((arg) => `"${arg}"`).join(' ')}`
+        `Running cucumber with configuration: (${process.cwd()})\n${JSON.stringify(
+          useConfiguration,
+          null,
+          2
+        )}`
       );
     }
+    if (this.supportCodeLibrary) {
+      config.support = this.supportCodeLibrary;
+    }
     try {
-      await cli.run();
+      this.supportCodeLibrary = (await runCucumber(config)).support;
     } catch (err: any) {
       return {
         status: DryRunStatus.Error,
         errorMessage: err.stack,
       };
-    } finally {
-      this.directoryRequireCache.record();
-      this.directoryRequireCache.clear();
     }
     const timeoutResult = determineHitLimitReached(
       this.instrumenterContext.hitCount,
@@ -166,20 +175,10 @@ export class CucumberTestRunner implements TestRunner {
     };
   }
 
-  private determineProfileArgs(): string[] {
-    if (this.options.profile) {
-      return ['--profile', this.options.profile];
-    }
-    return [];
-  }
-  private determineTagsArgs(): string[] {
-    if (this.options.tags) {
-      return this.options.tags.flatMap((tag) => ['--tags', tag]);
-    }
-    return [];
-  }
-
-  private determineFilterArgs(testFilter: string[] | undefined) {
+  private determinePaths(
+    testFilter: string[] | undefined,
+    defaultPaths: string[]
+  ): string[] {
     if (testFilter) {
       return Object.entries(
         testFilter?.reduce<Record<string, string[]>>((acc, testId) => {
@@ -194,7 +193,7 @@ export class CucumberTestRunner implements TestRunner {
     } else if (this.options.features) {
       return this.options.features;
     } else {
-      return [];
+      return defaultPaths;
     }
   }
 }

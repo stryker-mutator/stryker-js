@@ -1,15 +1,15 @@
 import path from 'path';
-
 import { createRequire } from 'module';
 
+import { expect } from 'chai';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import {
   assertions,
   factory,
+  TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
-
-import { expect } from 'chai';
+import type { IConfiguration } from '@cucumber/cucumber/api';
 
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
@@ -19,14 +19,19 @@ import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 describe('Running in an example project', () => {
   let options: CucumberRunnerWithStrykerOptions;
   let sut: CucumberTestRunner;
+  let tempDir: TempTestDirectorySandbox;
 
-  beforeEach(() => {
-    process.chdir(resolveTestResource('example'));
+  beforeEach(async () => {
+    tempDir = new TempTestDirectorySandbox(resolveTestResource('example'));
+    await tempDir.init();
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await tempDir.dispose();
   });
 
   it('should be to run in the example', async () => {
@@ -78,14 +83,28 @@ describe('Running in an example project', () => {
   });
 
   it('should log the exec command on debug', async () => {
+    // Arrange
     const require = createRequire(import.meta.url);
     testInjector.logger.isDebugEnabled.returns(true);
+    const expectedConfig: Partial<IConfiguration> = {
+      format: [require.resolve('../../src/cjs/stryker-formatter')],
+      retry: 0,
+      parallel: 0,
+      failFast: true,
+    };
+
+    // Act
     await sut.dryRun(factory.dryRunOptions());
-    expect(testInjector.logger.debug).calledWith(
-      `${process.cwd()} "node" "cucumber-js" "--retry" "0" "--parallel" "0" "--format" "${require.resolve(
-        '../../src/cjs/stryker-formatter'
-      )}" "--fail-fast"`
+
+    // Assert
+    expect(testInjector.logger.debug).calledOnce;
+    const actualLogMessage = testInjector.logger.debug.getCall(0).args[0];
+    const expectedPrefix = `Running cucumber with configuration: (${process.cwd()})`;
+    expect(actualLogMessage.startsWith(expectedPrefix)).true;
+    const actualConfig: IConfiguration = JSON.parse(
+      actualLogMessage.substring(expectedPrefix.length)
     );
+    expect(actualConfig).deep.includes(expectedConfig);
   });
 
   it("shouldn't log if debug isn't enabled", async () => {
