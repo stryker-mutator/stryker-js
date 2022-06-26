@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import babel from '@babel/core';
 import generator from '@babel/generator';
 import { I, normalizeWhitespaces } from '@stryker-mutator/util';
+import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
 import { TransformerContext } from '../../../src/transformers/index.js';
@@ -544,7 +545,7 @@ describe('babel-transformer', () => {
     });
   });
 
-  describe('with mutationRanges', () => {
+  describe('with mutateDescription', () => {
     let ast: ScriptAst;
 
     beforeEach(() => {
@@ -577,56 +578,51 @@ describe('babel-transformer', () => {
       mutantPlacers.push(catchAllMutantPlacer);
     });
 
-    function range(startLine: number, startColumn: number, endLine: number, endColumn: number, fileName = 'foo.js') {
-      return {
-        fileName,
-        start: { line: startLine, column: startColumn },
-        end: { line: endLine, column: endColumn },
-      };
+    function range(startLine: number, startColumn: number, endLine: number, endColumn: number): MutateDescription {
+      return [
+        {
+          start: { line: startLine, column: startColumn },
+          end: { line: endLine, column: endColumn },
+        },
+      ];
     }
 
     it('should mutate a node that matches the a single line range', () => {
-      context.options.mutationRanges = [range(2, 12, 2, 15)];
+      context.mutateDescription = range(2, 12, 2, 15);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
       expect(mutantCollector.mutants[0].original.loc?.start.line).eq(2);
     });
 
     it('should not mutate a node that does not match a single line start range', () => {
-      context.options.mutationRanges = [range(2, 13, 2, 15)];
+      context.mutateDescription = range(2, 13, 2, 15);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
     it('should not mutate a node that does not match a single line end range', () => {
-      context.options.mutationRanges = [range(2, 12, 2, 14)];
+      context.mutateDescription = range(2, 12, 2, 14);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
     it('should mutate a node that matches a multi line range', () => {
-      context.options.mutationRanges = [range(3, 0, 7, 0)];
+      context.mutateDescription = range(3, 0, 7, 0);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
       expect(mutantCollector.mutants[0].mutatorName).eq('blockMutatorForTest');
     });
 
     it('should not mutate a node that is not in the start line range', () => {
-      context.options.mutationRanges = [range(4, 0, 7, 0)];
+      context.mutateDescription = range(4, 0, 7, 0);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
     it('should not mutate a node that is not in the end line range', () => {
-      context.options.mutationRanges = [range(3, 0, 6, 0)];
+      context.mutateDescription = range(3, 0, 6, 0);
       act(ast);
       expect(mutantCollector.mutants).lengthOf(0);
-    });
-
-    it('should still mutate other files', () => {
-      context.options.mutationRanges = [range(100, 0, 101, 0, 'bar.js')];
-      act(ast);
-      expect(mutantCollector.mutants).lengthOf(4);
     });
   });
 

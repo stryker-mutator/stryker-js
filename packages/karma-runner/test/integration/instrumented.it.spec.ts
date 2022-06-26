@@ -110,7 +110,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
         assertions.expectKilled(result);
         expect(result.killedBy).deep.eq(['spec0']);
-        expect(result.failureMessage.split('\n')[0]).eq('Error: Expected undefined to be 7.');
+        expect(result.failureMessage.split('\n')[0]).eq('Expected undefined to be 7.');
       });
 
       it('should survive if the filtered tests do not kill the mutant', async () => {
@@ -135,7 +135,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         const expected = factory.killedMutantRunResult({
           killedBy: ['spec1'],
           status: MutantRunStatus.Killed,
-          failureMessage: 'Error: Expected undefined to be 3.',
+          failureMessage: 'Expected undefined to be 3.',
           nrOfTests: 1,
         });
         expect(result).deep.eq(expected);

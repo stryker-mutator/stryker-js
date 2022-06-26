@@ -1,7 +1,7 @@
 import path from 'path';
 import { URL } from 'url';
 
-import { LogLevel } from '@stryker-mutator/api/core';
+import { FileDescriptions, LogLevel } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -22,10 +22,15 @@ describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
   let log: Mock<Logger>;
+  let fileDescriptions: FileDescriptions;
   const testRunnerName = 'echoRunner';
   const workingDir = '..';
 
   beforeEach(async () => {
+    fileDescriptions = {
+      'src/foo.js': { mutate: true },
+      'src/foo.spec.js': { mutate: false },
+    };
     loggingServer = new LoggingServer();
     const port = await loggingServer.listen();
     testInjector.options.testRunner = testRunnerName;
@@ -34,6 +39,7 @@ describe(ChildProcessProxy.name, () => {
       new URL('./echo.js', import.meta.url).toString(),
       { port, level: LogLevel.Debug },
       testInjector.options,
+      fileDescriptions,
       [],
       workingDir,
       Echo,
@@ -63,6 +69,11 @@ describe(ChildProcessProxy.name, () => {
     expect(actual).eq(`${testRunnerName}: hello (2 ms)`);
   });
 
+  it('should provide fileDescriptions correctly', async () => {
+    const actual = await sut.proxy.echoFiles();
+    expect(actual).deep.eq(fileDescriptions);
+  });
+
   it('should set the current working directory', async () => {
     const actual = await sut.proxy.cwd();
     expect(actual).eq(path.resolve(workingDir));
@@ -84,7 +95,7 @@ describe(ChildProcessProxy.name, () => {
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {
     const logEventTask = new Task<log4js.LoggingEvent>();
     loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
-    sut.proxy.debug('test message');
+    await sut.proxy.debug('test message');
     const logger = await logEventTask.promise;
     expect(logger.categoryName).eq(Echo.name);
     expect(logger.data).deep.eq(['test message']);
@@ -93,8 +104,8 @@ describe(ChildProcessProxy.name, () => {
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
     const logEventTask = new Task<log4js.LoggingEvent>();
     loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
-    sut.proxy.trace('foo');
-    sut.proxy.debug('bar');
+    await sut.proxy.trace('foo');
+    await sut.proxy.debug('bar');
     const logger = await logEventTask.promise;
     expect(logger.categoryName).eq(Echo.name);
     expect(logger.data).deep.eq(['bar']);

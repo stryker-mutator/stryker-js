@@ -1,6 +1,7 @@
 import {
   assertions,
   factory,
+  TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
@@ -8,19 +9,23 @@ import sinon from 'sinon';
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Cucumber runner timing', () => {
   let options: CucumberRunnerWithStrykerOptions;
   let sut: CucumberTestRunner;
+  let sandbox: TempTestDirectorySandbox;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    sandbox = new TempTestDirectorySandbox('timing');
+    await sandbox.init();
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
-    process.chdir(resolveTestResource('timing'));
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await sandbox.dispose();
   });
 
   it('should report time correctly', async () => {

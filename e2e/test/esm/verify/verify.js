@@ -26,6 +26,11 @@ describe('esm', () => {
     execStryker('stryker run --testRunner karma');
     await assertStrykerRanCorrectly();
   });
+
+  it('should be supported in the cucumber runner', async () => {
+    execStryker('stryker run --testRunner cucumber');
+    await assertStrykerRanCorrectly();
+  });
 });
 
 async function assertStrykerRanCorrectly() {

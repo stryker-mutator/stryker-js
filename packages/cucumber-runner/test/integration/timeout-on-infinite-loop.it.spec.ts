@@ -4,26 +4,32 @@ import {
   testInjector,
   factory,
   assertions,
+  TempTestDirectorySandbox,
 } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   const infiniteLoopFileName = path.join('features', 'infinite-loop.feature');
   let sut: CucumberTestRunner;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    process.chdir(resolveTestResource('infinite-loop-instrumented'));
+    sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
+    await sandbox.init();
+
     const options: CucumberRunnerWithStrykerOptions =
       testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await sandbox.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {

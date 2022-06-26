@@ -3,28 +3,32 @@ import path from 'path';
 import {
   assertions,
   factory,
+  TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
-
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import * as pluginTokens from '../../src/plugin-tokens.js';
 import { CucumberTestRunner } from '../../src/index.js';
 import { CucumberRunnerWithStrykerOptions } from '../../src/cucumber-runner-with-stryker-options.js';
-import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running cucumber when steps are failing', () => {
   let options: CucumberRunnerWithStrykerOptions;
+  let sandbox: TempTestDirectorySandbox;
 
   let sut: CucumberTestRunner;
 
-  beforeEach(() => {
-    process.chdir(resolveTestResource('failure-example'));
+  beforeEach(async () => {
+    sandbox = new TempTestDirectorySandbox('failure-example');
+    await sandbox.init();
     options = testInjector.options as CucumberRunnerWithStrykerOptions;
     options.cucumber = {};
     sut = testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(CucumberTestRunner);
+  });
+  afterEach(async () => {
+    await sandbox.dispose();
   });
 
   it('should report a failed step as "failed"', async () => {

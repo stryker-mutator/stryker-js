@@ -36,7 +36,7 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
 
       constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
         super(config, context);
-        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__] = state.instrumenterContext;
+        this.strykerContext = this.global[this.global.__strykerGlobalNamespace__ ?? '__stryker__'] = state.instrumenterContext;
         state.testFilesWithStrykerEnvironment.add(context.testPath);
       }
 

@@ -72,8 +72,8 @@ describe(EventRecorderReporter.name, () => {
         sut = testInjector.injector.injectClass(EventRecorderReporter);
       });
 
-      it('should reject when `wrapUp()` is called', () => {
-        expect(sut.wrapUp()).rejectedWith(expectedError);
+      it('should reject when `wrapUp()` is called', async () => {
+        await expect(sut.wrapUp()).rejectedWith(expectedError);
       });
     });
   });

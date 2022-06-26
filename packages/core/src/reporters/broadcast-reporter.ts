@@ -53,22 +53,22 @@ export class BroadcastReporter implements StrictReporter {
   }
 
   public onDryRunCompleted(event: DryRunCompletedEvent): void {
-    this.broadcast('onDryRunCompleted', event);
+    void this.broadcast('onDryRunCompleted', event);
   }
   public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
-    this.broadcast('onMutationTestingPlanReady', event);
+    void this.broadcast('onMutationTestingPlanReady', event);
   }
 
   public onMutantTested(result: MutantResult): void {
-    this.broadcast('onMutantTested', result);
+    void this.broadcast('onMutantTested', result);
   }
 
   public onAllMutantsTested(results: MutantResult[]): void {
-    this.broadcast('onAllMutantsTested', results);
+    void this.broadcast('onAllMutantsTested', results);
   }
 
   public onMutationTestReportReady(report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
-    this.broadcast('onMutationTestReportReady', report, metrics);
+    void this.broadcast('onMutationTestReportReady', report, metrics);
   }
 
   public async wrapUp(): Promise<void> {

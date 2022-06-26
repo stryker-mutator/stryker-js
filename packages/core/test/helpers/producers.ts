@@ -1,4 +1,5 @@
 import { CpuInfo } from 'os';
+import type { Dirent } from 'fs';
 
 import { ClearTextReporterOptions } from '@stryker-mutator/api/core';
 import { Logger } from 'log4js';
@@ -9,6 +10,8 @@ import { I } from '@stryker-mutator/util';
 
 import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
 import { CheckerFacade } from '../../src/checker/index.js';
+import { FileSystem } from '../../src/fs/file-system.js';
+import { TSConfig } from '../../src/sandbox/ts-config-preprocessor.js';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -20,10 +23,20 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
   return sinon.createStubInstance(constructorFn);
 }
 
+export function createFileSystemMock(): sinon.SinonStubbedInstance<FileSystem> {
+  return {
+    copyFile: sinon.stub(),
+    readFile: sinon.stub(),
+    dispose: sinon.stub(),
+    mkdir: sinon.stub(),
+    writeFile: sinon.stub(),
+    readdir: sinon.stub(),
+  } as sinon.SinonStubbedInstance<FileSystem>;
+}
+
 /**
  * Use this factory method to create deep test data
- * @param defaults
- */
+ * */
 function factoryMethod<T>(defaultsFactory: () => T) {
   return (overrides?: Partial<T>) => Object.assign({}, defaultsFactory(), overrides);
 }
@@ -103,5 +116,32 @@ export function createCpuInfo(overrides?: Partial<CpuInfo>): CpuInfo {
       irq: 0,
     },
     ...overrides,
+  };
+}
+
+export function serializeTSConfig(content: TSConfig): string {
+  return JSON.stringify(content, null, 2);
+}
+
+interface CreateDirentOptions {
+  name: string;
+  isDirectory: boolean;
+}
+export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
+  const { name, isDirectory } = {
+    name: 'foo',
+    isDirectory: true,
+    ...overrides,
+  };
+  const dummy = () => true;
+  return {
+    isBlockDevice: dummy,
+    isCharacterDevice: dummy,
+    isDirectory: () => isDirectory,
+    isFIFO: dummy,
+    isFile: () => !isDirectory,
+    isSocket: dummy,
+    isSymbolicLink: dummy,
+    name,
   };
 }

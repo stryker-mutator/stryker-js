@@ -9,7 +9,7 @@
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^7.2.0"
+    "@cucumber/cucumber": "8.0.0"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

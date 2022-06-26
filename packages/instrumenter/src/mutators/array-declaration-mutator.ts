@@ -1,5 +1,7 @@
 import babel, { type NodePath } from '@babel/core';
 
+import { deepCloneNode } from '../util/index.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
@@ -15,8 +17,8 @@ export const arrayDeclarationMutator: NodeMutator = {
     if ((path.isCallExpression() || path.isNewExpression()) && types.isIdentifier(path.node.callee) && path.node.callee.name === 'Array') {
       const mutatedCallArgs = path.node.arguments.length ? [] : [types.arrayExpression()];
       const replacement = types.isNewExpression(path)
-        ? types.newExpression(path.node.callee, mutatedCallArgs)
-        : types.callExpression(path.node.callee, mutatedCallArgs);
+        ? types.newExpression(deepCloneNode(path.node.callee), mutatedCallArgs)
+        : types.callExpression(deepCloneNode(path.node.callee), mutatedCallArgs);
       yield replacement;
     }
   },

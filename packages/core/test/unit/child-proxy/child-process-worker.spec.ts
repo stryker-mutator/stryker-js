@@ -100,6 +100,7 @@ describe(ChildProcessProxyWorker.name, () => {
         kind: WorkerMessageKind.Init,
         loggingContext: LOGGING_CONTEXT,
         options,
+        fileDescriptions: { 'foo.js': { mutate: true } },
         pluginModulePaths,
         namedExport: HelloClass.name,
         modulePath: new URL('./hello-class.js', import.meta.url).toString(),

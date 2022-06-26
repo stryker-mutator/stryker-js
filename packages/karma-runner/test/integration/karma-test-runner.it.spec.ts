@@ -104,7 +104,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         // Assert
         assertions.expectCompleted(runResult);
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.']);
+        expectToHaveFailedTests(runResult, ['Expected 7 to be 8.']);
       });
 
       it('should report all failing tests when disableBail is true', async () => {
@@ -119,7 +119,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         // Assert
         assertions.expectCompleted(runResult);
         expectToHaveSuccessfulTests(runResult, 5);
-        expectToHaveFailedTests(runResult, ['Error: Expected 7 to be 8.', 'Error: Expected 3 to be 4.']);
+        expectToHaveFailedTests(runResult, ['Expected 7 to be 8.', 'Expected 3 to be 4.']);
       });
     });
 
@@ -135,7 +135,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         // Assert
         assertions.expectKilled(mutantResult);
         expect(mutantResult.killedBy).deep.eq(['spec5']);
-        expect(mutantResult.failureMessage.split('\n')[0]).eq('Error: Expected 7 to be 8.');
+        expect(mutantResult.failureMessage.split('\n')[0]).eq('Expected 7 to be 8.');
       });
 
       it('should report all failed tests when disableBail is true', async () => {
@@ -150,7 +150,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
         // Assert
         assertions.expectKilled(mutantResult);
         expect(mutantResult.killedBy).deep.eq(['spec5', 'spec6']);
-        expect(mutantResult.failureMessage.split('\n')[0]).eq('Error: Expected 7 to be 8.');
+        expect(mutantResult.failureMessage.split('\n')[0]).eq('Expected 7 to be 8.');
       });
     });
   });

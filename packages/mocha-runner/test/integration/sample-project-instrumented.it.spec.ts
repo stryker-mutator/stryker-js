@@ -1,29 +1,29 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src/index.js';
 import { createMochaOptions } from '../helpers/factories.js';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running an instrumented project', () => {
   let sut: MochaTestRunner;
   let spec: string[];
-  let tmpDir: string;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
     // Work in a tmp dir, files can only be loaded once.
-    tmpDir = resolveTempTestResourceDirectory();
-    await fsPromisesCp(resolveTestResource('sample-project-instrumented'), tmpDir, { recursive: true });
-    spec = [path.resolve(tmpDir, 'MyMath.js'), path.resolve(tmpDir, 'MyMathSpec.js')];
+    sandbox = new TempTestDirectorySandbox('sample-project-instrumented');
+    await sandbox.init();
+    spec = [path.resolve(sandbox.tmpDir, 'MyMath.js'), path.resolve(sandbox.tmpDir, 'MyMathSpec.js')];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
   });
 
   afterEach(async () => {
     await sut.dispose();
+    await sandbox.dispose();
   });
 
   describe('dryRun', () => {
@@ -170,7 +170,7 @@ describe('Running an instrumented project', () => {
   describe('mutantRun mutant activation', () => {
     beforeEach(async () => {
       while (spec.pop());
-      spec.push(path.resolve(tmpDir, 'MyMath.js'), path.resolve(tmpDir, 'MyMathMutantActivationSpec.js'));
+      spec.push(path.resolve(sandbox.tmpDir, 'MyMath.js'), path.resolve(sandbox.tmpDir, 'MyMathMutantActivationSpec.js'));
       await sut.init();
     });
 

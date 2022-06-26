@@ -1,8 +1,7 @@
 import { URL } from 'url';
 
-import { LogLevel } from '@stryker-mutator/api/core';
+import { FileDescriptions, LogLevel } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { CheckerChildProcessProxy } from '../../../src/checker/checker-child-process-proxy.js';
@@ -13,14 +12,16 @@ import { LoggingClientContext } from '../../../src/logging/index.js';
 describe(CheckerChildProcessProxy.name, () => {
   let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
+  let fileDescriptions: FileDescriptions;
 
   beforeEach(() => {
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     loggingContext = { port: 4200, level: LogLevel.Fatal };
+    fileDescriptions = { 'foo.js': { mutate: true } };
   });
 
   function createSut(): CheckerChildProcessProxy {
-    return new CheckerChildProcessProxy(testInjector.options, ['plugin', 'paths'], loggingContext);
+    return new CheckerChildProcessProxy(testInjector.options, fileDescriptions, ['plugin', 'paths'], loggingContext);
   }
 
   describe('constructor', () => {
@@ -31,6 +32,7 @@ describe(CheckerChildProcessProxy.name, () => {
         new URL('../../../src/checker/checker-worker.js', import.meta.url).toString(),
         loggingContext,
         testInjector.options,
+        fileDescriptions,
         ['plugin', 'paths'],
         process.cwd(),
         CheckerWorker,
@@ -40,7 +42,9 @@ describe(CheckerChildProcessProxy.name, () => {
     it('should provide arguments', () => {
       testInjector.options.checkerNodeArgs = ['foo', 'bar'];
       createSut();
-      expect(childProcessProxyCreateStub).calledWith(
+      sinon.assert.calledOnceWithExactly(
+        childProcessProxyCreateStub,
+        sinon.match.any,
         sinon.match.any,
         sinon.match.any,
         sinon.match.any,

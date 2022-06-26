@@ -1,19 +1,19 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories.js';
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
   let sut: MochaTestRunner;
+  let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    const tmpDir = resolveTempTestResourceDirectory();
-    await fsPromisesCp(resolveTestResource('infinite-loop-instrumented'), tmpDir, { recursive: true });
-    const spec = [path.resolve(tmpDir, 'infinite-loop.spec.js')];
+    sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
+    await sandbox.init();
+    const spec = [path.resolve(sandbox.tmpDir, 'infinite-loop.spec.js')];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
     sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
     await sut.init();
@@ -21,6 +21,7 @@ describe('Infinite loop', () => {
 
   afterEach(async () => {
     await sut.dispose();
+    await sandbox.dispose();
   });
 
   it('should be able to recover using a hit counter', async () => {

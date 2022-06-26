@@ -1,12 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 
+import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-
-import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import { fileUtils } from '../../../src/utils/file-utils.js';
 import { objectUtils } from '../../../src/utils/object-utils.js';
@@ -15,11 +14,11 @@ import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 describe(TemporaryDirectory.name, () => {
   let randomStub: sinon.SinonStubbedMember<typeof objectUtils.random>;
   let deleteDirStub: sinon.SinonStub;
-  let mkdirpStub: sinon.SinonStubbedMember<typeof fileUtils.mkdirp>;
+  let mkdirStub: sinon.SinonStubbedMember<typeof fs.promises['mkdir']>;
   const tempDirName = '.stryker-tmp';
 
   beforeEach(() => {
-    mkdirpStub = sinon.stub(fileUtils, 'mkdirp');
+    mkdirStub = sinon.stub(fs.promises, 'mkdir');
     sinon.stub(fs.promises, 'writeFile');
     deleteDirStub = sinon.stub(fileUtils, 'deleteDir');
     randomStub = sinon.stub(objectUtils, 'random');
@@ -46,8 +45,8 @@ describe(TemporaryDirectory.name, () => {
       await sut.initialize();
       await sut.createDirectory('some-dir');
 
-      sinon.assert.calledTwice(mkdirpStub);
-      sinon.assert.calledWith(mkdirpStub, path.resolve(tempDirName, 'some-dir'));
+      sinon.assert.calledTwice(mkdirStub);
+      sinon.assert.calledWith(mkdirStub, path.resolve(tempDirName, 'some-dir'));
     });
     it('should reject when temp directory is not initialized', async () => {
       const sut = createSut();

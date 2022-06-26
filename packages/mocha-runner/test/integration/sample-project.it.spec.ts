@@ -1,12 +1,11 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, fsPromisesCp } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories.js';
 import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
-import { resolveTempTestResourceDirectory, resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
 
@@ -16,6 +15,7 @@ const countFailed = (runResult: CompleteDryRunResult) => countTests(runResult, (
 describe('Running a sample project', () => {
   let sut: MochaTestRunner;
   let resolveTestFile: (...pathSegments: string[]) => string;
+  let sandbox: TempTestDirectorySandbox;
 
   function createSut() {
     return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
@@ -23,9 +23,13 @@ describe('Running a sample project', () => {
 
   beforeEach(async () => {
     // Work in a tmp dir, files can only be loaded once.
-    const tmpDir = resolveTempTestResourceDirectory();
-    await fsPromisesCp(resolveTestResource('sample-project'), tmpDir, { recursive: true });
-    resolveTestFile = path.resolve.bind(undefined, tmpDir);
+    sandbox = new TempTestDirectorySandbox('sample-project');
+    await sandbox.init();
+    resolveTestFile = path.resolve.bind(undefined, sandbox.tmpDir);
+  });
+
+  afterEach(async () => {
+    await sandbox.dispose();
   });
 
   describe('when tests pass', () => {

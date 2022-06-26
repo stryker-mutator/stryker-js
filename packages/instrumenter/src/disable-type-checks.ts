@@ -1,5 +1,7 @@
 import type { types } from '@babel/core';
-import { notEmpty, File } from '@stryker-mutator/util';
+import { notEmpty } from '@stryker-mutator/util';
+
+import { File } from './file.js';
 
 import { createParser, getFormat, ParserOptions } from './parsers/index.js';
 import { AstFormat, HtmlAst, ScriptAst } from './syntax/index.js';
@@ -11,23 +13,26 @@ const startingCommentRegex = /(^\s*\/\*.*?\*\/)/gs;
 export async function disableTypeChecks(file: File, options: ParserOptions): Promise<File> {
   if (isJSFileWithoutTSDirectives(file)) {
     // Performance optimization. Only parse the file when it has a change of containing a `// @ts-` directive
-    return new File(file.name, prefixWithNoCheck(file.textContent));
+    return {
+      ...file,
+      content: prefixWithNoCheck(file.content),
+    };
   }
   const parse = createParser(options);
-  const ast = await parse(file.textContent, file.name);
+  const ast = await parse(file.content, file.name);
   switch (ast.format) {
     case AstFormat.JS:
     case AstFormat.TS:
     case AstFormat.Tsx:
-      return new File(file.name, disableTypeCheckingInBabelAst(ast));
+      return { ...file, content: disableTypeCheckingInBabelAst(ast) };
     case AstFormat.Html:
-      return new File(file.name, disableTypeCheckingInHtml(ast));
+      return { ...file, content: disableTypeCheckingInHtml(ast) };
   }
 }
 
 function isJSFileWithoutTSDirectives(file: File) {
   const format = getFormat(file.name);
-  return (format === AstFormat.TS || format === AstFormat.JS) && !tsDirectiveLikeRegEx.test(file.textContent);
+  return (format === AstFormat.TS || format === AstFormat.JS) && !tsDirectiveLikeRegEx.test(file.content);
 }
 
 function disableTypeCheckingInBabelAst(ast: ScriptAst): string {
@@ -45,6 +50,7 @@ function prefixWithNoCheck(code: string): string {
     }
   } else {
     // We should leave comments, like `/** @jest-env jsdom */ at the top of the file, see #2569
+    startingCommentRegex.lastIndex = 0;
     const commentMatch = startingCommentRegex.exec(code);
     return `${commentMatch?.[1].concat('\n') ?? ''}// @ts-nocheck\n${code.substr(commentMatch?.[1].length ?? 0)}`;
   }
@@ -61,7 +67,7 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
     html += '\n';
     currentIndex = script.root.end!;
   }
-  html += ast.rawContent.substr(currentIndex);
+  html += ast.rawContent.substring(currentIndex);
   return html;
 }
 
@@ -77,7 +83,7 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
       pruned += text.substring(currentIndex, directiveRange.startPos);
       currentIndex = directiveRange.endPos;
     }
-    pruned += text.substr(currentIndex);
+    pruned += text.substring(currentIndex);
     return pruned;
   } else {
     return text;

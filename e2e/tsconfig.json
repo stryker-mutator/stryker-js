@@ -11,7 +11,8 @@
     "useUnknownInCatchVariables": false,// hard to handle without type assertions
     "esModuleInterop": true,
     "rootDir": "..",
-    "types": ["mocha", "node"]
+    "types": ["mocha", "node"],
+    "skipLibCheck": true
   },
   "include": ["tasks", "test/*/verify/*.js", "helpers.js"]
 }

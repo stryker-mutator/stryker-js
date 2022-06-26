@@ -1,5 +1,7 @@
 import babel from '@babel/core';
 
+import { deepCloneNode } from '../util/index.js';
+
 import { NodeMutator } from './index.js';
 
 const { types } = babel;
@@ -17,8 +19,8 @@ export const unaryOperatorMutator: NodeMutator = {
     if (path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix) {
       const mutatedOperator = UnaryOperator[path.node.operator];
       const replacement = mutatedOperator.length
-        ? types.unaryExpression(mutatedOperator as '-' | '+', path.node.argument)
-        : types.cloneNode(path.node.argument, true);
+        ? types.unaryExpression(mutatedOperator as '-' | '+', deepCloneNode(path.node.argument))
+        : deepCloneNode(path.node.argument);
 
       yield replacement;
     }
