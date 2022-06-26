@@ -29,6 +29,9 @@ describe('Running a sample project', () => {
   });
 
   afterEach(async () => {
+    if (sut) {
+      await sut.dispose();
+    }
     await sandbox.dispose();
   });
 
@@ -40,15 +43,23 @@ describe('Running a sample project', () => {
       await sut.init();
     });
 
-    afterEach(async () => {
-      await sut.dispose();
-    });
     it('should report completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(countSucceeded(runResult)).to.be.eq(5, 'Succeeded tests did not match');
       expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
       runResult.tests.forEach((t) => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
+    });
+
+    it('should report test files', async () => {
+      const specFileName = resolveTestFile('MyMathSpec.js');
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests[0].fileName).eq(specFileName);
+      expect(runResult.tests[1].fileName).eq(specFileName);
+      expect(runResult.tests[2].fileName).eq(specFileName);
+      expect(runResult.tests[3].fileName).eq(specFileName);
+      expect(runResult.tests[4].fileName).eq(specFileName);
     });
 
     it('should be able to run 2 times in a row', async () => {
@@ -65,9 +76,6 @@ describe('Running a sample project', () => {
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
-    });
-    afterEach(async () => {
-      await sut.dispose();
     });
 
     it('should only report the first failure (bail)', async () => {
@@ -89,10 +97,6 @@ describe('Running a sample project', () => {
       testInjector.options.mochaOptions = createMochaOptions({ spec });
       sut = createSut();
       return sut.init();
-    });
-
-    afterEach(async () => {
-      await sut.dispose();
     });
     it('should report no completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());

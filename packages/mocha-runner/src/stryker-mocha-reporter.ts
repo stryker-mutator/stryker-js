@@ -37,6 +37,7 @@ export class StrykerMochaReporter {
         name: title,
         status: TestStatus.Success,
         timeSpentMs: this.timer.elapsedMs(),
+        fileName: test.file,
       };
       this.tests.push(result);
       this.passedCount++;
