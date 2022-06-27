@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @cucumber/messages to v18 ([#3554](https://github.com/stryker-mutator/stryker-js/issues/3554)) ([596347e](https://github.com/stryker-mutator/stryker-js/commit/596347e85ebe5472cddafd4920c600613c98e2b9))
+* **deps:** update dependency @cucumber/messages to v19 ([#3559](https://github.com/stryker-mutator/stryker-js/issues/3559)) ([969fb1d](https://github.com/stryker-mutator/stryker-js/commit/969fb1d862ea7bdb9cf495551b6ed688a3f796ac))
+* **deps:** update dependency commander to ~9.3.0 ([#3546](https://github.com/stryker-mutator/stryker-js/issues/3546)) ([1142f11](https://github.com/stryker-mutator/stryker-js/commit/1142f11209c481b602845d8068cde5bec57631ac))
+* **deps:** update dependency file-url to v4 ([#3555](https://github.com/stryker-mutator/stryker-js/issues/3555)) ([658f00e](https://github.com/stryker-mutator/stryker-js/commit/658f00e6825c3229d18f9a45e79787d5e6c0fea1))
+* **deps:** update dependency get-port to v6 ([#3556](https://github.com/stryker-mutator/stryker-js/issues/3556)) ([2cae23f](https://github.com/stryker-mutator/stryker-js/commit/2cae23f0bdb35143519134e0b0d21939b2b98a22))
+* **deps:** update dependency glob to v8.0.3 ([#3531](https://github.com/stryker-mutator/stryker-js/issues/3531)) ([bb5611a](https://github.com/stryker-mutator/stryker-js/commit/bb5611abc762022de70098e9bd921ccc61427863))
+* **deps:** update dependency inquirer to v9 ([#3592](https://github.com/stryker-mutator/stryker-js/issues/3592)) ([db0bd34](https://github.com/stryker-mutator/stryker-js/commit/db0bd34360de8b1d9f11b2226d2d7634cb4087d9))
+* **deps:** update dependency log4js to ~6.5.0 ([#3547](https://github.com/stryker-mutator/stryker-js/issues/3547)) ([67df3f0](https://github.com/stryker-mutator/stryker-js/commit/67df3f0618e322e2e08eb937ff8a6cfe33c74b58))
+* **deps:** update dependency minimatch to ~3.1.0 ([#3549](https://github.com/stryker-mutator/stryker-js/issues/3549)) ([a4e5c43](https://github.com/stryker-mutator/stryker-js/commit/a4e5c439e1082b714ab4c847c4c2e57dffa4971e))
+* **deps:** update dependency minimatch to v5.1.0 ([#3548](https://github.com/stryker-mutator/stryker-js/issues/3548)) ([c27ec2f](https://github.com/stryker-mutator/stryker-js/commit/c27ec2f038c13ada285413ecc0a7a157afc9534c))
+* **deps:** update dependency semver to v7.3.7 ([#3532](https://github.com/stryker-mutator/stryker-js/issues/3532)) ([2dce631](https://github.com/stryker-mutator/stryker-js/commit/2dce631e25c586ebf2344df815bc9a4a3dda6004))
+* **jest:** allow mixin jest env for unit testing ([#3598](https://github.com/stryker-mutator/stryker-js/issues/3598)) ([da8a720](https://github.com/stryker-mutator/stryker-js/commit/da8a7206243f148030bf7421d236fd5b3be87b89))
+* **logging:** log non-existing node_modules on debug ([#3521](https://github.com/stryker-mutator/stryker-js/issues/3521)) ([766072f](https://github.com/stryker-mutator/stryker-js/commit/766072f6a6b1f92ea5973948a1a6cfd5c55be1e9))
+
+
+*  feat(cucumber): support native esm (#3596) ([4eaf713](https://github.com/stryker-mutator/stryker-js/commit/4eaf7136db5d704fc70a646b53a3946eb42743d5)), closes [#3596](https://github.com/stryker-mutator/stryker-js/issues/3596)
+
+
+### Features
+
+* **mocha-runner:** report the test's file name ([#3504](https://github.com/stryker-mutator/stryker-js/issues/3504)) ([34d8e70](https://github.com/stryker-mutator/stryker-js/commit/34d8e70ff913303ea94080a5431d7c55bdf99987))
+* **mutators:** Add method expression mutator ([#3508](https://github.com/stryker-mutator/stryker-js/issues/3508)) ([70a4e4f](https://github.com/stryker-mutator/stryker-js/commit/70a4e4f092b47c018ed1877d9011c7dbd7fdc5b2))
+* **plugin:** allow fileDescriptions to be injected ([#3582](https://github.com/stryker-mutator/stryker-js/issues/3582)) ([fa2b77e](https://github.com/stryker-mutator/stryker-js/commit/fa2b77e3572884f44329e3f03b9201e9fd37082c))
+
+
+### BREAKING CHANGES
+
+* The `@stryker-mutator/cucumber-runner` now requires `@cucumber/cucumber` v8 or up.
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 

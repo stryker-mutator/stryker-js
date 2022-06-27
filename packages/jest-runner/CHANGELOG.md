@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* **jest:** allow mixin jest env for unit testing ([#3598](https://github.com/stryker-mutator/stryker-js/issues/3598)) ([da8a720](https://github.com/stryker-mutator/stryker-js/commit/da8a7206243f148030bf7421d236fd5b3be87b89))
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 

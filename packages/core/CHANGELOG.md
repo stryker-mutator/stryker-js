@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency commander to ~9.3.0 ([#3546](https://github.com/stryker-mutator/stryker-js/issues/3546)) ([1142f11](https://github.com/stryker-mutator/stryker-js/commit/1142f11209c481b602845d8068cde5bec57631ac))
+* **deps:** update dependency file-url to v4 ([#3555](https://github.com/stryker-mutator/stryker-js/issues/3555)) ([658f00e](https://github.com/stryker-mutator/stryker-js/commit/658f00e6825c3229d18f9a45e79787d5e6c0fea1))
+* **deps:** update dependency get-port to v6 ([#3556](https://github.com/stryker-mutator/stryker-js/issues/3556)) ([2cae23f](https://github.com/stryker-mutator/stryker-js/commit/2cae23f0bdb35143519134e0b0d21939b2b98a22))
+* **deps:** update dependency glob to v8.0.3 ([#3531](https://github.com/stryker-mutator/stryker-js/issues/3531)) ([bb5611a](https://github.com/stryker-mutator/stryker-js/commit/bb5611abc762022de70098e9bd921ccc61427863))
+* **deps:** update dependency inquirer to v9 ([#3592](https://github.com/stryker-mutator/stryker-js/issues/3592)) ([db0bd34](https://github.com/stryker-mutator/stryker-js/commit/db0bd34360de8b1d9f11b2226d2d7634cb4087d9))
+* **deps:** update dependency log4js to ~6.5.0 ([#3547](https://github.com/stryker-mutator/stryker-js/issues/3547)) ([67df3f0](https://github.com/stryker-mutator/stryker-js/commit/67df3f0618e322e2e08eb937ff8a6cfe33c74b58))
+* **deps:** update dependency minimatch to ~3.1.0 ([#3549](https://github.com/stryker-mutator/stryker-js/issues/3549)) ([a4e5c43](https://github.com/stryker-mutator/stryker-js/commit/a4e5c439e1082b714ab4c847c4c2e57dffa4971e))
+* **deps:** update dependency minimatch to v5.1.0 ([#3548](https://github.com/stryker-mutator/stryker-js/issues/3548)) ([c27ec2f](https://github.com/stryker-mutator/stryker-js/commit/c27ec2f038c13ada285413ecc0a7a157afc9534c))
+* **logging:** log non-existing node_modules on debug ([#3521](https://github.com/stryker-mutator/stryker-js/issues/3521)) ([766072f](https://github.com/stryker-mutator/stryker-js/commit/766072f6a6b1f92ea5973948a1a6cfd5c55be1e9))
+
+
+### Features
+
+* **plugin:** allow fileDescriptions to be injected ([#3582](https://github.com/stryker-mutator/stryker-js/issues/3582)) ([fa2b77e](https://github.com/stryker-mutator/stryker-js/commit/fa2b77e3572884f44329e3f03b9201e9fd37082c))
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 **Note:** Version bump only for package @stryker-mutator/core

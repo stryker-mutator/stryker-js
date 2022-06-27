@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency semver to v7.3.7 ([#3532](https://github.com/stryker-mutator/stryker-js/issues/3532)) ([2dce631](https://github.com/stryker-mutator/stryker-js/commit/2dce631e25c586ebf2344df815bc9a4a3dda6004))
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 **Note:** Version bump only for package @stryker-mutator/karma-runner

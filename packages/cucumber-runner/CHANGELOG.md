@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @cucumber/messages to v18 ([#3554](https://github.com/stryker-mutator/stryker-js/issues/3554)) ([596347e](https://github.com/stryker-mutator/stryker-js/commit/596347e85ebe5472cddafd4920c600613c98e2b9))
+* **deps:** update dependency @cucumber/messages to v19 ([#3559](https://github.com/stryker-mutator/stryker-js/issues/3559)) ([969fb1d](https://github.com/stryker-mutator/stryker-js/commit/969fb1d862ea7bdb9cf495551b6ed688a3f796ac))
+
+
+*  feat(cucumber): support native esm (#3596) ([4eaf713](https://github.com/stryker-mutator/stryker-js/commit/4eaf7136db5d704fc70a646b53a3946eb42743d5)), closes [#3596](https://github.com/stryker-mutator/stryker-js/issues/3596)
+
+
+### BREAKING CHANGES
+
+* The `@stryker-mutator/cucumber-runner` now requires `@cucumber/cucumber` v8 or up.
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 **Note:** Version bump only for package @stryker-mutator/cucumber-runner

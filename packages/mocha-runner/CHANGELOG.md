@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.1.0](https://github.com/stryker-mutator/stryker-js/compare/v6.0.2...v6.1.0) (2022-06-27)
+
+
+### Features
+
+* **mocha-runner:** report the test's file name ([#3504](https://github.com/stryker-mutator/stryker-js/issues/3504)) ([34d8e70](https://github.com/stryker-mutator/stryker-js/commit/34d8e70ff913303ea94080a5431d7c55bdf99987))
+
+
+
+
+
 ## [6.0.2](https://github.com/stryker-mutator/stryker-js/compare/v6.0.1...v6.0.2) (2022-05-05)
 
 **Note:** Version bump only for package @stryker-mutator/mocha-runner
