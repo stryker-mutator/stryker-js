@@ -22,5 +22,4 @@ packages/report.*.json # Ignore heap dumps
 *.tmp.txt
 tsconfig.*.tsbuildinfo
 packages/core/schema
-packages/*/package-lock.json
 __filterSpecs.js
