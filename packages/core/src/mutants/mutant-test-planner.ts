@@ -11,7 +11,6 @@ import {
   StrykerOptions,
   MutantStatus,
   MutantEarlyResultPlan,
-  MutantResult,
 } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
