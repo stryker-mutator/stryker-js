@@ -74,7 +74,7 @@ describe(MutationTestExecutor.name, () => {
 
     mutants = [factory.mutant()];
     mutantTestPlans = [];
-    mutantTestPlannerMock.makePlan.returns(mutantTestPlans);
+    mutantTestPlannerMock.makePlan.resolves(mutantTestPlans);
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.checkerPool, checkerPoolMock)

@@ -270,11 +270,6 @@
       "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
       "type": "number"
     },
-    "maxTestRunnerReuse": {
-      "description": "Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.",
-      "type": "number",
-      "default": 0
-    },
     "commandRunner": {
       "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
       "$ref": "#/definitions/commandRunnerOptions",
@@ -313,6 +308,11 @@
       "type": "boolean",
       "default": false
     },
+    "incremental": {
+      "description": "Experimental: Enable 'incremental mode'. Stryker will store results in \"reports/.mutation-incremental.json\" and use those to speed up the next --incremental run",
+      "type": "boolean",
+      "default": false
+    },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
       "$ref": "#/definitions/logLevel",
@@ -332,6 +332,11 @@
       "description": "[DEPRECATED please use \"concurrency\" instead]. Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
       "type": "number",
       "default": 9007199254740991
+    },
+    "maxTestRunnerReuse": {
+      "description": "Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.",
+      "type": "number",
+      "default": 0
     },
     "mutate": {
       "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.",

@@ -26,4 +26,5 @@ export const validationSchema = 'validationSchema';
 export const optionsValidator = 'optionsValidator';
 export const requireFromCwd = 'requireFromCwd';
 export const fs = 'fs';
+export const incrementalResult = 'incrementalResult';
 export const project = 'project';

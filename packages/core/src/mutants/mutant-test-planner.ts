@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
 import {
   MutantRunPlan,
@@ -9,6 +11,7 @@ import {
   StrykerOptions,
   MutantStatus,
   MutantEarlyResultPlan,
+  MutantResult,
 } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -19,6 +22,7 @@ import { StrictReporter } from '../reporters/strict-reporter.js';
 import { Sandbox } from '../sandbox/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { optionsPath } from '../utils/index.js';
+import { Project } from '../fs/project.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -38,6 +42,7 @@ export class MutantTestPlanner {
     coreTokens.dryRunResult,
     coreTokens.reporter,
     coreTokens.sandbox,
+    coreTokens.project,
     coreTokens.timeOverheadMS,
     commonTokens.options,
     commonTokens.logger
@@ -45,11 +50,13 @@ export class MutantTestPlanner {
   private readonly testsByMutantId: Map<string, Set<TestResult>>;
   private readonly hitsByMutantId: Map<string, number>;
   private readonly timeSpentAllTests: number;
+  private readonly previousFiles: Map<string, string> | undefined;
 
   constructor(
     private readonly dryRunResult: CompleteDryRunResult,
     private readonly reporter: StrictReporter,
     private readonly sandbox: I<Sandbox>,
+    private readonly project: I<Project>,
     private readonly timeOverheadMS: number,
     private readonly options: StrykerOptions,
     private readonly logger: Logger
@@ -57,18 +64,27 @@ export class MutantTestPlanner {
     this.testsByMutantId = this.findTestsByMutant(this.dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
     this.hitsByMutantId = findHitsByMutantId(this.dryRunResult.mutantCoverage);
     this.timeSpentAllTests = calculateTotalTime(this.dryRunResult.tests);
+    const { incrementalReport } = this.project;
+    if (incrementalReport) {
+      const { files, testFiles } = incrementalReport;
+      this.previousFiles = new Map(Object.entries(files).map(([fileName, { source }]) => [fileName, source]));
+      if (testFiles) {
+        Object.entries(testFiles).forEach(([fileName, { source }]) => source && this.previousFiles!.set(fileName, source));
+      }
+    }
   }
 
-  public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantPlans = mutants.map((mutant) => this.planMutant(mutant));
+  public async makePlan(mutants: readonly Mutant[]): Promise<readonly MutantTestPlan[]> {
+    const mutantsDiff = await this.incrementalDiff(mutants);
+    const mutantPlans = mutantsDiff.map((mutant) => this.planMutant(mutant));
     this.reporter.onMutationTestingPlanReady({ mutantPlans });
     this.warnAboutSlow(mutantPlans);
     return mutantPlans;
   }
 
   private planMutant(mutant: Mutant): MutantTestPlan {
-    // If mutant was already ignored, pass that along
     const isStatic = this.dryRunResult.mutantCoverage && this.dryRunResult.mutantCoverage.static[mutant.id] > 0;
+
     if (mutant.status) {
       // If this mutant was already ignored, early result
       return this.createMutantEarlyResultPlan(mutant, { isStatic, status: mutant.status, statusReason: mutant.statusReason });
@@ -218,6 +234,66 @@ export class MutantTestPlanner {
       }
     }
   }
+
+  private async incrementalDiff(currentMutants: readonly Mutant[]): Promise<readonly Mutant[]> {
+    const { incrementalReport } = this.project;
+    if (incrementalReport) {
+      let earlyResultCount = 0;
+      const { files, testFiles } = incrementalReport;
+      const previousMutantResults = new Map(
+        Object.entries(files).flatMap(([fileName, { mutants }]) => mutants.map((mutant) => [toUniqueKey(mutant, fileName), mutant] as const))
+      );
+      const fileChanges = new Map<string, boolean>();
+      const previousFiles = new Map(Object.entries(files).map(([fileName, { source }]) => [path.resolve(fileName), source]));
+      if (testFiles) {
+        Object.entries(testFiles).forEach(([fileName, { source }]) => source && previousFiles.set(path.resolve(fileName), source));
+      }
+      const fileIsSame = async (fileName: string): Promise<boolean> => {
+        if (!fileChanges.has(fileName)) {
+          const previousFile = previousFiles.get(fileName);
+          const currentContent = await this.project.files.get(fileName)!.readOriginal();
+          fileChanges.set(fileName, previousFile === currentContent);
+        }
+        return fileChanges.get(fileName)!;
+      };
+
+      const result = await Promise.all(
+        currentMutants.map(async (mutant) => {
+          const previousMutant = previousMutantResults.get(toUniqueKey(mutant, mutant.fileName));
+          if (previousMutant && (await fileIsSame(mutant.fileName))) {
+            const tests = this.testsByMutantId.get(mutant.id);
+            let testFilesAreSame = true;
+            for (const test of tests ?? []) {
+              if (test.fileName) {
+                testFilesAreSame = await fileIsSame(test.fileName);
+                if (!testFilesAreSame) {
+                  break;
+                }
+              }
+            }
+            if (testFilesAreSame) {
+              earlyResultCount++;
+              return {
+                ...mutant,
+                status: previousMutant.status,
+              };
+            }
+          }
+          return mutant;
+        })
+      );
+      this.logger.info(`Incremental mode: ${earlyResultCount}/${currentMutants.length} are reused.`);
+      return result;
+    }
+    return currentMutants;
+  }
+}
+
+function toUniqueKey(
+  { mutatorName, replacement, location: { start, end } }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
+  fileName: string
+) {
+  return `${path.relative(process.cwd(), fileName)}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
 }
 
 function calculateTotalTime(testResults: Iterable<TestResult>): number {

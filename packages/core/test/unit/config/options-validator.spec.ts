@@ -35,6 +35,7 @@ describe(OptionsValidator.name, () => {
         cleanTempDir: true,
         inPlace: false,
         ignorePatterns: [],
+        incremental: false,
         ignoreStatic: false,
         checkerNodeArgs: [],
         clearTextReporter: {

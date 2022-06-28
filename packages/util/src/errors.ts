@@ -20,3 +20,7 @@ export function errorToString(error: any): string {
   }
   return error.toString();
 }
+
+export const ERROR_CODES = Object.freeze({
+  NoSuchFileOrDirectory: 'ENOENT',
+});

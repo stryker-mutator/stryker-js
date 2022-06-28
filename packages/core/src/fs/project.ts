@@ -1,9 +1,14 @@
+import path from 'path';
+
 import { Logger } from '@stryker-mutator/api/logging';
 import { FileDescriptions } from '@stryker-mutator/api/core';
 import { I, normalizeWhitespaces } from '@stryker-mutator/util';
+import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import { FileSystem } from './file-system.js';
 import { ProjectFile } from './project-file.js';
+
+export const INCREMENTAL_REPORT_FILE = path.join('reports', '.mutation-incremental.json');
 
 /**
  * Represents the project that is under test by Stryker users.
@@ -14,7 +19,11 @@ export class Project {
   public readonly files = new Map<string, ProjectFile>();
   public readonly filesToMutate = new Map<string, ProjectFile>();
 
-  constructor(fs: I<FileSystem>, public readonly fileDescriptions: FileDescriptions) {
+  constructor(
+    private readonly fs: I<FileSystem>,
+    public readonly fileDescriptions: FileDescriptions,
+    public readonly incrementalReport?: MutationTestResult
+  ) {
     Object.entries(fileDescriptions).forEach(([name, desc]) => {
       const file = new ProjectFile(fs, name, desc.mutate);
       this.files.set(name, file);
@@ -48,5 +57,10 @@ export class Project {
         log.debug(`Files to mutate: ${JSON.stringify([...this.filesToMutate.keys()], null, 2)}`);
       }
     }
+  }
+
+  public async writeIncrementalReport(report: MutationTestResult): Promise<void> {
+    await this.fs.mkdir(path.dirname(INCREMENTAL_REPORT_FILE), { recursive: true });
+    await this.fs.writeFile(INCREMENTAL_REPORT_FILE, JSON.stringify(report, null, 2), 'utf-8');
   }
 }

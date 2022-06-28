@@ -111,6 +111,9 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report, metrics);
+    if (this.options.incremental) {
+      await this.project.writeIncrementalReport(report);
+    }
     this.determineExitCode(metrics);
   }
 
