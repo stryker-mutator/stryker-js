@@ -175,7 +175,7 @@ export class MutationTestReportHelper {
   private async toTestFiles(remapTestId: (id: string) => string): Promise<schema.TestFileDefinitionDictionary> {
     const testResultsByName = new Map<string, schema.TestFile>(
       await Promise.all(
-        [...new Set(this.dryRunResult.tests.map(({ fileName }) => fileName))].map(
+        [...new Set(this.dryRunResult.tests.map(({ fileName }) => fileName && path.relative(process.cwd(), fileName)))].map(
           async (fileName) => [fileName ?? '', await this.toTestFile(fileName)] as const
         )
       )
@@ -183,7 +183,7 @@ export class MutationTestReportHelper {
 
     return this.dryRunResult.tests.reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
-      const fileName = testResult.fileName ?? ''; // by default we accumulate tests under the '' key
+      const fileName = (testResult.fileName && path.relative(process.cwd(), testResult.fileName)) ?? ''; // by default we accumulate tests under the '' key
       const testFile = acc[fileName] ?? (acc[fileName] = testResultsByName.get(fileName)!);
       testFile.tests.push(test);
       return acc;

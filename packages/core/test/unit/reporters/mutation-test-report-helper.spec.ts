@@ -1,3 +1,5 @@
+import path from 'path';
+
 import sinon from 'sinon';
 import { Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
@@ -335,6 +337,19 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.testFiles!['foo.spec.js'].tests[0].name).eq('1');
         expect(actualReport.testFiles!['foo.spec.js'].tests[1].name).eq('3');
         expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
+      });
+
+      it('should make test file names relative', async () => {
+        // Arrange
+        dryRunResult.tests.push(factory.testResult({ fileName: path.resolve('test', 'unit', 'foo.spec.js'), name: '1' }));
+        fileSystemTestDouble.files['test/unit/foo.spec.js'] = '';
+
+        // Act
+        const [actualReport] = await actReportAll();
+
+        // Assert
+        expect(Object.keys(actualReport.testFiles!)).lengthOf(1);
+        expect(actualReport.testFiles![path.join('test', 'unit', 'foo.spec.js')].tests).lengthOf(1);
       });
 
       it('should log a warning the test file could not be found', async () => {
