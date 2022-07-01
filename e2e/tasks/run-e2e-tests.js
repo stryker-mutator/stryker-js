@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
-import execa from 'execa';
+import { execa } from 'execa';
 import semver from 'semver';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
@@ -20,7 +20,7 @@ function runE2eTests() {
     .filter(minimatch.filter(pattern));
 
   console.log(`Running e2e test in ${testDirs.length ? testDirs.join(', ') : '<none>'}`);
-  console.log(`(matched with ${pattern})`);
+console.log(`(matched with ${pattern})`);
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(map((testDir) => defer(() => runTest(testDir))));
 

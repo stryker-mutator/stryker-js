@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import { fileURLToPath, URL } from 'url';
 
 import chai from 'chai';
-import execa from 'execa';
+import { execa, execaSync } from 'execa';
 import rimraf from 'rimraf';
 import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
@@ -33,19 +33,19 @@ describe('in place', () => {
     await rm(rootResolve('.lock'));
   });
   it('should reset files after a successful run', async () => {
-    execa.execaSync('stryker', ['run']);
+    execaSync('stryker', ['run']);
     const addJSContent = await fsPromises.readFile(rootResolve('src', 'Add.js'), 'utf-8');
     expect(addJSContent).eq(originalAddJSContent);
   });
   it('should report correct score', async () => {
-    execa.execaSync('stryker', ['run']);
+    execaSync('stryker', ['run']);
     await expectMetricsJsonToMatchSnapshot();
   });
   it('should also reset the files if Stryker exits unexpectedly', async () => {
     // Arrange
     let addJSMutatedContent;
     await fsPromises.writeFile(rootResolve('.lock'), ''); // this will lock the test run completion
-    const onGoingStrykerRun = execa.execa('node', [path.resolve('..', '..', 'node_modules', '.bin', 'stryker'), 'run']);
+    const onGoingStrykerRun = execa('node', [path.resolve('..', '..', 'node_modules', '.bin', 'stryker'), 'run']);
     onGoingStrykerRun.stdout.on('data', async (data) => {
       if (data.toString().includes('Starting initial test run')) {
         addJSMutatedContent = await readAddJS();
