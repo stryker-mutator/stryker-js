@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
-import { execa } from 'execa';
+import execa from 'execa';
 import semver from 'semver';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
@@ -50,7 +50,7 @@ runE2eTests().subscribe({
 function execNpm(command, testDir, stream) {
   const currentTestDir = path.resolve(testRootDir, testDir);
   console.log(`Exec ${testDir} npm ${command}`);
-  const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
+  const testProcess = execa.execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
   let stderr = '';
   let stdout = '';
   testProcess.stderr.on('data', (chunk) => {
