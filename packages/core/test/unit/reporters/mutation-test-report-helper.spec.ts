@@ -252,6 +252,21 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
         expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
       });
+
+      it('should report file names as normalized and relative to the cwd', async () => {
+        // Arrange
+        const expectedRelativeName = 'src/util/foo.js';
+        const fileName = path.resolve(expectedRelativeName);
+        const inputMutants = [factory.killedMutantResult({ fileName })];
+        fileSystemTestDouble.files[fileName] = 'console.log("foo");';
+
+        // Act
+        const [actualReport] = await actReportAll(inputMutants);
+
+        // Assert
+        expect(actualReport.files[expectedRelativeName].mutants).lengthOf(1);
+        expect(actualReport.files[expectedRelativeName].source).eq('console.log("foo");');
+      });
     });
 
     describe('tests', () => {
@@ -339,17 +354,21 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
       });
 
-      it('should make test file names relative', async () => {
+      it('should report file names as normalized and relative to the cwd', async () => {
         // Arrange
-        dryRunResult.tests.push(factory.testResult({ fileName: path.resolve('test', 'unit', 'foo.spec.js'), name: '1' }));
-        fileSystemTestDouble.files['test/unit/foo.spec.js'] = '';
+        const expectedRelativeName = 'test/unit/foo.spec.js';
+        const testFileName = path.resolve(expectedRelativeName);
+        dryRunResult.tests.push(factory.testResult({ fileName: testFileName, name: '1' }));
+        fileSystemTestDouble.files[testFileName] = 'it("should work")';
 
         // Act
         const [actualReport] = await actReportAll();
 
         // Assert
         expect(Object.keys(actualReport.testFiles!)).lengthOf(1);
-        expect(actualReport.testFiles![path.join('test', 'unit', 'foo.spec.js')].tests).lengthOf(1);
+        const testFile = actualReport.testFiles![expectedRelativeName];
+        expect(testFile.source).eq('it("should work")');
+        expect(testFile.tests).lengthOf(1);
       });
 
       it('should log a warning the test file could not be found', async () => {
