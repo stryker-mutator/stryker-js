@@ -20,7 +20,7 @@ function runE2eTests() {
     .filter(minimatch.filter(pattern));
 
   console.log(`Running e2e test in ${testDirs.length ? testDirs.join(', ') : '<none>'}`);
-console.log(`(matched with ${pattern})`);
+  console.log(`(matched with ${pattern})`);
   // Create test$, an observable of test runs
   const test$ = from(testDirs).pipe(map((testDir) => defer(() => runTest(testDir))));
 
@@ -50,7 +50,7 @@ runE2eTests().subscribe({
 function execNpm(command, testDir, stream) {
   const currentTestDir = path.resolve(testRootDir, testDir);
   console.log(`Exec ${testDir} npm ${command}`);
-  const testProcess = execa.execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
+  const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
   let stderr = '';
   let stdout = '';
   testProcess.stderr.on('data', (chunk) => {
