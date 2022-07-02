@@ -37,6 +37,7 @@ describe(MutationTestReportHelper.name, () => {
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideValue(coreTokens.requireFromCwd, requireFromCwdStub)
+      .provideValue(coreTokens.fs, fileSystemTestDouble)
       .injectClass(MutationTestReportHelper);
   }
 

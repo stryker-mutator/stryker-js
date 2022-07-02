@@ -4,7 +4,7 @@ import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, s
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
+import { I, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
@@ -12,7 +12,7 @@ import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/ap
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
 import { objectUtils } from '../utils/object-utils.js';
-import { Project } from '../fs/project.js';
+import { Project, FileSystem } from '../fs/index.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',
@@ -35,6 +35,7 @@ export class MutationTestReportHelper {
     coreTokens.project,
     commonTokens.logger,
     coreTokens.dryRunResult,
+    coreTokens.fs,
     coreTokens.requireFromCwd
   );
 
@@ -44,6 +45,7 @@ export class MutationTestReportHelper {
     private readonly project: Project,
     private readonly log: Logger,
     private readonly dryRunResult: CompleteDryRunResult,
+    private readonly fs: I<FileSystem>,
     private readonly requireFromCwd: typeof requireResolve
   ) {}
 
@@ -112,7 +114,8 @@ export class MutationTestReportHelper {
     this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
-      await this.project.writeIncrementalReport(report);
+      await this.fs.mkdir(path.dirname(this.options.incrementalFile), { recursive: true });
+      await this.fs.writeFile(this.options.incrementalFile, JSON.stringify(report, null, 2), 'utf-8');
     }
     this.determineExitCode(metrics);
   }

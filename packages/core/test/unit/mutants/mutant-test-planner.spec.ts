@@ -515,7 +515,6 @@ describe(MutantTestPlanner.name, () => {
       expect(testInjector.logger.warn).not.called;
     });
   });
-  console.log('changed');
 });
 
 function assertIsRunPlan(plan: MutantTestPlan): asserts plan is MutantRunPlan {

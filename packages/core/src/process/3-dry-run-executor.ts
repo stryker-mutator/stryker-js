@@ -28,7 +28,6 @@ import { FileMatcher } from '../config/index.js';
 import { MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
-
 import { objectUtils } from '../utils/object-utils.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
