@@ -6,94 +6,29 @@ Object {
     "language": "javascript",
     "mutants": Array [
       Object {
-        "coveredBy": Array [],
-        "id": "6",
+        "coveredBy": Array [
+          "0",
+        ],
+        "id": "0",
+        "killedBy": Array [
+          "0",
+        ],
         "location": Object {
           "end": Object {
             "column": 2,
-            "line": 16,
+            "line": 3,
           },
           "start": Object {
-            "column": 46,
-            "line": 14,
+            "column": 43,
+            "line": 1,
           },
         },
         "mutatorName": "BlockStatement",
         "replacement": "{}",
         "static": false,
-        "status": "NoCoverage",
-      },
-      Object {
-        "coveredBy": Array [],
-        "id": "7",
-        "location": Object {
-          "end": Object {
-            "column": 21,
-            "line": 15,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 15,
-          },
-        },
-        "mutatorName": "ConditionalExpression",
-        "replacement": "true",
-        "static": false,
-        "status": "NoCoverage",
-      },
-      Object {
-        "coveredBy": Array [],
-        "id": "8",
-        "location": Object {
-          "end": Object {
-            "column": 21,
-            "line": 15,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 15,
-          },
-        },
-        "mutatorName": "ConditionalExpression",
-        "replacement": "false",
-        "static": false,
-        "status": "NoCoverage",
-      },
-      Object {
-        "coveredBy": Array [],
-        "id": "9",
-        "location": Object {
-          "end": Object {
-            "column": 21,
-            "line": 15,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 15,
-          },
-        },
-        "mutatorName": "EqualityOperator",
-        "replacement": "number >= 10",
-        "static": false,
-        "status": "NoCoverage",
-      },
-      Object {
-        "coveredBy": Array [],
-        "id": "10",
-        "location": Object {
-          "end": Object {
-            "column": 21,
-            "line": 15,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 15,
-          },
-        },
-        "mutatorName": "EqualityOperator",
-        "replacement": "number <= 10",
-        "static": false,
-        "status": "NoCoverage",
+        "status": "Killed",
+        "statusReason": "expected undefined to equal 7",
+        "testsCompleted": 1,
       },
       Object {
         "coveredBy": Array [
@@ -121,104 +56,22 @@ Object {
         "testsCompleted": 1,
       },
       Object {
-        "coveredBy": Array [
-          "1",
-        ],
-        "id": "2",
-        "killedBy": Array [
-          "1",
-        ],
+        "coveredBy": Array [],
+        "id": "10",
         "location": Object {
           "end": Object {
-            "column": 2,
-            "line": 8,
-          },
-          "start": Object {
-            "column": 42,
-            "line": 5,
-          },
-        },
-        "mutatorName": "BlockStatement",
-        "replacement": "{}",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected undefined to equal 3",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
-          "1",
-        ],
-        "id": "3",
-        "killedBy": Array [
-          "1",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 11,
-            "line": 6,
-          },
-          "start": Object {
-            "column": 3,
-            "line": 6,
-          },
-        },
-        "mutatorName": "UpdateOperator",
-        "replacement": "number--",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected 1 to equal 3",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
-          "2",
-        ],
-        "id": "4",
-        "killedBy": Array [
-          "2",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 2,
-            "line": 12,
-          },
-          "start": Object {
-            "column": 42,
-            "line": 10,
-          },
-        },
-        "mutatorName": "BlockStatement",
-        "replacement": "{}",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected undefined to equal -2",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
-          "2",
-        ],
-        "id": "5",
-        "killedBy": Array [
-          "2",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 17,
-            "line": 11,
+            "column": 21,
+            "line": 15,
           },
           "start": Object {
             "column": 10,
-            "line": 11,
+            "line": 15,
           },
         },
-        "mutatorName": "UnaryOperator",
-        "replacement": "+number",
+        "mutatorName": "EqualityOperator",
+        "replacement": "number <= 10",
         "static": false,
-        "status": "Killed",
-        "statusReason": "expected 2 to equal -2",
-        "testsCompleted": 1,
+        "status": "NoCoverage",
       },
       Object {
         "coveredBy": Array [
@@ -403,31 +256,6 @@ Object {
       },
       Object {
         "coveredBy": Array [
-          "0",
-        ],
-        "id": "0",
-        "killedBy": Array [
-          "0",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 2,
-            "line": 3,
-          },
-          "start": Object {
-            "column": 43,
-            "line": 1,
-          },
-        },
-        "mutatorName": "BlockStatement",
-        "replacement": "{}",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected undefined to equal 7",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
           "3",
         ],
         "id": "18",
@@ -450,6 +278,178 @@ Object {
         "status": "Killed",
         "statusReason": "expected false to be true",
         "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "1",
+        ],
+        "id": "2",
+        "killedBy": Array [
+          "1",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 2,
+            "line": 8,
+          },
+          "start": Object {
+            "column": 42,
+            "line": 5,
+          },
+        },
+        "mutatorName": "BlockStatement",
+        "replacement": "{}",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected undefined to equal 3",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "1",
+        ],
+        "id": "3",
+        "killedBy": Array [
+          "1",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 11,
+            "line": 6,
+          },
+          "start": Object {
+            "column": 3,
+            "line": 6,
+          },
+        },
+        "mutatorName": "UpdateOperator",
+        "replacement": "number--",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected 1 to equal 3",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "2",
+        ],
+        "id": "4",
+        "killedBy": Array [
+          "2",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 2,
+            "line": 12,
+          },
+          "start": Object {
+            "column": 42,
+            "line": 10,
+          },
+        },
+        "mutatorName": "BlockStatement",
+        "replacement": "{}",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected undefined to equal -2",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "2",
+        ],
+        "id": "5",
+        "killedBy": Array [
+          "2",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 17,
+            "line": 11,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 11,
+          },
+        },
+        "mutatorName": "UnaryOperator",
+        "replacement": "+number",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected 2 to equal -2",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [],
+        "id": "6",
+        "location": Object {
+          "end": Object {
+            "column": 2,
+            "line": 16,
+          },
+          "start": Object {
+            "column": 46,
+            "line": 14,
+          },
+        },
+        "mutatorName": "BlockStatement",
+        "replacement": "{}",
+        "static": false,
+        "status": "NoCoverage",
+      },
+      Object {
+        "coveredBy": Array [],
+        "id": "7",
+        "location": Object {
+          "end": Object {
+            "column": 21,
+            "line": 15,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 15,
+          },
+        },
+        "mutatorName": "ConditionalExpression",
+        "replacement": "true",
+        "static": false,
+        "status": "NoCoverage",
+      },
+      Object {
+        "coveredBy": Array [],
+        "id": "8",
+        "location": Object {
+          "end": Object {
+            "column": 21,
+            "line": 15,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 15,
+          },
+        },
+        "mutatorName": "ConditionalExpression",
+        "replacement": "false",
+        "static": false,
+        "status": "NoCoverage",
+      },
+      Object {
+        "coveredBy": Array [],
+        "id": "9",
+        "location": Object {
+          "end": Object {
+            "column": 21,
+            "line": 15,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 15,
+          },
+        },
+        "mutatorName": "EqualityOperator",
+        "replacement": "number >= 10",
+        "static": false,
+        "status": "NoCoverage",
       },
     ],
     "source": "module.exports.add = function(num1, num2) {
@@ -483,6 +483,77 @@ module.exports.isNegativeNumber = function(number) {
   "src/Circle.js": Object {
     "language": "javascript",
     "mutants": Array [
+      Object {
+        "coveredBy": Array [
+          "5",
+        ],
+        "id": "19",
+        "killedBy": Array [
+          "5",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 2,
+            "line": 4,
+          },
+          "start": Object {
+            "column": 52,
+            "line": 1,
+          },
+        },
+        "mutatorName": "BlockStatement",
+        "replacement": "{}",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected undefined to equal 6.283185307179586",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "5",
+        ],
+        "id": "20",
+        "location": Object {
+          "end": Object {
+            "column": 30,
+            "line": 3,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 3,
+          },
+        },
+        "mutatorName": "ArithmeticOperator",
+        "replacement": "2 * Math.PI / radius",
+        "static": false,
+        "status": "Survived",
+        "testsCompleted": 1,
+      },
+      Object {
+        "coveredBy": Array [
+          "5",
+        ],
+        "id": "21",
+        "killedBy": Array [
+          "5",
+        ],
+        "location": Object {
+          "end": Object {
+            "column": 21,
+            "line": 3,
+          },
+          "start": Object {
+            "column": 10,
+            "line": 3,
+          },
+        },
+        "mutatorName": "ArithmeticOperator",
+        "replacement": "2 / Math.PI",
+        "static": false,
+        "status": "Killed",
+        "statusReason": "expected 0.6366197723675814 to equal 6.283185307179586",
+        "testsCompleted": 1,
+      },
       Object {
         "coveredBy": Array [],
         "id": "22",
@@ -536,77 +607,6 @@ module.exports.isNegativeNumber = function(number) {
         "replacement": "5 * 2",
         "static": false,
         "status": "NoCoverage",
-      },
-      Object {
-        "coveredBy": Array [
-          "5",
-        ],
-        "id": "20",
-        "location": Object {
-          "end": Object {
-            "column": 30,
-            "line": 3,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 3,
-          },
-        },
-        "mutatorName": "ArithmeticOperator",
-        "replacement": "2 * Math.PI / radius",
-        "static": false,
-        "status": "Survived",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
-          "5",
-        ],
-        "id": "19",
-        "killedBy": Array [
-          "5",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 2,
-            "line": 4,
-          },
-          "start": Object {
-            "column": 52,
-            "line": 1,
-          },
-        },
-        "mutatorName": "BlockStatement",
-        "replacement": "{}",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected undefined to equal 6.283185307179586",
-        "testsCompleted": 1,
-      },
-      Object {
-        "coveredBy": Array [
-          "5",
-        ],
-        "id": "21",
-        "killedBy": Array [
-          "5",
-        ],
-        "location": Object {
-          "end": Object {
-            "column": 21,
-            "line": 3,
-          },
-          "start": Object {
-            "column": 10,
-            "line": 3,
-          },
-        },
-        "mutatorName": "ArithmeticOperator",
-        "replacement": "2 / Math.PI",
-        "static": false,
-        "status": "Killed",
-        "statusReason": "expected 0.6366197723675814 to equal 6.283185307179586",
-        "testsCompleted": 1,
       },
     ],
     "source": "module.exports.getCircumference = function(radius) {

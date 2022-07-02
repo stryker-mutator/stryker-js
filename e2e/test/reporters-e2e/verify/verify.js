@@ -27,8 +27,18 @@ describe('Verify stryker has ran correctly', () => {
 
   it('should report json report with expected results', async () => {
     const result = await readMutationTestingJsonResult();
-    expect(result.files).matchSnapshot();
-    expect(result.testFiles).matchSnapshot();
+    const files = Object.fromEntries(
+      Object.entries(result.files)
+        .map(([fileName, fileResult]) => [fileName, { ...fileResult, mutants: fileResult.mutants.sort((a, b) => (a.id < b.id ? -1 : 1)) }])
+        .sort(([a], [b]) => (a < b ? -1 : 1))
+    );
+    const testFiles = Object.fromEntries(
+      Object.entries(result.testFiles)
+        .map(([fileName, fileResult]) => [fileName, { ...fileResult, tests: fileResult.tests.sort((a, b) => (a.id < b.id ? -1 : 1)) }])
+        .sort(([a], [b]) => (a < b ? -1 : 1))
+    );
+    expect(files).matchSnapshot();
+    expect(testFiles).matchSnapshot();
   });
 
   describe('clearText report', () => {
