@@ -1,15 +1,11 @@
 import { promises as fsPromises } from 'fs';
-
 import path from 'path';
-
 import { promisify } from 'util';
-
 import { fileURLToPath, URL } from 'url';
 
 import chai from 'chai';
 import { execa, execaSync } from 'execa';
 import rimraf from 'rimraf';
-
 import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
 

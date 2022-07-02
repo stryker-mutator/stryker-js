@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp } from '../../src/index.js';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, normalizeFileName } from '../../src/index.js';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -94,5 +94,14 @@ describe('stringUtils', () => {
         expect(escapeRegExp(letter)).eq(`\\${letter}`);
       });
     }
+  });
+
+  describe(normalizeFileName.name, () => {
+    it('should normalize `\\`', () => {
+      expect(normalizeFileName('test\\util\\foo.spec.js')).eq('test/util/foo.spec.js');
+    });
+    it('should normalize `/`', () => {
+      expect(normalizeFileName('test/util/foo.spec.js')).eq('test/util/foo.spec.js');
+    });
   });
 });
