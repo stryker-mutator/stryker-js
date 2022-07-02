@@ -23,9 +23,22 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
-      run: npm install || npm install # retry once, install on windows is flaky...
+      run: npm ci || npm ci # retry once, install on windows is flaky...
     - name: Build & lint & test
       run: npm run all
+  
+  incremental_mutation_test:
+      runs-on: 'ubuntu-latest'
+      steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Download incremental reports
+        run: npm run download-incremental-reports
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      - name: Run stryker run --incremental
+        run: npm run test:mutation:incremental
 
   e2e:
     runs-on: ${{ matrix.os }}
@@ -46,7 +59,7 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
-      run: npm install || npm install # retry once, install on windows is flaky...
+      run: npm ci || npm ci # retry once, install on windows is flaky...
     - name: Build packages
       run: npm run build
     - name: Run e2e tests
