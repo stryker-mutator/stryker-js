@@ -4,7 +4,7 @@ import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, s
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
+import { normalizeFileName, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
@@ -166,7 +166,8 @@ export class MutationTestReportHelper {
     );
 
     return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
-      const fileResult = acc[mutantResult.fileName] ?? (acc[mutantResult.fileName] = fileResultsByName.get(mutantResult.fileName)!);
+      const reportFileName = normalizeReportFileName(mutantResult.fileName);
+      const fileResult = acc[reportFileName] ?? (acc[reportFileName] = fileResultsByName.get(mutantResult.fileName)!);
       fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
       return acc;
     }, {});
@@ -176,15 +177,15 @@ export class MutationTestReportHelper {
     const testResultsByName = new Map<string, schema.TestFile>(
       await Promise.all(
         [...new Set(this.dryRunResult.tests.map(({ fileName }) => fileName))].map(
-          async (fileName) => [fileName ?? '', await this.toTestFile(fileName)] as const
+          async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const
         )
       )
     );
 
     return this.dryRunResult.tests.reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
-      const fileName = testResult.fileName ?? ''; // by default we accumulate tests under the '' key
-      const testFile = acc[fileName] ?? (acc[fileName] = testResultsByName.get(fileName)!);
+      const reportFileName = normalizeReportFileName(testResult.fileName);
+      const testFile = acc[reportFileName] ?? (acc[reportFileName] = testResultsByName.get(reportFileName)!);
       testFile.tests.push(test);
       return acc;
     }, {});
@@ -308,4 +309,12 @@ export class MutationTestReportHelper {
       return acc;
     }, {});
   }
+}
+
+function normalizeReportFileName(fileName: string | undefined) {
+  if (fileName) {
+    return normalizeFileName(path.relative(process.cwd(), fileName));
+  }
+  // File name is not required for test files. By default we accumulate tests under the '' key
+  return '';
 }

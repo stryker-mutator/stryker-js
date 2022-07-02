@@ -1,3 +1,5 @@
+import path from 'path';
+
 import sinon from 'sinon';
 import { Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
@@ -250,6 +252,21 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
         expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
       });
+
+      it('should report file names as normalized and relative to the cwd', async () => {
+        // Arrange
+        const expectedRelativeName = 'src/util/foo.js';
+        const fileName = path.resolve(expectedRelativeName);
+        const inputMutants = [factory.killedMutantResult({ fileName })];
+        fileSystemTestDouble.files[fileName] = 'console.log("foo");';
+
+        // Act
+        const [actualReport] = await actReportAll(inputMutants);
+
+        // Assert
+        expect(actualReport.files[expectedRelativeName].mutants).lengthOf(1);
+        expect(actualReport.files[expectedRelativeName].source).eq('console.log("foo");');
+      });
     });
 
     describe('tests', () => {
@@ -335,6 +352,23 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.testFiles!['foo.spec.js'].tests[0].name).eq('1');
         expect(actualReport.testFiles!['foo.spec.js'].tests[1].name).eq('3');
         expect(actualReport.testFiles!['bar.spec.js'].tests[0].name).eq('2');
+      });
+
+      it('should report file names as normalized and relative to the cwd', async () => {
+        // Arrange
+        const expectedRelativeName = 'test/unit/foo.spec.js';
+        const testFileName = path.resolve(expectedRelativeName);
+        dryRunResult.tests.push(factory.testResult({ fileName: testFileName, name: '1' }));
+        fileSystemTestDouble.files[testFileName] = 'it("should work")';
+
+        // Act
+        const [actualReport] = await actReportAll();
+
+        // Assert
+        expect(Object.keys(actualReport.testFiles!)).lengthOf(1);
+        const testFile = actualReport.testFiles![expectedRelativeName];
+        expect(testFile.source).eq('it("should work")');
+        expect(testFile.tests).lengthOf(1);
       });
 
       it('should log a warning the test file could not be found', async () => {

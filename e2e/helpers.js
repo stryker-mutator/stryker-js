@@ -92,8 +92,15 @@ export async function readMutationTestingJsonResult(jsonReportFile = path.resolv
    * @type {import('mutation-testing-report-schema/api').MutationTestResult}
    */
   const report = JSON.parse(mutationTestReportContent);
-  const metricsResult = calculateMutationTestMetrics(report);
-  return metricsResult;
+  return report;
+}
+
+/**
+ * @param {string} [jsonReportFile]
+ * @returns {Promise<import('mutation-testing-metrics').MutationTestMetricsResult>}
+ */
+export async function readMutationTestingJsonResultAsMetricsResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
+  return calculateMutationTestMetrics(await readMutationTestingJsonResult(jsonReportFile));
 }
 
 /**
@@ -105,6 +112,6 @@ export function readLogFile(fileName = path.resolve('stryker.log')) {
 }
 
 export async function expectMetricsJsonToMatchSnapshot() {
-  const actualMetricsResult = await readMutationTestingJsonResult();
+  const actualMetricsResult = await readMutationTestingJsonResultAsMetricsResult();
   expect(actualMetricsResult.systemUnderTestMetrics.metrics).to.matchSnapshot();
 }
