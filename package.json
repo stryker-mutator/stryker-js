@@ -56,7 +56,7 @@
     "build": "tsc -b && lerna run build",
     "test": "lerna run test --stream --concurrency 2",
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
-    "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
+    "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- -- --incremental",
     "e2e": "cd e2e && npm ci && npm run lint && npm t && cd ..",
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
     "perf": "cd perf && npm ci && npm run lint && npm t && cd ..",
