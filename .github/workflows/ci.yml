@@ -39,6 +39,7 @@ jobs:
         run: npm run download-incremental-reports
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
       - name: Run stryker run --incremental
         run: npm run test:mutation:incremental
 
