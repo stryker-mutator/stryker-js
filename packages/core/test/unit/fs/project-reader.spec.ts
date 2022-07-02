@@ -18,16 +18,15 @@ describe(ProjectReader.name, () => {
     fsMock = createFileSystemMock();
   });
 
-  it('should log a warning if no files were resolved', async () => {
-    stubFileSystem({}); // empty dir
-    const sut = createSut();
-    await sut.read();
-    expect(testInjector.logger.warn).calledWith(
-      `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","*.tsbuildinfo","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
-    );
-  });
-
   describe('file resolving', () => {
+    it('should log a warning if no files were resolved', async () => {
+      stubFileSystem({}); // empty dir
+      const sut = createSut();
+      await sut.read();
+      expect(testInjector.logger.warn).calledWith(
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","*.tsbuildinfo","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+      );
+    });
     it('should discover files recursively using readdir', async () => {
       // Arrange
       stubFileSystem({
@@ -335,6 +334,126 @@ describe(ProjectReader.name, () => {
     });
   });
 
+  describe('incremental report', () => {
+    it('should not be read if incremental = false', async () => {
+      stubFileSystem({}); // empty dir
+      const sut = createSut();
+      await sut.read();
+      sinon.assert.notCalled(fsMock.readFile);
+    });
+    it('should be read if incremental = true', async () => {
+      testInjector.options.incremental = true;
+      stubFileSystem({}); // empty dir
+      const sut = createSut();
+      await sut.read();
+      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'reports/stryker-incremental.json', 'utf-8');
+    });
+    it('should not be read when incremental = true, but force is provided', async () => {
+      testInjector.options.incremental = true;
+      testInjector.options.force = true;
+      stubFileSystem({ reports: { 'stryker-incremental.json': JSON.stringify(factory.mutationTestReportSchemaMutationTestResult({})) } });
+      const sut = createSut();
+      const actualProject = await sut.read();
+      expect(actualProject.incrementalReport).undefined;
+      sinon.assert.calledOnceWithExactly(
+        testInjector.logger.info,
+        'Incremental file will not be used because "force" was provided, a full mutation testing run will be performed.'
+      );
+    });
+    it('should handle file not found correctly', async () => {
+      // Arrange
+      testInjector.options.incremental = true;
+      stubFileSystem({}); // empty dir
+      const sut = createSut();
+
+      // Act
+      const actualProject = await sut.read();
+
+      // Assert
+      expect(actualProject.incrementalReport).undefined;
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        'No incremental result file found at %s, a full mutation testing run will be performed.',
+        'reports/stryker-incremental.json'
+      );
+    });
+    it('should be corrected for file locations', async () => {
+      // Arrange
+      testInjector.options.incremental = true;
+      stubFileSystem({
+        reports: {
+          'stryker-incremental.json': JSON.stringify(
+            factory.mutationTestReportSchemaMutationTestResult({
+              files: {
+                'foo.js': factory.mutationTestReportSchemaFileResult({
+                  mutants: [
+                    factory.mutationTestReportSchemaMutantResult({
+                      location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
+                    }),
+                  ],
+                }),
+              },
+              testFiles: {
+                'foo.spec.js': factory.mutationTestReportSchemaTestFile({
+                  tests: [
+                    factory.mutationTestReportSchemaTestDefinition({
+                      location: undefined,
+                    }),
+                    factory.mutationTestReportSchemaTestDefinition({
+                      location: { start: { line: 1, column: 2 } },
+                    }),
+                    factory.mutationTestReportSchemaTestDefinition({
+                      location: { start: { line: 3, column: 4 }, end: { line: 5, column: 6 } },
+                    }),
+                  ],
+                }),
+              },
+            })
+          ),
+        },
+      });
+      const sut = createSut();
+
+      // Act
+      const actualProject = await sut.read();
+
+      // Assert
+      const expected = factory.mutationTestReportSchemaMutationTestResult({
+        files: {
+          'foo.js': factory.mutationTestReportSchemaFileResult({
+            mutants: [
+              factory.mutationTestReportSchemaMutantResult({
+                location: { start: { line: 0, column: 1 }, end: { line: 2, column: 3 } }, // Stryker works 0-based internally
+              }),
+            ],
+          }),
+        },
+        testFiles: {
+          'foo.spec.js': factory.mutationTestReportSchemaTestFile({
+            tests: [
+              factory.mutationTestReportSchemaTestDefinition({ location: undefined }),
+              factory.mutationTestReportSchemaTestDefinition({
+                location: { start: { line: 0, column: 1 }, end: undefined },
+              }),
+              factory.mutationTestReportSchemaTestDefinition({
+                location: { start: { line: 2, column: 3 }, end: { line: 4, column: 5 } },
+              }),
+            ],
+          }),
+        },
+      });
+      expect(actualProject.incrementalReport).deep.eq(expected);
+    });
+    it('should respect the incremental file location', async () => {
+      testInjector.options.incremental = true;
+      testInjector.options.incrementalFile = 'some/other/file.json';
+      stubFileSystem({}); // empty dir
+      const sut = createSut();
+      await sut.read();
+      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'some/other/file.json', 'utf-8');
+    });
+  });
+
   function mutateRange(startLine: number, startColumn: number, endLine: number, endColumn: number): MutationRange {
     return {
       start: { line: startLine, column: startColumn },
@@ -346,17 +465,18 @@ describe(ProjectReader.name, () => {
     return testInjector.injector.provideValue(coreTokens.fs, fsMock).injectClass(ProjectReader);
   }
 
-  // eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
   type DirectoryEntry = string | { [name: string]: DirectoryEntry };
 
   function stubFileSystem(dirEntry: DirectoryEntry, fullName = process.cwd()) {
     if (typeof dirEntry === 'string') {
       fsMock.readFile.withArgs(fullName).resolves(dirEntry);
+      fsMock.readFile.withArgs(path.relative(process.cwd(), fullName)).resolves(dirEntry);
     } else {
       fsMock.readdir
         .withArgs(fullName, sinon.match.object)
         .resolves(Object.entries(dirEntry).map(([name, value]) => createDirent({ name, isDirectory: typeof value !== 'string' })));
       Object.entries(dirEntry).map(([name, value]) => stubFileSystem(value, path.resolve(fullName, name)));
     }
+    fsMock.readFile.rejects(factory.fileNotFoundError());
   }
 });

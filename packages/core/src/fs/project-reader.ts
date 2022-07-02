@@ -13,7 +13,7 @@ import { OpenEndLocation } from 'mutation-testing-report-schema';
 import { defaultOptions, FileMatcher } from '../config/index.js';
 import { coreTokens } from '../di/index.js';
 
-import { INCREMENTAL_REPORT_FILE, Project } from './project.js';
+import { Project } from './project.js';
 import { FileSystem } from './file-system.js';
 
 const { Minimatch } = minimatch;
@@ -33,22 +33,26 @@ export class ProjectReader {
   private readonly mutatePatterns: readonly string[];
   private readonly ignoreRules: readonly string[];
   private readonly incremental: boolean;
+  private readonly force: boolean;
+  private readonly incrementalFile: string;
 
   public static inject = tokens(coreTokens.fs, commonTokens.logger, commonTokens.options);
   constructor(
     private readonly fs: I<FileSystem>,
     private readonly log: Logger,
-    { mutate, tempDirName, ignorePatterns, incremental }: StrykerOptions
+    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force }: StrykerOptions
   ) {
     this.mutatePatterns = mutate;
     this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, ...ignorePatterns];
     this.incremental = incremental;
+    this.incrementalFile = incrementalFile;
+    this.force = force;
   }
 
   public async read(): Promise<Project> {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
-    const project = new Project(this.fs, fileDescriptions, this.incremental ? await this.readIncrementalReport() : undefined);
+    const project = new Project(this.fs, fileDescriptions, await this.readIncrementalReport());
     project.logFiles(this.log, this.ignoreRules);
     return project;
   }
@@ -192,9 +196,17 @@ export class ProjectReader {
   }
 
   private async readIncrementalReport(): Promise<MutationTestResult | undefined> {
+    if (!this.incremental) {
+      return;
+    }
+    if (this.force) {
+      this.log.info('Incremental file will not be used because "force" was provided, a full mutation testing run will be performed.');
+      return;
+    }
     try {
       // TODO: Validate against the schema or stryker version?
-      const result: MutationTestResult = JSON.parse(await this.fs.readFile(INCREMENTAL_REPORT_FILE, 'utf-8'));
+      const contents = await this.fs.readFile(this.incrementalFile, 'utf-8');
+      const result: MutationTestResult = JSON.parse(contents);
       return {
         ...result,
         files: Object.fromEntries(
@@ -217,8 +229,8 @@ export class ProjectReader {
       };
     } catch (err: unknown) {
       if (isErrnoException(err) && err.code === ERROR_CODES.NoSuchFileOrDirectory) {
-        this.log.info('No incremental result file found, Stryker will perform a full run.');
-        return undefined;
+        this.log.info('No incremental result file found at %s, a full mutation testing run will be performed.', this.incrementalFile);
+        return;
       }
       // Whoops, didn't mean to catch this one!
       throw err;
