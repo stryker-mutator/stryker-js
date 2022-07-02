@@ -1,4 +1,4 @@
-import { Dirent } from 'fs';
+import { Dirent, PathLike } from 'fs';
 
 import { FileDescriptions, MutateDescription } from '@stryker-mutator/api/src/core/index.js';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -15,6 +15,7 @@ type Param<TMethod extends keyof I<FileSystem>, n extends number> = Parameters<F
  * Only supports sync, in-memory, text files.
  */
 export class FileSystemTestDouble implements I<FileSystem> {
+  public dirs = new Set<string>();
   constructor(public readonly files: Record<string, string> = Object.create(null)) {}
   public async dispose(): Promise<void> {
     // Idle, nothing to do here
@@ -48,8 +49,8 @@ export class FileSystemTestDouble implements I<FileSystem> {
     this.files[name] = data;
   }
 
-  public async mkdir(): Promise<any> {
-    // Idle, nothing to do
+  public async mkdir(path: PathLike): Promise<any> {
+    this.dirs.add(path.toString());
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

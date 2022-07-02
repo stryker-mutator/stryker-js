@@ -79,6 +79,28 @@ describe(MutationTestReportHelper.name, () => {
         const [actualReport] = await actReportAll();
         expect(actualReport.config).eq(testInjector.options);
       });
+
+      it('should provide the metrics as second argument', async () => {
+        // Arrange
+        const inputMutants: MutantResult[] = [
+          {
+            mutatorName: 'Foo',
+            fileName: 'foo.js',
+            status: MutantStatus.Killed,
+            location: { start: { line: 1, column: 2 }, end: { line: 4, column: 5 } },
+            replacement: '+',
+            id: '1',
+          },
+        ];
+        fileSystemTestDouble.files['foo.js'] = '';
+        dryRunResult.tests.push(factory.testResult({ id: 'foo should bar', name: 'foo should bar' }));
+
+        // Act
+        const [actualReport, metrics] = await actReportAll(inputMutants);
+
+        // Assert
+        expect(metrics).deep.eq(calculateMutationTestMetrics(actualReport));
+      });
     });
 
     describe('framework', () => {
@@ -379,26 +401,31 @@ describe(MutationTestReportHelper.name, () => {
       });
     });
 
-    it('should provide the metrics as second argument', async () => {
-      // Arrange
-      const inputMutants: MutantResult[] = [
-        {
-          mutatorName: 'Foo',
-          fileName: 'foo.js',
-          status: MutantStatus.Killed,
-          location: { start: { line: 1, column: 2 }, end: { line: 4, column: 5 } },
-          replacement: '+',
-          id: '1',
-        },
-      ];
-      fileSystemTestDouble.files['foo.js'] = '';
-      dryRunResult.tests.push(factory.testResult({ id: 'foo should bar', name: 'foo should bar' }));
-
-      // Act
-      const [actualReport, metrics] = await actReportAll(inputMutants);
-
-      // Assert
-      expect(metrics).deep.eq(calculateMutationTestMetrics(actualReport));
+    describe('incremental', () => {
+      it('should write the report to the incremental file', async () => {
+        testInjector.options.incremental = true;
+        const [actualReport] = await actReportAll();
+        const actualFileContent: string = await fileSystemTestDouble.readFile('reports/stryker-incremental.json');
+        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
+      });
+      it('should support the incrementalFile option', async () => {
+        testInjector.options.incremental = true;
+        testInjector.options.incrementalFile = 'some/other/incremental.json';
+        const [actualReport] = await actReportAll();
+        const actualFileContent: string = await fileSystemTestDouble.readFile('some/other/incremental.json');
+        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
+      });
+      it('should create the dir for the incremental file', async () => {
+        testInjector.options.incremental = true;
+        const [actualReport] = await actReportAll();
+        const actualFileContent: string = await fileSystemTestDouble.readFile('reports/stryker-incremental.json');
+        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
+      });
+      it('should make the directory before writing the results file', async () => {
+        testInjector.options.incremental = true;
+        await actReportAll();
+        expect(fileSystemTestDouble.dirs).contains('reports');
+      });
     });
 
     describe('determineExitCode', () => {
