@@ -275,6 +275,7 @@ export class MutantTestPlanner {
               return {
                 ...mutant,
                 status: previousMutant.status,
+                statusReason: previousMutant.statusReason,
               };
             }
           }
