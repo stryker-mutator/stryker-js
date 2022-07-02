@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { KnownKeys } from './known-keys';
 import { Primitive } from './primitive';
 
