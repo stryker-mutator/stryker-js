@@ -3,6 +3,8 @@ import fs from 'fs';
 import { expect } from 'chai';
 import { describe } from 'mocha';
 
+import { readMutationTestingJsonResult } from '../../../helpers.js';
+
 describe('Verify stryker has ran correctly', () => {
   /**
    * @param {string} fileName
@@ -21,6 +23,12 @@ describe('Verify stryker has ran correctly', () => {
 
   it('should have a json report', () => {
     expectExists('reports/mutation/mutation.json');
+  });
+
+  it('should report json report with expected results', async () => {
+    const result = await readMutationTestingJsonResult();
+    expect(result.files).matchSnapshot();
+    expect(result.testFiles).matchSnapshot();
   });
 
   describe('clearText report', () => {

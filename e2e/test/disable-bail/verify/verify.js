@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import { expect } from 'chai';
 
-import { readMutationTestingJsonResult, execStryker } from '../../../helpers.js';
+import { readMutationTestingJsonResultAsMetricsResult, execStryker } from '../../../helpers.js';
 
 describe('disableBail', () => {
   beforeEach(async () => {
@@ -33,7 +33,7 @@ describe('disableBail', () => {
 async function assertBailWasDisabled(
   [killedByName1, killedByName2] = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1']
 ) {
-  const result = await readMutationTestingJsonResult();
+  const result = await readMutationTestingJsonResultAsMetricsResult();
   const theMutant = result.systemUnderTestMetrics.childResults[0].file.mutants.find((mutant) => mutant.replacement === 'a - b');
   expect(theMutant.killedByTests).lengthOf(2);
   expect(theMutant.killedByTests[0].name).eq(killedByName1);

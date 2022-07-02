@@ -14,7 +14,7 @@ describe('After running stryker with test runner jest on test environment "node"
     const sumTestFileName = fileURLToPath(new URL('../src/sum.test.js', import.meta.url));
     const report = JSON.parse(await fsPromises.readFile(fileURLToPath(new URL('../reports/mutation/mutation.json', import.meta.url)), 'utf-8'));
     const expectedTestFiles = {
-      [sumTestFileName]: {
+      ['src/sum.test.js']: {
         source: await fsPromises.readFile(sumTestFileName, 'utf-8'),
         tests: [
           {
