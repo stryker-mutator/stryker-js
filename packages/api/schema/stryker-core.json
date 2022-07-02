@@ -309,7 +309,17 @@
       "default": false
     },
     "incremental": {
-      "description": "Experimental: Enable 'incremental mode'. Stryker will store results in \"reports/.mutation-incremental.json\" and use those to speed up the next --incremental run",
+      "description": "Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run",
+      "type": "boolean",
+      "default": false
+    },
+    "incrementalFile": {
+      "description": "Specify the file to use for incremental mode.",
+      "type": "string",
+      "default": "reports/stryker-incremental.json"
+    },
+    "force": {
+      "description": "Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.",
       "type": "boolean",
       "default": false
     },

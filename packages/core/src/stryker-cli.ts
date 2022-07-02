@@ -75,7 +75,12 @@ export class StrykerCli {
       .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
       .option(
         '--incremental',
-        'Experimental: Enable \'incremental mode\'. Stryker will store results in "reports/stryker-incremental.json" and use those to speed up next --incremental run'
+        "Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run"
+      )
+      .option('--incrementalFile <file>', 'Specify the file to use for incremental mode.')
+      .option(
+        '--force',
+        'Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.'
       )
       .option(
         '-m, --mutate <filesToMutate>',
