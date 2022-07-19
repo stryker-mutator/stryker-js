@@ -19,7 +19,7 @@
     "@types/source-map-support": "0.5.4",
     "@typescript-eslint/eslint-plugin": "5.30.7",
     "@typescript-eslint/parser": "5.30.7",
-    "c8": "7.11.3",
+    "c8": "7.12.0",
     "chai": "4.3.6",
     "chai-as-promised": "7.1.1",
     "concurrently": "7.3.0",
