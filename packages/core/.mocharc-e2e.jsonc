@@ -1,11 +1,11 @@
 {
-  "spec": "dist/test/unit/**/*.js",
+  "spec": "dist/test/integration/**/*.js",
   "reporter": "mocha-multi-reporters",
   "reporterEnabled": "spec, mocha-junit-reporter",
-  "reporterOptions": "configFile=.mocharc.jsonc",
+  "reporterOptions": "configFile=.mocharc-e2e.jsonc",
   "mochaJunitReporterReporterOptions": {
-    "mochaFile": "./reports/unit/test-results.xml"
+    "mochaFile": "./reports/integration/test-results.xml"
   },
   "require": ["./dist/test/setup.js"],
-  "timeout": 10000
+  "timeout": 60000
 }
