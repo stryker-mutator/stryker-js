@@ -30,7 +30,7 @@ jobs:
       if: always()
       with:
         name: test-reports
-        path: packages/*/reports/**/text-results.xml
+        path: packages/*/reports/*/test-results.xml
 
   e2e:
     runs-on: ${{ matrix.os }}
