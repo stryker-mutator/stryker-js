@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: ['14.18.0', 16.x]
+        node-version: ['14.18.0', 18.x]
         os: ['ubuntu-latest', 'windows-latest']
     steps:
     - uses: actions/checkout@v3
@@ -26,6 +26,11 @@ jobs:
       run: npm install || npm install # retry once, install on windows is flaky...
     - name: Build & lint & test
       run: npm run all
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-reports
+        path: packages/*/reports/**/text-results.xml
 
   e2e:
     runs-on: ${{ matrix.os }}
@@ -56,3 +61,29 @@ jobs:
       with:
         name: e2e-reports
         path: e2e/test/*/reports/mutation/
+        
+  # publish-test-results:
+  #   needs: build_and_test
+  #   runs-on: ${{ matrix.os }}
+  #   permissions:
+  #     checks: write
+  #     pull-requests: write
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       node-version: ['14.18.0', 18.x]
+  #       os: ['ubuntu-latest', 'windows-latest']
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+  #     - name: Download Artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         path: artifacts
+  #     - name: Publish Test Results
+  #       id: test-results
+  #       uses: ./composite
+  #       with:
+  #         check_name: Test Results (${{ matrix.os-label }} python ${{ matrix.python }})
+  #         files: "artifacts${{ steps.os.outputs.path-sep }}**${{ steps.os.outputs.path-sep }}*.xml"
+  #         json_file: "tests.json"
