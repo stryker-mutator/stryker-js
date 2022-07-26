@@ -47,7 +47,7 @@
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
-    "postinstall": "lerna bootstrap -- --legacy-peer-deps",
+    "postinstall": "lerna bootstrap",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.js",
     "lint:fix": "npm run lint -- --fix",
     "clean": "rimraf \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
