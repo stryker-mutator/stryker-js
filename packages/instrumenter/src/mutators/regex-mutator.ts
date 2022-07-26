@@ -1,5 +1,5 @@
 import babel, { NodePath, type types as t } from '@babel/core';
-import weaponRegex from 'weapon-regex';
+import * as weaponRegex from 'weapon-regex';
 
 import { NodeMutator } from './index.js';
 
@@ -19,29 +19,38 @@ function isObviousRegexString(path: NodePath<t.StringLiteral>) {
     path.parentPath.node.arguments[0] === path.node
   );
 }
-const weaponRegexOptions: weaponRegex.Options = { mutationLevels: [1] };
+
+function getFlags(path: NodePath<t.NewExpression>): string | undefined {
+  if (types.isStringLiteral(path.node.arguments[1])) {
+    return path.node.arguments[1].value;
+  }
+  return undefined;
+}
+
+const weaponRegexOptions: weaponRegex.MutationOptions = { mutationLevels: [1] };
 
 export const regexMutator: NodeMutator = {
   name: 'Regex',
 
   *mutate(path) {
     if (path.isRegExpLiteral()) {
-      for (const replacementPattern of mutatePattern(path.node.pattern)) {
+      for (const replacementPattern of mutatePattern(path.node.pattern, path.node.flags)) {
         const replacement = types.regExpLiteral(replacementPattern, path.node.flags);
         yield replacement;
       }
     } else if (path.isStringLiteral() && isObviousRegexString(path)) {
-      for (const replacementPattern of mutatePattern(path.node.value)) {
+      const flags = getFlags(path.parentPath as NodePath<t.NewExpression>);
+      for (const replacementPattern of mutatePattern(path.node.value, flags)) {
         yield types.stringLiteral(replacementPattern);
       }
     }
   },
 };
 
-function mutatePattern(pattern: string): string[] {
+function mutatePattern(pattern: string, flags: string | undefined): string[] {
   if (pattern.length) {
     try {
-      return weaponRegex.mutate(pattern, weaponRegexOptions).map((mutant) => mutant.pattern);
+      return weaponRegex.mutate(pattern, flags, weaponRegexOptions).map((mutant) => mutant.pattern);
     } catch (err: any) {
       console.error(
         `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`

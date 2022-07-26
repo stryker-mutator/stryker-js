@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import weaponRegex from 'weapon-regex';
 
 import { regexMutator as sut } from '../../../src/mutators/regex-mutator.js';
 import { expectJSMutation } from '../../helpers/expect-mutation.js';
@@ -20,16 +19,14 @@ describe(sut.name, () => {
 
   it("should not crash if a regex couldn't be parsed", () => {
     // Arrange
-    const weaponRegexStub = sinon.stub(weaponRegex, 'mutate');
-    weaponRegexStub.throws(new Error('[Error] Parser: Position 1:1, found "[[]]"'));
     const errorStub = sinon.stub(console, 'error');
 
     // Act
-    expectJSMutation(sut, '/[[]]/');
+    expectJSMutation(sut, 'new RegExp("*(a|$]")');
 
     // Assert
     expect(errorStub).calledWith(
-      '[RegexMutator]: The Regex parser of weapon-regex couldn\'t parse this regex pattern: "[[]]". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: [Error] Parser: Position 1:1, found "[[]]"'
+      '[RegexMutator]: The Regex parser of weapon-regex couldn\'t parse this regex pattern: "*(a|$]". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: [Error] Parser: Position 1:1, found "*(a|$]"'
     );
   });
 
@@ -39,5 +36,21 @@ describe(sut.name, () => {
 
   it('should not mutate the flags of a new RegExp constructor', () => {
     expectJSMutation(sut, 'new RegExp("", "\\\\d{4}")');
+  });
+
+  it('should not pass flags if no flags are defined', () => {
+    expectJSMutation(sut, '/\\u{20}/', '/\\u/');
+  });
+
+  it('should pass flags in regex literals', () => {
+    expectJSMutation(sut, '/\\u{20}/u');
+  });
+
+  it('should pass flags in new RegExp constructors', () => {
+    expectJSMutation(sut, 'new RegExp("\\\\u{20}", "u")');
+  });
+
+  it('should only pass flags in new RegExp constructors if it is a string literal', () => {
+    expectJSMutation(sut, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
   });
 });
