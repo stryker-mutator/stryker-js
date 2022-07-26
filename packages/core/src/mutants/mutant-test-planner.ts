@@ -86,7 +86,12 @@ export class MutantTestPlanner {
 
     if (mutant.status) {
       // If this mutant was already ignored, early result
-      return this.createMutantEarlyResultPlan(mutant, { isStatic, status: mutant.status, statusReason: mutant.statusReason });
+      return this.createMutantEarlyResultPlan(mutant, {
+        isStatic,
+        coveredBy: mutant.coveredBy,
+        status: mutant.status,
+        statusReason: mutant.statusReason,
+      });
     } else if (this.dryRunResult.mutantCoverage) {
       // If there was coverage information (coverageAnalysis not "off")
       const tests = this.testsByMutantId.get(mutant.id) ?? [];
@@ -121,7 +126,8 @@ export class MutantTestPlanner {
       status,
       statusReason,
       coveredBy,
-    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[] }
+      killedBy,
+    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[]; killedBy?: string[] }
   ): MutantEarlyResultPlan {
     return {
       plan: PlanKind.EarlyResult,
@@ -131,6 +137,7 @@ export class MutantTestPlanner {
         static: isStatic,
         statusReason,
         coveredBy,
+        killedBy,
       },
     };
   }
@@ -272,10 +279,14 @@ export class MutantTestPlanner {
             }
             if (testFilesAreSame) {
               earlyResultCount++;
+              previousMutant.testsCompleted;
               return {
                 ...mutant,
                 status: previousMutant.status,
                 statusReason: previousMutant.statusReason,
+                testsCompleted: previousMutant.testsCompleted,
+                killedBy: previousMutant.killedBy,
+                coveredBy: previousMutant.coveredBy,
               };
             }
           }
