@@ -9,7 +9,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 export class ConcurrencyTokenProvider implements Disposable {
   private readonly concurrencyCheckers: number;
   private readonly concurrencyTestRunners: number;
-  private readonly testRunnerTokenSubject: ReplaySubject<number> = new ReplaySubject();
+  private readonly testRunnerTokenSubject = new ReplaySubject<number>();
 
   public get testRunnerToken$(): Observable<number> {
     return this.testRunnerTokenSubject;
