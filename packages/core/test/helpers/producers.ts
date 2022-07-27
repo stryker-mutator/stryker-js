@@ -77,7 +77,7 @@ export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<I<Che
   };
 }
 
-export const logger = (): Mock<Logger> => {
+export const logger = (): sinon.SinonStubbedInstance<Logger> => {
   return {
     category: 'foo-category',
     _log: sinon.stub(),
@@ -101,7 +101,7 @@ export const logger = (): Mock<Logger> => {
     setParseCallStackFunction: sinon.stub(),
     trace: sinon.stub(),
     warn: sinon.stub(),
-  };
+  } as sinon.SinonStubbedInstance<Logger>;
 };
 
 export function createCpuInfo(overrides?: Partial<CpuInfo>): CpuInfo {
