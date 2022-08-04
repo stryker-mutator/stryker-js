@@ -229,3 +229,51 @@ There are two solutions for this problem.
     ```
 
 2. Deactivate the usage of this Jest feature by setting `--findRelatedTests` to `false`. See [documentation](https://stryker-mutator.io/docs/stryker-js/jest-runner/#jestenablefindrelatedtests-boolean).
+
+### Error when running Stryker with the TypeScript checker: no watcher is registered.
+
+**Symptom**
+
+When activating the TypeScript checker, you might run into this error:
+
+```
+22:23:36 (2804) ERROR Stryker Unexpected error occurred while running Stryker StrykerError: 
+Error: Tried to check file "app/app.component.ts" (which is part of your typescript project), 
+but no watcher is registered for it. Changes would go unnoticed. This probably means that you
+need to expand the files that are included in your project.
+```
+
+This error most often occurs in Angular projects, but can occur in any TS project.
+
+**Problem**
+
+The problem here is that the TypeScript checker plugin uses the `ts.createSolutionBuilderWithWatch` api. This is equivalent to you running `tsc --build --watch`. This works great, but has one downside, files not explicitly included in your project's tsconfig.json file will not be watched. When files are not watched by the TypeScript compiler, the checker plugin cannot check for type errors for that mutant. 
+
+It has to choose to either let this mutant go unchecked or throw an error and stop running. Since you've configured the checker, you probably want the mutants to be checked, thus it makes sense to simply stop mutation testing so you can fix this issue.
+
+**Solution**
+
+The solution is to include all files that are mutated in your project's tsconfig.json file. For example (for an angular project)
+
+```diff
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+  "outDir": "./out-tsc/app",
+  "types": []
+-  "files": [
+-   "src/main.ts",
+-   "src/polyfills.ts"
+-  ],
+  "include": [
+-   "src/**/*.d.ts"
++   "src/**/*.ts",
++   "src/**/*.d.ts"
+  ],
++ "exclude": [
++   "src/**/*.spec.ts"
++ ]
+}
+```
+
+This shouldn't change anything about your Angular project. Your just being a bit more explicit in which files you want to include.
