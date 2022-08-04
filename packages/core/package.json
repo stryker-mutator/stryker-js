@@ -67,7 +67,7 @@
     "file-url": "~4.0.0",
     "get-port": "~6.1.0",
     "glob": "~8.0.0",
-    "inquirer": "~9.0.0",
+    "inquirer": "~9.1.0",
     "lodash.flatmap": "~4.5.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.6.0",
