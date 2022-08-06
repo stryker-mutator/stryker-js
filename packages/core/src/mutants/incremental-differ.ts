@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { diffChars, Change } from 'diff';
-import { Mutant, MutantStatus, Position } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus, Position, schema } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { MutationTestResult, MutantResult, Location, TestDefinition, TestFileDefinitionDictionary } from 'mutation-testing-report-schema/api';
@@ -47,14 +47,21 @@ export class IncrementalDiffer {
       })
     );
 
-    const testKeysById = new Map(
-      Object.entries(testFiles ?? (Object.create(null) as TestFileDefinitionDictionary)).flatMap(([fileName, testFile]) =>
-        testFile.tests.map((test) => [test.id, testToIdentifyingKey(test, fileName)])
-      )
+    const testKeysByOldMutantId = new Map(
+      Object.entries(testFiles ?? (Object.create(null) as TestFileDefinitionDictionary)).flatMap(([fileName, oldTestFile]) => {
+        const currentFileSource = currentFiles.get(fileName);
+        if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
+          const changes = diffChars(oldTestFile.source, currentFileSource);
+          const { locatedTests } = closeLocations(oldTestFile);
+          return withUpdatedLocations(changes, locatedTests).map((test) => [test.id, testToIdentifyingKey(test, fileName)]);
+        }
+        // No sources to compare, we should do our best with the info we do have
+        return oldTestFile.tests.map((test) => [test.id, testToIdentifyingKey(test, fileName)]);
+      })
     );
     for (const [key, mutant] of this.reusableMutantsByKey) {
-      this.oldTestCoverageByMutantKey.set(key, new Set(mutant.coveredBy?.map((testId) => testKeysById.get(testId)).filter(notEmpty)));
-      this.oldTestKilledByMutantKey.set(key, new Set(mutant.killedBy?.map((testId) => testKeysById.get(testId)).filter(notEmpty)));
+      this.oldTestCoverageByMutantKey.set(key, new Set(mutant.coveredBy?.map((testId) => testKeysByOldMutantId.get(testId)).filter(notEmpty)));
+      this.oldTestKilledByMutantKey.set(key, new Set(mutant.killedBy?.map((testId) => testKeysByOldMutantId.get(testId)).filter(notEmpty)));
     }
   }
 
@@ -80,56 +87,60 @@ export class IncrementalDiffer {
 }
 
 /**
- * Updates the locations of mutants based on the diff result.
- * @param changes The changes (result of the diff tool)
- * @param mutants The mutants to update locations for. These will be treated as immutable.
- * @returns A list of mutants with updated locations
+ * Updates the locations of mutants or tests based on the diff result.
+ * @param changes The text changes (result of the diff tool)
+ * @param items The mutants or tests to update locations for. These will be treated as immutable.
+ * @returns A list of items with updated locations, without items that are changed
  */
-function withUpdatedLocations(changes: Change[], mutants: MutantResult[]): MutantResult[] {
-  const toDo = new Set(mutants.map((m) => ({ ...m, location: deepClone(m.location) })));
-  const done: MutantResult[] = [];
-  const offset: Position = { column: 0, line: 0 };
+function withUpdatedLocations<T extends { location: Location }>(changes: Change[], items: T[]): T[] {
+  const toDo = new Set(items.map((m) => ({ ...m, location: deepClone(m.location) })));
+  const done: T[] = [];
+  const currentPosition: Position = { column: 0, line: 0 };
   for (const change of changes) {
-    const valueOffset = calculateOffset(change.value);
+    if (toDo.size === 0) {
+      // There are more changes, but nothing left to update.
+      break;
+    }
+    const offset = calculateOffset(change.value);
     if (change.added) {
-      toDo.forEach(({ location }) => updateLocation(location, valueOffset, offset.line === location.start.line));
-      progressOffset(offset, valueOffset);
+      toDo.forEach((test) => {
+        const { location } = test;
+        if (gte(currentPosition, location.start) && gte(location.end, currentPosition)) {
+          // This item cannot be reused, code was added here
+          toDo.delete(test);
+        } else {
+          locationAdd(location, offset, currentPosition.line === location.start.line);
+        }
+      });
+      positionMove(currentPosition, offset);
     } else if (change.removed) {
-      toDo.forEach((mutant) => {
+      toDo.forEach((item) => {
         const {
           location: { start },
-        } = mutant;
-        const endOffset = progressOffset({ ...offset }, valueOffset);
+        } = item;
+        const endOffset = positionMove({ ...currentPosition }, offset);
         if (gte(endOffset, start)) {
-          // This mutant cannot be reused, the code it covers has changed
-          toDo.delete(mutant);
+          // This item cannot be reused, the code it covers has changed
+          toDo.delete(item);
         } else {
-          updateLocation(mutant.location, negate(valueOffset), offset.line === start.line);
+          locationAdd(item.location, negate(offset), currentPosition.line === start.line);
         }
       });
     } else {
-      progressOffset(offset, valueOffset);
-      toDo.forEach((mutant) => {
-        const { end } = mutant.location;
-        if (gte(offset, end)) {
-          // We're done with this mutant, it can be reused
-          toDo.delete(mutant);
-          done.push(mutant);
+      positionMove(currentPosition, offset);
+      toDo.forEach((item) => {
+        const { end } = item.location;
+        if (gte(currentPosition, end)) {
+          // We're done with this item, it can be reused
+          toDo.delete(item);
+          done.push(item);
         }
       });
     }
   }
+  // Add the tests with Number.MAX_SAFE_INTEGER as line number.
+  done.push(...toDo);
   return done;
-}
-
-function progressOffset(offset: Position, addedOffset: Position): Position {
-  offset.line += addedOffset.line;
-  if (addedOffset.line === 0) {
-    offset.column += addedOffset.column;
-  } else {
-    offset.column = addedOffset.column;
-  }
-  return offset;
 }
 
 /**
@@ -154,10 +165,12 @@ function mutantToIdentifyingKey(
   return `${path.relative(process.cwd(), fileName)}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
 }
 
-function testToIdentifyingKey({ name, location }: Pick<TestDefinition, 'location' | 'name'>, fileName = '') {
-  const locationDescription = location
-    ? `@${location.start.line}:${location.start.column}${location.end ? `-${location.end.line}:${location.end.column}` : ''}`
-    : '';
+function testToIdentifyingKey(
+  { name, location, startPosition }: Pick<TestDefinition, 'location' | 'name'> & Pick<TestResult, 'startPosition'>,
+  fileName = ''
+) {
+  startPosition = startPosition ?? location?.start;
+  const locationDescription = startPosition ? `@${startPosition.line}:${startPosition.column}` : '';
   return `${path.relative(process.cwd(), fileName)}${locationDescription}\n${name}`;
 }
 
@@ -174,7 +187,17 @@ function calculateOffset(text: string): Position {
   return pos;
 }
 
-function updateLocation({ start, end }: Location, { line, column }: Position, currentLine: boolean) {
+function positionMove(pos: Position, diff: Position): Position {
+  pos.line += diff.line;
+  if (diff.line === 0) {
+    pos.column += diff.column;
+  } else {
+    pos.column = diff.column;
+  }
+  return pos;
+}
+
+function locationAdd({ start, end }: Location, { line, column }: Position, currentLine: boolean) {
   start.line += line;
   if (currentLine) {
     start.column += column;
@@ -232,3 +255,82 @@ function mutantCanBeReused(oldMutant: MutantResult, testsDiff: Map<string, DiffA
   // A non-killed mutant did not get new tests, no need to rerun it
   return true;
 }
+
+/**
+ * Sets the end position of each test to the start position of the next test.
+ * This is an educated guess and necessary.
+ *
+ * Knowing the end location of tests is necessary in order to know if the test was changed.
+ */
+function closeLocations(testFile: schema.TestFile): {
+  unlocatedTests: UnlocatedTest[];
+  locatedTests: LocatedTest[];
+} {
+  const unlocatedTests: UnlocatedTest[] = [];
+  const locatedTests: LocatedTest[] = [];
+  const openEndedTests: OpenEndedTest[] = [];
+
+  testFile.tests.forEach((test) => {
+    if (testHasLocation(test)) {
+      if (isClosed(test)) {
+        locatedTests.push(test);
+      } else {
+        openEndedTests.push(test);
+      }
+    } else {
+      unlocatedTests.push(test);
+    }
+  });
+
+  if (openEndedTests.length) {
+    // Sort the opened tests in order to close their locations
+    openEndedTests.sort((a, b) => a.location.start.line - b.location.start.line);
+
+    const startPositions = uniqueStartPositions(openEndedTests);
+
+    let currentPositionIndex = 0;
+    let currentPosition = startPositions[currentPositionIndex];
+    openEndedTests.forEach((test) => {
+      if (currentPosition && test.location.start.line === currentPosition.line && test.location.start.column === currentPosition.column) {
+        currentPositionIndex++;
+        currentPosition = startPositions[currentPositionIndex];
+      }
+      if (currentPosition) {
+        locatedTests.push({ ...test, location: { start: test.location.start, end: currentPosition } });
+      }
+    });
+
+    // Don't forget about the last test
+    const lastTest = openEndedTests[openEndedTests.length - 1];
+    locatedTests.push({ ...lastTest, location: { start: lastTest.location.start, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
+  }
+
+  return { unlocatedTests, locatedTests };
+}
+
+/**
+ * Determines the unique start positions of a sorted list of tests in order
+ */
+function uniqueStartPositions(sortedTests: OpenEndedTest[]) {
+  let current: Position | undefined;
+  const startPositions = sortedTests.reduce<Position[]>((collector, { location: { start } }) => {
+    if (!current || current.line !== start.line || current.column !== start.column) {
+      current = start;
+      collector.push(current);
+    }
+    return collector;
+  }, []);
+  return startPositions;
+}
+
+function testHasLocation(test: schema.TestDefinition): test is OpenEndedTest {
+  return !!test.location;
+}
+
+function isClosed(test: Required<schema.TestDefinition>): test is LocatedTest {
+  return !!test.location.end;
+}
+
+type UnlocatedTest = Omit<schema.TestDefinition, 'location'>;
+type LocatedTest = schema.TestDefinition & { location: Location };
+type OpenEndedTest = schema.TestDefinition & { location: schema.OpenEndLocation };

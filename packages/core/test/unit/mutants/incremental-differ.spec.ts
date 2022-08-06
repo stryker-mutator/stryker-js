@@ -24,6 +24,60 @@ describe('add' () => {
   });
 });
 `;
+const testAddContentTwoTests = `import { expect } from 'chai';
+import { add } from '../src/add.js';
+
+describe('add' () => {
+  it('should result in 42 for 2 and 40', () => {
+    expect(add(40, 2)).eq(42);
+  });
+  it('should result in 42 for 45 and -3', () => {
+    expect(add(45, -3)).eq(42);
+  });
+});
+`;
+const testAddContentWithTestGeneration = `import { expect } from 'chai';
+import { add } from '../src/add.js';
+
+describe('add' () => {
+  for(const [a, b, answer] of [[40, 2, 42], [45, -3, 42]]) {
+    it(\`should result in \${answer} for \${a} and \${b}\`, () => {
+      expect(add(a, b)).eq(answer);
+    });
+  }
+  it('should have name "add"', () => {
+    expect(add.name).eq('add');
+  });
+});
+`;
+
+const testAddContentWithTestGenerationUpdated = `import { expect } from 'chai';
+import { add } from '../src/add.js';
+
+describe('add' () => {
+  for(const [a, b, answer] of [[40, 2, 42], [45, -3, 42]]) {
+    it(\`should result in \${answer} for \${a} and \${b}\`, () => {
+      expect(add(a, b)).eq(answer);
+    });
+  }
+  it('should have name "add"', () => {
+    // Add a comment as change
+    expect(add.name).eq('add');
+  });
+});
+`;
+const testAddContentTwoTestsUpdated = `import { expect } from 'chai';
+import { add } from '../src/add.js';
+
+describe('add' () => {
+  it('should result in 42 for 2 and 40', () => {
+    expect(add(40, 2)).eq(42);
+  });
+  it('should result in 42 for 46 and -4', () => {
+    expect(add(46, -4)).eq(42);
+  });
+});
+`;
 const testMultiplyContent = `import { expect } from 'chai';
 import { multiply } from '../src/multiply.js';
 
@@ -276,6 +330,248 @@ describe.only(IncrementalDiffer.name, () => {
       expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 
+    describe('with test file changes', () => {
+      it('should identify that mutant state can be reused with changes above', () => {
+        // Arrange
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: `import foo from 'bar'
+
+        ${testAddContent}`,
+          })
+        );
+        const mutants = [createMinReplacementMutant({ coveredBy: ['2'] })];
+        const tests = new Map(Object.entries({ [mutants[0].id]: new Set([createAddTestResult({ startPosition: pos(6, 2) })]) }));
+        const incrementalReport = createMinReplacementIncrementalReport({
+          testFiles: {
+            [testAdd]: {
+              source: testAddContent,
+              tests: [createAddTestDefinition({ location: loc(4, 2) })],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+
+      it('should identify that mutant state can be reused with changes before', () => {
+        // Arrange
+        const comment = '/*text-added*/';
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: testAddContent
+              .split('\n')
+              .map((line, nr) => (nr === 4 ? `${comment}${line}` : line))
+              .join('\n'),
+          })
+        );
+        const mutants = [createMinReplacementMutant({ coveredBy: ['2'] })];
+        const tests = new Map(Object.entries({ [mutants[0].id]: new Set([createAddTestResult({ startPosition: pos(4, 2 + comment.length) })]) }));
+        const incrementalReport = createMinReplacementIncrementalReport({
+          testFiles: {
+            [testAdd]: {
+              source: testAddContent,
+              tests: [createAddTestDefinition({ location: loc(4, 2) })],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+
+      it('should identify that mutant state can be reused with changes below', () => {
+        // Arrange
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: testAddContentTwoTests,
+          })
+        );
+        const mutants = [createMinReplacementMutant({ coveredBy: ['2'] })];
+        const tests = new Map(
+          Object.entries({
+            [mutants[0].id]: new Set([createAddSecondTestResult({ startPosition: pos(7, 2) }), createAddTestResult({ startPosition: pos(4, 2) })]),
+          })
+        );
+        const incrementalReport = createMinReplacementIncrementalReport({
+          testFiles: {
+            [testAdd]: {
+              source: testAddContent,
+              tests: [createAddTestDefinition({ location: loc(4, 2, 6, 7) })],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+
+      it('should identify that mutant state can be reused with changes behind', () => {
+        // Arrange
+        const comment = '/*text-added*/';
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: `${testAddContent}${comment}`,
+          })
+        );
+        const mutants = [createMinReplacementMutant()];
+        const tests = new Map(Object.entries({ [mutants[0].id]: new Set([createAddTestResult({ startPosition: pos(4, 2) })]) }));
+        const incrementalReport = createMinReplacementIncrementalReport({
+          testFiles: {
+            [testAdd]: {
+              source: testAddContent,
+              tests: [createAddTestDefinition({ location: loc(4, 2, 6, 7) })],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+
+      it('should not reuse a mutant state when a covering test gets code added', () => {
+        // Arrange
+        const code = 'addedText();';
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: testAddContent
+              .split('\n')
+              .map((line, nr) => (nr === 5 ? `  ${code}\n${line}` : line))
+              .join('\n'),
+          })
+        );
+        const mutants = [createMinReplacementMutant()];
+        const tests = new Map(Object.entries({ [mutants[0].id]: new Set([createAddTestResult({ startPosition: pos(4, 2) })]) }));
+        const incrementalReport = createMinReplacementIncrementalReport({
+          files: {
+            [srcAdd]: factory.mutationTestReportSchemaFileResult({
+              source: srcAddContent,
+              mutants: [createMinReplacementMutantResult({ killedBy: [], status: MutantStatus.NoCoverage })],
+            }),
+          },
+          testFiles: {
+            [testAdd]: {
+              source: testAddContent,
+              tests: [createAddTestDefinition({ location: loc(4, 2) })],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).undefined;
+      });
+
+      it('should close locations of tests in the incremental report', () => {
+        // All test runners currently only report the start positions of tests.
+        // Add a workaround for 'inventing' the end position based on the next test's start position.
+        // Arrange
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: testAddContentTwoTestsUpdated,
+          })
+        );
+        const mutants = [createMinReplacementMutant()];
+        const tests = new Map(
+          Object.entries({
+            [mutants[0].id]: new Set([createAddTestResult({ startPosition: pos(4, 2) })]),
+          })
+        );
+        const incrementalReport = createMinReplacementIncrementalReport({
+          testFiles: {
+            [testAdd]: {
+              source: testAddContentTwoTests,
+              tests: [
+                // Tests are presented deliberately in the wrong order, should be sorted by Stryker
+                createAddSecondTestDefinition({ location: loc(7, 2) }),
+                createAddTestDefinition({ location: loc(4, 2) }),
+              ],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+
+      it('should close locations for tests on the same location in the incremental report', () => {
+        // Test cases can generate tests, make sure the correct end position is chosen in those cases
+        // Arrange
+        const currentFiles = new Map(
+          Object.entries({
+            [srcAdd]: srcAddContent,
+            [testAdd]: testAddContentWithTestGenerationUpdated,
+          })
+        );
+        const mutants = [createMinReplacementMutant()];
+        const tests = new Map(
+          Object.entries({
+            [mutants[0].id]: new Set([
+              createAddTestResult({ name: 'should have name "add"', startPosition: pos(9, 2) }),
+              createAddWithTestGenerationTestResult(40, 2, 42),
+              createAddWithTestGenerationTestResult(45, -3, 42),
+            ]),
+          })
+        );
+        const incrementalReport = createMinReplacementIncrementalReport({
+          files: {
+            [srcAdd]: factory.mutationTestReportSchemaFileResult({
+              source: srcAddContent,
+              mutants: [createMinReplacementMutantResult({ coveredBy: ['spec4', 'spec5'], killedBy: ['spec4'] })],
+            }),
+          },
+          testFiles: {
+            [testAdd]: {
+              source: testAddContentWithTestGeneration,
+              tests: [
+                // Tests are presented deliberately in the wrong order, should be sorted by Stryker
+                factory.mutationTestReportSchemaTestDefinition({ id: '23', name: 'should have name "add"', location: loc(9, 2) }),
+                createAddWithTestGenerationTestDefinition('spec4', 40, 2, 42),
+                createAddWithTestGenerationTestDefinition('spec5', 45, -3, 42),
+              ],
+            },
+          },
+        });
+        const sut = new IncrementalDiffer(incrementalReport, currentFiles, testInjector.logger);
+
+        // Act
+        const actualDiff = sut.diff(mutants, tests);
+
+        // Assert
+        expect(actualDiff[0].status).eq(MutantStatus.Killed);
+      });
+    });
+
     it('should identify that a non-"Killed" state can be reused when a test is removed', () => {
       // Arrange
       const currentFiles = new Map([[srcAdd, srcAddContent]]);
@@ -325,7 +621,7 @@ describe.only(IncrementalDiffer.name, () => {
       expect(actualDiff[0].status).undefined;
     });
 
-    it('should identify that a "Killed" state be reused when the killing test didn\'t change', () => {
+    it('should identify that a "Killed" state can be reused when the killing test didn\'t change', () => {
       // Arrange
       const currentFiles = new Map([[srcAdd, srcAddContent]]);
       const mutants = [createMinReplacementMutant()];
@@ -419,12 +715,37 @@ describe.only(IncrementalDiffer.name, () => {
   function createAddTestResult(overrides?: Partial<TestResult>): TestResult {
     return factory.testResult({ fileName: testAdd, name: 'add(2, 0) = 2', ...overrides });
   }
+  function createAddSecondTestResult(overrides?: Partial<TestResult>): TestResult {
+    return factory.testResult({ id: '2', fileName: testAdd, name: 'add(45, -3) = 42', ...overrides });
+  }
 
   function createAddTestDefinition(overrides?: Partial<schema.TestDefinition>): schema.TestDefinition {
     return { id: '1', name: 'add(2, 0) = 2', ...overrides };
   }
 
-  function loc(startLine: number, startColumn: number, endLine: number, endColumn: number): Location {
-    return { start: { line: startLine, column: startColumn }, end: { line: endLine, column: endColumn } };
+  function createAddSecondTestDefinition(overrides?: Partial<schema.TestDefinition>): schema.TestDefinition {
+    return { id: '2', name: 'add(45, -3) = 42', ...overrides };
+  }
+
+  function createAddWithTestGenerationTestResult(a: number, b: number, answer: number): TestResult {
+    return factory.testResult({ fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
+  }
+
+  function createAddWithTestGenerationTestDefinition(id: string, a: number, b: number, answer: number): schema.TestDefinition {
+    return factory.mutationTestReportSchemaTestDefinition({
+      id,
+      name: `should result in ${answer} for ${a} and ${b}`,
+      location: loc(5, 4),
+    });
+  }
+
+  function loc(startLine: number, startColumn: number): schema.OpenEndLocation;
+  function loc(startLine: number, startColumn: number, endLine: number, endColumn: number): Location;
+  function loc(startLine: number, startColumn: number, endLine?: number, endColumn?: number): schema.OpenEndLocation {
+    return { start: { line: startLine, column: startColumn }, end: endLine ? { line: endLine, column: endColumn ?? 0 } : undefined };
+  }
+
+  function pos(line: number, column: number): schema.Position {
+    return { line, column };
   }
 });
