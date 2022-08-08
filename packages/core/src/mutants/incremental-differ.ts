@@ -52,7 +52,7 @@ export class IncrementalDiffer {
         const currentFileSource = currentFiles.get(fileName);
         if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
           const changes = diffChars(oldTestFile.source, currentFileSource);
-          const { locatedTests } = closeLocations(oldTestFile);
+          const locatedTests = closeLocations(oldTestFile);
           return withUpdatedLocations(changes, locatedTests).map((test) => [test.id, testToIdentifyingKey(test, fileName)]);
         }
         // No sources to compare, we should do our best with the info we do have
@@ -67,19 +67,28 @@ export class IncrementalDiffer {
 
   public diff(currentMutants: readonly Mutant[], currentTestsByMutantId: Map<string, Set<TestResult>>): readonly Mutant[] {
     return currentMutants.map((mutant) => {
-      const key = mutantToIdentifyingKey(mutant, mutant.fileName);
-      const oldMutant = this.reusableMutantsByKey.get(key);
-      const testsDiff = diffTestCoverage(this.oldTestCoverageByMutantKey.get(key), currentTestsByMutantId.get(mutant.id));
-      if (oldMutant && mutantCanBeReused(oldMutant, testsDiff, this.oldTestKilledByMutantKey.get(key))) {
-        const { status, statusReason, coveredBy, testsCompleted, killedBy } = oldMutant;
-        return {
-          ...mutant,
-          status,
-          statusReason,
-          coveredBy,
-          testsCompleted,
-          killedBy,
-        };
+      if (!mutant.status) {
+        const key = mutantToIdentifyingKey(mutant, mutant.fileName);
+        const oldMutant = this.reusableMutantsByKey.get(key);
+        const coveringTests = currentTestsByMutantId.get(mutant.id);
+        const testsDiff = diffTestCoverage(this.oldTestCoverageByMutantKey.get(key), coveringTests);
+        const killedByTestKeys = this.oldTestKilledByMutantKey.get(key);
+        if (oldMutant && mutantCanBeReused(oldMutant, testsDiff, killedByTestKeys)) {
+          const { status, statusReason, testsCompleted } = oldMutant;
+          return {
+            ...mutant,
+            status,
+            statusReason,
+            testsCompleted,
+            coveredBy: coveringTests && [...coveringTests].map(({ id }) => id),
+            killedBy:
+              killedByTestKeys &&
+              coveringTests &&
+              [...coveringTests]
+                .filter((coveringTest) => killedByTestKeys.has(testToIdentifyingKey(coveringTest, coveringTest.fileName)))
+                .map(({ id }) => id),
+          };
+        }
       }
       return mutant;
     });
@@ -167,11 +176,10 @@ function mutantToIdentifyingKey(
 
 function testToIdentifyingKey(
   { name, location, startPosition }: Pick<TestDefinition, 'location' | 'name'> & Pick<TestResult, 'startPosition'>,
-  fileName = ''
+  fileName: string | undefined
 ) {
-  startPosition = startPosition ?? location?.start;
-  const locationDescription = startPosition ? `@${startPosition.line}:${startPosition.column}` : '';
-  return `${path.relative(process.cwd(), fileName)}${locationDescription}\n${name}`;
+  startPosition = startPosition ?? location?.start ?? { line: 0, column: 0 };
+  return `${path.relative(process.cwd(), fileName ?? '')}@${startPosition.line}:${startPosition.column}\n${name}`;
 }
 
 function calculateOffset(text: string): Position {
@@ -259,14 +267,11 @@ function mutantCanBeReused(oldMutant: MutantResult, testsDiff: Map<string, DiffA
 /**
  * Sets the end position of each test to the start position of the next test.
  * This is an educated guess and necessary.
+ * If a test has no location, it is assumed it spans the entire file (line 0 to Infinity)
  *
  * Knowing the end location of tests is necessary in order to know if the test was changed.
  */
-function closeLocations(testFile: schema.TestFile): {
-  unlocatedTests: UnlocatedTest[];
-  locatedTests: LocatedTest[];
-} {
-  const unlocatedTests: UnlocatedTest[] = [];
+function closeLocations(testFile: schema.TestFile): LocatedTest[] {
   const locatedTests: LocatedTest[] = [];
   const openEndedTests: OpenEndedTest[] = [];
 
@@ -278,7 +283,7 @@ function closeLocations(testFile: schema.TestFile): {
         openEndedTests.push(test);
       }
     } else {
-      unlocatedTests.push(test);
+      locatedTests.push({ ...test, location: { start: { line: 0, column: 0 }, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
     }
   });
 
@@ -305,7 +310,7 @@ function closeLocations(testFile: schema.TestFile): {
     locatedTests.push({ ...lastTest, location: { start: lastTest.location.start, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
   }
 
-  return { unlocatedTests, locatedTests };
+  return locatedTests;
 }
 
 /**
@@ -324,13 +329,12 @@ function uniqueStartPositions(sortedTests: OpenEndedTest[]) {
 }
 
 function testHasLocation(test: schema.TestDefinition): test is OpenEndedTest {
-  return !!test.location;
+  return !!test.location?.start;
 }
 
 function isClosed(test: Required<schema.TestDefinition>): test is LocatedTest {
   return !!test.location.end;
 }
 
-type UnlocatedTest = Omit<schema.TestDefinition, 'location'>;
 type LocatedTest = schema.TestDefinition & { location: Location };
 type OpenEndedTest = schema.TestDefinition & { location: schema.OpenEndLocation };
