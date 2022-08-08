@@ -6,14 +6,13 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
-import { MutationTestResult } from 'mutation-testing-report-schema/api';
 
 import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { Project } from '../../../src/fs/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
-import { createMutant, loc } from '../../helpers/producers.js';
+import { loc } from '../../helpers/producers.js';
 
 const TIME_OVERHEAD_MS = 501;
 

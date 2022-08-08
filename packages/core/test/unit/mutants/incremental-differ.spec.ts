@@ -2,7 +2,6 @@ import { Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { Location } from 'mutation-testing-report-schema/api';
 
 import { IncrementalDiffer } from '../../../src/mutants/index.js';
 import { createMutant, loc, pos } from '../../helpers/producers.js';
