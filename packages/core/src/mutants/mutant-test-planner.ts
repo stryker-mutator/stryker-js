@@ -14,7 +14,7 @@ import {
 } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { I } from '@stryker-mutator/util';
+import { I, normalizeFileName, notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
@@ -22,6 +22,8 @@ import { Sandbox } from '../sandbox/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { optionsPath } from '../utils/index.js';
 import { Project } from '../fs/project.js';
+
+import { IncrementalDiffer } from './incremental-differ.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -49,7 +51,6 @@ export class MutantTestPlanner {
   private readonly testsByMutantId: Map<string, Set<TestResult>>;
   private readonly hitsByMutantId: Map<string, number>;
   private readonly timeSpentAllTests: number;
-  private readonly previousFiles: Map<string, string> | undefined;
 
   constructor(
     private readonly dryRunResult: CompleteDryRunResult,
@@ -63,14 +64,6 @@ export class MutantTestPlanner {
     this.testsByMutantId = this.findTestsByMutant(this.dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
     this.hitsByMutantId = findHitsByMutantId(this.dryRunResult.mutantCoverage);
     this.timeSpentAllTests = calculateTotalTime(this.dryRunResult.tests);
-    const { incrementalReport } = this.project;
-    if (incrementalReport) {
-      const { files, testFiles } = incrementalReport;
-      this.previousFiles = new Map(Object.entries(files).map(([fileName, { source }]) => [fileName, source]));
-      if (testFiles) {
-        Object.entries(testFiles).forEach(([fileName, { source }]) => source && this.previousFiles!.set(fileName, source));
-      }
-    }
   }
 
   public async makePlan(mutants: readonly Mutant[]): Promise<readonly MutantTestPlan[]> {
@@ -89,6 +82,7 @@ export class MutantTestPlanner {
       return this.createMutantEarlyResultPlan(mutant, {
         isStatic,
         coveredBy: mutant.coveredBy,
+        killedBy: mutant.killedBy,
         status: mutant.status,
         statusReason: mutant.statusReason,
       });
@@ -243,68 +237,30 @@ export class MutantTestPlanner {
 
   private async incrementalDiff(currentMutants: readonly Mutant[]): Promise<readonly Mutant[]> {
     const { incrementalReport } = this.project;
-    if (incrementalReport) {
-      let earlyResultCount = 0;
-      const { files, testFiles } = incrementalReport;
-      const previousMutantResults = new Map(
-        Object.entries(files).flatMap(([fileName, { mutants }]) => mutants.map((mutant) => [toUniqueKey(mutant, fileName), mutant] as const))
-      );
-      const fileChanges = new Map<string, boolean>();
-      const previousFiles = new Map(Object.entries(files).map(([fileName, { source }]) => [path.resolve(fileName), source]));
-      if (testFiles) {
-        Object.entries(testFiles).forEach(([fileName, { source }]) => source && previousFiles.set(path.resolve(fileName), source));
-      }
-      const fileIsSame = async (fileName: string): Promise<boolean> => {
-        if (!fileChanges.has(fileName)) {
-          const previousFile = previousFiles.get(fileName);
-          const currentContent = await this.project.files.get(fileName)!.readOriginal();
-          fileChanges.set(fileName, previousFile === currentContent);
-        }
-        return fileChanges.get(fileName)!;
-      };
 
-      const result = await Promise.all(
-        currentMutants.map(async (mutant) => {
-          const previousMutant = previousMutantResults.get(toUniqueKey(mutant, mutant.fileName));
-          if (previousMutant && (await fileIsSame(mutant.fileName))) {
-            const tests = this.testsByMutantId.get(mutant.id);
-            let testFilesAreSame = true;
-            for (const test of tests ?? []) {
-              if (test.fileName) {
-                testFilesAreSame = await fileIsSame(test.fileName);
-                if (!testFilesAreSame) {
-                  break;
-                }
-              }
-            }
-            if (testFilesAreSame) {
-              earlyResultCount++;
-              previousMutant.testsCompleted;
-              return {
-                ...mutant,
-                status: previousMutant.status,
-                statusReason: previousMutant.statusReason,
-                testsCompleted: previousMutant.testsCompleted,
-                killedBy: previousMutant.killedBy,
-                coveredBy: previousMutant.coveredBy,
-              };
-            }
-          }
-          return mutant;
-        })
-      );
-      this.logger.info(`Incremental mode: ${earlyResultCount}/${currentMutants.length} are reused.`);
-      return result;
+    if (incrementalReport) {
+      const currentFiles = await this.readAllOriginalFiles([...currentMutants, ...this.dryRunResult.tests]);
+      const differ = new IncrementalDiffer(incrementalReport, currentFiles, this.logger);
+      return differ.diff(currentMutants, this.testsByMutantId);
     }
     return currentMutants;
   }
-}
 
-function toUniqueKey(
-  { mutatorName, replacement, location: { start, end } }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
-  fileName: string
-) {
-  return `${path.relative(process.cwd(), fileName)}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
+  private async readAllOriginalFiles(thingsWithFileNames: ReadonlyArray<{ fileName?: string }>): Promise<Map<string, string>> {
+    const uniqueFileNames = [...new Set(thingsWithFileNames.map(({ fileName }) => fileName).filter(notEmpty))];
+    const result = await Promise.all(
+      uniqueFileNames.map(async (fileName) => {
+        const originalContent = await this.project.files.get(fileName)?.readOriginal();
+        if (originalContent) {
+          return [normalizeFileName(path.relative(process.cwd(), fileName)), originalContent] as const;
+        } else {
+          return undefined;
+        }
+      })
+    );
+
+    return new Map(result.filter(notEmpty));
+  }
 }
 
 function calculateTotalTime(testResults: Iterable<TestResult>): number {

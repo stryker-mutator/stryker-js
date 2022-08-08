@@ -5,7 +5,7 @@ import { Mutant, MutantStatus, Position, schema } from '@stryker-mutator/api/cor
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { MutationTestResult, MutantResult, Location, TestDefinition, TestFileDefinitionDictionary } from 'mutation-testing-report-schema/api';
-import { notEmpty } from '@stryker-mutator/util';
+import { normalizeFileName, notEmpty } from '@stryker-mutator/util';
 
 /**
  * This class is responsible for calculating the diff between a run and a previous run based on the incremental report.
@@ -171,7 +171,9 @@ function mutantToIdentifyingKey(
   { mutatorName, replacement, location: { start, end } }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
   fileName: string
 ) {
-  return `${path.relative(process.cwd(), fileName)}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
+  return `${normalizeFileName(path.relative(process.cwd(), fileName))}@${start.line}:${start.column}-${end.line}:${
+    end.column
+  }\n${mutatorName}: ${replacement}`;
 }
 
 function testToIdentifyingKey(
@@ -179,7 +181,7 @@ function testToIdentifyingKey(
   fileName: string | undefined
 ) {
   startPosition = startPosition ?? location?.start ?? { line: 0, column: 0 };
-  return `${path.relative(process.cwd(), fileName ?? '')}@${startPosition.line}:${startPosition.column}\n${name}`;
+  return `${normalizeFileName(path.relative(process.cwd(), fileName ?? ''))}@${startPosition.line}:${startPosition.column}\n${name}`;
 }
 
 function calculateOffset(text: string): Position {

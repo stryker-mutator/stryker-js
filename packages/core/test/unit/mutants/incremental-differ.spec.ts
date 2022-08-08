@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { Location } from 'mutation-testing-report-schema/api';
 
 import { IncrementalDiffer } from '../../../src/mutants/index.js';
-import { createMutant } from '../../helpers/producers.js';
+import { createMutant, loc, pos } from '../../helpers/producers.js';
 
 // Keep this files here for the indenting
 const srcAddContent = `export function add(a, b) {
@@ -645,13 +645,3 @@ describe(IncrementalDiffer.name, () => {
     });
   });
 });
-
-function loc(startLine: number, startColumn: number): schema.OpenEndLocation;
-function loc(startLine: number, startColumn: number, endLine: number, endColumn: number): Location;
-function loc(startLine: number, startColumn: number, endLine?: number, endColumn?: number): schema.OpenEndLocation {
-  return { start: pos(startLine, startColumn), end: endLine ? pos(endLine, endColumn ?? 0) : undefined };
-}
-
-function pos(line: number, column: number): schema.Position {
-  return { line, column };
-}

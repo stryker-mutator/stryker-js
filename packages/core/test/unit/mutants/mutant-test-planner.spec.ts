@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus } from '@stryker-mutator/api/core';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { MutationTestResult } from 'mutation-testing-report-schema/api';
 
@@ -13,7 +13,7 @@ import { coreTokens } from '../../../src/di/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { Project } from '../../../src/fs/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
-import { createMutant } from '../../helpers/producers.js';
+import { createMutant, loc } from '../../helpers/producers.js';
 
 const TIME_OVERHEAD_MS = 501;
 
@@ -33,7 +33,7 @@ describe(MutantTestPlanner.name, () => {
     dryRunResult: CompleteDryRunResult,
     mutants: Mutant[],
     project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions())
-  ) {
+  ): Promise<readonly MutantTestPlan[]> {
     return testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.dryRunResult, dryRunResult)
@@ -54,7 +54,7 @@ describe(MutantTestPlanner.name, () => {
 
     // Assert
     const expected: MutantEarlyResultPlan[] = [
-      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored, coveredBy: undefined } },
+      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored, coveredBy: undefined, killedBy: undefined } },
     ];
     expect(result).deep.eq(expected);
   });
@@ -210,6 +210,7 @@ describe(MutantTestPlanner.name, () => {
               statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
               static: true,
               coveredBy: [],
+              killedBy: undefined,
             },
           },
         ];
@@ -404,154 +405,6 @@ describe(MutantTestPlanner.name, () => {
     });
   });
 
-  describe.only('incrementalDiff', () => {
-    const srcAdd = 'src/add.js';
-    const srcMultiply = 'src/multiply.js';
-    const testAdd = 'test/add.spec.js';
-    const testMultiply = 'test/multiply.spec.js';
-    let incrementalReport: MutationTestResult;
-    let mutants: Mutant[];
-    let project: Project;
-    let dryRunResult: CompleteDryRunResult;
-
-    beforeEach(() => {
-      incrementalReport = factory.mutationTestReportSchemaMutationTestResult({
-        files: {
-          [srcAdd]: factory.mutationTestReportSchemaFileResult({
-            mutants: [
-              factory.mutationTestReportSchemaMutantResult({
-                id: '1',
-                coveredBy: ['1'],
-                killedBy: ['1'],
-                replacement: '-',
-                mutatorName: 'min-replacement',
-                status: MutantStatus.Killed,
-                location: { start: { line: 3, column: 25 }, end: { line: 3, column: 26 } },
-              }),
-            ],
-            source: `
-            export function add(a, b) {
-              return a + b;
-            }            
-            `,
-          }),
-          [srcMultiply]: factory.mutationTestReportSchemaFileResult({
-            mutants: [
-              factory.mutationTestReportSchemaMutantResult({
-                id: '2',
-                coveredBy: ['2'],
-                killedBy: ['2'],
-                replacement: '/',
-                mutatorName: 'divide-replacement',
-                status: MutantStatus.Killed,
-                location: { start: { line: 3, column: 25 }, end: { line: 3, column: 26 } },
-              }),
-            ],
-            source: `
-            export function multiply(a, b) {
-              return a * b;
-            }`,
-          }),
-        },
-        testFiles: {
-          [testAdd]: factory.mutationTestReportSchemaTestFile({
-            source: `
-            import { expect } from 'chai';
-            import { add } from '../src/add.js';
-
-            describe('add' () => {
-              it('should result in 42 for 2 and 40', () => {
-                expect(add(40, 2)).eq(42);
-              });
-            });
-            `,
-            tests: [
-              factory.mutationTestReportSchemaTestDefinition({
-                id: '1',
-                name: 'add should result in 42 for 2 and 40',
-                location: { start: { line: 6, column: 14 } },
-              }),
-            ],
-          }),
-          [testMultiply]: factory.mutationTestReportSchemaTestFile({
-            source: `
-            import { expect } from 'chai';
-            import { multiply } from '../src/multiply.js';
-
-            describe('multiply' () => {
-              it('should result in 42 for 21 and 2', () => {
-                expect(multiply(21, 2)).eq(42);
-              });
-            });
-            `,
-            tests: [
-              factory.mutationTestReportSchemaTestDefinition({
-                id: '2',
-                name: 'multiply should result in 42 for 21 and 2',
-                location: { start: { line: 6, column: 14 } },
-              }),
-            ],
-          }),
-        },
-      });
-      fileSystemTestDouble.files[srcAdd] = incrementalReport.files[srcAdd].source;
-      fileSystemTestDouble.files[srcMultiply] = incrementalReport.files[srcMultiply].source;
-      fileSystemTestDouble.files[testAdd] = incrementalReport.testFiles![testAdd].source!;
-      fileSystemTestDouble.files[testMultiply] = incrementalReport.testFiles![testMultiply].source!;
-      project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions(), incrementalReport);
-      mutants = [
-        createMutant({
-          id: '1',
-          replacement: '-',
-          mutatorName: 'min-replacement',
-          location: { start: { line: 3, column: 25 }, end: { line: 3, column: 26 } },
-        }),
-        createMutant({
-          id: '2',
-          replacement: '/',
-          mutatorName: 'divide-replacement',
-          status: MutantStatus.Killed,
-          location: { start: { line: 3, column: 25 }, end: { line: 3, column: 26 } },
-        }),
-      ];
-      dryRunResult = factory.completeDryRunResult({
-        tests: [
-          factory.testResult({
-            id: '1',
-            name: 'add should result in 42 for 2 and 40',
-            fileName: path.resolve(testAdd),
-          }),
-          factory.testResult({
-            id: '2',
-            name: 'multiply should result in 42 for 21 and 2',
-            fileName: path.resolve(testMultiply),
-          }),
-        ],
-      });
-    });
-
-    it('should reuse all results if there is no difference', async () => {
-      const plans = await act(dryRunResult, mutants, project);
-      const expectedPlans: MutantEarlyResultPlan[] = [
-        factory.mutantEarlyResultPlan({
-          mutant: {
-            ...incrementalReport.files[srcAdd].mutants[0],
-            fileName: mutants[0].fileName,
-            replacement: mutants[0].replacement,
-          },
-        }),
-        factory.mutantEarlyResultPlan({
-          mutant: {
-            ...incrementalReport.files[srcMultiply].mutants[0],
-            fileName: mutants[1].fileName,
-            replacement: mutants[1].replacement,
-          },
-        }),
-      ];
-      expect(plans).deep.eq(expectedPlans);
-    });
-  });
-
   describe('static mutants warning', () => {
     function arrangeStaticWarning() {
       const mutants = [
@@ -673,10 +526,102 @@ describe(MutantTestPlanner.name, () => {
       expect(testInjector.logger.warn).not.called;
     });
   });
+
+  describe('incremental', () => {
+    class ScenarioBuilder {
+      #mutants: Mutant[] = [];
+      #srcFileName = 'foo.js';
+      #testFileName = 'foo.spec.js';
+      #incrementalReport: schema.MutationTestResult | undefined = undefined;
+      #dryRunResult!: CompleteDryRunResult;
+
+      public withWindowsPathSeparator() {
+        // Deliberately not replacing all slashes, otherwise `path.relative` won't work on linux.
+        this.#srcFileName = 'src\\foo.js';
+        this.#testFileName = 'src\\foo.spec.js';
+        return this;
+      }
+
+      public withIncrementalKilledMutant() {
+        const testFileFullName = path.resolve(this.#testFileName);
+        const srcFileFullName = path.resolve(this.#srcFileName);
+        this.#mutants.push(
+          factory.mutant({ id: '1', fileName: srcFileFullName, mutatorName: 'fooMutator', replacement: '<=', location: loc(0, 0, 0, 1) })
+        );
+        fileSystemTestDouble.files[srcFileFullName] = 'foo';
+        fileSystemTestDouble.files[testFileFullName] = 'describe("foo")';
+        this.#incrementalReport = factory.mutationTestReportSchemaMutationTestResult({
+          files: {
+            [this.#srcFileName.replace(/\\/g, '/')]: factory.mutationTestReportSchemaFileResult({
+              source: 'foo',
+              mutants: [
+                factory.mutantResult({
+                  status: MutantStatus.Killed,
+                  replacement: '<=',
+                  mutatorName: 'fooMutator',
+                  location: loc(0, 0, 0, 1),
+                  killedBy: ['1'],
+                  coveredBy: ['1'],
+                }),
+              ],
+            }),
+          },
+          testFiles: {
+            [this.#testFileName.replace(/\\/g, '/')]: factory.mutationTestReportSchemaTestFile({
+              source: 'describe("foo")',
+              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'foo should bar' })],
+            }),
+          },
+        });
+        this.#dryRunResult = factory.completeDryRunResult({
+          tests: [factory.testResult({ fileName: testFileFullName, id: '25', name: 'foo should bar' })],
+          mutantCoverage: { static: {}, perTest: { '25': { 1: 1 } } },
+        });
+        return this;
+      }
+
+      public build() {
+        const project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions(), this.#incrementalReport);
+        return { dryRunResult: this.#dryRunResult, mutants: this.#mutants, project };
+      }
+    }
+
+    // Actual diffing algorithm is tested in the 'incremental-differ' unit tests
+    // These are just the unit tests for testing the integration between the planner and the differ
+
+    it("should plan an early result for mutants that didn't change", async () => {
+      // Arrange
+      const { dryRunResult, mutants, project } = new ScenarioBuilder().withIncrementalKilledMutant().build();
+
+      // Act
+      const [actualPlan] = await act(dryRunResult, mutants, project);
+
+      // Assert
+      assertIsEarlyResultPlan(actualPlan);
+      expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
+      expect(actualPlan.mutant.killedBy).deep.eq(['25']);
+    });
+
+    it('should normalize file names before passing them to the differ', async () => {
+      // Arrange
+      const { dryRunResult, mutants, project } = new ScenarioBuilder().withWindowsPathSeparator().withIncrementalKilledMutant().build();
+
+      // Act
+      const [actualPlan] = await act(dryRunResult, mutants, project);
+
+      // Assert
+      assertIsEarlyResultPlan(actualPlan);
+      expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
+      expect(actualPlan.mutant.killedBy).deep.eq(['25']);
+    });
+  });
 });
 
 function assertIsRunPlan(plan: MutantTestPlan): asserts plan is MutantRunPlan {
   expect(plan.plan).eq(PlanKind.Run);
+}
+function assertIsEarlyResultPlan(plan: MutantTestPlan): asserts plan is MutantEarlyResultPlan {
+  expect(plan.plan).eq(PlanKind.EarlyResult);
 }
 function calculateTimeout(netTime: number): number {
   return testInjector.options.timeoutMS + testInjector.options.timeoutFactor * netTime + TIME_OVERHEAD_MS;

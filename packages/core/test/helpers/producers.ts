@@ -1,7 +1,7 @@
 import { CpuInfo } from 'os';
 import type { Dirent } from 'fs';
 
-import { ClearTextReporterOptions, Mutant } from '@stryker-mutator/api/core';
+import { ClearTextReporterOptions, Location, Mutant, schema } from '@stryker-mutator/api/core';
 import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
@@ -155,4 +155,14 @@ export function createMutant(overrides?: Partial<Mutant>): Mutant {
     replacement: 'foo',
     ...overrides,
   };
+}
+
+export function loc(startLine: number, startColumn: number): schema.OpenEndLocation;
+export function loc(startLine: number, startColumn: number, endLine: number, endColumn: number): Location;
+export function loc(startLine: number, startColumn: number, endLine?: number, endColumn?: number): schema.OpenEndLocation {
+  return { start: pos(startLine, startColumn), end: endLine === undefined ? undefined : pos(endLine, endColumn ?? 0) };
+}
+
+export function pos(line: number, column: number): schema.Position {
+  return { line, column };
 }
