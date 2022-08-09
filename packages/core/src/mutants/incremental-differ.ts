@@ -5,7 +5,9 @@ import { Mutant, MutantStatus, Position, schema } from '@stryker-mutator/api/cor
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { MutationTestResult, MutantResult, Location, TestDefinition, TestFileDefinitionDictionary } from 'mutation-testing-report-schema/api';
-import { normalizeFileName, notEmpty } from '@stryker-mutator/util';
+import { normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-mutator/util';
+
+import { toPosixFileName } from '../config';
 
 /**
  * This class is responsible for calculating the diff between a run and a previous run based on the incremental report.
@@ -31,6 +33,7 @@ export class IncrementalDiffer {
   private readonly reusableMutantsByKey: Map<string, MutantResult>;
   private readonly oldTestCoverageByMutantKey = new Map<string, Set<string>>();
   private readonly oldTestKilledByMutantKey = new Map<string, Set<string>>();
+  private readonly collector = new DiffStatisticsCollector();
 
   constructor(incrementalReport: MutationTestResult, currentFiles: Map<string, string>, private readonly logger: Logger) {
     const { files, testFiles } = incrementalReport;
@@ -39,7 +42,7 @@ export class IncrementalDiffer {
       Object.entries(files).flatMap(([oldFileName, oldFile]) => {
         const currentFileSource = currentFiles.get(oldFileName);
         if (currentFileSource) {
-          const changes = diffChars(oldFile.source, currentFileSource);
+          const changes = diffChars(normalizeLineEndings(oldFile.source), normalizeLineEndings(currentFileSource));
           return withUpdatedLocations(changes, oldFile.mutants).map((m) => [mutantToIdentifyingKey(m, oldFileName), m]);
         }
         // File is missing in the old project, cannot reuse these mutants
@@ -51,7 +54,7 @@ export class IncrementalDiffer {
       Object.entries(testFiles ?? (Object.create(null) as TestFileDefinitionDictionary)).flatMap(([fileName, oldTestFile]) => {
         const currentFileSource = currentFiles.get(fileName);
         if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
-          const changes = diffChars(oldTestFile.source, currentFileSource);
+          const changes = diffChars(normalizeLineEndings(oldTestFile.source), normalizeLineEndings(currentFileSource));
           const locatedTests = closeLocations(oldTestFile);
           return withUpdatedLocations(changes, locatedTests).map((test) => [test.id, testToIdentifyingKey(test, fileName)]);
         }
@@ -150,6 +153,42 @@ function withUpdatedLocations<T extends { location: Location }>(changes: Change[
   // Add the tests with Number.MAX_SAFE_INTEGER as line number.
   done.push(...toDo);
   return done;
+}
+
+interface DiffChanges {
+  added: number;
+  removed: number;
+  same: number;
+}
+class DiffStatisticsCollector {
+  private readonly mutantChangesByFile = new Map<string, DiffChanges>();
+  private readonly testChangesByFile = new Map<string, DiffChanges>();
+
+  public countMutant(file: string, action: DiffAction) {
+    this.count(this.mutantChangesByFile, file, action);
+  }
+  public countTest(file: string, action: DiffAction) {
+    this.count(this.testChangesByFile, file, action);
+  }
+
+  private count(collector: Map<string, DiffChanges>, file: string, action: DiffAction) {
+    let changes = collector.get(file);
+    if (!changes) {
+      changes = { added: 0, removed: 0, same: 0 };
+      collector.set(file, changes);
+    }
+    switch (action) {
+      case 'added':
+        changes.added++;
+        break;
+      case 'removed':
+        changes.removed++;
+        break;
+      case 'same':
+        changes.same++;
+        break;
+    }
+  }
 }
 
 /**

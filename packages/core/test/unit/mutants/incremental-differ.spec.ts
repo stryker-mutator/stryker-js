@@ -136,6 +136,16 @@ class ScenarioBuilder {
     return this;
   }
 
+  public withCrlfLineEndingsInIncrementalReport(): this {
+    Object.values(this.#incrementalFiles).forEach((file) => {
+      file.source = file.source.replace(/\n/g, '\r\n');
+    });
+    Object.values(this.#incrementalTestFiles).forEach((file) => {
+      file.source = file.source?.replace(/\n/g, '\r\n');
+    });
+    return this;
+  }
+
   public withRemovedLinesAboveMutant(...lines: string[]): this {
     this.#incrementalFiles[srcAdd].source = `${lines.join('\n')}\n${srcAddContent}`;
     this.#incrementalFiles[srcAdd].mutants[0].location = loc(1 + lines.length, 11, 1 + lines.length, 12);
@@ -323,6 +333,23 @@ describe(IncrementalDiffer.name, () => {
         testsCompleted: 1,
       };
       expect(actualMutant).deep.contains(expected);
+    });
+
+    it('should normalize line endings when comparing diffs', () => {
+      // Arrange
+      const { sut, mutants, tests } = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest()
+        .withCrlfLineEndingsInIncrementalReport()
+        .build();
+
+      // Act
+      const actualDiff = sut.diff(mutants, tests);
+
+      // Assert
+      const actualMutant = actualDiff[0];
+      expect(actualMutant.status).eq(MutantStatus.Killed);
     });
 
     it('should map killedBy and coveredBy to the new test ids if a mutant result is reused', () => {

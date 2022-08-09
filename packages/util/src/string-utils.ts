@@ -11,6 +11,13 @@ export function normalizeWhitespaces(str: string): string {
   return str.replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Normalizes line endings as unix style.
+ */
+export function normalizeLineEndings(text: string): string {
+  return text.replace(/\r\n/g, '\n');
+}
+
 export interface PropertyPathOverloads<T> {
   (key: KnownKeys<T>): string;
   <TProp1 extends KnownKeys<T>>(key: TProp1, key2: KnownKeys<OnlyObject<T[TProp1]>>): string;
