@@ -240,8 +240,10 @@ export class MutantTestPlanner {
 
     if (incrementalReport) {
       const currentFiles = await this.readAllOriginalFiles([...currentMutants, ...this.dryRunResult.tests]);
-      const differ = new IncrementalDiffer(incrementalReport, currentFiles, this.logger);
-      return differ.diff(currentMutants, this.testsByMutantId);
+      const differ = new IncrementalDiffer(this.logger);
+      const diffedMutants = differ.diff(currentMutants, this.testsByMutantId, incrementalReport, currentFiles);
+
+      return diffedMutants;
     }
     return currentMutants;
   }

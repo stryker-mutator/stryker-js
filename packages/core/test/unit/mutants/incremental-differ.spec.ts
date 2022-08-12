@@ -76,6 +76,7 @@ class ScenarioBuilder {
   public currentFiles = new Map<string, string>();
   public mutants: Mutant[] = [];
   public tests = new Map<string, Set<TestResult>>();
+  public sut?: IncrementalDiffer;
 
   public withMathProjectExample({ mutantState: mutantStatus = MutantStatus.Killed } = {}): this {
     this.mutants.push(
@@ -296,15 +297,16 @@ class ScenarioBuilder {
   }
 
   public act() {
-    const sut = new IncrementalDiffer(
+    this.sut = new IncrementalDiffer(testInjector.logger);
+    return this.sut.diff(
+      this.mutants,
+      this.tests,
       factory.mutationTestReportSchemaMutationTestResult({
         files: this.incrementalFiles,
         testFiles: this.incrementalTestFiles,
       }),
-      this.currentFiles,
-      testInjector.logger
+      this.currentFiles
     );
-    return sut.diff(this.mutants, this.tests);
   }
 }
 
@@ -401,6 +403,37 @@ describe(IncrementalDiffer.name, () => {
       const actualDiff = scenario.act();
       expect(actualDiff).deep.eq(scenario.mutants);
     });
+
+    it('should collect 1 added mutant and 1 removed mutant if the mutant changed', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      scenario.act();
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(1);
+      const changes = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(changes).property('added', 1);
+      expect(changes).property('removed', 1);
+    });
+
+    it('should collect the removed mutants if the file got removed', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentFileName('src/some-other-file.js');
+      scenario.act();
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(2);
+      const changesOldFile = scenario.sut!.mutantStatisticsCollector!.changesByFile.get('src/some-other-file.js')!;
+      const changesNewFile = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(changesNewFile).property('added', 1);
+      expect(changesNewFile).property('removed', 0);
+      expect(changesOldFile).property('added', 0);
+      expect(changesOldFile).property('removed', 1);
+    });
+    
+    it('should log  1 added mutant and 1 removed mutant if the mutant changed', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      scenario.act();
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(1);
+      const changes = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(changes).property('added', 1);
+      expect(changes).property('removed', 1);
+    });
+
   });
 
   describe('test changes', () => {
