@@ -107,6 +107,7 @@
       "preprocessors",
       "promisified",
       "quasis",
+      "serialise",
       "serializable",
       "stryker",
       "Unserializable",

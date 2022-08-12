@@ -30,10 +30,11 @@ export class StripAnsiAppender {
       return dataElement;
     });
     if (ansiStripped) {
-      this.appender({
+      const newEvent = {
         ...loggingEvent,
         data: strippedData,
-      });
+      };
+      this.appender(newEvent);
     } else {
       this.appender(loggingEvent);
     }
