@@ -39,6 +39,7 @@ describe('LogConfigurator', () => {
       const masterConfig = createMasterConfig(LogLevel.Information, LogLevel.Off, LogLevel.Information, allowConsoleColors);
       delete masterConfig.appenders.file;
       delete masterConfig.appenders.filterLevelFile;
+      delete masterConfig.appenders.stripAnsi;
       delete masterConfig.appenders.filterLog4jsCategoryFile;
       (masterConfig.appenders.all as any).appenders = ['filterLevelConsole'];
       expect(log4jsConfigure).calledWith(masterConfig);
@@ -132,8 +133,12 @@ describe('LogConfigurator', () => {
         console: { type: 'stdout', layout: consoleLayout },
         file: { type: 'file', layout: notColoredLayout, filename: 'stryker.log' },
         filterLog4jsCategoryConsole: { type: 'categoryFilter', appender: 'console', exclude: 'log4js' },
-        filterLog4jsCategoryFile: { type: 'categoryFilter', appender: 'file', exclude: 'log4js' },
+        filterLog4jsCategoryFile: { type: 'categoryFilter', appender: 'stripAnsi', exclude: 'log4js' },
         filterLevelConsole: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryConsole', level: consoleLevel },
+        stripAnsi: {
+          type: fileURLToPath(new URL('../../../src/cjs/logging/strip-ansi-appender.js', import.meta.url)),
+          appender: 'file',
+        },
         filterLevelFile: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryFile', level: fileLevel },
       },
       categories: {

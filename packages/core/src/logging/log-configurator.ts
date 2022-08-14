@@ -57,7 +57,7 @@ export class LogConfigurator {
       // Add the custom "multiAppender": https://log4js-node.github.io/log4js-node/appenders.html#other-appenders
       const stripAnsiAppender = {
         type: fileURLToPath(new URL('../cjs/logging/strip-ansi-appender.js', import.meta.url)),
-        appender: [AppenderName.File],
+        appender: AppenderName.File,
       };
       const fileAppender: log4js.FileAppender = { type: 'file', filename: LOG_FILE_NAME, layout: layouts.noColor };
       const filterLog4sCategory: log4js.CategoryFilterAppender = { type: 'categoryFilter', appender: AppenderName.StripAnsi, exclude: 'log4js' };
