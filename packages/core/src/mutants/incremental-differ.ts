@@ -1,11 +1,19 @@
 import path from 'path';
 
-import { diffChars, Change } from 'diff';
+import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import chalk from 'chalk';
 import { schema, Mutant, Position, Location, MutantStatus } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-mutator/util';
+
+import { DiffChange, DiffStatisticsCollector } from './diff-statistics-collector.js';
+
+/**
+ * The 'diff match patch' high-performant 'diffing' of files.
+ * @see https://github.com/google/diff-match-patch
+ */
+const diffMatchPatch = new DiffMatchPatch();
 
 /**
  * This class is responsible for calculating the diff between a run and a previous run based on the incremental report.
@@ -15,6 +23,9 @@ import { normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-muta
  * - Mutant: file name, mutator name, location and replacement
  * - Test: test name, test file name (if present) and location (if present).
  *
+ * We're storing these identifiers in local variables (maps and sets) as strings.
+ * We should move to 'records' for these when they come available: https://github.com/tc39/proposal-record-tuple
+ *
  * A mutant result from the previous run is reused if the following conditions were met:
  * - The location of the mutant refers to a piece of code that didn't change
  * - If mutant was killed:
@@ -22,13 +33,10 @@ import { normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-muta
  * - If the mutant survived:
  *   - No test was added
  *
- * It uses the diff package to offset locations for tests and mutants, see link.
- * @see https://npmjs.com/package/diff
+ * It uses google's "diff-match-patch" project to calculate the new locations for tests and mutants, see link.
+ * @link https://github.com/google/diff-match-patch
  */
 export class IncrementalDiffer {
-  // We should introduce mutant key and test key as a record in the future
-  // @see https://github.com/tc39/proposal-record-tuple
-
   public mutantStatisticsCollector: DiffStatisticsCollector | undefined;
   public testStatisticsCollector: DiffStatisticsCollector | undefined;
 
@@ -41,9 +49,6 @@ export class IncrementalDiffer {
     currentFiles: Map<string, string>
   ): readonly Mutant[] {
     const { files, testFiles } = incrementalReport;
-    let reuseCount = 0;
-    const oldTestCoverageByMutantKey = new Map<string, Set<string>>();
-    const oldTestKilledByMutantKey = new Map<string, Set<string>>();
     const mutantStatisticsCollector = new DiffStatisticsCollector();
     const testStatisticsCollector = new DiffStatisticsCollector();
 
@@ -52,12 +57,10 @@ export class IncrementalDiffer {
     this.testStatisticsCollector = testStatisticsCollector;
 
     // Figure out what we can reuse, while correcting for diff locations
-    const reusableMutantsByKey = dissectReusableMutantsByKey();
-    const testKeysByOldTestId = dissectReusableTestKeysByOldTestId();
-    for (const [key, mutant] of reusableMutantsByKey) {
-      oldTestCoverageByMutantKey.set(key, new Set(mutant.coveredBy?.map((testId) => testKeysByOldTestId.get(testId)).filter(notEmpty)));
-      oldTestKilledByMutantKey.set(key, new Set(mutant.killedBy?.map((testId) => testKeysByOldTestId.get(testId)).filter(notEmpty)));
-    }
+    const reusableMutantsByKey = collectReusableMutantsByKey(this.logger);
+    const testKeysByOldTestId = collectReusableTestKeysByOldTestId(this.logger);
+    const { oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey, oldKilledByMutantKey: oldKilledTestKeysByMutantKey } =
+      collectOldKilledAndCoverageMatrix();
     const oldTestKeys = new Set(testKeysByOldTestId.values());
 
     // Create a helper map to get info by new test id
@@ -71,14 +74,15 @@ export class IncrementalDiffer {
     }
 
     // Done with preparations, time to map over the mutants
+    let reuseCount = 0;
     const result = currentMutants.map((mutant) => {
       if (!mutant.status) {
         const relativeFileName = toRelativeNormalizedFileName(mutant.fileName);
         const mutantKey = mutantToIdentifyingKey(mutant, relativeFileName);
         const oldMutant = reusableMutantsByKey.get(mutantKey);
         const coveringTests = currentTestsByMutantId.get(mutant.id);
-        const testsDiff = diffTestCoverage(oldTestCoverageByMutantKey.get(mutantKey), coveringTests);
-        const killedByTestKeys = oldTestKilledByMutantKey.get(mutantKey);
+        const testsDiff = diffTestCoverage(oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
+        const killedByTestKeys = oldKilledTestKeysByMutantKey.get(mutantKey);
         if (oldMutant) {
           if (mutantCanBeReused(oldMutant, testsDiff, killedByTestKeys)) {
             reuseCount++;
@@ -110,25 +114,25 @@ export class IncrementalDiffer {
       this.logger.info(
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector.createTotalsReport()}` +
           `\n\tTests:\t\t${testStatisticsCollector.createTotalsReport()}` +
-          `\n\tResult:\t\t${chalk.yellowBright(reuseCount)} of ${currentMutants.length} mutant results are reused.`
+          `\n\tResult:\t\t${chalk.yellowBright(reuseCount)} of ${currentMutants.length} mutant result(s) are reused.`
       );
     }
     if (this.logger.isDebugEnabled()) {
       const lineSeparator = '\n\t\t';
       const detailedMutantSummary = `${lineSeparator}${mutantStatisticsCollector.createDetailedReport().join(lineSeparator) || 'No changes'}`;
-      const detailedTestsSummary = `${lineSeparator}${testStatisticsCollector.createDetailedReport().join('\n\t\t') || 'No changes'}`;
-      this.logger.debug(`Detailed incremental report:\n\tMutants\n\t\t${detailedMutantSummary}\n\tTests\n\t\t${detailedTestsSummary}`);
+      const detailedTestsSummary = `${lineSeparator}${testStatisticsCollector.createDetailedReport().join(lineSeparator) || 'No changes'}`;
+      this.logger.debug(`Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${detailedTestsSummary}`);
     }
     return result;
 
-    function dissectReusableMutantsByKey() {
+    function collectReusableMutantsByKey(log: Logger) {
       return new Map(
         Object.entries(files).flatMap(([fileName, oldFile]) => {
           const relativeFileName = toRelativeNormalizedFileName(fileName);
           const currentFileSource = currentFiles.get(relativeFileName);
           if (currentFileSource) {
-            const changes = diffChars(normalizeLineEndings(oldFile.source), normalizeLineEndings(currentFileSource));
-            const { results, removeCount } = withUpdatedLocations(changes, oldFile.mutants);
+            log.trace('Diffing %s', relativeFileName);
+            const { results, removeCount } = performDiff(oldFile.source, currentFileSource, oldFile.mutants);
             mutantStatisticsCollector.count(relativeFileName, 'removed', removeCount);
             return results.map((m) => [mutantToIdentifyingKey(m, relativeFileName), m]);
           }
@@ -139,15 +143,15 @@ export class IncrementalDiffer {
       );
     }
 
-    function dissectReusableTestKeysByOldTestId() {
+    function collectReusableTestKeysByOldTestId(log: Logger) {
       return new Map(
         Object.entries(testFiles ?? {}).flatMap(([fileName, oldTestFile]) => {
           const relativeFileName = toRelativeNormalizedFileName(fileName);
           const currentFileSource = currentFiles.get(relativeFileName);
           if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
-            const changes = diffChars(normalizeLineEndings(oldTestFile.source), normalizeLineEndings(currentFileSource));
+            log.trace('Diffing %s', relativeFileName);
             const locatedTests = closeLocations(oldTestFile);
-            const { results, removeCount } = withUpdatedLocations(changes, locatedTests);
+            const { results, removeCount } = performDiff(oldTestFile.source, currentFileSource, locatedTests);
             testStatisticsCollector.count(relativeFileName, 'removed', removeCount);
             return results.map((test) => [test.id, testToIdentifyingKey(test, relativeFileName)]);
           }
@@ -155,6 +159,17 @@ export class IncrementalDiffer {
           return oldTestFile.tests.map((test) => [test.id, testToIdentifyingKey(test, relativeFileName)]);
         })
       );
+    }
+
+    function collectOldKilledAndCoverageMatrix() {
+      const oldCoverageByMutantKey = new Map<string, Set<string>>();
+      const oldKilledByMutantKey = new Map<string, Set<string>>();
+
+      for (const [key, mutant] of reusableMutantsByKey) {
+        oldCoverageByMutantKey.set(key, new Set(mutant.coveredBy?.map((testId) => testKeysByOldTestId.get(testId)).filter(notEmpty)));
+        oldKilledByMutantKey.set(key, new Set(mutant.killedBy?.map((testId) => testKeysByOldTestId.get(testId)).filter(notEmpty)));
+      }
+      return { oldCoverageByMutantKey, oldKilledByMutantKey };
     }
 
     function collectTestInfoByNewTestId() {
@@ -172,23 +187,29 @@ export class IncrementalDiffer {
 }
 
 /**
- * Updates the locations of mutants or tests based on the diff result.
- * @param changes The text changes (result of the diff tool)
- * @param items The mutants or tests to update locations for. These will be treated as immutable.
- * @returns A list of items with updated locations, without items that are changed
+ * Finds the diff of mutants and tests. Removes mutants / tests that no longer exist (changed or removed). Updates locations of mutants or tests that do still exist.
+ * @param oldCode The old code to use for the diff
+ * @param newCode The new (current) code to use for the diff
+ * @param items The mutants or tests to be looked . These will be treated as immutable.
+ * @returns A list of items with updated locations, without items that are changed.
  */
-function withUpdatedLocations<T extends { location: Location }>(changes: Change[], items: T[]): { results: T[]; removeCount: number } {
+function performDiff<T extends { location: Location }>(oldCode: string, newCode: string, items: T[]): { results: T[]; removeCount: number } {
+  const oldSourceNormalized = normalizeLineEndings(oldCode);
+  const currentSrcNormalized = normalizeLineEndings(newCode);
+  const diffChanges = diffMatchPatch.diff_main(oldSourceNormalized, currentSrcNormalized);
+
   const toDo = new Set(items.map((m) => ({ ...m, location: deepClone(m.location) })));
+  const [added, removed] = [1, -1];
   const done: T[] = [];
   const currentPosition: Position = { column: 0, line: 0 };
   let removeCount = 0;
-  for (const change of changes) {
+  for (const [change, text] of diffChanges) {
     if (toDo.size === 0) {
       // There are more changes, but nothing left to update.
       break;
     }
-    const offset = calculateOffset(change.value);
-    if (change.added) {
+    const offset = calculateOffset(text);
+    if (change === added) {
       for (const test of toDo) {
         const { location } = test;
         if (gte(currentPosition, location.start) && gte(location.end, currentPosition)) {
@@ -200,7 +221,7 @@ function withUpdatedLocations<T extends { location: Location }>(changes: Change[
         }
       }
       positionMove(currentPosition, offset);
-    } else if (change.removed) {
+    } else if (change === removed) {
       for (const item of toDo) {
         const {
           location: { start },
@@ -228,50 +249,6 @@ function withUpdatedLocations<T extends { location: Location }>(changes: Change[
   }
   done.push(...toDo);
   return { results: done, removeCount };
-}
-
-class DiffChanges {
-  public added = 0;
-  public removed = 0;
-  public toString() {
-    return `${chalk.red.greenBright(`+${this.added}`)} ${chalk.redBright(`-${this.removed}`)}`;
-  }
-}
-type DiffAction = 'added' | 'removed' | 'same';
-
-class DiffStatisticsCollector {
-  public readonly changesByFile = new Map<string, DiffChanges>();
-  public readonly total = new DiffChanges();
-
-  public count(file: string, action: Exclude<DiffAction, 'same'>, amount = 1) {
-    if (amount === 0) {
-      // Nothing to see here
-      return;
-    }
-    let changes = this.changesByFile.get(file);
-    if (!changes) {
-      changes = new DiffChanges();
-      this.changesByFile.set(file, changes);
-    }
-    switch (action) {
-      case 'added':
-        changes.added += amount;
-        this.total.added += amount;
-        break;
-      case 'removed':
-        changes.removed += amount;
-        this.total.removed += amount;
-        break;
-    }
-  }
-
-  public createDetailedReport(): string[] {
-    return [...this.changesByFile.entries()].map(([fileName, changes]) => `${fileName} ${changes.toString()}`);
-  }
-
-  public createTotalsReport() {
-    return `${chalk.yellowBright(this.changesByFile.size)} files changed (${this.total.toString()})`;
-  }
 }
 
 /**
@@ -346,6 +323,7 @@ function negate({ line, column }: Position): Position {
   return { line: -1 * line, column: -1 * column };
 }
 
+type DiffAction = DiffChange | 'same';
 /**
  * Determines if there is a diff between old test coverage and new test coverage.
  */

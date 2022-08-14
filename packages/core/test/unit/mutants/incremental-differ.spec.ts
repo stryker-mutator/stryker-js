@@ -2,6 +2,8 @@ import { Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import chalk from 'chalk';
+import sinon from 'sinon';
 
 import { IncrementalDiffer } from '../../../src/mutants/index.js';
 import { createMutant, loc, pos } from '../../helpers/producers.js';
@@ -424,8 +426,8 @@ describe(IncrementalDiffer.name, () => {
       expect(changesOldFile).property('added', 0);
       expect(changesOldFile).property('removed', 1);
     });
-    
-    it('should log  1 added mutant and 1 removed mutant if the mutant changed', () => {
+
+    it('should collect 1 added mutant and 1 removed mutant if a mutant changed', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
       scenario.act();
       expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(1);
@@ -434,6 +436,31 @@ describe(IncrementalDiffer.name, () => {
       expect(changes).property('removed', 1);
     });
 
+    it('should log an incremental report', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      testInjector.logger.isInfoEnabled.returns(true);
+      scenario.act();
+      const { mutantStatisticsCollector, testStatisticsCollector } = scenario.sut!;
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        `Incremental report:\n\tMutants:\t${mutantStatisticsCollector!.createTotalsReport()}` +
+          `\n\tTests:\t\t${testStatisticsCollector!.createTotalsReport()}` +
+          `\n\tResult:\t\t${chalk.yellowBright(0)} of 1 mutant result(s) are reused.`
+      );
+    });
+    it('should log a detailed incremental report', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      testInjector.logger.isDebugEnabled.returns(true);
+      scenario.act();
+      const { mutantStatisticsCollector } = scenario.sut!;
+      const lineSeparator = '\n\t\t';
+      const detailedMutantSummary = `${lineSeparator}${mutantStatisticsCollector!.createDetailedReport().join(lineSeparator)}`;
+
+      sinon.assert.calledWithExactly(
+        testInjector.logger.debug,
+        `Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${lineSeparator}No changes`
+      );
+    });
   });
 
   describe('test changes', () => {
