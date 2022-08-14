@@ -91,6 +91,7 @@
   "devDependencies": {
     "@stryker-mutator/api": "4.0.0-beta.4",
     "@stryker-mutator/test-helpers": "6.2.0-beta.0",
+    "@types/diff-match-patch": "^1.0.32",
     "@types/inquirer": "8.2.2",
     "@types/lodash.flatmap": "4.5.7",
     "@types/lodash.groupby": "4.6.7",
