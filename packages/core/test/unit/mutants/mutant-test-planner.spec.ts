@@ -3,16 +3,17 @@ import path from 'path';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
-import { MutantTestPlanner } from '../../../src/mutants/mutant-test-planner.js';
+import { MutantTestPlanner } from '../../../src/mutants/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { Project } from '../../../src/fs/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { loc } from '../../helpers/producers.js';
+import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
+import { IncrementalDiffer } from '../../../src/mutants/incremental-differ.js';
 
 const TIME_OVERHEAD_MS = 501;
 
@@ -20,36 +21,37 @@ describe(MutantTestPlanner.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let fileSystemTestDouble: FileSystemTestDouble;
+  let testCoverage: TestCoverageTestDouble;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
     sandboxMock = sinon.createStubInstance(Sandbox);
     sandboxMock.sandboxFileFor.returns('sandbox/foo.js');
     fileSystemTestDouble = new FileSystemTestDouble();
+    testCoverage = new TestCoverageTestDouble();
   });
 
   function act(
-    dryRunResult: CompleteDryRunResult,
     mutants: Mutant[],
     project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions())
   ): Promise<readonly MutantTestPlan[]> {
     return testInjector.injector
+      .provideValue(coreTokens.testCoverage, testCoverage)
       .provideValue(coreTokens.reporter, reporterMock)
-      .provideValue(coreTokens.dryRunResult, dryRunResult)
       .provideValue(coreTokens.mutants, mutants)
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.timeOverheadMS, TIME_OVERHEAD_MS)
+      .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer) // inject the real deal
       .injectClass(MutantTestPlanner)
       .makePlan(mutants);
   }
 
   it('should make an early result plan for an ignored mutant', async () => {
     const mutant = factory.mutant({ id: '2', status: MutantStatus.Ignored, statusReason: 'foo should ignore' });
-    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
 
     // Act
-    const result = await act(dryRunResult, [mutant]);
+    const result = await act([mutant]);
 
     // Assert
     const expected: MutantEarlyResultPlan[] = [
@@ -61,10 +63,11 @@ describe(MutantTestPlanner.name, () => {
   it('should make a plan with an empty test filter for a mutant without coverage', async () => {
     // Arrange
     const mutant = factory.mutant({ id: '3' });
-    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
+    testCoverage.addTest(factory.testResult({ id: 'spec2' }));
+    testCoverage.addCoverage(1, ['spec2']);
 
     // Act
-    const [result] = await act(dryRunResult, [mutant]);
+    const [result] = await act([mutant]);
 
     // Assert
     assertIsRunPlan(result);
@@ -76,10 +79,9 @@ describe(MutantTestPlanner.name, () => {
   it('should provide the sandboxFileName', async () => {
     // Arrange
     const mutant = factory.mutant({ id: '3', fileName: 'file.js' });
-    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
 
     // Act
-    const [result] = await act(dryRunResult, [mutant]);
+    const [result] = await act([mutant]);
 
     // Assert
     assertIsRunPlan(result);
@@ -89,11 +91,10 @@ describe(MutantTestPlanner.name, () => {
 
   it('should pass disableBail in the runOptions', async () => {
     const mutant = factory.mutant({ id: '3', fileName: 'file.js' });
-    const dryRunResult = factory.completeDryRunResult({ mutantCoverage: { static: {}, perTest: { '1': { 2: 2 } } } });
     testInjector.options.disableBail = true;
 
     // Act
-    const [result] = await act(dryRunResult, [mutant]);
+    const [result] = await act([mutant]);
 
     // Assert
     assertIsRunPlan(result);
@@ -118,13 +119,11 @@ describe(MutantTestPlanner.name, () => {
         location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
       }),
     ];
-    const dryRunResult = factory.completeDryRunResult({
-      tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
-      mutantCoverage: undefined,
-    });
+    testCoverage.addTest(factory.successTestResult({ timeSpentMs: 20 }));
+    testCoverage.addTest(factory.successTestResult({ timeSpentMs: 22 }));
 
     // Act
-    const mutantPlans = await act(dryRunResult, mutants);
+    const mutantPlans = await act(mutants);
 
     // Assert
     sinon.assert.calledOnceWithExactly(reporterMock.onMutationTestingPlanReady, { mutantPlans });
@@ -137,10 +136,9 @@ describe(MutantTestPlanner.name, () => {
         const mutant1 = factory.mutant({ id: '1' });
         const mutant2 = factory.mutant({ id: '2' });
         const mutants = [mutant1, mutant2];
-        const dryRunResult = factory.completeDryRunResult({ mutantCoverage: undefined });
 
         // Act
-        const [plan1, plan2] = await act(dryRunResult, mutants);
+        const [plan1, plan2] = await act(mutants);
 
         // Assert
         assertIsRunPlan(plan1);
@@ -156,10 +154,9 @@ describe(MutantTestPlanner.name, () => {
       it('should disable the hitLimit', async () => {
         // Arrange
         const mutants = [factory.mutant({ id: '1' })];
-        const dryRunResult = factory.completeDryRunResult({ mutantCoverage: undefined });
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -170,13 +167,11 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         const mutant1 = factory.mutant({ id: '1' });
         const mutants = [mutant1];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ timeSpentMs: 20 }), factory.successTestResult({ timeSpentMs: 22 })],
-          mutantCoverage: undefined,
-        });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }));
+        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }));
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -191,13 +186,12 @@ describe(MutantTestPlanner.name, () => {
         testInjector.options.ignoreStatic = true;
         const mutant = factory.mutant({ id: '1' });
         const mutants = [mutant];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: {} },
-        });
+        testCoverage.staticCoverage['1'] = true;
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
+        testCoverage.hasCoverage = true;
 
         // Act
-        const result = await act(dryRunResult, mutants);
+        const result = await act(mutants);
 
         // Assert
         const expected: MutantTestPlan[] = [
@@ -220,13 +214,12 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testInjector.options.ignoreStatic = false;
         const mutants = [factory.mutant({ id: '1' })];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: {} },
-        });
+        testCoverage.staticCoverage['1'] = true;
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
+        testCoverage.hasCoverage = true;
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -240,10 +233,10 @@ describe(MutantTestPlanner.name, () => {
       it('should set activeMutant on the runOptions', async () => {
         // Arrange
         const mutants = [Object.freeze(factory.mutant({ id: '1' }))];
-        const dryRunResult = factory.completeDryRunResult({ tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })] });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -254,13 +247,10 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         const mutant = factory.mutant({ id: '1' });
         const mutants = [mutant];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: { 1: { 1: 2, 2: 100 }, 2: { 2: 100 }, 3: { 1: 3 } } },
-        });
+        testCoverage.hitsByMutantId.set('1', 6);
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -271,13 +261,11 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         const mutant = factory.mutant({ id: '1' });
         const mutants = [mutant];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }), factory.successTestResult({ id: 'spec1', timeSpentMs: 22 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: {} },
-        });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }));
+        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }));
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -291,13 +279,12 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testInjector.options.ignoreStatic = true;
         const mutants = [factory.mutant({ id: '1' })];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 10 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: { spec1: { 1: 1 } } },
-        });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
+        testCoverage.addCoverage('1', ['spec1']);
+        testCoverage.staticCoverage['1'] = true;
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -312,13 +299,13 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testInjector.options.ignoreStatic = false;
         const mutants = [factory.mutant({ id: '1' })];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 20 })],
-          mutantCoverage: { static: { 1: 1 }, perTest: { spec1: { 1: 1 } } },
-        });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
+        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 20 }));
+        testCoverage.staticCoverage['1'] = true;
+        testCoverage.addCoverage('1', ['spec1']);
 
         // Act
-        const [result] = await act(dryRunResult, mutants);
+        const [result] = await act(mutants);
 
         // Assert
         assertIsRunPlan(result);
@@ -334,13 +321,13 @@ describe(MutantTestPlanner.name, () => {
       it('should enable test filtering with runtime mutant activation for covered tests', async () => {
         // Arrange
         const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 })],
-          mutantCoverage: { static: { 1: 0 }, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
-        });
+        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 }));
+        testCoverage.addCoverage('1', ['spec1']);
+        testCoverage.addCoverage('2', ['spec2']);
+        testCoverage.staticCoverage['1'] = false;
 
         // Act
-        const [plan1, plan2] = await act(dryRunResult, mutants);
+        const [plan1, plan2] = await act(mutants);
 
         // Assert
         assertIsRunPlan(plan1);
@@ -360,17 +347,17 @@ describe(MutantTestPlanner.name, () => {
       it('should calculate timeout and net time using the sum of covered tests', async () => {
         // Arrange
         const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [
-            factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
-            factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-            factory.successTestResult({ id: 'spec3', timeSpentMs: 22 }),
-          ],
-          mutantCoverage: { static: { 1: 0 }, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 }, spec3: { 1: 2 } } },
-        });
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec3', timeSpentMs: 22 })
+        );
+        testCoverage.staticCoverage['1'] = false;
+        testCoverage.addCoverage('1', ['spec1', 'spec3']);
+        testCoverage.addCoverage('2', ['spec2']);
 
         // Act
-        const [plan1, plan2] = await act(dryRunResult, mutants);
+        const [plan1, plan2] = await act(mutants);
 
         // Assert
         assertIsRunPlan(plan1);
@@ -379,27 +366,6 @@ describe(MutantTestPlanner.name, () => {
         expect(plan2.netTime).eq(10); // spec2
         expect(plan1.runOptions.timeout).eq(calculateTimeout(42)); // spec1 + spec3
         expect(plan2.runOptions.timeout).eq(calculateTimeout(10)); // spec2
-      });
-
-      it('should allow for non-existing tests (#2485)', async () => {
-        // Arrange
-        const mutant1 = factory.mutant({ id: '1' });
-        const mutant2 = factory.mutant({ id: '2' });
-        const mutants = [mutant1, mutant2];
-        const dryRunResult = factory.completeDryRunResult({
-          tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 20 })], // test result for spec2 is missing
-          mutantCoverage: { static: {}, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
-        });
-
-        // Act
-        const actualMatches = await act(dryRunResult, mutants);
-
-        // Assert
-        expect(actualMatches.find(({ mutant }) => mutant.id === '1')?.mutant.coveredBy).deep.eq(['spec1']);
-        expect(actualMatches.find(({ mutant }) => mutant.id === '2')?.mutant.coveredBy).lengthOf(0);
-        expect(testInjector.logger.warn).calledWith(
-          'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.'
-        );
       });
     });
   });
@@ -415,25 +381,29 @@ describe(MutantTestPlanner.name, () => {
         factory.mutant({ id: '9' }),
         factory.mutant({ id: '10' }),
       ];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [
-          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec4', timeSpentMs: 10 }),
-        ],
-        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
-      });
-      return { mutants, dryRunResult };
+      testCoverage.addTest(
+        factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 10 })
+      );
+      arrangeStaticCoverage(4, 5, 6, 7);
+      testCoverage.addCoverage(1, ['spec1']);
+      testCoverage.addCoverage(2, ['spec2']);
+      testCoverage.addCoverage(3, ['spec3']);
+      testCoverage.addCoverage(8, ['spec3']);
+      testCoverage.addCoverage(9, ['spec3']);
+      testCoverage.addCoverage(10, ['spec2']);
+      return { mutants };
     }
 
     it('should warn when the estimated time to run all static mutants exceeds 40% and the performance impact of a static mutant is estimated to be twice that of other mutants', async () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
-      const { mutants, dryRunResult } = arrangeStaticWarning();
+      const { mutants } = arrangeStaticWarning();
 
       // Act
-      await act(dryRunResult, mutants);
+      await act(mutants);
 
       // Assert
       expect(testInjector.logger.warn)
@@ -444,10 +414,10 @@ describe(MutantTestPlanner.name, () => {
     it('should not warn when ignore static is enabled', async () => {
       // Arrange
       testInjector.options.ignoreStatic = true;
-      const { mutants, dryRunResult } = arrangeStaticWarning();
+      const { mutants } = arrangeStaticWarning();
 
       // Act
-      await act(dryRunResult, mutants);
+      await act(mutants);
 
       // Assert
       expect(testInjector.logger.warn).not.called;
@@ -457,10 +427,10 @@ describe(MutantTestPlanner.name, () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
       testInjector.options.warnings = factory.warningOptions({ slow: false });
-      const { mutants, dryRunResult } = arrangeStaticWarning();
+      const { mutants } = arrangeStaticWarning();
 
       // Act
-      await act(dryRunResult, mutants);
+      await act(mutants);
 
       // Assert
       expect(testInjector.logger.warn).not.called;
@@ -477,18 +447,22 @@ describe(MutantTestPlanner.name, () => {
         factory.mutant({ id: '9' }),
         factory.mutant({ id: '10' }),
       ];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [
-          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec4', timeSpentMs: 9 }),
-        ],
-        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
-      });
+      testCoverage.addTest(
+        factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 9 })
+      );
+      arrangeStaticCoverage(4, 5, 6, 7);
+      testCoverage.addCoverage(1, ['spec1']);
+      testCoverage.addCoverage(2, ['spec2']);
+      testCoverage.addCoverage(10, ['spec2']);
+      testCoverage.addCoverage(3, ['spec3']);
+      testCoverage.addCoverage(8, ['spec3']);
+      testCoverage.addCoverage(9, ['spec3']);
 
       // Act
-      await act(dryRunResult, mutants);
+      await act(mutants);
 
       // Assert
       expect(testInjector.logger.warn).not.called;
@@ -508,18 +482,22 @@ describe(MutantTestPlanner.name, () => {
         factory.mutant({ id: '9' }),
         factory.mutant({ id: '10' }),
       ];
-      const dryRunResult = factory.completeDryRunResult({
-        tests: [
-          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec4', timeSpentMs: 9 }),
-        ],
-        mutantCoverage: { static: { 4: 1, 5: 1, 6: 1, 7: 1 }, perTest: { spec1: { 1: 1 }, spec2: { 2: 1, 10: 1 }, spec3: { 3: 1, 8: 1, 9: 1 } } },
-      });
+      testCoverage.addTest(
+        factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 9 })
+      );
+      arrangeStaticCoverage(4, 5, 6, 7);
+      testCoverage.addCoverage(1, ['spec1']);
+      testCoverage.addCoverage(2, ['spec2']);
+      testCoverage.addCoverage(10, ['spec2']);
+      testCoverage.addCoverage(3, ['spec3']);
+      testCoverage.addCoverage(8, ['spec3']);
+      testCoverage.addCoverage(9, ['spec3']);
 
       // Act
-      await act(dryRunResult, mutants);
+      await act(mutants);
 
       // Assert
       expect(testInjector.logger.warn).not.called;
@@ -532,7 +510,6 @@ describe(MutantTestPlanner.name, () => {
       #srcFileName = 'foo.js';
       #testFileName = 'foo.spec.js';
       #incrementalReport: schema.MutationTestResult | undefined = undefined;
-      #dryRunResult!: CompleteDryRunResult;
 
       public withWindowsPathSeparator() {
         // Deliberately not replacing all slashes, otherwise `path.relative` won't work on linux.
@@ -572,16 +549,14 @@ describe(MutantTestPlanner.name, () => {
             }),
           },
         });
-        this.#dryRunResult = factory.completeDryRunResult({
-          tests: [factory.testResult({ fileName: testFileFullName, id: '25', name: 'foo should bar' })],
-          mutantCoverage: { static: {}, perTest: { '25': { 1: 1 } } },
-        });
+        testCoverage.addTest(factory.testResult({ fileName: testFileFullName, id: 'spec1', name: 'foo should bar' }));
+        testCoverage.addCoverage(1, ['spec1']);
         return this;
       }
 
       public build() {
         const project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions(), this.#incrementalReport);
-        return { dryRunResult: this.#dryRunResult, mutants: this.#mutants, project };
+        return { mutants: this.#mutants, project };
       }
     }
 
@@ -590,30 +565,36 @@ describe(MutantTestPlanner.name, () => {
 
     it("should plan an early result for mutants that didn't change", async () => {
       // Arrange
-      const { dryRunResult, mutants, project } = new ScenarioBuilder().withIncrementalKilledMutant().build();
+      const { mutants, project } = new ScenarioBuilder().withIncrementalKilledMutant().build();
 
       // Act
-      const [actualPlan] = await act(dryRunResult, mutants, project);
+      const [actualPlan] = await act(mutants, project);
 
       // Assert
       assertIsEarlyResultPlan(actualPlan);
       expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
-      expect(actualPlan.mutant.killedBy).deep.eq(['25']);
+      expect(actualPlan.mutant.killedBy).deep.eq(['spec1']);
     });
 
     it('should normalize file names before passing them to the differ', async () => {
       // Arrange
-      const { dryRunResult, mutants, project } = new ScenarioBuilder().withWindowsPathSeparator().withIncrementalKilledMutant().build();
+      const { mutants, project } = new ScenarioBuilder().withWindowsPathSeparator().withIncrementalKilledMutant().build();
 
       // Act
-      const [actualPlan] = await act(dryRunResult, mutants, project);
+      const [actualPlan] = await act(mutants, project);
 
       // Assert
       assertIsEarlyResultPlan(actualPlan);
       expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
-      expect(actualPlan.mutant.killedBy).deep.eq(['25']);
+      expect(actualPlan.mutant.killedBy).deep.eq(['spec1']);
     });
   });
+
+  function arrangeStaticCoverage(...mutantIds: Array<number | string>) {
+    for (const mutantId of mutantIds) {
+      testCoverage.staticCoverage[mutantId] = true;
+    }
+  }
 });
 
 function assertIsRunPlan(plan: MutantTestPlan): asserts plan is MutantRunPlan {

@@ -6,7 +6,6 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { type requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import { CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus } from '@stryker-mutator/api/check';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
@@ -16,11 +15,12 @@ import { objectUtils } from '../../../src/utils/object-utils.js';
 import { strykerVersion } from '../../../src/stryker-package.js';
 import { Project } from '../../../src/fs/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
+import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
   let setExitCodeStub: sinon.SinonStub;
-  let dryRunResult: CompleteDryRunResult;
+  let testCoverage: TestCoverageTestDouble;
   let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let fileSystemTestDouble: FileSystemTestDouble;
 
@@ -29,7 +29,7 @@ describe(MutationTestReportHelper.name, () => {
     reporterMock = factory.reporter();
     setExitCodeStub = sinon.stub(objectUtils, 'setExitCode');
     fileSystemTestDouble = new FileSystemTestDouble();
-    dryRunResult = factory.completeDryRunResult();
+    testCoverage = new TestCoverageTestDouble();
   });
 
   function createSut() {
@@ -37,7 +37,7 @@ describe(MutationTestReportHelper.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.project, project)
-      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.testCoverage, testCoverage)
       .provideValue(coreTokens.requireFromCwd, requireFromCwdStub)
       .provideValue(coreTokens.fs, fileSystemTestDouble)
       .injectClass(MutationTestReportHelper);
@@ -93,7 +93,7 @@ describe(MutationTestReportHelper.name, () => {
           },
         ];
         fileSystemTestDouble.files['foo.js'] = '';
-        dryRunResult.tests.push(factory.testResult({ id: 'foo should bar', name: 'foo should bar' }));
+        testCoverage.addTest(factory.testResult({ id: 'foo should bar', name: 'foo should bar' }));
 
         // Act
         const [actualReport, metrics] = await actReportAll(inputMutants);
@@ -295,7 +295,7 @@ describe(MutationTestReportHelper.name, () => {
     describe('tests', () => {
       it('should correctly provide test file properties', async () => {
         // Arrange
-        dryRunResult.tests.push(factory.testResult({ id: 'spec1', name: 'dog should not eat dog', fileName: 'foo.spec.js' }));
+        testCoverage.addTest(factory.testResult({ id: 'spec1', name: 'dog should not eat dog', fileName: 'foo.spec.js' }));
         fileSystemTestDouble.files['foo.js'] = 'foo content';
         fileSystemTestDouble.files['foo.spec.js'] = 'it("dog should not eat dog")';
         fileSystemTestDouble.files['baz.js'] = 'baz content';
@@ -309,7 +309,7 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should report the tests in `testFiles`', async () => {
         // Arrange
-        dryRunResult.tests.push(
+        testCoverage.addTest(
           factory.testResult({ id: 'spec1', name: 'dog should not eat dog' }),
           factory.testResult({ id: 'spec2', name: 'dog should chase its own tail', startPosition: { line: 5, column: 0 } })
         );
@@ -331,7 +331,7 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should remap test ids if possible (for brevity, since mocha, jest and karma use test titles as test ids)', async () => {
         // Arrange
-        dryRunResult.tests.push(
+        testCoverage.addTest(
           factory.testResult({ id: 'foo should bar', name: 'foo should bar' }),
           factory.testResult({ id: 'baz should qux', name: 'baz should qux' })
         );
@@ -358,10 +358,10 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should group test by test file name', async () => {
         // Arrange
-        dryRunResult.tests.push(
-          factory.testResult({ fileName: 'foo.spec.js', name: '1' }),
-          factory.testResult({ fileName: 'bar.spec.js', name: '2' }),
-          factory.testResult({ fileName: 'foo.spec.js', name: '3' })
+        testCoverage.addTest(
+          factory.testResult({ id: 'spec1', fileName: 'foo.spec.js', name: '1' }),
+          factory.testResult({ id: 'spec2', fileName: 'bar.spec.js', name: '2' }),
+          factory.testResult({ id: 'spec3', fileName: 'foo.spec.js', name: '3' })
         );
         fileSystemTestDouble.files['foo.spec.js'] = '';
         fileSystemTestDouble.files['bar.spec.js'] = '';
@@ -381,7 +381,7 @@ describe(MutationTestReportHelper.name, () => {
         // Arrange
         const expectedRelativeName = 'test/unit/foo.spec.js';
         const testFileName = path.resolve(expectedRelativeName);
-        dryRunResult.tests.push(factory.testResult({ fileName: testFileName, name: '1' }));
+        testCoverage.addTest(factory.testResult({ fileName: testFileName, name: '1' }));
         fileSystemTestDouble.files[testFileName] = 'it("should work")';
 
         // Act
@@ -395,7 +395,7 @@ describe(MutationTestReportHelper.name, () => {
       });
 
       it('should log a warning the test file could not be found', async () => {
-        dryRunResult.tests.push(factory.testResult({ fileName: 'foo.spec.js' }));
+        testCoverage.addTest(factory.testResult({ fileName: 'foo.spec.js' }));
         await actReportAll();
         expect(testInjector.logger.warn).calledWithMatch('Test file "foo.spec.js" not found in input files');
       });
@@ -553,7 +553,7 @@ describe(MutationTestReportHelper.name, () => {
     describe(MutationTestReportHelper.prototype.reportMutantRunResult.name, () => {
       it('should report a killed mutant when called with a KilledMutantRunResult', () => {
         // Arrange
-        dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+        testCoverage.addTest(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
         const sut = createSut();
 
         // Act
@@ -574,7 +574,7 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should report a killed mutant when called with a KilledMutantRunResult with KilledBy as array', () => {
         // Arrange
-        dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+        testCoverage.addTest(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
         const sut = createSut();
 
         // Act
@@ -627,7 +627,7 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should report a survived mutant when called with a SurvivedMutantRunResult', () => {
         // Arrange
-        dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+        testCoverage.addTest(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
         const sut = createSut();
 
         // Act
@@ -647,7 +647,7 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should be able to report coveredBy as `undefined` for a survived mutant', () => {
         // Arrange
-        dryRunResult.tests.push(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
+        testCoverage.addTest(factory.failedTestResult({ id: '1', name: 'foo should be bar' }));
         const sut = createSut();
 
         // Act

@@ -1,12 +1,14 @@
 import { Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { TestResult } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { deepFreeze } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import sinon from 'sinon';
 
-import { IncrementalDiffer } from '../../../src/mutants/index.js';
+import { IncrementalDiffer, TestCoverage } from '../../../src/mutants/index.js';
 import { createMutant, loc, pos } from '../../helpers/producers.js';
+import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
 
 // Keep this files here for the indenting
 const srcAddContent = `export function add(a, b) {
@@ -77,7 +79,7 @@ class ScenarioBuilder {
   public incrementalTestFiles: schema.TestFileDefinitionDictionary = {};
   public currentFiles = new Map<string, string>();
   public mutants: Mutant[] = [];
-  public tests = new Map<string, Set<TestResult>>();
+  public testCoverage = new TestCoverageTestDouble();
   public sut?: IncrementalDiffer;
 
   public withMathProjectExample({ mutantState: mutantStatus = MutantStatus.Killed } = {}): this {
@@ -104,7 +106,8 @@ class ScenarioBuilder {
       tests: [{ id: this.oldSpecId, name: 'add(2, 0) = 2' }],
     });
     this.currentFiles.set(srcAdd, srcAddContent);
-    this.tests.set(this.mutantId, new Set([factory.testResult({ id: this.newTestId, fileName: testAdd, name: 'add(2, 0) = 2' })]));
+    this.testCoverage.addTest(factory.testResult({ id: this.newTestId, fileName: testAdd, name: 'add(2, 0) = 2' }));
+    this.testCoverage.addCoverage(this.mutantId, [this.newTestId]);
     return this;
   }
 
@@ -119,13 +122,13 @@ class ScenarioBuilder {
     if (includeEnd) {
       this.incrementalTestFiles[testAdd].tests[0].location.end = pos(6, 5);
     }
-    [...this.tests.get(this.mutantId)!][0].startPosition = pos(4, 2);
+    [...this.testCoverage.forMutant(this.mutantId)!][0].startPosition = pos(4, 2);
     return this;
   }
 
   public withAddedLinesAboveTest(...lines: string[]): this {
     this.currentFiles.set(testAdd, `${lines.join('\n')}\n${testAddContent}`);
-    for (const test of this.tests.get(this.mutantId)!) {
+    for (const test of this.testCoverage.forMutant(this.mutantId)!) {
       if (test.startPosition) {
         test.startPosition = pos(4 + lines.length, 2);
       }
@@ -175,7 +178,7 @@ class ScenarioBuilder {
         .map((line, nr) => (nr === 4 ? `${text}${line}` : line))
         .join('\n')
     );
-    for (const test of this.tests.get(this.mutantId)!) {
+    for (const test of this.testCoverage.forMutant(this.mutantId)!) {
       if (test.startPosition) {
         test.startPosition = pos(4, 2 + text.length);
       }
@@ -191,7 +194,7 @@ class ScenarioBuilder {
         .map((line, nr) => (nr === 5 ? `  ${code}\n${line}` : line))
         .join('\n')
     );
-    for (const test of this.tests.get(this.mutantId)!) {
+    for (const test of this.testCoverage.forMutant(this.mutantId)!) {
       if (test.startPosition) {
         test.startPosition = pos(4, 2);
       }
@@ -205,7 +208,7 @@ class ScenarioBuilder {
     if (located) {
       secondTest.startPosition = pos(7, 2);
     }
-    this.tests.get(this.mutantId)!.add(secondTest);
+    this.testCoverage.forMutant(this.mutantId)!.add(secondTest);
     return this;
   }
   public withSecondTestInIncrementalReport({ isKillingTest = false } = {}): this {
@@ -225,14 +228,15 @@ class ScenarioBuilder {
   public withUpdatedTestGeneration(): this {
     this.currentFiles.set(testAdd, testAddContentWithTestGenerationUpdated);
     const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
-      factory.testResult({ fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
+      factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
 
-    this.tests.get(this.mutantId)!.clear();
-    this.tests
-      .get(this.mutantId)!
-      .add(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
-    this.tests.get(this.mutantId)!.add(createAddWithTestGenerationTestResult(40, 2, 42));
-    this.tests.get(this.mutantId)!.add(createAddWithTestGenerationTestResult(45, -3, 42));
+    this.testCoverage.testsById.clear();
+    this.testCoverage.forMutant(this.mutantId)!.clear();
+    this.testCoverage.addTest(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
+    const gen1 = createAddWithTestGenerationTestResult(40, 2, 42);
+    const gen2 = createAddWithTestGenerationTestResult(45, -3, 42);
+    this.testCoverage.addTest(gen1, gen2);
+    this.testCoverage.addCoverage(this.mutantId, ['new-spec-2', gen1.id, gen2.id]);
     return this;
   }
   public withTestGenerationIncrementalReport(): this {
@@ -299,10 +303,11 @@ class ScenarioBuilder {
   }
 
   public act() {
-    this.sut = new IncrementalDiffer(testInjector.logger);
+    this.sut = testInjector.injector.injectClass(IncrementalDiffer);
+    deepFreeze(this.mutants); // make sure mutants aren't changed at all
     return this.sut.diff(
       this.mutants,
-      this.tests,
+      this.testCoverage,
       factory.mutationTestReportSchemaMutationTestResult({
         files: this.incrementalFiles,
         testFiles: this.incrementalTestFiles,
@@ -385,19 +390,19 @@ describe(IncrementalDiffer.name, () => {
     it('should not copy the status if the mutant came from a different mutator', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentMutator('max-replacement');
       const actualDiff = scenario.act();
-      expect(actualDiff).deep.eq(scenario.mutants);
+      expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different replacement', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentReplacement('other replacement');
       const actualDiff = scenario.act();
-      expect(actualDiff).deep.eq(scenario.mutants);
+      expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different location', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentMutantLocation();
       const actualDiff = scenario.act();
-      expect(actualDiff).deep.eq(scenario.mutants);
+      expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different file name', () => {

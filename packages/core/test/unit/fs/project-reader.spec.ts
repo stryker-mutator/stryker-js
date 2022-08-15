@@ -348,17 +348,14 @@ describe(ProjectReader.name, () => {
       await sut.read();
       sinon.assert.calledOnceWithExactly(fsMock.readFile, 'reports/stryker-incremental.json', 'utf-8');
     });
-    it('should not be read when incremental = true, but force is provided', async () => {
+    it('should be read when incremental = true and force = true', async () => {
       testInjector.options.incremental = true;
       testInjector.options.force = true;
       stubFileSystem({ reports: { 'stryker-incremental.json': JSON.stringify(factory.mutationTestReportSchemaMutationTestResult({})) } });
       const sut = createSut();
       const actualProject = await sut.read();
-      expect(actualProject.incrementalReport).undefined;
-      sinon.assert.calledOnceWithExactly(
-        testInjector.logger.info,
-        'Incremental file will not be used because "force" was provided, a full mutation testing run will be performed.'
-      );
+      expect(actualProject.incrementalReport).not.undefined;
+      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'reports/stryker-incremental.json', 'utf-8');
     });
     it('should handle file not found correctly', async () => {
       // Arrange

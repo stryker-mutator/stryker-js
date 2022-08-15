@@ -53,7 +53,7 @@ export class ProjectReader {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
     const project = new Project(this.fs, fileDescriptions, await this.readIncrementalReport());
-    project.logFiles(this.log, this.ignoreRules);
+    project.logFiles(this.log, this.ignoreRules, this.force);
     return project;
   }
 
@@ -197,10 +197,6 @@ export class ProjectReader {
 
   private async readIncrementalReport(): Promise<MutationTestResult | undefined> {
     if (!this.incremental) {
-      return;
-    }
-    if (this.force) {
-      this.log.info('Incremental file will not be used because "force" was provided, a full mutation testing run will be performed.');
       return;
     }
     try {

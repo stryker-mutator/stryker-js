@@ -25,7 +25,7 @@ import { MutationTestReportHelper } from '../reporters/mutation-test-report-help
 import { ConfigError } from '../errors.js';
 import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
-import { MutantTestPlanner } from '../mutants/index.js';
+import { IncrementalDiffer, MutantTestPlanner, TestCoverage } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
 import { objectUtils } from '../utils/object-utils.js';
@@ -79,12 +79,15 @@ export class DryRunExecutor {
     if (!result.tests.length) {
       throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     }
+
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, result)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
-      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
-      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner);
+      .provideFactory(coreTokens.testCoverage, TestCoverage.from)
+      .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
+      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
