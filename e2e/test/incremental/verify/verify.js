@@ -37,7 +37,7 @@ describe('incremental', () => {
     await changeFiles('original'); // change the files back to there original state
   });
 
-  const expectedReuseCount = Object.freeze({
+  const reuseCountExpectation = Object.freeze({
     // This is the best result, we should strive to push each test runner to this
     withFullTestResults: 4,
     // We know which test files are changed and assume each test in that file changed
@@ -50,14 +50,14 @@ describe('incremental', () => {
    * @type {Array<[string, number, import('@stryker-mutator/api/core').PartialStrykerOptions?]>}
    */
   const tests = [
-    ['cucumber', expectedReuseCount.withFullTestResults],
-    ['jest', expectedReuseCount.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'] }],
+    ['cucumber', reuseCountExpectation.withFullTestResults],
+    ['jest', reuseCountExpectation.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'] }],
 
-    ['command', expectedReuseCount.withoutTestLocations, { commandRunner: { command: 'npm run test:mocha' } }],
-    ['mocha', expectedReuseCount.withoutTestLocations],
+    ['command', reuseCountExpectation.withoutTestLocations, { commandRunner: { command: 'npm run test:mocha' } }],
+    ['mocha', reuseCountExpectation.withoutTestLocations],
 
-    ['karma', expectedReuseCount.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
-    ['jasmine', expectedReuseCount.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
+    ['karma', reuseCountExpectation.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
+    ['jasmine', reuseCountExpectation.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
   ];
   tests.forEach(([testRunner, expectedReuseCount, additionalOptions]) => {
     it(`should reuse expected mutant results for ${testRunner}`, async () => {
