@@ -21,20 +21,22 @@ export class TestCoverageTestDouble implements I<TestCoverage> {
   }
   public addCoverage(mutantId: number | string, testIds: string[]): void {
     this.hasCoverage = true;
-    this.testsByMutantId.set(
-      mutantId.toString(),
-      new Set(
-        testIds.map((testId) => {
-          const test = this.testsById.get(testId);
-          if (!test) {
-            throw new Error(`Test ${testId} not found`);
-          }
-          return test;
-        })
-      )
-    );
+    const testResultSet = this.testsByMutantId.get(mutantId.toString()) ?? new Set();
+    this.testsByMutantId.set(mutantId.toString(), testResultSet);
+    for (const testId of testIds) {
+      const test = this.testsById.get(testId);
+      if (!test) {
+        throw new Error(`Test ${testId} not found`);
+      }
+      testResultSet.add(test);
+    }
   }
-  public forMutant(mutantId: string): Set<TestResult> | undefined {
+  public forMutant(mutantId: string): ReadonlySet<TestResult> | undefined {
     return this.testsByMutantId.get(mutantId);
+  }
+  public clear(): void {
+    this.testsById.clear();
+    this.testsByMutantId.clear();
+    this.staticCoverage = {};
   }
 }

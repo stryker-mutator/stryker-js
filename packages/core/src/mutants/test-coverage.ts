@@ -55,7 +55,7 @@ export class TestCoverage {
       .forEach((test) => tests.add(test));
   }
 
-  public forMutant(mutantId: string): Set<TestResult> | undefined {
+  public forMutant(mutantId: string): ReadonlySet<TestResult> | undefined {
     return this.#testsByMutantId.get(mutantId);
   }
 

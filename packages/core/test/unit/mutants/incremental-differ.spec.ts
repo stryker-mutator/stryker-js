@@ -1,12 +1,13 @@
+import path from 'path';
+
 import { Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
-import { TestResult } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { deepFreeze } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import chalk from 'chalk';
 import sinon from 'sinon';
 
-import { IncrementalDiffer, TestCoverage } from '../../../src/mutants/index.js';
+import { IncrementalDiffer } from '../../../src/mutants/index.js';
 import { createMutant, loc, pos } from '../../helpers/producers.js';
 import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
 
@@ -67,8 +68,23 @@ describe('add' () => {
 });
 `;
 
+const srcMultiplyContent = `export function multiply(a, b) {
+  return a * b;
+}`;
+const testMultiplyContent = `import { expect } from 'chai';
+import { multiply } from '../src/multiply.js';
+
+describe('multiply' () => {
+  it('should result in 42 for 2 and 21', () => {
+    expect(multiply(2, 21)).eq(42);
+  });
+});
+`;
+
 const srcAdd = 'src/add.js';
+const srcMultiply = 'src/multiply.js';
 const testAdd = 'test/add.spec.js';
+const testMultiply = 'test/multiply.spec.js';
 
 class ScenarioBuilder {
   public readonly oldSpecId = 'spec-1';
@@ -204,16 +220,17 @@ class ScenarioBuilder {
 
   public withSecondTest({ located }: { located: boolean }): this {
     this.currentFiles.set(testAdd, testAddContentTwoTests);
-    const secondTest = factory.testResult({ id: '2', fileName: testAdd, name: 'add(45, -3) = 42' });
+    const secondTest = factory.testResult({ id: 'spec2', fileName: testAdd, name: 'add(45, -3) = 42' });
     if (located) {
       secondTest.startPosition = pos(7, 2);
     }
-    this.testCoverage.forMutant(this.mutantId)!.add(secondTest);
+    this.testCoverage.addTest(secondTest);
+    this.testCoverage.addCoverage(this.mutantId, [secondTest.id]);
     return this;
   }
   public withSecondTestInIncrementalReport({ isKillingTest = false } = {}): this {
     this.incrementalTestFiles[testAdd].tests.unshift(
-      factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'add(45, -3) = 42', location: loc(7, 0) })
+      factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) })
     );
     if (isKillingTest) {
       this.incrementalFiles[srcAdd].mutants[0].killedBy = ['2'];
@@ -230,8 +247,7 @@ class ScenarioBuilder {
     const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
       factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
 
-    this.testCoverage.testsById.clear();
-    this.testCoverage.forMutant(this.mutantId)!.clear();
+    this.testCoverage.clear();
     this.testCoverage.addTest(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
     const gen1 = createAddWithTestGenerationTestResult(40, 2, 42);
     const gen2 = createAddWithTestGenerationTestResult(45, -3, 42);
@@ -302,6 +318,39 @@ class ScenarioBuilder {
     return this;
   }
 
+  public withSecondSourceAndTestFileInIncrementalReport(): this {
+    this.incrementalTestFiles[testMultiply] = factory.mutationTestReportSchemaTestFile({
+      source: testMultiplyContent,
+      tests: [
+        factory.mutationTestReportSchemaTestDefinition({ id: 'spec-3', location: loc(4, 2), name: 'multiply should result in 42 for 2 and 21' }),
+      ],
+    });
+    this.incrementalFiles[srcMultiply] = factory.mutationTestReportSchemaFileResult({
+      mutants: [
+        factory.mutationTestReportSchemaMutantResult({
+          id: 'mut-3',
+          coveredBy: ['spec-3'],
+          killedBy: ['spec-3'],
+          replacement: '/',
+          testsCompleted: 1,
+          status: MutantStatus.Killed,
+          location: loc(1, 11, 1, 12),
+        }),
+      ],
+      source: srcMultiplyContent,
+    });
+    return this;
+  }
+
+  public withSecondSourceFile(): this {
+    this.currentFiles.set(srcMultiply, srcMultiplyContent);
+    return this;
+  }
+  public withSecondTestFile(): this {
+    this.currentFiles.set(testMultiply, testMultiplyContent);
+    return this;
+  }
+
   public act() {
     this.sut = testInjector.injector.injectClass(IncrementalDiffer);
     deepFreeze(this.mutants); // make sure mutants aren't changed at all
@@ -336,6 +385,16 @@ describe(IncrementalDiffer.name, () => {
         testsCompleted: 1,
       };
       expect(actualMutant).deep.contains(expected);
+    });
+
+    it('should not reuse the result when --force is active', () => {
+      // Arrange
+      testInjector.options.force = true;
+      const actualDiff = new ScenarioBuilder().withMathProjectExample().act();
+
+      // Assert
+      const actualMutant = actualDiff[0];
+      expect(actualMutant.status).undefined;
     });
 
     it('should normalize line endings when comparing diffs', () => {
@@ -466,6 +525,15 @@ describe(IncrementalDiffer.name, () => {
         `Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${lineSeparator}No changes`
       );
     });
+
+    it('should not log if logLevel "info" or "debug" aren\'t enabled', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      testInjector.logger.isInfoEnabled.returns(false);
+      testInjector.logger.isDebugEnabled.returns(false);
+      scenario.act();
+      sinon.assert.notCalled(testInjector.logger.debug);
+      sinon.assert.notCalled(testInjector.logger.info);
+    });
   });
 
   describe('test changes', () => {
@@ -474,77 +542,75 @@ describe(IncrementalDiffer.name, () => {
       expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 
-    describe('with test file changes', () => {
-      it('should identify that mutant state can be reused with changes above', () => {
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest()
-          .withAddedLinesAboveTest("import foo from 'bar'", '')
-          .act();
+    it('should identify that mutant state can be reused with changes above', () => {
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest()
+        .withAddedLinesAboveTest("import foo from 'bar'", '')
+        .act();
 
-        // Assert
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+      // Assert
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
 
-      it('should identify that mutant state can be reused with changes before', () => {
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest()
-          .withAddedTextBeforeTest('/*text-added*/')
-          .act();
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+    it('should identify that mutant state can be reused with changes before', () => {
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest()
+        .withAddedTextBeforeTest('/*text-added*/')
+        .act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
 
-      it('should identify that mutant state can be reused with changes below', () => {
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest({ includeEnd: true })
-          .withSecondTest({ located: true })
-          .act();
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+    it('should identify that mutant state can be reused with changes below', () => {
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest({ includeEnd: true })
+        .withSecondTest({ located: true })
+        .act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
 
-      it('should identify that mutant state can be reused with changes behind', () => {
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest({ includeEnd: true })
-          .withAddedTextAfterTest('/*text-added*/')
-          .act();
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+    it('should identify that mutant state can be reused with changes behind', () => {
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest({ includeEnd: true })
+        .withAddedTextAfterTest('/*text-added*/')
+        .act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
 
-      it('should not reuse a mutant state when a covering test gets code added', () => {
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest({ includeEnd: true })
-          .withAddedCodeInsideTheTest('addedText();')
-          .act();
-        expect(actualDiff[0].status).undefined;
-      });
+    it('should not reuse a mutant state when a covering test gets code added', () => {
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest({ includeEnd: true })
+        .withAddedCodeInsideTheTest('addedText();')
+        .act();
+      expect(actualDiff[0].status).undefined;
+    });
 
-      it('should close locations of tests in the incremental report', () => {
-        // All test runners currently only report the start positions of tests.
-        // Add a workaround for 'inventing' the end position based on the next test's start position.
-        const actualDiff = new ScenarioBuilder()
-          .withMathProjectExample()
-          .withTestFile()
-          .withLocatedTest({ includeEnd: true })
-          .withSecondTest({ located: true })
-          .withSecondTestInIncrementalReport()
-          .act();
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+    it('should close locations of tests in the incremental report', () => {
+      // All test runners currently only report the start positions of tests.
+      // Add a workaround for 'inventing' the end position based on the next test's start position.
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest({ includeEnd: true })
+        .withSecondTest({ located: true })
+        .withSecondTestInIncrementalReport()
+        .act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
 
-      it('should close locations for tests on the same location in the incremental report', () => {
-        // Test cases can generate tests, make sure the correct end position is chosen in those cases
-        const actualDiff = new ScenarioBuilder().withMathProjectExample().withUpdatedTestGeneration().withTestGenerationIncrementalReport().act();
-        expect(actualDiff[0].status).eq(MutantStatus.Killed);
-      });
+    it('should close locations for tests on the same location in the incremental report', () => {
+      // Test cases can generate tests, make sure the correct end position is chosen in those cases
+      const actualDiff = new ScenarioBuilder().withMathProjectExample().withUpdatedTestGeneration().withTestGenerationIncrementalReport().act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 
     it('should identify that a non-"Killed" state can be reused when a test is removed', () => {
@@ -580,6 +646,81 @@ describe(IncrementalDiffer.name, () => {
         .withSecondTestInIncrementalReport({ isKillingTest: true })
         .act();
       expect(actualDiff[0].status).undefined;
+    });
+
+    it('should collect an added test', () => {
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest({ includeEnd: true })
+        .withSecondTest({ located: true });
+      scenario.act();
+      const actualCollector = scenario.sut!.testStatisticsCollector!;
+      expect(actualCollector.changesByFile).lengthOf(1);
+      const changes = actualCollector.changesByFile.get(testAdd)!;
+      expect(changes).property('added', 1);
+      expect(changes).property('removed', 0);
+    });
+
+    it('should collect an added and removed test when a test changes', () => {
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .withLocatedTest()
+        .withAddedCodeInsideTheTest('arrangeSomething()');
+      scenario.act();
+      const actualCollector = scenario.sut!.testStatisticsCollector!;
+      expect(actualCollector.changesByFile).lengthOf(1);
+      const changes = actualCollector.changesByFile.get(testAdd)!;
+      expect(changes).property('added', 1);
+      expect(changes).property('removed', 1);
+    });
+  });
+
+  describe('with history', () => {
+    it('should keep historic mutants in other files', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      const mutants = scenario.act();
+      expect(mutants).lengthOf(2);
+      const actualMutant = mutants[1];
+      expect(actualMutant.id).includes('src/multiply.js@1:11-1:12');
+      expect(actualMutant.status).eq(MutantStatus.Killed);
+      expect(actualMutant.fileName).eq(path.resolve(srcMultiply));
+    });
+    it("should keep historic tests that didn't run this time around", () => {
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withSecondSourceAndTestFileInIncrementalReport()
+        .withSecondSourceFile()
+        .withSecondTestFile();
+      const mutants = scenario.act();
+      const actualTest = scenario.testCoverage.testsById.get(`${testMultiply}@4:2\nmultiply should result in 42 for 2 and 21`)!;
+      expect(actualTest).ok;
+      expect(actualTest.fileName).eq(path.resolve(testMultiply));
+      expect(actualTest.name).eq('multiply should result in 42 for 2 and 21');
+      expect(actualTest.startPosition).deep.eq(pos(4, 2));
+      expect(scenario.testCoverage.forMutant(mutants[1].id)).deep.eq(new Set([actualTest]));
+    });
+
+    it('should not keep historic mutants when they are inside of a mutated file', () => {
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: true };
+      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      const mutants = scenario.act();
+      expect(mutants).lengthOf(1);
+    });
+
+    it('should not keep historic mutants when they are inside of a mutated scope of a file', () => {
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: [loc(1, 11, 1, 12), loc(2, 2, 2, 3)] };
+      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      const mutants = scenario.act();
+      expect(mutants).lengthOf(1);
+    });
+
+    it('should keep historic mutants when they are outside of a mutated scope of a file', () => {
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: [loc(1, 9, 1, 10), loc(2, 11, 2, 12)] };
+      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      const mutants = scenario.act();
+      expect(mutants).lengthOf(2);
     });
   });
 });
