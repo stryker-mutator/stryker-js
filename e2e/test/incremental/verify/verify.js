@@ -1,10 +1,15 @@
 import { promises as fsPromises } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { Stryker } from '@stryker-mutator/core';
 import { expect } from 'chai';
-import { calculateMetrics } from 'mutation-testing-metrics';
 
-import { CoverageAnalysisReporter } from './coverage-analysis-reporter.js';
+import '../../../helpers.js';
+
+import { PlanKind } from '@stryker-mutator/api/core';
+
+import { MutationRunPlanReporter } from './mutation-run-plan-reporter.js';
 
 const incrementalFile = new URL('../reports/stryker-incremental.json', import.meta.url);
 
@@ -16,20 +21,78 @@ describe('incremental', () => {
 
   beforeEach(async () => {
     await fsPromises.rm(incrementalFile, { force: true });
-    strykerOptions = { incremental: true, concurrency: 1 };
-    await changeFiles('changed');
+    /**
+     * @type {import('@stryker-mutator/api/core').LogLevel}
+     */
+    strykerOptions = {
+      incremental: true,
+      concurrency: 1,
+      plugins: ['./verify/mutation-run-plan-reporter.js'],
+      reporters: ['mutation-run-plan', 'html'],
+    };
+    await changeFiles('original'); // change the files back to there original state
   });
 
-  ['cucumber', 'jest'].forEach((testRunner) => {
+  afterEach(async () => {
+    await changeFiles('original'); // change the files back to there original state
+  });
+
+  const expectedReuseCount = Object.freeze({
+    // This is the best result, we should strive to push each test runner to this
+    withFullTestResults: 4,
+    // We know which test files are changed and assume each test in that file changed
+    withoutTestLocations: 2,
+    // No clue which tests were updated 🤷‍♀️
+    withoutTestFiles: 6,
+  });
+
+  /**
+   * @type {Array<[string, number, import('@stryker-mutator/api/core').PartialStrykerOptions?]>}
+   */
+  const tests = [
+    ['cucumber', expectedReuseCount.withFullTestResults],
+    ['jest', expectedReuseCount.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'] }],
+
+    ['command', expectedReuseCount.withoutTestLocations, { commandRunner: { command: 'npm run test:mocha' } }],
+    ['mocha', expectedReuseCount.withoutTestLocations],
+
+    ['karma', expectedReuseCount.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
+    ['jasmine', expectedReuseCount.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
+  ];
+  tests.forEach(([testRunner, expectedReuseCount, additionalOptions]) => {
     it(`should reuse expected mutant results for ${testRunner}`, async () => {
-      // Arrange
-      // strykerOptions.testRunner = testRunner;
-      // const stryker = new Stryker(strykerOptions);
-      // await stryker.runMutationTest();
-      // await fsPromises.access(incrementalFile);
-      // // Act
-      // await stryker.runMutationTest();
-      // expect();
+      // Arrange;
+      strykerOptions.testRunner = testRunner;
+      if (testRunner !== 'command') {
+        strykerOptions.plugins.push(`@stryker-mutator/${testRunner}-runner`);
+      }
+      const stryker = new Stryker({
+        ...strykerOptions,
+        ...additionalOptions,
+      });
+      await stryker.runMutationTest();
+      await fsPromises.access(incrementalFile);
+      await changeFiles('changed');
+
+      // Act
+      await stryker.runMutationTest();
+
+      // Assert
+      let actualReuseCount = 0;
+      const normalizedTestPlans = MutationRunPlanReporter.instance.event.mutantPlans.map((plan) => {
+        // Remove all flaky attributes
+        const { id, fileName, statusReason, ...mutant } = plan.mutant;
+        if (plan.plan === PlanKind.EarlyResult) {
+          actualReuseCount++;
+        }
+        return {
+          plan: plan.plan,
+          mutant,
+          fileName: path.relative(fileURLToPath(new URL('../', import.meta.url)), fileName).replace(/\\/g, '/'),
+        };
+      });
+      expect(actualReuseCount).eq(expectedReuseCount);
+      expect(normalizedTestPlans).matchSnapshot();
     });
   });
 

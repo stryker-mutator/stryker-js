@@ -8,6 +8,7 @@ describe('concat', () => {
 
 describe('greet', () => {
   it('should greet me', () => {
+    // Change: updated test
     expect(greet('me')).toBe('👋 me 🙋‍♀️');
   });
 });
