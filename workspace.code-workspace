@@ -115,7 +115,8 @@
       "Unserializables",
       "Whitespaces"
     ],
-    "cSpell.language": "en"
+    "cSpell.language": "en",
+    "liveServer.settings.multiRootWorkspaceName": "core"
   },
   "extensions": {
     "recommendations": ["dbaeumer.vscode-eslint", "EditorConfig.EditorConfig"]
