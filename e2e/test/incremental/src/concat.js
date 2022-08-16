@@ -6,5 +6,5 @@ export function concat(a, b){
 const hi = '👋';
 
 export function greet(name) {
-  return `${hi} ${name} 🙋‍♀️`
+  return `${hi} ${name}`
 }

@@ -8,6 +8,6 @@ describe('concat', () => {
 
 describe('greet', () => {
   it('should greet me', () => {
-    expect(greet('me')).toBe('👋 me 🙋‍♀️');
+    expect(greet('me')).toBe('👋 me');
   });
 });

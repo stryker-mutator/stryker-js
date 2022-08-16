@@ -8,6 +8,7 @@ describe('add', () => {
 
 describe('multiply', () => {
   it('should multiply the numbers', () => {
-    expect(multiply(2, 3)).toBe(6);
+    // Bad test, surviving mutant when * => /
+    expect(multiply(2, 0)).toBe(0);
   });
 });
