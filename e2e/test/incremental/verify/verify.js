@@ -87,7 +87,11 @@ describe('incremental', () => {
         }
         return {
           plan: plan.plan,
-          mutant,
+          mutant: {
+            ...mutant,
+            killedBy: mutant.killedBy?.map((name) => name.replace(/\\/g, '/')),
+            coveredBy: mutant.coveredBy?.map((name) => name.replace(/\\/g, '/')),
+          },
           fileName: path.relative(fileURLToPath(new URL('../', import.meta.url)), fileName).replace(/\\/g, '/'),
         };
       });

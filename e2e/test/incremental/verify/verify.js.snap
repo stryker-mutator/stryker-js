@@ -6,6 +6,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -27,6 +28,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 19,
@@ -48,6 +50,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -69,6 +72,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -90,6 +94,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -111,6 +116,7 @@ Array [
     "fileName": "src/log.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -132,6 +138,7 @@ Array [
     "fileName": "src/log.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -153,6 +160,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -174,6 +182,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -195,6 +204,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -216,6 +226,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": undefined,
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -342,6 +353,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -365,6 +377,7 @@ Array [
       "coveredBy": Array [
         "features/concat.feature:8",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -388,6 +401,7 @@ Array [
       "coveredBy": Array [
         "features/concat.feature:8",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -411,6 +425,7 @@ Array [
       "coveredBy": Array [
         "features/log.feature:3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -434,6 +449,7 @@ Array [
       "coveredBy": Array [
         "features/log.feature:3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -457,6 +473,7 @@ Array [
       "coveredBy": Array [
         "features/math.feature:3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -480,6 +497,7 @@ Array [
       "coveredBy": Array [
         "features/math.feature:3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -503,6 +521,7 @@ Array [
       "coveredBy": Array [
         "features/math.feature:8",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -526,6 +545,7 @@ Array [
       "coveredBy": Array [
         "features/math.feature:8",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -652,6 +672,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -675,6 +696,7 @@ Array [
       "coveredBy": Array [
         "spec1",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -698,6 +720,7 @@ Array [
       "coveredBy": Array [
         "spec1",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -721,6 +744,7 @@ Array [
       "coveredBy": Array [
         "spec2",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -744,6 +768,7 @@ Array [
       "coveredBy": Array [
         "spec2",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -767,6 +792,7 @@ Array [
       "coveredBy": Array [
         "spec3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -790,6 +816,7 @@ Array [
       "coveredBy": Array [
         "spec3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -970,6 +997,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -993,6 +1021,7 @@ Array [
       "coveredBy": Array [
         "greet should greet me",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1016,6 +1045,7 @@ Array [
       "coveredBy": Array [
         "greet should greet me",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -1039,6 +1069,7 @@ Array [
       "coveredBy": Array [
         "log should not throw",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1062,6 +1093,7 @@ Array [
       "coveredBy": Array [
         "log should not throw",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -1085,6 +1117,7 @@ Array [
       "coveredBy": Array [
         "add should add two numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1108,6 +1141,7 @@ Array [
       "coveredBy": Array [
         "add should add two numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -1131,6 +1165,7 @@ Array [
       "coveredBy": Array [
         "multiply should multiply the numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1154,6 +1189,7 @@ Array [
       "coveredBy": Array [
         "multiply should multiply the numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -1280,6 +1316,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -1303,6 +1340,7 @@ Array [
       "coveredBy": Array [
         "spec1",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1326,6 +1364,7 @@ Array [
       "coveredBy": Array [
         "spec1",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -1349,6 +1388,7 @@ Array [
       "coveredBy": Array [
         "spec2",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1372,6 +1412,7 @@ Array [
       "coveredBy": Array [
         "spec2",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -1395,6 +1436,7 @@ Array [
       "coveredBy": Array [
         "spec3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1418,6 +1460,7 @@ Array [
       "coveredBy": Array [
         "spec3",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -1546,6 +1589,7 @@ Array [
       "coveredBy": Array [
         "concat should concat a and b",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1569,6 +1613,7 @@ Array [
       "coveredBy": Array [
         "concat should concat a and b",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 19,
@@ -1590,6 +1635,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 15,
@@ -1613,6 +1659,7 @@ Array [
       "coveredBy": Array [
         "greet should greet me",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1636,6 +1683,7 @@ Array [
       "coveredBy": Array [
         "greet should greet me",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 30,
@@ -1659,6 +1707,7 @@ Array [
       "coveredBy": Array [
         "log should not throw",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1682,6 +1731,7 @@ Array [
       "coveredBy": Array [
         "log should not throw",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 31,
@@ -1705,6 +1755,7 @@ Array [
       "coveredBy": Array [
         "add should add two numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1728,6 +1779,7 @@ Array [
       "coveredBy": Array [
         "add should add two numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -1751,6 +1803,7 @@ Array [
       "coveredBy": Array [
         "multiply should multiply the numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1774,6 +1827,7 @@ Array [
       "coveredBy": Array [
         "multiply should multiply the numbers",
       ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
