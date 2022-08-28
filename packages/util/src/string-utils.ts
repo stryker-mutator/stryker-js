@@ -55,5 +55,5 @@ export function escapeRegExp(input: string): string {
  * Normalizes relative or absolute file names to be in posix format (forward slashes '/')
  */
 export function normalizeFileName(fileName: string): string {
-  return fileName.replace(/\/|\\/g, '/');
+  return fileName.replace(/\\/g, '/');
 }

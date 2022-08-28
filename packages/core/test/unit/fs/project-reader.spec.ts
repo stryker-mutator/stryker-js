@@ -2,7 +2,7 @@ import path from 'path';
 
 import { MutateDescription, MutationRange } from '@stryker-mutator/api/core';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { I } from '@stryker-mutator/util';
+import { I, normalizeFileName } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -467,7 +467,10 @@ describe(ProjectReader.name, () => {
   function stubFileSystem(dirEntry: DirectoryEntry, fullName = process.cwd()) {
     if (typeof dirEntry === 'string') {
       fsMock.readFile.withArgs(fullName).resolves(dirEntry);
-      fsMock.readFile.withArgs(path.relative(process.cwd(), fullName)).resolves(dirEntry);
+      const relativeName = path.relative(process.cwd(), fullName);
+      // Make sure both forward slash and backslashes are stubbed on windows os's
+      fsMock.readFile.withArgs(relativeName).resolves(dirEntry);
+      fsMock.readFile.withArgs(normalizeFileName(relativeName)).resolves(dirEntry);
     } else {
       fsMock.readdir
         .withArgs(fullName, sinon.match.object)
