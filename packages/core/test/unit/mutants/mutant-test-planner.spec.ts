@@ -411,6 +411,23 @@ describe(MutantTestPlanner.name, () => {
         .and.calledWithMatch('(disable "warnings.slow" to ignore this warning)');
     });
 
+    it('should warn when 100% of the mutants are static', async () => {
+      // Arrange
+      testInjector.options.ignoreStatic = false;
+      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
+      testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
+      testCoverage.hasCoverage = true;
+      arrangeStaticCoverage(1, 2);
+
+      // Act
+      await act(mutants);
+
+      // Assert
+      expect(testInjector.logger.warn).calledWithMatch(
+        'Detected 2 static mutants (100% of total) that are estimated to take 100% of the time running the tests!'
+      );
+    });
+
     it('should not warn when ignore static is enabled', async () => {
       // Arrange
       testInjector.options.ignoreStatic = true;
@@ -468,7 +485,7 @@ describe(MutantTestPlanner.name, () => {
       expect(testInjector.logger.warn).not.called;
     });
 
-    it('should not warn when the performance impact of a static mutant is estimated to be twice that of other mutants', async () => {
+    it('should not warn when the performance impact of a static mutant is not estimated to be twice that of other mutants', async () => {
       // Arrange
       const mutants = [
         factory.mutant({ id: '1' }),
@@ -477,24 +494,23 @@ describe(MutantTestPlanner.name, () => {
         factory.mutant({ id: '4' }), // static
         factory.mutant({ id: '5' }), // static
         factory.mutant({ id: '6' }), // static
-        factory.mutant({ id: '7' }), // static
-        factory.mutant({ id: '8' }),
-        factory.mutant({ id: '9' }),
-        factory.mutant({ id: '10' }),
       ];
       testCoverage.addTest(
-        factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
-        factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-        factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-        factory.successTestResult({ id: 'spec4', timeSpentMs: 9 })
+        factory.successTestResult({ id: 'spec1', timeSpentMs: 1 }),
+        factory.successTestResult({ id: 'spec2', timeSpentMs: 3 }),
+        factory.successTestResult({ id: 'spec3', timeSpentMs: 0.1 }),
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 7 })
       );
-      arrangeStaticCoverage(4, 5, 6, 7);
-      testCoverage.addCoverage(1, ['spec1']);
-      testCoverage.addCoverage(2, ['spec2']);
-      testCoverage.addCoverage(10, ['spec2']);
+      arrangeStaticCoverage(4, 5, 6);
+      testCoverage.addCoverage(1, ['spec2', 'spec1']);
+      testCoverage.addCoverage(2, ['spec2', 'spec4']);
+      testCoverage.addCoverage(3, ['spec2']);
+
       testCoverage.addCoverage(3, ['spec3']);
       testCoverage.addCoverage(8, ['spec3']);
       testCoverage.addCoverage(9, ['spec3']);
+      // static = 11.1
+      // runtime = 5.6*2=11.3;
 
       // Act
       await act(mutants);

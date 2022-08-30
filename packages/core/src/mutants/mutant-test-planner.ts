@@ -170,20 +170,22 @@ export class MutantTestPlanner {
   private warnAboutSlow(mutantPlans: readonly MutantTestPlan[]) {
     if (!this.options.ignoreStatic && objectUtils.isWarningEnabled('slow', this.options.warnings)) {
       // Only warn when the estimated time to run all static mutants exceeds 40%
-      // ... and when the average performance impact of a static mutant is estimated to be twice that of a non-static mutant
+      // ... and when the average performance impact of a static mutant is estimated to be twice that (or more) of a non-static mutant
       const ABSOLUTE_CUT_OFF_PERUNAGE = 0.4;
       const RELATIVE_CUT_OFF_FACTOR = 2;
+      const zeroIfNaN = (n: number) => (isNaN(n) ? 0 : n);
       const runPlans = mutantPlans.filter(isRunPlan);
       const staticRunPlans = runPlans.filter(({ mutant }) => mutant.static);
+      const runTimeRunPlans = runPlans.filter(({ mutant }) => !mutant.static);
       const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
-      const estimatedTimeForRunTimeMutants = runPlans.filter(({ mutant }) => !mutant.static).reduce((acc, { netTime }) => acc + netTime, 0);
+      const estimatedTimeForRunTimeMutants = runTimeRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
       const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
+      const avgTimeForAStaticMutant = zeroIfNaN(estimatedTimeForStaticMutants / staticRunPlans.length);
+      const avgTimeForARunTimeMutant = zeroIfNaN(estimatedTimeForRunTimeMutants / runTimeRunPlans.length);
       const relativeTimeForStaticMutants = estimatedTimeForStaticMutants / estimatedTotalTime;
-      const relativeNumberOfStaticMutants = staticRunPlans.length / runPlans.length;
-      if (
-        relativeNumberOfStaticMutants * RELATIVE_CUT_OFF_FACTOR < relativeTimeForStaticMutants &&
-        relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE
-      ) {
+      const absoluteCondition = relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE;
+      const relativeCondition = avgTimeForAStaticMutant >= RELATIVE_CUT_OFF_FACTOR * avgTimeForARunTimeMutant;
+      if (relativeCondition && absoluteCondition) {
         const percentage = (perunage: number) => Math.round(perunage * 100);
         this.logger.warn(
           `Detected ${staticRunPlans.length} static mutants (${percentage(
