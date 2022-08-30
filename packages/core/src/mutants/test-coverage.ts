@@ -35,6 +35,8 @@ export class TestCoverage {
   }
 
   public get hasCoverage(): boolean {
+    // Since static coverage should always be reported when coverage analysis succeeded (albeit an empty object),
+    // we can use that to determine if there is any coverage at all
     return !!this.#staticCoverage;
   }
 

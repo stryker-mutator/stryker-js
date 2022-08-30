@@ -42,25 +42,28 @@ describe('incremental', () => {
     withFullTestResults: 4,
     // We know which test files are changed and assume each test in that file changed
     withoutTestLocations: 2,
-    // No clue which tests were updated 🤷‍♀️
+    // Don't know from which test files the tests originated
     withoutTestFiles: 6,
+    // No test coverage info whatsoever
+    withoutTestCoverage: 7,
   });
 
   /**
-   * @type {Array<[string, number, import('@stryker-mutator/api/core').PartialStrykerOptions?]>}
+   * @type {Array<[string, number, import('@stryker-mutator/api/core').PartialStrykerOptions?, boolean?]>}
    */
   const tests = [
     ['cucumber', reuseCountExpectation.withFullTestResults],
     ['jest', reuseCountExpectation.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'] }],
 
-    ['command', reuseCountExpectation.withoutTestLocations, { commandRunner: { command: 'npm run test:mocha' } }],
     ['mocha', reuseCountExpectation.withoutTestLocations],
 
     ['karma', reuseCountExpectation.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
     ['jasmine', reuseCountExpectation.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
+
+    ['command', reuseCountExpectation.withoutTestCoverage, { commandRunner: { command: 'npm run test:mocha' } }],
   ];
-  tests.forEach(([testRunner, expectedReuseCount, additionalOptions]) => {
-    it(`should reuse expected mutant results for ${testRunner}`, async () => {
+  tests.forEach(([testRunner, expectedReuseCount, additionalOptions, focus]) => {
+    (focus ? it.only : it)(`should reuse expected mutant results for ${testRunner}`, async () => {
       // Arrange;
       strykerOptions.testRunner = testRunner;
       if (testRunner !== 'command') {

@@ -5,8 +5,10 @@ Array [
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": undefined,
-      "killedBy": undefined,
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
       "location": Object {
         "end": Object {
           "column": 1,
@@ -19,16 +21,19 @@ Array [
       },
       "mutatorName": "BlockStatement",
       "replacement": "{}",
-      "static": undefined,
-      "status": undefined,
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": undefined,
-      "killedBy": undefined,
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
       "location": Object {
         "end": Object {
           "column": 19,
@@ -41,16 +46,19 @@ Array [
       },
       "mutatorName": "StringLiteral",
       "replacement": "\`\`",
-      "static": undefined,
-      "status": undefined,
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": undefined,
-      "killedBy": undefined,
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
       "location": Object {
         "end": Object {
           "column": 15,
@@ -63,10 +71,11 @@ Array [
       },
       "mutatorName": "StringLiteral",
       "replacement": "\\"\\"",
-      "static": undefined,
-      "status": undefined,
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
@@ -203,8 +212,10 @@ Array [
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": undefined,
-      "killedBy": undefined,
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
       "location": Object {
         "end": Object {
           "column": 1,
@@ -217,16 +228,19 @@ Array [
       },
       "mutatorName": "BlockStatement",
       "replacement": "{}",
-      "static": undefined,
-      "status": undefined,
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": undefined,
-      "killedBy": undefined,
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
       "location": Object {
         "end": Object {
           "column": 14,
@@ -239,10 +253,11 @@ Array [
       },
       "mutatorName": "ArithmeticOperator",
       "replacement": "a / b",
-      "static": undefined,
-      "status": undefined,
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/math.js",

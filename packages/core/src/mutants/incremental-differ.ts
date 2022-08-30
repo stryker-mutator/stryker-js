@@ -70,14 +70,14 @@ export class IncrementalDiffer {
     this.mutantStatisticsCollector = mutantStatisticsCollector;
     this.testStatisticsCollector = testStatisticsCollector;
 
-    // Collect what we can reuse, while correcting for diff locations
+    // Collect what we can reuse, while correcting for diff in the locations
     const reusableMutantsByKey = collectReusableMutantsByKey(this.logger);
     const { byId: oldTestsById, byKey: oldTestInfoByKey } = collectReusableTestInfo(this.logger);
     const { oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey, oldKilledByMutantKey: oldKilledTestKeysByMutantKey } =
       collectOldKilledAndCoverageMatrix();
     const oldTestKeys = new Set([...oldTestsById.values()].map(({ key }) => key));
 
-    // Create helpers to more easily get test information
+    // Create a dictionary to more easily get test information
     const testInfoByKey = collectCurrentTestInfo();
 
     // Mark which tests are added
@@ -120,9 +120,8 @@ export class IncrementalDiffer {
         const oldMutant = reusableMutantsByKey.get(mutantKey);
         if (oldMutant) {
           const coveringTests = testCoverage.forMutant(mutant.id);
-          const testsDiff = diffTestCoverage(oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
           const killedByTestKeys = oldKilledTestKeysByMutantKey.get(mutantKey);
-          if (mutantCanBeReused(oldMutant, testsDiff, killedByTestKeys)) {
+          if (mutantCanBeReused(oldMutant, mutantKey, coveringTests, killedByTestKeys)) {
             reusedMutantCount++;
             const { status, statusReason, testsCompleted } = oldMutant;
             return {
@@ -151,7 +150,7 @@ export class IncrementalDiffer {
       // - return a || b;
       // + return a && b;
       // ```
-      // The conditional expression mutator here decides to _not_ b to `false` the second time around. (even though the text of "b" itself didn't change)
+      // The conditional expression mutator here decides to _not_ mutate b to `false` the second time around. (even though the text of "b" itself didn't change)
       // Not doing this additional check would result in a sticky mutant that is never removed
       if (!currentMutantKeys.has(mutantKey) && !this.isInMutatedScope(oldResult.relativeFileName, oldResult)) {
         const coverage = oldCoverageTestKeysByMutantKey.get(mutantKey) ?? [];
@@ -172,9 +171,10 @@ export class IncrementalDiffer {
     }
 
     if (this.logger.isInfoEnabled()) {
+      const testInfo = testCoverage.hasCoverage ? `\n\tTests:\t\t${testStatisticsCollector.createTotalsReport()}` : '';
       this.logger.info(
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector.createTotalsReport()}` +
-          `\n\tTests:\t\t${testStatisticsCollector.createTotalsReport()}` +
+          testInfo +
           `\n\tResult:\t\t${chalk.yellowBright(reusedMutantCount)} of ${currentMutants.length} mutant result(s) are reused.`
       );
     }
@@ -254,8 +254,11 @@ export class IncrementalDiffer {
       const oldKilledByMutantKey = new Map<string, Set<string>>();
 
       for (const [key, mutant] of reusableMutantsByKey) {
-        oldCoverageByMutantKey.set(key, new Set(mutant.coveredBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty)));
-        oldKilledByMutantKey.set(key, new Set(mutant.killedBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty)));
+        const killedRow = new Set(mutant.killedBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty));
+        const coverageRow = new Set(mutant.coveredBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty));
+        killedRow.forEach((killed) => coverageRow.add(killed));
+        oldCoverageByMutantKey.set(key, coverageRow);
+        oldKilledByMutantKey.set(key, killedRow);
       }
       return { oldCoverageByMutantKey, oldKilledByMutantKey };
     }
@@ -270,6 +273,41 @@ export class IncrementalDiffer {
       }
 
       return byTestKey;
+    }
+
+    function mutantCanBeReused(
+      oldMutant: schema.MutantResult,
+      mutantKey: string,
+      coveringTests: ReadonlySet<TestResult> | undefined,
+      oldKillingTests: Set<string> | undefined
+    ): boolean {
+      if (!testCoverage.hasCoverage) {
+        // This is the best we can do when the test runner didn't report coverage.
+        // We assume that all mutant test results can be reused,
+        // End users can use --force to force retesting of certain mutants
+        return true;
+      }
+
+      const testsDiff = diffTestCoverage(oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
+      if (oldMutant.status === MutantStatus.Killed) {
+        if (oldKillingTests) {
+          for (const killingTest of oldKillingTests) {
+            if (testsDiff.get(killingTest) === 'same') {
+              return true;
+            }
+          }
+        }
+        // Killing tests has changed or no longer exists
+        return false;
+      }
+      for (const action of testsDiff.values()) {
+        if (action === 'added') {
+          // A non-killed mutant got a new test, we need to run it
+          return false;
+        }
+      }
+      // A non-killed mutant did not get new tests, no need to rerun it
+      return true;
     }
   }
 }
@@ -437,28 +475,6 @@ function diffTestCoverage(oldTestKeys: Set<string> | undefined, newTests: Readon
     }
   }
   return result;
-}
-
-function mutantCanBeReused(oldMutant: schema.MutantResult, testsDiff: Map<string, DiffAction>, oldKillingTests: Set<string> | undefined): boolean {
-  if (oldMutant.status === MutantStatus.Killed) {
-    if (oldKillingTests) {
-      for (const killingTest of oldKillingTests) {
-        if (testsDiff.get(killingTest) === 'same') {
-          return true;
-        }
-      }
-    }
-    // Killing tests has changed or no longer exists
-    return false;
-  }
-  for (const action of testsDiff.values()) {
-    if (action === 'added') {
-      // A non-killed mutant got a new test, we need to run it
-      return false;
-    }
-  }
-  // A non-killed mutant did not get new tests, no need to rerun it
-  return true;
 }
 
 /**

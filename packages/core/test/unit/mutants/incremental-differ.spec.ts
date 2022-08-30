@@ -127,6 +127,13 @@ class ScenarioBuilder {
     return this;
   }
 
+  public withoutTestCoverage(): this {
+    Object.keys(this.incrementalTestFiles).forEach((testFile) => delete this.incrementalTestFiles[testFile]);
+    this.testCoverage.clear();
+    this.testCoverage.hasCoverage = false;
+    return this;
+  }
+
   public withTestFile(): this {
     this.currentFiles.set(testAdd, testAddContent);
     this.incrementalTestFiles[testAdd].source = testAddContent;
@@ -446,6 +453,11 @@ describe(IncrementalDiffer.name, () => {
       expect(actualDiff[0].status).undefined;
     });
 
+    it('should reuse the status when there is no test coverage', () => {
+      const actualDiff = new ScenarioBuilder().withMathProjectExample().withoutTestCoverage().act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
+
     it('should not copy the status if the mutant came from a different mutator', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentMutator('max-replacement');
       const actualDiff = scenario.act();
@@ -512,6 +524,20 @@ describe(IncrementalDiffer.name, () => {
           `\n\tResult:\t\t${chalk.yellowBright(0)} of 1 mutant result(s) are reused.`
       );
     });
+
+    it('should not log test diff when there is no test coverage', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withoutTestCoverage();
+      testInjector.logger.isInfoEnabled.returns(true);
+      scenario.act();
+      const { mutantStatisticsCollector } = scenario.sut!;
+
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        `Incremental report:\n\tMutants:\t${mutantStatisticsCollector!.createTotalsReport()}` +
+          `\n\tResult:\t\t${chalk.yellowBright(1)} of 1 mutant result(s) are reused.`
+      );
+    });
+
     it('should log a detailed incremental report', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
       testInjector.logger.isDebugEnabled.returns(true);
