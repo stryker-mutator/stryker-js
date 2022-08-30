@@ -5,7 +5,7 @@
   "devDependencies": {
     "@types/chai": "4.3.1",
     "@types/chai-as-promised": "7.1.5",
-    "@types/glob": "7.2.0",
+    "@types/glob": "8.0.0",
     "@types/istanbul": "0.4.30",
     "@types/karma": "6.3.3",
     "@types/lodash": "4.14.184",
