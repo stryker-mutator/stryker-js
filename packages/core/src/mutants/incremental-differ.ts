@@ -287,6 +287,10 @@ export class IncrementalDiffer {
         // End users can use --force to force retesting of certain mutants
         return true;
       }
+      if (oldMutant.status === MutantStatus.Ignored) {
+        // Was previously ignored, but not anymore, we need to run it now
+        return false;
+      }
 
       const testsDiff = diffTestCoverage(oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
       if (oldMutant.status === MutantStatus.Killed) {

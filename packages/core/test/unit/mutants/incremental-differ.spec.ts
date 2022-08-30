@@ -404,6 +404,15 @@ describe(IncrementalDiffer.name, () => {
       expect(actualMutant.status).undefined;
     });
 
+    it('should not reuse when the mutant was ignored', () => {
+      // Arrange
+      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: MutantStatus.Ignored }).act();
+
+      // Assert
+      const actualMutant = actualDiff[0];
+      expect(actualMutant.status).undefined;
+    });
+
     it('should normalize line endings when comparing diffs', () => {
       const actualDiff = new ScenarioBuilder()
         .withMathProjectExample()
