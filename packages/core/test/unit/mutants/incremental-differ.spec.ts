@@ -98,7 +98,7 @@ class ScenarioBuilder {
   public testCoverage = new TestCoverageTestDouble();
   public sut?: IncrementalDiffer;
 
-  public withMathProjectExample({ mutantState: mutantStatus = MutantStatus.Killed } = {}): this {
+  public withMathProjectExample({ mutantState: mutantStatus = MutantStatus.Killed, isStatic = false } = {}): this {
     this.mutants.push(
       createMutant({ id: this.mutantId, fileName: srcAdd, replacement: '-', mutatorName: 'min-replacement', location: loc(1, 11, 1, 12) })
     );
@@ -106,7 +106,7 @@ class ScenarioBuilder {
       mutants: [
         factory.mutationTestReportSchemaMutantResult({
           id: 'mut-1',
-          coveredBy: [this.oldSpecId],
+          coveredBy: isStatic ? undefined : [this.oldSpecId],
           killedBy: [this.oldSpecId],
           replacement: '-',
           mutatorName: 'min-replacement',
@@ -123,7 +123,13 @@ class ScenarioBuilder {
     });
     this.currentFiles.set(srcAdd, srcAddContent);
     this.testCoverage.addTest(factory.testResult({ id: this.newTestId, fileName: testAdd, name: 'add(2, 0) = 2' }));
-    this.testCoverage.addCoverage(this.mutantId, [this.newTestId]);
+
+    if (isStatic) {
+      this.testCoverage.hasCoverage = true;
+      this.testCoverage.staticCoverage[this.mutantId] = true;
+    } else {
+      this.testCoverage.addCoverage(this.mutantId, [this.newTestId]);
+    }
     return this;
   }
 
@@ -240,8 +246,7 @@ class ScenarioBuilder {
       factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) })
     );
     if (isKillingTest) {
-      this.incrementalFiles[srcAdd].mutants[0].killedBy = ['2'];
-      this.incrementalFiles[srcAdd].mutants[0].coveredBy = ['2'];
+      this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec2'];
     }
     if (this.incrementalTestFiles[testAdd].source) {
       this.incrementalTestFiles[testAdd].source = testAddContentTwoTests;
@@ -681,6 +686,11 @@ describe(IncrementalDiffer.name, () => {
         .withSecondTestInIncrementalReport({ isKillingTest: true })
         .act();
       expect(actualDiff[0].status).undefined;
+    });
+
+    it('should identify that a "Killed" state for a static mutant (no covering tests) can be reused when the killing test didn\'t change', () => {
+      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: MutantStatus.Killed, isStatic: true }).act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 
     it('should collect an added test', () => {

@@ -44,12 +44,12 @@ export abstract class ProgressKeeper implements Reporter {
     if (ticks !== undefined) {
       this.progress.tested++;
       this.progress.ticks += this.ticksByMutantId.get(result.id) ?? 0;
-    }
-    if (result.status === MutantStatus.Survived) {
-      this.progress.survived++;
-    }
-    if (result.status === MutantStatus.Timeout) {
-      this.progress.timedOut++;
+      if (result.status === MutantStatus.Survived) {
+        this.progress.survived++;
+      }
+      if (result.status === MutantStatus.Timeout) {
+        this.progress.timedOut++;
+      }
     }
     return ticks ?? 0;
   }

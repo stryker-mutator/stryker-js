@@ -73,9 +73,14 @@ export class IncrementalDiffer {
     // Collect what we can reuse, while correcting for diff in the locations
     const reusableMutantsByKey = collectReusableMutantsByKey(this.logger);
     const { byId: oldTestsById, byKey: oldTestInfoByKey } = collectReusableTestInfo(this.logger);
+
+    // Collect some helper maps and sets
     const { oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey, oldKilledByMutantKey: oldKilledTestKeysByMutantKey } =
       collectOldKilledAndCoverageMatrix();
     const oldTestKeys = new Set([...oldTestsById.values()].map(({ key }) => key));
+    const newTestKeys = new Set(
+      [...testCoverage.testsById].map(([, test]) => testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName)))
+    );
 
     // Create a dictionary to more easily get test information
     const testInfoByKey = collectCurrentTestInfo();
@@ -112,7 +117,7 @@ export class IncrementalDiffer {
     // Done with preparations, time to map over the mutants
     let reusedMutantCount = 0;
     const currentMutantKeys = new Set<string>();
-    const result = currentMutants.map((mutant) => {
+    const mutants = currentMutants.map((mutant) => {
       const relativeFileName = toRelativeNormalizedFileName(mutant.fileName);
       const mutantKey = mutantToIdentifyingKey(mutant, relativeFileName);
       currentMutantKeys.add(mutantKey);
@@ -121,7 +126,7 @@ export class IncrementalDiffer {
         if (oldMutant) {
           const coveringTests = testCoverage.forMutant(mutant.id);
           const killedByTestKeys = oldKilledTestKeysByMutantKey.get(mutantKey);
-          if (mutantCanBeReused(oldMutant, mutantKey, coveringTests, killedByTestKeys)) {
+          if (mutantCanBeReused(mutant, oldMutant, mutantKey, coveringTests, killedByTestKeys)) {
             reusedMutantCount++;
             const { status, statusReason, testsCompleted } = oldMutant;
             return {
@@ -165,7 +170,7 @@ export class IncrementalDiffer {
           coveredBy,
           killedBy,
         };
-        result.push(reusedMutant);
+        mutants.push(reusedMutant);
         testCoverage.addCoverage(reusedMutant.id, coveredBy);
       }
     }
@@ -185,7 +190,7 @@ export class IncrementalDiffer {
       const detailedTestsSummary = `${lineSeparator}${testStatisticsCollector.createDetailedReport().join(lineSeparator) || noChanges}`;
       this.logger.debug(`Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${detailedTestsSummary}`);
     }
-    return result;
+    return mutants;
 
     function testKeysToId(testKeys: Iterable<string> | undefined) {
       return [...(testKeys ?? [])]
@@ -220,7 +225,7 @@ export class IncrementalDiffer {
 
     function collectReusableTestInfo(log: Logger) {
       const byId = new Map<string, { relativeFileName: string; test: TestDefinition; key: string }>();
-      const byKey = new Map<string, { relativeFileName: string; test: TestDefinition; key: string }>();
+      const byKey = new Map<string, TestInfo>();
 
       Object.entries(testFiles ?? {}).forEach(([fileName, oldTestFile]) => {
         const relativeFileName = toRelativeNormalizedFileName(fileName);
@@ -276,6 +281,7 @@ export class IncrementalDiffer {
     }
 
     function mutantCanBeReused(
+      mutant: Mutant,
       oldMutant: schema.MutantResult,
       mutantKey: string,
       coveringTests: ReadonlySet<TestResult> | undefined,
@@ -292,7 +298,7 @@ export class IncrementalDiffer {
         return false;
       }
 
-      const testsDiff = diffTestCoverage(oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
+      const testsDiff = diffTestCoverage(mutant.id, oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
       if (oldMutant.status === MutantStatus.Killed) {
         if (oldKillingTests) {
           for (const killingTest of oldKillingTests) {
@@ -312,6 +318,37 @@ export class IncrementalDiffer {
       }
       // A non-killed mutant did not get new tests, no need to rerun it
       return true;
+    }
+
+    /**
+     * Determines if there is a diff between old test coverage and new test coverage.
+     */
+    function diffTestCoverage(
+      mutantId: string,
+      oldCoveringTestKeys: Set<string> | undefined,
+      newCoveringTests: ReadonlySet<TestResult> | undefined
+    ): Map<string, DiffAction> {
+      const result = new Map<string, DiffAction>();
+      if (newCoveringTests) {
+        for (const newTest of newCoveringTests) {
+          const key = testToIdentifyingKey(newTest, toRelativeNormalizedFileName(newTest.fileName));
+          result.set(key, oldCoveringTestKeys?.has(key) ? 'same' : 'added');
+        }
+      }
+      if (oldCoveringTestKeys) {
+        const isStatic = testCoverage.hasStaticCoverage(mutantId);
+        for (const oldTestKey of oldCoveringTestKeys) {
+          if (!result.has(oldTestKey)) {
+            // Static mutants might not have covering tests, but the test might still exist
+            if (isStatic && newTestKeys.has(oldTestKey)) {
+              result.set(oldTestKey, 'same');
+            } else {
+              result.set(oldTestKey, 'removed');
+            }
+          }
+        }
+      }
+      return result;
     }
   }
 }
@@ -459,27 +496,13 @@ function negate({ line, column }: Position): Position {
   return { line: -1 * line, column: -1 * column };
 }
 
-type DiffAction = DiffChange | 'same';
-/**
- * Determines if there is a diff between old test coverage and new test coverage.
- */
-function diffTestCoverage(oldTestKeys: Set<string> | undefined, newTests: ReadonlySet<TestResult> | undefined): Map<string, DiffAction> {
-  const result = new Map<string, DiffAction>();
-  if (newTests) {
-    for (const newTest of newTests) {
-      const key = testToIdentifyingKey(newTest, toRelativeNormalizedFileName(newTest.fileName));
-      result.set(key, oldTestKeys?.has(key) ? 'same' : 'added');
-    }
-  }
-  if (oldTestKeys) {
-    for (const oldTestKey of oldTestKeys) {
-      if (!result.has(oldTestKey)) {
-        result.set(oldTestKey, 'removed');
-      }
-    }
-  }
-  return result;
+interface TestInfo {
+  relativeFileName: string;
+  test: TestDefinition;
+  key: string;
 }
+
+type DiffAction = DiffChange | 'same';
 
 /**
  * Sets the end position of each test to the start position of the next test.

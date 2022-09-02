@@ -110,7 +110,7 @@ export class ClearTextReporter implements Reporter {
   }
 
   private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {
-    logImplementation(`#${result.id}. [${MutantStatus[result.status]}] ${result.mutatorName}`);
+    logImplementation(`[${MutantStatus[result.status]}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.fileName, result.location.start));
 
     result
