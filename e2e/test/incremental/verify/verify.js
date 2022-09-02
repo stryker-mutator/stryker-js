@@ -43,9 +43,7 @@ describe('incremental', () => {
     // We know which test files are changed and assume each test in that file changed
     withoutTestLocations: 2,
     // Don't know from which test files the tests originated
-    withoutTestFiles: 6,
-    // No test coverage info whatsoever
-    withoutTestCoverage: 7,
+    withoutTestFiles: 7,
   });
 
   /**
@@ -59,8 +57,7 @@ describe('incremental', () => {
 
     ['karma', reuseCountExpectation.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
     ['jasmine', reuseCountExpectation.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
-
-    ['command', reuseCountExpectation.withoutTestCoverage, { commandRunner: { command: 'npm run test:mocha' } }],
+    ['command', reuseCountExpectation.withoutTestFiles, { commandRunner: { command: 'npm run test:mocha' } }],
   ];
   tests.forEach(([testRunner, expectedReuseCount, additionalOptions, focus]) => {
     (focus ? it.only : it)(`should reuse expected mutant results for ${testRunner}`, async () => {

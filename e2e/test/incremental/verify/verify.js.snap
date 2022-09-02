@@ -687,7 +687,9 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
-      "killedBy": undefined,
+      "killedBy": Array [
+        "spec1",
+      ],
       "location": Object {
         "end": Object {
           "column": 15,
@@ -701,9 +703,10 @@ Array [
       "mutatorName": "StringLiteral",
       "replacement": "\\"\\"",
       "static": true,
-      "status": undefined,
+      "status": "Killed",
+      "testsCompleted": 2,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
@@ -1331,7 +1334,9 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [],
-      "killedBy": undefined,
+      "killedBy": Array [
+        "spec1",
+      ],
       "location": Object {
         "end": Object {
           "column": 15,
@@ -1345,9 +1350,10 @@ Array [
       "mutatorName": "StringLiteral",
       "replacement": "\\"\\"",
       "static": true,
-      "status": undefined,
+      "status": "Killed",
+      "testsCompleted": 2,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
