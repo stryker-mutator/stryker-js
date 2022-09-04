@@ -92,7 +92,7 @@ export class TypescriptChecker implements Checker {
             // idle, never clear the screen
           },
           getModifiedTime: (fileName) => {
-            return this.fs.getFile(fileName)!.modifiedTime;
+            return this.fs.getFile(fileName)?.modifiedTime;
           },
           watchDirectory: (): ts.FileWatcher => {
             // this is used to see if new files are added to a directory. Can safely be ignored for mutation testing.
