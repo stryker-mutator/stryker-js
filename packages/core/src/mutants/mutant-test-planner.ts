@@ -1,24 +1,20 @@
-import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
-import {
-  MutantRunPlan,
-  MutantTestPlan,
-  PlanKind,
-  Mutant,
-  CoveragePerTestId,
-  MutantCoverage,
-  StrykerOptions,
-  MutantStatus,
-  MutantEarlyResultPlan,
-} from '@stryker-mutator/api/core';
+import path from 'path';
+
+import { TestResult } from '@stryker-mutator/api/test-runner';
+import { MutantRunPlan, MutantTestPlan, PlanKind, Mutant, StrykerOptions, MutantStatus, MutantEarlyResultPlan } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { I } from '@stryker-mutator/util';
+import { I, notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { Sandbox } from '../sandbox/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { optionsPath } from '../utils/index.js';
+import { Project } from '../fs/project.js';
+
+import { IncrementalDiffer, toRelativeNormalizedFileName } from './incremental-differ.js';
+import { TestCoverage } from './test-coverage.js';
 
 /**
  * The factor by which hit count from dry run is multiplied to calculate the hit limit for a mutant.
@@ -35,46 +31,53 @@ const HIT_LIMIT_FACTOR = 100;
  */
 export class MutantTestPlanner {
   public static readonly inject = tokens(
-    coreTokens.dryRunResult,
+    coreTokens.testCoverage,
+    coreTokens.incrementalDiffer,
     coreTokens.reporter,
     coreTokens.sandbox,
+    coreTokens.project,
     coreTokens.timeOverheadMS,
     commonTokens.options,
     commonTokens.logger
   );
-  private readonly testsByMutantId: Map<string, Set<TestResult>>;
-  private readonly hitsByMutantId: Map<string, number>;
   private readonly timeSpentAllTests: number;
 
   constructor(
-    private readonly dryRunResult: CompleteDryRunResult,
+    private readonly testCoverage: I<TestCoverage>,
+    private readonly incrementalDiffer: IncrementalDiffer,
     private readonly reporter: StrictReporter,
     private readonly sandbox: I<Sandbox>,
+    private readonly project: I<Project>,
     private readonly timeOverheadMS: number,
     private readonly options: StrykerOptions,
     private readonly logger: Logger
   ) {
-    this.testsByMutantId = this.findTestsByMutant(this.dryRunResult.mutantCoverage?.perTest, dryRunResult.tests);
-    this.hitsByMutantId = findHitsByMutantId(this.dryRunResult.mutantCoverage);
-    this.timeSpentAllTests = calculateTotalTime(this.dryRunResult.tests);
+    this.timeSpentAllTests = calculateTotalTime(this.testCoverage.testsById.values());
   }
 
-  public makePlan(mutants: readonly Mutant[]): readonly MutantTestPlan[] {
-    const mutantPlans = mutants.map((mutant) => this.planMutant(mutant));
+  public async makePlan(mutants: readonly Mutant[]): Promise<readonly MutantTestPlan[]> {
+    const mutantsDiff = await this.incrementalDiff(mutants);
+    const mutantPlans = mutantsDiff.map((mutant) => this.planMutant(mutant));
     this.reporter.onMutationTestingPlanReady({ mutantPlans });
     this.warnAboutSlow(mutantPlans);
     return mutantPlans;
   }
 
   private planMutant(mutant: Mutant): MutantTestPlan {
-    // If mutant was already ignored, pass that along
-    const isStatic = this.dryRunResult.mutantCoverage && this.dryRunResult.mutantCoverage.static[mutant.id] > 0;
+    const isStatic = this.testCoverage.hasStaticCoverage(mutant.id);
+
     if (mutant.status) {
       // If this mutant was already ignored, early result
-      return this.createMutantEarlyResultPlan(mutant, { isStatic, status: mutant.status, statusReason: mutant.statusReason });
-    } else if (this.dryRunResult.mutantCoverage) {
+      return this.createMutantEarlyResultPlan(mutant, {
+        isStatic,
+        coveredBy: mutant.coveredBy,
+        killedBy: mutant.killedBy,
+        status: mutant.status,
+        statusReason: mutant.statusReason,
+      });
+    } else if (this.testCoverage.hasCoverage) {
       // If there was coverage information (coverageAnalysis not "off")
-      const tests = this.testsByMutantId.get(mutant.id) ?? [];
+      const tests = this.testCoverage.testsByMutantId.get(mutant.id) ?? [];
       const coveredBy = toTestIds(tests);
       if (!isStatic || (this.options.ignoreStatic && coveredBy.length)) {
         // If not static, or it was "hybrid" (both static and perTest coverage) and ignoreStatic is on.
@@ -106,7 +109,8 @@ export class MutantTestPlanner {
       status,
       statusReason,
       coveredBy,
-    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[] }
+      killedBy,
+    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[]; killedBy?: string[] }
   ): MutantEarlyResultPlan {
     return {
       plan: PlanKind.EarlyResult,
@@ -116,6 +120,7 @@ export class MutantTestPlanner {
         static: isStatic,
         statusReason,
         coveredBy,
+        killedBy,
       },
     };
   }
@@ -131,7 +136,7 @@ export class MutantTestPlanner {
   ): MutantRunPlan {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
     const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
-    const hitCount = this.hitsByMutantId.get(mutant.id);
+    const hitCount = this.testCoverage.hitsByMutantId.get(mutant.id);
     const hitLimit = hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
 
     return {
@@ -161,49 +166,26 @@ export class MutantTestPlanner {
       },
     };
   }
-  private findTestsByMutant(coveragePerTest: CoveragePerTestId | undefined, allTests: TestResult[]) {
-    const testsByMutantId = new Map<string, Set<TestResult>>();
-    const testsById = allTests.reduce((acc, test) => acc.set(test.id, test), new Map<string, TestResult>());
-    coveragePerTest &&
-      Object.entries(coveragePerTest).forEach(([testId, mutantCoverage]) => {
-        const foundTest = testsById.get(testId);
-        if (!foundTest) {
-          this.logger.warn(
-            `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.`
-          );
-          return;
-        }
-        Object.entries(mutantCoverage).forEach(([mutantId, count]) => {
-          if (count > 0) {
-            let tests = testsByMutantId.get(mutantId);
-            if (!tests) {
-              tests = new Set();
-              testsByMutantId.set(mutantId, tests);
-            }
-            tests.add(foundTest);
-          }
-        });
-      });
-    return testsByMutantId;
-  }
 
   private warnAboutSlow(mutantPlans: readonly MutantTestPlan[]) {
     if (!this.options.ignoreStatic && objectUtils.isWarningEnabled('slow', this.options.warnings)) {
       // Only warn when the estimated time to run all static mutants exceeds 40%
-      // ... and when the average performance impact of a static mutant is estimated to be twice that of a non-static mutant
+      // ... and when the average performance impact of a static mutant is estimated to be twice that (or more) of a non-static mutant
       const ABSOLUTE_CUT_OFF_PERUNAGE = 0.4;
       const RELATIVE_CUT_OFF_FACTOR = 2;
+      const zeroIfNaN = (n: number) => (isNaN(n) ? 0 : n);
       const runPlans = mutantPlans.filter(isRunPlan);
       const staticRunPlans = runPlans.filter(({ mutant }) => mutant.static);
+      const runTimeRunPlans = runPlans.filter(({ mutant }) => !mutant.static);
       const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
-      const estimatedTimeForRunTimeMutants = runPlans.filter(({ mutant }) => !mutant.static).reduce((acc, { netTime }) => acc + netTime, 0);
+      const estimatedTimeForRunTimeMutants = runTimeRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
       const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
+      const avgTimeForAStaticMutant = zeroIfNaN(estimatedTimeForStaticMutants / staticRunPlans.length);
+      const avgTimeForARunTimeMutant = zeroIfNaN(estimatedTimeForRunTimeMutants / runTimeRunPlans.length);
       const relativeTimeForStaticMutants = estimatedTimeForStaticMutants / estimatedTotalTime;
-      const relativeNumberOfStaticMutants = staticRunPlans.length / runPlans.length;
-      if (
-        relativeNumberOfStaticMutants * RELATIVE_CUT_OFF_FACTOR < relativeTimeForStaticMutants &&
-        relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE
-      ) {
+      const absoluteCondition = relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE;
+      const relativeCondition = avgTimeForAStaticMutant >= RELATIVE_CUT_OFF_FACTOR * avgTimeForARunTimeMutant;
+      if (relativeCondition && absoluteCondition) {
         const percentage = (perunage: number) => Math.round(perunage * 100);
         this.logger.warn(
           `Detected ${staticRunPlans.length} static mutants (${percentage(
@@ -217,6 +199,48 @@ export class MutantTestPlanner {
         );
       }
     }
+  }
+
+  private async incrementalDiff(currentMutants: readonly Mutant[]): Promise<readonly Mutant[]> {
+    const { incrementalReport } = this.project;
+
+    if (incrementalReport) {
+      const currentFiles = await this.readAllOriginalFiles(
+        currentMutants,
+        this.testCoverage.testsById.values(),
+        Object.keys(incrementalReport.files),
+        Object.keys(incrementalReport.testFiles ?? {})
+      );
+      const diffedMutants = this.incrementalDiffer.diff(currentMutants, this.testCoverage, incrementalReport, currentFiles);
+
+      return diffedMutants;
+    }
+    return currentMutants;
+  }
+
+  private async readAllOriginalFiles(
+    ...thingsWithFileNamesOrFileNames: Array<Iterable<string | { fileName?: string }>>
+  ): Promise<Map<string, string>> {
+    const uniqueFileNames = [
+      ...new Set(
+        thingsWithFileNamesOrFileNames
+          .flatMap((container) => [...container].map((thing) => (typeof thing === 'string' ? thing : thing.fileName)))
+          .filter(notEmpty)
+          .map((fileName) => path.resolve(fileName))
+      ),
+    ];
+    const result = await Promise.all(
+      uniqueFileNames.map(async (fileName) => {
+        const originalContent = await this.project.files.get(fileName)?.readOriginal();
+        if (originalContent) {
+          return [toRelativeNormalizedFileName(fileName), originalContent] as const;
+        } else {
+          return undefined;
+        }
+      })
+    );
+
+    return new Map(result.filter(notEmpty));
   }
 }
 
@@ -234,25 +258,6 @@ function toTestIds(testResults: Iterable<TestResult>): string[] {
     result.push(test.id);
   }
   return result;
-}
-
-/**
- * Find the number of hits per mutant. This is the total amount of times the mutant was executed during the dry test run.
- * @param coverageData The coverage data from the initial test run
- * @returns The hits by mutant id
- */
-function findHitsByMutantId(coverageData: MutantCoverage | undefined): Map<string, number> {
-  const hitsByMutant = new Map<string, number>();
-  if (coverageData) {
-    // We don't care about the exact tests in this case, just the total number of hits
-    const coverageResultsPerMutant = [coverageData.static, ...Object.values(coverageData.perTest)];
-    coverageResultsPerMutant.forEach((coverageByMutantId) => {
-      Object.entries(coverageByMutantId).forEach(([mutantId, count]) => {
-        hitsByMutant.set(mutantId, (hitsByMutant.get(mutantId) ?? 0) + count);
-      });
-    });
-  }
-  return hitsByMutant;
 }
 
 export function isEarlyResult(mutantPlan: MutantTestPlan): mutantPlan is MutantEarlyResultPlan {

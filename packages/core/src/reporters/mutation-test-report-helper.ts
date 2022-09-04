@@ -4,19 +4,19 @@ import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, s
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { normalizeFileName, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
+import { I, normalizeFileName, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
-import { CompleteDryRunResult, MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
+import { MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
 import { objectUtils } from '../utils/object-utils.js';
-import { Project } from '../fs/project.js';
+import { Project, FileSystem } from '../fs/index.js';
+import { TestCoverage } from '../mutants/index.js';
 
 const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
   name: 'StrykerJS',
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   version: strykerVersion,
   branding: {
     homepageUrl: 'https://stryker-mutator.io',
@@ -34,7 +34,8 @@ export class MutationTestReportHelper {
     commonTokens.options,
     coreTokens.project,
     commonTokens.logger,
-    coreTokens.dryRunResult,
+    coreTokens.testCoverage,
+    coreTokens.fs,
     coreTokens.requireFromCwd
   );
 
@@ -43,7 +44,8 @@ export class MutationTestReportHelper {
     private readonly options: StrykerOptions,
     private readonly project: Project,
     private readonly log: Logger,
-    private readonly dryRunResult: CompleteDryRunResult,
+    private readonly testCoverage: I<TestCoverage>,
+    private readonly fs: I<FileSystem>,
     private readonly requireFromCwd: typeof requireResolve
   ) {}
 
@@ -111,6 +113,10 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report, metrics);
+    if (this.options.incremental) {
+      await this.fs.mkdir(path.dirname(this.options.incrementalFile), { recursive: true });
+      await this.fs.writeFile(this.options.incrementalFile, JSON.stringify(report, null, 2), 'utf-8');
+    }
     this.determineExitCode(metrics);
   }
 
@@ -137,7 +143,7 @@ export class MutationTestReportHelper {
     // Mocha, jest and karma use test titles as test ids.
     // This can mean a lot of duplicate strings in the json report.
     // Therefore we remap the test ids here to numbers.
-    const testIdMap = new Map(this.dryRunResult.tests.map((test, index) => [test.id, index.toString()]));
+    const testIdMap = new Map([...this.testCoverage.testsById.values()].map((test, index) => [test.id, index.toString()]));
     const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
     const remapTestIds = (ids: string[] | undefined): string[] | undefined => ids?.map(remapTestId);
 
@@ -174,18 +180,18 @@ export class MutationTestReportHelper {
   }
 
   private async toTestFiles(remapTestId: (id: string) => string): Promise<schema.TestFileDefinitionDictionary> {
-    const testResultsByName = new Map<string, schema.TestFile>(
+    const testFilesByName = new Map<string, schema.TestFile>(
       await Promise.all(
-        [...new Set(this.dryRunResult.tests.map(({ fileName }) => fileName))].map(
+        [...new Set([...this.testCoverage.testsById.values()].map(({ fileName }) => fileName))].map(
           async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const
         )
       )
     );
 
-    return this.dryRunResult.tests.reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
+    return [...this.testCoverage.testsById.values()].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
       const reportFileName = normalizeReportFileName(testResult.fileName);
-      const testFile = acc[reportFileName] ?? (acc[reportFileName] = testResultsByName.get(reportFileName)!);
+      const testFile = acc[reportFileName] ?? (acc[reportFileName] = testFilesByName.get(reportFileName)!);
       testFile.tests.push(test);
       return acc;
     }, {});

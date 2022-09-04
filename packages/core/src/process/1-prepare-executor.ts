@@ -56,19 +56,19 @@ export class PrepareExecutor {
     const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
 
     // Resolve input files
-    const inputFileResolverInjector = optionsValidatorInjector
+    const projectFileReaderInjector = optionsValidatorInjector
       .provideValue(commonTokens.options, options)
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
       .provideClass(coreTokens.fs, FileSystem)
       .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
-    const project = await inputFileResolverInjector.injectClass(ProjectReader).read();
+    const project = await projectFileReaderInjector.injectClass(ProjectReader).read();
 
     if (project.isEmpty) {
       throw new ConfigError('No input files found.');
     } else {
       // Done preparing, finish up and return
-      await inputFileResolverInjector.resolve(coreTokens.temporaryDirectory).initialize();
-      return inputFileResolverInjector
+      await projectFileReaderInjector.resolve(coreTokens.temporaryDirectory).initialize();
+      return projectFileReaderInjector
         .provideValue(coreTokens.project, project)
         .provideValue(commonTokens.fileDescriptions, project.fileDescriptions)
         .provideClass(coreTokens.pluginCreator, PluginCreator)

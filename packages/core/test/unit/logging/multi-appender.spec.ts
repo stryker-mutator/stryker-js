@@ -1,7 +1,10 @@
 import { expect } from 'chai';
 import log4js from 'log4js';
 
-import { configure, RuntimeAppender } from '../../../src/cjs/logging/multi-appender.js';
+import { configure } from '../../../src/cjs/logging/multi-appender.js';
+import { RuntimeAppender } from '../../../src/cjs/logging/runtime-appender.js';
+
+import { createLoggingEvent } from './helpers.js';
 
 describe('MultiAppender', () => {
   let sut: RuntimeAppender;
@@ -24,21 +27,9 @@ describe('MultiAppender', () => {
   });
 
   it('should fan out events to all appenders', () => {
-    const loggingEvent: log4js.LoggingEvent = {
-      categoryName: 'category',
-      context: null,
-      data: ['foo data'],
-      level: log4js.levels.DEBUG,
-      pid: 42,
-      serialise() {
-        return JSON.stringify(this);
-      },
-      startTime: new Date(42),
-    };
+    const loggingEvent: log4js.LoggingEvent = createLoggingEvent();
     sut(loggingEvent);
-    expect(fooLogEvents).lengthOf(1);
-    expect(barLogEvents).lengthOf(1);
-    expect(fooLogEvents).contains(loggingEvent);
-    expect(barLogEvents).contains(loggingEvent);
+    expect(fooLogEvents).deep.eq([loggingEvent]);
+    expect(barLogEvents).deep.eq([loggingEvent]);
   });
 });

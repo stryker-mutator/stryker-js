@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, normalizeFileName } from '../../src/index.js';
+import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, normalizeFileName, normalizeLineEndings } from '../../src/index.js';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -14,6 +14,21 @@ describe('stringUtils', () => {
 
     it('should normalize a string with multiple consecutive spaces, tabs and new lines', () => {
       expect(normalizeWhitespaces('foo \t \n bar\n\tbaz')).eq('foo bar baz');
+    });
+  });
+
+  describe(normalizeLineEndings.name, () => {
+    it('should passthrough normal text', () => {
+      expect(normalizeLineEndings('lorum ipsum')).eq('lorum ipsum');
+    });
+    it('should passthrough unix line endings', () => {
+      expect(normalizeLineEndings('lorum\nipsum\n')).eq('lorum\nipsum\n');
+    });
+    it('should passthrough carriage returns', () => {
+      expect(normalizeLineEndings('lorum\ripsum\r')).eq('lorum\ripsum\r');
+    });
+    it('should replace carriage return line feeds', () => {
+      expect(normalizeLineEndings('lorum\r\nipsum\r\n')).eq('lorum\nipsum\n');
     });
   });
 

@@ -36,6 +36,9 @@ describe(OptionsValidator.name, () => {
         inPlace: false,
         ignorePatterns: [],
         ignoreStatic: false,
+        incremental: false,
+        incrementalFile: 'reports/stryker-incremental.json',
+        force: false,
         checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,

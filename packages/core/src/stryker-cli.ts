@@ -74,6 +74,15 @@ export class StrykerCli {
       )
       .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
       .option(
+        '--incremental',
+        "Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run"
+      )
+      .option('--incrementalFile <file>', 'Specify the file to use for incremental mode.')
+      .option(
+        '--force',
+        'Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.'
+      )
+      .option(
         '-m, --mutate <filesToMutate>',
         'A comma separated list of globbing expression used for selecting the files that should be mutated. Example: src/**/*.js,a.js. You can also specify specific lines and columns to mutate by adding :startLine[:startColumn]-endLine[:endColumn]. This will execute all mutants inside that range. It cannot be combined with glob patterns. Example: src/index.js:1:3-1:5',
         list

@@ -188,7 +188,7 @@ describe(ClearTextReporter.name, () => {
         mutant.status = MutantStatus.Killed;
         mutant.killedBy = ['1'];
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Killed] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Killed] Math'));
         expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
         expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
         expect(testInjector.logger.debug).calledWith('Killed by: foo should be bar');
@@ -198,7 +198,7 @@ describe(ClearTextReporter.name, () => {
         mutant.status = MutantStatus.CompileError;
         mutant.statusReason = 'could not call bar of undefined';
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [CompileError] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[CompileError] Math'));
         expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
         expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
         expect(testInjector.logger.debug).calledWith('Error message: could not call bar of undefined');
@@ -207,7 +207,7 @@ describe(ClearTextReporter.name, () => {
       it('should report a NoCoverage mutant to stdout', async () => {
         mutant.status = MutantStatus.NoCoverage;
         act(report);
-        expect(stdoutStub).calledWithMatch(sinon.match('1. [NoCoverage] Math'));
+        expect(stdoutStub).calledWithMatch(sinon.match('[NoCoverage] Math'));
         expect(stdoutStub).calledWith(`${chalk.red('-   foo')}${os.EOL}`);
         expect(stdoutStub).calledWith(`${chalk.green('+   bar')}${os.EOL}`);
       });
@@ -215,13 +215,13 @@ describe(ClearTextReporter.name, () => {
       it('should report a Survived mutant to stdout', async () => {
         mutant.status = MutantStatus.Survived;
         act(report);
-        expect(stdoutStub).calledWithMatch(sinon.match('1. [Survived] Math'));
+        expect(stdoutStub).calledWithMatch(sinon.match('[Survived] Math'));
       });
 
       it('should report a Timeout mutant to stdout', async () => {
         mutant.status = MutantStatus.Timeout;
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('1. [Timeout] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Timeout] Math'));
       });
 
       it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {

@@ -1,0 +1,1916 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`incremental should reuse expected mutant results for command 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": undefined,
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": undefined,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "all",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Survived",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "Survived",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;
+
+exports[`incremental should reuse expected mutant results for cucumber 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/concat.feature:3",
+      ],
+      "killedBy": Array [
+        "features/concat.feature:3",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/concat.feature:3",
+      ],
+      "killedBy": Array [
+        "features/concat.feature:3",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": true,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/concat.feature:8",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/concat.feature:8",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/log.feature:3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/log.feature:3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/math.feature:3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/math.feature:3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/math.feature:8",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "features/math.feature:8",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;
+
+exports[`incremental should reuse expected mutant results for jasmine 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec0",
+      ],
+      "killedBy": Array [
+        "spec0",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec0",
+      ],
+      "killedBy": Array [
+        "spec0",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "spec1",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": true,
+      "status": "Killed",
+      "testsCompleted": 2,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec1",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec1",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec2",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec2",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec4",
+      ],
+      "killedBy": Array [
+        "spec4",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec4",
+      ],
+      "killedBy": Array [
+        "spec4",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;
+
+exports[`incremental should reuse expected mutant results for jest 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "concat should concat a and b",
+      ],
+      "killedBy": Array [
+        "concat should concat a and b",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "concat should concat a and b",
+      ],
+      "killedBy": Array [
+        "concat should concat a and b",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": true,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "greet should greet me",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "greet should greet me",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "log should not throw",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "log should not throw",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "add should add two numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "add should add two numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "multiply should multiply the numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "multiply should multiply the numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;
+
+exports[`incremental should reuse expected mutant results for karma 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec0",
+      ],
+      "killedBy": Array [
+        "spec0",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec0",
+      ],
+      "killedBy": Array [
+        "spec0",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [
+        "spec1",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": true,
+      "status": "Killed",
+      "testsCompleted": 2,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec1",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec1",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec2",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec2",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec3",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec4",
+      ],
+      "killedBy": Array [
+        "spec4",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "spec4",
+      ],
+      "killedBy": Array [
+        "spec4",
+      ],
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": "Killed",
+      "testsCompleted": 1,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;
+
+exports[`incremental should reuse expected mutant results for mocha 1`] = `
+Array [
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "concat should concat a and b",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "concat should concat a and b",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 19,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 15,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 11,
+          "line": 5,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\\"\\"",
+      "static": true,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "greet should greet me",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 28,
+          "line": 7,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/concat.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "greet should greet me",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 30,
+          "line": 8,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 8,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "log should not throw",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 3,
+        },
+        "start": Object {
+          "column": 25,
+          "line": 1,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/log.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "log should not throw",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 31,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 14,
+          "line": 2,
+        },
+      },
+      "mutatorName": "StringLiteral",
+      "replacement": "\`\`",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "add should add two numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 2,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 0,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "add should add two numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 1,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 1,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a + b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "multiply should multiply the numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 6,
+        },
+        "start": Object {
+          "column": 31,
+          "line": 4,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [
+        "multiply should multiply the numbers",
+      ],
+      "killedBy": undefined,
+      "location": Object {
+        "end": Object {
+          "column": 14,
+          "line": 5,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 5,
+        },
+      },
+      "mutatorName": "ArithmeticOperator",
+      "replacement": "a / b",
+      "static": false,
+      "status": undefined,
+    },
+    "plan": "Run",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 1,
+          "line": 10,
+        },
+        "start": Object {
+          "column": 26,
+          "line": 8,
+        },
+      },
+      "mutatorName": "BlockStatement",
+      "replacement": "{}",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+  Object {
+    "fileName": "src/math.js",
+    "mutant": Object {
+      "coveredBy": Array [],
+      "killedBy": Array [],
+      "location": Object {
+        "end": Object {
+          "column": 12,
+          "line": 9,
+        },
+        "start": Object {
+          "column": 9,
+          "line": 9,
+        },
+      },
+      "mutatorName": "UpdateOperator",
+      "replacement": "--a",
+      "static": false,
+      "status": "NoCoverage",
+      "testsCompleted": undefined,
+    },
+    "plan": "EarlyResult",
+  },
+]
+`;

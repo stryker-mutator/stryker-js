@@ -26,4 +26,6 @@ export const validationSchema = 'validationSchema';
 export const optionsValidator = 'optionsValidator';
 export const requireFromCwd = 'requireFromCwd';
 export const fs = 'fs';
+export const testCoverage = 'testCoverage';
+export const incrementalDiffer = 'incrementalDiffer';
 export const project = 'project';

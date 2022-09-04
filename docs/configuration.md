@@ -169,6 +169,15 @@ Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
 
 **DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead, or use [mutate](#mutate-string) to select which files to mutate. 
  
+### `force` [`boolean`]
+
+Default: `false`<br />
+Command line: `--force`<br />
+Config file: `"force": true`<br />
+
+Run all mutants, even if [`incremental`](#incremental-boolean) is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.
+See [incremental](./incremental.md#forcing-reruns)
+
 ### `ignorePatterns` [`string[]`]
 
 Default: `[]`<br />
@@ -204,6 +213,24 @@ export function greet(name) {
 In this example, `'👋'` on line 1 would be mutated to an empty string by the StringLiteral mutator. However, the mutant is only executed _when the file is loaded_, making it a static mutant. It is impossible to measure the exact code coverage per test for the mutant. Therefore, Stryker would default to running all tests.
 
 _Note:_ Enabling `--ignoreStatic` requires `"coverageAnalysis": "perTest"`, because detecting which mutant is static is done during the initial test run and needs per test coverage analysis.
+
+### `incremental` [`boolean`]
+
+Default: `false`<br />
+Command line: `--incremental`<br />
+Config file: `"incremental": true`<br />
+
+Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next `--incremental` run.
+See [incremental](./incremental.md) for more details.
+
+### `incrementalFile` [`string`]
+
+Default: `"reports/stryker-incremental.json"`<br />
+Command line: `--incrementalFile reports/stryker-incremental-alternative.json`<br />
+Config file: `"incrementalFile": "reports/stryker-incremental-alternative.json"`<br />
+
+Specify the file to use for incremental mode.
+See [incremental](./incremental.md) for more details.
 
 ### `inPlace` [`boolean`]
 

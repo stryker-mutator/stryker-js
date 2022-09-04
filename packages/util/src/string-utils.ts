@@ -11,6 +11,13 @@ export function normalizeWhitespaces(str: string): string {
   return str.replace(/\s+/g, ' ').trim();
 }
 
+/**
+ * Normalizes line endings as unix style.
+ */
+export function normalizeLineEndings(text: string): string {
+  return text.replace(/\r\n/g, '\n');
+}
+
 export interface PropertyPathOverloads<T> {
   (key: KnownKeys<T>): string;
   <TProp1 extends KnownKeys<T>>(key: TProp1, key2: KnownKeys<OnlyObject<T[TProp1]>>): string;
@@ -48,5 +55,5 @@ export function escapeRegExp(input: string): string {
  * Normalizes relative or absolute file names to be in posix format (forward slashes '/')
  */
 export function normalizeFileName(fileName: string): string {
-  return fileName.replace(/\/|\\/g, '/');
+  return fileName.replace(/\\/g, '/');
 }
