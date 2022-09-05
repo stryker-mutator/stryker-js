@@ -105,7 +105,7 @@ Config file:
 
 ```json
 {
-  "dasboard": {
+  "dashboard": {
     "project": "github.com/my-org/my-project",
     "version": "branch-or-tag",
     "module": "my-module",
