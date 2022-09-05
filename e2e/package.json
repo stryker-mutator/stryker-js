@@ -13,7 +13,7 @@
     "@cucumber/cucumber": "8.5.2",
     "@types/chai-jest-snapshot": "1.3.6",
     "@types/node": "16.11.57",
-    "@types/semver": "7.3.10",
+    "@types/semver": "7.3.12",
     "ajv": "8.11.0",
     "axios": "0.27.2",
     "chai": "4.3.6",
