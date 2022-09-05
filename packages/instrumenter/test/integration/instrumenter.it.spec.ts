@@ -59,6 +59,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument string literals in different places', async () => {
     await arrangeAndActAssert('string-mutations.ts');
   });
+  it('should be able to place exotic mutants', async () => {
+    await arrangeAndActAssert('mutant-placing.ts');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

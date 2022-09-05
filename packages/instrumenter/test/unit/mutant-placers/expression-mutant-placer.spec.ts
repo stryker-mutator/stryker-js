@@ -51,7 +51,7 @@ describe('expressionMutantPlacer', () => {
     });
 
     describe('chain expressions', () => {
-      type ChainExpressionArrangement = [string, (path: NodePath) => boolean];
+      type ChainExpressionArrangement = [code: string, selector: (path: NodePath) => boolean, only?: true];
 
       const okPointers: ChainExpressionArrangement[] = [
         ['bar()', (p) => p.isCallExpression()],
@@ -64,11 +64,12 @@ describe('expressionMutantPlacer', () => {
         ['qux?.foo(bar());', (p) => p.isCallExpression() && types.isIdentifier(p.node.callee, { name: 'bar' })],
         ['foo(bar());', (p) => p.isCallExpression() && types.isIdentifier(p.node.callee, { name: 'bar' })],
         ['foo(bar.baz);', (p) => p.isMemberExpression() && types.isIdentifier(p.node.object, { name: 'bar' })],
+        ['directoryFiles[file[0].substr(1)];', (p) => p.isCallExpression()],
       ];
 
-      okPointers.forEach(([js, query]) => {
-        it(`should allow placing in \`bar\` of \`${js}\``, () => {
-          const path = findNodePath(parseJS(js), query);
+      okPointers.forEach(([js, query, only]) => {
+        const path = findNodePath(parseJS(js), query);
+        (only ? it.only : it)(`should allow placing in \`${path.toString()}\` of \`${js}\``, () => {
           expect(expressionMutantPlacer.canPlace(path)).true;
         });
       });
@@ -82,8 +83,8 @@ describe('expressionMutantPlacer', () => {
         ['foo?.bar!.baz', (p) => p.isTSNonNullExpression()],
       ];
       falsePointers.forEach(([js, query]) => {
-        it(`should not allow placing in \`bar\` of \`${js}\``, () => {
-          const path = findNodePath(parseTS(js), query);
+        const path = findNodePath(parseTS(js), query);
+        it(`should not allow placing in \`${path.toString()}\` of \`${js}\``, () => {
           expect(expressionMutantPlacer.canPlace(path)).false;
         });
       });

@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration should be able to instrument optional chains 1`] = `
-"function stryNS_9fa48() {
+exports[`instrumenter integration should be able to place exotic mutants 1`] = `
+"// @ts-nocheck
+// https://github.com/stryker-mutator/stryker-js/issues/3702
+function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
 
@@ -63,9 +65,5 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 
-const baz = stryMutAct_9fa48(\\"0\\") ? foo?.bar?.()?.[1] && 'qux' : (stryCov_9fa48(\\"0\\"), (stryMutAct_9fa48(\\"1\\") ? foo?.bar?.()[1] : (stryCov_9fa48(\\"1\\"), (stryMutAct_9fa48(\\"3\\") ? foo.bar?.() : stryMutAct_9fa48(\\"2\\") ? foo?.bar() : (stryCov_9fa48(\\"2\\", \\"3\\"), foo?.bar?.()))?.[1])) ?? (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'qux')));
-stryMutAct_9fa48(\\"5\\") ? qux().map() : (stryCov_9fa48(\\"5\\"), qux()?.map());
-const directiveRanges = stryMutAct_9fa48(\\"6\\") ? comments.map(tryParseTSDirective) : (stryCov_9fa48(\\"6\\"), comments?.map(tryParseTSDirective));
-const qux = quux(stryMutAct_9fa48(\\"7\\") ? corge.cov() : (stryCov_9fa48(\\"7\\"), corge?.cov()));
-(stryMutAct_9fa48(\\"8\\") ? input.id : (stryCov_9fa48(\\"8\\"), input?.id))!.toString();"
+directoryFiles[stryMutAct_9fa48(\\"0\\") ? file[0] : (stryCov_9fa48(\\"0\\"), file[0].substr(1))] = file[1];"
 `;
