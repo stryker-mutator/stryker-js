@@ -1,7 +1,7 @@
 import path from 'path';
 import { isDeepStrictEqual } from 'util';
 
-import minimatch, { type IMinimatch } from 'minimatch';
+import minimatch, { type Minimatch as IMinimatch } from 'minimatch';
 import { StrykerOptions, FileDescriptions, FileDescription, Location, Position } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -144,7 +144,6 @@ export class ProjectReader {
      * Rewrite of: https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L213-L215
      */
     const matchesDirectoryPartially = (entryPath: string, rule: IMinimatch) => {
-      // @ts-expect-error Missing overload in type definitions. See https://github.com/isaacs/minimatch/issues/134
       return rule.match(`/${entryPath}`, true) || rule.match(entryPath, true);
     };
 
