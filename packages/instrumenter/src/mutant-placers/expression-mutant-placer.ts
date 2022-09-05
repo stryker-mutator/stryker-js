@@ -59,14 +59,17 @@ function nameIfAnonymous(path: NodePath<babel.types.Expression>): babel.types.Ex
   return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
 }
 
-function isMemberOrCallExpression(path: NodePath) {
-  return isCallExpression(path) || isMemberExpression(path);
+function isMemberOrCallOrNonNullExpression(path: NodePath) {
+  return isCallExpression(path) || isMemberOrNonNullExpression(path);
 }
 
-function isMemberExpression(
+function isMemberOrNonNullExpression(
   path: NodePath
 ): path is NodePath<babel.types.MemberExpression | babel.types.OptionalMemberExpression | babel.types.TSNonNullExpression> {
-  return path.isMemberExpression() || path.isOptionalMemberExpression() || path.isTSNonNullExpression();
+  return isMemberExpression(path) || path.isTSNonNullExpression();
+}
+function isMemberExpression(path: NodePath): path is NodePath<babel.types.MemberExpression | babel.types.OptionalMemberExpression> {
+  return path.isMemberExpression() || path.isOptionalMemberExpression();
 }
 
 function isCallExpression(path: NodePath): path is NodePath<babel.types.CallExpression | babel.types.OptionalCallExpression> {
@@ -95,11 +98,18 @@ function isValidExpression(path: NodePath<babel.types.Expression>) {
    * foo.bar.baz();
    * foo.bar?.baz()
    * foo.bar;
+   * foo.bar!;
    * foo.bar();
    * foo?.bar();
+   * baz[foo.bar()]
    */
   function isPartOfChain() {
-    return isMemberOrCallExpression(path) && (isMemberExpression(parent) || (isCallExpression(parent) && parent.node.callee === path.node));
+    return (
+      isMemberOrCallOrNonNullExpression(path) &&
+      ((isMemberExpression(parent) && !parent.node.computed) ||
+        path.isTSNonNullExpression() ||
+        (isCallExpression(parent) && parent.node.callee === path.node))
+    );
   }
 }
 
