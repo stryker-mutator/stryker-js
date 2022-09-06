@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.1](https://github.com/stryker-mutator/stryker-js/compare/v6.2.0...v6.2.1) (2022-09-06)
+
+
+### Bug Fixes
+
+* **mutant-placing:** regression in optional chain ([#3718](https://github.com/stryker-mutator/stryker-js/issues/3718)) ([1228619](https://github.com/stryker-mutator/stryker-js/commit/1228619afd85449e35c466a75d71bb94636f091e))
+
+
+
+
+
 # [6.2.0](https://github.com/stryker-mutator/stryker-js/compare/v6.1.2...v6.2.0) (2022-09-06)
 
 
