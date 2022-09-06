@@ -81,10 +81,11 @@ describe('expressionMutantPlacer', () => {
         ['foo.bar?.baz', (p) => p.isMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
         ['foo?.bar.baz', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.property, { name: 'bar' })],
         ['foo?.bar!.baz', (p) => p.isTSNonNullExpression()],
+        ['bar?.baz[0]', (p) => p.isOptionalMemberExpression() && types.isIdentifier(p.node.object, { name: 'bar' })],
       ];
-      falsePointers.forEach(([js, query]) => {
+      falsePointers.forEach(([js, query, only]) => {
         const path = findNodePath(parseTS(js), query);
-        it(`should not allow placing in \`${path.toString()}\` of \`${js}\``, () => {
+        (only ? it.only : it)(`should not allow placing in \`${path.toString()}\` of \`${js}\``, () => {
           expect(expressionMutantPlacer.canPlace(path)).false;
         });
       });
