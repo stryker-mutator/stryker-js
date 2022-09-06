@@ -97,15 +97,21 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(inquirerPrompt).callCount(6);
-      const [promptPreset, promptTestRunner, promptBuildCommand, promptReporters, promptPackageManagers, promptConfigTypes]: inquirer.ListQuestion[] =
-        [
-          inquirerPrompt.getCall(0).args[0],
-          inquirerPrompt.getCall(1).args[0],
-          inquirerPrompt.getCall(2).args[0],
-          inquirerPrompt.getCall(3).args[0],
-          inquirerPrompt.getCall(4).args[0],
-          inquirerPrompt.getCall(5).args[0],
-        ];
+      const [
+        promptPreset,
+        promptTestRunner,
+        promptBuildCommand,
+        promptReporters,
+        promptPackageManagers,
+        promptConfigTypes,
+      ]: inquirer.ui.FetchedQuestion[] = [
+        inquirerPrompt.getCall(0).args[0],
+        inquirerPrompt.getCall(1).args[0],
+        inquirerPrompt.getCall(2).args[0],
+        inquirerPrompt.getCall(3).args[0],
+        inquirerPrompt.getCall(4).args[0],
+        inquirerPrompt.getCall(5).args[0],
+      ];
 
       expect(promptPreset.type).to.eq('list');
       expect(promptPreset.name).to.eq('preset');
@@ -200,7 +206,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
-      const [promptPreset, promptConfigType, promptPackageManager]: inquirer.ListQuestion[] = [
+      const [promptPreset, promptConfigType, promptPackageManager]: inquirer.ui.FetchedQuestion[] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
