@@ -253,7 +253,7 @@ It has to choose to either let this mutant go unchecked or throw an error and st
 
 **Solution**
 
-The solution is to include all files that are mutated in your project's tsconfig.json file. For example (for an angular project)
+The solution is to include all files that are mutated in your project's tsconfig.json file. If you have multiple tsconfig.json files, you probably need to change the one you've configured in your stryker.conf.json. For example (for an angular project)
 
 ```diff
 {
