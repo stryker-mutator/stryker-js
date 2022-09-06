@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.2.0](https://github.com/stryker-mutator/stryker-js/compare/v6.1.2...v6.2.0) (2022-09-06)
+
+
+### Bug Fixes
+
+* **deps:** update babel monorepo to ~7.19.0 ([#3716](https://github.com/stryker-mutator/stryker-js/issues/3716)) ([edc1ae0](https://github.com/stryker-mutator/stryker-js/commit/edc1ae0644c320ca8dda58686f0b02b5ca0cb908))
+* **deps:** update dependency log4js to ~6.6.0 ([#3628](https://github.com/stryker-mutator/stryker-js/issues/3628)) ([201bba2](https://github.com/stryker-mutator/stryker-js/commit/201bba23bad2abe6f9bc66dbd88f614bb4433137))
+* **json-report:** make all file paths relative in report ([#3617](https://github.com/stryker-mutator/stryker-js/issues/3617)) ([d51f1a9](https://github.com/stryker-mutator/stryker-js/commit/d51f1a9d0e7cc705f6938fe509411623958210e9))
+* **mutant placing:** computed member expressions ([#3713](https://github.com/stryker-mutator/stryker-js/issues/3713)) ([e6ee245](https://github.com/stryker-mutator/stryker-js/commit/e6ee245120252d1294deb8c5aa3e7df20e5249a5))
+* **regex:** support unicode regex flags([#3642](https://github.com/stryker-mutator/stryker-js/issues/3642)) ([fcf3a6b](https://github.com/stryker-mutator/stryker-js/commit/fcf3a6beb852dddec2c4f3e32ed72dd4fcb4cd98)), closes [#3579](https://github.com/stryker-mutator/stryker-js/issues/3579)
+* **typescript:** support TS v4.8 ([#3700](https://github.com/stryker-mutator/stryker-js/issues/3700)) ([f6b8ff4](https://github.com/stryker-mutator/stryker-js/commit/f6b8ff46558692a76f478b62ffdd659b27c4d626))
+
+
+### Features
+
+* **incremental:** add incremental mode ([#3609](https://github.com/stryker-mutator/stryker-js/issues/3609)) ([82bea56](https://github.com/stryker-mutator/stryker-js/commit/82bea5604c81c1ccf76d44827ad3922cfb61463b))
+
+
+
+
+
 # [6.2.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v6.1.2...v6.2.0-beta.0) (2022-06-28)
 
 
