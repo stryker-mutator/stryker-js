@@ -102,12 +102,13 @@ function isValidExpression(path: NodePath<babel.types.Expression>) {
    * foo.bar();
    * foo?.bar();
    * baz[foo.bar()]
+   * bar?.baz[0]
    */
   function isPartOfChain() {
     return (
       isMemberOrCallOrNonNullExpression(path) &&
-      ((isMemberExpression(parent) && !parent.node.computed) ||
-        path.isTSNonNullExpression() ||
+      ((isMemberExpression(parent) && !(parent.node.computed && parent.node.property === path.node)) ||
+        parent.isTSNonNullExpression() ||
         (isCallExpression(parent) && parent.node.callee === path.node))
     );
   }

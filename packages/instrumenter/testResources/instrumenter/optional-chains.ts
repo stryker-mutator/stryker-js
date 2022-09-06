@@ -8,3 +8,5 @@ const directiveRanges = comments?.map(tryParseTSDirective)
 const qux = quux(corge?.cov());
 
 input?.id!.toString();
+
+bar?.baz[0]
