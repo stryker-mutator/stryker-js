@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.2.2](https://github.com/stryker-mutator/stryker-js/compare/v6.2.1...v6.2.2) (2022-09-06)
+
+**Note:** Version bump only for package @stryker-mutator/jasmine-runner
+
+
+
+
+
 ## [6.2.1](https://github.com/stryker-mutator/stryker-js/compare/v6.2.0...v6.2.1) (2022-09-06)
 
 **Note:** Version bump only for package @stryker-mutator/jasmine-runner
