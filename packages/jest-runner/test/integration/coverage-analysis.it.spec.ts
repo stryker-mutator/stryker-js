@@ -34,9 +34,10 @@ describe('JestTestRunner coverage analysis integration', () => {
       const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-node-instrumented');
       let sut: JestTestRunner;
 
-      beforeEach(() => {
+      beforeEach(async () => {
         process.chdir(resolveTestCase());
         sut = createSut(testCase.jestConfig);
+        await sut.init();
       });
 
       describe('dryRun', () => {
@@ -148,9 +149,10 @@ describe('JestTestRunner coverage analysis integration', () => {
     (testCase.focus ? describe.only : describe)(`${testCase.name}-jsdom project`, () => {
       const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'jasmine2-jsdom-instrumented');
       let sut: JestTestRunner;
-      beforeEach(() => {
+      beforeEach(async () => {
         process.chdir(resolveTestCase());
         sut = createSut(testCase.jestConfig);
+        await sut.init();
       });
 
       describe('dryRun', () => {

@@ -14,5 +14,5 @@ export interface JestConfigLoader {
    *
    * @return {JestConfiguration} an object containing the Jest configuration.
    */
-  loadConfig(): Config.InitialOptions;
+  loadConfig(): Promise<Config.InitialOptions>;
 }

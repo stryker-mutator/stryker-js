@@ -20,7 +20,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     private readonly requireFromCwd: typeof requireResolve
   ) {}
 
-  public loadConfig(): Config.InitialOptions {
+  public async loadConfig(): Promise<Config.InitialOptions> {
     try {
       // Create the React configuration for Jest
       const jestConfiguration = this.createJestConfig();

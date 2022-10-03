@@ -53,9 +53,9 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
 export const jestTestRunnerFactory = createJestTestRunnerFactory();
 
 export class JestTestRunner implements TestRunner {
-  private readonly jestConfig: jest.Config.InitialOptions;
+  private jestConfig!: jest.Config.InitialOptions;
   private readonly jestOptions: JestOptions;
-  private readonly enableFindRelatedTests: boolean;
+  private readonly enableFindRelatedTests!: boolean;
 
   public static inject = tokens(
     commonTokens.logger,
@@ -69,17 +69,12 @@ export class JestTestRunner implements TestRunner {
     private readonly log: Logger,
     options: StrykerOptions,
     private readonly jestTestAdapter: JestTestAdapter,
-    configLoader: JestConfigLoader,
+    private readonly configLoader: JestConfigLoader,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
-    // Get jest configuration from stryker options and assign it to jestConfig
-    const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
-
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
-
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
     } else {
@@ -87,6 +82,11 @@ export class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
+  }
+
+  public async init(): Promise<void> {
+    const configFromFile = await this.configLoader.loadConfig();
+    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
   }
 
   public capabilities(): TestRunnerCapabilities {

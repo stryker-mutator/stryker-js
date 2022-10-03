@@ -20,6 +20,7 @@ describe('jest with config in child dir', () => {
   it('should still be able perform a mutant run', async () => {
     process.chdir(resolveTestResource('config-in-child-dir'));
     const sut = createSut({ configFile: 'client/jest.config.js' });
+    await sut.init();
     const actual = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(actual);
     expect(actual.tests).lengthOf(2);
