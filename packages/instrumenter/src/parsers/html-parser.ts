@@ -60,10 +60,10 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
   return root;
 
   async function parseScript<T extends ScriptFormat>(el: Element, scriptFormat: T): Promise<AstByFormat[T]> {
-    const content = text.substring(el.startSourceSpan!.end.offset, el.endSourceSpan!.start.offset);
+    const content = text.substring(el.startSourceSpan.end.offset, el.endSourceSpan!.start.offset);
     const ast = await parserContext.parse(content, fileName, scriptFormat);
     if (ast) {
-      const offset = el.startSourceSpan!.end;
+      const offset = el.startSourceSpan.end;
       ast.root.start! += offset.offset;
       ast.root.end! += offset.offset;
       return {
