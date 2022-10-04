@@ -7,9 +7,9 @@ import { normalizeFileName } from '@stryker-mutator/util';
  * A helper class for matching files using the `disableTypeChecks` setting.
  */
 export class FileMatcher {
-  private readonly pattern: string | false | true;
+  private readonly pattern: boolean | string;
 
-  constructor(pattern: string | false | true) {
+  constructor(pattern: boolean | string) {
     if (typeof pattern === 'string') {
       this.pattern = normalizeFileName(path.resolve(pattern));
     } else {
@@ -21,7 +21,7 @@ export class FileMatcher {
     if (typeof this.pattern === 'string') {
       return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern);
     } else {
-      return !!this.pattern;
+      return this.pattern;
     }
   }
 }
