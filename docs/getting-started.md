@@ -50,7 +50,7 @@ Please let us know if your option is missing here [by opening an issue](https://
 
 After the init is done, inspect the `stryker.conf.js` file.
 
-For more information on what these options mean, take a look at the [Stryker readme](https://github.com/stryker-mutator/stryker-js/tree/master/packages/core#readme)
+For more information on what these options mean, take a look at [the Configuration docs page](./configuration.md)
 
 ---
 
@@ -68,7 +68,7 @@ Have troubles running Stryker? Try running with trace logging.
 stryker run --logLevel trace
 ```
 
-You can also have a look at the [readme file of stryker](https://github.com/stryker-mutator/stryker-js/tree/master/packages/core#readme) for more information about the configuration.
+You can also have a look at [the Configuration docs page](./configuration.md) for more information about the configuration.
 
 Please [report any issues](http://github.com/stryker-mutator/stryker/issues) you have or let us know [via Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
 
