@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -17,7 +19,7 @@ describe(determineResolveFromDirectory.name, () => {
 
     // Assert
     sinon.assert.calledOnceWithExactly(resolveStub, 'react-scripts/package.json');
-    expect(actualDir).eq('node_modules/react-scripts');
+    expect(actualDir).eq(path.join('node_modules', 'react-scripts'));
   });
 
   it('should resolve to cwd when project type is "custom"', () => {
