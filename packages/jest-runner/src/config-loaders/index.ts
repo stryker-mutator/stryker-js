@@ -1,10 +1,9 @@
 import { tokens, commonTokens, Injector } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { requireResolve } from '@stryker-mutator/util';
 
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
-import { JestPluginContext, pluginTokens } from '../plugin-di.js';
+import { JestPluginContext } from '../plugin-di.js';
 
 import { CustomJestConfigLoader } from './custom-jest-config-loader.js';
 import { ReactScriptsJestConfigLoader } from './react-scripts-jest-config-loader.js';
