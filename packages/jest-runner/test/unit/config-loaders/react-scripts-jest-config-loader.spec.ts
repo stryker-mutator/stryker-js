@@ -6,7 +6,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import type { requireResolve } from '@stryker-mutator/util';
 
 import { ReactScriptsJestConfigLoader } from '../../../src/config-loaders/react-scripts-jest-config-loader.js';
-import * as pluginTokens from '../../../src/plugin-tokens.js';
+import { pluginTokens } from '../../../src/plugin-di.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options.js';
 import { createJestOptions } from '../../helpers/producers.js';
 
@@ -21,7 +21,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     createReactJestConfigStub = sinon.stub();
     requireResolveStub = sinon.stub();
     requireResolveStub.returns(path.resolve('./node_modules/react-scripts/package.json'));
-    createReactJestConfigStub.returns({ testPaths: ['example'] });
+    createReactJestConfigStub.returns({ testPaths: ['example'], watchPlugins: undefined });
     requireFromCwdStub = sinon.stub();
     requireFromCwdStub.returns(createReactJestConfigStub);
     processEnvMock = {
@@ -40,7 +40,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     expect(requireResolveStub).calledWith('react-scripts/package.json');
     expect(requireFromCwdStub).calledWith('react-scripts/scripts/utils/createJestConfig');
     expect(createReactJestConfigStub).calledWith(sinon.match.func, process.cwd(), false);
-    expect(config).deep.eq({ testPaths: ['example'] });
+    expect(config).deep.eq({ testPaths: ['example'], watchPlugins: undefined });
   });
 
   it('should throw an error when react-scripts could not be found', () => {

@@ -5,10 +5,15 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { propertyPath, type requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
-import * as pluginTokens from '../plugin-tokens.js';
+import { pluginTokens } from '../plugin-di.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
+import { state } from '../jest-plugins/cjs/messaging.js';
 
 import { JestConfigLoader } from './jest-config-loader.js';
+
+function isString(maybeString: unknown): maybeString is string {
+  return typeof maybeString === 'string';
+}
 
 export class ReactScriptsJestConfigLoader implements JestConfigLoader {
   public static inject = tokens(commonTokens.logger, pluginTokens.resolve, pluginTokens.processEnv, pluginTokens.requireFromCwd);
@@ -23,11 +28,13 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
   public loadConfig(): Config.InitialOptions {
     try {
       // Create the React configuration for Jest
-      const jestConfiguration = this.createJestConfig();
-
+      const { config, reactScriptsLocation } = this.createJestConfig();
+      // Make sure that any jest environment plugins (i.e. jest-environment-jsdom) is loaded from the react-script module
+      state.resolveFromDirectory = reactScriptsLocation;
+      config.watchPlugins = config.watchPlugins?.filter(isString).map((watchPlugin) => this.resolve(watchPlugin, { paths: [reactScriptsLocation] }));
       this.setEnv();
 
-      return jestConfiguration;
+      return config;
     } catch (e) {
       if (this.isNodeErrnoException(e) && e.code === 'MODULE_NOT_FOUND') {
         throw Error(
@@ -45,14 +52,17 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     return arg.code !== undefined;
   }
 
-  private createJestConfig(): Config.InitialOptions {
+  private createJestConfig(): { reactScriptsLocation: string; config: Config.InitialOptions } {
     const createReactJestConfig = this.requireFromCwd('react-scripts/scripts/utils/createJestConfig') as (
       resolve: (thing: string) => string,
       rootDir: string,
       isEjecting: boolean
     ) => Config.InitialOptions;
     const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
-    return createReactJestConfig((relativePath) => path.join(reactScriptsLocation, relativePath), process.cwd(), false);
+    return {
+      reactScriptsLocation,
+      config: createReactJestConfig((relativePath) => path.join(reactScriptsLocation, relativePath), process.cwd(), false),
+    };
   }
   private setEnv() {
     // Jest CLI will set process.env.NODE_ENV to 'test' when it's null, do the same here

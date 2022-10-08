@@ -1,5 +1,6 @@
-import { jestWrapper } from '../utils/index.js';
 import { JestRunResult } from '../jest-run-result.js';
+import { JestWrapper } from '../utils/jest-wrapper.js';
+import { pluginTokens } from '../plugin-di.js';
 
 import { RunSettings, JestTestAdapter } from './jest-test-adapter.js';
 
@@ -8,9 +9,12 @@ import { RunSettings, JestTestAdapter } from './jest-test-adapter.js';
  * It has a lot of `any` typings here, since the installed typings are not in sync.
  */
 export class JestLessThan25TestAdapter implements JestTestAdapter {
+  public static readonly inject = [pluginTokens.jestWrapper] as const;
+  constructor(private readonly jestWrapper: JestWrapper) {}
+
   public run({ jestConfig, fileNamesUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
-    return jestWrapper.runCLI(
+    return this.jestWrapper.runCLI(
       {
         $0: 'stryker',
         _: fileNamesUnderTest ? fileNamesUnderTest : [],
