@@ -1,16 +1,23 @@
+import { createRequire } from 'module';
+
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+import { requireResolve } from '@stryker-mutator/util';
 
 import { CustomJestConfigLoader } from '../../../src/config-loaders/custom-jest-config-loader.js';
 import { ReactScriptsJestConfigLoader } from '../../../src/config-loaders/react-scripts-jest-config-loader.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options.js';
 import { configLoaderFactory } from '../../../src/config-loaders/index.js';
+import { JestWrapper } from '../../../src/utils/jest-wrapper.js';
+import { pluginTokens } from '../../../src/plugin-di.js';
 
 describe(configLoaderFactory.name, () => {
   let options: JestRunnerOptionsWithStrykerOptions;
+  let jestWrapper: JestWrapper;
 
   beforeEach(() => {
+    jestWrapper = new JestWrapper(process.cwd(), requireResolve);
     options = factory.strykerWithPluginOptions({
       jest: {
         enableBail: true,
@@ -21,7 +28,7 @@ describe(configLoaderFactory.name, () => {
   });
 
   it('should call a CustomJestConfigLoader no projectType is defined', () => {
-    const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
+    const sut = createSut();
 
     expect(sut).instanceOf(CustomJestConfigLoader);
   });
@@ -32,7 +39,7 @@ describe(configLoaderFactory.name, () => {
     });
 
     it('should create a ReactScriptsJestConfigLoader', () => {
-      const sut = testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
+      const sut = createSut();
 
       expect(sut).instanceOf(ReactScriptsJestConfigLoader);
     });
@@ -40,9 +47,18 @@ describe(configLoaderFactory.name, () => {
     it('should warn when a configFile is set', () => {
       options.jest.configFile = 'jest.conf.js';
 
-      testInjector.injector.provideValue(commonTokens.options, options).injectFunction(configLoaderFactory);
+      createSut();
 
       expect(testInjector.logger.warn).calledWith(`Config setting "configFile" is not supported for projectType "${options.jest.projectType}"`);
     });
   });
+  function createSut() {
+    return testInjector.injector
+      .provideValue(commonTokens.options, options)
+      .provideValue(pluginTokens.jestWrapper, jestWrapper)
+      .provideValue(pluginTokens.resolve, createRequire(import.meta.url).resolve)
+      .provideValue(pluginTokens.requireFromCwd, requireResolve)
+      .provideValue(pluginTokens.processEnv, process.env)
+      .injectFunction(configLoaderFactory);
+  }
 });
