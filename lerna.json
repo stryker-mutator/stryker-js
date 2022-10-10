@@ -1,15 +1,9 @@
 {
-  "packages": [
-    "packages/*"
-  ],
-  "version": "6.2.2",
+  "packages": ["packages/*"],
+  "version": "6.2.3",
   "command": {
     "version": {
-      "allowBranch": [
-        "master",
-        "epic/*",
-        "feat/*"
-      ],
+      "allowBranch": ["master", "epic/*", "feat/*"],
       "conventionalCommits": true,
       "createRelease": "github",
       "forcePublish": true,
