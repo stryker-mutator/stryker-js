@@ -88,6 +88,7 @@ export class TestHooksMiddleware {
       case 'jasmine':
         this.currentTestHooks = `
       window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
+      window.__stryker__ = window.__stryker__ || {};
       jasmine.getEnv().addReporter({
         specStarted: function (spec) {
           window.${NAMESPACE}.${CURRENT_TEST_ID} = spec.id;
