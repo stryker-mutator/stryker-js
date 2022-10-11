@@ -38,6 +38,7 @@ describe(TestHooksMiddleware.name, () => {
         expect(sut.currentTestHooks)
           .contains('window.__strykerShouldReportCoverage__ = true')
           .contains('window.__stryker__.currentTestId = spec.id')
+          .contains('window.__stryker__ = window.__stryker__ || {};')
           .and.contains('jasmine.getEnv().addReporter(')
           .and.not.contains('beforeEach(function() {');
       });
