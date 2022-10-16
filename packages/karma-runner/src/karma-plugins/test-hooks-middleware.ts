@@ -84,11 +84,12 @@ export class TestHooksMiddleware {
   }
 
   private configurePerTestCoverageAnalysis() {
+    this.currentTestHooks = ` 
+    window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
+    window.${NAMESPACE} = window.${NAMESPACE} || {};`;
     switch (this.testFramework) {
       case 'jasmine':
-        this.currentTestHooks = `
-      window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
-      window.__stryker__ = window.__stryker__ || {};
+        this.currentTestHooks += `
       jasmine.getEnv().addReporter({
         specStarted: function (spec) {
           window.${NAMESPACE}.${CURRENT_TEST_ID} = spec.id;
@@ -96,8 +97,7 @@ export class TestHooksMiddleware {
       });`;
         break;
       case 'mocha':
-        this.currentTestHooks = `
-        window.${SHOULD_REPORT_COVERAGE_FLAG} = true;
+        this.currentTestHooks += `
         beforeEach(function() {
           window.${NAMESPACE}.${CURRENT_TEST_ID} = this.currentTest && this.currentTest.fullTitle();
         });
