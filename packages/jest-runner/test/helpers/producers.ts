@@ -41,6 +41,14 @@ export function createJestRunResult(overrides?: Partial<JestRunResult>): JestRun
   };
 }
 
+export function createJestConfigArgv(overrides?: Partial<Config.Argv>): Config.Argv {
+  return {
+    $0: 'stryker',
+    _: [''],
+    ...overrides,
+  };
+}
+
 export function createJestAggregatedResult(overrides?: Partial<AggregatedResult>): AggregatedResult {
   return {
     numFailedTestSuites: 0,

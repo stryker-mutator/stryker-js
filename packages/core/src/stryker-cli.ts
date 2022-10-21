@@ -110,7 +110,7 @@ export class StrykerCli {
       .option('--reporters <name>', 'A comma separated list of the names of the reporter(s) you want to use', list)
       .option('--plugins <listOfPlugins>', 'A list of plugins you want stryker to load (`require`).', list)
       .option(
-        '--appendPlugins <listOfPlugions>',
+        '--appendPlugins <listOfPlugins>',
         'A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.',
         list
       )

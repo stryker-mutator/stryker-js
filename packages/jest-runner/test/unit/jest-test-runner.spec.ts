@@ -16,12 +16,12 @@ import { Task } from '@stryker-mutator/util';
 import { JestTestAdapter } from '../../src/jest-test-adapters/index.js';
 import { JestTestRunner } from '../../src/jest-test-runner.js';
 import * as producers from '../helpers/producers.js';
-import * as pluginTokens from '../../src/plugin-tokens.js';
+import { pluginTokens } from '../../src/plugin-di.js';
 import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
 import { JestRunResult } from '../../src/jest-run-result.js';
 import { state } from '../../src/jest-plugins/cjs/messaging.js';
-import { jestWrapper } from '../../src/utils/index.js';
+import { JestWrapper } from '../../src/utils/jest-wrapper.js';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
@@ -30,9 +30,11 @@ describe(JestTestRunner.name, () => {
   let jestConfigLoaderMock: sinon.SinonStubbedInstance<JestConfigLoader>;
   let options: JestRunnerOptionsWithStrykerOptions;
   let jestRunResult: JestRunResult;
+  let jestWrapperMock: sinon.SinonStubbedInstance<JestWrapper>;
 
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
+    jestWrapperMock = sinon.createStubInstance(JestWrapper);
     jestTestAdapterMock = { run: sinon.stub() };
     jestRunResult = producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) });
     jestTestAdapterMock.run.resolves(jestRunResult);
@@ -366,8 +368,7 @@ describe(JestTestRunner.name, () => {
       });
 
       it('should add a set setupFile if testRunner is not specified and jest version < 27', async () => {
-        const getVersionStub = sinon.stub(jestWrapper, 'getVersion');
-        getVersionStub.returns('26.999.999');
+        jestWrapperMock.getVersion.returns('26.999.999');
         options.jest.config = { testRunner: undefined };
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
@@ -379,8 +380,7 @@ describe(JestTestRunner.name, () => {
       });
 
       it('should not add a set setupFile if testRunner is not specified and jest version >= 27 (circus test runner)', async () => {
-        const getVersionStub = sinon.stub(jestWrapper, 'getVersion');
-        getVersionStub.returns('27.0.0');
+        jestWrapperMock.getVersion.returns('27.0.0');
         options.jest.config = { testRunner: undefined };
         const sut = createSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
@@ -591,6 +591,7 @@ describe(JestTestRunner.name, () => {
       .provideValue(pluginTokens.jestTestAdapter, jestTestAdapterMock as unknown as JestTestAdapter)
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
+      .provideValue(pluginTokens.jestWrapper, jestWrapperMock)
       .injectClass(JestTestRunner);
   }
 

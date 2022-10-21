@@ -15,6 +15,9 @@
       "browsers": ["ChromeHeadless"]
     }
   },
+  "plugins": [
+    "../../../packages/karma-runner/dist/src/index.js"
+  ],
   "timeoutMS": 60000,
   "reporters": ["progress", "clear-text", "html"],
   "concurrency": 2,

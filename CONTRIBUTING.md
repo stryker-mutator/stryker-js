@@ -52,7 +52,10 @@ To run local changes you made in StrykerJS in an actual project you have two opt
     ```sh
     cd my-project
     open stryker.conf.json 
-    # Add `"plugins": ["/home/username/stryker-js/packages/jest-runner"]` inside the stryker.conf.json
+     # Add `"plugins": ["/home/username/stryker-js/packages/karma-runner/dist/src/index.js"]` inside the stryker.conf.json
+     #   If you use typescript checker and you get an error :  Cannot find Checker plugin "typescript"
+     #   then add the typescript checker local path to the `plugin` as well:
+     #   "plugins": ["/Users/username/stryker-js/packages/karma-runner/dist/src/index.js",  "/Users/username/stryker-js/packages/typescript-checker/dist/src/index.js"],
     /home/username/stryker-js/packages/core/bin/stryker run
     ```
     This way you can also debug from vscode using the "Attach" configuration and running Stryker from `my-project` like this: `node --inspect-brk /home/username/stryker-js/packages/core/bin/stryker run`.

@@ -8,7 +8,7 @@ import type { requireResolve } from '@stryker-mutator/util';
 import type { Config } from '@jest/types';
 
 import { CustomJestConfigLoader } from '../../../src/config-loaders/custom-jest-config-loader.js';
-import * as pluginTokens from '../../../src/plugin-tokens.js';
+import { pluginTokens } from '../../../src/plugin-di.js';
 import { createJestOptions } from '../../helpers/producers.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../../src/jest-runner-options-with-stryker-options.js';
 
