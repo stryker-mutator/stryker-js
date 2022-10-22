@@ -4,7 +4,6 @@ import { StrykerOptions } from '@stryker-mutator/api/src-generated/stryker-core.
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { requireResolve } from '@stryker-mutator/util';
 import type * as jestModule from 'jest';
-import type * as jestConfigModule from 'jest-config';
 
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
 import { pluginTokens } from '../plugin-di.js';

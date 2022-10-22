@@ -1,16 +1,12 @@
-import fs from 'fs';
 import path from 'path';
 
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
-import type { requireResolve } from '@stryker-mutator/util';
+import jestConfig from 'jest-config';
 
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
-import { pluginTokens } from '../plugin-di.js';
-
-import { jestWrapper } from '../utils/jest-wrapper.js';
 
 import { JestConfigLoader } from './jest-config-loader.js';
 
@@ -19,16 +15,16 @@ import { JestConfigLoader } from './jest-config-loader.js';
  */
 export class CustomJestConfigLoader implements JestConfigLoader {
   private readonly options: JestRunnerOptionsWithStrykerOptions;
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.requireFromCwd);
+  public static inject = tokens(commonTokens.logger, commonTokens.options);
 
-  constructor(private readonly log: Logger, options: StrykerOptions, private readonly requireFromCwd: typeof requireResolve) {
+  constructor(private readonly log: Logger, options: StrykerOptions) {
     this.options = options as JestRunnerOptionsWithStrykerOptions;
   }
 
   public async loadConfig(): Promise<Config.InitialOptions> {
-    const { config, configPath } = await jestWrapper.readInitialOptions(this.options.jest.configFile, { skipMultipleConfigError: true });
+    const { config, configPath } = await jestConfig.readInitialOptions(this.options.jest.configFile, { skipMultipleConfigError: true });
     if (configPath) {
-      this.log.debug(`Read config from "${path.relative(process.cwd(), configPath)}"`);
+      this.log.debug(`Read config from "${path.relative(process.cwd(), configPath)}".`);
     } else {
       this.log.debug('No config file read.');
     }

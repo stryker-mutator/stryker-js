@@ -75,7 +75,7 @@ export class JestTestRunner implements TestRunner {
     private readonly log: Logger,
     options: StrykerOptions,
     private readonly jestTestAdapter: JestTestAdapter,
-    private configLoader: JestConfigLoader,
+    private readonly configLoader: JestConfigLoader,
     private readonly jestWrapper: JestWrapper,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
