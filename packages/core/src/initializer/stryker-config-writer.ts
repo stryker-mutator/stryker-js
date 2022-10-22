@@ -49,7 +49,7 @@ export class StrykerConfigWriter {
     const configObject: Partial<StrykerOptions> & { _comment: string } = {
       _comment:
         "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
-      packageManager: selectedPackageManager.name as 'npm' | 'yarn',
+      packageManager: selectedPackageManager.name as 'npm' | 'pnpm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',

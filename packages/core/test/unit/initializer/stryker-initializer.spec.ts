@@ -123,7 +123,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptReporters.type).to.eq('checkbox');
       expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
       expect(promptPackageManagers.type).to.eq('list');
-      expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn']);
+      expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
       expect(promptConfigTypes.type).to.eq('list');
       expect(promptConfigTypes.choices).to.deep.eq(['JSON', 'JavaScript']);
     });
@@ -217,7 +217,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptConfigType.type).to.eq('list');
       expect(promptConfigType.choices).to.deep.eq(['JSON', 'JavaScript']);
       expect(promptPackageManager.type).to.eq('list');
-      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn']);
+      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
     });
 
     it('should install any additional dependencies', async () => {
@@ -230,6 +230,18 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
       expect(childExecSync).calledWith('npm i --save-dev @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter', {
+        stdio: [0, 1, 2],
+      });
+    });
+
+    it('should install additional dependencies with pnpm', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'pnpm',
+        reporters: [],
+        testRunner: 'awesome',
+      });
+      await sut.initialize();
+      expect(childExecSync).calledWith('pnpm i -D @stryker-mutator/awesome-runner', {
         stdio: [0, 1, 2],
       });
     });
