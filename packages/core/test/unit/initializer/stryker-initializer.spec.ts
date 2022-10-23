@@ -241,7 +241,7 @@ describe(StrykerInitializer.name, () => {
         testRunner: 'awesome',
       });
       await sut.initialize();
-      expect(childExecSync).calledWith('pnpm i -D @stryker-mutator/awesome-runner', {
+      expect(childExecSync).calledWith('pnpm add -D @stryker-mutator/awesome-runner', {
         stdio: [0, 1, 2],
       });
     });

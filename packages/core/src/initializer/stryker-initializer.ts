@@ -205,7 +205,7 @@ export class StrykerInitializer {
     if (packageManager === PackageManager.Yarn) {
       return `yarn add ${dependencyArg} --dev`;
     } else if (packageManager === PackageManager.Pnpm) {
-      return `pnpm i -D ${dependencyArg}`;
+      return `pnpm add -D ${dependencyArg}`;
     }
 
     return `npm i --save-dev ${dependencyArg}`;
