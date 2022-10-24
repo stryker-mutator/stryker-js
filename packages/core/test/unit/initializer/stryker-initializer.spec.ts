@@ -246,6 +246,29 @@ describe(StrykerInitializer.name, () => {
       });
     });
 
+    it('should explicitly specify plugins when using pnpm', async () => {
+      childExec.resolves();
+      const expectedOutput = `// @ts-check
+          /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */  
+          const config =  {
+            "_comment": "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
+            "packageManager": "pnpm",
+            "reporters": [],
+            "testRunner": "awesome",
+            "coverageAnalysis": "perTest",
+            "plugins": [ "@stryker-mutator/awesome-runner" ]
+          };
+          export default config;`;
+      inquirerPrompt.resolves({
+        packageManager: 'pnpm',
+        reporters: [],
+        testRunner: 'awesome',
+        configType: 'JavaScript',
+      });
+      await sut.initialize();
+      expectStrykerConfWritten(expectedOutput);
+    });
+
     it('should configure testRunner, reporters, and packageManager', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',

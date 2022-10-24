@@ -43,6 +43,7 @@ export class StrykerConfigWriter {
     buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
+    requiredPlugins: string[],
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
@@ -57,6 +58,9 @@ export class StrykerConfigWriter {
 
     // Only write buildCommand to config file if non-empty
     if (buildCommand.name) configObject.buildCommand = buildCommand.name;
+
+    // Automatic plugin discovery doesn't work with pnpm, so explicitly specify the required plugins in the config file
+    if (selectedPackageManager.name === 'pnpm') configObject.plugins = requiredPlugins;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
