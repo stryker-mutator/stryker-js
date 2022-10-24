@@ -276,4 +276,30 @@ The solution is to include all files that are mutated in your project's tsconfig
 }
 ```
 
-This shouldn't change anything about your Angular project. Your just being a bit more explicit in which files you want to include.
+This shouldn't change anything about your Angular project. You're just being a bit more explicit in which files you want to include.
+
+### Testing takes very long when using pnpm as package manager
+
+**Symptom**
+
+Running mutation tests takes longer than expected when using pnpm in combination with TypeScript.
+
+**Problem**
+
+When using npm or yarn as package manager, Stryker can automagically detect which Stryker plugins you'd like to use by scanning your ```node_modules```.
+Because _pnpm_ uses a special directory structure to improve performance, Stryker can't auto-detect plugins like the ```@stryker-mutator/typescript-checker``` plugin. When mutation testing a TypeScript project without the ```typescript-checker``` plugin, even mutants with incompatible types might be run, making the test run take longer than expected.
+
+**Solution**
+
+Specify plugins explicitly in your Stryker configuration file. The ```stryker init``` command tries to add most plugins to the configuration file already, but some might need to added manually.
+
+```json
+{
+  "packageManager": "pnpm",
+  "testRunner": "jest",
+  "plugins": [
+    "@stryker-mutator/jest-runner",
+    "@stryker-mutator/typescript-checker"
+  ]
+}
+```
