@@ -6,26 +6,26 @@
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit test/**/*.ts src/**/*.spec.ts",
-    "test": "echo 'Using workaround for https://github.com/webpack/webpack/issues/14532' && cross-env NODE_OPTIONS=--openssl-legacy-provider stryker run",
+    "test": "stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "dependencies": {
-    "core-js": "~3.19.2",
-    "vue": "~2.6.14"
+    "core-js": "~3.26.0",
+    "vue": "~3.2.41"
   },
   "devDependencies": {
-    "@types/chai": "~4.2.22",
-    "@types/mocha": "~9.0.0",
-    "@types/sinon": "~10.0.6",
-    "@vue/cli-plugin-babel": "~4.5.15",
-    "@vue/cli-plugin-typescript": "~4.5.15",
-    "@vue/cli-plugin-unit-mocha": "~4.5.15",
-    "@vue/cli-service": "~4.5.15",
-    "@vue/test-utils": "~1.3.0",
-    "chai": "~4.3.4",
-    "sinon": "~12.0.1",
-    "typescript": "~4.5.2",
-    "vue-template-compiler": "~2.6.14",
+    "@types/chai": "~4.3.3",
+    "@types/mocha": "~10.0.0",
+    "@types/sinon": "~10.0.13",
+    "@vue/cli-plugin-babel": "~5.0.8",
+    "@vue/cli-plugin-typescript": "~5.0.8",
+    "@vue/cli-plugin-unit-mocha": "~5.0.8",
+    "@vue/cli-service": "~5.0.8",
+    "@vue/test-utils": "~2.2.0",
+    "chai": "~4.3.6",
+    "sinon": "~14.0.1",
+    "typescript": "~4.8.4",
+    "vue-template-compiler": "~2.7.13",
     "whatwg-fetch": "~3.6.2"
   },
   "mocha": {
