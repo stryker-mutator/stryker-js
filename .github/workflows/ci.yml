@@ -7,42 +7,42 @@ on:
     - cron:  '0 12 * * *'
 
 jobs:
-  # build_and_test:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       node-version: ['14.18.0', 16.x]
-  #       os: ['ubuntu-latest', 'windows-latest']
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - name: Use Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v3
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
-  #       cache: 'npm'
-  #       cache-dependency-path: '**/package-lock.json'
-  #   - name: Install dependencies
-  #     run: npm ci || npm ci # retry once, install on windows is flaky...
-  #   - name: Build & lint & test
-  #     run: npm run all
+  build_and_test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['14.18.0', 16.x]
+        os: ['ubuntu-latest', 'windows-latest']
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Install dependencies
+      run: npm ci || npm ci # retry once, install on windows is flaky...
+    - name: Build & lint & test
+      run: npm run all
   
-  # incremental_mutation_test:
-  #     runs-on: 'ubuntu-latest'
-  #     steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Build
-  #       run: npm run build
-  #     - name: Download incremental reports
-  #       run: npm run download-incremental-reports
-  #       env:
-  #         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-  #     - name: Run stryker run --incremental
-  #       run: npm run test:mutation:incremental
-  #       env:
-  #         STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+  incremental_mutation_test:
+      runs-on: 'ubuntu-latest'
+      steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Download incremental reports
+        run: npm run download-incremental-reports
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      - name: Run stryker run --incremental
+        run: npm run test:mutation:incremental
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
   e2e:
     runs-on: ${{ matrix.os }}
@@ -57,7 +57,6 @@ jobs:
         echo TEMP="D:\Temp" >> $env:GITHUB_ENV
         echo TMP="D:\Temp" >> $env:GITHUB_ENV
     - uses: actions/checkout@v3
-    - uses: browser-actions/setup-chrome@latest
     - uses: actions/setup-node@v3
       with:
         node-version: lts/*
