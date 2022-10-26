@@ -13,7 +13,7 @@ describe('Pokemon component', () => {
       }
     });
     expect(sut.find('dl').element).ok;
-    sut.destroy();
+    sut.unmount();
   });
   it('should render the type', async () => {
     const sut = mount(Pokemon, {
@@ -25,7 +25,7 @@ describe('Pokemon component', () => {
       }
     });
     expect(sut.find('dd').element.innerHTML).eq('bar');
-    sut.destroy();
+    sut.unmount();
   });
   it('should render the name', async () => {
     const sut = mount(Pokemon, {
@@ -37,6 +37,6 @@ describe('Pokemon component', () => {
       }
     });
     expect(sut.find('h2').element.innerHTML).eq('Foo');
-    sut.destroy();
+    sut.unmount();
   });
 });
