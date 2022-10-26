@@ -135,7 +135,8 @@ describe(ChildProcessProxy.name, () => {
     await expect(sut.proxy.say('something')).rejectedWith(ChildProcessCrashedError);
   });
 
-  it('should throw an OutOfMemoryError if the process went out-of-memory', async () => {
+  it('should throw an OutOfMemoryError if the process went out-of-memory', async function () {
+    this.retries(5);
     await expect(sut.proxy.memoryLeak()).rejectedWith(OutOfMemoryError);
   });
 });
