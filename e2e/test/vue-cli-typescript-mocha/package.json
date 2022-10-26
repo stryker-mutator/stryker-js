@@ -6,7 +6,7 @@
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit test/**/*.ts src/**/*.spec.ts",
-    "test": "stryker run",
+    "test": "echo 'Using workaround for https://github.com/webpack/webpack/issues/14532' && cross-env NODE_OPTIONS=--openssl-legacy-provider stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "dependencies": {
