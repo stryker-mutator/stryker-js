@@ -49,7 +49,7 @@ export class FileSystem implements Disposable {
   public readonly mkdir = this.forward('mkdir');
   public readonly readdir = this.forward('readdir');
 
-  private forward<TMethod extends keyof typeof fs.promises>(method: TMethod): typeof fs.promises[TMethod] {
+  private forward<TMethod extends keyof Omit<typeof fs.promises, 'constants'>>(method: TMethod): typeof fs.promises[TMethod] {
     return (...args: any[]) => {
       const action = new FileSystemAction(() => (fs.promises[method] as any)(...args));
       this.todoSubject.next(action);
