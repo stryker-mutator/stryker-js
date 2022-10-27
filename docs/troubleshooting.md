@@ -276,4 +276,36 @@ The solution is to include all files that are mutated in your project's tsconfig
 }
 ```
 
-This shouldn't change anything about your Angular project. Your just being a bit more explicit in which files you want to include.
+This shouldn't change anything about your Angular project. You're just being a bit more explicit in which files you want to include.
+
+### Plugins can't be found when using pnpm as package manager
+
+**Symptom**
+
+Stryker is unable to load plugins (like `@stryker-mutator/typescript-checker`) when using pnpm as package manager.
+You might run into errors like:
+
+```
+Cannot find TestRunner plugin "mocha". No TestRunner plugins were loaded.
+```
+
+**Problem**
+
+When using npm or yarn as package manager, Stryker can automagically load plugins by scanning your `node_modules`.
+Because _pnpm_ uses a special directory structure to store dependencies, Stryker can't auto-detect plugins like the `@stryker-mutator/typescript-checker` plugin.
+
+**Solution**
+
+Explicitly specify the plugins to load in your Stryker configuration file. 
+
+```diff
+{
+  "packageManager": "pnpm",
+  "testRunner": "jest",
+  "checkers": ["typescript"],
++  "plugins": [
++    "@stryker-mutator/jest-runner",
++    "@stryker-mutator/typescript-checker"
++  ]
+}
+```

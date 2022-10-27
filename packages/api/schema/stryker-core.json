@@ -367,7 +367,8 @@
     "packageManager": {
       "enum": [
         "npm",
-        "yarn"
+        "yarn",
+        "pnpm"
       ],
       "description": "The package manager Stryker can use to install missing dependencies."
     },
