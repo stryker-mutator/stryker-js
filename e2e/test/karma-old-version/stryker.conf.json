@@ -10,16 +10,7 @@
     "event-recorder"
   ],
   "karma": {
-    "config": {
-      "frameworks": [
-        "mocha",
-        "chai"
-      ],
-      "files": [
-        "src/*.js",
-        "test/*.js"
-      ]
-    }
+    "configFile": "karma.conf.js"
   },
   "timeoutMS": 60000,
   "concurrency": 2,

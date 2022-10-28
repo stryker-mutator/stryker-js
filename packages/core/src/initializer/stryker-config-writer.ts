@@ -43,13 +43,14 @@ export class StrykerConfigWriter {
     buildCommand: PromptOption,
     selectedReporters: PromptOption[],
     selectedPackageManager: PromptOption,
+    requiredPlugins: string[],
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     exportAsJson: boolean
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> & { _comment: string } = {
       _comment:
         "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
-      packageManager: selectedPackageManager.name as 'npm' | 'yarn',
+      packageManager: selectedPackageManager.name as 'npm' | 'pnpm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
@@ -57,6 +58,9 @@ export class StrykerConfigWriter {
 
     // Only write buildCommand to config file if non-empty
     if (buildCommand.name) configObject.buildCommand = buildCommand.name;
+
+    // Automatic plugin discovery doesn't work with pnpm, so explicitly specify the required plugins in the config file
+    if (selectedPackageManager.name === 'pnpm') configObject.plugins = requiredPlugins;
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
     return this.writeStrykerConfig(configObject, exportAsJson);
