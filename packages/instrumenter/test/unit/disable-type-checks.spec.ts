@@ -1,4 +1,5 @@
 import { assertions } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
 import { disableTypeChecks, File } from '../../src/index.js';
 
@@ -151,6 +152,14 @@ describe(disableTypeChecks.name, () => {
       const inputFile = { name: 'foo.vue', content: '<template>\n// @ts-expect-error\n</template>', mutate: true };
       const actual = await disableTypeChecks(inputFile, { plugins: null });
       assertions.expectTextFileEqual(actual, { name: 'foo.vue', content: '<template>\n// @ts-expect-error\n</template>' });
+    });
+  });
+
+  describe('with unsupported AST format', () => {
+    it('should silently ignore the file', async () => {
+      const expectedFile = { content: '# Readme', name: 'readme.md', mutate: true };
+      const actualFile = await disableTypeChecks(expectedFile, { plugins: null });
+      expect(actualFile).eq(expectedFile);
     });
   });
 });

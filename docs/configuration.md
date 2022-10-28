@@ -147,13 +147,13 @@ As you can see, when you disable bail, a lot more tests get the "Killing" status
 
 _Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature except for Jest. Jest always runs without --bail (see [#11766](https://github.com/facebook/jest/issues/11766)) inside Stryker, however it will report only the first failing test when disableBail=false and all failing tests when disableBail=true_
 
-### `disableTypeChecks` [`false | string`]
+### `disableTypeChecks` [`boolean` | `string`]
 
 Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.
+Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.
 
 ### `dryRunTimeoutMinutes` [`number`]
 
@@ -170,14 +170,6 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
-### `files` (DEPRECATED)
-
-Default: `undefined`<br />
-Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
-Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
-
-**DEPRECATED**. Please use [mutate](#mutate-string) to select which files to mutate, or use [ignorePatterns](#ignorepatterns-string) to exclude directories containing not relevant files from beeing mutated.
 
 
 ### `force` [`boolean`]
