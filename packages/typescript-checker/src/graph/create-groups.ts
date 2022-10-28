@@ -1,4 +1,6 @@
+/* eslint-disable */
 import { Mutant } from '@stryker-mutator/api/src/core/index.js';
+
 import { Node } from './node.js';
 
 function createTempGraph(): Node[] {
@@ -6,24 +8,36 @@ function createTempGraph(): Node[] {
     parents: [],
     childs: [],
     fileName: 'A.js',
+    GetAllParentReferences() {
+      return [];
+    },
   };
 
   const nodeB: Node = {
     parents: [],
     childs: [],
     fileName: 'B.js',
+    GetAllParentReferences() {
+      return [];
+    },
   };
 
   const nodeC: Node = {
     parents: [],
     childs: [],
     fileName: 'C.js',
+    GetAllParentReferences() {
+      return [];
+    },
   };
 
   const nodeD: Node = {
     parents: [],
     childs: [],
     fileName: 'D.js',
+    GetAllParentReferences() {
+      return [];
+    },
   };
 
   nodeA.childs = [nodeB, nodeC];
@@ -41,8 +55,16 @@ function createTempGraph(): Node[] {
 const graph: Node = createTempGraph();
 
 export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
-  const mutantSelector = new MutantSelector(mutants);
-  const mutant = getNewMutant(mutants);
+  const mutantSelector: MutantSelectorHelpers = new MutantSelectorHelpers(mutants, nodes);
+
+  let mutant: Mutant | null = mutantSelector.getNewMutant();
+
+  while (mutant != null) {
+
+
+    mutant = mutantSelector.getNewMutant();
+  }
+
   const negeerlijst: Node[];
   const groep: Node[];
 
@@ -51,11 +73,15 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
   return graph;
 }
 
-class MutantSelector {
-  constructor(private mutants: Mutant[]) {};
+class MutantSelectorHelpers {
+  constructor(private mutants: Mutant[], nodes: Node[]) {};
 
-  public getNewMutant(): Mutant {
+  public getNewMutant(): Mutant | null {
+    return null;
+  }
 
+  public selectNode(mutant: Mutant) {
+    
   }
 }
 
