@@ -1,52 +1,15 @@
-/* eslint-disable */
 import { Mutant } from '@stryker-mutator/api/src/core/index.js';
-import { group } from 'console';
-import { findNode, MutantSelectorHelpers } from './mutant-selector-helpers.js';
+
+import { findNode } from './mutant-selector-helpers.js';
 
 import { Node } from './node.js';
-
-function createTempGraph(): Node[] {
-  const nodeA: Node = new Node('a.js', [], []);
-  const nodeB: Node = new Node('b.js', [], []);
-  const nodeC: Node = new Node('c.js', [], []);
-  const nodeD: Node = new Node('d.js', [], []);
-
-  nodeA.childs = [nodeB, nodeC];
-
-  nodeB.parents = [nodeA];
-
-  nodeC.childs = [nodeD];
-  nodeC.parents = [nodeA];
-
-  nodeD.parents = [nodeC];
-
-  return [nodeA, nodeB, nodeC, nodeD];
-}
-
-function createTempMutents(): Node[] {
-  const nodeA: Node = new Node('a.js', [], []);
-  const nodeB: Node = new Node('b.js', [], []);
-  const nodeC: Node = new Node('c.js', [], []);
-  const nodeD: Node = new Node('d.js', [], []);
-
-  nodeA.childs = [nodeB, nodeC];
-
-  nodeB.parents = [nodeA];
-
-  nodeC.childs = [nodeD];
-  nodeC.parents = [nodeA];
-
-  nodeD.parents = [nodeC];
-
-  return [nodeA, nodeB, nodeC, nodeD];
-}
 
 export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
   const groups: Mutant[][] = [];
 
   let mutant: Mutant | null = selectNewMutant(mutants, groups);
 
-  // Loop unil all the mutants are in a group
+  // Loop until all the mutants are in a group
   while (mutant != null) {
     // Copy the list of mutants who are not in a group
     const mutantWhoAreNotInAGroup = [...mutants];
@@ -56,21 +19,26 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
 
     if (node === null) throw new Error('Node not in graph');
 
-    // Fill the ignorelist
-    let nodesToIgnore: Set<Node> = new Set(node.getAllParentReferencesIncludingSelf());
+    // Fill the ignoreList
+    let nodesToIgnore: Set<Node> = node.getAllParentReferencesIncludingSelf();
 
     // Loop through the nodes who can possibly go in the group
     for (const mutantSelected of mutantWhoAreNotInAGroup) {
-      let nodeSelected = findNode(mutantSelected.fileName, nodes);
+      const nodeSelected = findNode(mutantSelected.fileName, nodes);
 
       if (nodeSelected === null) throw new Error('Node not in graph');
+
+      // check of er al mutants in deze groep zitten die in de parent structuur van nodeSelected voorkomt
+      const groupNodes: Set<Node> = getNodesFromMutants(group, nodes);
+      if (currentNodeHasParentsInNodesToIgnoreList(nodeSelected, new Set<Node>(groupNodes))) continue;
 
       // See if the node can be in the group
       if (nodesToIgnore.has(nodeSelected)) continue;
 
       // Push the group
       group.push(mutantSelected);
-      // Add to the ignorelist
+      mutants.splice(mutants.indexOf(mutantSelected), 1);
+      // Add to the ignoreList
       nodesToIgnore = new Set<Node>([...nodesToIgnore, ...nodeSelected.getAllParentReferencesIncludingSelf()]);
     }
 
@@ -81,23 +49,13 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
   return Promise.resolve(groupsToString(groups));
 }
 
-function createTempMutants(): Mutant[] {
-  return [
-    {fileName: 'A.js', replacement: '', id: '1', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
-    {fileName: 'B.js', replacement: '', id: '2', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
-    {fileName: 'C.js', replacement: '', id: '3', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
-    {fileName: 'D.js', replacement: '', id: '4', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
-    {fileName: 'A.js', replacement: '', id: '5', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
-  ]
-}
-
 function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
   const flatGroups = groups.flat();
 
   for (let i = 0; i < mutants.length; i++) {
     if (!flatGroups.includes(mutants[i])) {
-      mutants.splice(i, 1)
-      return mutants[i];
+      const mutant = mutants.splice(i, 1);
+      return mutant[0];
     }
   }
 
@@ -105,6 +63,26 @@ function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
 }
 
 function groupsToString(groups: Mutant[][]): string[][] {
-  return groups.map(group => group.map(mutant => mutant.fileName));
+  return groups.map((group) => group.map((mutant) => mutant.id));
 }
 
+function currentNodeHasParentsInNodesToIgnoreList(nodeSelected: Node, nodesToIgnore: Set<Node>) {
+  let result = false;
+  nodeSelected.getAllParentReferencesIncludingSelf().forEach((parentNode) => {
+    if (nodesToIgnore.has(parentNode)) {
+      result = true;
+    }
+  });
+  return result;
+}
+function getNodesFromMutants(group: Mutant[], nodes: Node[]): Set<Node> {
+  return new Set<Node>(
+    group.map((mutant) => {
+      const node = findNode(mutant.fileName, nodes);
+      if (!node) {
+        throw new Error('node not found');
+      }
+      return node;
+    })
+  );
+}
