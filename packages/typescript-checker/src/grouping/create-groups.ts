@@ -93,9 +93,14 @@ function createTempMutants(): Mutant[] {
 
 function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
   const flatGroups = groups.flat();
-  for (const mutant of mutants) {
-    if (!flatGroups.includes(mutant)) return mutant;
+
+  for (let i = 0; i < mutants.length; i++) {
+    if (!flatGroups.includes(mutants[i])) {
+      mutants.splice(i, 1)
+      return mutants[i];
+    }
   }
+
   return null;
 }
 
