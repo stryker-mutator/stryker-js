@@ -78,4 +78,14 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
   return graph;
 }
 
+function createTempMutants(): Mutant[]{
+  return [
+    {fileName: 'A.js', replacement: '', id: '1', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
+    {fileName: 'B.js', replacement: '', id: '2', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
+    {fileName: 'C.js', replacement: '', id: '3', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
+    {fileName: 'D.js', replacement: '', id: '4', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
+    {fileName: 'A.js', replacement: '', id: '5', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
+  ]
+}
+
 
