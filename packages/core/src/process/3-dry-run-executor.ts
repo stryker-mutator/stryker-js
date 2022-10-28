@@ -69,8 +69,8 @@ export class DryRunExecutor {
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
-      .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
+      .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
     const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
     const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.executeDryRun(testRunner)));
@@ -110,6 +110,10 @@ export class DryRunExecutor {
   }
 
   private async executeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
+    if (this.options.dryRun) {
+      this.log.info('Note: A dry-run has been started, no mutations will be run.');
+    }
+
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     const project = this.injector.resolve(coreTokens.project);
     const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) => this.sandbox.sandboxFileFor(name));

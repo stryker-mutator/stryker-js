@@ -64,6 +64,11 @@ export class MutationTestExecutor {
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
+    if (this.options.dryRun) {
+      this.log.info('The dry-run has been completed successfully. No mutations have been executed.');
+      return [];
+    }
+
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
     const { earlyResult$, runMutant$ } = this.executeEarlyResult(from(mutantTestPlans));
     const { passedMutant$, checkResult$ } = this.executeCheck(runMutant$);

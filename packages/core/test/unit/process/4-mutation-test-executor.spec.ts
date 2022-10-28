@@ -383,4 +383,18 @@ describe(MutationTestExecutor.name, () => {
     // Assert
     expect(testInjector.logger.info).calledWithExactly('Done in %s.', '2 seconds, tops!');
   });
+
+  it('should short circuit when dryRun is enabled', async () => {
+    // Arrange
+    testInjector.options.dryRun = true;
+
+    // Act
+    const actualResults = await sut.execute();
+
+    // Assert
+    expect(mutantTestPlannerMock.makePlan).not.called;
+    expect(testRunner.mutantRun).not.called;
+    expect(checker.check).not.called;
+    expect(actualResults).empty;
+  });
 });

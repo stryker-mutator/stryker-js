@@ -196,11 +196,5 @@ describe(Stryker.name, () => {
       await expect(sut.runMutationTest()).rejected;
       expect(shutdownLoggingStub).called;
     });
-
-    it('should not run mutations when dryRun has been enabled in the cli options', async () => {
-      cliOptions.dryRun = true;
-      await sut.runMutationTest();
-      expect(mutationTestExecutorMock.execute).not.called;
-    });
   });
 });
