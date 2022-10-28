@@ -18,7 +18,6 @@ export class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
     this.configConsoleColor();
-    console.log(options);
   }
 
   private readonly out: NodeJS.WritableStream = process.stdout;
@@ -39,9 +38,9 @@ export class ClearTextReporter implements Reporter {
 
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
     this.writeLine();
-    this.reportAllTests(metrics);
-    this.reportAllMutants(metrics);
-    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
+    // this.reportAllTests(metrics);
+    // this.reportAllMutants(metrics);
+    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
   }
 
   private reportAllTests(metrics: MutationTestMetricsResult) {
