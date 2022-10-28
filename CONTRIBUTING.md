@@ -63,7 +63,7 @@ To run local changes you made in StrykerJS in an actual project you have two opt
 
 ## VSCode environment configuration
 
-We've chosen to **check in in our vscode configuration**. This makes development unified amongst stryker developers. VSCode is an open source code editor maintained by Microsoft. For more info and the download link, please visit https://code.visualstudio.com/.
+We've chosen to **check in our vscode configuration**. This makes development unified amongst stryker developers. VSCode is an open source code editor maintained by Microsoft. For more info and the download link, please visit https://code.visualstudio.com/.
 
 We recommend you to install the following plugins:
 
@@ -98,7 +98,7 @@ New features are welcome! Either as requests or proposals.
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker-js/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
-    * You can check if there are lint issues using `npm run lint:log`. Output will be in root folder in `lint.log` file.
+    * You can check if there are lint issues using `npm run lint`.
     * You can automatically fix a lot of lint issues using `npm run lint:fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `npm test`
