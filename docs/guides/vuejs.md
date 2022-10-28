@@ -107,7 +107,7 @@ This needs to work first before progressing to the next step. You might need to 
 
 ### Configure and run Stryker
 
-Once mocha runs succesfully on the webpack output, you're ready to install and run Stryker:
+Once mocha runs successfully on the webpack output, you're ready to install and run Stryker:
 
 1. Install the `@stryker-mutator/mocha-runner` plugin: `npm i -D @stryker-mutator/mocha-runner` or `yarn add --dev @stryker-mutator/mocha-runner`.
 2. Create your `stryker.conf.json` file:
