@@ -520,6 +520,16 @@ describe(JestTestRunner.name, () => {
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
     });
 
+    it.only('should set the node environment variable before calling jest in the dry run', async () => {
+      const sut = createSut();
+      jestTestAdapterMock.run.callsFake(async () => {
+        expect(process.env.NODE_ENV).to.equal('test');
+        return jestRunResult;
+      });
+      await sut.dryRun(factory.dryRunOptions());
+      expect(jestTestAdapterMock.run.calledOnce).to.be.true;
+    });
+
     it('should set the __strykerGlobalNamespace__ in globals', async () => {
       const sut = createSut();
       await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
