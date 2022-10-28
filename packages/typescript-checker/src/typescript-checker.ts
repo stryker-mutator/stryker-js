@@ -7,6 +7,7 @@ import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { HybridFileSystem } from './fs/index.js';
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
+import { createGroups } from './grouping/create-groups.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -41,7 +42,7 @@ export class TypescriptChecker implements Checker {
     options: StrykerOptions,
     private readonly fs: HybridFileSystem,
     private readonly tsCompiler: TypescriptCompiler
-  ) { }
+  ) {}
 
   /**
    * Starts the typescript compiler and does a dry run
@@ -81,31 +82,12 @@ export class TypescriptChecker implements Checker {
     });
 
     return result;
-
-    // const mutant = mutants[0];
-
-    // if (this.fs.existsInMemory(mutant.fileName)) {
-    //   this.fs.mutate(mutant);
-
-    //   return {
-    //     [mutant.id]: {
-    //       status: CheckStatus.Passed,
-    //     },
-    //   };
-    // } else {
-    //   // We allow people to mutate files that are not included in this ts project
-    //   return {
-    //     [mutant.id]: {
-    //       status: CheckStatus.Passed,
-    //     },
-    //   };
-    // }
   }
 
-  public async group?(mutants: Mutant[]): Promise<string[][]> {
-    await this.tsCompiler.check(mutants);
+  public async group(mutants: Mutant[]): Promise<string[][]> {
     const nodes = this.tsCompiler.getFileRelation();
-    return mutants.map((m) => [m.id]);
+    const result = await createGroups(mutants, nodes);
+    return result;
   }
 
   /**

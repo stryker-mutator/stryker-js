@@ -55,30 +55,36 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       {
         ...ts.sys,
         readFile: (fileName) => {
+          if (fileName.endsWith('.tsbuildinfo')) {
+            return undefined;
+          }
           const content = this.fs.getFile(fileName)?.content;
           if (content && this.allTSConfigFiles.has(path.resolve(fileName))) {
             return this.adjustTSConfigFile(fileName, content, buildModeEnabled);
           }
           return content;
         },
-        fileExists: (filePath: string) => {
+        fileExists: (fileName: string) => {
           // We want to ignore the buildinfo files. With them the compiler skips the program part we want to use.
-          if (filePath.endsWith('.tsbuildinfo')) {
+          if (fileName.endsWith('.tsbuildinfo')) {
             return false;
           }
-          return ts.sys.fileExists(filePath);
+          return ts.sys.fileExists(fileName);
         },
-        getModifiedTime: (pathName: string) => {
-          return this.fs.getFile(pathName)?.modifiedTime;
+        getModifiedTime: (fileName: string) => {
+          if (fileName.endsWith('.tsbuildinfo')) {
+            return undefined;
+          }
+          return this.fs.getFile(fileName)?.modifiedTime;
         },
-        watchFile: (filePath: string, callback: ts.FileWatcherCallback) => {
-          const file = this.fs.getFile(filePath);
+        watchFile: (fileName: string, callback: ts.FileWatcherCallback) => {
+          const file = this.fs.getFile(fileName);
 
           if (file) file.watcher = callback;
 
           return {
             close: () => {
-              delete this.fs.getFile(filePath)!.watcher;
+              delete this.fs.getFile(fileName)!.watcher;
             },
           };
         },
@@ -131,8 +137,8 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
     compiler.build();
-    const errors = await this.check([]);
-    return errors;
+    await this.currentTask.promise;
+    return this.currentErrors;
   }
 
   public async check(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
@@ -189,7 +195,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
 
     const content = JSON.parse(sourceMap.content);
 
-    return content.sources.map((sourcePath: string) => toPosixFileName(path.resolve(sourceMappingURL, '..', sourcePath)));
+    return content.sources.map((sourcePath: string) => toPosixFileName(path.resolve(sourceMapFileName, '..', sourcePath)));
   }
 
   private getSourceMappingURL(content: string): string | undefined {
