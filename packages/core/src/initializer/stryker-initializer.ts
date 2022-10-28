@@ -18,6 +18,7 @@ import { initializerTokens } from './index.js';
 const enum PackageManager {
   Npm = 'npm',
   Yarn = 'yarn',
+  Pnpm = 'pnpm',
 }
 
 export class StrykerInitializer {
@@ -108,6 +109,7 @@ export class StrykerInitializer {
       buildCommand,
       selectedReporters,
       selectedPackageManager,
+      npmDependencies.map((pkg) => pkg.name),
       await this.fetchAdditionalConfig(npmDependencies),
       isJsonSelected
     );
@@ -162,6 +164,10 @@ export class StrykerInitializer {
         name: PackageManager.Yarn,
         pkg: null,
       },
+      {
+        name: PackageManager.Pnpm,
+        pkg: null,
+      },
     ]);
   }
 
@@ -187,12 +193,23 @@ export class StrykerInitializer {
 
     const dependencyArg = dependencies.join(' ');
     this.out('Installing NPM dependencies...');
-    const cmd = selectedOption.name === PackageManager.Npm ? `npm i --save-dev ${dependencyArg}` : `yarn add ${dependencyArg} --dev`;
+    const cmd = this.getInstallCommand(selectedOption.name as PackageManager, dependencyArg);
     this.out(cmd);
     try {
       childProcess.execSync(cmd, { stdio: [0, 1, 2] });
     } catch (_) {
       this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
+    }
+  }
+
+  private getInstallCommand(packageManager: PackageManager, dependencyArg: string): string {
+    switch (packageManager) {
+      case PackageManager.Yarn:
+        return `yarn add ${dependencyArg} --dev`;
+      case PackageManager.Pnpm:
+        return `pnpm add -D ${dependencyArg}`;
+      case PackageManager.Npm:
+        return `npm i --save-dev ${dependencyArg}`;
     }
   }
 

@@ -6,7 +6,7 @@ import { CoverageAnalysis, StrykerOptions } from '@stryker-mutator/api/core';
 import { propertyPath } from '@stryker-mutator/util';
 import semver from 'semver';
 
-import { jestWrapper } from '../utils/index.js';
+import { JestWrapper } from '../utils/jest-wrapper.js';
 
 import { state } from './cjs/messaging.js';
 
@@ -16,7 +16,7 @@ const jestEnvironmentGenericFileName = fileURLToPath(new URL('./cjs/jest-environ
  * Jest's defaults.
  * @see https://jestjs.io/docs/en/configuration
  */
-function getJestDefaults() {
+function getJestDefaults(jestWrapper: JestWrapper) {
   // New defaults since 27: https://jestjs.io/blog/2021/05/25/jest-27
   if (semver.satisfies(jestWrapper.getVersion(), '>=27')) {
     return {
@@ -32,25 +32,29 @@ function getJestDefaults() {
   }
 }
 
-export function withCoverageAnalysis(jestConfig: Config.InitialOptions, coverageAnalysis: CoverageAnalysis): Config.InitialOptions {
+export function withCoverageAnalysis(
+  jestConfig: Config.InitialOptions,
+  coverageAnalysis: CoverageAnalysis,
+  jestWrapper: JestWrapper
+): Config.InitialOptions {
   // Override with Stryker specific test environment to capture coverage analysis
   if (coverageAnalysis === 'off') {
     return jestConfig;
   } else {
     const overrides: Config.InitialOptions = {};
-    overrideEnvironment(jestConfig, overrides);
+    overrideEnvironment(jestConfig, overrides, jestWrapper);
     if (coverageAnalysis === 'perTest') {
-      setupFramework(jestConfig, overrides);
+      setupFramework(jestConfig, overrides, jestWrapper);
     }
     return { ...jestConfig, ...overrides };
   }
 }
 
-export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number | undefined): Config.InitialOptions {
+export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number | undefined, jestWrapper: JestWrapper): Config.InitialOptions {
   // Override with Stryker specific test environment to capture coverage analysis
   if (typeof hitLimit === 'number') {
     const overrides: Config.InitialOptions = {};
-    overrideEnvironment(jestConfig, overrides);
+    overrideEnvironment(jestConfig, overrides, jestWrapper);
     return { ...jestConfig, ...overrides };
   } else {
     return jestConfig;
@@ -61,8 +65,8 @@ export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number
  * Setup the test framework (aka "runner" in jest terms) for "perTest" coverage analysis.
  * Will use monkey patching for framework "jest-jasmine2", and will assume the test environment handles events when "jest-circus"
  */
-function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions) {
-  const testRunner = jestConfig.testRunner ?? getJestDefaults().testRunner;
+function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions, jestWrapper: JestWrapper) {
+  const testRunner = jestConfig.testRunner ?? getJestDefaults(jestWrapper).testRunner;
   if (testRunner === 'jest-jasmine2') {
     overrides.setupFilesAfterEnv = [
       path.resolve(path.dirname(fileURLToPath(import.meta.url)), './jasmine2-setup-coverage-analysis.js'),
@@ -81,8 +85,8 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
   }
 }
 
-function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions): void {
-  const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults().testEnvironment;
+function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions, jestWrapper: JestWrapper): void {
+  const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults(jestWrapper).testEnvironment;
   state.jestEnvironment = nameEnvironment(originalJestEnvironment);
   overrides.testEnvironment = jestEnvironmentGenericFileName;
 }

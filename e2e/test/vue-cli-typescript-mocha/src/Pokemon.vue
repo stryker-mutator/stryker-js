@@ -1,17 +1,16 @@
 <template>
   <div>
-    <h2>{{ pokemon.name }}</h2>
+    <h2>{{ pokemon!.name }}</h2>
     <dl>
       <dt>Type</dt>
-      <dd>{{ pokemon.type }}</dd>
+      <dd>{{ pokemon!.type }}</dd>
     </dl>
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
-import { pokemonService } from './pokemon.service';
+import { defineComponent } from 'vue'
 
-export default Vue.extend({
+export default defineComponent({
   props: {
     pokemon: Object
   }

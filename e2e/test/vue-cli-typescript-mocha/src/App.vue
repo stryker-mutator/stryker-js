@@ -5,11 +5,11 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue'
 import { pokemonService, Pokemon } from './pokemon.service';
 import PokemonVue from './Pokemon.vue';
 
-export default Vue.extend({
+export default defineComponent({
   components: {
     ['component-pokemon']: PokemonVue
   },

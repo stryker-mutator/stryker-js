@@ -5,6 +5,7 @@ class State {
   public testFilesWithStrykerEnvironment = new Set<string>();
   public coverageAnalysis!: CoverageAnalysis;
   public jestEnvironment!: string;
+  public resolveFromDirectory!: string;
 
   constructor() {
     this.clear();
@@ -15,6 +16,7 @@ class State {
     this.instrumenterContext = {};
     this.coverageAnalysis = 'off';
     this.jestEnvironment = 'jest-environment-node';
+    this.resolveFromDirectory = process.cwd();
   }
 }
 
