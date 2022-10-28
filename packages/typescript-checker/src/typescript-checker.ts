@@ -9,6 +9,7 @@ import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { HybridFileSystem } from './fs/index.js';
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
+import { createGroups } from './grouping/create-groups.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -77,9 +78,10 @@ export class TypescriptChecker implements Checker {
     return result;
   }
 
-  public async group?(mutants: Mutant[]): Promise<string[][]> {
-    await this.tsCompiler.check(mutants);
-    return mutants.map((m) => [m.id]);
+  public async group(mutants: Mutant[]): Promise<string[][]> {
+    const nodes = this.tsCompiler.getFileRelation();
+    const result = await createGroups(mutants, nodes);
+    return result;
   }
 
   // string is id van de mutant
