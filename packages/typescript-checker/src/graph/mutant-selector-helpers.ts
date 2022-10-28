@@ -10,12 +10,12 @@ export class MutantSelectorHelpers {
     this.mutants.splice(0, 1);
     return mutant;
   }
+}
 
-  public selectNode(fileName: string): Node | null {
-    for (const node of this.nodes) {
-      if (node.fileName === fileName) return node;
-    }
-
-    return null;
+export function findNode(fileName: string, nodes: Node[]): Node | null {
+  for (const node of nodes) {
+    if (node.fileName === fileName) return node;
   }
+
+  return null;
 }
