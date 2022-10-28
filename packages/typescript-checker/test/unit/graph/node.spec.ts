@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { Node } from '../../../src/graph/node.js';
+import { Node } from '../../../src/grouping/node.js';
 
 describe('node', () => {
   it('getAllParentReferencesIncludingSelf without parent should return array of 1 node ', () => {
