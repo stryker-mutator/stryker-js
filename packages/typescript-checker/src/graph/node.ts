@@ -1,3 +1,3 @@
 export class Node {
-  constructor(public fileName: string, public parents: Node[] | null, public childs: Node[] | null) {}
+  constructor(public fileName: string, public parents: Node[], public childs: Node[]) {}
 }
