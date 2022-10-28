@@ -176,6 +176,7 @@ export class StrykerCli {
         `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
         parseBoolean
       )
+      .option('--disableConsoleEmojis', 'Choose whether or not emoji will be shown in CLI output. Default option is false.')
       .showSuggestionAfterError()
       .parse(this.argv);
 

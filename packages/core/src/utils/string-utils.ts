@@ -1,5 +1,8 @@
 import { propertyPath } from '@stryker-mutator/util';
+import { schema } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
+
+const { MutantStatus } = schema;
 
 export function wrapInClosure(codeFragment: string): string {
   return `
@@ -29,6 +32,24 @@ export function serialize(thing: unknown): string {
 
 export function deserialize<T>(stringified: string): T {
   return JSON.parse(stringified);
+}
+
+export function getEmojiForStatus(status: schema.MutantStatus): string {
+  switch (status) {
+    case MutantStatus.Killed:
+      return '✅';
+    case MutantStatus.NoCoverage:
+      return '🙈';
+    case MutantStatus.Ignored:
+      return '🤥';
+    case MutantStatus.Survived:
+      return '👽';
+    case MutantStatus.Timeout:
+      return '⌛';
+    case MutantStatus.RuntimeError:
+    case MutantStatus.CompileError:
+      return '💥';
+  }
 }
 
 /**
