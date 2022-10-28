@@ -44,21 +44,27 @@ function createTempMutents(): Node[] {
 export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
   const mutantSelectorHelper: MutantSelectorHelpers = new MutantSelectorHelpers(mutants, nodes);
 
-  let mutant: Mutant | null = mutants.splice(0, 1)[0] ?? null;
-
   const groups: Mutant[][] = [];
+
+  let mutant: Mutant | null = selectNewMutant(mutans, groups);
 
   while (mutant != null) {
     const mutantCopy = [...mutants];
-    const group: Mutant[] = [];
+    const group: Mutant[] = [mutant];
     const node = mutantSelectorHelper.selectNode(mutant.fileName);
     
     if (node === null) throw new Error('Node not in graph');
-    
+
     const nodesToIgnore: Set<Node> = node.getAllParentReferencesIncludingSelf();
+
+    for (const mutantSelected of mutantCopy) {
+      
+    }
+
+    
     
     groups.push(group);
-    mutant = mutants.splice(0, 1)[0] ?? null;
+    mutant = selectNewMutant(mutans, groups);
   }
 
   return graph;
@@ -72,4 +78,8 @@ function createTempMutants(): Mutant[]{
     {fileName: 'D.js', replacement: '', id: '4', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
     {fileName: 'A.js', replacement: '', id: '5', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
   ]
+}
+
+function selectNewMutant(mutans: Mutants[], groups: Mutant[][]): Mutant | null {
+  throw new Error('Function not implemented.');
 }
