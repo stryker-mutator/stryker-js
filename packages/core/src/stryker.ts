@@ -24,6 +24,11 @@ export class Stryker {
     const rootInjector = this.injectorFactory();
     const loggerProvider = provideLogger(rootInjector);
 
+    if (this.cliOptions.dryRun) {
+      const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+      log.info('Note: A dry-run has been started, no mutations will be run');
+    }
+
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
       const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
@@ -37,6 +42,12 @@ export class Stryker {
         // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
         const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
         const mutationRunExecutorInjector = await dryRunExecutor.execute();
+
+        if (this.cliOptions.dryRun) {
+          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+          log.info('The dry-run has been completed successfully. No mutations have been executed');
+          return [];
+        }
 
         // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
         const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);

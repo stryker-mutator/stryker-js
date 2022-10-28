@@ -290,6 +290,11 @@
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
     },
+    "dryRun": {
+      "description": "Runs only the initial test run, without running the mutators. This can be used to test for a correct setup of Stryker.",
+      "type":"boolean",
+      "default": false
+    },
     "eventReporter": {
       "description": "The options for the event recorder reporter.",
       "$ref": "#/definitions/eventRecorderOptions",
