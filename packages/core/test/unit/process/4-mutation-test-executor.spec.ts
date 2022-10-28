@@ -387,6 +387,10 @@ describe(MutationTestExecutor.name, () => {
   it('should short circuit when dryRunOnly is enabled', async () => {
     // Arrange
     testInjector.options.dryRunOnly = true;
+    arrangeScenario();
+    const plan1 = mutantRunPlan({ id: '1' });
+    const plan2 = mutantRunPlan({ id: '2' });
+    mutantTestPlans.push(plan1, plan2);
 
     // Act
     const actualResults = await sut.execute();
