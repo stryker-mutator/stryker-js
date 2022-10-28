@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 import { group } from 'console';
-import { MutantSelectorHelpers } from './mutant-selector-helpers.js';
+import { findNode, MutantSelectorHelpers } from './mutant-selector-helpers.js';
 
 import { Node } from './node.js';
 
@@ -42,35 +42,46 @@ function createTempMutents(): Node[] {
 }
 
 export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
-  const mutantSelectorHelper: MutantSelectorHelpers = new MutantSelectorHelpers(mutants, nodes);
-
   const groups: Mutant[][] = [];
 
-  let mutant: Mutant | null = selectNewMutant(mutans, groups);
+  let mutant: Mutant | null = selectNewMutant(mutants, groups);
 
+  // Loop unil all the mutants are in a group
   while (mutant != null) {
-    const mutantCopy = [...mutants];
+    // Copy the list of mutants who are not in a group
+    const mutantWhoAreNotInAGroup = [...mutants];
+    // The first mutant is always in a group
     const group: Mutant[] = [mutant];
-    const node = mutantSelectorHelper.selectNode(mutant.fileName);
-    
+    const node = findNode(mutant.fileName, nodes);
+
     if (node === null) throw new Error('Node not in graph');
 
-    const nodesToIgnore: Set<Node> = node.getAllParentReferencesIncludingSelf();
+    // Fill the ignorelist
+    let nodesToIgnore: Set<Node> = new Set(node.getAllParentReferencesIncludingSelf());
 
-    for (const mutantSelected of mutantCopy) {
-      
+    // Loop through the nodes who can possibly go in the group
+    for (const mutantSelected of mutantWhoAreNotInAGroup) {
+      let nodeSelected = findNode(mutantSelected.fileName, nodes);
+
+      if (nodeSelected === null) throw new Error('Node not in graph');
+
+      // See if the node can be in the group
+      if (nodesToIgnore.has(nodeSelected)) continue;
+
+      // Push the group
+      group.push(mutantSelected);
+      // Add to the ignorelist
+      nodesToIgnore = new Set<Node>([...nodesToIgnore, ...nodeSelected.getAllParentReferencesIncludingSelf()]);
     }
 
-    
-    
     groups.push(group);
-    mutant = selectNewMutant(mutans, groups);
+    mutant = selectNewMutant(mutants, groups);
   }
 
-  return graph;
+  return Promise.resolve(groupsToString(groups));
 }
 
-function createTempMutants(): Mutant[]{
+function createTempMutants(): Mutant[] {
   return [
     {fileName: 'A.js', replacement: '', id: '1', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
     {fileName: 'B.js', replacement: '', id: '2', location: {start: {line:1, column:1}, end: {line:1, column:1}}, mutatorName: 'test'},
@@ -80,6 +91,15 @@ function createTempMutants(): Mutant[]{
   ]
 }
 
-function selectNewMutant(mutans: Mutants[], groups: Mutant[][]): Mutant | null {
-  throw new Error('Function not implemented.');
+function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
+  const flatGroups = groups.flat();
+  for (const mutant of mutants) {
+    if (!flatGroups.includes(mutant)) return mutant;
+  }
+  return null;
 }
+
+function groupsToString(groups: Mutant[][]): string[][] {
+  return groups.map(group => group.map(mutant => mutant.fileName));
+}
+
