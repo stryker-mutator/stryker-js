@@ -19,25 +19,20 @@ const dots = (n: number) => repeat('.', n);
  */
 class Column {
   protected width: number;
+  private readonly emojiRegex = '✅|💥|🙈|👽|⌛️';
+  private readonly emojiMatchInHeader: RegExpExecArray | null;
 
   constructor(public header: string, public valueFactory: TableCellValueFactory, public rows: MetricsResult) {
+    this.emojiMatchInHeader = RegExp(this.emojiRegex).exec(this.header);
     const maxContentSize = this.determineValueSize();
     this.width = this.pad(dots(maxContentSize)).length;
   }
 
-  protected determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
+  private determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
     const valueWidths = row.childResults.map((child) => this.determineValueSize(child, ancestorCount + 1));
-    valueWidths.push(this.headerLength);
+    valueWidths.push(this.header.length);
     valueWidths.push(this.valueFactory(row, ancestorCount).length);
     return Math.max(...valueWidths);
-  }
-
-  private get headerLength() {
-    const headerEmojis = ['✅', '⌛️', '👽', '💥', '🙈'];
-    headerEmojis.forEach((emoji) => console.log(emoji.length));
-    const emojiInHeader = headerEmojis.some((emoji) => this.header.includes(emoji));
-
-    return emojiInHeader ? this.header.length - 1 : this.header.length;
   }
 
   /**
@@ -45,11 +40,16 @@ class Column {
    * @param input The string input
    */
   protected pad(input: string): string {
-    const sub = ['✅', '⌛️', '👽', '💥', '🙈'].some((emoji) => input.includes(emoji)) ? 2 : 3;
-    return `${spaces(this.width - input.length - sub)} ${input} `;
+    if (this.header.includes('✅')) {
+      if (input.includes('✅')) return `${spaces(this.width - input.length - 3)} ${input} `;
+      return `${spaces(this.width - input.length - 1)} ${input} `;
+    }
+
+    return `${spaces(this.width - input.length - 2)} ${input} `;
   }
 
   public drawLine(): string {
+    if (this.header.includes('✅')) return repeat('-', this.width + 1);
     return repeat('-', this.width);
   }
 
@@ -104,11 +104,11 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
-      new Column('# ✅ killed', (row) => row.metrics.killed.toString(), metricsResult),
-      new Column('# ⌛️ timeout', (row) => row.metrics.timeout.toString(), metricsResult),
-      new Column('# 👽 survived', (row) => row.metrics.survived.toString(), metricsResult),
-      new Column('# 🙈 no cov', (row) => row.metrics.noCoverage.toString(), metricsResult),
-      new Column('# 💥 error', (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(), metricsResult),
+      new Column('✅ killed', (row) => row.metrics.killed.toString(), metricsResult),
+      new Column('⌛️ timeout', (row) => row.metrics.timeout.toString(), metricsResult),
+      new Column('👽 survived', (row) => row.metrics.survived.toString(), metricsResult),
+      new Column('🙈 no cov', (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column('💥 error', (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(), metricsResult),
     ];
   }
 
