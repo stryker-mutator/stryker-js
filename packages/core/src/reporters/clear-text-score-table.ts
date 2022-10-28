@@ -104,11 +104,15 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
-      new Column('✅ killed', (row) => row.metrics.killed.toString(), metricsResult),
-      new Column('⌛️ timeout', (row) => row.metrics.timeout.toString(), metricsResult),
-      new Column('👽 survived', (row) => row.metrics.survived.toString(), metricsResult),
-      new Column('🙈 no cov', (row) => row.metrics.noCoverage.toString(), metricsResult),
-      new Column('💥 error', (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(), metricsResult),
+      new Column(`${options.disableConsoleEmojis ? '#' : '✅'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
+      new Column(`${options.disableConsoleEmojis ? '#' : '⌛️'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
+      new Column(`${options.disableConsoleEmojis ? '#' : '👽'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
+      new Column(`${options.disableConsoleEmojis ? '#' : '💥'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column(
+        `${options.disableConsoleEmojis ? '#' : '💥'} errors`,
+        (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
+        metricsResult
+      ),
     ];
   }
 
