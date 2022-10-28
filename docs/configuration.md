@@ -160,14 +160,6 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
-### `files` (DEPRECATED)
-
-Default: `undefined`<br />
-Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
-Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
-
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead, or use [mutate](#mutate-string) to select which files to mutate. 
  
 ### `force` [`boolean`]
 
@@ -184,7 +176,9 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,coverage`<br />
 Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
-Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+
+This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with [`--inPlace`](#inplace-boolean).
 
 These patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
