@@ -73,8 +73,6 @@ describe(CustomJestConfigLoader.name, () => {
       readFileStub = sinon.stub(fs.promises, 'readFile');
       fileExistsSyncStub = sinon.stub(fs, 'existsSync');
       readConfig = { testMatch: ['exampleJestConfigValue'] };
-      readFileStub.callsFake(() => Promise.resolve(`{ "jest": ${JSON.stringify(readConfig)}}`));
-      requireFromCwdStub.returns(readConfig);
 
       // Native rejects, which enables manual mode
       jestConfigWrapperMock.readInitialOptions.rejects(new Error());
@@ -82,6 +80,18 @@ describe(CustomJestConfigLoader.name, () => {
 
     it('should load the Jest configuration from the jest.config.js', async () => {
       fileExistsSyncStub.returns(true);
+      requireFromCwdStub.returns(readConfig);
+
+      const config = await sut.loadConfig();
+
+      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
+      expect(config).to.deep.contains(readConfig);
+    });
+
+    it('should load the Jest configuration from an async function in the jest.config.js', async () => {
+      fileExistsSyncStub.returns(true);
+      requireFromCwdStub.returns(async () => readConfig);
+
       const config = await sut.loadConfig();
 
       expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
@@ -90,6 +100,8 @@ describe(CustomJestConfigLoader.name, () => {
 
     it('should set the rootDir when no rootDir was configured jest.config.js', async () => {
       fileExistsSyncStub.returns(true);
+      requireFromCwdStub.returns(readConfig);
+
       const config = await sut.loadConfig();
 
       expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
@@ -99,6 +111,7 @@ describe(CustomJestConfigLoader.name, () => {
     it('should override the rootDir when a rootDir was configured jest.config.js', async () => {
       readConfig.rootDir = 'lib';
       fileExistsSyncStub.returns(true);
+      requireFromCwdStub.returns(readConfig);
       const config = await sut.loadConfig();
 
       expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
@@ -108,6 +121,7 @@ describe(CustomJestConfigLoader.name, () => {
     it('should allow users to configure a jest.config.json file as "configFile"', async () => {
       // Arrange
       fileExistsSyncStub.returns(true);
+      requireFromCwdStub.returns(readConfig);
       options.jest.configFile = path.resolve(projectRoot, 'jest.config.json');
 
       // Act
@@ -126,6 +140,7 @@ describe(CustomJestConfigLoader.name, () => {
         .withArgs(path.resolve(projectRoot, 'package.json'))
         .returns(true);
       options.jest.configFile = path.resolve(projectRoot, 'package.json');
+      readFileStub.resolves(JSON.stringify({ jest: readConfig }));
 
       // Act
       const config = await sut.loadConfig();
@@ -158,6 +173,7 @@ describe(CustomJestConfigLoader.name, () => {
         .returns(false)
         .withArgs(path.resolve(projectRoot, 'package.json'))
         .returns(true);
+      readFileStub.resolves(JSON.stringify({ jest: readConfig }));
 
       // Act
       const config = await sut.loadConfig();
@@ -175,6 +191,7 @@ describe(CustomJestConfigLoader.name, () => {
         .returns(false)
         .withArgs(path.resolve(projectRoot, 'client', 'package.json'))
         .returns(true);
+      readFileStub.resolves(JSON.stringify({ jest: readConfig }));
 
       // Act
       const config = await sut.loadConfig();
