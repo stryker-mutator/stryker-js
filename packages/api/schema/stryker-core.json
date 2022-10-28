@@ -291,7 +291,7 @@
       "default": {}
     },
     "dryRunOnly": {
-      "description": "Runs only the initial test run, without running the mutators. This can be used to test for a correct setup of Stryker.",
+      "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",
       "type":"boolean",
       "default": false
     },

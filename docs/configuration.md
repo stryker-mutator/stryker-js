@@ -151,7 +151,7 @@ Default: `false`<br />
 Command line: `--dryRunOnly`<br />
 Config file: `"dryRunOnly": false`
 
-Execute the initial test run only without doing actual mutation testing. Doing a dry run can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.
+Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.
 
 ### `dryRunTimeoutMinutes` [`number`]
 

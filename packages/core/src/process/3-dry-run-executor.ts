@@ -111,7 +111,7 @@ export class DryRunExecutor {
 
   private async executeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
     if (this.options.dryRunOnly) {
-      this.log.info('Note: the dry-run has been started, no mutations will be run.');
+      this.log.info('Note: running the dry-run only. No mutations will be tested.');
     }
 
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;

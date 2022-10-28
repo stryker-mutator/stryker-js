@@ -94,7 +94,7 @@ export class StrykerCli {
       )
       .option(
         '--dryRunOnly',
-        'Execute the initial test run only, without doing actual mutation testing. Doing a dry run can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.'
+        'Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.'
       )
       .option(
         '--checkers <listOfCheckersOrEmptyString>',
