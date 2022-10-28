@@ -1,10 +1,10 @@
 export class Node {
   constructor(public fileName: string, public parents: Node[] | null, public childs: Node[] | null) {}
 
-  public getAllParentReferences(): Node[] {
-    const allParentReferences: Node[] = [];
+  public getAllNodesToIgnore(): Node[] {
+    const allParentReferences: Node[] = [this];
     this.parents?.forEach((parent) => {
-      const innerParents = parent.getAllParentReferences();
+      const innerParents = parent.getAllNodesToIgnore();
       innerParents.forEach((node) => {
         allParentReferences.push(node);
       });
