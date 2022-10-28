@@ -6,41 +6,28 @@ import { MutantSelectorHelpers } from './mutant-selector-helpers.js';
 import { Node } from './node.js';
 
 function createTempGraph(): Node[] {
-  const nodeA: Node = {
-    parents: [],
-    childs: [],
-    fileName: 'A.js',
-    GetAllParentReferences() {
-      return [];
-    },
-  };
+  const nodeA: Node = new Node('a.js', [], []);
+  const nodeB: Node = new Node('b.js', [], []);
+  const nodeC: Node = new Node('c.js', [], []);
+  const nodeD: Node = new Node('d.js', [], []);
 
-  const nodeB: Node = {
-    parents: [],
-    childs: [],
-    fileName: 'B.js',
-    GetAllParentReferences() {
-      return [];
-    },
-  };
+  nodeA.childs = [nodeB, nodeC];
 
-  const nodeC: Node = {
-    parents: [],
-    childs: [],
-    fileName: 'C.js',
-    GetAllParentReferences() {
-      return [];
-    },
-  };
+  nodeB.parents = [nodeA];
 
-  const nodeD: Node = {
-    parents: [],
-    childs: [],
-    fileName: 'D.js',
-    GetAllParentReferences() {
-      return [];
-    },
-  };
+  nodeC.childs = [nodeD];
+  nodeC.parents = [nodeA];
+
+  nodeD.parents = [nodeC];
+
+  return [nodeA, nodeB, nodeC, nodeD];
+}
+
+function createTempMutents(): Node[] {
+  const nodeA: Node = new Node('a.js', [], []);
+  const nodeB: Node = new Node('b.js', [], []);
+  const nodeC: Node = new Node('c.js', [], []);
+  const nodeD: Node = new Node('d.js', [], []);
 
   nodeA.childs = [nodeB, nodeC];
 
@@ -57,25 +44,24 @@ function createTempGraph(): Node[] {
 export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
   const mutantSelectorHelper: MutantSelectorHelpers = new MutantSelectorHelpers(mutants, nodes);
 
-  let mutant: Mutant | null = mutantSelectorHelper.getNewMutant();
+  let mutant: Mutant | null = mutants.splice(0, 1)[0] ?? null;
 
   const groups: Mutant[][] = [];
 
   while (mutant != null) {
-    const group: Mutant = [];
+    const mutantCopy = [...mutants];
+    const group: Mutant[] = [];
     const node = mutantSelectorHelper.selectNode(mutant.fileName);
     
     if (node === null) throw new Error('Node not in graph');
     
-    const negeerlijst: Set<Node> = node.GetAllParentReferences();
+    const nodesToIgnore: Set<Node> = node.getAllParentReferencesIncludingSelf();
     
     groups.push(group);
-    mutant = mutantSelectorHelper.getNewMutant();
+    mutant = mutants.splice(0, 1)[0] ?? null;
   }
-
-  const leaf = getLeaf(graph, negeerlijst);
 
   return graph;
 }
 
-
+createGroups();
