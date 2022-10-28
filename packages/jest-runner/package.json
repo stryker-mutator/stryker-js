@@ -76,7 +76,6 @@
   "dependencies": {
     "@stryker-mutator/api": "6.2.3",
     "@stryker-mutator/util": "6.2.3",
-    "jest-config": "~29.2.1",
     "semver": "~7.3.7",
     "tslib": "~2.4.0"
   },
