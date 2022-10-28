@@ -69,7 +69,7 @@ export class StrykerCli {
       )
       .option(
         '--ignorePatterns <filesToIgnore>',
-        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Should only be used in cases where for example large files slow down stryker. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
+        'A comma separated list of patterns used for specifying which files need to be ignored. This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".  Example: --ignorePatterns dist',
         list
       )
       .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
