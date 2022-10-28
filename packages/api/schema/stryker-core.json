@@ -290,7 +290,7 @@
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
     },
-    "dryRun": {
+    "dryRunOnly": {
       "description": "Runs only the initial test run, without running the mutators. This can be used to test for a correct setup of Stryker.",
       "type":"boolean",
       "default": false

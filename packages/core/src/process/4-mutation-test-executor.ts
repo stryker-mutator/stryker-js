@@ -64,7 +64,7 @@ export class MutationTestExecutor {
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
-    if (this.options.dryRun) {
+    if (this.options.dryRunOnly) {
       this.log.info('The dry-run has been completed successfully. No mutations have been executed.');
       return [];
     }

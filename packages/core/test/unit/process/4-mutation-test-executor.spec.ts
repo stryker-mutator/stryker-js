@@ -384,9 +384,9 @@ describe(MutationTestExecutor.name, () => {
     expect(testInjector.logger.info).calledWithExactly('Done in %s.', '2 seconds, tops!');
   });
 
-  it('should short circuit when dryRun is enabled', async () => {
+  it('should short circuit when dryRunOnly is enabled', async () => {
     // Arrange
-    testInjector.options.dryRun = true;
+    testInjector.options.dryRunOnly = true;
 
     // Act
     const actualResults = await sut.execute();
