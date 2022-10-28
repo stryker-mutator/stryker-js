@@ -5,12 +5,7 @@ export class Node {
     allParentReferences.add(this);
     this.parents?.forEach((parent) => {
       if (!allParentReferences.has(parent)) {
-        const innerParents = parent.getAllParentReferencesIncludingSelf(allParentReferences);
-        innerParents.forEach((node) => {
-          if (!allParentReferences.has(node)) {
-            allParentReferences.add(node);
-          }
-        });
+        parent.getAllParentReferencesIncludingSelf(allParentReferences);
       }
     });
     return allParentReferences;
