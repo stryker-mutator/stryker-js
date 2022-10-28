@@ -64,12 +64,12 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        '[DEPRECATED, please use `--ignorePatterns` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        '[DEPRECATED, please use the inverse option `--ignorePatterns` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
         list
       )
       .option(
         '--ignorePatterns <filesToIgnore>',
-        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
+        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Should only be used in cases where for example large files slow down stryker. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
         list
       )
       .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
@@ -99,7 +99,8 @@ export class StrykerCli {
       )
       .option('--checkerNodeArgs <listOfNodeArgs>', 'A list of node args to be passed to checker child processes.', createSplitter(' '))
       .option(
-        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
+        '--coverageAnalysis <perTest|all|off>',
+        `The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
