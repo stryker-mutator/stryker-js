@@ -16,11 +16,10 @@ import { findNode } from './grouping/mutant-selector-helpers.js';
 export interface ITypescriptCompiler {
   init(): Promise<ts.Diagnostic[]>;
   check(mutants: Mutant[]): Promise<ts.Diagnostic[]>; // todo set return type
-  getFileRelation(): Node[];
 }
 
 export interface IFileRelationCreator {
-  getFileRelation(): void;
+  getFileRelationsAsNodes(): void;
 }
 
 export type SourceFiles = Map<
@@ -154,7 +153,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     return errors;
   }
 
-  public getFileRelation(): Node[] {
+  public getFileRelationsAsNodes(): Node[] {
     if (!this.nodes.length) {
       // create nodes
       for (const [fileName] of this.sourceFiles) {

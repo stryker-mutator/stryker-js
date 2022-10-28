@@ -79,7 +79,7 @@ export class TypescriptChecker implements Checker {
   }
 
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    const nodes = this.tsCompiler.getFileRelation();
+    const nodes = this.tsCompiler.getFileRelationsAsNodes();
     const result = await createGroups(mutants, nodes);
     return result;
   }
@@ -97,7 +97,7 @@ export class TypescriptChecker implements Checker {
           errorsMap[mutants[0].id] = [error];
         }
       } else {
-        const nodeErrorWasThrownIn = this.tsCompiler.getFileRelation().find((node) => (node.fileName = error.file!.fileName));
+        const nodeErrorWasThrownIn = this.tsCompiler.getFileRelationsAsNodes().find((node) => (node.fileName = error.file!.fileName));
         if (!nodeErrorWasThrownIn) {
           throw new Error('Error not found in any node');
         }
