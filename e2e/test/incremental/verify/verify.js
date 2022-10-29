@@ -8,6 +8,8 @@ import { PlanKind } from '@stryker-mutator/api/core';
 
 import { MutationRunPlanReporter } from './mutation-run-plan-reporter.js';
 
+import '../../../helpers.js';
+
 const incrementalFile = new URL('../reports/stryker-incremental.json', import.meta.url);
 
 describe('incremental', () => {
