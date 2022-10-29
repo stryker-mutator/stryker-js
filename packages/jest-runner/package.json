@@ -67,6 +67,7 @@
     "jest-circus": "29.2.2",
     "jest-environment-jsdom": "29.2.2",
     "jest-environment-jsdom-sixteen": "2.0.0",
+    "ts-node": "10.9.1",
     "jest-jasmine2": "29.2.2"
   },
   "peerDependencies": {

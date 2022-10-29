@@ -32,7 +32,7 @@ import { pluginTokens } from './plugin-di.js';
 import { configLoaderFactory } from './config-loaders/index.js';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options.js';
 import { JEST_OVERRIDE_OPTIONS } from './jest-override-options.js';
-import { determineResolveFromDirectory, JestWrapper, verifyAllTestFilesHaveCoverage } from './utils/index.js';
+import { determineResolveFromDirectory, JestConfigWrapper, JestWrapper, verifyAllTestFilesHaveCoverage } from './utils/index.js';
 import { state } from './jest-plugins/cjs/messaging.js';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
@@ -47,6 +47,7 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
       .provideValue(pluginTokens.requireFromCwd, requireResolve)
       .provideValue(pluginTokens.processEnv, process.env)
       .provideClass(pluginTokens.jestWrapper, JestWrapper)
+      .provideClass(pluginTokens.jestConfigWrapper, JestConfigWrapper)
       .provideFactory(pluginTokens.jestTestAdapter, jestTestAdapterFactory)
       .provideFactory(pluginTokens.configLoader, configLoaderFactory)
       .provideValue(pluginTokens.globalNamespace, namespace)
@@ -58,9 +59,9 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
 export const jestTestRunnerFactory = createJestTestRunnerFactory();
 
 export class JestTestRunner implements TestRunner {
-  private readonly jestConfig: jest.Config.InitialOptions;
+  private jestConfig!: jest.Config.InitialOptions;
   private readonly jestOptions: JestOptions;
-  private readonly enableFindRelatedTests: boolean;
+  private readonly enableFindRelatedTests!: boolean;
 
   public static inject = tokens(
     commonTokens.logger,
@@ -75,18 +76,13 @@ export class JestTestRunner implements TestRunner {
     private readonly log: Logger,
     options: StrykerOptions,
     private readonly jestTestAdapter: JestTestAdapter,
-    configLoader: JestConfigLoader,
+    private readonly configLoader: JestConfigLoader,
     private readonly jestWrapper: JestWrapper,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
   ) {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
-    // Get jest configuration from stryker options and assign it to jestConfig
-    const configFromFile = configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
-
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
-
     if (this.enableFindRelatedTests) {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
     } else {
@@ -94,6 +90,11 @@ export class JestTestRunner implements TestRunner {
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
       );
     }
+  }
+
+  public async init(): Promise<void> {
+    const configFromFile = await this.configLoader.loadConfig();
+    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
   }
 
   public capabilities(): TestRunnerCapabilities {

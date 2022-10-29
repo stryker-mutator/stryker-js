@@ -38,9 +38,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
   describe('dryRun', () => {
     it('should set the test name and timeSpentMs', async function () {
       process.chdir(resolveTestResource('jasmine2-node'));
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
 
-      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       const result = runResult.tests.find((test) => test.id === 'Add should be able to add two numbers');
@@ -51,9 +52,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should run tests on the example custom project using package.json', async () => {
       process.chdir(resolveTestResource('jasmine2-node'));
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
 
-      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -62,9 +64,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should run tests on the example custom project using jest.config.js', async () => {
       process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
 
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
 
-      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
@@ -74,8 +77,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
       process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
       const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
       const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
-      const jestTestRunner = createSut();
-      const runResult = await jestTestRunner.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+      const sut = createSut();
+      await sut.init();
+
+      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
       assertions.expectCompleted(runResult);
       expectTestResults(runResult, [
         {
@@ -112,14 +117,16 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should kill mutant 1', async () => {
       process.chdir(resolveFromProject());
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
+
       const mutantRunOptions = factory.mutantRunOptions({
         activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: resolveFromProject('src', 'Add.js'),
       });
       mutantRunOptions.activeMutant.id = '1';
 
-      const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
@@ -130,13 +137,15 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
     it('should let mutant 11 survive', async () => {
       process.chdir(resolveFromProject());
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
+
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: resolveFromProject('src', 'Circle.js'),
       });
       mutantRunOptions.activeMutant.id = '11';
 
-      const runResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectSurvived(runResult);
     });
@@ -144,16 +153,18 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should be able to let a mutant survive after killing mutant 1', async () => {
       // Arrange
       process.chdir(resolveFromProject());
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
+
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: resolveFromProject('src', 'Add.js'),
       });
       mutantRunOptions.activeMutant.id = '1';
 
       // Act
-      const firstResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      const firstResult = await sut.mutantRun(mutantRunOptions);
       mutantRunOptions.activeMutant.id = '10';
-      const secondResult = await jestTestRunner.mutantRun(mutantRunOptions);
+      const secondResult = await sut.mutantRun(mutantRunOptions);
 
       // Assert
       assertions.expectKilled(firstResult);
@@ -163,14 +174,16 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should only report the first failing test in `killedBy` when disableBail = false', async () => {
       // Arrange
       process.chdir(resolveFromProject());
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
+
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: resolveFromProject('src', 'Add.js'),
         activeMutant: factory.mutant({ id: '0' }),
       });
 
       // Act
-      const result = await jestTestRunner.mutantRun(mutantRunOptions);
+      const result = await sut.mutantRun(mutantRunOptions);
 
       // Assert
       assertions.expectKilled(result);
@@ -180,7 +193,9 @@ describe(`${JestTestRunner.name} integration test`, () => {
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {
       // Arrange
       process.chdir(resolveFromProject());
-      const jestTestRunner = createSut();
+      const sut = createSut();
+      await sut.init();
+
       const mutantRunOptions = factory.mutantRunOptions({
         sandboxFileName: resolveFromProject('src', 'Add.js'),
         activeMutant: factory.mutant({ id: '0' }),
@@ -188,7 +203,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
       });
 
       // Act
-      const result = await jestTestRunner.mutantRun(mutantRunOptions);
+      const result = await sut.mutantRun(mutantRunOptions);
 
       // Assert
       assertions.expectKilled(result);
