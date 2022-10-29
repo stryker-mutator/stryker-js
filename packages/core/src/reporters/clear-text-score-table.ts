@@ -1,12 +1,19 @@
 import os from 'os';
 
 import { MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
+
 import { MetricsResult } from 'mutation-testing-metrics';
 
 import chalk from 'chalk';
 import flatMap from 'lodash.flatmap';
 
+import emojiRegex from 'emoji-regex';
+
+import { inputLength } from '../utils/string-utils.js';
+
 const FILES_ROOT_NAME = 'All files';
+
+const emojiRe = emojiRegex();
 
 type TableCellValueFactory = (row: MetricsResult, ancestorCount: number) => string;
 
@@ -19,20 +26,26 @@ const dots = (n: number) => repeat('.', n);
  */
 class Column {
   protected width: number;
-  private readonly emojiRegex = '✅|💥|🙈|👽|⌛️';
   private readonly emojiMatchInHeader: RegExpExecArray | null;
 
   constructor(public header: string, public valueFactory: TableCellValueFactory, public rows: MetricsResult) {
-    this.emojiMatchInHeader = RegExp(this.emojiRegex).exec(this.header);
+    this.emojiMatchInHeader = emojiRe.exec(this.header);
     const maxContentSize = this.determineValueSize();
     this.width = this.pad(dots(maxContentSize)).length;
   }
 
   private determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
     const valueWidths = row.childResults.map((child) => this.determineValueSize(child, ancestorCount + 1));
-    valueWidths.push(this.header.length);
+    valueWidths.push(this.headerLenght);
     valueWidths.push(this.valueFactory(row, ancestorCount).length);
     return Math.max(...valueWidths);
+  }
+
+  private get headerLenght() {
+    if (this.emojiMatchInHeader) {
+      return this.header.length - this.emojiMatchInHeader[0].length + 2;
+    }
+    return this.header.length;
   }
 
   /**
@@ -40,16 +53,10 @@ class Column {
    * @param input The string input
    */
   protected pad(input: string): string {
-    if (this.header.includes('✅')) {
-      if (input.includes('✅')) return `${spaces(this.width - input.length - 3)} ${input} `;
-      return `${spaces(this.width - input.length - 1)} ${input} `;
-    }
-
-    return `${spaces(this.width - input.length - 2)} ${input} `;
+    return `${spaces(this.width - inputLength(input) - 2)} ${input} `;
   }
 
   public drawLine(): string {
-    if (this.header.includes('✅')) return repeat('-', this.width + 1);
     return repeat('-', this.width);
   }
 
@@ -89,8 +96,8 @@ class FileColumn extends Column {
   constructor(rows: MetricsResult) {
     super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
   }
-  protected pad(input: string): string {
-    return `${input} ${spaces(this.width - input.length - 1)}`;
+  protected override pad(input: string): string {
+    return `${input} ${spaces(this.width - inputLength(input) - 1)}`;
   }
 }
 
@@ -107,7 +114,7 @@ export class ClearTextScoreTable {
       new Column(`${options.disableConsoleEmojis ? '#' : '✅'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
       new Column(`${options.disableConsoleEmojis ? '#' : '⌛️'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
       new Column(`${options.disableConsoleEmojis ? '#' : '👽'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
-      new Column(`${options.disableConsoleEmojis ? '#' : '💥'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column(`${options.disableConsoleEmojis ? '#' : '🙈'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
       new Column(
         `${options.disableConsoleEmojis ? '#' : '💥'} errors`,
         (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),

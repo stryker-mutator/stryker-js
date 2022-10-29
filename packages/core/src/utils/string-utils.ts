@@ -2,6 +2,10 @@ import { propertyPath } from '@stryker-mutator/util';
 import { schema } from '@stryker-mutator/api/core';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
+import emojiRegex from 'emoji-regex';
+
+const emojiRe = emojiRegex();
+
 const { MutantStatus } = schema;
 
 export function wrapInClosure(codeFragment: string): string {
@@ -50,6 +54,14 @@ export function getEmojiForStatus(status: schema.MutantStatus): string {
     case MutantStatus.CompileError:
       return '💥';
   }
+}
+
+export function inputLength(input: string): number {
+  let length = input.length;
+  for (const match of input.matchAll(emojiRe)) {
+    length = length - match.length + 2;
+  }
+  return length;
 }
 
 /**
