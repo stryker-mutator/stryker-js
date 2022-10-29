@@ -16,11 +16,10 @@ import { findNode } from './grouping/mutant-selector-helpers.js';
 export interface ITypescriptCompiler {
   init(): Promise<ts.Diagnostic[]>;
   check(mutants: Mutant[]): Promise<ts.Diagnostic[]>; // todo set return type
-  getFileRelation(): Node[];
 }
 
 export interface IFileRelationCreator {
-  getFileRelation(): void;
+  getFileRelationsAsNodes(): void;
 }
 
 export type SourceFiles = Map<
@@ -40,6 +39,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
   private readonly sourceFiles: SourceFiles = new Map();
+  private readonly nodes: Node[] = [];
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
@@ -151,30 +151,30 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     return errors;
   }
 
-  public getFileRelation(): Node[] {
-    const nodes: Node[] = [];
-
-    // create nodes
-    for (const [fileName] of this.sourceFiles) {
-      const node = new Node(fileName, [], []);
-      nodes.push(node);
-    }
-
-    // set imports
-    for (const [fileName, file] of this.sourceFiles) {
-      const node = findNode(fileName, nodes);
-      if (node == null) {
-        throw new Error('todo');
+  public getFileRelationsAsNodes(): Node[] {
+    if (!this.nodes.length) {
+      // create nodes
+      for (const [fileName] of this.sourceFiles) {
+        const node = new Node(fileName, [], []);
+        this.nodes.push(node);
       }
-      const importFileNames = [...file.imports];
-      node.childs = nodes.filter((n) => importFileNames.includes(n.fileName));
-    }
 
-    for (const node of nodes) {
-      node.parents = nodes.filter((n) => n.childs.includes(node));
-    }
+      // set imports
+      for (const [fileName, file] of this.sourceFiles) {
+        const node = findNode(fileName, this.nodes);
+        if (node == null) {
+          throw new Error('todo');
+        }
+        const importFileNames = [...file.imports];
+        node.childs = this.nodes.filter((n) => importFileNames.includes(n.fileName));
+      }
 
-    return nodes;
+      // todo set parents
+      for (const node of this.nodes) {
+        node.parents = this.nodes.filter((n) => n.childs.includes(node)); // todo remove ? when childs isnt nullable
+      }
+    }
+    return this.nodes;
   }
 
   private resolveFilename(fileName: string): string[] {

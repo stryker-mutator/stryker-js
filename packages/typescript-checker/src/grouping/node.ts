@@ -10,4 +10,14 @@ export class Node {
     });
     return allParentReferences;
   }
+
+  public getAllChildReferencesIncludingSelf(allChildReferences: Set<Node> = new Set<Node>()): Set<Node> {
+    allChildReferences.add(this);
+    this.parents?.forEach((parent) => {
+      if (!allChildReferences.has(parent)) {
+        parent.getAllChildReferencesIncludingSelf(allChildReferences);
+      }
+    });
+    return allChildReferences;
+  }
 }
