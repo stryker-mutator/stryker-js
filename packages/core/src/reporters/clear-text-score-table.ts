@@ -36,12 +36,12 @@ class Column {
 
   private determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
     const valueWidths = row.childResults.map((child) => this.determineValueSize(child, ancestorCount + 1));
-    valueWidths.push(this.headerLenght);
+    valueWidths.push(this.headerLength);
     valueWidths.push(this.valueFactory(row, ancestorCount).length);
     return Math.max(...valueWidths);
   }
 
-  private get headerLenght() {
+  private get headerLength() {
     if (this.emojiMatchInHeader) {
       return this.header.length - this.emojiMatchInHeader[0].length + 2;
     }
