@@ -64,10 +64,11 @@ export class TypescriptChecker implements Checker {
   /**
    * Checks whether or not a mutant results in a compile error.
    * Will simply pass through if the file mutated isn't part of the typescript project
-   * @param mutant The mutant to check
+   * @param mutants The mutants to check
    */
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     const result: Record<string, CheckResult> = {};
+
     mutants.forEach((mutant) => {
       result[mutant.id] = {
         status: CheckStatus.Passed,
@@ -77,9 +78,15 @@ export class TypescriptChecker implements Checker {
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
       result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
     }
+
     return result;
   }
 
+  /**
+   * Creates groups of the mutants.
+   * These groups will get send to the check method.
+   * @param mutants All the mutants to group.
+   */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     const e = mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts'));
     const a = mutants.filter((m) => !m.fileName.includes('jest-test-adapter-factory.ts'));
@@ -115,13 +122,16 @@ export class TypescriptChecker implements Checker {
         }
         const allNodesWrongMutantsCanBeIn = nodeErrorWasThrownIn.getAllChildReferencesIncludingSelf();
         const fileNamesToCheck: string[] = [];
+
         allNodesWrongMutantsCanBeIn.forEach((node) => {
           fileNamesToCheck.push(node.fileName);
         });
+
         const mutantsRelatedToError = mutants.filter((mutant) => {
           // todo fix all posix
           return fileNamesToCheck.map((f) => toPosixFileName(f)).includes(toPosixFileName(mutant.fileName));
         });
+
         if (mutantsRelatedToError.length === 1) {
           if (errorsMap[mutants[0].id]) {
             errorsMap[mutants[0].id].push(error);

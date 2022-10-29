@@ -4,9 +4,41 @@ import { findNode } from './mutant-selector-helpers.js';
 
 import { Node } from './node.js';
 
-export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
+/**
+ * To speed up the type checking we want to check multiple mutants at once.
+ * When multiple mutants in different files who can't throw errors in each other we can type check them simultaneously.
+ * These mutants who can be tested at the same time are called a group.
+ * Therefore the return type is an array of arrays in other words: an array of groups.
+ *
+ * @example
+ * Let's assume we got tho following project structure and in every file is one mutant.
+ *
+ *          ========
+ *          = A.ts =
+ *          ========
+ *         /        \
+ * ========          ========
+ * = B.ts =          = C.ts =
+ * ========          ========
+ *                           \
+ *                            ========
+ *                            = D.ts =
+ *                            ========
+ *
+ * A imports B and C
+ * C imports D
+ *
+ * In this example we can type check B and D at the same time.
+ * This is because these files can't throw errors in each other.
+ * If we type check them and let's say B throws an error.
+ * We know for sure that the mutant in B was the one creating the type error.
+ * If we type check B and D at the same time it is possible that an error shows up in A.
+ * When this happens we go down de dependency graph and individual test the mutants who were in that group.
+ *
+ * In this function we create the groups of mutants who can be tested at the same time.
+ */
+export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
   const groups: Mutant[][] = [];
-
   let mutant: Mutant | null = selectNewMutant(mutants, groups);
 
   // Loop until all the mutants are in a group
@@ -28,7 +60,7 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
 
       if (nodeSelected === null) throw new Error('Node not in graph');
 
-      // check of er al mutants in deze groep zitten die in de parent structuur van nodeSelected voorkomt
+      // Check if parents of node are not in the group
       const groupNodes: Set<Node> = getNodesFromMutants(group, nodes);
       if (currentNodeHasParentsInNodesToIgnoreList(nodeSelected, new Set<Node>(groupNodes))) continue;
 
@@ -46,7 +78,7 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
     mutant = selectNewMutant(mutants, groups);
   }
 
-  return Promise.resolve(groupsToString(groups));
+  return groupsToString(groups);
 }
 
 function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
@@ -75,6 +107,7 @@ function currentNodeHasParentsInNodesToIgnoreList(nodeSelected: Node, nodesToIgn
   });
   return result;
 }
+
 function getNodesFromMutants(group: Mutant[], nodes: Node[]): Set<Node> {
   return new Set<Node>(
     group.map((mutant) => {
