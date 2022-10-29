@@ -10,6 +10,8 @@ import { HybridFileSystem } from './fs/index.js';
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
+import { toPosixFileName } from './tsconfig-helpers.js';
+import { Node } from './grouping/node.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -71,7 +73,7 @@ export class TypescriptChecker implements Checker {
         status: CheckStatus.Passed,
       };
     });
-    const mutantErrorRelationMap = await this.checkErrors(mutants, {});
+    const mutantErrorRelationMap = await this.checkErrors(mutants, {}, this.tsCompiler.getFileRelationsAsNodes());
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
       result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
     }
@@ -79,17 +81,27 @@ export class TypescriptChecker implements Checker {
   }
 
   public async group(mutants: Mutant[]): Promise<string[][]> {
+    const e = mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts'));
+    const a = mutants.filter((m) => !m.fileName.includes('jest-test-adapter-factory.ts'));
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    const result = await createGroups(mutants, nodes);
-    return result;
+    const result1 = await createGroups(e, nodes);
+    const result2 = await createGroups(a, nodes);
+
+    return [...result1, ...result2];
+    // return mutants.map((m) => [m.id]);
+    // const nodes = this.tsCompiler.getFileRelationsAsNodes();
+    // const result = await createGroups(mutants, nodes);
+    // return result;
   }
 
   // string is id van de mutant
-  private async checkErrors(mutants: Mutant[], errorsMap: Record<string, ts.Diagnostic[]>): Promise<Record<string, ts.Diagnostic[]>> {
+  // todo make private
+  public async checkErrors(mutants: Mutant[], errorsMap: Record<string, ts.Diagnostic[]>, nodes: Node[]): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
     this.logger.info(`Found errors: ${errors.length}`);
 
-    errors.forEach((error) => {
+    for (const error of errors) {
+      // errors.forEach((error) => {
       if (mutants.length === 1) {
         if (errorsMap[mutants[0].id]) {
           errorsMap[mutants[0].id].push(error);
@@ -97,7 +109,7 @@ export class TypescriptChecker implements Checker {
           errorsMap[mutants[0].id] = [error];
         }
       } else {
-        const nodeErrorWasThrownIn = this.tsCompiler.getFileRelationsAsNodes().find((node) => (node.fileName = error.file!.fileName));
+        const nodeErrorWasThrownIn = nodes.find((node) => (node.fileName = error.file!.fileName));
         if (!nodeErrorWasThrownIn) {
           throw new Error('Error not found in any node');
         }
@@ -107,7 +119,8 @@ export class TypescriptChecker implements Checker {
           fileNamesToCheck.push(node.fileName);
         });
         const mutantsRelatedToError = mutants.filter((mutant) => {
-          return fileNamesToCheck.includes(mutant.fileName);
+          // todo fix all posix
+          return fileNamesToCheck.map((f) => toPosixFileName(f)).includes(toPosixFileName(mutant.fileName));
         });
         if (mutantsRelatedToError.length === 1) {
           if (errorsMap[mutants[0].id]) {
@@ -115,13 +128,18 @@ export class TypescriptChecker implements Checker {
           } else {
             errorsMap[mutants[0].id] = [error];
           }
+        } else if (mutantsRelatedToError.length === 0) {
+          throw new Error('No related mutants found.');
         } else {
-          mutantsRelatedToError.forEach(async (mutant) => {
-            await this.checkErrors([mutant], errorsMap);
-          });
+          for (const mutant of mutantsRelatedToError) {
+            await this.checkErrors([mutant], errorsMap, nodes);
+          }
+          // mutantsRelatedToError.forEach(async (mutant) => {
+          //   await this.checkErrors([mutant], errorsMap, nodes);
+          // });
         }
       }
-    });
+    }
     return errorsMap;
   }
 
