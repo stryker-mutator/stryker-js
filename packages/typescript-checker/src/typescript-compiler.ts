@@ -55,7 +55,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       {
         ...ts.sys,
         readFile: (fileName) => {
-          if (fileName.endsWith('.tsbuildinfo')) {
+          if (this.fileNameIsBuildInfo(fileName)) {
             return undefined;
           }
           const content = this.fs.getFile(fileName)?.content;
@@ -66,13 +66,13 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         },
         fileExists: (fileName: string) => {
           // We want to ignore the buildinfo files. With them the compiler skips the program part we want to use.
-          if (fileName.endsWith('.tsbuildinfo')) {
+          if (this.fileNameIsBuildInfo(fileName)) {
             return false;
           }
           return ts.sys.fileExists(fileName);
         },
         getModifiedTime: (fileName: string) => {
-          if (fileName.endsWith('.tsbuildinfo')) {
+          if (this.fileNameIsBuildInfo(fileName)) {
             return undefined;
           }
           return this.fs.getFile(fileName)?.modifiedTime;
@@ -137,14 +137,12 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
     compiler.build();
-    await this.currentTask.promise;
-    return this.currentErrors;
+    return await this.check([]);
   }
 
   public async check(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
     mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.mutate(mutant));
     await this.currentTask.promise;
-
     // todo make this better?
     const errors = [...this.currentErrors];
     this.currentTask = new Task();
@@ -172,9 +170,8 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       node.childs = nodes.filter((n) => importFileNames.includes(n.fileName));
     }
 
-    // todo set parents
     for (const node of nodes) {
-      node.parents = nodes.filter((n) => n.childs?.includes(node)); // todo remove ? when childs isnt nullable
+      node.parents = nodes.filter((n) => n.childs.includes(node));
     }
 
     return nodes;
@@ -222,5 +219,9 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>()('tsconfigFile')}"`
       );
     }
+  }
+
+  private fileNameIsBuildInfo(fileName: string): boolean {
+    return fileName.endsWith('.tsbuildinfo');
   }
 }
