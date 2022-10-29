@@ -40,6 +40,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   private currentErrors: ts.Diagnostic[] = [];
   private readonly sourceFiles: SourceFiles = new Map();
   private readonly nodes: Node[] = [];
+  private lastMutants: Mutant[] = [];
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
@@ -141,13 +142,16 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   }
 
   public async check(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.mutate(mutant));
+    // todo remove !
+    this.lastMutants.forEach((mutant) => this.fs.getFile(mutant.fileName)!.resetMutant());
+    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)!.mutate(mutant));
+    [...this.lastMutants, ...mutants].forEach((m) => this.fs.getFile(m.fileName)!.touch());
     await this.currentTask.promise;
     // todo make this better?
     const errors = [...this.currentErrors];
     this.currentTask = new Task();
     this.currentErrors = [];
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)?.resetMutant());
+    this.lastMutants = mutants;
     return errors;
   }
 

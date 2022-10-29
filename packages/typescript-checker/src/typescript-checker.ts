@@ -34,7 +34,6 @@ export function create(injector: Injector<PluginContext>): TypescriptChecker {
  * An in-memory type checker implementation which validates type errors of mutants.
  */
 export class TypescriptChecker implements Checker {
-  private readonly currentErrors: ts.Diagnostic[] = [];
   /**
    * Keep track of all tsconfig files which are read during compilation (for project references)
    */
@@ -88,24 +87,31 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    const e = mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts'));
-    const a = mutants.filter((m) => !m.fileName.includes('jest-test-adapter-factory.ts'));
-    const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    const result1 = await createGroups(e, nodes);
-    const result2 = await createGroups(a, nodes);
-
-    return [...result1, ...result2];
-    // return mutants.map((m) => [m.id]);
+    // const e = mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts'));
+    // const a = mutants.filter((m) => !m.fileName.includes('jest-test-adapter-factory.ts'));
     // const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    // const result = await createGroups(mutants, nodes);
-    // return result;
+    // const result1 = await createGroups(e, nodes);
+    // const result2 = await createGroups(a, nodes);
+
+    // return [...result1, ...result2];
+    // return mutants.map((m) => [m.id]);
+    const nodes = this.tsCompiler.getFileRelationsAsNodes();
+    const result = await createGroups(mutants, nodes);
+    return result;
   }
 
   // string is id van de mutant
   // todo make private
   public async checkErrors(mutants: Mutant[], errorsMap: Record<string, ts.Diagnostic[]>, nodes: Node[]): Promise<Record<string, ts.Diagnostic[]>> {
+    if (mutants.filter((m) => m.id === '256').length) {
+      debugger;
+    }
     const errors = await this.tsCompiler.check(mutants);
     this.logger.info(`Found errors: ${errors.length}`);
+
+    // if (mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts')).length) {
+    //   debugger;
+    // }
 
     for (const error of errors) {
       // errors.forEach((error) => {
