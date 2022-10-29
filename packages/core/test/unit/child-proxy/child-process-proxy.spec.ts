@@ -94,11 +94,11 @@ describe(ChildProcessProxy.name, () => {
       const nextWorkerId = (idGenerator.next() - 1).toString();
       // Assert
       expect(logMock.debug).calledWith(
-        'Started %s in child process %s%s & env var STRYKER_MUTATOR_WORKER as %s',
+        'Started %s in worker process %s with pid %s %s',
         'HelloClass',
+        nextWorkerId,
         childProcessMock.pid,
-        ' (using args --cpu-prof --inspect)',
-        nextWorkerId
+        ' (using args --cpu-prof --inspect)'
       );
     });
 

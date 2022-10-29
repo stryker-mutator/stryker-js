@@ -14,17 +14,17 @@ describe(CheckerChildProcessProxy.name, () => {
   let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
   let fileDescriptions: FileDescriptions;
-  let idGenerator: IdGenerator;
+  let idGeneratorMock: sinon.SinonStubbedInstance<IdGenerator>;
 
   beforeEach(() => {
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     loggingContext = { port: 4200, level: LogLevel.Fatal };
     fileDescriptions = { 'foo.js': { mutate: true } };
-    idGenerator = new IdGenerator();
+    idGeneratorMock = sinon.createStubInstance(IdGenerator);
   });
 
   function createSut(): CheckerChildProcessProxy {
-    return new CheckerChildProcessProxy(testInjector.options, fileDescriptions, ['plugin', 'paths'], loggingContext, idGenerator);
+    return new CheckerChildProcessProxy(testInjector.options, fileDescriptions, ['plugin', 'paths'], loggingContext, idGeneratorMock);
   }
 
   describe('constructor', () => {
@@ -40,7 +40,7 @@ describe(CheckerChildProcessProxy.name, () => {
         process.cwd(),
         CheckerWorker,
         [],
-        idGenerator
+        idGeneratorMock
       );
     });
     it('should provide arguments', () => {
@@ -56,7 +56,7 @@ describe(CheckerChildProcessProxy.name, () => {
         sinon.match.any,
         sinon.match.any,
         ['foo', 'bar'],
-        idGenerator
+        idGeneratorMock
       );
     });
   });

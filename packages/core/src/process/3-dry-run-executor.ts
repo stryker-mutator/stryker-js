@@ -71,7 +71,7 @@ export class DryRunExecutor {
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
-      .provideClass('worker-id-generator', IdGenerator)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
@@ -90,7 +90,8 @@ export class DryRunExecutor {
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
       .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
-      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper);
+      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator);
   }
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {

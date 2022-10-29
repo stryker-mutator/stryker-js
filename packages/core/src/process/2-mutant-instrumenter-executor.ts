@@ -60,7 +60,7 @@ export class MutantInstrumenterExecutor {
 
     const checkerPoolProvider = concurrencyTokenProviderProvider
       .provideValue(coreTokens.checkerConcurrencyTokens, concurrencyTokenProvider.checkerToken$)
-      .provideClass('worker-id-generator', IdGenerator)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .provideFactory(coreTokens.checkerFactory, createCheckerFactory)
       .provideFactory(coreTokens.checkerPool, createCheckerPool);
     const checkerPool = checkerPoolProvider.resolve(coreTokens.checkerPool);

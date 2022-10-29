@@ -17,7 +17,7 @@ createCheckerFactory.inject = tokens(
   coreTokens.loggingContext,
   coreTokens.pluginModulePaths,
   commonTokens.getLogger,
-  'worker-id-generator'
+  coreTokens.workerIdGenerator
 );
 export function createCheckerFactory(
   options: StrykerOptions,

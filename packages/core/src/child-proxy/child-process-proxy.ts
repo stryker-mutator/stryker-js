@@ -63,11 +63,11 @@ export class ChildProcessProxy<T> implements Disposable {
     });
     this.initTask = new Task();
     this.log.debug(
-      'Started %s in child process %s%s & env var STRYKER_MUTATOR_WORKER as %s',
+      'Started %s in worker process %s with pid %s %s',
       namedExport,
+      workerId,
       this.worker.pid,
-      execArgv.length ? ` (using args ${execArgv.join(' ')})` : '',
-      workerId
+      execArgv.length ? ` (using args ${execArgv.join(' ')})` : ''
     );
     // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
     this.worker.on('close', this.handleUnexpectedExit);

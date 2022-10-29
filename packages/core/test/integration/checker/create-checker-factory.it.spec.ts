@@ -36,7 +36,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
     createSut = testInjector.injector
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
-      .provideClass('worker-id-generator', IdGenerator)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createCheckerFactory);
   });
 

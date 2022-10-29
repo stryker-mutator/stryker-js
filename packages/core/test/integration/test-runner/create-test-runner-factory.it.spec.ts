@@ -47,7 +47,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
-      .provideClass('worker-id-generator', IdGenerator)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);
