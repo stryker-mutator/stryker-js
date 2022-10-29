@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { inputLength } from '../../../src/utils/string-utils.js';
 
-describe.only('string utils', () => {
+describe('string utils', () => {
   describe('inputLength', () => {
     it('should see an emoji as two characters in lenght', () => {
       const actual = inputLength('✅ killed');
