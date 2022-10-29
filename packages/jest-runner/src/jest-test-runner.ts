@@ -134,7 +134,7 @@ export class JestTestRunner implements TestRunner {
 
     try {
       // Use process.env to set the active mutant.
-      // We could use `state.strykerStatic.activeMutant`, but that only works with the `StrykerEnvironment` mixin, wich is optional
+      // We could use `state.strykerStatic.activeMutant`, but that only works with the `StrykerEnvironment` mixin, which is optional
       process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
       const { dryRunResult } = await this.run({
         fileNamesUnderTest: fileNameUnderTest ? [fileNameUnderTest] : undefined,
@@ -217,6 +217,8 @@ export class JestTestRunner implements TestRunner {
   private setEnv() {
     // Force colors off: https://github.com/chalk/supports-color#info
     process.env.FORCE_COLOR = '0';
+    // Set node environment for issues like these: https://github.com/stryker-mutator/stryker-js/issues/3580
+    process.env.NODE_ENV = 'test';
   }
 
   private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {
