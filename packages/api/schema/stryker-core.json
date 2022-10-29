@@ -290,6 +290,11 @@
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
     },
+    "dryRunOnly": {
+      "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",
+      "type":"boolean",
+      "default": false
+    },
     "eventReporter": {
       "description": "The options for the event recorder reporter.",
       "$ref": "#/definitions/eventRecorderOptions",
