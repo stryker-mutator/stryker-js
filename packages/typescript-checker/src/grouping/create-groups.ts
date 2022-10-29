@@ -4,9 +4,8 @@ import { findNode } from './mutant-selector-helpers.js';
 
 import { Node } from './node.js';
 
-export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[][]> {
+export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
   const groups: Mutant[][] = [];
-
   let mutant: Mutant | null = selectNewMutant(mutants, groups);
 
   // Loop until all the mutants are in a group
@@ -28,7 +27,7 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
 
       if (nodeSelected === null) throw new Error('Node not in graph');
 
-      // check of er al mutants in deze groep zitten die in de parent structuur van nodeSelected voorkomt
+      // Check if parents of node are not in the group
       const groupNodes: Set<Node> = getNodesFromMutants(group, nodes);
       if (currentNodeHasParentsInNodesToIgnoreList(nodeSelected, new Set<Node>(groupNodes))) continue;
 
@@ -46,7 +45,7 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): Promise<string[]
     mutant = selectNewMutant(mutants, groups);
   }
 
-  return Promise.resolve(groupsToString(groups));
+  return groupsToString(groups);
 }
 
 function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
@@ -75,6 +74,7 @@ function currentNodeHasParentsInNodesToIgnoreList(nodeSelected: Node, nodesToIgn
   });
   return result;
 }
+
 function getNodesFromMutants(group: Mutant[], nodes: Node[]): Set<Node> {
   return new Set<Node>(
     group.map((mutant) => {

@@ -62,25 +62,35 @@ export class TypescriptChecker implements Checker {
   /**
    * Checks whether or not a mutant results in a compile error.
    * Will simply pass through if the file mutated isn't part of the typescript project
-   * @param mutant The mutant to check
+   * @param mutants The mutants to check
    */
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     const result: Record<string, CheckResult> = {};
+
     mutants.forEach((mutant) => {
       result[mutant.id] = {
         status: CheckStatus.Passed,
       };
     });
+
     const mutantErrorRelationMap = await this.checkErrors(mutants, {});
+
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
       result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
     }
+
     return result;
   }
 
+  /**
+   * Creates groups of the mutants.
+   * These groups will get send to the check method.
+   * @param mutants All the mutants to group.
+   */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    const result = await createGroups(mutants, nodes);
+    const result = createGroups(mutants, nodes);
+
     return result;
   }
 
@@ -98,17 +108,20 @@ export class TypescriptChecker implements Checker {
         }
       } else {
         const nodeErrorWasThrownIn = this.tsCompiler.getFileRelationsAsNodes().find((node) => (node.fileName = error.file!.fileName));
-        if (!nodeErrorWasThrownIn) {
-          throw new Error('Error not found in any node');
-        }
+
+        if (!nodeErrorWasThrownIn) throw new Error('Error not found in any node');
+
         const allNodesWrongMutantsCanBeIn = nodeErrorWasThrownIn.getAllChildReferencesIncludingSelf();
         const fileNamesToCheck: string[] = [];
+
         allNodesWrongMutantsCanBeIn.forEach((node) => {
           fileNamesToCheck.push(node.fileName);
         });
+
         const mutantsRelatedToError = mutants.filter((mutant) => {
           return fileNamesToCheck.includes(mutant.fileName);
         });
+
         if (mutantsRelatedToError.length === 1) {
           if (errorsMap[mutants[0].id]) {
             errorsMap[mutants[0].id].push(error);
@@ -122,6 +135,7 @@ export class TypescriptChecker implements Checker {
         }
       }
     });
+
     return errorsMap;
   }
 
