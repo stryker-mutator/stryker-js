@@ -55,6 +55,7 @@ describe(OptionsValidator.name, () => {
           reportType: ReportType.Full,
         },
         disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+        dryRunOnly: false,
         dryRunTimeoutMinutes: 5,
         eventReporter: {
           baseDir: 'reports/mutation/events',

@@ -144,7 +144,7 @@ node_modules/@types/react/index.d.ts:3075:13 - error TS2717: Subsequent property
 ```
 
 If that happens, add `"skipLibCheck": true` to your `tsconfig` file.
-**Note**: adding `typescript-checker` to StykerJS makes types safety better and you get less false negative results, but it comes with a performance cost. Mutating may take more time with the checker plugin.
+**Note**: adding `typescript-checker` to StrykerJS makes types safety better and you get less false negative results, but it comes with a performance cost. Mutating may take more time with the checker plugin.
 
 ### Error when running StrykerJS: `Committing semi space failed. Allocation failed - JavaScript heap out of memory`
 **Example**:

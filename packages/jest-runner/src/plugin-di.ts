@@ -1,7 +1,7 @@
 import { PluginContext } from '@stryker-mutator/api/src/plugin';
 import { requireResolve } from '@stryker-mutator/util';
 
-import { JestWrapper } from './utils/index.js';
+import { JestWrapper, JestConfigWrapper } from './utils/index.js';
 
 export const pluginTokens = {
   requireFromCwd: 'requireFromCwd',
@@ -12,6 +12,7 @@ export const pluginTokens = {
   jestTestAdapter: 'jestTestAdapter',
   globalNamespace: 'globalNamespace',
   jestWrapper: 'jestWrapper',
+  jestConfigWrapper: 'jestConfigWrapper',
 } as const;
 
 export interface JestPluginContext extends PluginContext {
@@ -19,4 +20,5 @@ export interface JestPluginContext extends PluginContext {
   [pluginTokens.resolve]: RequireResolve;
   [pluginTokens.requireFromCwd]: typeof requireResolve;
   [pluginTokens.processEnv]: typeof process.env;
+  [pluginTokens.jestConfigWrapper]: JestConfigWrapper;
 }

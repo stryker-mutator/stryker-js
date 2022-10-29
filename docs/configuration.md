@@ -145,6 +145,14 @@ Config file: `"disableTypeChecks": false`
 
 Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.
 
+### `dryRunOnly` [`boolean`]
+
+Default: `false`<br />
+Command line: `--dryRunOnly`<br />
+Config file: `"dryRunOnly": false`
+
+Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.
+
 ### `dryRunTimeoutMinutes` [`number`]
 
 Default: `5`<br />
@@ -160,14 +168,6 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
-### `files` (DEPRECATED)
-
-Default: `undefined`<br />
-Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
-Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
-
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead, or use [mutate](#mutate-string) to select which files to mutate. 
  
 ### `force` [`boolean`]
 
@@ -184,7 +184,9 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,coverage`<br />
 Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
-Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+
+This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with [`--inPlace`](#inplace-boolean).
 
 These patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 
