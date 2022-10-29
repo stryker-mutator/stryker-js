@@ -115,7 +115,7 @@ export class StrykerInitializer {
       selectedPackageManager,
       npmDependencies.map((pkg) => pkg.name),
       additionalConfig,
-      pkgInfoOfSelectedTestRunner?.homepage ?? `URL not found for ${selectedTestRunner.name}`,
+      pkgInfoOfSelectedTestRunner?.homepage ?? 'URL not found',
       isJsonSelected
     );
     this.installNpmDependencies(
@@ -218,7 +218,7 @@ export class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<Array<NpmPackage>> {
+  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<NpmPackage[]> {
     return await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)));
   }
 }
