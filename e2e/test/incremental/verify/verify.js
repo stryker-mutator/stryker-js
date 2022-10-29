@@ -4,12 +4,11 @@ import { fileURLToPath } from 'url';
 
 import { Stryker } from '@stryker-mutator/core';
 import { expect } from 'chai';
-
-import '../../../helpers.js';
-
 import { PlanKind } from '@stryker-mutator/api/core';
 
 import { MutationRunPlanReporter } from './mutation-run-plan-reporter.js';
+
+import '../../../helpers.js';
 
 const incrementalFile = new URL('../reports/stryker-incremental.json', import.meta.url);
 
@@ -51,7 +50,7 @@ describe('incremental', () => {
    */
   const tests = [
     ['cucumber', reuseCountExpectation.withFullTestResults],
-    ['jest', reuseCountExpectation.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'] }],
+    ['jest', reuseCountExpectation.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'], tempDirName: 'stryker-tmp' }],
 
     ['mocha', reuseCountExpectation.withoutTestLocations],
 
