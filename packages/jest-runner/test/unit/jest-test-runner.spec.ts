@@ -520,7 +520,7 @@ describe(JestTestRunner.name, () => {
       expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
     });
 
-    it.only('should set the node environment variable before calling jest in the dry run', async () => {
+    it('should set the node environment variable before calling jest in the dry run', async () => {
       const sut = createSut();
       jestTestAdapterMock.run.callsFake(async () => {
         expect(process.env.NODE_ENV).to.equal('test');
