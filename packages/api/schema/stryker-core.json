@@ -290,8 +290,8 @@
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
     },
-    "disableConsoleEmojis": {
-      "description": "The 'disableConsoleEmojis' options removes emojis from the console.",
+    "enableConsoleEmojis": {
+      "description": "The 'enableConsoleEmojis' options adds emojis from the console (experimental).",
       "type": "boolean",
       "default": false
     },

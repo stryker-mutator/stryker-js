@@ -111,7 +111,7 @@ export class ClearTextReporter implements Reporter {
 
   private getStatusStringForMutant(mutant: MutantModel): string {
     const status = MutantStatus[mutant.status];
-    return this.options.disableConsoleEmojis ? status.toString() : `${getEmojiForStatus(status)} ${status}`;
+    return this.options.enableConsoleEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
   }
 
   private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {

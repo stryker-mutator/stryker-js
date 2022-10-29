@@ -108,12 +108,12 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
-      new Column(`${options.disableConsoleEmojis ? '#' : '✅'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
-      new Column(`${options.disableConsoleEmojis ? '#' : '⌛️'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
-      new Column(`${options.disableConsoleEmojis ? '#' : '👽'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
-      new Column(`${options.disableConsoleEmojis ? '#' : '🙈'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column(`${options.enableConsoleEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
+      new Column(`${options.enableConsoleEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
+      new Column(`${options.enableConsoleEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
+      new Column(`${options.enableConsoleEmojis ? '🙈' : '#'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
       new Column(
-        `${options.disableConsoleEmojis ? '#' : '💥'} errors`,
+        `${options.enableConsoleEmojis ? '💥' : '#'} errors`,
         (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
         metricsResult
       ),
