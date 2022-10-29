@@ -10,17 +10,21 @@ import { JestGreaterThan25TestAdapter } from '../../../src/jest-test-adapters/je
 import { JestLessThan25TestAdapter } from '../../../src/jest-test-adapters/jest-less-than-25-adapter.js';
 import { pluginTokens } from '../../../src/plugin-di.js';
 import { JestWrapper } from '../../../src/utils/jest-wrapper.js';
+import { JestConfigWrapper } from '../../../src/utils/index.js';
 
 describe(jestTestAdapterFactory.name, () => {
   let jestWrapperMock: sinon.SinonStubbedInstance<JestWrapper>;
+  let jestConfigWrapperMock: sinon.SinonStubbedInstance<JestConfigWrapper>;
 
   beforeEach(() => {
     jestWrapperMock = sinon.createStubInstance(JestWrapper);
+    jestConfigWrapperMock = sinon.createStubInstance(JestConfigWrapper);
   });
 
   function act(): JestTestAdapter {
     return testInjector.injector
       .provideValue(pluginTokens.jestWrapper, jestWrapperMock)
+      .provideValue(pluginTokens.jestConfigWrapper, jestConfigWrapperMock)
       .provideValue(pluginTokens.resolve, createRequire(import.meta.url).resolve)
       .provideValue(pluginTokens.requireFromCwd, requireResolve)
       .provideValue(pluginTokens.processEnv, process.env)
