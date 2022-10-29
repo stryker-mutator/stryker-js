@@ -42,10 +42,7 @@ class Column {
   }
 
   private get headerLength() {
-    if (this.emojiMatchInHeader) {
-      return this.header.length - this.emojiMatchInHeader[0].length + 2;
-    }
-    return this.header.length;
+    return inputLength(this.header);
   }
 
   /**
