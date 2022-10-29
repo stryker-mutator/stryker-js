@@ -4,6 +4,39 @@ import { findNode } from './mutant-selector-helpers.js';
 
 import { Node } from './node.js';
 
+/**
+ * To speed up the type checking we want to check multiple mutants at once.
+ * When multiple mutants in different files who can't throw errors in each other we can type check them simultaneously.
+ * These mutants who can be tested at the same time are called a group.
+ * Therefore the return type is an array of arrays in other words: an array of groups.
+ *
+ * @example
+ * Let's assume we got tho following project structure and in every file is one mutant.
+ *
+ *          ========
+ *          = A.ts =
+ *          ========
+ *         /        \
+ * ========          ========
+ * = B.ts =          = C.ts =
+ * ========          ========
+ *                           \
+ *                            ========
+ *                            = D.ts =
+ *                            ========
+ *
+ * A imports B and C
+ * C imports D
+ *
+ * In this example we can type check B and D at the same time.
+ * This is because these files can't throw errors in each other.
+ * If we type check them and let's say B throws an error.
+ * We know for sure that the mutant in B was the one creating the type error.
+ * If we type check B and D at the same time it is possible that an error shows up in A.
+ * When this happens we go down de dependency graph and individual test the mutants who were in that group.
+ *
+ * In this function we create the groups of mutants who can be tested at the same time.
+ */
 export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
   const groups: Mutant[][] = [];
   let mutant: Mutant | null = selectNewMutant(mutants, groups);
