@@ -16,6 +16,7 @@ export class ProjectFile implements FileDescription {
   #currentContent: string | undefined;
   #originalContent: string | undefined;
   #relativePath: string;
+  #mode: number | undefined;
 
   constructor(private readonly fs: I<FileSystem>, private readonly name: string, public mutate: MutateDescription) {
     this.#relativePath = path.relative(process.cwd(), this.name);
@@ -23,10 +24,13 @@ export class ProjectFile implements FileDescription {
 
   async #writeTo(to: string): Promise<void> {
     if (this.#currentContent === undefined) {
+      this.#mode = await this.getChmod(this.name);
       await this.fs.copyFile(this.name, to);
     } else {
       await this.fs.writeFile(to, this.#currentContent, 'utf-8');
     }
+
+    await this.setChmod(to);
   }
 
   public setContent(content: string): void {
@@ -51,6 +55,8 @@ export class ProjectFile implements FileDescription {
   public async readOriginal(): Promise<string> {
     if (this.#originalContent === undefined) {
       this.#originalContent = await this.fs.readFile(this.name, 'utf-8');
+      this.#mode = await this.getChmod(this.name);
+
       if (this.#currentContent === undefined) {
         this.#currentContent = this.#originalContent;
       }
@@ -77,13 +83,26 @@ export class ProjectFile implements FileDescription {
     await this.fs.mkdir(path.dirname(backupFileName), { recursive: true });
     if (this.#originalContent === undefined) {
       await this.fs.copyFile(this.name, backupFileName);
+      this.#mode = await this.getChmod(this.name);
     } else {
       await this.fs.writeFile(backupFileName, this.#originalContent);
     }
+    await this.setChmod(backupFileName);
     return backupFileName;
   }
 
   public get hasChanges(): boolean {
     return this.#currentContent !== this.#originalContent;
+  }
+
+  private async getChmod(file: string): Promise<number | undefined> {
+    const stats = await this.fs.stat(file);
+    return stats?.mode;
+  }
+
+  private async setChmod(file: string, mode: number | undefined = this.#mode): Promise<void> {
+    if (mode !== undefined) {
+      await this.fs.chmod(file, mode);
+    }
   }
 }

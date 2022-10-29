@@ -25,6 +25,8 @@ export function mock<T>(constructorFn: sinon.StubbableType<T>): Mock<T> {
 
 export function createFileSystemMock(): sinon.SinonStubbedInstance<FileSystem> {
   return {
+    stat: sinon.stub(),
+    chmod: sinon.stub(),
     copyFile: sinon.stub(),
     readFile: sinon.stub(),
     dispose: sinon.stub(),

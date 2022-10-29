@@ -1,4 +1,4 @@
-import { Dirent, PathLike } from 'fs';
+import { Dirent, Mode, PathLike, Stats } from 'fs';
 
 import { FileDescriptions, MutateDescription } from '@stryker-mutator/api/src/core/index.js';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -19,6 +19,11 @@ export class FileSystemTestDouble implements I<FileSystem> {
   constructor(public readonly files: Record<string, string> = Object.create(null)) {}
   public async dispose(): Promise<void> {
     // Idle, nothing to do here
+  }
+  public async chmod(path: PathLike, mode: Mode): Promise<void> {}
+
+  public async stat(path: Param<'stat', 0>, opts?: Param<'stat', 1>): Promise<any> {
+    return new Promise((resolve) => resolve(new Stats()));
   }
 
   public async readFile(fileName: Param<'readFile', 0>): Promise<any> {

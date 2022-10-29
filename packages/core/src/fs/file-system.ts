@@ -43,6 +43,8 @@ export class FileSystem implements Disposable {
     this.subscription.unsubscribe();
   }
 
+  public readonly chmod = this.forward('chmod');
+  public readonly stat = this.forward('stat');
   public readonly readFile = this.forward('readFile');
   public readonly copyFile = this.forward('copyFile');
   public readonly writeFile = this.forward('writeFile');
