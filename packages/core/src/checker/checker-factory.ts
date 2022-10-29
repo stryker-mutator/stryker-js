@@ -2,6 +2,8 @@ import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 
+import { IdGenerator } from '../child-proxy/id-generator';
+
 import { coreTokens } from '../di/index.js';
 import { LoggingClientContext } from '../logging/logging-client-context.js';
 
@@ -21,13 +23,14 @@ export function createCheckerFactory(
   fileDescriptions: FileDescriptions,
   loggingContext: LoggingClientContext,
   pluginModulePaths: readonly string[],
-  getLogger: LoggerFactoryMethod
+  getLogger: LoggerFactoryMethod,
+  idGenerator: IdGenerator
 ): () => CheckerFacade {
   return () =>
     new CheckerFacade(
       () =>
         new CheckerRetryDecorator(
-          () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingContext),
+          () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingContext, idGenerator),
           getLogger(CheckerRetryDecorator.name)
         )
     );

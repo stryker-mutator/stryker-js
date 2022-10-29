@@ -30,6 +30,8 @@ import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 
+import { IdGenerator } from '../child-proxy/id-generator';
+
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
 
@@ -69,6 +71,7 @@ export class DryRunExecutor {
 
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
+      .provideClass('worker-id-generator', IdGenerator)
       .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
       .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
