@@ -16,6 +16,8 @@ import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
 
+import { IdGenerator } from '../child-proxy/id-generator.js';
+
 import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutantInstrumenterContext extends PluginContext {
@@ -58,6 +60,7 @@ export class MutantInstrumenterExecutor {
 
     const checkerPoolProvider = concurrencyTokenProviderProvider
       .provideValue(coreTokens.checkerConcurrencyTokens, concurrencyTokenProvider.checkerToken$)
+      .provideClass('worker-id-generator', IdGenerator)
       .provideFactory(coreTokens.checkerFactory, createCheckerFactory)
       .provideFactory(coreTokens.checkerPool, createCheckerPool);
     const checkerPool = checkerPoolProvider.resolve(coreTokens.checkerPool);

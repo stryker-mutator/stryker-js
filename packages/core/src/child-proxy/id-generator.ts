@@ -1,5 +1,5 @@
 export class IdGenerator {
-  private childId;
+  private childId: number;
   constructor() {
     this.childId = 0;
   }

@@ -30,7 +30,7 @@ import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 
-import { IdGenerator } from '../child-proxy/id-generator';
+import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';

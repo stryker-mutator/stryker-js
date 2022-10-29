@@ -9,7 +9,7 @@ import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-e
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
 import { LoggingClientContext } from '../logging/index.js';
 
-import { IdGenerator } from '../child-proxy/id-generator';
+import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { ChildProcessTestRunnerWorker } from './child-process-test-runner-worker.js';
 

@@ -25,6 +25,8 @@ import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.j
 import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';
 
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+
 import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -46,6 +48,7 @@ describe(ChildProcessProxy.name, () => {
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
   let clock: sinon.SinonFakeTimers;
+  let idGenerator: IdGenerator;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -54,6 +57,7 @@ describe(ChildProcessProxy.name, () => {
     killStub = sinon.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
+    idGenerator = new IdGenerator();
   });
 
   afterEach(() => {
@@ -65,9 +69,11 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
+      const workerId = idGenerator.next().toString();
       expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
+        env: { STRYKER_MUTATOR_WORKER: workerId },
       });
     });
 
@@ -82,10 +88,18 @@ describe(ChildProcessProxy.name, () => {
       createSut({
         loggingContext: LOGGING_CONTEXT,
         execArgv: ['--cpu-prof', '--inspect'],
+        idGenerator,
       });
 
+      const nextWorkerId = (idGenerator.next() - 1).toString();
       // Assert
-      expect(logMock.debug).calledWith('Started %s in child process %s%s', 'HelloClass', childProcessMock.pid, ' (using args --cpu-prof --inspect)');
+      expect(logMock.debug).calledWith(
+        'Started %s in child process %s%s & env var STRYKER_MUTATOR_WORKER as %s',
+        'HelloClass',
+        childProcessMock.pid,
+        ' (using args --cpu-prof --inspect)',
+        nextWorkerId
+      );
     });
 
     it('should listen to worker process', () => {
@@ -354,6 +368,7 @@ function createSut({
   fileDescriptions = { 'foo.js': { mutate: true } },
   pluginModulePaths = ['plugin', 'path'],
   execArgv = [],
+  idGenerator = new IdGenerator(),
 }: {
   requirePath?: string;
   loggingContext?: LoggingClientContext;
@@ -362,6 +377,7 @@ function createSut({
   fileDescriptions?: FileDescriptions;
   pluginModulePaths?: readonly string[];
   execArgv?: string[];
+  idGenerator?: IdGenerator;
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     requirePath,
@@ -371,6 +387,7 @@ function createSut({
     pluginModulePaths,
     workingDir,
     HelloClass,
-    execArgv
+    execArgv,
+    idGenerator
   );
 }
