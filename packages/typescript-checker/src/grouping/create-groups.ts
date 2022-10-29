@@ -86,10 +86,10 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
 }
 
 function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
-  const flatGroups = groups.flat();
+  const groupsFlattened = groups.flat();
 
   for (let i = 0; i < mutants.length; i++) {
-    if (!flatGroups.includes(mutants[i])) {
+    if (!groupsFlattened.includes(mutants[i])) {
       return mutants.splice(i, 1)[0];
     }
   }
@@ -101,22 +101,19 @@ function groupsToString(groups: Mutant[][]): string[][] {
   return groups.map((group) => group.map((mutant) => mutant.id));
 }
 
-function nodeSelectedHasParentsInCurrentGroup(nodeSelected: Node, groupNodes: Set<Node>) {
+function nodeSelectedHasParentsInCurrentGroup(nodeSelected: Node, groupNodes: Node[]) {
   for (const parentNode of nodeSelected.getAllParentReferencesIncludingSelf()) {
-    if (groupNodes.has(parentNode)) return true;
+    if (groupNodes.includes(parentNode)) return true;
   }
 
   return false;
 }
 
-function getNodesFromMutants(group: Mutant[], nodes: Node[]): Set<Node> {
-  return new Set<Node>(
-    group.map((mutant) => {
-      const node = findNode(mutant.fileName, nodes);
-      if (!node) {
-        throw new Error('Node not in graph');
-      }
-      return node;
-    })
-  );
+function getNodesFromMutants(group: Mutant[], nodes: Node[]): Node[] {
+  return group.map((mutant) => {
+    const node = findNode(mutant.fileName, nodes);
+    if (node === null) throw new Error('Node not in graph');
+
+    return node;
+  });
 }
