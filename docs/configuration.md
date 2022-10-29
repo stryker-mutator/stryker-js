@@ -145,6 +145,14 @@ Config file: `"disableTypeChecks": false`
 
 Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.
 
+### `dryRunOnly` [`boolean`]
+
+Default: `false`<br />
+Command line: `--dryRunOnly`<br />
+Config file: `"dryRunOnly": false`
+
+Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.
+
 ### `dryRunTimeoutMinutes` [`number`]
 
 Default: `5`<br />
