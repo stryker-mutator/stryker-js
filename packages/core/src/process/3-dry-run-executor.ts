@@ -113,6 +113,10 @@ export class DryRunExecutor {
   }
 
   private async executeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
+    if (this.options.dryRunOnly) {
+      this.log.info('Note: running the dry-run only. No mutations will be tested.');
+    }
+
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     const project = this.injector.resolve(coreTokens.project);
     const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) => this.sandbox.sandboxFileFor(name));

@@ -10,7 +10,7 @@
     "build": "tsc",
     "pretest:unit": "npm run build",
     "test:unit": "mocha",
-    "pretest": "rimraf \"reports\" \"dist\"",
+    "pretest": "rimraf \"reports\" \"dist\" \"stryker.log\"",
     "test": "stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },

@@ -9,6 +9,11 @@ describe(FileMatcher.name, () => {
       expect(sut.matches('src/foo.ts')).true;
     });
 
+    it('should match if the pattern is set to `true`', () => {
+      const sut = new FileMatcher(true);
+      expect(sut.matches('src/foo.ts')).true;
+    });
+
     it('should not match if the pattern is set to `false`', () => {
       const sut = new FileMatcher(false);
       expect(sut.matches('src/foo.js')).false;

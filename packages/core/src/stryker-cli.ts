@@ -64,12 +64,12 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        '[DEPRECATED, please use `--ignorePatterns` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        '[DEPRECATED, please use the inverse option `--ignorePatterns` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
         list
       )
       .option(
         '--ignorePatterns <filesToIgnore>',
-        'A comma separated list of patterns used for specifying which files need to be ignored. Example: --ignorePatterns dist. Note that `node_modules`, `.git` and others are always ignored. Note: this cannot be combined with "files".',
+        'A comma separated list of patterns used for specifying which files need to be ignored. This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. Note: This option will have no effect when using the --inPlace option. The directories `node_modules`, `.git` and some others are always ignored. Example: --ignorePatterns dist',
         list
       )
       .option('--ignoreStatic', 'Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.')
@@ -93,13 +93,18 @@ export class StrykerCli {
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
       .option(
+        '--dryRunOnly',
+        'Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.'
+      )
+      .option(
         '--checkers <listOfCheckersOrEmptyString>',
         'A comma separated list of checkers to use, for example --checkers typescript',
         createSplitter(',')
       )
       .option('--checkerNodeArgs <listOfNodeArgs>', 'A list of node args to be passed to checker child processes.', createSplitter(' '))
       .option(
-        `--coverageAnalysis <perTest|all|off>', 'The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
+        '--coverageAnalysis <perTest|all|off>',
+        `The coverage analysis strategy you want to use. Default value: "${defaultOptions.coverageAnalysis}"`
       )
       .option('--testRunner <name>', 'The name of the test runner you want to use')
       .option(
