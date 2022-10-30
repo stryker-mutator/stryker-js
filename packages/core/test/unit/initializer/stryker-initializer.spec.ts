@@ -128,7 +128,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptConfigTypes.choices).to.deep.eq(['JSON', 'JavaScript']);
     });
 
-    it.only('should immediately complete when a preset and package manager is chosen', async () => {
+    it('should immediately complete when a preset and package manager is chosen', async () => {
       inquirerPrompt.resolves({
         packageManager: 'npm',
         preset: 'awesome-preset',
