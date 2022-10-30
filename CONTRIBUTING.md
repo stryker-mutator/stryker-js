@@ -105,7 +105,7 @@ New features are welcome! Either as requests or proposals.
 1. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
    Namely in the form `<type>(<scope>): <subject>\n\n[body]`
    * Type: feat, fix, docs, style, refactor, test, chore.
-   * Scope can the the file or group of files (not a strict right or wrong)
+   * Scope can be the file or group of files that have been changed (not a strict right or wrong)
    * Subject and body: present tense (~changed~*change*, ~added~*add*) and include motivation and contrasts with previous behavior
 
 Don't get discouraged! We estimate that the response time from the
