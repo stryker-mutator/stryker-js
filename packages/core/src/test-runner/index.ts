@@ -23,7 +23,7 @@ createTestRunnerFactory.inject = tokens(
   coreTokens.loggingContext,
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
-  'worker-id-generator'
+  coreTokens.workerIdGenerator
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
