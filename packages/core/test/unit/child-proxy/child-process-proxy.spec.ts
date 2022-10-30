@@ -25,6 +25,8 @@ import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.j
 import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';
 
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+
 import { HelloClass } from './hello-class.js';
 
 const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
@@ -39,6 +41,8 @@ class ChildProcessMock extends EventEmitter {
   public pid = 4648;
 }
 
+let idGeneratorStub: sinon.SinonStubbedInstance<IdGenerator>;
+
 describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<HelloClass>;
   let forkStub: sinon.SinonStub;
@@ -46,6 +50,7 @@ describe(ChildProcessProxy.name, () => {
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
   let clock: sinon.SinonFakeTimers;
+  const workerId = 5;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -54,6 +59,8 @@ describe(ChildProcessProxy.name, () => {
     killStub = sinon.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
+    idGeneratorStub = sinon.createStubInstance(IdGenerator);
+    idGeneratorStub.next.returns(workerId);
   });
 
   afterEach(() => {
@@ -68,6 +75,7 @@ describe(ChildProcessProxy.name, () => {
       expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
+        env: { STRYKER_MUTATOR_WORKER: workerId.toString(), ...process.env },
       });
     });
 
@@ -82,10 +90,16 @@ describe(ChildProcessProxy.name, () => {
       createSut({
         loggingContext: LOGGING_CONTEXT,
         execArgv: ['--cpu-prof', '--inspect'],
+        idGenerator: idGeneratorStub,
       });
-
       // Assert
-      expect(logMock.debug).calledWith('Started %s in child process %s%s', 'HelloClass', childProcessMock.pid, ' (using args --cpu-prof --inspect)');
+      expect(logMock.debug).calledWith(
+        'Started %s in worker process %s with pid %s %s',
+        'HelloClass',
+        workerId.toString(),
+        childProcessMock.pid,
+        ' (using args --cpu-prof --inspect)'
+      );
     });
 
     it('should listen to worker process', () => {
@@ -354,6 +368,7 @@ function createSut({
   fileDescriptions = { 'foo.js': { mutate: true } },
   pluginModulePaths = ['plugin', 'path'],
   execArgv = [],
+  idGenerator = idGeneratorStub,
 }: {
   requirePath?: string;
   loggingContext?: LoggingClientContext;
@@ -362,6 +377,7 @@ function createSut({
   fileDescriptions?: FileDescriptions;
   pluginModulePaths?: readonly string[];
   execArgv?: string[];
+  idGenerator?: sinon.SinonStubbedInstance<IdGenerator>;
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     requirePath,
@@ -371,6 +387,7 @@ function createSut({
     pluginModulePaths,
     workingDir,
     HelloClass,
-    execArgv
+    execArgv,
+    idGenerator
   );
 }

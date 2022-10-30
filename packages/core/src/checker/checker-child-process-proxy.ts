@@ -6,6 +6,7 @@ import { Disposable } from 'typed-inject';
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
 import { LoggingClientContext } from '../logging/index.js';
 import { Resource } from '../concurrent/pool.js';
+import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { CheckerWorker } from './checker-worker.js';
 import { CheckerResource } from './checker-resource.js';
@@ -17,7 +18,8 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
-    loggingContext: LoggingClientContext
+    loggingContext: LoggingClientContext,
+    idGenerator: IdGenerator
   ) {
     this.childProcess = ChildProcessProxy.create(
       new URL('./checker-worker.js', import.meta.url).toString(),
@@ -27,7 +29,8 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
       pluginModulePaths,
       process.cwd(),
       CheckerWorker,
-      options.checkerNodeArgs
+      options.checkerNodeArgs,
+      idGenerator
     );
   }
 

@@ -8,20 +8,23 @@ import { CheckerChildProcessProxy } from '../../../src/checker/checker-child-pro
 import { CheckerWorker } from '../../../src/checker/checker-worker.js';
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 describe(CheckerChildProcessProxy.name, () => {
   let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
   let loggingContext: LoggingClientContext;
   let fileDescriptions: FileDescriptions;
+  let idGeneratorStub: sinon.SinonStubbedInstance<IdGenerator>;
 
   beforeEach(() => {
     childProcessProxyCreateStub = sinon.stub(ChildProcessProxy, 'create');
     loggingContext = { port: 4200, level: LogLevel.Fatal };
     fileDescriptions = { 'foo.js': { mutate: true } };
+    idGeneratorStub = sinon.createStubInstance(IdGenerator);
   });
 
   function createSut(): CheckerChildProcessProxy {
-    return new CheckerChildProcessProxy(testInjector.options, fileDescriptions, ['plugin', 'paths'], loggingContext);
+    return new CheckerChildProcessProxy(testInjector.options, fileDescriptions, ['plugin', 'paths'], loggingContext, idGeneratorStub);
   }
 
   describe('constructor', () => {
@@ -36,7 +39,8 @@ describe(CheckerChildProcessProxy.name, () => {
         ['plugin', 'paths'],
         process.cwd(),
         CheckerWorker,
-        []
+        [],
+        idGeneratorStub
       );
     });
     it('should provide arguments', () => {
@@ -51,7 +55,8 @@ describe(CheckerChildProcessProxy.name, () => {
         sinon.match.any,
         sinon.match.any,
         sinon.match.any,
-        ['foo', 'bar']
+        ['foo', 'bar'],
+        idGeneratorStub
       );
     });
   });
