@@ -71,7 +71,7 @@
     "jest-jasmine2": "29.2.2"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~6.2.0"
+    "@stryker-mutator/core": "~6.3.0"
   },
   "dependencies": {
     "@stryker-mutator/api": "6.2.3",
