@@ -67,6 +67,11 @@
           "type": "boolean",
           "default": true
         },
+        "allowEmojis": {
+          "description": "Enable emojis in your clear text report (experimental).",
+          "type": "boolean",
+          "default": false
+        },
         "logTests": {
           "description": "Indicates whether or not to log which tests were executed for a given mutant.",
           "type": "boolean",
