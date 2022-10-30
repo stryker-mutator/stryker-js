@@ -42,6 +42,7 @@ describe(OptionsValidator.name, () => {
         checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,
+          allowEmojis: false,
           logTests: true,
           maxTestsToLog: 3,
         },
