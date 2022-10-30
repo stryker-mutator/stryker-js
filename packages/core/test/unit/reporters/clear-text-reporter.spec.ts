@@ -58,7 +58,7 @@ describe(ClearTextReporter.name, () => {
     });
 
     it('should show emojis in table with enableConsoleEmojis flag', () => {
-      testInjector.options.enableConsoleEmojis = true;
+      testInjector.options.clearTextReporter.allowEmojis = true;
 
       act({
         files: {

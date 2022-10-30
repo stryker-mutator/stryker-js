@@ -109,13 +109,13 @@ export class ClearTextReporter implements Reporter {
     this.writeLine(`Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`);
   }
 
-  private getStatusStringForMutant(mutant: MutantModel): string {
+  private statusLabel(mutant: MutantModel): string {
     const status = MutantStatus[mutant.status];
-    return this.options.enableConsoleEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
+    return this.options.clearTextReporter.allowEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
   }
 
   private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {
-    logImplementation(`[${this.getStatusStringForMutant(result)}] ${result.mutatorName}`);
+    logImplementation(`[${this.statusLabel(result)}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.fileName, result.location.start));
 
     result

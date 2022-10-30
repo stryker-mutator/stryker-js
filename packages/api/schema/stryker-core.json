@@ -67,6 +67,11 @@
           "type": "boolean",
           "default": true
         },
+        "allowEmojis": {
+          "description": "Enable emojis in your clear text report (experimental).",
+          "type": "boolean",
+          "default": false
+        },
         "logTests": {
           "description": "Indicates whether or not to log which tests were executed for a given mutant.",
           "type": "boolean",
@@ -289,11 +294,6 @@
       "description": "The options for the dashboard reporter.",
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
-    },
-    "enableConsoleEmojis": {
-      "description": "The 'enableConsoleEmojis' options adds emojis from the console (experimental).",
-      "type": "boolean",
-      "default": false
     },
     "dryRunOnly": {
       "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",

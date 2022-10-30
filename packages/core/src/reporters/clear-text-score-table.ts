@@ -9,7 +9,7 @@ import flatMap from 'lodash.flatmap';
 
 import emojiRegex from 'emoji-regex';
 
-import { inputLength } from '../utils/string-utils.js';
+import { stringWidth } from '../utils/string-utils.js';
 
 const FILES_ROOT_NAME = 'All files';
 
@@ -42,7 +42,7 @@ class Column {
   }
 
   private get headerLength() {
-    return inputLength(this.header);
+    return stringWidth(this.header);
   }
 
   /**
@@ -50,7 +50,7 @@ class Column {
    * @param input The string input
    */
   protected pad(input: string): string {
-    return `${spaces(this.width - inputLength(input) - 2)} ${input} `;
+    return `${spaces(this.width - stringWidth(input) - 2)} ${input} `;
   }
 
   public drawLine(): string {
@@ -94,7 +94,7 @@ class FileColumn extends Column {
     super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
   }
   protected override pad(input: string): string {
-    return `${input} ${spaces(this.width - inputLength(input) - 1)}`;
+    return `${input} ${spaces(this.width - stringWidth(input) - 1)}`;
   }
 }
 
@@ -108,12 +108,12 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
-      new Column(`${options.enableConsoleEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
-      new Column(`${options.enableConsoleEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
-      new Column(`${options.enableConsoleEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
-      new Column(`${options.enableConsoleEmojis ? '🙈' : '#'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
+      new Column(`${options.clearTextReporter.allowEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
+      new Column(`${options.clearTextReporter.allowEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
+      new Column(`${options.clearTextReporter.allowEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
+      new Column(`${options.clearTextReporter.allowEmojis ? '🙈' : '#'} no cov`, (row) => row.metrics.noCoverage.toString(), metricsResult),
       new Column(
-        `${options.enableConsoleEmojis ? '💥' : '#'} errors`,
+        `${options.clearTextReporter.allowEmojis ? '💥' : '#'} errors`,
         (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
         metricsResult
       ),

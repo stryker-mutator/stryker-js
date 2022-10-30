@@ -8,7 +8,7 @@ import chalk from 'chalk';
 import flatMap from 'lodash.flatmap';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
-import { inputLength } from '../../../src/utils/string-utils.js';
+import { stringWidth } from '../../../src/utils/string-utils.js';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
@@ -68,7 +68,7 @@ describe(ClearTextScoreTable.name, () => {
       const rows = table.split(os.EOL);
 
       const killedColumnValues = flatMap(rows, (row) => row.split('|').filter((_, i) => i === 2));
-      killedColumnValues.forEach((val) => expect(inputLength(val)).to.eq(12));
+      killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });
 
