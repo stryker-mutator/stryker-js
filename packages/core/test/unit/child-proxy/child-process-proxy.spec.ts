@@ -50,6 +50,7 @@ describe(ChildProcessProxy.name, () => {
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
   let clock: sinon.SinonFakeTimers;
+  const workerId = 5;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -59,7 +60,7 @@ describe(ChildProcessProxy.name, () => {
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
     idGeneratorStub = sinon.createStubInstance(IdGenerator);
-    idGeneratorStub.next.returns(5);
+    idGeneratorStub.next.returns(workerId);
   });
 
   afterEach(() => {
@@ -74,7 +75,7 @@ describe(ChildProcessProxy.name, () => {
       expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
-        env: { STRYKER_MUTATOR_WORKER: '5', ...process.env },
+        env: { STRYKER_MUTATOR_WORKER: workerId.toString(), ...process.env },
       });
     });
 
@@ -95,7 +96,7 @@ describe(ChildProcessProxy.name, () => {
       expect(logMock.debug).calledWith(
         'Started %s in worker process %s with pid %s %s',
         'HelloClass',
-        '5',
+        workerId.toString(),
         childProcessMock.pid,
         ' (using args --cpu-prof --inspect)'
       );
