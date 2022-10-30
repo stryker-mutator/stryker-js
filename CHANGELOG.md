@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.3.0](https://github.com/stryker-mutator/stryker-js/compare/v6.2.3...v6.3.0) (2022-10-30)
+
+### Bug Fixes
+
+- **deps:** update dependency angular-html-parser to ~2.1.0 ([#3797](https://github.com/stryker-mutator/stryker-js/issues/3797)) ([33eb2b1](https://github.com/stryker-mutator/stryker-js/commit/33eb2b1e2cb5915ea85ec02fe2a9e41b6f58d8d0))
+- **deps:** update dependency chalk to ~5.1.0 ([#3773](https://github.com/stryker-mutator/stryker-js/issues/3773)) ([973dc7b](https://github.com/stryker-mutator/stryker-js/commit/973dc7ba88a8d3af1a9dab212aaa9e6820eb3bea))
+- **jest-runner:** automatically set `NODE_ENV` env variable ([#3816](https://github.com/stryker-mutator/stryker-js/issues/3816)) ([9fc7a6f](https://github.com/stryker-mutator/stryker-js/commit/9fc7a6f64b27cdb67e6844ce00f6e55c630d0cd6))
+- **jest:** support more config file formats ([#3761](https://github.com/stryker-mutator/stryker-js/issues/3761)) ([7d42139](https://github.com/stryker-mutator/stryker-js/commit/7d421394fcdaab6222cc6e55662e94a3abe94e79))
+- **karma-runner:** support zero-mutant runs ([#3787](https://github.com/stryker-mutator/stryker-js/issues/3787)) ([c6a9219](https://github.com/stryker-mutator/stryker-js/commit/c6a9219017b509241d6388654e93896d98cc31aa))
+
+### Features
+
+- **ci:** forbid `.only` in CI pipeline tests ([#3823](https://github.com/stryker-mutator/stryker-js/issues/3823)) ([051ec93](https://github.com/stryker-mutator/stryker-js/commit/051ec937809468751a74c9e01cacd27ceb1acca2))
+- **clear-text reporter:** add `allowEmojis` option in console ([#3820](https://github.com/stryker-mutator/stryker-js/issues/3820)) ([79cc05f](https://github.com/stryker-mutator/stryker-js/commit/79cc05fe867f0edf9d2b84f7e89435855e874d1a))
+- **core:** add `--dryRunOnly` CLI argument to only run initial tests ([#3814](https://github.com/stryker-mutator/stryker-js/issues/3814)) ([f2cf7e6](https://github.com/stryker-mutator/stryker-js/commit/f2cf7e6141802f04a5de836000b949de8632b567))
+- **core:** add support for pnpm as package manager ([#3802](https://github.com/stryker-mutator/stryker-js/issues/3802)) ([af0e34e](https://github.com/stryker-mutator/stryker-js/commit/af0e34e63734ddf1b506f0c5fce40ee8eae6566f))
+- **disableTypeChecks:** add option 'true' to disable all type checks ([#3765](https://github.com/stryker-mutator/stryker-js/issues/3765)) ([3c3d298](https://github.com/stryker-mutator/stryker-js/commit/3c3d2988c616a8bb8e7cdb76d4c16ddb948a3011))
+- **init:** document test runner homepage url in stryker.conf.json ([#3817](https://github.com/stryker-mutator/stryker-js/issues/3817)) ([92c0852](https://github.com/stryker-mutator/stryker-js/commit/92c0852606c0db4380dd806e07eee55bfea7a4de))
+- **worker:** add worker count env variable to processes ([#3821](https://github.com/stryker-mutator/stryker-js/issues/3821)) ([efb6fd6](https://github.com/stryker-mutator/stryker-js/commit/efb6fd64df78dcae020b540c6283406bcd06b783))
+
 ## [6.2.3](https://github.com/stryker-mutator/stryker-js/compare/v6.2.2...v6.2.3) (2022-10-10)
 
 ### Bug Fixes
