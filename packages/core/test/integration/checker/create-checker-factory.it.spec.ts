@@ -10,6 +10,8 @@ import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.
 import { coreTokens } from '../../../src/di/index.js';
 import { LoggingClientContext } from '../../../src/logging/index.js';
 
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+
 import { TwoTimesTheCharm } from './additional-checkers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
@@ -34,6 +36,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
     createSut = testInjector.injector
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createCheckerFactory);
   });
 

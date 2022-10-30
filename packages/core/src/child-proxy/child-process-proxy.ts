@@ -16,6 +16,7 @@ import { ChildProcessCrashedError } from './child-process-crashed-error.js';
 import { InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
 import { OutOfMemoryError } from './out-of-memory-error.js';
 import { ChildProcessContext } from './child-process-proxy-worker.js';
+import { IdGenerator } from './id-generator.js';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -51,11 +52,23 @@ export class ChildProcessProxy<T> implements Disposable {
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     workingDirectory: string,
-    execArgv: string[]
+    execArgv: string[],
+    idGenerator: IdGenerator
   ) {
-    this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), { silent: true, execArgv });
+    const workerId = idGenerator.next().toString();
+    this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), {
+      silent: true,
+      execArgv,
+      env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
+    });
     this.initTask = new Task();
-    this.log.debug('Started %s in child process %s%s', namedExport, this.worker.pid, execArgv.length ? ` (using args ${execArgv.join(' ')})` : '');
+    this.log.debug(
+      'Started %s in worker process %s with pid %s %s',
+      namedExport,
+      workerId,
+      this.worker.pid,
+      execArgv.length ? ` (using args ${execArgv.join(' ')})` : ''
+    );
     // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
     this.worker.on('close', this.handleUnexpectedExit);
     this.worker.on('error', this.handleError);
@@ -87,7 +100,8 @@ export class ChildProcessProxy<T> implements Disposable {
     pluginModulePaths: readonly string[],
     workingDirectory: string,
     injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
-    execArgv: string[]
+    execArgv: string[],
+    idGenerator: IdGenerator
   ): ChildProcessProxy<R> {
     return new ChildProcessProxy(
       modulePath,
@@ -97,7 +111,8 @@ export class ChildProcessProxy<T> implements Disposable {
       fileDescriptions,
       pluginModulePaths,
       workingDirectory,
-      execArgv
+      execArgv,
+      idGenerator
     );
   }
 

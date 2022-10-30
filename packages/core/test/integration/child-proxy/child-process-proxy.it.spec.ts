@@ -16,6 +16,8 @@ import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';
 import { sleep } from '../../helpers/test-utils.js';
 
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+
 import { Echo } from './echo.js';
 
 describe(ChildProcessProxy.name, () => {
@@ -25,6 +27,7 @@ describe(ChildProcessProxy.name, () => {
   let fileDescriptions: FileDescriptions;
   const testRunnerName = 'echoRunner';
   const workingDir = '..';
+  const idGenerator: IdGenerator = new IdGenerator();
 
   beforeEach(async () => {
     fileDescriptions = {
@@ -35,6 +38,7 @@ describe(ChildProcessProxy.name, () => {
     const port = await loggingServer.listen();
     testInjector.options.testRunner = testRunnerName;
     log = currentLogMock();
+    idGenerator.next();
     sut = ChildProcessProxy.create(
       new URL('./echo.js', import.meta.url).toString(),
       { port, level: LogLevel.Debug },
@@ -46,7 +50,8 @@ describe(ChildProcessProxy.name, () => {
       [
         '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
         '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
-      ]
+      ],
+      idGenerator
     );
   });
 

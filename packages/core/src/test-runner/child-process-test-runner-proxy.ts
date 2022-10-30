@@ -9,6 +9,8 @@ import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-e
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
 import { LoggingClientContext } from '../logging/index.js';
 
+import { IdGenerator } from '../child-proxy/id-generator.js';
+
 import { ChildProcessTestRunnerWorker } from './child-process-test-runner-worker.js';
 
 const MAX_WAIT_FOR_DISPOSE = 2000;
@@ -25,7 +27,8 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
     sandboxWorkingDirectory: string,
     loggingContext: LoggingClientContext,
     pluginModulePaths: readonly string[],
-    private readonly log: Logger
+    private readonly log: Logger,
+    idGenerator: IdGenerator
   ) {
     this.worker = ChildProcessProxy.create(
       new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
@@ -35,7 +38,8 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
       pluginModulePaths,
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker,
-      options.testRunnerNodeArgs
+      options.testRunnerNodeArgs,
+      idGenerator
     );
   }
 

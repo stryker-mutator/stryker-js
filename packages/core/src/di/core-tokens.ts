@@ -29,3 +29,4 @@ export const fs = 'fs';
 export const testCoverage = 'testCoverage';
 export const incrementalDiffer = 'incrementalDiffer';
 export const project = 'project';
+export const workerIdGenerator = 'worker-id-generator';
