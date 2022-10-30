@@ -47,14 +47,42 @@ describe(ClearTextReporter.name, () => {
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        '----------|---------|----------|-----------|------------|----------|---------|',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|----------|-----------|------------|----------|----------|',
         '',
       ]);
+    });
+
+    it('should show emojis in table with enableConsoleEmojis flag', () => {
+      testInjector.options.clearTextReporter.allowEmojis = true;
+
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Killed,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+      expect(rows[1]).to.eq('File      | % score | ✅ killed | ⌛️ timeout | 👽 survived | 🙈 no cov | 💥 errors |');
     });
 
     it('should report the clear text table with full n/a values', () => {
@@ -82,12 +110,12 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        `All files |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
-        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
-        '----------|---------|----------|-----------|------------|----------|---------|',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });
@@ -129,13 +157,13 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '----------|---------|----------|-----------|------------|----------|---------|',
-        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |       0 |`,
-        ` file2.js |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |       0 |`,
-        '----------|---------|----------|-----------|------------|----------|---------|',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
+        ` file2.js |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });
