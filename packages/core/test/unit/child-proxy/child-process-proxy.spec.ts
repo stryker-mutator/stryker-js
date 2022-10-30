@@ -41,6 +41,8 @@ class ChildProcessMock extends EventEmitter {
   public pid = 4648;
 }
 
+let idGeneratorStub: sinon.SinonStubbedInstance<IdGenerator>;
+
 describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<HelloClass>;
   let forkStub: sinon.SinonStub;
@@ -48,7 +50,6 @@ describe(ChildProcessProxy.name, () => {
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
   let clock: sinon.SinonFakeTimers;
-  let idGenerator: IdGenerator;
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -57,7 +58,8 @@ describe(ChildProcessProxy.name, () => {
     killStub = sinon.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
     logMock = currentLogMock();
-    idGenerator = new IdGenerator();
+    idGeneratorStub = sinon.createStubInstance(IdGenerator);
+    idGeneratorStub.next.returns(5);
   });
 
   afterEach(() => {
@@ -69,11 +71,10 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      const workerId = idGenerator.next().toString();
       expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
         silent: true,
         execArgv: [],
-        env: { STRYKER_MUTATOR_WORKER: workerId },
+        env: { STRYKER_MUTATOR_WORKER: '5', ...process.env },
       });
     });
 
@@ -88,15 +89,13 @@ describe(ChildProcessProxy.name, () => {
       createSut({
         loggingContext: LOGGING_CONTEXT,
         execArgv: ['--cpu-prof', '--inspect'],
-        idGenerator,
+        idGenerator: idGeneratorStub,
       });
-
-      const nextWorkerId = (idGenerator.next() - 1).toString();
       // Assert
       expect(logMock.debug).calledWith(
         'Started %s in worker process %s with pid %s %s',
         'HelloClass',
-        nextWorkerId,
+        '5',
         childProcessMock.pid,
         ' (using args --cpu-prof --inspect)'
       );
@@ -368,7 +367,7 @@ function createSut({
   fileDescriptions = { 'foo.js': { mutate: true } },
   pluginModulePaths = ['plugin', 'path'],
   execArgv = [],
-  idGenerator = new IdGenerator(),
+  idGenerator = idGeneratorStub,
 }: {
   requirePath?: string;
   loggingContext?: LoggingClientContext;
@@ -377,7 +376,7 @@ function createSut({
   fileDescriptions?: FileDescriptions;
   pluginModulePaths?: readonly string[];
   execArgv?: string[];
-  idGenerator?: IdGenerator;
+  idGenerator?: sinon.SinonStubbedInstance<IdGenerator>;
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     requirePath,

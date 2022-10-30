@@ -59,7 +59,7 @@ export class ChildProcessProxy<T> implements Disposable {
     this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), {
       silent: true,
       execArgv,
-      env: { STRYKER_MUTATOR_WORKER: workerId },
+      env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
     });
     this.initTask = new Task();
     this.log.debug(
