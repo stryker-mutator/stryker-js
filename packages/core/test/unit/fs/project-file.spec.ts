@@ -241,18 +241,18 @@ describe(ProjectFile.name, () => {
   });
 
   describe(ProjectFile.prototype.backupTo.name, () => {
-    it('should write to the sandbox', async () => {
+    it('should write to the backup', async () => {
       // Arrange
       const sut = createSut({ name: path.resolve('src', 'foo.js') });
       fileSystemMock.readFile.resolves('original');
       await sut.readOriginal();
 
       // Act
-      const actualBackupFile = await sut.writeToSandbox(path.resolve('.stryker-tmp', 'backup123'));
+      const actualBackupFile = await sut.backupTo(path.resolve('.stryker-tmp', 'backup123'));
 
       // Assert
       expect(actualBackupFile).eq(path.resolve('.stryker-tmp', 'backup123', 'src', 'foo.js'));
-      sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, actualBackupFile, 'original', 'utf-8');
+      sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, actualBackupFile, 'original');
       sinon.assert.notCalled(fileSystemMock.copyFile);
     });
 
@@ -263,7 +263,7 @@ describe(ProjectFile.name, () => {
       await sut.readOriginal();
 
       // Act
-      const actualBackupFile = await sut.writeToSandbox(path.resolve('.stryker-tmp', 'backup123'));
+      const actualBackupFile = await sut.backupTo(path.resolve('.stryker-tmp', 'backup123'));
 
       // Assert
       sinon.assert.calledOnceWithExactly(fileSystemMock.mkdir, path.dirname(actualBackupFile), { recursive: true });

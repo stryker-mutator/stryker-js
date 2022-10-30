@@ -8,7 +8,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
-import { plural } from '../utils/string-utils.js';
+import { getEmojiForStatus, plural } from '../utils/string-utils.js';
 
 import { ClearTextScoreTable } from './clear-text-score-table.js';
 
@@ -40,7 +40,7 @@ export class ClearTextReporter implements Reporter {
     this.writeLine();
     this.reportAllTests(metrics);
     this.reportAllMutants(metrics);
-    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options.thresholds).draw());
+    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
   }
 
   private reportAllTests(metrics: MutationTestMetricsResult) {
@@ -109,8 +109,13 @@ export class ClearTextReporter implements Reporter {
     this.writeLine(`Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`);
   }
 
+  private statusLabel(mutant: MutantModel): string {
+    const status = MutantStatus[mutant.status];
+    return this.options.clearTextReporter.allowEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
+  }
+
   private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {
-    logImplementation(`[${MutantStatus[result.status]}] ${result.mutatorName}`);
+    logImplementation(`[${this.statusLabel(result)}] ${result.mutatorName}`);
     logImplementation(this.colorSourceFileAndLocation(result.fileName, result.location.start));
 
     result

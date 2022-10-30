@@ -34,8 +34,8 @@ describe(ReactScriptsJestConfigLoader.name, () => {
       .injectClass(ReactScriptsJestConfigLoader);
   });
 
-  it('should load the configuration via the createJestConfig method provided by react-scripts', () => {
-    const config = sut.loadConfig();
+  it('should load the configuration via the createJestConfig method provided by react-scripts', async () => {
+    const config = await sut.loadConfig();
 
     expect(requireResolveStub).calledWith('react-scripts/package.json');
     expect(requireFromCwdStub).calledWith('react-scripts/scripts/utils/createJestConfig');
@@ -43,14 +43,14 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     expect(config).deep.eq({ testPaths: ['example'], watchPlugins: undefined });
   });
 
-  it('should throw an error when react-scripts could not be found', () => {
+  it('should throw an error when react-scripts could not be found', async () => {
     // Arrange
     const error: NodeJS.ErrnoException = new Error('');
     error.code = 'MODULE_NOT_FOUND';
     requireResolveStub.throws(error);
 
     // Act & Assert
-    expect(() => sut.loadConfig()).throws(
+    await expect(sut.loadConfig()).rejectedWith(
       'Unable to locate package "react-scripts". This package is required when "jest.projectType" is set to "create-react-app".'
     );
   });
@@ -58,20 +58,20 @@ describe(ReactScriptsJestConfigLoader.name, () => {
   it('should load "react-scripts/config/env.js" when projectType = create-react-app', async () => {
     const options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     options.jest = createJestOptions({ projectType: 'create-react-app' });
-    sut.loadConfig();
+    await sut.loadConfig();
     expect(requireFromCwdStub).calledWith('react-scripts/config/env.js');
   });
 
-  it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", () => {
-    sut.loadConfig();
+  it("should set process.env.NODE_ENV to 'test' when process.env.NODE_ENV is null", async () => {
+    await sut.loadConfig();
 
     expect(processEnvMock.NODE_ENV).to.equal('test');
   });
 
-  it('should keep the value set in process.env.NODE_ENV if not null', () => {
+  it('should keep the value set in process.env.NODE_ENV if not null', async () => {
     processEnvMock.NODE_ENV = 'stryker';
 
-    sut.loadConfig();
+    await sut.loadConfig();
 
     expect(processEnvMock.NODE_ENV).to.equal('stryker');
   });
