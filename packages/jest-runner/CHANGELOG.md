@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.3.0](https://github.com/stryker-mutator/stryker-js/compare/v6.2.3...v6.3.0) (2022-10-30)
+
+### Bug Fixes
+
+- **jest-runner:** automatically set `NODE_ENV` env variable ([#3816](https://github.com/stryker-mutator/stryker-js/issues/3816)) ([9fc7a6f](https://github.com/stryker-mutator/stryker-js/commit/9fc7a6f64b27cdb67e6844ce00f6e55c630d0cd6))
+- **jest:** support more config file formats ([#3761](https://github.com/stryker-mutator/stryker-js/issues/3761)) ([7d42139](https://github.com/stryker-mutator/stryker-js/commit/7d421394fcdaab6222cc6e55662e94a3abe94e79))
+
+### Features
+
+- **ci:** forbid `.only` in CI pipeline tests ([#3823](https://github.com/stryker-mutator/stryker-js/issues/3823)) ([051ec93](https://github.com/stryker-mutator/stryker-js/commit/051ec937809468751a74c9e01cacd27ceb1acca2))
+
 ## [6.2.3](https://github.com/stryker-mutator/stryker-js/compare/v6.2.2...v6.2.3) (2022-10-10)
 
 ### Bug Fixes
