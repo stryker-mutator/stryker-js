@@ -54,7 +54,7 @@ export class StrykerConfigWriter {
       packageManager: selectedPackageManager.name as 'npm' | 'pnpm' | 'yarn',
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
-      testRunner_comment: `More information about the ${selectedTestRunner.name} plugin can be found here: ${homepageOfSelectedTestRunner}`,
+      testRunner_comment: `Please take a look at: ${homepageOfSelectedTestRunner} for information about the ${selectedTestRunner.name} plugin.`,
       coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
     };
 
