@@ -40,7 +40,7 @@
   },
   "peerDependencies": {
     "@cucumber/cucumber": "^8.0.0",
-    "@stryker-mutator/core": "~6.2.0"
+    "@stryker-mutator/core": "~6.3.0"
   },
   "dependencies": {
     "@cucumber/messages": "^19.0.0",
