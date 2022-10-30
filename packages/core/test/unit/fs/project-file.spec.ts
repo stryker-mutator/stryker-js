@@ -347,8 +347,8 @@ describe(ProjectFile.name, () => {
 
       // Assert
       expect(actualBackupFile).eq(path.resolve('.stryker-tmp', 'backup123', 'src', 'foo.js'));
-      sinon.assert.notCalled(fileSystemMock.copyFile);
       sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, actualBackupFile, 'original');
+      sinon.assert.notCalled(fileSystemMock.copyFile);
     });
 
     it('should make the dir before write', async () => {

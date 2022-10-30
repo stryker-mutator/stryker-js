@@ -93,6 +93,10 @@ export class StrykerCli {
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`."
       )
       .option(
+        '--dryRunOnly',
+        'Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.'
+      )
+      .option(
         '--checkers <listOfCheckersOrEmptyString>',
         'A comma separated list of checkers to use, for example --checkers typescript',
         createSplitter(',')

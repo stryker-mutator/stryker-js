@@ -13,8 +13,9 @@ interface NpmSearchResult {
   results: Array<{ package: PackageInfo }>;
 }
 
-interface NpmPackage {
+export interface NpmPackage {
   name: string;
+  homepage?: string;
   initStrykerConfig?: Record<string, unknown>;
 }
 
@@ -50,18 +51,17 @@ export class NpmClient {
     return this.search('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(pkgInfo: PackageInfo): Promise<Record<string, unknown>> {
+  public getAdditionalConfig(pkgInfo: PackageInfo): Promise<NpmPackage> {
     const path = `/${pkgInfo.name}@${pkgInfo.version}/package.json`;
     return this.packageClient
       .get<NpmPackage>(path)
       .then(handleResult(path))
-      .then((pkg) => pkg.initStrykerConfig ?? {})
       .catch((err) => {
         this.log.warn(
           `Could not fetch additional initialization config for dependency ${pkgInfo.name}. You might need to configure it manually`,
           err
         );
-        return {};
+        return { name: pkgInfo.name };
       });
   }
 
