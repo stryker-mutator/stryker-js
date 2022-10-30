@@ -16,7 +16,7 @@ import { ChildProcessCrashedError } from './child-process-crashed-error.js';
 import { InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
 import { OutOfMemoryError } from './out-of-memory-error.js';
 import { ChildProcessContext } from './child-process-proxy-worker.js';
-import { IdGenerator } from './id-generator';
+import { IdGenerator } from './id-generator.js';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -59,14 +59,14 @@ export class ChildProcessProxy<T> implements Disposable {
     this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), {
       silent: true,
       execArgv,
-      env: { STRYKER_MUTATOR_WORKER: workerId },
+      env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
     });
     this.initTask = new Task();
     this.log.debug(
-      'Started %s in child process %s%s and env STRYKER_MUTATOR_WORKER as %s',
+      'Started %s in worker process %s with pid %s %s',
       namedExport,
-      this.worker.pid,
       workerId,
+      this.worker.pid,
       execArgv.length ? ` (using args ${execArgv.join(' ')})` : ''
     );
     // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634

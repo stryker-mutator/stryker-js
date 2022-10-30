@@ -7,7 +7,7 @@ import { LoggingClientContext } from '../logging/index.js';
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 
-import { IdGenerator } from '../child-proxy/id-generator';
+import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { RetryRejectedDecorator } from './retry-rejected-decorator.js';
 import { TimeoutDecorator } from './timeout-decorator.js';
@@ -23,7 +23,7 @@ createTestRunnerFactory.inject = tokens(
   coreTokens.loggingContext,
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
-  'worker-id-generator'
+  coreTokens.workerIdGenerator
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
