@@ -20,7 +20,9 @@ export class FileSystemTestDouble implements I<FileSystem> {
   public async dispose(): Promise<void> {
     // Idle, nothing to do here
   }
-  public async chmod(path: PathLike, mode: Mode): Promise<void> {}
+  public async chmod(path: PathLike, mode: Mode): Promise<void> {
+    // empty, not supported for test double.
+  }
 
   public async stat(path: Param<'stat', 0>, opts?: Param<'stat', 1>): Promise<any> {
     return new Promise((resolve) => resolve(new Stats()));
