@@ -75,6 +75,12 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
   });
 
+  for (const directive of directiveBookkeeper.uniqueDirectives) {
+    if (!mutators.map((x) => x.name.toLowerCase()).includes(directive)) {
+      console.log(directive);
+    }
+  }
+
   if (mutantCollector.hasPlacedMutants(originFileName)) {
     // Be sure to leave comments like `// @flow` in.
     let header = instrumentationBabelHeader;

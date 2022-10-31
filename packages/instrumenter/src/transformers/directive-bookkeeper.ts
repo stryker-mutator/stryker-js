@@ -48,6 +48,8 @@ export class DirectiveBookkeeper {
 
   private currentIgnoreRule = rootRule;
 
+  public readonly uniqueDirectives = new Set<string>();
+
   public processStrykerDirectives({ loc, leadingComments }: types.Node): void {
     leadingComments
       ?.map(
@@ -59,6 +61,7 @@ export class DirectiveBookkeeper {
       .filter(notEmpty)
       .forEach(([, directiveType, scope, mutators, optionalReason]) => {
         const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
+        mutatorNames.filter((x) => x !== WILDCARD).forEach((n) => this.uniqueDirectives.add(n));
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':

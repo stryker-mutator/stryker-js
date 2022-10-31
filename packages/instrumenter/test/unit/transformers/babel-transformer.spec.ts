@@ -60,7 +60,8 @@ describe('babel-transformer', () => {
       path.replaceWith(types.sequenceExpression([...[...appliedMutants.values()].flatMap((val) => val.expressions), ...path.node.expressions])),
   };
 
-  beforeEach(() => {
+  beforeEach(function () {
+    if (this.currentTest?.title === 'should warn users when a mutator name does not match any of the enabled mutators.') return; // override for issue 3812
     context = transformerContextStub();
     mutantCollector = new MutantCollector();
     mutators = [fooMutator, plusMutator];
@@ -441,6 +442,27 @@ describe('babel-transformer', () => {
         });
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
+      });
+
+      // issue https://github.com/stryker-mutator/stryker-js/issues/3812
+      it.only('should warn users when a mutator name does not match any of the enabled mutators.', () => {
+        // Explicitly override the before each because we are interested in the default Mutators
+        context = transformerContextStub();
+        mutantCollector = new MutantCollector();
+        mutantPlacers = [blockStatementPlacer, sequenceExpressionPlacer];
+
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable all: Disable all the default Mutators
+              // Stryker restore EqualityOperator: Restore the actual Mutator
+              // Stryker disable next-line Equality: This Mutator does not exist
+              function test(a, b) {
+                return a - b >= 0 ? 1 : -1;
+              }
+            `,
+        });
+        act(ast);
+        expect(notIgnoredMutants()).lengthOf(2);
       });
 
       it('should allow to restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
