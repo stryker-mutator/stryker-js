@@ -427,7 +427,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Please take a look at: https://url-to-hyper.com for information about the hyper plugin."')
+        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."')
       );
     });
   });
