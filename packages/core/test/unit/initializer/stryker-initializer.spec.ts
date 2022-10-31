@@ -255,7 +255,7 @@ describe(StrykerInitializer.name, () => {
             "packageManager": "pnpm",
             "reporters": [],
             "testRunner": "awesome",
-            "testRunner_comment": "Please take a look at: URL not found for information about the awesome plugin.",
+            "testRunner_comment": "Take a look at (missing 'homepage' URL in package.json) for information about the awesome plugin.",
             "coverageAnalysis": "perTest",
             "plugins": [ "@stryker-mutator/awesome-runner" ]
           };
@@ -412,7 +412,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Please take a look at: URL not found for information about the hyper plugin."')
+        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."')
       );
     });
 
