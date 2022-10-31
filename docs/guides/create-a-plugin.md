@@ -285,7 +285,7 @@ After that, Stryker is done, and an excellent mutation test report gets generate
 
 #### A note on `capabilities` and `mutantActivation`
 
-Stryker relies on test runners to run mutants in quick succession, each time calling the `mutantRun` method. However, it might occur that Stryker needs to test a [static mutant](../../../mutation-testing-elements/static-mutants/) (when `--ignoreStatic` isn't enabled). In order to solve this: 
+Stryker relies on test runners to run mutants in quick succession, each time calling the `mutantRun` method. However, it might occur that Stryker needs to test a [static mutant](https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants/) (when `--ignoreStatic` isn't enabled). In order to solve this: 
 
 This pseudo code should help illustrate what needs to happen
 
