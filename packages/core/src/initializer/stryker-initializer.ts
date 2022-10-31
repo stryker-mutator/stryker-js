@@ -115,7 +115,7 @@ export class StrykerInitializer {
       selectedPackageManager,
       npmDependencies.map((pkg) => pkg.name),
       additionalConfig,
-      pkgInfoOfSelectedTestRunner?.homepage ?? 'URL not found',
+      pkgInfoOfSelectedTestRunner?.homepage ?? "(missing 'homepage' URL in package.json)",
       isJsonSelected
     );
     this.installNpmDependencies(
