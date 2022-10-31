@@ -49,7 +49,7 @@ Running in incremental mode, Stryker will do its best to produce an accurate mut
 - Detecting test file changes is only supported if the test runner plugin supports reporting the test files. (see support table below)
 - Detecting test changes is only supported if the test runner plugin supports reporting test locations. (see support table below)
 - Any other changes to your environment are not detected, such as updates to other files, updated (dev) dependencies, changes to environment variables, changes to `.snap` files, readme files, etc.
-- [Static mutants](../../mutation-testing-elements/static-mutants/) don't have test coverage; thus, Stryker won't detect test changes for them.
+- [Static mutants](https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants/) don't have test coverage; thus, Stryker won't detect test changes for them.
 
 | Test runner plugin | Test reporting                  |
 | ------------------ | ------------------------------- |
