@@ -6,6 +6,7 @@
   "stryker-js/configuration",
   "stryker-js/disable-mutants",
   "stryker-js/incremental",
+  "stryker-js/parallel-workers",
   "stryker-js/plugins",
   "stryker-js/cucumber-runner",
   "stryker-js/jasmine-runner",
