@@ -59,7 +59,7 @@ Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`<br />
 Command line: `--concurrency 4`<br />
 Config file: `"concurrency": 4`
 
-Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
+Set the concurrency of workers. This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
 
 ### `commandRunner` [`object`]
 
