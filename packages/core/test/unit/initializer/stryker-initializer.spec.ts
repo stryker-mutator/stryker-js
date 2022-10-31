@@ -255,7 +255,7 @@ describe(StrykerInitializer.name, () => {
             "packageManager": "pnpm",
             "reporters": [],
             "testRunner": "awesome",
-            "testRunner_comment": "More information about the awesome plugin can be found here: URL not found",
+            "testRunner_comment": "Take a look at (missing 'homepage' URL in package.json) for information about the awesome plugin.",
             "coverageAnalysis": "perTest",
             "plugins": [ "@stryker-mutator/awesome-runner" ]
           };
@@ -412,7 +412,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "More information about the hyper plugin can be found here: URL not found"')
+        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."')
       );
     });
 
@@ -427,7 +427,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "More information about the hyper plugin can be found here: https://url-to-hyper.com"')
+        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."')
       );
     });
   });
