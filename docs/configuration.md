@@ -56,11 +56,6 @@ The temp dir will never be removed when the run failed for some reason (for debu
 ### `clearTextReporter` [`ClearTextOptions`]
 
 Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
-Command line: 
-- `--clearTextReporter.allowColor`
-- `--clearTextReporter.allowEmojis`
-- `--clearTextReporter.logTests`
-- `--clearTextReporter.maxTestsToLog 3`
 
 Config file: 
 ```json
