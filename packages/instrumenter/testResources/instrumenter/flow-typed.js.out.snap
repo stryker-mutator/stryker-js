@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`instrumenter integration type declarations should not produce mutants for flow-types 1`] = `
-"declare module 'react-test-renderer' {// eslint-disable-next-line no-inner-declarations
+"declare module 'react-test-renderer' {
+  // eslint-disable-next-line no-inner-declarations
 }
 declare type ReactTestRenderer = {
   toJSON(): null | ReactTestRendererJSON,
