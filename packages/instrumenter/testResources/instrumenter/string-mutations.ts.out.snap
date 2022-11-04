@@ -2,12 +2,9 @@
 
 exports[`instrumenter integration should be able to instrument string literals in different places 1`] = `
 "require('foo'); // no mutation
-
-
 import 'foo'; // no mutation
 
 class Foo {
   public 'bar-baz': string; // no mutation
-
 }"
 `;
