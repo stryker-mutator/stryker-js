@@ -4,65 +4,49 @@ exports[`instrumenter integration should be able to instrument a lit-html file 1
 "function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
-
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
-
   function retrieveNS() {
     return ns;
   }
-
   stryNS_9fa48 = retrieveNS;
   return retrieveNS();
 }
-
 stryNS_9fa48();
-
 function stryCov_9fa48() {
   var ns = stryNS_9fa48();
   var cov = ns.mutantCoverage || (ns.mutantCoverage = {
     static: {},
     perTest: {}
   });
-
   function cover() {
     var c = cov.static;
-
     if (ns.currentTestId) {
       c = cov.perTest[ns.currentTestId] = cov.perTest[ns.currentTestId] || {};
     }
-
     var a = arguments;
-
     for (var i = 0; i < a.length; i++) {
       c[a[i]] = (c[a[i]] || 0) + 1;
     }
   }
-
   stryCov_9fa48 = cover;
   cover.apply(null, arguments);
 }
-
 function stryMutAct_9fa48(id) {
   var ns = stryNS_9fa48();
-
   function isActive(id) {
     if (ns.activeMutant === id) {
       if (ns.hitCount !== void 0 && ++ns.hitCount > ns.hitLimit) {
         throw new Error('Stryker: Hit count limit reached (' + ns.hitCount + ')');
       }
-
       return true;
     }
-
     return false;
   }
-
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-
 import { LitElement, html, property, customElement, svg } from 'lit-element';
 import { Thresholds } from 'mutation-testing-report-schema';
 import { pathJoin } from '../lib/codeHelpers';
@@ -78,13 +62,11 @@ export class MutationTestReportTotalsComponent extends LitElement {
   public currentPath: string[] = stryMutAct_9fa48(\\"0\\") ? [\\"Stryker was here\\"] : (stryCov_9fa48(\\"0\\"), []);
   private readonly fileIcon = stryMutAct_9fa48(\\"1\\") ? svg\`\` : (stryCov_9fa48(\\"1\\"), svg\`<svg aria-label=\\"file\\" class=\\"octicon octicon-file\\" viewBox=\\"0 0 12 16\\" version=\\"1.1\\" width=\\"12\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z\\"></path></svg>\`);
   private readonly directoryIcon = stryMutAct_9fa48(\\"2\\") ? svg\`\` : (stryCov_9fa48(\\"2\\"), svg\`<svg aria-label=\\"directory\\" class=\\"octicon octicon-file-directory\\" viewBox=\\"0 0 14 16\\" version=\\"1.1\\" width=\\"14\\" height=\\"16\\" role=\\"img\\"><path fill-rule=\\"evenodd\\" d=\\"M13 4H7V3c0-.66-.31-1-1-1H1c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1V5c0-.55-.45-1-1-1zM6 4H1V3h5v1z\\"></path></svg>\`);
-
   public render() {
     if (stryMutAct_9fa48(\\"3\\")) {
       {}
     } else {
       stryCov_9fa48(\\"3\\");
-
       if (stryMutAct_9fa48(\\"5\\") ? false : stryMutAct_9fa48(\\"4\\") ? true : (stryCov_9fa48(\\"4\\", \\"5\\"), this.model)) {
         if (stryMutAct_9fa48(\\"6\\")) {
           {}
@@ -106,7 +88,6 @@ export class MutationTestReportTotalsComponent extends LitElement {
       }
     }
   }
-
   private renderHead() {
     if (stryMutAct_9fa48(\\"9\\")) {
       {}
@@ -154,19 +135,16 @@ export class MutationTestReportTotalsComponent extends LitElement {
     </thead>\`);
     }
   }
-
   private renderTableBody(model: MetricsResult) {
     if (stryMutAct_9fa48(\\"11\\")) {
       {}
     } else {
       stryCov_9fa48(\\"11\\");
-
       const renderChildren = () => {
         if (stryMutAct_9fa48(\\"12\\")) {
           {}
         } else {
           stryCov_9fa48(\\"12\\");
-
           if (stryMutAct_9fa48(\\"14\\") ? false : stryMutAct_9fa48(\\"13\\") ? true : (stryCov_9fa48(\\"13\\", \\"14\\"), model.file)) {
             if (stryMutAct_9fa48(\\"15\\")) {
               {}
@@ -185,7 +163,6 @@ export class MutationTestReportTotalsComponent extends LitElement {
                 } else {
                   stryCov_9fa48(\\"17\\");
                   let fullName: string = childResult.name;
-
                   while (stryMutAct_9fa48(\\"19\\") ? !childResult.file || childResult.childResults.length === 1 : stryMutAct_9fa48(\\"18\\") ? false : (stryCov_9fa48(\\"18\\", \\"19\\"), (stryMutAct_9fa48(\\"20\\") ? childResult.file : (stryCov_9fa48(\\"20\\"), !childResult.file)) && (stryMutAct_9fa48(\\"22\\") ? childResult.childResults.length !== 1 : stryMutAct_9fa48(\\"21\\") ? true : (stryCov_9fa48(\\"21\\", \\"22\\"), childResult.childResults.length === 1)))) {
                     if (stryMutAct_9fa48(\\"23\\")) {
                       {}
@@ -195,7 +172,6 @@ export class MutationTestReportTotalsComponent extends LitElement {
                       fullName = pathJoin(fullName, childResult.name);
                     }
                   }
-
                   return this.renderRow(fullName, childResult, pathJoin(...this.currentPath, fullName));
                 }
               });
@@ -203,7 +179,6 @@ export class MutationTestReportTotalsComponent extends LitElement {
           }
         }
       };
-
       return stryMutAct_9fa48(\\"24\\") ? html\`\` : (stryCov_9fa48(\\"24\\"), html\`
       <tbody>
         \${this.renderRow(model.name, model, undefined)} \${renderChildren()}
@@ -211,7 +186,6 @@ export class MutationTestReportTotalsComponent extends LitElement {
     \`);
     }
   }
-
   private renderRow(name: string, row: MetricsResult, path: string | undefined) {
     if (stryMutAct_9fa48(\\"25\\")) {
       {}
@@ -261,19 +235,16 @@ export class MutationTestReportTotalsComponent extends LitElement {
     </tr>\`);
     }
   }
-
   private determineColoringClass(mutationScore: number) {
     if (stryMutAct_9fa48(\\"37\\")) {
       {}
     } else {
       stryCov_9fa48(\\"37\\");
-
       if (stryMutAct_9fa48(\\"40\\") ? !isNaN(mutationScore) || this.thresholds : stryMutAct_9fa48(\\"39\\") ? false : stryMutAct_9fa48(\\"38\\") ? true : (stryCov_9fa48(\\"38\\", \\"39\\", \\"40\\"), (stryMutAct_9fa48(\\"41\\") ? isNaN(mutationScore) : (stryCov_9fa48(\\"41\\"), !isNaN(mutationScore))) && this.thresholds)) {
         if (stryMutAct_9fa48(\\"42\\")) {
           {}
         } else {
           stryCov_9fa48(\\"42\\");
-
           if (stryMutAct_9fa48(\\"46\\") ? mutationScore >= this.thresholds.low : stryMutAct_9fa48(\\"45\\") ? mutationScore <= this.thresholds.low : stryMutAct_9fa48(\\"44\\") ? false : stryMutAct_9fa48(\\"43\\") ? true : (stryCov_9fa48(\\"43\\", \\"44\\", \\"45\\", \\"46\\"), mutationScore < this.thresholds.low)) {
             if (stryMutAct_9fa48(\\"47\\")) {
               {}
@@ -307,6 +278,5 @@ export class MutationTestReportTotalsComponent extends LitElement {
       }
     }
   }
-
 }"
 `;
