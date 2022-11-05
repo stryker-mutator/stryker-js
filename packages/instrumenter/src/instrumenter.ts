@@ -2,7 +2,7 @@ import path from 'path';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { MutateDescription } from '@stryker-mutator/api/core';
+import { MutantStatus, MutateDescription } from '@stryker-mutator/api/core';
 
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
@@ -51,6 +51,17 @@ export class Instrumenter {
       }
     }
     const mutants = mutantCollector.mutants.map((mutant) => mutant.toApiMutant());
+    for (const mutant of mutants) {
+      if (
+        mutant.status === MutantStatus.Ignored &&
+        mutant.statusReason?.toLowerCase().includes('unused') &&
+        mutant.statusReason?.toLowerCase().includes('directive')
+      ) {
+        this.logger.warn(
+          `${mutant.statusReason}. Mutator with name '${mutant.mutatorName}' not found. Directive found at: ${mutant.fileName}:${mutant.location.start.line}:${mutant.location.start.column}`
+        );
+      }
+    }
     this.logger.info('Instrumented %d source file(s) with %d mutant(s)', files.length, mutants.length);
     return {
       files: outFiles,

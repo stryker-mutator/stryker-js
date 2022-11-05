@@ -36,7 +36,7 @@ export interface Reporter {
   /**
    * Called when mutation testing is done
    * @param report the mutation test result that is valid according to the mutation-testing-report-schema (json schema)
-   * @see https://github.com/stryker-mutator/mutation-testing-elements/blob/master/packages/report-schema/src/mutation-testing-report-schema.json
+   * @see https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/mutation-testing-report-schema#mutation-testing-elements-schema
    */
   onMutationTestReportReady?(report: Readonly<schema.MutationTestResult>, metrics: Readonly<MutationTestMetricsResult>): void;
 

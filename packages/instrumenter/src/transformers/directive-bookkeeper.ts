@@ -65,15 +65,18 @@ export class DirectiveBookkeeper {
       .forEach(([, directiveType, scope, mutators, optionalReason]) => {
         const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
 
-        const directives = mutators.split(',').map((mutator) => mutator.trim());
+        const directives = mutators
+          .split(',')
+          .map((mutator) => mutator.trim())
+          .filter((mutator) => mutator !== WILDCARD);
         for (const directive of directives) {
           if (!allMutators.map((x) => x.name.toLowerCase()).includes(directive.toLowerCase())) {
             const mutant = new Mutant(directive, originFileName, node, {
               mutatorName: directive,
-              ignoreReason: 'Unknown directive',
+              ignoreReason: `Unused 'Stryker ${directiveType}' directive`,
               replacement: node,
             });
-            collector.collect(originFileName, node, mutant, { line: -1, position: 0 }); // Assuming the directive is always above the node
+            collector.collect(originFileName, node, mutant);
           }
         }
 

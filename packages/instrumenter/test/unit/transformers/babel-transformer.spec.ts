@@ -445,7 +445,7 @@ describe('babel-transformer', () => {
       });
 
       // issue https://github.com/stryker-mutator/stryker-js/issues/3812
-      it.only('should warn users when a mutator name does not match any of the enabled mutators.', () => {
+      it('should warn users when a mutator name does not match any of the enabled mutators.', () => {
         // Explicitly override the before each because we are interested in the default Mutators
         context = transformerContextStub();
         mutantCollector = new MutantCollector();
@@ -462,7 +462,14 @@ describe('babel-transformer', () => {
             `,
         });
         act(ast);
-        expect(notIgnoredMutants()).lengthOf(2);
+
+        function ignoredDirectives() {
+          return mutantCollector.mutants
+            .filter((mutant) => Boolean(mutant.ignoreReason))
+            .filter((mutant) => mutant.ignoreReason?.toLowerCase().includes('unused'));
+        }
+
+        expect(ignoredDirectives()).lengthOf(1);
       });
 
       it('should allow to restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
