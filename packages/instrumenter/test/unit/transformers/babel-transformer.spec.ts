@@ -14,6 +14,7 @@ import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
 import { createJSAst, createTSAst } from '../../helpers/factories.js';
+import { allMutators } from '../../../src/mutators/index.js';
 
 // @ts-expect-error CJS typings not in line with synthetic esm
 const generate: typeof generator = generator.default;
@@ -61,7 +62,7 @@ describe('babel-transformer', () => {
   };
 
   beforeEach(function () {
-    if (this.currentTest?.title === 'should warn users when a mutator name does not match any of the enabled mutators.') return; // override for issue 3812
+    if (this.currentTest?.title === 'should warn users when a mutator name does not match any of the enabled mutators.') return; // override beforeEach for issue 3812
     context = transformerContextStub();
     mutantCollector = new MutantCollector();
     mutators = [fooMutator, plusMutator];
@@ -449,6 +450,7 @@ describe('babel-transformer', () => {
         // Explicitly override the before each because we are interested in the default Mutators
         context = transformerContextStub();
         mutantCollector = new MutantCollector();
+        mutators = allMutators;
         mutantPlacers = [blockStatementPlacer, sequenceExpressionPlacer];
 
         const ast = createTSAst({
