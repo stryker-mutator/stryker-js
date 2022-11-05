@@ -56,7 +56,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
-      directiveBookkeeper.processStrykerDirectives(path.node);
+      directiveBookkeeper.processStrykerDirectives(path.node, mutators, mutantCollector, originFileName);
 
       if (shouldSkip(path)) {
         path.skip();
@@ -74,12 +74,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       placeMutantsIfNeeded(path);
     },
   });
-
-  for (const directive of directiveBookkeeper.uniqueDirectives) {
-    if (!mutators.map((x) => x.name.toLowerCase()).includes(directive)) {
-      console.log(directive);
-    }
-  }
 
   if (mutantCollector.hasPlacedMutants(originFileName)) {
     // Be sure to leave comments like `// @flow` in.

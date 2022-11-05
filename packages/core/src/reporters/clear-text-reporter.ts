@@ -99,6 +99,9 @@ export class ClearTextReporter implements Reporter {
             case MutantStatus.NoCoverage:
               this.reportMutantResult(result, this.writeLine);
               break;
+            case MutantStatus.Ignored:
+              this.reportIgnoredMutant(result, this.writeLine);
+              break;
             default:
           }
         });
@@ -107,6 +110,20 @@ export class ClearTextReporter implements Reporter {
     };
     reportMutants(systemUnderTestMetrics.childResults);
     this.writeLine(`Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`);
+  }
+
+  private reportIgnoredMutant(result: MutantModel, logImplementation: (input: string) => void): void {
+    logImplementation(`[${this.statusLabel(result)}] ${result.mutatorName}`);
+
+    result
+      .getOriginalLines()
+      .split('\n')
+      .filter(Boolean)
+      .forEach((line) => {
+        logImplementation(line);
+      });
+    logImplementation(chalk.yellowBright(`${result.statusReason}: ${result.mutatorName}`));
+    logImplementation('');
   }
 
   private statusLabel(mutant: MutantModel): string {

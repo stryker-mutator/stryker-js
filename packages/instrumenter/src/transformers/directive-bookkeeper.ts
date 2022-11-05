@@ -1,5 +1,10 @@
 import type { types } from '@babel/core';
-import { notEmpty } from '@stryker-mutator/util';
+import { notEmpty, I } from '@stryker-mutator/util';
+
+import { Mutant } from '../mutant.js';
+import { NodeMutator } from '../mutators/node-mutator.js';
+
+import { MutantCollector } from './mutant-collector.js';
 
 const WILDCARD = 'all';
 const DEFAULT_REASON = 'Ignored using a comment';
@@ -48,10 +53,8 @@ export class DirectiveBookkeeper {
 
   private currentIgnoreRule = rootRule;
 
-  public readonly uniqueDirectives = new Set<string>();
-
-  public processStrykerDirectives({ loc, leadingComments }: types.Node): void {
-    leadingComments
+  public processStrykerDirectives(node: types.Node, allMutators: NodeMutator[], collector: I<MutantCollector>, originFileName: string): void {
+    node.leadingComments
       ?.map(
         (comment) =>
           this.strykerCommentDirectiveRegex.exec(comment.value) as
@@ -61,13 +64,25 @@ export class DirectiveBookkeeper {
       .filter(notEmpty)
       .forEach(([, directiveType, scope, mutators, optionalReason]) => {
         const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
-        mutatorNames.filter((x) => x !== WILDCARD).forEach((n) => this.uniqueDirectives.add(n));
+
+        const directives = mutators.split(',').map((mutator) => mutator.trim());
+        for (const directive of directives) {
+          if (!allMutators.map((x) => x.name.toLowerCase()).includes(directive.toLowerCase())) {
+            const mutant = new Mutant(directive, originFileName, node, {
+              mutatorName: directive,
+              ignoreReason: 'Unknown directive',
+              replacement: node,
+            });
+            collector.collect(originFileName, node, mutant, { line: -1, position: 0 }); // Assuming the directive is always above the node
+          }
+        }
+
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new IgnoreRule(mutatorNames, loc!.start.line, reason, this.currentIgnoreRule);
+                this.currentIgnoreRule = new IgnoreRule(mutatorNames, node.loc!.start.line, reason, this.currentIgnoreRule);
                 break;
               default:
                 this.currentIgnoreRule = new IgnoreRule(mutatorNames, undefined, reason, this.currentIgnoreRule);
@@ -77,7 +92,7 @@ export class DirectiveBookkeeper {
           case 'restore':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new RestoreRule(mutatorNames, loc!.start.line, this.currentIgnoreRule);
+                this.currentIgnoreRule = new RestoreRule(mutatorNames, node.loc!.start.line, this.currentIgnoreRule);
                 break;
               default:
                 this.currentIgnoreRule = new RestoreRule(mutatorNames, undefined, this.currentIgnoreRule);
