@@ -6,17 +6,10 @@ custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/
 This page describes the available configuration options in Stryker's core package. Please keep in mind that your plugins might also need configuration, see your plugin's configuration page for that.
 
 
-## Command Line vs. Config File
-
 All configuration options can either be set via the command line or via a [config file](./config-file#usage).
-Keep in mind, that each option used on the command line will completely replace (**not** supplement !) whatever is defined in the [config file](./config-file) for this particular parameter.
+Keep in mind, that each option used on the command line will replace (**not** supplement!) whatever is defined in the [config file](./config-file) for this particular parameter.
 
-
-
-## Configuration Options and Globbing Expressions
-
-
-The [`ignorePatterns`](#ignorepatterns-string) and [`mutate`](#mutate-string) options (and some others) support globbing expressions using [node glob](https://github.com/isaacs/node-glob). When used on the command line, you need to 'escape' not only the stars `*` `**`, but also alls strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent you shell from expanding on them. For example, if you use `bash` or windows `cmd` or `powershell` as you shell , you need to use double quotes, backslash or other methods to prevent the shell from doing so. See [the config file documentation](./config-file.md#glob-patterns) for more information.
+The [`ignorePatterns`](#ignorepatterns-string) and [`mutate`](#mutate-string) options (and some others) support globbing expressions using [node glob](https://github.com/isaacs/node-glob). When used on the command line, you need to 'escape' not only the stars `*` `**`, but also strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent your shell from expanding them. For example, if you use `bash`, windows `cmd`, or `powershell`, you need to use double quotes, backslash or other methods to prevent the shell from doing so. See [the config file documentation](./config-file.md#glob-patterns) for more information.
 
 
 ### `allowConsoleColors` [`boolean`]
