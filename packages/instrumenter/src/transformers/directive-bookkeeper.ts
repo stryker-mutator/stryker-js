@@ -76,7 +76,7 @@ export class DirectiveBookkeeper {
               ignoreReason: `Unused 'Stryker ${directiveType}' directive`,
               replacement: node,
             });
-            collector.collect(originFileName, node, mutant);
+            collector.collect(originFileName, node, mutant, { line: -1, position: 0 }); // Assumption that the directive is always -1 above it...
           }
         }
 
