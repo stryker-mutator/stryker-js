@@ -306,7 +306,7 @@
       "default": {}
     },
     "ignorePatterns": {
-      "description": "Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThis should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with `inPlace`.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
+      "description": "Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThis should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. \nHowever to **select specific files** to be mutated, you better use `mutate`.\nThis option has no effect when used in combination with `inPlace`.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
       "type": "array",
       "items": {
         "type": "string"
@@ -340,7 +340,7 @@
     },
     "inPlace": {
       "type": "boolean",
-      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
+      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also with `true` the `ignorePatterns` has no effect any more.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
       "default": false
     },
     "logLevel": {
@@ -359,7 +359,7 @@
       "default": 0
     },
     "mutate": {
-      "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.",
+      "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files. If you don't want to go with the default, use `--mutate src/app/home/home.component.ts` for mutating only one specific file and You can also use glob patterns",
       "type": "array",
       "items": {
         "type": "string"
