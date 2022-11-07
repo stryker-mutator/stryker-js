@@ -33,6 +33,8 @@ export function transform(
     case AstFormat.Tsx:
       transformBabel(ast, mutantCollector, context);
       break;
+    case AstFormat.Svelte:
+      transformBabel(ast, mutantCollector, context);
   }
 }
 

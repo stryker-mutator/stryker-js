@@ -36,6 +36,7 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
   switch (ast.format) {
     case AstFormat.JS:
     case AstFormat.TS:
+    case AstFormat.Svelte:
     case AstFormat.Tsx:
       return { ...file, content: disableTypeCheckingInBabelAst(ast) };
     case AstFormat.Html:

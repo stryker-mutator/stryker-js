@@ -5,6 +5,7 @@ export enum AstFormat {
   JS = 'js',
   TS = 'ts',
   Tsx = 'tsx',
+  Svelte = 'svelte',
 }
 
 export interface AstByFormat {
@@ -12,11 +13,12 @@ export interface AstByFormat {
   [AstFormat.JS]: JSAst;
   [AstFormat.TS]: TSAst;
   [AstFormat.Tsx]: TsxAst;
+  [AstFormat.Svelte]: SvelteAst;
 }
-export type Ast = HtmlAst | JSAst | TSAst | TsxAst;
+export type Ast = HtmlAst | JSAst | SvelteAst | TSAst | TsxAst;
 
-export type ScriptFormat = AstFormat.JS | AstFormat.TS | AstFormat.Tsx;
-export type ScriptAst = JSAst | TSAst | TsxAst;
+export type ScriptFormat = AstFormat.JS | AstFormat.Svelte | AstFormat.TS | AstFormat.Tsx;
+export type ScriptAst = JSAst | SvelteAst | TSAst | TsxAst;
 export interface BaseAst {
   originFileName: string;
   rawContent: string;
@@ -59,6 +61,14 @@ export interface TSAst extends BaseAst {
 export interface TsxAst extends BaseAst {
   format: AstFormat.Tsx;
   root: babelTypes.File;
+}
+
+/**
+ * Represents a Svelte AST
+ */
+export interface SvelteAst extends BaseAst {
+  format: AstFormat.Svelte;
+  root: babelTypes.File; //TODO: is dit correct?
 }
 
 /**
