@@ -64,7 +64,7 @@ export class StrykerCli {
       })
       .option(
         '-f, --files <allFiles>',
-        '[DEPRECATED, please use the option `--migrate` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
+        '[DEPRECATED, please use the option `--mutate` instead] A comma separated list of patterns used for selecting all files needed to run the tests. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
         list
       )
       .option(
