@@ -2,7 +2,7 @@ import path from 'path';
 
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { MutantStatus, MutateDescription } from '@stryker-mutator/api/core';
+import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
@@ -37,7 +37,7 @@ export class Instrumenter {
     const parse = this._createParser(options);
     for await (const { name, mutate, content } of files) {
       const ast = await parse(content, name);
-      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate) });
+      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate) }, this.logger);
       const mutatedContent = this._print(ast);
       outFiles.push({
         name,
@@ -51,17 +51,6 @@ export class Instrumenter {
       }
     }
     const mutants = mutantCollector.mutants.map((mutant) => mutant.toApiMutant());
-    for (const mutant of mutants) {
-      if (
-        mutant.status === MutantStatus.Ignored &&
-        mutant.statusReason?.toLowerCase().includes('unused') &&
-        mutant.statusReason?.toLowerCase().includes('directive')
-      ) {
-        this.logger.warn(
-          `${mutant.statusReason}. Mutator with name '${mutant.mutatorName}' not found. Directive found at: ${mutant.fileName}:${mutant.location.start.line}:${mutant.location.start.column}`
-        );
-      }
-    }
     this.logger.info('Instrumented %d source file(s) with %d mutant(s)', files.length, mutants.length);
     return {
       files: outFiles,

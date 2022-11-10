@@ -28,6 +28,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
   { options, mutateDescription },
+  logger,
   mutators = allMutators,
   mutantPlacers = allMutantPlacers
 ) => {
@@ -39,7 +40,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   const placementMap: PlacementMap = new Map();
 
   // Create the bookkeeper responsible for the // Stryker ... directives
-  const directiveBookkeeper = new DirectiveBookkeeper();
+  const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
 
   // Now start the actual traversing of the AST
   //
@@ -56,7 +57,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
-      directiveBookkeeper.processStrykerDirectives(path.node, mutators, mutantCollector, originFileName);
+      directiveBookkeeper.processStrykerDirectives(path.node);
 
       if (shouldSkip(path)) {
         path.skip();

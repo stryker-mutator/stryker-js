@@ -4,6 +4,9 @@ import babel from '@babel/core';
 import generator from '@babel/generator';
 import { I, normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
+import { testInjector } from '@stryker-mutator/test-helpers';
+
+import { Logger } from '@stryker-mutator/api/src/logging/logger.js';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
 import { TransformerContext } from '../../../src/transformers/index.js';
@@ -28,6 +31,7 @@ const { types } = babel;
  */
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
+  const logger: sinon.SinonStubbedInstance<Logger> = testInjector.logger;
   let mutators: NodeMutator[];
   let mutantPlacers: MutantPlacer[];
   let mutantCollector: MutantCollector;
@@ -446,7 +450,7 @@ describe('babel-transformer', () => {
       });
 
       // issue https://github.com/stryker-mutator/stryker-js/issues/3812
-      it('should warn users when a mutator name does not match any of the enabled mutators.', () => {
+      it.only('should warn users when a mutator name does not match any of the enabled mutators.', () => {
         // Explicitly override the before each because we are interested in the default Mutators
         context = transformerContextStub();
         mutantCollector = new MutantCollector();
@@ -456,6 +460,7 @@ describe('babel-transformer', () => {
         const ast = createTSAst({
           rawContent: `
               // Stryker disable all: Disable all the default Mutators
+              // Stryker disable SomeOtherThing: This Mutator does not exist
               // Stryker restore EqualityOperator: Restore the actual Mutator
               // Stryker disable next-line Equality: This Mutator does not exist
               function test(a, b) {
@@ -465,13 +470,12 @@ describe('babel-transformer', () => {
         });
         act(ast);
 
-        function ignoredDirectives() {
-          return mutantCollector.mutants
-            .filter((mutant) => Boolean(mutant.ignoreReason))
-            .filter((mutant) => mutant.ignoreReason?.toLowerCase().includes('unused'));
-        }
-
-        expect(ignoredDirectives()).lengthOf(1);
+        expect(logger.warn).calledWithMatch(
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'SomeOtherThing' not found. Directive found at: example.ts")
+        );
+        expect(logger.warn).calledWithMatch(
+          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'Equality' not found. Directive found at: example.ts")
+        );
       });
 
       it('should allow to restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
@@ -694,9 +698,10 @@ describe('babel-transformer', () => {
         ast: ScriptAst,
         mutantCollector: I<MutantCollector>,
         context: TransformerContext,
+        logger: Logger,
         mutators: NodeMutator[],
         mutantPlacers: MutantPlacer[]
       ) => void
-    )(ast, mutantCollector, context, mutators, mutantPlacers);
+    )(ast, mutantCollector, context, logger, mutators, mutantPlacers);
   }
 });

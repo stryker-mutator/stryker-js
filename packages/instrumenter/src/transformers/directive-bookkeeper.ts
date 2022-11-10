@@ -1,10 +1,9 @@
 import type { types } from '@babel/core';
-import { notEmpty, I } from '@stryker-mutator/util';
+import { notEmpty } from '@stryker-mutator/util';
 
-import { Mutant } from '../mutant.js';
+import { Logger } from '@stryker-mutator/api/logging';
+
 import { NodeMutator } from '../mutators/node-mutator.js';
-
-import { MutantCollector } from './mutant-collector.js';
 
 const WILDCARD = 'all';
 const DEFAULT_REASON = 'Ignored using a comment';
@@ -53,8 +52,10 @@ export class DirectiveBookkeeper {
 
   private currentIgnoreRule = rootRule;
 
-  public processStrykerDirectives(node: types.Node, allMutators: NodeMutator[], collector: I<MutantCollector>, originFileName: string): void {
-    node.leadingComments
+  constructor(private readonly logger: Logger, private readonly allMutators: NodeMutator[], private readonly originFileName: string) {}
+
+  public processStrykerDirectives({ loc, leadingComments }: types.Node): void {
+    leadingComments
       ?.map(
         (comment) =>
           this.strykerCommentDirectiveRegex.exec(comment.value) as
@@ -63,29 +64,14 @@ export class DirectiveBookkeeper {
       )
       .filter(notEmpty)
       .forEach(([, directiveType, scope, mutators, optionalReason]) => {
+        this.warnAboutUnusedDirective(mutators, directiveType, scope!);
         const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
-
-        const directives = mutators
-          .split(',')
-          .map((mutator) => mutator.trim())
-          .filter((mutator) => mutator !== WILDCARD);
-        for (const directive of directives) {
-          if (!allMutators.map((x) => x.name.toLowerCase()).includes(directive.toLowerCase())) {
-            const mutant = new Mutant(directive, originFileName, node, {
-              mutatorName: directive,
-              ignoreReason: `Unused 'Stryker ${directiveType}' directive`,
-              replacement: node,
-            });
-            collector.collect(originFileName, node, mutant, { line: -1, position: 0 }); // Assumption that the directive is always -1 above it...
-          }
-        }
-
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new IgnoreRule(mutatorNames, node.loc!.start.line, reason, this.currentIgnoreRule);
+                this.currentIgnoreRule = new IgnoreRule(mutatorNames, loc!.start.line, reason, this.currentIgnoreRule);
                 break;
               default:
                 this.currentIgnoreRule = new IgnoreRule(mutatorNames, undefined, reason, this.currentIgnoreRule);
@@ -95,7 +81,7 @@ export class DirectiveBookkeeper {
           case 'restore':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new RestoreRule(mutatorNames, node.loc!.start.line, this.currentIgnoreRule);
+                this.currentIgnoreRule = new RestoreRule(mutatorNames, loc!.start.line, this.currentIgnoreRule);
                 break;
               default:
                 this.currentIgnoreRule = new RestoreRule(mutatorNames, undefined, this.currentIgnoreRule);
@@ -109,5 +95,22 @@ export class DirectiveBookkeeper {
   public findIgnoreReason(line: number, mutatorName: string): string | undefined {
     mutatorName = mutatorName.toLowerCase();
     return this.currentIgnoreRule.findIgnoreReason(mutatorName, line);
+  }
+
+  private warnAboutUnusedDirective(mutators: string, directiveType: string, scope: string) {
+    const directives = mutators
+      .split(',')
+      .map((mutator) => mutator.trim())
+      .filter((mutator) => mutator !== WILDCARD);
+    for (const directive of directives) {
+      if (!this.allMutators.map((x) => x.name.toLowerCase()).includes(directive.toLowerCase())) {
+        this.logger.warn(
+          // Scope can be global and therefore undefined
+          `Unused 'Stryker ${
+            scope ? directiveType + ' ' + scope : directiveType
+          }' directive. Mutator with name '${directive}' not found. Directive found at: ${this.originFileName}.`
+        );
+      }
+    }
   }
 }
