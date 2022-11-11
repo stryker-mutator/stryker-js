@@ -42,6 +42,7 @@ describe(OptionsValidator.name, () => {
         checkerNodeArgs: [],
         clearTextReporter: {
           allowColor: true,
+          allowEmojis: false,
           logTests: true,
           maxTestsToLog: 3,
         },
@@ -54,6 +55,7 @@ describe(OptionsValidator.name, () => {
           reportType: ReportType.Full,
         },
         disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+        dryRunOnly: false,
         dryRunTimeoutMinutes: 5,
         eventReporter: {
           baseDir: 'reports/mutation/events',

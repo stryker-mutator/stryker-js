@@ -15,6 +15,8 @@ import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TestRunnerResource } from '../../../src/concurrent/index.js';
 
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+
 import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
@@ -45,6 +47,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
       .provideValue(coreTokens.loggingContext, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
+      .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);

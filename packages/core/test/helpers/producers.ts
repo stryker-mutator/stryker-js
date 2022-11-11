@@ -43,6 +43,7 @@ function factoryMethod<T>(defaultsFactory: () => T) {
 
 export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOptions>(() => ({
   allowColor: true,
+  allowEmojis: false,
   logTests: true,
   maxTestsToLog: 3,
 }));

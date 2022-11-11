@@ -67,6 +67,11 @@
           "type": "boolean",
           "default": true
         },
+        "allowEmojis": {
+          "description": "Enable emojis in your clear text report (experimental).",
+          "type": "boolean",
+          "default": false
+        },
         "logTests": {
           "description": "Indicates whether or not to log which tests were executed for a given mutant.",
           "type": "boolean",
@@ -290,13 +295,18 @@
       "$ref": "#/definitions/dashboardOptions",
       "default": {}
     },
+    "dryRunOnly": {
+      "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",
+      "type":"boolean",
+      "default": false
+    },
     "eventReporter": {
       "description": "The options for the event recorder reporter.",
       "$ref": "#/definitions/eventRecorderOptions",
       "default": {}
     },
     "ignorePatterns": {
-      "description": "Specify the patterns to all files or directories that are not used to run your tests and thus should *not be copied* to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
+      "description": "Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThis should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with `inPlace`.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
       "type": "array",
       "items": {
         "type": "string"
@@ -413,11 +423,12 @@
       "default": {}
     },
     "disableTypeChecks": {
-      "description": "Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.",
+      "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
       "oneOf": [
         {
           "enum": [
-            false
+            false,
+            true
           ]
         },
         {

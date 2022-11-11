@@ -53,13 +53,30 @@ Config file: `"cleanTempDir": false`
 Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run.
 The temp dir will never be removed when the run failed for some reason (for debugging purposes).
 
+### `clearTextReporter` [`ClearTextOptions`]
+
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
+
+Config file: 
+```json
+{
+  "clearTextReporter": {
+    "allowColor": true,
+    "allowEmojis": false,
+    "logTests": true,
+    "maxTestsToLog": 3
+  }
+}
+```
+
+Settings for the `clear-text` reporter.
 ### `concurrency` [`number`]
 
 Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`<br />
 Command line: `--concurrency 4`<br />
 Config file: `"concurrency": 4`
 
-Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
+Set the concurrency of workers. This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
 
 ### `commandRunner` [`object`]
 
@@ -137,13 +154,21 @@ As you can see, when you disable bail, a lot more tests get the "Killing" status
 
 _Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature except for Jest. Jest always runs without --bail (see [#11766](https://github.com/facebook/jest/issues/11766)) inside Stryker, however it will report only the first failing test when disableBail=false and all failing tests when disableBail=true_
 
-### `disableTypeChecks` [`false | string`]
+### `disableTypeChecks` [`boolean` | `string`]
 
 Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories. You can specify a different glob expression or set it to `false` to completely disable this behavior.
+Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.
+
+### `dryRunOnly` [`boolean`]
+
+Default: `false`<br />
+Command line: `--dryRunOnly`<br />
+Config file: `"dryRunOnly": false`
+
+Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.
 
 ### `dryRunTimeoutMinutes` [`number`]
 
@@ -160,14 +185,6 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
-### `files` (DEPRECATED)
-
-Default: `undefined`<br />
-Command line: `[--files|-f] src/**/*.js,a.js,test/**/*.js`<br />
-Config file: `"files": ["src/**/*.js", "!src/**/index.js", "test/**/*.js"]`
-
-**DEPRECATED**. Please use [`ignorePatterns`](#ignorepatterns-string) instead, or use [mutate](#mutate-string) to select which files to mutate. 
  
 ### `force` [`boolean`]
 
@@ -184,7 +201,9 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,coverage`<br />
 Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
-Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
+
+This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with [`--inPlace`](#inplace-boolean).
 
 These patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.
 

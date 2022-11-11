@@ -1,6 +1,5 @@
 import os from 'os';
 
-import { MutationScoreThresholds } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
@@ -9,6 +8,7 @@ import chalk from 'chalk';
 import flatMap from 'lodash.flatmap';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
+import { stringWidth } from '../../../src/utils/string-utils.js';
 
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
@@ -38,19 +38,19 @@ describe(ClearTextScoreTable.name, () => {
         }),
         name: 'root',
       };
-      const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
+      const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-        'File                           | % score | # killed | # timeout | # survived | # no cov | # error |',
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
-        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |      11 |`,
-        ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |       0 |`,
-        `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |       0 |`,
-        '-------------------------------|---------|----------|-----------|------------|----------|---------|',
+        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
+        'File                           | % score | # killed | # timeout | # survived | # no cov | # errors |',
+        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
+        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |       11 |`,
+        ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |        0 |`,
+        `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |        0 |`,
+        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
       ]);
     });
 
@@ -62,18 +62,19 @@ describe(ClearTextScoreTable.name, () => {
         }),
         name: 'root',
       };
-      const sut = new ClearTextScoreTable(metricsResult, testInjector.options.thresholds);
+      const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
       const killedColumnValues = flatMap(rows, (row) => row.split('|').filter((_, i) => i === 2));
-      killedColumnValues.forEach((val) => expect(val).to.have.lengthOf(12));
+      killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });
 
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
-      const thresholds: MutationScoreThresholds = { high: 60, low: 50, break: 0 };
+      const options = testInjector.options;
+      options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [
           factory.metricsResult({ metrics: factory.metrics({ mutationScore: 60.0 }) }),
@@ -84,7 +85,7 @@ describe(ClearTextScoreTable.name, () => {
         ],
         metrics: factory.metrics({ mutationScore: 60.01 }),
       });
-      const sut = new ClearTextScoreTable(input, thresholds);
+      const sut = new ClearTextScoreTable(input, options);
 
       const table = sut.draw();
 
@@ -97,7 +98,8 @@ describe(ClearTextScoreTable.name, () => {
     });
 
     it('should color score in red and green if low equals high thresholds', () => {
-      const thresholds: MutationScoreThresholds = { high: 50, low: 50, break: 0 };
+      const options = testInjector.options;
+      options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [
           factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.0 }) }),
@@ -105,7 +107,7 @@ describe(ClearTextScoreTable.name, () => {
         ],
         metrics: factory.metrics({ mutationScore: 50.01 }),
       });
-      const sut = new ClearTextScoreTable(input, thresholds);
+      const sut = new ClearTextScoreTable(input, options);
 
       const table = sut.draw();
 

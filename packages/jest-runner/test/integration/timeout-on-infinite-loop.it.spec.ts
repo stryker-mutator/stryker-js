@@ -31,9 +31,10 @@ describe('Infinite Loop', () => {
       const resolveTestCase: typeof resolveTestResource = resolveTestResource.bind(undefined, 'infinite-loop-instrumented');
       let sut: JestTestRunner;
 
-      beforeEach(() => {
+      beforeEach(async () => {
         process.chdir(resolveTestCase());
         sut = createSut(testCase.jestConfig);
+        await sut.init();
       });
 
       it('should be able to recover using a hit counter with coverageAnalysis in mutantOption', async () => {

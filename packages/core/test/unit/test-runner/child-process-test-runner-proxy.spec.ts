@@ -11,6 +11,7 @@ import { ChildProcessProxy, Promisified } from '../../../src/child-proxy/child-p
 import { LoggingClientContext } from '../../../src/logging/index.js';
 import { ChildProcessTestRunnerProxy } from '../../../src/test-runner/child-process-test-runner-proxy.js';
 import { ChildProcessTestRunnerWorker } from '../../../src/test-runner/child-process-test-runner-worker.js';
+import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 describe(ChildProcessTestRunnerProxy.name, () => {
   let options: StrykerOptions;
@@ -20,6 +21,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
   let loggingContext: LoggingClientContext;
   let clock: sinon.SinonFakeTimers;
   let fileDescriptions: FileDescriptions;
+  const idGenerator = new IdGenerator();
 
   beforeEach(() => {
     clock = sinon.useFakeTimers();
@@ -34,6 +36,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       plugins: ['foo-plugin', 'bar-plugin'],
     });
     loggingContext = { port: 4200, level: LogLevel.Fatal };
+    idGenerator.next();
   });
 
   function createSut(): ChildProcessTestRunnerProxy {
@@ -43,7 +46,8 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       'a working directory',
       loggingContext,
       ['plugin', 'paths'],
-      testInjector.logger
+      testInjector.logger,
+      idGenerator
     );
   }
 
@@ -59,7 +63,8 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       ['plugin', 'paths'],
       'a working directory',
       ChildProcessTestRunnerWorker,
-      ['--inspect', '--no-warnings']
+      ['--inspect', '--no-warnings'],
+      idGenerator
     );
   });
 

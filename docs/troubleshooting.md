@@ -34,7 +34,7 @@ Example:
 > [...] Cannot assign to 'stryNS_9fa48' because it is not a variable [...]
 > ```
 
-The initial test run might fail when you're using ts-jest or ts-node. The reason for this is that Stryker will mutate your code and, by doing so, introduce type errors into your code. Stryker tries to ignore these errors by adding [`// @ts-nocheck`](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#ts-nocheck-in-typescript-files) in your source files. However, this is only done for TypeScript-like files inside your `lib`, `src`, and `test` directories by default. If you have your code somewhere else, you will need to override [disableTypeChecks](./configuration.md#disabletypechecks-false--string) yourself:
+The initial test run might fail when you're using ts-jest or ts-node. The reason for this is that Stryker will mutate your code and, by doing so, introduce type errors into your code. Stryker tries to ignore these errors by adding [`// @ts-nocheck`](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/#ts-nocheck-in-typescript-files) in your source files. However, this is only done for TypeScript-like files inside your `lib`, `src`, and `test` directories by default. If you have your code somewhere else, you will need to override [disableTypeChecks](./configuration.md#disabletypechecks-false--true--string) yourself:
 
 ```json
 {
@@ -144,7 +144,7 @@ node_modules/@types/react/index.d.ts:3075:13 - error TS2717: Subsequent property
 ```
 
 If that happens, add `"skipLibCheck": true` to your `tsconfig` file.
-**Note**: adding `typescript-checker` to StykerJS makes types safety better and you get less false negative results, but it comes with a performance cost. Mutating may take more time with the checker plugin.
+**Note**: adding `typescript-checker` to StrykerJS makes types safety better and you get less false negative results, but it comes with a performance cost. Mutating may take more time with the checker plugin.
 
 ### Error when running StrykerJS: `Committing semi space failed. Allocation failed - JavaScript heap out of memory`
 **Example**:

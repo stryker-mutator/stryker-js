@@ -5,7 +5,7 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { NpmClient } from './npm-client.js';
+import { NpmClient, NpmPackage } from './npm-client.js';
 import { PackageInfo } from './package-info.js';
 import { Preset } from './presets/preset.js';
 import { PromptOption } from './prompt-option.js';
@@ -104,13 +104,18 @@ export class StrykerInitializer {
     const selectedPackageManager = await this.selectPackageManager();
     const isJsonSelected = await this.selectJsonConfigType();
     const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner].concat(selectedReporters));
+    const packageInfo = await this.fetchAdditionalConfig(npmDependencies);
+    const pkgInfoOfSelectedTestRunner = packageInfo.find((pkg) => pkg.name == selectedTestRunner.pkg?.name);
+    const additionalConfig = packageInfo.map((dep) => dep.initStrykerConfig ?? {}).filter(notEmpty);
+
     const configFileName = await configWriter.write(
       selectedTestRunner,
       buildCommand,
       selectedReporters,
       selectedPackageManager,
       npmDependencies.map((pkg) => pkg.name),
-      await this.fetchAdditionalConfig(npmDependencies),
+      additionalConfig,
+      pkgInfoOfSelectedTestRunner?.homepage ?? "(missing 'homepage' URL in package.json)",
       isJsonSelected
     );
     this.installNpmDependencies(
@@ -213,7 +218,7 @@ export class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<Array<Record<string, unknown>>> {
-    return (await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)))).filter(notEmpty);
+  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<NpmPackage[]> {
+    return await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)));
   }
 }

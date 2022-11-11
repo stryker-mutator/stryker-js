@@ -7,6 +7,8 @@ import { LoggingClientContext } from '../logging/index.js';
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 
+import { IdGenerator } from '../child-proxy/id-generator.js';
+
 import { RetryRejectedDecorator } from './retry-rejected-decorator.js';
 import { TimeoutDecorator } from './timeout-decorator.js';
 import { ChildProcessTestRunnerProxy } from './child-process-test-runner-proxy.js';
@@ -20,7 +22,8 @@ createTestRunnerFactory.inject = tokens(
   coreTokens.sandbox,
   coreTokens.loggingContext,
   commonTokens.getLogger,
-  coreTokens.pluginModulePaths
+  coreTokens.pluginModulePaths,
+  coreTokens.workerIdGenerator
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
@@ -28,7 +31,8 @@ export function createTestRunnerFactory(
   sandbox: Pick<Sandbox, 'workingDirectory'>,
   loggingContext: LoggingClientContext,
   getLogger: LoggerFactoryMethod,
-  pluginModulePaths: readonly string[]
+  pluginModulePaths: readonly string[],
+  idGenerator: IdGenerator
 ): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
     return () => new RetryRejectedDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
@@ -48,7 +52,8 @@ export function createTestRunnerFactory(
                         sandbox.workingDirectory,
                         loggingContext,
                         pluginModulePaths,
-                        getLogger(ChildProcessTestRunnerProxy.name)
+                        getLogger(ChildProcessTestRunnerProxy.name),
+                        idGenerator
                       )
                   ),
                 options

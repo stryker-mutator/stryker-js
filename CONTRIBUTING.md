@@ -48,7 +48,7 @@ To run local changes you made in StrykerJS in an actual project you have two opt
     cd my-project
     npx install-local ../stryker-js/packages/core ../stryker-js/packages/util ../stryker-js/packages/api ../stryker-js/packages/instrumenter ../stryker-js/packages/jest-runner
     ```
-2. You can simply cd into your test project, add your plugin inside `"plugins"` configurtion and run Stryker from the command line. For example:
+2. You can simply cd into your test project, add your plugin inside `"plugins"` configuration and run Stryker from the command line. For example:
     ```sh
     cd my-project
     open stryker.conf.json 
@@ -105,7 +105,7 @@ New features are welcome! Either as requests or proposals.
 1. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
    Namely in the form `<type>(<scope>): <subject>\n\n[body]`
    * Type: feat, fix, docs, style, refactor, test, chore.
-   * Scope can the the file or group of files (not a strict right or wrong)
+   * Scope can be the file or group of files that have been changed (not a strict right or wrong)
    * Subject and body: present tense (~changed~*change*, ~added~*add*) and include motivation and contrasts with previous behavior
 
 Don't get discouraged! We estimate that the response time from the
@@ -124,9 +124,9 @@ Please report a bug report on our [issues page](https://github.com/stryker-mutat
 1. Label the issue as bug
 2. Explain what the bug is in clear English
 3. Include reproduction steps
-   This can be an example project, code snippit, etc
-4. Include the expected behaviour.
-5. Include actual behaviour.
+   This can be an example project, code snippet, etc
+4. Include the expected behavior.
+5. Include actual behavior.
 6. Add more details if required (e.g. which browser, which test runner, which versions, etc)
 
 # Community

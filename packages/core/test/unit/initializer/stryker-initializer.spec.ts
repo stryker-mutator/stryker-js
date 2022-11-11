@@ -11,7 +11,7 @@ import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest
 
 import { fileUtils } from '../../../src/utils/file-utils.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
-import { NpmClient } from '../../../src/initializer/npm-client.js';
+import { NpmClient, NpmPackage } from '../../../src/initializer/npm-client.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 import { Preset } from '../../../src/initializer/presets/preset.js';
 import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
@@ -251,10 +251,11 @@ describe(StrykerInitializer.name, () => {
       const expectedOutput = `// @ts-check
           /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */  
           const config =  {
-            "_comment": "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information",
+            "_comment": "This config was generated using 'stryker init'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information.",
             "packageManager": "pnpm",
             "reporters": [],
             "testRunner": "awesome",
+            "testRunner_comment": "Take a look at (missing 'homepage' URL in package.json) for information about the awesome plugin.",
             "coverageAnalysis": "perTest",
             "plugins": [ "@stryker-mutator/awesome-runner" ]
           };
@@ -310,7 +311,7 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
         sinon.match(
-          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information"'
+          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information."'
         )
       );
     });
@@ -399,6 +400,35 @@ describe(StrykerInitializer.name, () => {
 
       expect(out).calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner"');
       expect(fs.promises.writeFile).called;
+    });
+
+    it('should write not found if test runner homepage url as comment when not found', async () => {
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."')
+      );
+    });
+
+    it('should write URL if test runner homepage url as comment', async () => {
+      stubPackageClient({ 'stryker-hyper-runner': { name: 'hyper' } }, 'https://url-to-hyper.com');
+      inquirerPrompt.resolves({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'hyper',
+        configType: 'JSON',
+      });
+      await sut.initialize();
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.conf.json',
+        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."')
+      );
     });
   });
 
@@ -509,21 +539,17 @@ describe(StrykerInitializer.name, () => {
       statusCode: 200,
     } as unknown as IRestResponse<PackageInfo[]>);
   };
-  const stubPackageClient = (packageConfigPerPackage: Record<string, Record<string, unknown> | null>) => {
-    Object.keys(packageConfigPerPackage).forEach((packageName) => {
-      const pkgConfig: PackageInfo & { initStrykerConfig?: Record<string, unknown> } = {
-        keywords: [],
-        name: packageName,
-        version: '1.1.1',
-      };
-      const cfg = packageConfigPerPackage[packageName];
-      if (cfg) {
-        pkgConfig.initStrykerConfig = cfg;
-      }
+  const stubPackageClient = (initStrykerConfigPerPackage: Record<string, Record<string, unknown> | null>, homepage?: string | null) => {
+    Object.keys(initStrykerConfigPerPackage).forEach((packageName) => {
+      const cfg = initStrykerConfigPerPackage[packageName];
       restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves({
-        result: pkgConfig,
+        result: {
+          name: packageName,
+          homepage: homepage,
+          initStrykerConfig: cfg ?? null,
+        },
         statusCode: 200,
-      } as unknown as IRestResponse<PackageInfo[]>);
+      } as unknown as IRestResponse<NpmPackage[]>);
     });
   };
 
