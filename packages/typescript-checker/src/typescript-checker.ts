@@ -10,7 +10,7 @@ import { HybridFileSystem } from './fs/index.js';
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
-import { toBackSlashFileName, toPosixFileName } from './tsconfig-helpers.js';
+import { toBackSlashFileName } from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
@@ -86,8 +86,9 @@ export class TypescriptChecker implements Checker {
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    const result = await createGroups(mutants, nodes);
-    this.logger.info(`Created ${result.length} groups for ${mutants.length} mutants`);
+    const groups = await createGroups(mutants, nodes);
+    const result = groups.sort((a, b) => b.length - a.length);
+    this.logger.info(`Created ${result.length} groups with largest group of ${result[0].length} mutants`);
     return result;
   }
 
@@ -98,7 +99,7 @@ export class TypescriptChecker implements Checker {
     nodes: Map<string, Node>
   ): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
-    // this.logger.info(`Found errors: ${errors.length}`);
+    const mutantsToTestIndividually = new Set<Mutant>();
 
     for (const error of errors) {
       if (mutants.length === 1) {
@@ -118,10 +119,7 @@ export class TypescriptChecker implements Checker {
         allNodesWrongMutantsCanBeIn.forEach((node) => {
           fileNamesToCheck.push(node.fileName);
         });
-
-        const mutantsRelatedToError = mutants.filter((mutant) => {
-          return fileNamesToCheck.map((f) => f).includes(mutant.fileName);
-        });
+        const mutantsRelatedToError = mutants.filter((mutant) => fileNamesToCheck.includes(mutant.fileName));
 
         if (mutantsRelatedToError.length === 1) {
           if (errorsMap[mutantsRelatedToError[0].id]) {
@@ -130,15 +128,21 @@ export class TypescriptChecker implements Checker {
             errorsMap[mutantsRelatedToError[0].id] = [error];
           }
         } else if (mutantsRelatedToError.length === 0) {
-          this.logger.info(`${error.file?.fileName} has error does could not be matched with a mutant: ${error.messageText}`);
-          // throw new Error('No related mutants found.');
+          for (const mutant of mutants) {
+            mutantsToTestIndividually.add(mutant);
+          }
         } else {
           for (const mutant of mutantsRelatedToError) {
-            await this.checkErrors([mutant], errorsMap, nodes);
+            mutantsToTestIndividually.add(mutant);
           }
         }
       }
     }
+
+    for (const mutant of mutantsToTestIndividually) {
+      await this.checkErrors([mutant], errorsMap, nodes);
+    }
+
     return errorsMap;
   }
 

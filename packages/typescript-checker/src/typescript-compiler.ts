@@ -178,7 +178,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         this.nodes.set(backslashFileName, node);
       }
 
-      // set imports
+      // set childs
       for (const [fileName, file] of this.sourceFiles) {
         const node = this.nodes.get(toBackSlashFileName(fileName));
         if (node == null) {

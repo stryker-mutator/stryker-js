@@ -1,3 +1,5 @@
+import { Mutant } from '@stryker-mutator/api/src/core';
+
 export class Node {
   constructor(public fileName: string, public parents: Node[], public childs: Node[]) {}
 
@@ -19,5 +21,18 @@ export class Node {
       }
     });
     return allChildReferences;
+  }
+
+  public getMutantsWithReferenceToChildrenOrSelf(mutants: Mutant[], nodesChecked: string[] = []): Mutant[] {
+    if (nodesChecked.includes(this.fileName)) {
+      return [];
+    }
+
+    nodesChecked.push(this.fileName);
+
+    // todo better name
+    const linkedMutants = mutants.filter((m) => m.fileName == this.fileName);
+    const childResult = this.childs.flatMap((c) => c.getMutantsWithReferenceToChildrenOrSelf(mutants, nodesChecked));
+    return [...linkedMutants, ...childResult];
   }
 }

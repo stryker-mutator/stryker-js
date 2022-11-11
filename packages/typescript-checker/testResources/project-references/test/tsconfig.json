@@ -1,7 +1,8 @@
 {
   "extends": "../tsconfig.settings",
   "compilerOptions": {
-    "outDir": "../dist/test"
+    "outDir": "../dist/test",
+    "tsBuildInfoFile": "test.tsbuildinfo"
   },
   "references": [
     { "path": "../src" }
