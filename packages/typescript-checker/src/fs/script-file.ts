@@ -45,7 +45,7 @@ export class ScriptFile {
     }
   }
 
-  public touch() {
+  public touch(): void {
     this.modifiedTime = new Date();
     this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
   }

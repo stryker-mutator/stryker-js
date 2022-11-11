@@ -32,6 +32,7 @@ export class HybridFileSystem {
     }
   }
 
+  // todo remove
   public mutate(mutant: Pick<Mutant, 'fileName' | 'location' | 'replacement'>): void {
     const fileName = toPosixFileName(mutant.fileName);
     const file = this.files.get(fileName);

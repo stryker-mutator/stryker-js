@@ -10,7 +10,7 @@ import { HybridFileSystem } from './fs/index.js';
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
-import { toPosixFileName } from './tsconfig-helpers.js';
+import { toBackSlashFileName, toPosixFileName } from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
@@ -54,9 +54,7 @@ export class TypescriptChecker implements Checker {
     const errors = await this.tsCompiler.init();
 
     if (errors.length) {
-      // todo
-      // throw new Error(`TypeScript error(s) found in dry run compilation: ${this.formatErrors(errors)}`);
-      throw new Error(`TypeScript error(s) found in dry run compilation: ${errors.length}`);
+      throw new Error(`TypeScript error(s) found in dry run compilation: ${this.createErrorText(errors)}`);
     }
   }
 
@@ -87,34 +85,22 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    // const e = mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts'));
-    // const a = mutants.filter((m) => !m.fileName.includes('jest-test-adapter-factory.ts'));
-    // const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    // const result1 = await createGroups(e, nodes);
-    // const result2 = await createGroups(a, nodes);
-
-    // return [...result1, ...result2];
-    // return mutants.map((m) => [m.id]);
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
     const result = await createGroups(mutants, nodes);
+    this.logger.info(`Created ${result.length} groups for ${mutants.length} mutants`);
     return result;
   }
 
   // string is id van de mutant
-  // todo make private
-  public async checkErrors(mutants: Mutant[], errorsMap: Record<string, ts.Diagnostic[]>, nodes: Node[]): Promise<Record<string, ts.Diagnostic[]>> {
-    if (mutants.filter((m) => m.id === '256').length) {
-      debugger;
-    }
+  private async checkErrors(
+    mutants: Mutant[],
+    errorsMap: Record<string, ts.Diagnostic[]>,
+    nodes: Map<string, Node>
+  ): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
-    this.logger.info(`Found errors: ${errors.length}`);
-
-    // if (mutants.filter((m) => m.fileName.includes('jest-test-adapter-factory.ts')).length) {
-    //   debugger;
-    // }
+    // this.logger.info(`Found errors: ${errors.length}`);
 
     for (const error of errors) {
-      // errors.forEach((error) => {
       if (mutants.length === 1) {
         if (errorsMap[mutants[0].id]) {
           errorsMap[mutants[0].id].push(error);
@@ -122,7 +108,7 @@ export class TypescriptChecker implements Checker {
           errorsMap[mutants[0].id] = [error];
         }
       } else {
-        const nodeErrorWasThrownIn = nodes.find((node) => (node.fileName = error.file!.fileName));
+        const nodeErrorWasThrownIn = nodes.get(toBackSlashFileName(error.file?.fileName ?? ''));
         if (!nodeErrorWasThrownIn) {
           throw new Error('Error not found in any node');
         }
@@ -134,25 +120,22 @@ export class TypescriptChecker implements Checker {
         });
 
         const mutantsRelatedToError = mutants.filter((mutant) => {
-          // todo fix all posix
-          return fileNamesToCheck.map((f) => toPosixFileName(f)).includes(toPosixFileName(mutant.fileName));
+          return fileNamesToCheck.map((f) => f).includes(mutant.fileName);
         });
 
         if (mutantsRelatedToError.length === 1) {
-          if (errorsMap[mutants[0].id]) {
-            errorsMap[mutants[0].id].push(error);
+          if (errorsMap[mutantsRelatedToError[0].id]) {
+            errorsMap[mutantsRelatedToError[0].id].push(error);
           } else {
-            errorsMap[mutants[0].id] = [error];
+            errorsMap[mutantsRelatedToError[0].id] = [error];
           }
         } else if (mutantsRelatedToError.length === 0) {
-          throw new Error('No related mutants found.');
+          this.logger.info(`${error.file?.fileName} has error does could not be matched with a mutant: ${error.messageText}`);
+          // throw new Error('No related mutants found.');
         } else {
           for (const mutant of mutantsRelatedToError) {
             await this.checkErrors([mutant], errorsMap, nodes);
           }
-          // mutantsRelatedToError.forEach(async (mutant) => {
-          //   await this.checkErrors([mutant], errorsMap, nodes);
-          // });
         }
       }
     }

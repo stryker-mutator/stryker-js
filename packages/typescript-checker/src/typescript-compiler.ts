@@ -8,10 +8,16 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { HybridFileSystem } from './fs/index.js';
-import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from './tsconfig-helpers.js';
+import {
+  determineBuildModeEnabled,
+  guardTSVersion,
+  overrideOptions,
+  retrieveReferencedProjects,
+  toBackSlashFileName,
+  toPosixFileName,
+} from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
 import * as pluginTokens from './plugin-tokens.js';
-import { findNode } from './grouping/mutant-selector-helpers.js';
 
 export interface ITypescriptCompiler {
   init(): Promise<ts.Diagnostic[]>;
@@ -39,7 +45,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
   private readonly sourceFiles: SourceFiles = new Map();
-  private readonly nodes: Node[] = [];
+  private readonly nodes = new Map<string, Node>();
   private lastMutants: Mutant[] = [];
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
@@ -102,12 +108,15 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       },
       (...args) => {
         const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(...args);
+        if (this.nodes.size) {
+          return program;
+        }
         program
           .getSourceFiles()
           .filter(filterDependency)
           .forEach((file) => {
             this.sourceFiles.set(file.fileName, {
-              fileName: toPosixFileName(file.fileName),
+              fileName: file.fileName,
               imports: new Set(
                 program
                   .getAllDependencies(file)
@@ -142,42 +151,55 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   }
 
   public async check(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
-    // todo remove !
-    this.lastMutants.forEach((mutant) => this.fs.getFile(mutant.fileName)!.resetMutant());
-    mutants.forEach((mutant) => this.fs.getFile(mutant.fileName)!.mutate(mutant));
-    [...this.lastMutants, ...mutants].forEach((m) => this.fs.getFile(m.fileName)!.touch());
+    this.lastMutants.forEach((mutant) => {
+      const file = this.fs.getFile(mutant.fileName);
+      file?.resetMutant();
+      file?.touch();
+    });
+    mutants.forEach((mutant) => {
+      const file = this.fs.getFile(mutant.fileName);
+      file?.mutate(mutant);
+      file?.touch();
+    });
     await this.currentTask.promise;
-    // todo make this better?
-    const errors = [...this.currentErrors];
+    const errors = this.currentErrors;
     this.currentTask = new Task();
     this.currentErrors = [];
     this.lastMutants = mutants;
     return errors;
   }
 
-  public getFileRelationsAsNodes(): Node[] {
-    if (!this.nodes.length) {
+  public getFileRelationsAsNodes(): Map<string, Node> {
+    if (!this.nodes.size) {
       // create nodes
       for (const [fileName] of this.sourceFiles) {
-        const node = new Node(fileName, [], []);
-        this.nodes.push(node);
+        const backslashFileName = toBackSlashFileName(fileName);
+        const node = new Node(backslashFileName, [], []);
+        this.nodes.set(backslashFileName, node);
       }
 
       // set imports
       for (const [fileName, file] of this.sourceFiles) {
-        const node = findNode(fileName, this.nodes);
+        const node = this.nodes.get(toBackSlashFileName(fileName));
         if (node == null) {
           throw new Error('todo');
         }
+
         const importFileNames = [...file.imports];
-        node.childs = this.nodes.filter((n) => importFileNames.includes(n.fileName));
+        // todo fix !
+        node.childs = importFileNames.map((importName) => this.nodes.get(toBackSlashFileName(importName))!).filter((n) => n != undefined);
       }
 
-      // todo set parents
-      for (const node of this.nodes) {
-        node.parents = this.nodes.filter((n) => n.childs.includes(node)); // todo remove ? when childs isnt nullable
+      for (const [, node] of this.nodes) {
+        node.parents = [];
+        for (const [_, n] of this.nodes) {
+          if (n.childs.includes(node)) {
+            node.parents.push(n);
+          }
+        }
       }
     }
+
     return this.nodes;
   }
 

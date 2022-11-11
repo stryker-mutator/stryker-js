@@ -1,7 +1,5 @@
 import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 
-import { findNode } from './mutant-selector-helpers.js';
-
 import { Node } from './node.js';
 
 /**
@@ -40,7 +38,7 @@ import { Node } from './node.js';
  *
  * In this function we create the groups of mutants who can be tested at the same time.
  */
-export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
+export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): string[][] {
   const groups: Mutant[][] = [];
   let mutant = selectNewMutant(mutants, groups);
 
@@ -50,18 +48,18 @@ export function createGroups(mutants: Mutant[], nodes: Node[]): string[][] {
     const mutantWhoAreNotInAGroup = [...mutants];
     // The first mutant is always in the group
     const group = [mutant];
-    const node = findNode(mutant.fileName, nodes);
+    const node = nodes.get(mutant.fileName);
 
-    if (node === null) throw new Error('Node not in graph');
+    if (node == null) throw new Error('Node not in graph');
 
     // Fill the ignoreList
     let nodesToIgnore = node.getAllParentReferencesIncludingSelf();
 
     // Loop through the nodes who can possibly go in the group
     for (const mutantSelected of mutantWhoAreNotInAGroup) {
-      const nodeSelected = findNode(mutantSelected.fileName, nodes);
+      const nodeSelected = nodes.get(mutantSelected.fileName);
 
-      if (nodeSelected === null) throw new Error('Node not in graph');
+      if (nodeSelected == null) throw new Error('Node not in graph');
 
       // Check if parents of node are not in the group
       const groupNodes = getNodesFromMutants(group, nodes);
@@ -109,11 +107,10 @@ function nodeSelectedHasParentsInCurrentGroup(nodeSelected: Node, groupNodes: No
   return false;
 }
 
-function getNodesFromMutants(group: Mutant[], nodes: Node[]): Node[] {
+function getNodesFromMutants(group: Mutant[], nodes: Map<string, Node>): Node[] {
   return group.map((mutant) => {
-    const node = findNode(mutant.fileName, nodes);
-    if (node === null) throw new Error('Node not in graph');
-
+    const node = nodes.get(mutant.fileName);
+    if (node == null) throw new Error('Node not in graph');
     return node;
   });
 }
