@@ -27,8 +27,7 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
-  { options, mutateDescription },
-  logger,
+  { options, mutateDescription, logger },
   mutators = allMutators,
   mutantPlacers = allMutantPlacers
 ) => {
