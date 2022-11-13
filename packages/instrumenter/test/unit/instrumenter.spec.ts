@@ -66,7 +66,11 @@ describe(Instrumenter.name, () => {
     const expected: transformers.TransformerOptions = createInstrumenterOptions({
       excludedMutations: [],
     });
-    expect(actual).deep.eq({ options: expected, mutateDescription: [{ start: { line: 1, column: 0 }, end: { line: 7, column: 42 } }] });
+    expect(actual).deep.eq({
+      options: expected,
+      mutateDescription: [{ start: { line: 1, column: 0 }, end: { line: 7, column: 42 } }],
+      logger: testInjector.logger,
+    });
   });
 
   it('should log about instrumenting', async () => {
