@@ -60,7 +60,7 @@ describe('babel-transformer', () => {
       path.replaceWith(types.sequenceExpression([...[...appliedMutants.values()].flatMap((val) => val.expressions), ...path.node.expressions])),
   };
 
-  beforeEach(function () {
+  beforeEach(() => {
     context = transformerContextStub();
     mutantCollector = new MutantCollector();
     mutators = [fooMutator, plusMutator];

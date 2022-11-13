@@ -1,5 +1,5 @@
 import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/src/logging/logger';
+import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginContext } from '@stryker-mutator/api/plugin';
 import sinon from 'sinon';
 import { Injector, createInjector } from 'typed-inject';
