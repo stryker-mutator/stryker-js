@@ -65,11 +65,11 @@ export class DirectiveBookkeeper {
           | [fullMatch: string, directiveType: string, scope: string | undefined, mutators: string, reason: string | undefined]
           | null,
       }))
-      .filter((commentAndRegexMatches) => notEmpty(commentAndRegexMatches.matchResult))
-      .forEach((commentAndRegexMatches) => {
-        const [, directiveType, scope, mutators, optionalReason] = commentAndRegexMatches.matchResult!;
+      .filter(({ matchResult }) => notEmpty(matchResult))
+      .forEach(({ comment, matchResult }) => {
+        const [, directiveType, scope, mutators, optionalReason] = matchResult!;
         let mutatorNames = mutators.split(',').map((mutator) => mutator.trim());
-        this.warnAboutUnusedDirective(mutatorNames, directiveType, scope, commentAndRegexMatches.comment);
+        this.warnAboutUnusedDirective(mutatorNames, directiveType, scope, comment);
         mutatorNames = mutatorNames.map((mutator) => mutator.toLowerCase());
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
@@ -105,7 +105,6 @@ export class DirectiveBookkeeper {
   private warnAboutUnusedDirective(mutators: string[], directiveType: string, scope: string | undefined, comment: types.Comment) {
     for (const mutator of mutators) {
       if (mutator === WILDCARD) continue;
-      if (!comment.value.includes(mutator)) return;
       if (!this.allMutatorNames.includes(mutator.toLowerCase())) {
         this.logger.warn(
           // Scope can be global and therefore undefined
