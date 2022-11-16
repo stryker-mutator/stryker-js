@@ -28,7 +28,7 @@ export function createParser(
       case AstFormat.Html:
         return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
       case AstFormat.Svelte:
-        return svelteParse(code, fileName) as Promise<AstByFormat[T]>;
+        return svelteParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
     }
   };
 }
@@ -52,6 +52,8 @@ export function getFormat(fileName: string, override?: AstFormat): AstFormat | u
       case '.html':
       case '.htm':
         return AstFormat.Html;
+      case '.svelte':
+        return AstFormat.Svelte;
       default:
         return;
     }

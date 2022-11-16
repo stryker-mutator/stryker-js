@@ -3,11 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "test": "npx jest src",
-    "test:watch": "npm run test -- --watch",
-    "build": "vite build",
-    "preview": "vite preview"
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.19.4",

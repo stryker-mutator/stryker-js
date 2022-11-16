@@ -4,7 +4,7 @@ import { notEmpty } from '@stryker-mutator/util';
 import { File } from './file.js';
 
 import { createParser, getFormat, ParserOptions } from './parsers/index.js';
-import { AstFormat, HtmlAst, ScriptAst } from './syntax/index.js';
+import { AstFormat, HtmlAst, ScriptAst, SvelteAst } from './syntax/index.js';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
@@ -36,11 +36,12 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
   switch (ast.format) {
     case AstFormat.JS:
     case AstFormat.TS:
-    case AstFormat.Svelte:
     case AstFormat.Tsx:
       return { ...file, content: disableTypeCheckingInBabelAst(ast) };
     case AstFormat.Html:
       return { ...file, content: disableTypeCheckingInHtml(ast) };
+    case AstFormat.Svelte:
+      return { ...file, content: disableTypeCheckingInSvelte(ast) };
   }
 }
 
@@ -71,6 +72,21 @@ function prefixWithNoCheck(code: string): string {
 
 function disableTypeCheckingInHtml(ast: HtmlAst): string {
   const sortedScripts = [...ast.root.scripts].sort((a, b) => a.root.start! - b.root.start!);
+  let currentIndex = 0;
+  let html = '';
+  for (const script of sortedScripts) {
+    html += ast.rawContent.substring(currentIndex, script.root.start!);
+    html += '\n';
+    html += prefixWithNoCheck(removeTSDirectives(script.rawContent, script.root.comments));
+    html += '\n';
+    currentIndex = script.root.end!;
+  }
+  html += ast.rawContent.substring(currentIndex);
+  return html;
+}
+
+function disableTypeCheckingInSvelte(ast: SvelteAst): string {
+  const sortedScripts = [...ast.root.rootScripts].sort((a, b) => a.root.start! - b.root.start!);
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {

@@ -17,8 +17,8 @@ export interface AstByFormat {
 }
 export type Ast = HtmlAst | JSAst | SvelteAst | TSAst | TsxAst;
 
-export type ScriptFormat = AstFormat.JS | AstFormat.Svelte | AstFormat.TS | AstFormat.Tsx;
-export type ScriptAst = JSAst | SvelteAst | TSAst | TsxAst;
+export type ScriptFormat = AstFormat.JS | AstFormat.TS | AstFormat.Tsx;
+export type ScriptAst = JSAst | TSAst | TsxAst;
 export interface BaseAst {
   originFileName: string;
   rawContent: string;
@@ -68,7 +68,7 @@ export interface TsxAst extends BaseAst {
  */
 export interface SvelteAst extends BaseAst {
   format: AstFormat.Svelte;
-  root: babelTypes.File; //TODO: is dit correct?
+  root: SvelteRootNode;
 }
 
 /**
@@ -78,4 +78,8 @@ export interface SvelteAst extends BaseAst {
  */
 export interface HtmlRootNode {
   scripts: ScriptAst[];
+}
+
+export interface SvelteRootNode {
+  rootScripts: ScriptAst[];
 }
