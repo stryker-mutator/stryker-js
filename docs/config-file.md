@@ -40,7 +40,7 @@ Since Stryker version 6 you can define your config in a native [ECMAScript modul
 const config = {
   // Your config here
 };
-export default;
+export default config;
 ```
 
 You can use your editor's autocompletion to help you author your configuration file.
