@@ -40,7 +40,7 @@
     "@babel/preset-typescript": "~7.18.0",
     "@stryker-mutator/api": "6.3.0",
     "@stryker-mutator/util": "6.3.0",
-    "angular-html-parser": "~2.1.0",
+    "angular-html-parser": "~3.0.0",
     "weapon-regex": "~1.0.2"
   },
   "devDependencies": {
