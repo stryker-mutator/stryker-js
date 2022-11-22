@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax/index.js';
+import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
 import { InstrumenterOptions } from '../../src/index.js';
@@ -63,6 +63,20 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
     originFileName,
     rawContent,
     root: parseTS(rawContent, originFileName),
+    ...overrides,
+  };
+}
+
+export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
+  const rawContent = overrides?.rawContent ?? '<h1>hello!</h1>';
+  const originFileName = overrides?.originFileName ?? 'example.svelte';
+  return {
+    format: AstFormat.Svelte,
+    originFileName,
+    rawContent,
+    root: {
+      scripts: [],
+    },
     ...overrides,
   };
 }

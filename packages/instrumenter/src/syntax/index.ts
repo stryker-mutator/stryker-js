@@ -81,5 +81,5 @@ export interface HtmlRootNode {
 }
 
 export interface SvelteRootNode {
-  rootScripts: ScriptAst[];
+  scripts: ScriptAst[];
 }

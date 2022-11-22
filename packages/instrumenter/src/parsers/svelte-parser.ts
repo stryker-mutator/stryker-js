@@ -1,27 +1,25 @@
 import { Program } from 'estree';
-import { parse as parseSvelte, walk } from 'svelte/compiler';
+import { parse as svelteParse, walk } from 'svelte/compiler';
 import { Ast } from 'svelte/types/compiler/interfaces.js';
 
 import { AstFormat, SvelteAst } from '../syntax/index.js';
 
 import { ParserContext } from './parser-context.js';
 
-// TODO: better name
-interface SvelteScript {
+interface SvelteScriptTag {
   content: string;
-  startEnd: StartEnd;
+  range: Range;
 }
 
-// TODO: better name
-export interface StartEnd {
+interface Range {
   start: number;
   end: number;
 }
 
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
-  const ast = parseSvelte(text);
+  const ast = svelteParse(text);
 
-  const scripts: SvelteScript[] = getAllHtmlScripts(ast);
+  const scripts: SvelteScriptTag[] = getAllHtmlScripts(ast);
 
   if (ast.instance?.content) {
     scripts.push(sliceContent(text, ast.instance.content));
@@ -33,8 +31,8 @@ export async function parse(text: string, fileName: string, context: ParserConte
   const rootScripts = await Promise.all(
     scripts.map(async (script) => {
       const scriptAst = await context.parse(script.content, fileName, AstFormat.JS);
-      scriptAst.root.start = script.startEnd.start;
-      scriptAst.root.end = script.startEnd.end;
+      scriptAst.root.start = script.range.start;
+      scriptAst.root.end = script.range.end;
       return scriptAst;
     })
   );
@@ -43,22 +41,22 @@ export async function parse(text: string, fileName: string, context: ParserConte
     originFileName: fileName,
     rawContent: text,
     format: AstFormat.Svelte,
-    root: { rootScripts: rootScripts },
+    root: { scripts: rootScripts },
   };
 }
 
-function sliceContent(text: string, program: Program): SvelteScript {
+function sliceContent(text: string, program: Program): SvelteScriptTag {
   const { start, end } = program as unknown as { start: number; end: number };
-  return { content: text.slice(start, end), startEnd: { start, end } };
+  return { content: text.slice(start, end), range: { start, end } };
 }
 
-function getAllHtmlScripts(ast: Ast): SvelteScript[] {
-  const templateScripts: SvelteScript[] = [];
+function getAllHtmlScripts(ast: Ast): SvelteScriptTag[] {
+  const templateScripts: SvelteScriptTag[] = [];
 
   walk(ast.html, {
     enter(node) {
       if (node.name === 'script' && node.children[0]) {
-        templateScripts.push({ content: node.children[0].data, startEnd: { start: node.children[0].start, end: node.children[0].end } });
+        templateScripts.push({ content: node.children[0].data, range: { start: node.children[0].start, end: node.children[0].end } });
       }
     },
   });
