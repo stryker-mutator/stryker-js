@@ -6,7 +6,7 @@ import { transformSvelte } from '../../../src/transformers/svelte-transformer.js
 import { createJSAst, createSvelteAst } from '../../helpers/factories.js';
 import { transformerContextStub } from '../../helpers/stubs.js';
 
-describe.only('svelte-transformer', () => {
+describe('svelte-transformer', () => {
   it('should transform the svelte file', () => {
     const SvelteAst = createSvelteAst();
     const jsScript = createJSAst();

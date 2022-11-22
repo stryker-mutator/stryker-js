@@ -62,13 +62,13 @@ describe('instrumenter integration', () => {
   it('should be able to place exotic mutants', async () => {
     await arrangeAndActAssert('mutant-placing.ts');
   });
-  it.only('should be able to instrument svelte', async () => {
+  it('should be able to instrument svelte', async () => {
     await arrangeAndActAssert('svelte-hello-world.svelte');
   });
-  it.only('should be able to instrument svelte with only a module script tag', async () => {
+  it('should be able to instrument svelte with only a module script tag', async () => {
     await arrangeAndActAssert('svelte-module-script-tag.svelte');
   });
-  it.only('should be able to instrument svelte with an instance, module and template script tags', async () => {
+  it('should be able to instrument svelte with an instance, module and template script tags', async () => {
     await arrangeAndActAssert('svelte-multiple-script-tags.svelte');
   });
 
