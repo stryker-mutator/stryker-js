@@ -1,6 +1,10 @@
 import type { types } from '@babel/core';
 import { notEmpty } from '@stryker-mutator/util';
 
+import { Logger } from '@stryker-mutator/api/logging';
+
+import { NodeMutator } from '../mutators/node-mutator.js';
+
 const WILDCARD = 'all';
 const DEFAULT_REASON = 'Ignored using a comment';
 
@@ -47,18 +51,26 @@ export class DirectiveBookkeeper {
   private readonly strykerCommentDirectiveRegex = /^\s?Stryker (disable|restore)(?: (next-line))? ([a-zA-Z, ]+)(?::(.+)?)?/;
 
   private currentIgnoreRule = rootRule;
+  private readonly allMutatorNames: string[];
+
+  constructor(private readonly logger: Logger, private readonly allMutators: NodeMutator[], private readonly originFileName: string) {
+    this.allMutatorNames = this.allMutators.map((x) => x.name.toLowerCase());
+  }
 
   public processStrykerDirectives({ loc, leadingComments }: types.Node): void {
     leadingComments
-      ?.map(
-        (comment) =>
-          this.strykerCommentDirectiveRegex.exec(comment.value) as
-            | [fullMatch: string, directiveType: string, scope: string | undefined, mutators: string, reason: string | undefined]
-            | null
-      )
-      .filter(notEmpty)
-      .forEach(([, directiveType, scope, mutators, optionalReason]) => {
-        const mutatorNames = mutators.split(',').map((mutator) => mutator.trim().toLowerCase());
+      ?.map((comment) => ({
+        comment,
+        matchResult: this.strykerCommentDirectiveRegex.exec(comment.value) as
+          | [fullMatch: string, directiveType: string, scope: string | undefined, mutators: string, reason: string | undefined]
+          | null,
+      }))
+      .filter(({ matchResult }) => notEmpty(matchResult))
+      .forEach(({ comment, matchResult }) => {
+        const [, directiveType, scope, mutators, optionalReason] = matchResult!;
+        let mutatorNames = mutators.split(',').map((mutator) => mutator.trim());
+        this.warnAboutUnusedDirective(mutatorNames, directiveType, scope, comment);
+        mutatorNames = mutatorNames.map((mutator) => mutator.toLowerCase());
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':
@@ -88,5 +100,21 @@ export class DirectiveBookkeeper {
   public findIgnoreReason(line: number, mutatorName: string): string | undefined {
     mutatorName = mutatorName.toLowerCase();
     return this.currentIgnoreRule.findIgnoreReason(mutatorName, line);
+  }
+
+  private warnAboutUnusedDirective(mutators: string[], directiveType: string, scope: string | undefined, comment: types.Comment) {
+    for (const mutator of mutators) {
+      if (mutator === WILDCARD) continue;
+      if (!this.allMutatorNames.includes(mutator.toLowerCase())) {
+        this.logger.warn(
+          // Scope can be global and therefore undefined
+          `Unused 'Stryker ${
+            scope ? directiveType + ' ' + scope : directiveType
+          }' directive. Mutator with name '${mutator}' not found. Directive found at: ${this.originFileName}:${comment.loc!.start.line}:${
+            comment.loc!.start.column
+          }.`
+        );
+      }
+    }
   }
 }

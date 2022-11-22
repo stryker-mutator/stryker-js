@@ -1,6 +1,8 @@
 import { MutateDescription } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
 
+import { Logger } from '@stryker-mutator/api/src/logging/logger';
+
 import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
 
 import { TransformerOptions } from './transformer-options.js';
@@ -18,7 +20,7 @@ import { MutantCollector } from './mutant-collector.js';
 export function transform(
   ast: Ast,
   mutantCollector: I<MutantCollector>,
-  transformerContext: Pick<TransformerContext, 'mutateDescription' | 'options'>
+  transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>
 ): void {
   const context: TransformerContext = {
     ...transformerContext,
@@ -42,4 +44,5 @@ export interface TransformerContext {
   transform: AstTransformer<AstFormat>;
   options: TransformerOptions;
   mutateDescription: MutateDescription;
+  logger: Logger;
 }
