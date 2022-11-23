@@ -9,7 +9,7 @@
     "@types/glob": "8.0.0",
     "@types/istanbul": "0.4.30",
     "@types/karma": "6.3.3",
-    "@types/lodash": "4.14.189",
+    "@types/lodash": "4.14.190",
     "@types/minimatch": "5.1.2",
     "@types/mkdirp": "1.0.2",
     "@types/mocha": "10.0.0",
