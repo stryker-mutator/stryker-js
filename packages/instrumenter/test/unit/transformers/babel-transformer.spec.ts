@@ -443,6 +443,68 @@ describe('babel-transformer', () => {
         expect(notIgnoredMutants()).lengthOf(1);
       });
 
+      it('should warn when a mutator name without scope does not match any of the enabled mutators.', () => {
+        const ast = createTSAst({
+          rawContent: `// Stryker disable RandomName: This Mutator does not exist
+              function test(a, b) {
+                return a - b >= 0 ? 1 : -1;
+              }
+            `,
+        });
+        act(ast);
+
+        expect(context.logger.warn).calledWithMatch(
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+        );
+      });
+
+      it('should warn when a mutator name with scope does not match any of the enabled mutators.', () => {
+        const ast = createTSAst({
+          rawContent: `// Stryker disable next-line RandomName: This Mutator does not exist
+              function test(a, b) {
+                return a - b >= 0 ? 1 : -1;
+              }
+            `,
+        });
+        act(ast);
+
+        expect(context.logger.warn).calledWithMatch(
+          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+        );
+      });
+
+      it('should warn when a mutator name does not match any of the enabled mutators.', () => {
+        const ast = createTSAst({
+          rawContent: `// Stryker disable Foo
+              // Stryker disable RandomName: This Mutator does not exist
+              // Stryker disable Plus
+              function test(a, b) {
+                return a - b >= 0 ? 1 : -1;
+              }
+            `,
+        });
+        act(ast);
+
+        expect(context.logger.warn).calledWithMatch(
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2")
+        );
+      });
+
+      it('should not warn when a disabled Mutator exists.', () => {
+        const ast = createTSAst({
+          rawContent: `
+              // Stryker disable Foo
+              // Stryker disable all
+              function test(a, b) {
+                return a - b >= 0 ? 1 : -1;
+              }
+            `,
+        });
+        act(ast);
+
+        expect(context.logger.warn).not.called;
+      });
+
       it('should allow to restore for next-line using a specific "Stryker restore next-line mutator" comment', () => {
         const ast = createTSAst({
           rawContent: `
