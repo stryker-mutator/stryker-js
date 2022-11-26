@@ -195,7 +195,6 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
 ### `force` [`boolean`]
 
 Default: `false`<br />
