@@ -217,7 +217,7 @@ This should only be used in cases where you experience a slow Stryker startup, b
 
 This option has **no effect at all**, when used in combination with [`--inPlace`](#inplace-boolean).
 
-However to **select specific files** to be mutated, you better use [mutate](#mutate-string).
+However to **select specific files** to be mutated, you better use [mutate](#mutate-string), but only if you are not happy with its default [see below](#mutate-string).
 
 Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options).
 
@@ -318,7 +318,7 @@ Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{sr
   - `--mutate src/app/home/home.component.ts`, for one specific file
   - `--mutate "src/app/home/*.ts","!src/app/home/*.spec.ts"`, if you want to mutate just one specific directory
 
-With `mutate` you configure the subset of files to be mutated. These should be your _production code files_, and definitely not your test files.
+With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files.
 (Whereas with [`ignorePatterns`](#ignorepatterns-string) you prevent non-relevant files from being copied to the [sandbox directory](#tempDirName-string) in the first place)
 
 The default will try to guess your production code files based on sane defaults. It reads like this:
@@ -326,7 +326,7 @@ The default will try to guess your production code files based on sane defaults.
 - Include all js-like files inside the `src` or `lib` dir
   - Except files inside `__tests__` directories and file names ending with `test` or `spec`.
 
-If the defaults are not sufficient for you, for example in a angular project you might want to **exclude** not only the `*.spec.ts` files but other files too.
+If the defaults are not sufficient for you, for example in a angular project you might want to **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.
 
 It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Some examples:
 
