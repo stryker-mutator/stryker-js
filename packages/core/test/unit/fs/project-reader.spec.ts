@@ -24,7 +24,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read();
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","/reports","*.tsbuildinfo","/stryker.log",".stryker-tmp"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
       );
     });
     it('should discover files recursively using readdir', async () => {
@@ -81,7 +81,7 @@ describe(ProjectReader.name, () => {
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('packages', 'app', 'src', 'index.js'));
     });
-    it('should ignore node_modules, .git, reports, stryker.log, *.tsbuildinfo and .stryker-tmp by default', async () => {
+    it('should ignore node_modules, .git, reports/stryker-incremental.json, stryker.log, *.tsbuildinfo and .stryker-tmp by default', async () => {
       // Arrange
       stubFileSystem({
         '.git': { config: '' },
@@ -93,7 +93,7 @@ describe(ProjectReader.name, () => {
         dist: {
           'tsconfig.tsbuildinfo': '',
         },
-        reports: { mutation: { 'mutation.json': '' } },
+        reports: { 'stryker-incremental.json': '' },
       });
       const sut = createSut();
 
@@ -103,6 +103,27 @@ describe(ProjectReader.name, () => {
       // Assert
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('index.js'));
+    });
+    it('should ignore tempDirName and incrementalFile by default', async () => {
+      // Arrange
+      stubFileSystem({
+        'foo.json': '',
+        bar: { 'index.js': '' },
+        '.stryker-tmp': { 'index.js': '' },
+        reports: { 'stryker-incremental.json': '' },
+      });
+      testInjector.options.incrementalFile = 'foo.json';
+      testInjector.options.tempDirName = 'bar';
+      const sut = createSut();
+
+      // Act
+      const { files } = await sut.read();
+
+      // Assert
+      expect(files).lengthOf(2);
+      const keys = files.keys();
+      expect(keys.next().value).eq(path.resolve('.stryker-tmp', 'index.js'));
+      expect(keys.next().value).eq(path.resolve('reports', 'stryker-incremental.json'));
     });
     it('should not ignore deep report directories by default', async () => {
       // Arrange
