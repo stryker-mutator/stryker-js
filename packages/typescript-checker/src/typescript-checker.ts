@@ -98,42 +98,46 @@ export class TypescriptChecker implements Checker {
     nodes: Map<string, Node>
   ): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
-    const mutantsToTestIndividually = new Set<Mutant>();
+    const mutantsThatCouldNotBeTestedInGroups = new Set<Mutant>();
 
+    //If there is only a single mutant the error has to originate from the single mutant
     if (errors.length && mutants.length === 1) {
       errorsMap[mutants[0].id] = errors;
-    } else {
-      for (const error of errors) {
-        const nodeErrorWasThrownIn = nodes.get(toBackSlashFileName(error.file?.fileName ?? ''));
-        if (!nodeErrorWasThrownIn) {
-          throw new Error('Error not found in any node');
-        }
-        const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
+      return errorsMap;
+    }
 
-        if (mutantsRelatedToError.length === 1) {
-          if (errorsMap[mutantsRelatedToError[0].id]) {
-            errorsMap[mutantsRelatedToError[0].id].push(error);
-          } else {
-            errorsMap[mutantsRelatedToError[0].id] = [error];
-          }
-        } else if (mutantsRelatedToError.length === 0) {
-          for (const mutant of mutants) {
-            mutantsToTestIndividually.add(mutant);
-          }
+    for (const error of errors) {
+      const nodeErrorWasThrownIn = nodes.get(toBackSlashFileName(error.file?.fileName ?? ''));
+      if (!nodeErrorWasThrownIn) {
+        throw new Error('Error not found in any node');
+      }
+      const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
+
+      if (mutantsRelatedToError.length === 1) {
+        if (errorsMap[mutantsRelatedToError[0].id]) {
+          errorsMap[mutantsRelatedToError[0].id].push(error);
         } else {
-          for (const mutant of mutantsRelatedToError) {
-            mutantsToTestIndividually.add(mutant);
-          }
+          errorsMap[mutantsRelatedToError[0].id] = [error];
+        }
+      } else if (mutantsRelatedToError.length === 0) {
+        for (const mutant of mutants) {
+          mutantsThatCouldNotBeTestedInGroups.add(mutant);
+        }
+      } else {
+        for (const mutant of mutantsRelatedToError) {
+          mutantsThatCouldNotBeTestedInGroups.add(mutant);
         }
       }
     }
 
-    if (mutantsToTestIndividually.size) {
-      // todo summary
+    if (mutantsThatCouldNotBeTestedInGroups.size) {
+      //Because at this point the filesystem contains all the mutants from the group we need to reset back
+      //to the original state of the files to make it possible to test the first mutant
+      //if we wouldnt do this the first mutant would not be noticed by the compiler because it was already in the filesystem
       await this.tsCompiler.check([]);
     }
-    for (const mutant of mutantsToTestIndividually) {
-      if (errorsMap[mutant.id]) continue; // todo not add to list instead of continue
+    for (const mutant of mutantsThatCouldNotBeTestedInGroups) {
+      if (errorsMap[mutant.id]) continue;
       await this.checkErrors([mutant], errorsMap, nodes);
     }
 
