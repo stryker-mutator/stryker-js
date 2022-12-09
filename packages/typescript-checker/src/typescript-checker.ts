@@ -133,7 +133,7 @@ export class TypescriptChecker implements Checker {
     if (mutantsThatCouldNotBeTestedInGroups.size) {
       //Because at this point the filesystem contains all the mutants from the group we need to reset back
       //to the original state of the files to make it possible to test the first mutant
-      //if we wouldnt do this the first mutant would not be noticed by the compiler because it was already in the filesystem
+      //if we wouldn't do this the first mutant would not be noticed by the compiler because it was already in the filesystem
       await this.tsCompiler.check([]);
     }
     for (const mutant of mutantsThatCouldNotBeTestedInGroups) {
