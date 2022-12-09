@@ -9,6 +9,7 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
   allowUnreachableCode: true,
   noUnusedLocals: false,
   noUnusedParameters: false,
+  declarationMap: true,
 });
 
 // When we're running in 'single-project' mode, we can safely disable emit
@@ -18,14 +19,12 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
   tsBuildInfoFile: undefined,
   composite: false,
   declaration: false,
-  declarationMap: true,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
 const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   emitDeclarationOnly: true,
   noEmit: false,
-  declarationMap: true,
 });
 
 export function guardTSVersion(): void {

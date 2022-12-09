@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers.js';
 
-describe('typescript-helpers', () => {
+describe.only('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {
     let readFileStub: sinon.SinonStub;
 
@@ -54,7 +54,7 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
-        declarationMap: false,
+        declarationMap: true,
       });
       expect(
         JSON.parse(
@@ -66,7 +66,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
-                  declarationMap: false,
+                  declarationMap: true,
                 },
               },
             },
@@ -78,7 +78,7 @@ describe('typescript-helpers', () => {
         incremental: false,
         composite: false,
         declaration: false,
-        declarationMap: false,
+        declarationMap: true,
       });
     });
 
@@ -93,7 +93,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
-                  declarationMap: false,
+                  declarationMap: true,
                   declarationDir: '.',
                 },
               },
@@ -112,7 +112,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
-                  declarationMap: false,
+                  declarationMap: true,
                   declarationDir: '',
                 },
               },
@@ -127,7 +127,7 @@ describe('typescript-helpers', () => {
       expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
       });
       expect(
         JSON.parse(
@@ -147,7 +147,13 @@ describe('typescript-helpers', () => {
       ).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
+      });
+    });
+
+    it('should set --declarationMap to true', () => {
+      expect(JSON.parse(overrideOptions({ config: { declarationMap: false } }, true)).compilerOptions).deep.include({
+        declarationMap: true,
       });
     });
   });
