@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers.js';
 
-describe.only('typescript-helpers', () => {
+describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {
     let readFileStub: sinon.SinonStub;
 

@@ -31,10 +31,10 @@ describe('Typescript checker on a project with project references', () => {
     return sut.init();
   });
 
-  it.only('todo test', async () => {
-    const mutant = createMutant('src/todo.ts', 'return totalCount', 'return ""', 'mutId');
-    const actual = await sut.check([mutant]);
-  });
+  // it.only('todo test', async () => {
+  //   const mutant = createMutant('src/todo.ts', 'return totalCount', 'return ""', 'mutId');
+  //   const actual = await sut.check([mutant]);
+  // });
 
   it('should not write output to disk', async () => {
     expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
@@ -47,12 +47,12 @@ describe('Typescript checker on a project with project references', () => {
     expect(actualResult).deep.eq(expectedResult);
   });
 
-  it.only('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42', 'mutId');
-    const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
-    const actual = await sut.check([mutant]);
-    expect(actual).deep.eq(expectedResult);
-  });
+  // it.only('should allow unused local variables (override options)', async () => {
+  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42', 'mutId');
+  //   const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
+  //   const actual = await sut.check([mutant]);
+  //   expect(actual).deep.eq(expectedResult);
+  // });
 });
 
 const fileContents = Object.freeze({
