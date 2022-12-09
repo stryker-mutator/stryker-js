@@ -92,7 +92,6 @@ export class TypescriptChecker implements Checker {
     return result;
   }
 
-  // string is id van de mutant
   private async checkErrors(
     mutants: Mutant[],
     errorsMap: Record<string, ts.Diagnostic[]>,
@@ -101,25 +100,15 @@ export class TypescriptChecker implements Checker {
     const errors = await this.tsCompiler.check(mutants);
     const mutantsToTestIndividually = new Set<Mutant>();
 
-    for (const error of errors) {
-      if (mutants.length === 1) {
-        if (errorsMap[mutants[0].id]) {
-          errorsMap[mutants[0].id].push(error);
-        } else {
-          errorsMap[mutants[0].id] = [error];
-        }
-      } else {
+    if (errors.length && mutants.length === 1) {
+      errorsMap[mutants[0].id] = errors;
+    } else {
+      for (const error of errors) {
         const nodeErrorWasThrownIn = nodes.get(toBackSlashFileName(error.file?.fileName ?? ''));
         if (!nodeErrorWasThrownIn) {
           throw new Error('Error not found in any node');
         }
-        const allNodesWrongMutantsCanBeIn = nodeErrorWasThrownIn.getAllChildReferencesIncludingSelf();
-        const fileNamesToCheck: string[] = [];
-
-        allNodesWrongMutantsCanBeIn.forEach((node) => {
-          fileNamesToCheck.push(node.fileName);
-        });
-        const mutantsRelatedToError = mutants.filter((mutant) => fileNamesToCheck.includes(mutant.fileName));
+        const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
 
         if (mutantsRelatedToError.length === 1) {
           if (errorsMap[mutantsRelatedToError[0].id]) {
@@ -139,7 +128,17 @@ export class TypescriptChecker implements Checker {
       }
     }
 
+    if (mutantsToTestIndividually.size) {
+      // todo make fix
+      this.logger.info(`Checking ${mutantsToTestIndividually.size} mutants individually.`);
+      const begin = new Date();
+      await this.tsCompiler.check([]);
+      const end = new Date();
+      this.logger.info(`Checking nothing cost ${(end.getTime() - begin.getTime()) / 1000}`);
+    }
     for (const mutant of mutantsToTestIndividually) {
+      if (errorsMap[mutant.id]) continue;
+      this.logger.debug(`Having to check mutant ${mutant.id} individually.`);
       await this.checkErrors([mutant], errorsMap, nodes);
     }
 

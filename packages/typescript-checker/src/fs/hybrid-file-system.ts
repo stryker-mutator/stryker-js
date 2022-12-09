@@ -16,7 +16,6 @@ import { ScriptFile } from './script-file.js';
  */
 export class HybridFileSystem {
   private readonly files = new Map<string, ScriptFile | undefined>();
-  private mutatedFile: ScriptFile | undefined;
 
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
@@ -30,20 +29,6 @@ export class HybridFileSystem {
       this.log.trace('Writing to file "%s"', fileName);
       this.files.set(fileName, new ScriptFile(data, fileName));
     }
-  }
-
-  // todo remove
-  public mutate(mutant: Pick<Mutant, 'fileName' | 'location' | 'replacement'>): void {
-    const fileName = toPosixFileName(mutant.fileName);
-    const file = this.files.get(fileName);
-    if (!file) {
-      throw new Error(`File "${mutant.fileName}" cannot be found.`);
-    }
-    if (this.mutatedFile && this.mutatedFile !== file) {
-      this.mutatedFile.resetMutant();
-    }
-    file.mutate(mutant);
-    this.mutatedFile = file;
   }
 
   public watchFile(fileName: string, watcher: ts.FileWatcherCallback): void {
