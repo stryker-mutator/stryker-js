@@ -10,7 +10,7 @@ export class ScriptFile {
 
   public write(content: string): void {
     this.content = content;
-    // this.touch();
+    this.touch();
   }
 
   public watcher: ts.FileWatcherCallback | undefined;
@@ -21,7 +21,7 @@ export class ScriptFile {
     const start = this.getOffset(mutant.location.start);
     const end = this.getOffset(mutant.location.end);
     this.content = `${this.originalContent.substr(0, start)}${mutant.replacement}${this.originalContent.substr(end)}`;
-    // this.touch();
+    this.touch();
   }
 
   private getOffset(pos: Position): number {
@@ -34,7 +34,7 @@ export class ScriptFile {
   public resetMutant(): void {
     this.guardMutationIsWatched();
     this.content = this.originalContent;
-    // this.touch();
+    this.touch();
   }
 
   private guardMutationIsWatched() {

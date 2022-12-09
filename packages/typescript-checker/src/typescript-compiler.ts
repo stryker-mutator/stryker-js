@@ -154,12 +154,10 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     this.lastMutants.forEach((mutant) => {
       const file = this.fs.getFile(mutant.fileName);
       file?.resetMutant();
-      file?.touch();
     });
     mutants.forEach((mutant) => {
       const file = this.fs.getFile(mutant.fileName);
       file?.mutate(mutant);
-      file?.touch();
     });
     await this.currentTask.promise;
     const errors = this.currentErrors;

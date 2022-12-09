@@ -129,16 +129,11 @@ export class TypescriptChecker implements Checker {
     }
 
     if (mutantsToTestIndividually.size) {
-      // todo make fix
-      this.logger.info(`Checking ${mutantsToTestIndividually.size} mutants individually.`);
-      const begin = new Date();
+      // todo summary
       await this.tsCompiler.check([]);
-      const end = new Date();
-      this.logger.info(`Checking nothing cost ${(end.getTime() - begin.getTime()) / 1000}`);
     }
     for (const mutant of mutantsToTestIndividually) {
-      if (errorsMap[mutant.id]) continue;
-      this.logger.debug(`Having to check mutant ${mutant.id} individually.`);
+      if (errorsMap[mutant.id]) continue; // todo not add to list instead of continue
       await this.checkErrors([mutant], errorsMap, nodes);
     }
 
