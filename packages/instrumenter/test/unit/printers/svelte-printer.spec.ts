@@ -31,7 +31,7 @@ describe('svelte-printer', () => {
     script.root.start = 9;
     const input = '<script>1</script><h1>hello!</h1>';
     const expectedOutput = /<script>.*const name = "test";.*<\/script><h1>hello!<\/h1>/s;
-    const ast = createSvelteAst({ rawContent: input, root: { scripts: [script] } });
+    const ast = createSvelteAst({ rawContent: input, root: { mainScript: script, additionalScripts: [] } });
 
     const output = print(ast, contextStub);
 
@@ -66,30 +66,7 @@ describe('svelte-printer', () => {
     const input = '<script>1</script><script context="module">2</script><div><h1>hello!</h1><script>3</script><script>4</script></div>';
     const expectedOutput =
       /<script>.*let name = "john";.*<\/script><script context="module">.*let age = 30;.*<\/script><div><h1>hello!<\/h1><script>.*const city = "london";.*<\/script><script>.*let country = "uk";.*<\/script><\/div>/s;
-    const ast = createSvelteAst({ rawContent: input, root: { scripts } });
-
-    // Act
-    const output = print(ast, contextStub);
-
-    // Assert
-    expect(output).match(expectedOutput);
-  });
-
-  it('should output scripts in the right order', () => {
-    const expectedScriptContent = ['let name = "john";', 'let age = 30;'];
-    const scripts = [createJSAst({ rawContent: '1' }), createJSAst({ rawContent: '2' })];
-    contextStub.print
-      .withArgs(scripts[0], sinon.match.any)
-      .returns(expectedScriptContent[0])
-      .withArgs(scripts[1], sinon.match.any)
-      .returns(expectedScriptContent[1]);
-    scripts[1].root.start = 8;
-    scripts[1].root.end = 9;
-    scripts[0].root.start = 43;
-    scripts[0].root.end = 44;
-    const input = '<script>1</script><script context="module">2</script><h1>hello!</h1>';
-    const expectedOutput = /<script>.*let age = 30;.*<\/script><script context="module">.*let name = "john";.*<\/script><h1>hello!<\/h1>/s;
-    const ast = createSvelteAst({ rawContent: input, root: { scripts } });
+    const ast = createSvelteAst({ rawContent: input, root: { mainScript: scripts[0], additionalScripts: scripts.slice(1) } });
 
     // Act
     const output = print(ast, contextStub);

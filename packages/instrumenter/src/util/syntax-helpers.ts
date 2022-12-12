@@ -12,12 +12,7 @@ const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
 
 const { types, traverse, parse } = babel;
 
-/**
- * Returns syntax for the header if JS/TS files
- */
-export const instrumentationBabelHeader = deepFreeze(
-  parse(
-    `function ${STRYKER_NAMESPACE_HELPER}(){
+export const instrumentationBabelHeaderAsString = `function ${STRYKER_NAMESPACE_HELPER}(){
   var g = new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
@@ -60,10 +55,13 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   }
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);
-}`,
-    { configFile: false }
-  ) as babel.types.File
-).program.body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
+}`;
+
+/**
+ * Returns syntax for the header if JS/TS files
+ */
+export const instrumentationBabelHeader = deepFreeze(parse(instrumentationBabelHeaderAsString, { configFile: false }) as babel.types.File).program
+  .body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
 
 /**
  * returns syntax for `global.activeMutant === $mutantId`

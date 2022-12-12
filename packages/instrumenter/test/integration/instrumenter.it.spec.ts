@@ -71,6 +71,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument svelte with an instance, module and template script tags', async () => {
     await arrangeAndActAssert('svelte-multiple-script-tags.svelte');
   });
+  it('should be able to instrument svelte with only template scripts tags', async () => {
+    await arrangeAndActAssert('svelte-only-template-script-tags.svelte');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

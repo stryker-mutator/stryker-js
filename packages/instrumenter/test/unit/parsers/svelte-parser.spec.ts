@@ -36,7 +36,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts).lengthOf(1);
+      expect(parsed.root.mainScript).not.undefined;
     });
 
     it('should find module script tag', async () => {
@@ -47,7 +47,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts).lengthOf(1);
+      expect(parsed.root.mainScript).not.undefined;
     });
 
     it('should find html script tag', async () => {
@@ -58,7 +58,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts).lengthOf(1);
+      expect(parsed.root.additionalScripts).lengthOf(1);
     });
 
     it('should find multiple html script tags', async () => {
@@ -69,7 +69,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts).lengthOf(2);
+      expect(parsed.root.additionalScripts).lengthOf(2);
     });
 
     it('should find all script tags (instance, module and html)', async () => {
@@ -86,7 +86,8 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts).lengthOf(3);
+      expect(parsed.root.mainScript).not.undefined;
+      expect(parsed.root.additionalScripts).lengthOf(2);
     });
   });
 
@@ -99,8 +100,8 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.scripts[0].root.start).eq(8);
-      expect(parsed.root.scripts[0].root.end).eq(27);
+      expect(parsed.root.mainScript?.root.start).eq(8);
+      expect(parsed.root.mainScript?.root.end).eq(27);
     });
   });
 });

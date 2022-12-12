@@ -86,7 +86,7 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
 }
 
 function disableTypeCheckingInSvelte(ast: SvelteAst): string {
-  const sortedScripts = [...ast.root.scripts].sort((a, b) => a.root.start! - b.root.start!);
+  const sortedScripts = [ast.root.mainScript, ...ast.root.additionalScripts].filter(notEmpty).sort((a, b) => a.root.start! - b.root.start!);
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {

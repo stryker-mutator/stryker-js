@@ -12,7 +12,7 @@ describe('svelte-transformer', () => {
     const jsScript = createJSAst();
     const mutantCollector = new MutantCollector();
     const context = transformerContextStub();
-    SvelteAst.root.scripts.push(jsScript);
+    SvelteAst.root.mainScript = jsScript;
 
     transformSvelte(SvelteAst, mutantCollector, context);
 

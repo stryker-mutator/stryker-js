@@ -4,7 +4,6 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 1,
-  "coverageAnalysis": "off",
   "logLevel": "debug",
   "reporters": [
     "clear-text",

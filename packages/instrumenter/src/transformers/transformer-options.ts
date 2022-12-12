@@ -1,3 +1,3 @@
 import { MutatorOptions } from '../mutators/index.js';
 
-export type TransformerOptions = MutatorOptions; // expand with header toggle.
+export type TransformerOptions = MutatorOptions;

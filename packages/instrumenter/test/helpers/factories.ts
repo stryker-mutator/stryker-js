@@ -75,7 +75,8 @@ export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
     originFileName,
     rawContent,
     root: {
-      scripts: [],
+      mainScript: undefined,
+      additionalScripts: [],
     },
     ...overrides,
   };

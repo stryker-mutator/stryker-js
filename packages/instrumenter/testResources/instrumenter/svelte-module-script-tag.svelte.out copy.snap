@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration should be able to instrument svelte with an instance, module and template script tags 1`] = `
+exports[`instrumenter integration should be able to instrument svelte with only a module script tag 1`] = `
 "<script context=\\"module\\">
 function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
@@ -48,19 +48,8 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-let name = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'test');
+let name = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'world');
 </script>
 
-<script>
-let name = stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'world');
-</script>
-
-<div>
-	<script>
-let name = stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'teun');
-</script>
-	<h1>
-		{name}
-	</h1>
-</div>"
+<h1>Hello {name}!</h1>"
 `;
