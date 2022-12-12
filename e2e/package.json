@@ -15,7 +15,7 @@
     "@types/node": "18.11.9",
     "@types/semver": "7.3.13",
     "ajv": "8.11.2",
-    "axios": "1.2.0",
+    "axios": "1.2.1",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
@@ -35,7 +35,7 @@
     "karma-sourcemap-loader": "0.3.8",
     "karma-webpack": "5.0.0",
     "load-grunt-tasks": "5.1.0",
-    "mocha": "10.1.0",
+    "mocha": "10.2.0",
     "mutation-testing-metrics": "1.7.10",
     "mutation-testing-report-schema": "1.7.10",
     "rxjs": "7.6.0",
@@ -43,9 +43,9 @@
     "ts-jest": "29.0.3",
     "ts-loader": "9.4.2",
     "ts-node": "10.9.1",
-    "typescript": "4.9.3",
+    "typescript": "4.9.4",
     "webpack": "5.75.0",
-    "webpack-cli": "5.0.0"
+    "webpack-cli": "5.0.1"
   },
   "scripts": {
     "bootstrap": "node ../node_modules/lerna/cli.js bootstrap",
