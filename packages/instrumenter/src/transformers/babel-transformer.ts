@@ -75,7 +75,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
   });
 
-  if (mutantCollector.hasPlacedMutants(originFileName) && options.header) {
+  if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
     // Be sure to leave comments like `// @flow` in.
     let header = instrumentationBabelHeader;
     if (Array.isArray(root.program.body[0]?.leadingComments)) {

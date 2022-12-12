@@ -10,9 +10,9 @@ export const transformSvelte: AstTransformer<AstFormat.Svelte> = ({ root }, muta
     .sort((a, b) => a.root.start! - b.root.start!)
     .forEach((ast, index) => {
       if (index == 0 && root.mainScript) {
-        context.options.header = true;
+        context.options.noHeader = false;
       } else {
-        context.options.header = false;
+        context.options.noHeader = true;
       }
       context.transform(ast, mutantCollector, context);
     });
