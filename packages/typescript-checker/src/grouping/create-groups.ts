@@ -39,78 +39,48 @@ import { Node } from './node.js';
  * In this function we create the groups of mutants who can be tested at the same time.
  */
 export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): string[][] {
-  const groups: Mutant[][] = [];
-  let mutant = selectNewMutant(mutants, groups);
+  const groups: string[][] = [];
+  const mutantsToGroup = new Set(mutants);
 
-  // Loop until all the mutants are in a group
-  while (mutant != null) {
-    // Copy the list of mutants who are not in a group
-    const mutantWhoAreNotInAGroup = [...mutants];
-    // The first mutant is always in the group
-    const group = [mutant];
-    const node = nodes.get(mutant.fileName);
+  while (mutantsToGroup.size) {
+    const group: string[] = [];
+    const groupNodes = new Set<Node>();
+    const nodesToIgnore = new Set<Node>();
 
-    if (node == null) throw new Error('Node not in graph');
-
-    // Fill the ignoreList
-    let nodesToIgnore = node.getAllParentReferencesIncludingSelf();
-
-    // Loop through the nodes who can possibly go in the group
-    for (const mutantSelected of mutantWhoAreNotInAGroup) {
-      const nodeSelected = nodes.get(mutantSelected.fileName);
-
-      if (nodeSelected == null) throw new Error('Node not in graph');
-
-      // Check if parents of node are not in the group
-      const groupNodes = getNodesFromMutants(group, nodes);
-      if (nodeSelectedHasParentsInCurrentGroup(nodeSelected, groupNodes)) continue;
-
-      // See if the node can be in the group
-      if (nodesToIgnore.has(nodeSelected)) continue;
-
-      // Push the group
-      group.push(mutantSelected);
-      // Mutate the original list and remove the mutant put in the group
-      mutants.splice(mutants.indexOf(mutantSelected), 1);
-      // Add to the ignoreList
-      nodesToIgnore = new Set<Node>([...nodesToIgnore, ...nodeSelected.getAllParentReferencesIncludingSelf()]);
+    for (const currentMutant of mutantsToGroup) {
+      const currentNode = findNode(currentMutant.fileName, nodes);
+      if (!nodesToIgnore.has(currentNode) && !parentsHaveOverlapWith(currentNode, groupNodes)) {
+        group.push(currentMutant.id);
+        groupNodes.add(currentNode);
+        mutantsToGroup.delete(currentMutant);
+        addAll(nodesToIgnore, currentNode.getAllParentReferencesIncludingSelf());
+      }
     }
-
     groups.push(group);
-    mutant = selectNewMutant(mutants, groups);
   }
 
-  return groupsToString(groups);
+  return groups;
 }
 
-function selectNewMutant(mutants: Mutant[], groups: Mutant[][]): Mutant | null {
-  const groupsFlattened = groups.flat();
+function addAll(nodes: Set<Node>, nodesToAdd: Iterable<Node>) {
+  for (const parent of nodesToAdd) {
+    nodes.add(parent);
+  }
+}
 
-  for (let i = 0; i < mutants.length; i++) {
-    if (!groupsFlattened.includes(mutants[i])) {
-      return mutants.splice(i, 1)[0];
+function findNode(fileName: string, nodes: Map<string, Node>) {
+  const node = nodes.get(fileName);
+  if (node == null) {
+    throw new Error(`Node not in graph: "${fileName}"`);
+  }
+  return node;
+}
+function parentsHaveOverlapWith(currentNode: Node, groupNodes: Set<Node>) {
+  for (const parentNode of currentNode.getAllParentReferencesIncludingSelf()) {
+    if (groupNodes.has(parentNode)) {
+      return true;
     }
-  }
-
-  return null;
-}
-
-function groupsToString(groups: Mutant[][]): string[][] {
-  return groups.map((group) => group.map((mutant) => mutant.id));
-}
-
-function nodeSelectedHasParentsInCurrentGroup(nodeSelected: Node, groupNodes: Node[]) {
-  for (const parentNode of nodeSelected.getAllParentReferencesIncludingSelf()) {
-    if (groupNodes.includes(parentNode)) return true;
   }
 
   return false;
-}
-
-function getNodesFromMutants(group: Mutant[], nodes: Map<string, Node>): Node[] {
-  return group.map((mutant) => {
-    const node = nodes.get(mutant.fileName);
-    if (node == null) throw new Error('Node not in graph');
-    return node;
-  });
 }
