@@ -22,7 +22,7 @@
     "ajv": "~8.11.0",
     "flatted": "~3.2.5",
     "mutation-testing-metrics": "1.7.10",
-    "rxjs": "~7.6.0"
+    "rxjs": "~7.8.0"
   },
   "devDependencies": {
     "@stryker-mutator/api": "6.3.0",
