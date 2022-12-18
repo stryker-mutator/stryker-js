@@ -530,24 +530,24 @@ function closeLocations(testFile: schema.TestFile): LocatedTest[] {
   if (openEndedTests.length) {
     // Sort the opened tests in order to close their locations
     openEndedTests.sort((a, b) => a.location.start.line - b.location.start.line);
-
+    const openEndedTestSet = new Set(openEndedTests);
     const startPositions = uniqueStartPositions(openEndedTests);
 
     let currentPositionIndex = 0;
-    let currentPosition = startPositions[currentPositionIndex];
-    openEndedTests.forEach((test) => {
-      if (currentPosition && test.location.start.line === currentPosition.line && test.location.start.column === currentPosition.column) {
+    openEndedTestSet.forEach((test) => {
+      if (eqPosition(test.location.start, startPositions[currentPositionIndex])) {
         currentPositionIndex++;
-        currentPosition = startPositions[currentPositionIndex];
       }
-      if (currentPosition) {
-        locatedTests.push({ ...test, location: { start: test.location.start, end: currentPosition } });
+      if (startPositions[currentPositionIndex]) {
+        locatedTests.push({ ...test, location: { start: test.location.start, end: startPositions[currentPositionIndex] } });
+        openEndedTestSet.delete(test);
       }
     });
 
-    // Don't forget about the last test
-    const lastTest = openEndedTests[openEndedTests.length - 1];
-    locatedTests.push({ ...lastTest, location: { start: lastTest.location.start, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
+    // Don't forget about the last tests
+    openEndedTestSet.forEach((lastTest) => {
+      locatedTests.push({ ...lastTest, location: { start: lastTest.location.start, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
+    });
   }
 
   return locatedTests;
@@ -574,6 +574,10 @@ function testHasLocation(test: schema.TestDefinition): test is OpenEndedTest {
 
 function isClosed(test: Required<schema.TestDefinition>): test is LocatedTest {
   return !!test.location.end;
+}
+
+function eqPosition(start: Position, end?: Position): boolean {
+  return start.column === end?.column && start.line === end.line;
 }
 
 type LocatedTest = schema.TestDefinition & { location: Location };
