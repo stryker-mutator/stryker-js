@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst } from '../../src/syntax/index.js';
+import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, SvelteScriptTag } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
 import { InstrumenterOptions } from '../../src/index.js';
@@ -68,17 +68,24 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
-  const rawContent = overrides?.rawContent ?? '<h1>hello!</h1>';
-  const originFileName = overrides?.originFileName ?? 'example.svelte';
+  const rawContent = overrides?.rawContent ?? '<script></script><h1>hello!</h1>';
+  const originFileName = overrides?.originFileName ?? 'foo.svelte';
   return {
     format: AstFormat.Svelte,
     originFileName,
     rawContent,
     root: {
-      mainScript: undefined,
-      additionalScripts: [],
+      mainScript: overrides?.root?.mainScript ?? undefined,
+      additionalScripts: overrides?.root?.additionalScripts ?? [],
     },
     ...overrides,
+  };
+}
+
+export function JSAstToSvelteScriptTag(ast: JSAst, start: number, end: number): SvelteScriptTag {
+  return {
+    ast: ast,
+    range: { start: start, end: end },
   };
 }
 

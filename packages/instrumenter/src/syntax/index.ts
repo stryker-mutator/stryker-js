@@ -81,6 +81,16 @@ export interface HtmlRootNode {
 }
 
 export interface SvelteRootNode {
-  mainScript?: ScriptAst;
-  additionalScripts: ScriptAst[];
+  mainScript?: SvelteScriptTag;
+  additionalScripts: SvelteScriptTag[];
+}
+
+export interface SvelteScriptTag {
+  ast: ScriptAst;
+  range: Range;
+}
+
+export interface Range {
+  start: number;
+  end: number;
 }

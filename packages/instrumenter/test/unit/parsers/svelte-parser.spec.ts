@@ -7,7 +7,7 @@ import { parse } from '../../../src/parsers/svelte-parser.js';
 import { createJSAst } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
 
-describe('svelte-parser', async () => {
+describe.only('svelte-parser', async () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
 
   beforeEach(() => {
@@ -100,8 +100,8 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(parsed.root.mainScript?.root.start).eq(8);
-      expect(parsed.root.mainScript?.root.end).eq(27);
+      expect(parsed.root.mainScript?.range.start).eq(8);
+      expect(parsed.root.mainScript?.range.end).eq(27);
     });
   });
 });

@@ -2,6 +2,10 @@
 
 exports[`instrumenter integration should be able to instrument svelte with an instance, module and template script tags 1`] = `
 "<script context=\\"module\\">
+let name = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'test');
+</script>
+
+<script>
 function stryNS_9fa48() {
   var g = new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
@@ -48,10 +52,6 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-let name = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'test');
-</script>
-
-<script>
 let name = stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'world');
 </script>
 

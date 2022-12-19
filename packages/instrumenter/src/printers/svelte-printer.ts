@@ -16,13 +16,13 @@ export const print: Printer<SvelteAst> = ({ root, rawContent }, context) => {
     offset = header.length;
   }
 
-  const sortedScripts = [root.mainScript, ...root.additionalScripts].filter(notEmpty).sort((a, b) => a.root.start! - b.root.start!);
+  const sortedScripts = [root.mainScript, ...root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
   for (const script of sortedScripts) {
-    svelte += rawContent.substring(currentIndex, script.root.start! + offset);
+    svelte += rawContent.substring(currentIndex, script.range.start + offset);
     svelte += '\n';
-    svelte += context.print(script, context);
+    svelte += context.print(script.ast, context);
     svelte += '\n';
-    currentIndex = script.root.end! + offset;
+    currentIndex = script.range.end + offset;
   }
   svelte += rawContent.substring(currentIndex);
 

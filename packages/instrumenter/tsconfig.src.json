@@ -7,7 +7,7 @@
       "node"
     ],
     "skipLibCheck": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
   },
   "references": [
     {

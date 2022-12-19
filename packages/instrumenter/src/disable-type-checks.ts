@@ -86,15 +86,15 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
 }
 
 function disableTypeCheckingInSvelte(ast: SvelteAst): string {
-  const sortedScripts = [ast.root.mainScript, ...ast.root.additionalScripts].filter(notEmpty).sort((a, b) => a.root.start! - b.root.start!);
+  const sortedScripts = [ast.root.mainScript, ...ast.root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {
-    html += ast.rawContent.substring(currentIndex, script.root.start!);
+    html += ast.rawContent.substring(currentIndex, script.range.start);
     html += '\n';
-    html += prefixWithNoCheck(removeTSDirectives(script.rawContent, script.root.comments));
+    html += prefixWithNoCheck(removeTSDirectives(script.ast.rawContent, script.ast.root.comments));
     html += '\n';
-    currentIndex = script.root.end!;
+    currentIndex = script.range.end;
   }
   html += ast.rawContent.substring(currentIndex);
   return html;
