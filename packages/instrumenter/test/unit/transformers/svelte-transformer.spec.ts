@@ -9,7 +9,7 @@ import { transformSvelte } from '../../../src/transformers/svelte-transformer.js
 import { createJSAst, createSvelteAst, JSAstToSvelteScriptTag } from '../../helpers/factories.js';
 import { transformerContextStub } from '../../helpers/stubs.js';
 
-describe.only('svelte-transformer', () => {
+describe('svelte-transformer', () => {
   it('should transform the svelte file', () => {
     const script = 'let name = "test"';
     const svelte = `<script>${script}</script><h1>hello!</h1>`;

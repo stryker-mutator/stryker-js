@@ -7,7 +7,7 @@ import { parse } from '../../../src/parsers/svelte-parser.js';
 import { createJSAst } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
 
-describe.only('svelte-parser', async () => {
+describe('svelte-parser', async () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
 
   beforeEach(() => {

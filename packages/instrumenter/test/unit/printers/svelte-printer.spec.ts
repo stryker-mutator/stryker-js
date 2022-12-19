@@ -7,7 +7,7 @@ import { PrinterContext } from '../../../src/printers/index.js';
 import { printerContextStub } from '../../helpers/stubs.js';
 import { createJSAst, createSvelteAst, JSAstToSvelteScriptTag } from '../../helpers/factories.js';
 
-describe.only('svelte-printer', () => {
+describe('svelte-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;
 
   beforeEach(() => {
