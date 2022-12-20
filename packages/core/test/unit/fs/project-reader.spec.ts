@@ -24,7 +24,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read();
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
       );
     });
     it('should discover files recursively using readdir', async () => {
@@ -81,7 +81,7 @@ describe(ProjectReader.name, () => {
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('packages', 'app', 'src', 'index.js'));
     });
-    it('should ignore node_modules, .git, reports/stryker-incremental.json, stryker.log, *.tsbuildinfo and .stryker-tmp by default', async () => {
+    it('should ignore default files', async () => {
       // Arrange
       stubFileSystem({
         '.git': { config: '' },
@@ -93,7 +93,10 @@ describe(ProjectReader.name, () => {
         dist: {
           'tsconfig.tsbuildinfo': '',
         },
-        reports: { 'stryker-incremental.json': '' },
+        reports: {
+            'stryker-incremental.json': '',
+            'mutation': { 'mutation.html': '', 'mutation.json': '' },
+        },
       });
       const sut = createSut();
 
@@ -104,26 +107,34 @@ describe(ProjectReader.name, () => {
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('index.js'));
     });
-    it('should ignore tempDirName and incrementalFile by default', async () => {
+    it('should ignore alternative configuration properties by default', async () => {
       // Arrange
       stubFileSystem({
         'foo.json': '',
         bar: { 'index.js': '' },
+        baz: { 'index.html': '', 'index.json': '' },
         '.stryker-tmp': { 'index.js': '' },
-        reports: { 'stryker-incremental.json': '' },
+        reports: {
+            'stryker-incremental.json': '',
+            'mutation': { 'mutation.html': '', 'mutation.json': '' },
+        },
       });
       testInjector.options.incrementalFile = 'foo.json';
       testInjector.options.tempDirName = 'bar';
+      testInjector.options.htmlReporter.fileName = 'baz/index.html';
+      testInjector.options.jsonReporter.fileName = 'baz/index.json';
       const sut = createSut();
 
       // Act
       const { files } = await sut.read();
 
       // Assert
-      expect(files).lengthOf(2);
+      expect(files).lengthOf(4);
       const keys = files.keys();
       expect(keys.next().value).eq(path.resolve('.stryker-tmp', 'index.js'));
       expect(keys.next().value).eq(path.resolve('reports', 'stryker-incremental.json'));
+      expect(keys.next().value).eq(path.resolve('reports', 'mutation', 'mutation.html'));
+      expect(keys.next().value).eq(path.resolve('reports', 'mutation', 'mutation.json'));
     });
     it('should not ignore deep report directories by default', async () => {
       // Arrange
@@ -147,22 +158,6 @@ describe(ProjectReader.name, () => {
       const { files } = await sut.read();
       // Assert
       expect(files).lengthOf(0);
-    });
-    it('should ignore an alternative stryker-tmp dir', async () => {
-      // Arrange
-      stubFileSystem({
-        '.git': { config: '' },
-        node_modules: { rimraf: { 'index.js': '' } },
-        'stryker-tmp': { 'stryker-sandbox-123': { src: { 'index.js': '' } } },
-        'index.js': '',
-      });
-      testInjector.options.tempDirName = 'stryker-tmp';
-      const sut = createSut();
-      // Act
-      const { files } = await sut.read();
-      // Assert
-      expect(files).lengthOf(1);
-      expect(files.keys().next().value).eq(path.resolve('index.js'));
     });
     it('should allow un-ignore', async () => {
       // Arrange

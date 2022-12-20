@@ -40,10 +40,10 @@ export class ProjectReader {
   constructor(
     private readonly fs: I<FileSystem>,
     private readonly log: Logger,
-    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force }: StrykerOptions
+    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force, htmlReporter, jsonReporter }: StrykerOptions
   ) {
     this.mutatePatterns = mutate;
-    this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, incrementalFile, ...ignorePatterns];
+    this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, incrementalFile, htmlReporter.fileName, jsonReporter.fileName, ...ignorePatterns];
     this.incremental = incremental;
     this.incrementalFile = incrementalFile;
     this.force = force;
