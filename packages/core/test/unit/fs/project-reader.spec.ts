@@ -94,8 +94,8 @@ describe(ProjectReader.name, () => {
           'tsconfig.tsbuildinfo': '',
         },
         reports: {
-            'stryker-incremental.json': '',
-            'mutation': { 'mutation.html': '', 'mutation.json': '' },
+          'stryker-incremental.json': '',
+          mutation: { 'mutation.html': '', 'mutation.json': '' },
         },
       });
       const sut = createSut();
@@ -115,8 +115,8 @@ describe(ProjectReader.name, () => {
         baz: { 'index.html': '', 'index.json': '' },
         '.stryker-tmp': { 'index.js': '' },
         reports: {
-            'stryker-incremental.json': '',
-            'mutation': { 'mutation.html': '', 'mutation.json': '' },
+          'stryker-incremental.json': '',
+          mutation: { 'mutation.html': '', 'mutation.json': '' },
         },
       });
       testInjector.options.incrementalFile = 'foo.json';
