@@ -1,7 +1,6 @@
 import { Program } from 'estree';
 import { parse as svelteParse, walk } from 'svelte/compiler';
-
-import { Ast } from 'svelte/types/compiler/interfaces.js';
+import { Ast as InternalSvelteAst } from 'svelte/types/compiler/interfaces.js';
 
 import { AstFormat, SvelteAst, SvelteRootNode, SvelteScriptTag } from '../syntax/index.js';
 
@@ -10,7 +9,7 @@ import { ParserContext } from './parser-context.js';
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
   const ast = svelteParse(text);
 
-  const root = await astParse(ast, text, context);
+  const root = await astParse(ast, text, fileName, context);
 
   return {
     originFileName: fileName,
@@ -20,9 +19,9 @@ export async function parse(text: string, fileName: string, context: ParserConte
   };
 }
 
-async function astParse(root: Ast, text: string, context: ParserContext): Promise<SvelteRootNode> {
-  const mainScript = await getMainScript(root, text, context);
-  const additionalScripts = await getAdditionalScripts(root, text, context);
+async function astParse(root: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteRootNode> {
+  const mainScript = await getMainScript(root, text, fileName, context);
+  const additionalScripts = await getAdditionalScripts(root, text, fileName, context);
 
   return {
     mainScript: mainScript,
@@ -30,42 +29,40 @@ async function astParse(root: Ast, text: string, context: ParserContext): Promis
   };
 }
 
-async function sliceScript(text: string, program: Program, context: ParserContext): Promise<SvelteScriptTag> {
+async function sliceScript(text: string, fileName: string, program: Program, context: ParserContext): Promise<SvelteScriptTag> {
   const { start, end } = program as unknown as { start: number; end: number };
-  const parsed = await context.parse(text.slice(start, end), '', AstFormat.JS);
+  const parsed = await context.parse(text.slice(start, end), fileName, AstFormat.JS);
   return { ast: parsed, range: { start, end } };
 }
 
-function getMainScript(ast: Ast, text: string, context: ParserContext): Promise<SvelteScriptTag | undefined> {
+function getMainScript(ast: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteScriptTag | undefined> {
   if (ast.instance?.content) {
-    return sliceScript(text, ast.instance.content, context);
+    return sliceScript(text, fileName, ast.instance.content, context);
   } else if (ast.module?.content) {
-    return sliceScript(text, ast.module.content, context);
+    return sliceScript(text, fileName, ast.module.content, context);
   }
 
   return Promise.resolve(undefined);
 }
 
-async function getAdditionalScripts(ast: Ast, text: string, context: ParserContext): Promise<SvelteScriptTag[]> {
-  const additionalScripts: SvelteScriptTag[] = [];
+function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteScriptTag[]> {
+  const additionalScriptsAsPromised: Array<Promise<SvelteScriptTag>> = [];
 
-  if (ast.instance?.content && ast.module?.content) {
-    additionalScripts.push(await sliceScript(text, ast.module.content, context));
+  if (svelteAst.instance?.content && svelteAst.module?.content) {
+    additionalScriptsAsPromised.push(sliceScript(text, fileName, svelteAst.module.content, context));
   }
 
-  const htmlScript: any = [];
-  walk(ast.html, {
+  walk(svelteAst.html, {
     enter(node: any) {
       if (node.name === 'script' && node.children[0]) {
-        htmlScript.push(node);
+        const promise = context.parse(node.children[0].data as string, fileName, AstFormat.JS).then((ast) => ({
+          ast,
+          range: { start: node.children[0].start, end: node.children[0].end },
+        }));
+        additionalScriptsAsPromised.push(promise);
       }
     },
   });
 
-  for (const node of htmlScript) {
-    const parsed = await context.parse(node.children[0].data as string, '', AstFormat.JS);
-    additionalScripts.push({ ast: parsed, range: { start: node.children[0].start, end: node.children[0].end } });
-  }
-
-  return additionalScripts;
+  return Promise.all(additionalScriptsAsPromised);
 }
