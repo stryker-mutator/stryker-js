@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
+
+### Bug Fixes
+
+- **deps:** update babel monorepo to ~7.20.0 ([#3810](https://github.com/stryker-mutator/stryker-js/issues/3810)) ([cd1c962](https://github.com/stryker-mutator/stryker-js/commit/cd1c96264fd52ff97182a1d0bc044401e7807044))
+- **deps:** update dependency @cucumber/messages to v20 ([#3858](https://github.com/stryker-mutator/stryker-js/issues/3858)) ([29939c3](https://github.com/stryker-mutator/stryker-js/commit/29939c3a1a384db88dc91d95050c4a0903b879ff))
+- **deps:** update dependency angular-html-parser to v3 ([#3869](https://github.com/stryker-mutator/stryker-js/issues/3869)) ([39d6381](https://github.com/stryker-mutator/stryker-js/commit/39d6381c9c347edc66b27c1009bb406d89018b1b))
+- **deps:** update dependency chalk to ~5.2.0 ([#3898](https://github.com/stryker-mutator/stryker-js/issues/3898)) ([c325272](https://github.com/stryker-mutator/stryker-js/commit/c3252726204b1ad4b3e28a64c12a5c48f0a6cd7e))
+- **diff:** last test generation ([#3910](https://github.com/stryker-mutator/stryker-js/issues/3910)) ([f88b038](https://github.com/stryker-mutator/stryker-js/commit/f88b03811001f2e393134c51b1603b315d892ecb))
+- **disable-comment:** log a warning when a specified mutator doesn't exist([#3842](https://github.com/stryker-mutator/stryker-js/issues/3842)) ([fe79d49](https://github.com/stryker-mutator/stryker-js/commit/fe79d49cbdf414bce007799c8930ec3a506fed6c))
+
 # [6.3.0](https://github.com/stryker-mutator/stryker-js/compare/v6.2.3...v6.3.0) (2022-10-30)
 
 ### Bug Fixes
