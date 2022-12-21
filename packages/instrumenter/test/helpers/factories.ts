@@ -68,7 +68,7 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
-  const rawContent = overrides?.rawContent ?? '<script></script><h1>hello!</h1>';
+  const rawContent = overrides?.rawContent ?? '<script>let name = "temp"</script><h1>hello {name}!</h1>';
   const originFileName = overrides?.originFileName ?? 'foo.svelte';
   return {
     format: AstFormat.Svelte,
