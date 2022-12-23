@@ -92,11 +92,14 @@ export class TypescriptChecker implements Checker {
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
-    const mutantsOutSideProject = mutants.filter((m) => nodes.get(m.fileName) == null).map((m) => m.id);
-    mutants = mutants.filter((m) => nodes.get(m.fileName) != null);
 
-    const groups = await createGroups(mutants, nodes);
-    const result = [mutantsOutSideProject, ...groups.sort((a, b) => b.length - a.length)];
+    const mutantsOutSideProject = mutants.filter((m) => nodes.get(m.fileName) == null).map((m) => m.id);
+    const mutantsToTest = mutants.filter((m) => nodes.get(m.fileName) != null);
+
+    const groups = await createGroups(mutantsToTest, nodes);
+    const sortedGroups = groups.sort((a, b) => b.length - a.length);
+    const result = mutantsOutSideProject.length ? [mutantsOutSideProject, ...sortedGroups] : sortedGroups;
+
     this.logger.info(`Created ${result.length} groups with largest group of ${result[0].length} mutants`);
     return result;
   }
