@@ -31,37 +31,32 @@ describe('Typescript checker on a project with project references', () => {
     return sut.init();
   });
 
-  // it.only('todo test', async () => {
-  //   const mutant = createMutant('src/todo.ts', 'return totalCount', 'return ""', 'mutId');
-  //   const actual = await sut.check([mutant]);
-  // });
-
   it('should not write output to disk', async () => {
     expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
   });
 
   it('should be able to validate a mutant', async () => {
-    const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43', 'mutId');
-    const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
+    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
+    const expectedResult: Record<string, CheckResult> = { [mutant.id]: { status: CheckStatus.Passed } };
     const actualResult = await sut.check([mutant]);
     expect(actualResult).deep.eq(expectedResult);
   });
 
-  // it.only('should allow unused local variables (override options)', async () => {
-  //   const mutant = createMutant('src/todo.ts', 'TodoList.allTodos.push(newItem)', '42', 'mutId');
-  //   const expectedResult: Record<string, CheckResult> = { mutId: { status: CheckStatus.Passed } };
-  //   const actual = await sut.check([mutant]);
-  //   expect(actual).deep.eq(expectedResult);
-  // });
+  it('should allow unused local variables (override options)', async () => {
+    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+    const expectedResult: Record<string, CheckResult> = { [mutant.id]: { status: CheckStatus.Passed } };
+    const actual = await sut.check([mutant]);
+    expect(actual).deep.eq(expectedResult);
+  });
 });
 
 const fileContents = Object.freeze({
-  ['src/todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
-  ['test/todo.spec.ts']: fs.readFileSync(resolveTestResource('test', 'todo.spec.ts'), 'utf8'),
+  ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
+  ['todo.spec.ts']: fs.readFileSync(resolveTestResource('test', 'todo.spec.ts'), 'utf8'),
 });
 
-function createMutant(fileName: 'src/todo.ts' | 'test/todo.spec.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
-  const lines = fileContents[fileName].split(os.EOL);
+function createMutant(fileName: 'todo.spec.ts' | 'todo.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
+  const lines = fileContents[fileName].split('\n'); // todo fix this \n
   const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {
     throw new Error(`Cannot find ${findText} in ${fileName}`);

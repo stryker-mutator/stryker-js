@@ -10,6 +10,7 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
   noUnusedLocals: false,
   noUnusedParameters: false,
   declarationMap: true,
+  declaration: true,
 });
 
 // When we're running in 'single-project' mode, we can safely disable emit
@@ -18,7 +19,6 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
   tsBuildInfoFile: undefined,
   composite: false,
-  declaration: false,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output

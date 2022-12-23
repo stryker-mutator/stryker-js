@@ -10,6 +10,7 @@ class Todo implements ITodo {
 
 export class TodoList {
   public static allTodos: Todo[] = [];
+
   createTodoItem(name: string, description: string) {
     let newItem = new Todo(name, description, false);
     let totalCount: number = TodoList.allTodos.push(newItem);
@@ -20,4 +21,3 @@ export class TodoList {
     return TodoList.allTodos;
   }
 }
-
