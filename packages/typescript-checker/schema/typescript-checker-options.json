@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "TypeScriptCheckerOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "typeScriptChecker": {
+      "description": "Configuration for @stryker-mutator/typescript-checker",
+      "title": "StrykerTypeScriptCheckerSetup",
+      "additionalProperties": false,
+      "type": "object",
+      "default": {},
+      "properties": {
+        "strategy": {
+          "$ref": "#/definitions/typeScriptCheckerStrategy",
+          "default": "noGrouping"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "typeScriptCheckerStrategy": {
+      "title": "TypeScriptCheckerStrategy",
+      "description": "Specify which strategy should be used for the typescript checker",
+      "enum": [
+        "grouping",
+        "noGrouping"
+      ]
+    }
+  }
+}

@@ -185,13 +185,13 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
 
         const importFileNames = [...file.imports];
         // todo fix !
-        node.childs = importFileNames.map((importName) => this.nodes.get(toBackSlashFileName(importName))!).filter((n) => n != undefined);
+        node.children = importFileNames.map((importName) => this.nodes.get(toBackSlashFileName(importName))!).filter((n) => n != undefined);
       }
 
       for (const [, node] of this.nodes) {
         node.parents = [];
         for (const [_, n] of this.nodes) {
-          if (n.childs.includes(node)) {
+          if (n.children.includes(node)) {
             node.parents.push(n);
           }
         }

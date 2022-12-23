@@ -64,7 +64,7 @@ describe('node', () => {
   it('getMutantsWithReferenceToChildrenOrSelf with single mutant in child should return 1 mutant', () => {
     const node = new Node('NodeA.js', [], []);
     const nodeB = new Node('NodeB.js', [], []);
-    node.childs.push(nodeB);
+    node.children.push(nodeB);
     const mutants: Mutant[] = [
       { fileName: 'NodeB.js', id: '0', replacement: '-', location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } }, mutatorName: '' },
     ];

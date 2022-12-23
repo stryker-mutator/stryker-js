@@ -6,12 +6,15 @@ import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-m
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { HybridFileSystem } from './fs/index.js';
+import { TypeScriptCheckerOptions } from '../src-generated/typescript-checker-options.js';
+
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
 import { toBackSlashFileName } from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
+import { TypeScriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
+import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -38,14 +41,12 @@ export class TypescriptChecker implements Checker {
    * Keep track of all tsconfig files which are read during compilation (for project references)
    */
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs, pluginTokens.tsCompiler);
+  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
+  private readonly typeScriptCheckeroptions: TypeScriptCheckerOptions;
 
-  constructor(
-    private readonly logger: Logger,
-    options: StrykerOptions,
-    private readonly fs: HybridFileSystem,
-    private readonly tsCompiler: TypescriptCompiler
-  ) {}
+  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
+    this.typeScriptCheckeroptions = this.loadSetup(options);
+  }
 
   /**
    * Starts the typescript compiler and does a dry run
@@ -91,12 +92,15 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
+    if (this.typeScriptCheckeroptions.typeScriptChecker.strategy === 'noGrouping') {
+      return [mutants.map((m) => m.id)];
+    }
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
 
     const mutantsOutSideProject = mutants.filter((m) => nodes.get(m.fileName) == null).map((m) => m.id);
     const mutantsToTest = mutants.filter((m) => nodes.get(m.fileName) != null);
 
-    const groups = await createGroups(mutantsToTest, nodes);
+    const groups = createGroups(mutantsToTest, nodes);
     const sortedGroups = groups.sort((a, b) => b.length - a.length);
     const result = mutantsOutSideProject.length ? [mutantsOutSideProject, ...sortedGroups] : sortedGroups;
 
@@ -162,5 +166,12 @@ export class TypescriptChecker implements Checker {
       getCurrentDirectory: process.cwd,
       getNewLine: () => EOL,
     });
+  }
+
+  private loadSetup(options: StrykerOptions): TypeScriptCheckerOptions {
+    const defaultTypeScriptCheckerConfig: TypeScriptCheckerOptions = {
+      typeScriptChecker: { strategy: 'noGrouping' },
+    };
+    return Object.assign(defaultTypeScriptCheckerConfig, (options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker);
   }
 }

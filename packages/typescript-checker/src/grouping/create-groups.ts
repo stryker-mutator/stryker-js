@@ -3,16 +3,16 @@ import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 import { Node } from './node.js';
 
 /**
- * To speed up the type checking we want to check multiple mutants at once.
- * When multiple mutants in different files who can't throw errors in each other we can type check them simultaneously.
+ * To speed up the type-checking we want to check multiple mutants at once.
+ * When multiple mutants in different files don't have overlap in affected files (or have small overlap), we can type-check them simultaneously.
  * These mutants who can be tested at the same time are called a group.
- * Therefore the return type is an array of arrays in other words: an array of groups.
+ * Therefore, the return type is an array of arrays, in other words: an array of groups.
  *
  * @param mutants All the mutants of the test project.
  * @param nodes A graph representation of the test project.
  *
  * @example
- * Let's assume we got tho following project structure and in every file is one mutant.
+ * Let's assume we got the following dependencies in files of a project, and in every file is one mutant.
  *
  *          ========
  *          = A.ts =
@@ -29,14 +29,14 @@ import { Node } from './node.js';
  * A imports B and C
  * C imports D
  *
- * In this example we can type check B and D at the same time.
+ * In this example, we can type-check B and D simultaneously.
  * This is because these files can't throw errors in each other.
- * If we type check them and let's say B throws an error.
- * We know for sure that the mutant in B was the one creating the type error.
- * If we type check B and D at the same time it is possible that an error shows up in A.
- * When this happens we go down de dependency graph and individual test the mutants who were in that group.
+ * If we type check them, let's say B reports an error.
+ * We know that the mutant in B created the type error.
+ * If we type check B and D at the same time, it is possible that an error shows up in A.
+ * When this happens, we go down the dependency graph and individually test the mutants in that group.
  *
- * In this function we create the groups of mutants who can be tested at the same time.
+ * In this function, we create groups of mutants who can be tested at the same time.
  */
 export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): string[][] {
   const groups: string[][] = [];

@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-import os from 'os';
 
 import { fileURLToPath } from 'url';
 
@@ -11,6 +10,7 @@ import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src/index.js';
 import { TypescriptChecker } from '../../src/typescript-checker.js';
+import { TypeScriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
@@ -26,6 +26,7 @@ describe('Typescript checker on a project with project references', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker.strategy = 'grouping';
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.root.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
