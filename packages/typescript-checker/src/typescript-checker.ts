@@ -11,7 +11,7 @@ import { TypeScriptCheckerOptions } from '../src-generated/typescript-checker-op
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
-import { toBackSlashFileName } from './tsconfig-helpers.js';
+import { toPosixFileName } from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
 import { TypeScriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
@@ -74,7 +74,7 @@ export class TypescriptChecker implements Checker {
     });
 
     // Check if this is the group with unrelated files and return al
-    if (!this.tsCompiler.getFileRelationsAsNodes().get(mutants[0].fileName)) {
+    if (!this.tsCompiler.getFileRelationsAsNodes().get(toPosixFileName(mutants[0].fileName))) {
       return result;
     }
 
@@ -97,8 +97,8 @@ export class TypescriptChecker implements Checker {
     }
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
 
-    const mutantsOutSideProject = mutants.filter((m) => nodes.get(m.fileName) == null).map((m) => m.id);
-    const mutantsToTest = mutants.filter((m) => nodes.get(m.fileName) != null);
+    const mutantsOutSideProject = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) == null).map((m) => m.id);
+    const mutantsToTest = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) != null);
 
     const groups = createGroups(mutantsToTest, nodes);
     const sortedGroups = groups.sort((a, b) => b.length - a.length);
@@ -123,7 +123,7 @@ export class TypescriptChecker implements Checker {
     }
 
     for (const error of errors) {
-      const nodeErrorWasThrownIn = nodes.get(toBackSlashFileName(error.file?.fileName ?? ''));
+      const nodeErrorWasThrownIn = nodes.get(error.file?.fileName ?? '');
       if (!nodeErrorWasThrownIn) {
         throw new Error('Error not found in any node');
       }
