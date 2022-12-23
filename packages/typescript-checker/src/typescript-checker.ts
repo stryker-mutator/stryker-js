@@ -93,7 +93,7 @@ export class TypescriptChecker implements Checker {
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     if (this.typeScriptCheckeroptions.typeScriptChecker.strategy === 'noGrouping') {
-      return [mutants.map((m) => m.id)];
+      return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
 
@@ -172,6 +172,6 @@ export class TypescriptChecker implements Checker {
     const defaultTypeScriptCheckerConfig: TypeScriptCheckerOptions = {
       typeScriptChecker: { strategy: 'noGrouping' },
     };
-    return Object.assign(defaultTypeScriptCheckerConfig, (options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker);
+    return Object.assign(defaultTypeScriptCheckerConfig, options as TypeScriptCheckerOptionsWithStrykerOptions);
   }
 }
