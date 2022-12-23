@@ -8,14 +8,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { HybridFileSystem } from './fs/index.js';
-import {
-  determineBuildModeEnabled,
-  guardTSVersion,
-  overrideOptions,
-  retrieveReferencedProjects,
-  toBackSlashFileName,
-  toPosixFileName,
-} from './tsconfig-helpers.js';
+import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from './tsconfig-helpers.js';
 import { Node } from './grouping/node.js';
 import * as pluginTokens from './plugin-tokens.js';
 
@@ -171,21 +164,20 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     if (!this.nodes.size) {
       // create nodes
       for (const [fileName] of this.sourceFiles) {
-        const backslashFileName = toBackSlashFileName(fileName);
-        const node = new Node(backslashFileName, [], []);
-        this.nodes.set(backslashFileName, node);
+        const node = new Node(fileName, [], []);
+        this.nodes.set(fileName, node);
       }
 
       // set childs
       for (const [fileName, file] of this.sourceFiles) {
-        const node = this.nodes.get(toBackSlashFileName(fileName));
+        const node = this.nodes.get(fileName);
         if (node == null) {
           throw new Error('todo');
         }
 
         const importFileNames = [...file.imports];
         // todo fix !
-        node.childs = importFileNames.map((importName) => this.nodes.get(toBackSlashFileName(importName))!).filter((n) => n != undefined);
+        node.childs = importFileNames.map((importName) => this.nodes.get(importName)!).filter((n) => n != undefined);
       }
 
       for (const [, node] of this.nodes) {

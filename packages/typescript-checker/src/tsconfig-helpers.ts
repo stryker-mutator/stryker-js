@@ -92,7 +92,3 @@ export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromD
 export function toPosixFileName(fileName: string): string {
   return fileName.replace(/\\/g, '/');
 }
-
-export function toBackSlashFileName(fileName: string): string {
-  return fileName.replace(/\//g, '\\');
-}

@@ -1,5 +1,7 @@
 import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 
+import { toPosixFileName } from '../tsconfig-helpers.js';
+
 import { Node } from './node.js';
 
 /**
@@ -69,7 +71,7 @@ function addRangeOfNodesToSet(nodes: Set<Node>, nodesToAdd: Iterable<Node>) {
 }
 
 function findNode(fileName: string, nodes: Map<string, Node>) {
-  const node = nodes.get(fileName);
+  const node = nodes.get(toPosixFileName(fileName));
   if (node == null) {
     throw new Error(`Node not in graph: "${fileName}"`);
   }
