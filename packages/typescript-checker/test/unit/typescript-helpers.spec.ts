@@ -53,7 +53,7 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: false,
+        declaration: true,
         declarationMap: true,
       });
       expect(
@@ -65,7 +65,7 @@ describe('typescript-helpers', () => {
                   noEmit: false,
                   incremental: true,
                   composite: true,
-                  declaration: true,
+                  declaration: false,
                   declarationMap: true,
                 },
               },
@@ -77,7 +77,7 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: false,
+        declaration: true,
         declarationMap: true,
       });
     });

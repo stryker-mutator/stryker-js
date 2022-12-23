@@ -71,6 +71,12 @@ export class TypescriptChecker implements Checker {
         status: CheckStatus.Passed,
       };
     });
+
+    // Check if this is the group with unrelated files and return al
+    if (!this.tsCompiler.getFileRelationsAsNodes().get(mutants[0].fileName)) {
+      return result;
+    }
+
     const mutantErrorRelationMap = await this.checkErrors(mutants, {}, this.tsCompiler.getFileRelationsAsNodes());
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
       result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
@@ -86,8 +92,11 @@ export class TypescriptChecker implements Checker {
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
     const nodes = this.tsCompiler.getFileRelationsAsNodes();
+    const mutantsOutSideProject = mutants.filter((m) => nodes.get(m.fileName) == null).map((m) => m.id);
+    mutants = mutants.filter((m) => nodes.get(m.fileName) != null);
+
     const groups = await createGroups(mutants, nodes);
-    const result = groups.sort((a, b) => b.length - a.length);
+    const result = [mutantsOutSideProject, ...groups.sort((a, b) => b.length - a.length)];
     this.logger.info(`Created ${result.length} groups with largest group of ${result[0].length} mutants`);
     return result;
   }
