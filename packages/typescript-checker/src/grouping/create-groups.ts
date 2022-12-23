@@ -53,7 +53,7 @@ export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): strin
         group.push(currentMutant.id);
         groupNodes.add(currentNode);
         mutantsToGroup.delete(currentMutant);
-        addAll(nodesToIgnore, currentNode.getAllParentReferencesIncludingSelf());
+        addRangeOfNodesToSet(nodesToIgnore, currentNode.getAllParentReferencesIncludingSelf());
       }
     }
     groups.push(group);
@@ -62,7 +62,7 @@ export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): strin
   return groups;
 }
 
-function addAll(nodes: Set<Node>, nodesToAdd: Iterable<Node>) {
+function addRangeOfNodesToSet(nodes: Set<Node>, nodesToAdd: Iterable<Node>) {
   for (const parent of nodesToAdd) {
     nodes.add(parent);
   }
@@ -75,6 +75,7 @@ function findNode(fileName: string, nodes: Map<string, Node>) {
   }
   return node;
 }
+
 function parentsHaveOverlapWith(currentNode: Node, groupNodes: Set<Node>) {
   for (const parentNode of currentNode.getAllParentReferencesIncludingSelf()) {
     if (groupNodes.has(parentNode)) {
