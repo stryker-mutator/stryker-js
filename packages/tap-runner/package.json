@@ -1,0 +1,54 @@
+{
+  "name": "@stryker-mutator/tap-runner",
+  "version": "6.3.1",
+  "description": "A plugin to use the TAP (test anything protocol) test runner in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'dist/test/unit/**/*.js'",
+    "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/tap-runner"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "keywords": [
+    "stryker",
+    "mocha",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/tap-runner",
+  "dependencies": {
+    "@stryker-mutator/api": "6.3.1",
+    "@stryker-mutator/util": "6.3.1",
+    "tap-parser": "~12.0.1",
+    "tslib": "~2.4.0"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.3.1",
+    "@types/glob": "8.0.0",
+    "@types/node": "18.11.9",
+    "tap": "^16.3.2"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "~6.3.0",
+    "mocha": ">= 7.2 < 11"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "node-tap-javascript",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "type": "module",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "test:unit": "tap",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
