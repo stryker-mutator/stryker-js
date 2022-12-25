@@ -47,6 +47,5 @@ function isOkayToRemove(path: NodePath): boolean {
       }
     }
   }
-  console.log(path.node.type);
   return true;
 }
