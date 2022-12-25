@@ -30,7 +30,7 @@ function isOkayToRemove(path: NodePath): boolean {
     return false;
   }
   if (path.isVariableDeclaration()) {
-    if(path.parentPath.isExportNamedDeclaration()) {
+    if (path.parentPath.isExportNamedDeclaration()) {
       return false;
     }
     return true;
