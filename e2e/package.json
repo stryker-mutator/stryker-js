@@ -15,7 +15,7 @@
     "@types/node": "18.11.9",
     "@types/semver": "7.3.13",
     "ajv": "8.11.2",
-    "axios": "1.2.1",
+    "axios": "1.2.2",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
