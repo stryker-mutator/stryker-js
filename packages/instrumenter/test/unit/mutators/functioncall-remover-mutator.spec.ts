@@ -9,8 +9,8 @@ describe(sut.name, () => {
   });
 
   describe('statements', () => {
-    it('should substitue each functioncall with an unknown', () => {
-      expectJSMutation(sut, 'const foo = call(call1());', 'const foo = call(unknown);', 'const foo = unknown;');
+    it('should substitue each functioncall with a null', () => {
+      expectJSMutation(sut, 'const foo = call(call1());', 'const foo = call(null);', 'const foo = null;');
     });
   });
 });

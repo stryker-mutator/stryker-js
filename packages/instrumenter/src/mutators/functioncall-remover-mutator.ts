@@ -9,7 +9,7 @@ export const functioncallRemoverMutator: NodeMutator = {
     //    console.log(path.node);
     if (path.isCallExpression()) {
       if (isOkayToRemove(path)) {
-        yield types.tsUnknownKeyword();
+        yield types.nullLiteral();
       }
     }
   },
