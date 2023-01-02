@@ -1,4 +1,4 @@
-import type { types as babelTypes } from '@babel/core';
+import type { ParseResult, types as babelTypes } from '@babel/core';
 
 export enum AstFormat {
   Html = 'html',
@@ -83,10 +83,16 @@ export interface HtmlRootNode {
 export interface SvelteRootNode {
   mainScript?: SvelteScriptTag;
   additionalScripts: SvelteScriptTag[];
+  bindingExpressions?: SvelteBinding[];
 }
 
 export interface SvelteScriptTag {
   ast: ScriptAst;
+  range: Range;
+}
+
+export interface SvelteBinding {
+  ast: ParseResult | null;
   range: Range;
 }
 
