@@ -14,7 +14,7 @@ import * as pluginTokens from './plugin-tokens.js';
 
 export interface ITypescriptCompiler {
   init(): Promise<ts.Diagnostic[]>;
-  check(mutants: Mutant[]): Promise<ts.Diagnostic[]>; // todo set return type
+  check(mutants: Mutant[]): Promise<ts.Diagnostic[]>;
 }
 
 export interface IFileRelationCreator {
@@ -176,13 +176,13 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         }
 
         const importFileNames = [...file.imports];
-        // todo fix !
         node.children = importFileNames.map((importName) => this._nodes.get(importName)!).filter((n) => n != undefined);
       }
 
+      // set parents
       for (const [, node] of this._nodes) {
         node.parents = [];
-        for (const [_, n] of this._nodes) {
+        for (const [, n] of this._nodes) {
           if (n.children.includes(node)) {
             node.parents.push(n);
           }

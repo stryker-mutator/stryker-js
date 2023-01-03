@@ -1,7 +1,7 @@
 import { Mutant } from '@stryker-mutator/api/src/core';
 
 // This class exist so we can have a two way dependency graph.
-// the two way dependecay graph is used to search for mutants related to typescript errors
+// the two way dependency graph is used to search for mutants related to typescript errors
 export class TSFileNode {
   constructor(public fileName: string, public parents: TSFileNode[], public children: TSFileNode[]) {}
 

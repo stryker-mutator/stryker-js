@@ -9,8 +9,6 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
   allowUnreachableCode: true,
   noUnusedLocals: false,
   noUnusedParameters: false,
-  declarationMap: true,
-  declaration: true,
 });
 
 // When we're running in 'single-project' mode, we can safely disable emit
@@ -25,11 +23,13 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
 const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   emitDeclarationOnly: true,
   noEmit: false,
+  declarationMap: true,
+  declaration: true,
 });
 
 export function guardTSVersion(): void {
   if (!semver.satisfies(ts.version, '>=3.6')) {
-    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
+    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@${ts.version}`);
   }
 }
 

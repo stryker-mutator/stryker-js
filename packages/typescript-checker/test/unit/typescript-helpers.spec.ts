@@ -53,8 +53,6 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: true,
-        declarationMap: true,
       });
       expect(
         JSON.parse(
@@ -65,8 +63,6 @@ describe('typescript-helpers', () => {
                   noEmit: false,
                   incremental: true,
                   composite: true,
-                  declaration: false,
-                  declarationMap: true,
                 },
               },
             },
@@ -77,8 +73,6 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: true,
-        declarationMap: true,
       });
     });
 
@@ -151,9 +145,10 @@ describe('typescript-helpers', () => {
       });
     });
 
-    it('should set --declarationMap to true', () => {
-      expect(JSON.parse(overrideOptions({ config: { declarationMap: false } }, true)).compilerOptions).deep.include({
+    it('should set --declarationMap and --declaration options when `--build` mode is on', () => {
+      expect(JSON.parse(overrideOptions({ config: { declarationMap: false, declaration: false } }, true)).compilerOptions).deep.include({
         declarationMap: true,
+        declaration: true,
       });
     });
   });
@@ -175,7 +170,7 @@ describe('typescript-helpers', () => {
   describe(guardTSVersion.name, () => {
     it('should throw if typescript@2.5.0', () => {
       sinon.stub(ts, 'version').value('3.5.0');
-      expect(guardTSVersion).throws('@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@3.5.0');
+      expect(guardTSVersion).throws('@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0');
     });
     it('should not throw if typescript@3.6.0', () => {
       sinon.stub(ts, 'version').value('3.6.0');
