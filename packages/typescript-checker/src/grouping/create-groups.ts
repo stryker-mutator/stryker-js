@@ -2,7 +2,7 @@ import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 
 import { toPosixFileName } from '../tsconfig-helpers.js';
 
-import { Node } from './node.js';
+import { TSFileNode } from './node.js';
 
 /**
  * To speed up the type-checking we want to check multiple mutants at once.
@@ -40,14 +40,14 @@ import { Node } from './node.js';
  *
  * In this function, we create groups of mutants who can be tested at the same time.
  */
-export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): string[][] {
+export function createGroups(mutants: Mutant[], nodes: Map<string, TSFileNode>): string[][] {
   const groups: string[][] = [];
   const mutantsToGroup = new Set(mutants);
 
   while (mutantsToGroup.size) {
     const group: string[] = [];
-    const groupNodes = new Set<Node>();
-    const nodesToIgnore = new Set<Node>();
+    const groupNodes = new Set<TSFileNode>();
+    const nodesToIgnore = new Set<TSFileNode>();
 
     for (const currentMutant of mutantsToGroup) {
       const currentNode = findNode(currentMutant.fileName, nodes);
@@ -64,13 +64,13 @@ export function createGroups(mutants: Mutant[], nodes: Map<string, Node>): strin
   return groups;
 }
 
-function addRangeOfNodesToSet(nodes: Set<Node>, nodesToAdd: Iterable<Node>) {
+function addRangeOfNodesToSet(nodes: Set<TSFileNode>, nodesToAdd: Iterable<TSFileNode>) {
   for (const parent of nodesToAdd) {
     nodes.add(parent);
   }
 }
 
-function findNode(fileName: string, nodes: Map<string, Node>) {
+function findNode(fileName: string, nodes: Map<string, TSFileNode>) {
   const node = nodes.get(toPosixFileName(fileName));
   if (node == null) {
     throw new Error(`Node not in graph: "${fileName}"`);
@@ -78,7 +78,7 @@ function findNode(fileName: string, nodes: Map<string, Node>) {
   return node;
 }
 
-function parentsHaveOverlapWith(currentNode: Node, groupNodes: Set<Node>) {
+function parentsHaveOverlapWith(currentNode: TSFileNode, groupNodes: Set<TSFileNode>) {
   for (const parentNode of currentNode.getAllParentReferencesIncludingSelf()) {
     if (groupNodes.has(parentNode)) {
       return true;

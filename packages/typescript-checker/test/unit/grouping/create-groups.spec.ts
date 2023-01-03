@@ -2,14 +2,14 @@ import { expect } from 'chai';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { Node } from '../../../src/grouping/node.js';
+import { TSFileNode } from '../../../src/grouping/node.js';
 
 import { createGroups } from '../../../src/grouping/create-groups.js';
 
 describe('create-group createGroups', () => {
   it('single mutant should create single group', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: 'mutant-1' })];
-    const nodes = new Map<string, Node>([['a.js', new Node('a.js', [], [])]]);
+    const nodes = new Map<string, TSFileNode>([['a.js', new TSFileNode('a.js', [], [])]]);
     const groups = createGroups(mutants, nodes);
     expect(groups).to.have.lengthOf(1);
     expect(groups[0]).to.have.lengthOf(1);
@@ -19,9 +19,9 @@ describe('create-group createGroups', () => {
   it('two mutants in different files without reference to each other should create single group', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
     const mutantsClone = structuredClone(mutants);
-    const nodes = new Map<string, Node>([
-      ['a.js', new Node('a.js', [], [])],
-      ['b.js', new Node('b.js', [], [])],
+    const nodes = new Map<string, TSFileNode>([
+      ['a.js', new TSFileNode('a.js', [], [])],
+      ['b.js', new TSFileNode('b.js', [], [])],
     ]);
     const groups = createGroups(mutants, nodes);
     expect(groups).to.have.lengthOf(1);
@@ -32,9 +32,9 @@ describe('create-group createGroups', () => {
   it('two mutants in different files with reference to each other should create 2 groups', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
     const mutantsClone = structuredClone(mutants);
-    const nodeA = new Node('a.js', [], []);
-    const nodeB = new Node('b.js', [nodeA], []);
-    const nodes = new Map<string, Node>([
+    const nodeA = new TSFileNode('a.js', [], []);
+    const nodeB = new TSFileNode('b.js', [nodeA], []);
+    const nodes = new Map<string, TSFileNode>([
       [nodeA.fileName, nodeA],
       [nodeB.fileName, nodeB],
     ]);
@@ -47,10 +47,10 @@ describe('create-group createGroups', () => {
   it('two mutants in different files with circular dependency to each other should create 2 groups', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
     const mutantsClone = structuredClone(mutants);
-    const nodeA = new Node('a.js', [], []);
-    const nodeB = new Node('b.js', [nodeA], []);
+    const nodeA = new TSFileNode('a.js', [], []);
+    const nodeB = new TSFileNode('b.js', [nodeA], []);
     nodeA.parents.push(nodeB);
-    const nodes = new Map<string, Node>([
+    const nodes = new Map<string, TSFileNode>([
       [nodeA.fileName, nodeA],
       [nodeB.fileName, nodeB],
     ]);
@@ -63,8 +63,8 @@ describe('create-group createGroups', () => {
   it('two mutants in same file should create 2 groups', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'a.js', id: '2' })];
     const mutantsClone = structuredClone(mutants);
-    const nodeA = new Node('a.js', [], []);
-    const nodes = new Map<string, Node>([[nodeA.fileName, nodeA]]);
+    const nodeA = new TSFileNode('a.js', [], []);
+    const nodes = new Map<string, TSFileNode>([[nodeA.fileName, nodeA]]);
     const groups = createGroups(mutants, nodes);
     expect(groups).to.have.lengthOf(2);
     expect(groups[0][0]).to.be.equal(mutantsClone[0].id);
@@ -81,13 +81,13 @@ describe('create-group createGroups', () => {
       factory.mutant({ fileName: 'f.js', id: '6' }),
     ];
     const mutantsClone = structuredClone(mutants);
-    const nodeA = new Node('a.js', [], []);
-    const nodeB = new Node('b.js', [nodeA], []);
-    const nodeC = new Node('c.js', [nodeA], []);
-    const nodeD = new Node('d.js', [nodeC], []);
-    const nodeE = new Node('e.js', [nodeA], []);
-    const nodeF = new Node('f.js', [nodeE, nodeD], []);
-    const nodes = new Map<string, Node>([
+    const nodeA = new TSFileNode('a.js', [], []);
+    const nodeB = new TSFileNode('b.js', [nodeA], []);
+    const nodeC = new TSFileNode('c.js', [nodeA], []);
+    const nodeD = new TSFileNode('d.js', [nodeC], []);
+    const nodeE = new TSFileNode('e.js', [nodeA], []);
+    const nodeF = new TSFileNode('f.js', [nodeE, nodeD], []);
+    const nodes = new Map<string, TSFileNode>([
       [nodeA.fileName, nodeA],
       [nodeB.fileName, nodeB],
       [nodeC.fileName, nodeC],

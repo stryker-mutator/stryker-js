@@ -9,7 +9,7 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { HybridFileSystem } from './fs/index.js';
 import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from './tsconfig-helpers.js';
-import { Node } from './grouping/node.js';
+import { TSFileNode } from './grouping/node.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 export interface ITypescriptCompiler {
@@ -18,7 +18,7 @@ export interface ITypescriptCompiler {
 }
 
 export interface IFileRelationCreator {
-  getFileRelationsAsNodes(): void;
+  get nodes(): Map<string, TSFileNode>;
 }
 
 export type SourceFiles = Map<
@@ -38,7 +38,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   private currentTask = new Task();
   private currentErrors: ts.Diagnostic[] = [];
   private readonly sourceFiles: SourceFiles = new Map();
-  private readonly nodes = new Map<string, Node>();
+  private readonly _nodes = new Map<string, TSFileNode>();
   private lastMutants: Mutant[] = [];
 
   constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
@@ -101,7 +101,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       },
       (...args) => {
         const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(...args);
-        if (this.nodes.size) {
+        if (this._nodes.size) {
           return program;
         }
         program
@@ -146,11 +146,11 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   public async check(mutants: Mutant[]): Promise<ts.Diagnostic[]> {
     this.lastMutants.forEach((mutant) => {
       const file = this.fs.getFile(mutant.fileName);
-      file?.resetMutant();
+      file!.resetMutant();
     });
     mutants.forEach((mutant) => {
       const file = this.fs.getFile(mutant.fileName);
-      file?.mutate(mutant);
+      file!.mutate(mutant);
     });
     await this.currentTask.promise;
     const errors = this.currentErrors;
@@ -160,29 +160,29 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     return errors;
   }
 
-  public getFileRelationsAsNodes(): Map<string, Node> {
-    if (!this.nodes.size) {
+  public get nodes(): Map<string, TSFileNode> {
+    if (!this._nodes.size) {
       // create nodes
       for (const [fileName] of this.sourceFiles) {
-        const node = new Node(fileName, [], []);
-        this.nodes.set(fileName, node);
+        const node = new TSFileNode(fileName, [], []);
+        this._nodes.set(fileName, node);
       }
 
       // set children
       for (const [fileName, file] of this.sourceFiles) {
-        const node = this.nodes.get(fileName);
+        const node = this._nodes.get(fileName);
         if (node == null) {
           throw new Error('todo');
         }
 
         const importFileNames = [...file.imports];
         // todo fix !
-        node.children = importFileNames.map((importName) => this.nodes.get(importName)!).filter((n) => n != undefined);
+        node.children = importFileNames.map((importName) => this._nodes.get(importName)!).filter((n) => n != undefined);
       }
 
-      for (const [, node] of this.nodes) {
+      for (const [, node] of this._nodes) {
         node.parents = [];
-        for (const [_, n] of this.nodes) {
+        for (const [_, n] of this._nodes) {
           if (n.children.includes(node)) {
             node.parents.push(n);
           }
@@ -190,7 +190,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       }
     }
 
-    return this.nodes;
+    return this._nodes;
   }
 
   private resolveFilename(fileName: string): string[] {

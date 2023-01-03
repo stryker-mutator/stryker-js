@@ -1,9 +1,11 @@
 import { Mutant } from '@stryker-mutator/api/src/core';
 
-export class Node {
-  constructor(public fileName: string, public parents: Node[], public children: Node[]) {}
+// This class exist so we can have a two way dependency graph.
+// the two way dependecay graph is used to search for mutants related to typescript errors
+export class TSFileNode {
+  constructor(public fileName: string, public parents: TSFileNode[], public children: TSFileNode[]) {}
 
-  public getAllParentReferencesIncludingSelf(allParentReferences: Set<Node> = new Set<Node>()): Set<Node> {
+  public getAllParentReferencesIncludingSelf(allParentReferences: Set<TSFileNode> = new Set<TSFileNode>()): Set<TSFileNode> {
     allParentReferences.add(this);
     this.parents.forEach((parent) => {
       if (!allParentReferences.has(parent)) {
@@ -13,7 +15,7 @@ export class Node {
     return allParentReferences;
   }
 
-  public getAllChildReferencesIncludingSelf(allChildReferences: Set<Node> = new Set<Node>()): Set<Node> {
+  public getAllChildReferencesIncludingSelf(allChildReferences: Set<TSFileNode> = new Set<TSFileNode>()): Set<TSFileNode> {
     allChildReferences.add(this);
     this.children.forEach((child) => {
       if (!allChildReferences.has(child)) {
