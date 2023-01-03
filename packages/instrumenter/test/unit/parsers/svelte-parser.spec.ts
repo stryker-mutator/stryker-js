@@ -104,4 +104,38 @@ describe('svelte-parser', async () => {
       expect(parsed.root.mainScript?.range.end).eq(27);
     });
   });
+
+  describe.only('template expressions', () => {
+    it('Should call the correct amount of parse functions', async () => {
+      const script = 'let a = 0; let temp = ["first", "second"];';
+      const svelte = `<script>${script}</script>     
+      <div>
+        <button on:click={() => (a += 1)}>
+          increase a: {a}
+        </button>
+        
+        {#if a < 5}
+          <p>a is lower than 5, it's: {a}</p>
+        {:else if a < 5}
+          <p>b is lower than 5, it's: {a + 2}</p>
+        {/if}
+      
+        {#each temp as val}
+          {@const length = val.length}
+          {length}
+        {/each}
+      
+        {#key a}
+          <p>updates when a updates, it's {a}</p>
+        {/key}
+      </div>
+      `;
+      const jsAst = createJSAst({ rawContent: script });
+      contextStub.parse.resolves(jsAst);
+
+      const ast = await parse(svelte, 'index.svelte', contextStub as ParserContext);
+
+      expect(ast.root.bindingExpressions!.length).eq(11);
+    });
+  });
 });
