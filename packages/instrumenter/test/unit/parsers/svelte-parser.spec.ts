@@ -105,7 +105,7 @@ describe('svelte-parser', async () => {
     });
   });
 
-  describe.only('template expressions', () => {
+  describe('template expressions', () => {
     it('Should call the correct amount of parse functions', async () => {
       const script = 'let a = 0; let temp = ["first", "second"];';
       const svelte = `<script>${script}</script>     
