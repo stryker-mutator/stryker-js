@@ -133,11 +133,14 @@ export class TypescriptChecker implements Checker {
 
       if (mutantsRelatedToError.length === 1) {
         // There is only one mutant related to the typescript error so we can add it to the errorsRelatedToMutant
-        let errorsRelatedToMutant = errorsMap[mutantsRelatedToError[0].id];
-        if (errorsRelatedToMutant) {
-          errorsRelatedToMutant.push(error);
+        if (errorsMap[mutantsRelatedToError[0].id]) {
+          errorsMap[mutantsRelatedToError[0].id].push(error);
         } else {
-          errorsRelatedToMutant = [error];
+          errorsMap[mutantsRelatedToError[0].id] = [error];
+        }
+      } else if (mutantsRelatedToError.length === 0) {
+        for (const mutant of mutants) {
+          mutantsThatCouldNotBeTestedInGroups.add(mutant);
         }
       } else {
         // If there are more than one  mutants related to the error we should check them individually
