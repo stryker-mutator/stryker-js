@@ -6,7 +6,7 @@ import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-m
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { TypeScriptCheckerOptions } from '../src-generated/typescript-checker-options.js';
+import { TypeScriptCheckerOptions, TypeScriptCheckerSetup } from '../src-generated/typescript-checker-options.js';
 
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
@@ -42,10 +42,10 @@ export class TypescriptChecker implements Checker {
    */
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
-  private readonly typeScriptCheckeroptions: TypeScriptCheckerOptions;
+  private readonly typeScriptCheckerSetup: TypeScriptCheckerOptions;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
-    this.typeScriptCheckeroptions = options as TypeScriptCheckerOptionsWithStrykerOptions;
+    this.typeScriptCheckerSetup = this.loadSetup(options);
   }
 
   /**
@@ -86,7 +86,7 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    if (this.typeScriptCheckeroptions.typeScriptChecker.strategy === 'noGrouping') {
+    if (this.typeScriptCheckerSetup.typeScriptChecker.strategy === 'noGrouping') {
       return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.nodes;
@@ -171,5 +171,12 @@ export class TypescriptChecker implements Checker {
       getCurrentDirectory: process.cwd,
       getNewLine: () => EOL,
     });
+  }
+
+  private loadSetup(options: StrykerOptions): TypeScriptCheckerOptions {
+    const defaultTypeScriptCheckerConfig: TypeScriptCheckerOptions = {
+      typeScriptChecker: { strategy: 'noGrouping' },
+    };
+    return Object.assign(defaultTypeScriptCheckerConfig, (options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker);
   }
 }

@@ -6,7 +6,7 @@
   "properties": {
     "typeScriptChecker": {
       "description": "Configuration for @stryker-mutator/typescript-checker",
-      "title": "TypeScriptCheckerOptions",
+      "title": "TypeScriptCheckerSetup",
       "additionalProperties": false,
       "type": "object",
       "default": {},
