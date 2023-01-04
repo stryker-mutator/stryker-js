@@ -70,7 +70,7 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
   const rawContent = overrides?.rawContent ?? '<script>let name = "temp"</script><h1>hello {name}!</h1>';
   const originFileName = overrides?.originFileName ?? 'foo.svelte';
-  const mainScript = overrides?.root?.mainScript ?? createSvelteScriptTag(createJSAst({ rawContent: '"let name = "temp"' }), 8, 25);
+  const mainScript = overrides?.root?.mainScript ?? createSvelteScriptTag(createJSAst({ rawContent: 'let name = "temp"' }), 8, 25);
   return {
     format: AstFormat.Svelte,
     originFileName,
