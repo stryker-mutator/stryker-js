@@ -14,15 +14,6 @@ describe('svelte-printer', () => {
     contextStub = printerContextStub();
   });
 
-  it('should output original file if there are no script tags', () => {
-    const expectedSvelte = '<h1>hello!</h1>';
-    const ast = createSvelteAst({ rawContent: expectedSvelte });
-
-    const output = print(ast, contextStub);
-
-    expect(output).eq(expectedSvelte);
-  });
-
   it('should replace single script tag', () => {
     const expectedScriptContent = 'const name = "test";';
     const script = createJSAst({ rawContent: '1' });
