@@ -2,7 +2,7 @@ import { I, notEmpty } from '@stryker-mutator/util';
 
 import { AstFormat } from '../syntax/index.js';
 
-import { instrumentationBabelHeaderAsString } from '../util/syntax-helpers.js';
+import { placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 
 import { transformBabel } from './babel-transformer.js';
 import { MutantCollector } from './mutant-collector';
@@ -12,18 +12,18 @@ import { AstTransformer, TransformerContext } from './transformer';
 export const transformSvelte: AstTransformer<AstFormat.Svelte> = ({ root, rawContent, originFileName }, mutantCollector, context) => {
   [root.mainScript, ...root.additionalScripts]
     .filter(notEmpty)
-    .filter((script) => script.ast.rawContent !== instrumentationBabelHeaderAsString)
     .sort((a, b) => a.range.start - b.range.start)
     .forEach((script) => {
-      const noHeader = script !== root.mainScript;
       context.transform(script.ast, mutantCollector, {
         ...context,
         options: {
           ...context.options,
-          noHeader,
+          noHeader: true,
         },
       });
     });
+
+  placeHeaderIfNeeded(mutantCollector, originFileName, context.options, root.mainScript.ast.root);
 
   root.bindingExpressions?.filter(notEmpty).forEach((expression) => {
     transformBabelWithSettings(

@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import { print } from '../../../src/printers/svelte-printer.js';
 import { PrinterContext } from '../../../src/printers/index.js';
 import { printerContextStub } from '../../helpers/stubs.js';
-import { createJSAst, createSvelteAst, JSAstToSvelteScriptTag } from '../../helpers/factories.js';
+import { createJSAst, createSvelteAst, createSvelteScriptTag } from '../../helpers/factories.js';
 
 describe('svelte-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;
@@ -44,10 +44,10 @@ describe('svelte-printer', () => {
   it('should replace multiple script tags', () => {
     const expectedScriptContent = ['let name = "john";', 'let age = 30;', 'const city = "london";', 'let country = "uk";'];
     const scripts = [
-      JSAstToSvelteScriptTag(createJSAst({ rawContent: '1' }), 8, 9),
-      JSAstToSvelteScriptTag(createJSAst({ rawContent: '2' }), 43, 44),
-      JSAstToSvelteScriptTag(createJSAst({ rawContent: '3' }), 81, 82),
-      JSAstToSvelteScriptTag(createJSAst({ rawContent: '4' }), 99, 100),
+      createSvelteScriptTag(createJSAst({ rawContent: '1' }), 8, 9),
+      createSvelteScriptTag(createJSAst({ rawContent: '2' }), 43, 44),
+      createSvelteScriptTag(createJSAst({ rawContent: '3' }), 81, 82),
+      createSvelteScriptTag(createJSAst({ rawContent: '4' }), 99, 100),
     ];
     contextStub.print
       .withArgs(scripts[0].ast, sinon.match.any)

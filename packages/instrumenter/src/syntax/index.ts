@@ -81,7 +81,7 @@ export interface HtmlRootNode {
 }
 
 export interface SvelteRootNode {
-  mainScript?: SvelteScriptTag;
+  mainScript: SvelteScriptTag;
   additionalScripts: SvelteScriptTag[];
   bindingExpressions?: SvelteBinding[];
 }

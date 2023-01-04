@@ -5,13 +5,12 @@ import { Ast as InternalSvelteAst, ConstTag, MustacheTag } from 'svelte/types/co
 import babel from '@babel/core';
 
 import { AstFormat, SvelteAst, SvelteBinding, SvelteRootNode, SvelteScriptTag } from '../syntax/index.js';
-import { instrumentationBabelHeaderAsString } from '../util/syntax-helpers.js';
 
 import { ParserContext } from './parser-context.js';
 
 const { parse: babelParse } = babel;
 
-const header = `<script>${instrumentationBabelHeaderAsString}</script>\n\n`;
+const header = '<script></script>\n\n';
 
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
   let ast = svelteParse(text);

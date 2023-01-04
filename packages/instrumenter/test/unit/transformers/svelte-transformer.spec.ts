@@ -6,7 +6,7 @@ import { transformBabel } from '../../../src/transformers/babel-transformer.js';
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 
 import { transformSvelte } from '../../../src/transformers/svelte-transformer.js';
-import { createJSAst, createSvelteAst, JSAstToSvelteScriptTag } from '../../helpers/factories.js';
+import { createJSAst, createSvelteAst, createSvelteScriptTag } from '../../helpers/factories.js';
 import { transformerContextStub } from '../../helpers/stubs.js';
 
 describe('svelte-transformer', () => {
@@ -15,7 +15,7 @@ describe('svelte-transformer', () => {
     const svelte = `<script>${script}</script><h1>hello!</h1>`;
     const jsAstOriginal = createJSAst({ rawContent: script });
     const jsAst = createJSAst({ rawContent: script });
-    const svelteScriptTag = JSAstToSvelteScriptTag(jsAst, 8, 25);
+    const svelteScriptTag = createSvelteScriptTag(jsAst, 8, 25);
     const svelteAst = createSvelteAst({ rawContent: svelte, root: { mainScript: svelteScriptTag, additionalScripts: [] } });
 
     const mutantCollector = new MutantCollector();

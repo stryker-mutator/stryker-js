@@ -70,19 +70,21 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
   const rawContent = overrides?.rawContent ?? '<script>let name = "temp"</script><h1>hello {name}!</h1>';
   const originFileName = overrides?.originFileName ?? 'foo.svelte';
+  const mainScript = overrides?.root?.mainScript ?? createSvelteScriptTag(createJSAst({ rawContent: '"let name = "temp"' }), 8, 25);
   return {
     format: AstFormat.Svelte,
     originFileName,
     rawContent,
     root: {
-      mainScript: overrides?.root?.mainScript ?? undefined,
+      mainScript: mainScript,
       additionalScripts: overrides?.root?.additionalScripts ?? [],
+      bindingExpressions: overrides?.root?.bindingExpressions ?? [],
     },
     ...overrides,
   };
 }
 
-export function JSAstToSvelteScriptTag(ast: JSAst, start: number, end: number): SvelteScriptTag {
+export function createSvelteScriptTag(ast: JSAst, start: number, end: number): SvelteScriptTag {
   return {
     ast: ast,
     range: { start: start, end: end },

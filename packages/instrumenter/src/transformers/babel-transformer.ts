@@ -5,7 +5,7 @@ import babel, { type NodePath, type types } from '@babel/core';
 import { File } from '@babel/core';
 /* eslint-enable @typescript-eslint/no-duplicate-imports */
 
-import { instrumentationBabelHeader, isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps } from '../util/syntax-helpers.js';
+import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
 import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
@@ -75,20 +75,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
   });
 
-  if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
-    // Be sure to leave comments like `// @flow` in.
-    let header = instrumentationBabelHeader;
-    if (Array.isArray(root.program.body[0]?.leadingComments)) {
-      header = [
-        {
-          ...instrumentationBabelHeader[0],
-          leadingComments: root.program.body[0]?.leadingComments,
-        },
-        ...instrumentationBabelHeader.slice(1),
-      ];
-    }
-    root.program.body.unshift(...header);
-  }
+  placeHeaderIfNeeded(mutantCollector, originFileName, options, root);
 
   /**
    *  If mutants were collected, be sure to register them in the placement map.
