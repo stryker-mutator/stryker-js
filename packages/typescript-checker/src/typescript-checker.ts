@@ -120,31 +120,32 @@ export class TypescriptChecker implements Checker {
     for (const error of errors) {
       if (!error.file?.fileName) {
         throw new Error(
-          `Typescript error: '${error.messageText}' doesnt have a corresponding file, if you think this is a bug please open an issue on the stryker-js github`
+          `Typescript error: '${error.messageText}' doesn\'t have a corresponding file, if you think this is a bug please open an issue on the stryker-js github`
         );
       }
       const nodeErrorWasThrownIn = nodes.get(error.file?.fileName);
       if (!nodeErrorWasThrownIn) {
         throw new Error(
-          'Typescript error located in a file that is not part of your project or doesnt have a reference to your project. This shouldnt happen, please open an issue on the stryker-js github'
+          "Typescript error located in a file that is not part of your project or doesn't have a reference to your project. This shouldn't happen, please open an issue on the stryker-js github"
         );
       }
       const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
 
-      if (mutantsRelatedToError.length === 1) {
+      if (mutantsRelatedToError.length === 0) {
+        // In rare cases there are no mutants related to the typescript error
+        // Having to test all mutants individually to know which mutant thrown the error
+        for (const mutant of mutants) {
+          mutantsThatCouldNotBeTestedInGroups.add(mutant);
+        }
+      } else if (mutantsRelatedToError.length === 1) {
         // There is only one mutant related to the typescript error so we can add it to the errorsRelatedToMutant
         if (errorsMap[mutantsRelatedToError[0].id]) {
           errorsMap[mutantsRelatedToError[0].id].push(error);
         } else {
           errorsMap[mutantsRelatedToError[0].id] = [error];
         }
-      } else if (mutantsRelatedToError.length === 0) {
-        for (const mutant of mutants) {
-          mutantsThatCouldNotBeTestedInGroups.add(mutant);
-        }
       } else {
-        // If there are more than one  mutants related to the error we should check them individually
-        // Also in rare cases there are no mutants related to the typescript error so then we also need to check the mutants individually
+        // If there are more than one mutants related to the error we should check them individually
         for (const mutant of mutantsRelatedToError) {
           mutantsThatCouldNotBeTestedInGroups.add(mutant);
         }
