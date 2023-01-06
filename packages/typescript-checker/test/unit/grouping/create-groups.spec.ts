@@ -8,12 +8,12 @@ import { createGroups } from '../../../src/grouping/create-groups.js';
 
 describe('create-group createGroups', () => {
   it('single mutant should create single group', () => {
-    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' })];
-    const mutantsClone = structuredClone(mutants);
+    const mutants = [factory.mutant({ fileName: 'a.js', id: 'mutant-1' })];
     const nodes = new Map<string, Node>([['a.js', new Node('a.js', [], [])]]);
     const groups = createGroups(mutants, nodes);
     expect(groups).to.have.lengthOf(1);
-    expect(groups[0][0]).to.be.equal(mutantsClone[0].id);
+    expect(groups[0]).to.have.lengthOf(1);
+    expect(groups[0][0]).to.be.equal('mutant-1');
   });
 
   it('two mutants in different files without reference to each other should create single group', () => {
