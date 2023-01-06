@@ -12,7 +12,7 @@ import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
 import { toPosixFileName } from './tsconfig-helpers.js';
-import { Node } from './grouping/node.js';
+import { TSFileNode } from './grouping/node.js';
 import { TypeScriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
@@ -45,7 +45,7 @@ export class TypescriptChecker implements Checker {
   private readonly typeScriptCheckeroptions: TypeScriptCheckerOptions;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
-    this.typeScriptCheckeroptions = this.loadSetup(options);
+    this.typeScriptCheckeroptions = options as TypeScriptCheckerOptionsWithStrykerOptions;
   }
 
   /**
@@ -65,20 +65,14 @@ export class TypescriptChecker implements Checker {
    * @param mutants The mutants to check
    */
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
-    const result: Record<string, CheckResult> = {};
-
-    mutants.forEach((mutant) => {
-      result[mutant.id] = {
-        status: CheckStatus.Passed,
-      };
-    });
+    const result: Record<string, CheckResult> = Object.fromEntries(mutants.map((mutant) => [mutant.id, { status: CheckStatus.Passed }]));
 
     // Check if this is the group with unrelated files and return al
-    if (!this.tsCompiler.getFileRelationsAsNodes().get(toPosixFileName(mutants[0].fileName))) {
+    if (!this.tsCompiler.nodes.get(toPosixFileName(mutants[0].fileName))) {
       return result;
     }
 
-    const mutantErrorRelationMap = await this.checkErrors(mutants, {}, this.tsCompiler.getFileRelationsAsNodes());
+    const mutantErrorRelationMap = await this.checkErrors(mutants, {}, this.tsCompiler.nodes);
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
       result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
     }
@@ -95,7 +89,7 @@ export class TypescriptChecker implements Checker {
     if (this.typeScriptCheckeroptions.typeScriptChecker.strategy === 'noGrouping') {
       return mutants.map((m) => [m.id]);
     }
-    const nodes = this.tsCompiler.getFileRelationsAsNodes();
+    const nodes = this.tsCompiler.nodes;
 
     const mutantsOutSideProject = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) == null).map((m) => m.id);
     const mutantsToTest = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) != null);
@@ -112,7 +106,7 @@ export class TypescriptChecker implements Checker {
   private async checkErrors(
     mutants: Mutant[],
     errorsMap: Record<string, ts.Diagnostic[]>,
-    nodes: Map<string, Node>
+    nodes: Map<string, TSFileNode>
   ): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
     const mutantsThatCouldNotBeTestedInGroups = new Set<Mutant>();
@@ -124,13 +118,21 @@ export class TypescriptChecker implements Checker {
     }
 
     for (const error of errors) {
-      const nodeErrorWasThrownIn = nodes.get(error.file?.fileName ?? '');
+      if (!error.file?.fileName) {
+        throw new Error(
+          `Typescript error: '${error.messageText}' doesnt have a corresponding file, if you think this is a bug please open an issue on the stryker-js github`
+        );
+      }
+      const nodeErrorWasThrownIn = nodes.get(error.file?.fileName);
       if (!nodeErrorWasThrownIn) {
-        throw new Error('Error not found in any node');
+        throw new Error(
+          'Typescript error located in a file that is not part of your project or doesnt have a reference to your project. This shouldnt happen, please open an issue on the stryker-js github'
+        );
       }
       const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
 
       if (mutantsRelatedToError.length === 1) {
+        // There is only one mutant related to the typescript error so we can add it to the errorsRelatedToMutant
         if (errorsMap[mutantsRelatedToError[0].id]) {
           errorsMap[mutantsRelatedToError[0].id].push(error);
         } else {
@@ -141,6 +143,8 @@ export class TypescriptChecker implements Checker {
           mutantsThatCouldNotBeTestedInGroups.add(mutant);
         }
       } else {
+        // If there are more than one  mutants related to the error we should check them individually
+        // Also in rare cases there are no mutants related to the typescript error so then we also need to check the mutants individually
         for (const mutant of mutantsRelatedToError) {
           mutantsThatCouldNotBeTestedInGroups.add(mutant);
         }
@@ -167,12 +171,5 @@ export class TypescriptChecker implements Checker {
       getCurrentDirectory: process.cwd,
       getNewLine: () => EOL,
     });
-  }
-
-  private loadSetup(options: StrykerOptions): TypeScriptCheckerOptions {
-    const defaultTypeScriptCheckerConfig: TypeScriptCheckerOptions = {
-      typeScriptChecker: { strategy: 'noGrouping' },
-    };
-    return Object.assign(defaultTypeScriptCheckerConfig, options as TypeScriptCheckerOptionsWithStrykerOptions);
   }
 }
