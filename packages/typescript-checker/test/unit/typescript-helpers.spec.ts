@@ -145,9 +145,10 @@ describe('typescript-helpers', () => {
       });
     });
 
-    it('should set --declarationMap to true', () => {
-      expect(JSON.parse(overrideOptions({ config: { declarationMap: false } }, true)).compilerOptions).deep.include({
+    it('should set --declarationMap and --declaration options when `--build` mode is on', () => {
+      expect(JSON.parse(overrideOptions({ config: { declarationMap: false, declaration: false } }, true)).compilerOptions).deep.include({
         declarationMap: true,
+        declaration: true,
       });
     });
   });
