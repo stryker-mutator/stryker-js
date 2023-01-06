@@ -67,7 +67,7 @@ export class TypescriptChecker implements Checker {
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
     const result: Record<string, CheckResult> = Object.fromEntries(mutants.map((mutant) => [mutant.id, { status: CheckStatus.Passed }]));
 
-    // Check if this is the group with unrelated files and return al
+    // Check if this is the group with unrelated files and return check status passed if so
     if (!this.tsCompiler.nodes.get(toPosixFileName(mutants[0].fileName))) {
       return result;
     }
