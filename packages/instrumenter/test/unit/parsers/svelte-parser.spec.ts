@@ -128,6 +128,14 @@ describe('svelte-parser', async () => {
         {#key a}
           <p>updates when a updates, it's {a}</p>
         {/key}
+
+        {#await fetch('https://api.agify.io?name=teun&country_id=NL')}
+          <p>Wait for your estimated age</p>
+        {:then value}
+          <p>Your estimated age is: {#await value.json() } <p>default</p>{:then age}{age.age}{/await}</p> 
+        {:catch error}
+          <p>Something went test wrong: {error.message}</p>
+        {/await}
       </div>
       `;
       const jsAst = createJSAst({ rawContent: script });
@@ -135,7 +143,11 @@ describe('svelte-parser', async () => {
 
       const ast = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(ast.root.additionalScripts.length).eq(11);
+      expect(ast.root.additionalScripts.length).eq(15);
+      expect(ast.root.additionalScripts[1].expression).to.be.true;
+      ast.root.additionalScripts.forEach((node) => {
+        expect(node.expression).to.be.true;
+      });
     });
   });
 });

@@ -29,6 +29,7 @@ describe('svelte-transformer', () => {
     expect(svelteAst.root.mainScript).not.eq(jsAstOriginal);
     expect(context.transform).callCount(1);
     expect(mutantCollector.mutants).lengthOf(1);
+    expect(svelteAst.root.mainScript.ast.root.program.body).length(5);
   });
 
   it('should transform the svelte file with additional scripts', () => {
@@ -39,8 +40,8 @@ describe('svelte-transformer', () => {
     const jsAstsOriginal = scripts.map((script) => createJSAst({ rawContent: script }));
     const svelteNodes = [
       createSvelteNode(jsAstsOriginal[0], 8, 25),
-      createSvelteNode(jsAstsOriginal[2], 78, 83),
       createSvelteNode(jsAstsOriginal[1], 50, 67),
+      createSvelteNode(jsAstsOriginal[2], 78, 83),
     ];
 
     const svelteAst = createSvelteAst({ rawContent: svelte, root: { mainScript: svelteNodes[0], additionalScripts: [...svelteNodes.slice(1)] } });
@@ -54,15 +55,16 @@ describe('svelte-transformer', () => {
       .withArgs(jsAstsOriginal[0], sinon.match.any, sinon.match.any)
       .resolves(jsAstsTransformed[0])
       .withArgs(jsAstsOriginal[1], sinon.match.any, sinon.match.any)
-      .resolves(jsAstsTransformed[2])
+      .resolves(jsAstsTransformed[1])
       .withArgs(jsAstsOriginal[2], sinon.match.any, sinon.match.any)
-      .resolves(jsAstsTransformed[1]);
+      .resolves(jsAstsTransformed[2]);
 
     transformSvelte(svelteAst, mutantCollector, context);
 
     expect(svelteAst.root.mainScript).not.eq(jsAstsOriginal[0]);
     expect(context.transform).callCount(3);
     expect(mutantCollector.mutants).lengthOf(2);
+    expect(mutantCollector.mutants).to.have.ordered.members(svelteNodes);
   });
 
   it('Should place header in empty script tag when there is a mutant', () => {
@@ -83,5 +85,6 @@ describe('svelte-transformer', () => {
     transformSvelte(svelteAst, mutantCollector, context);
 
     expect(svelteAst.root.mainScript.ast.rawContent).eq('');
+    expect(svelteAst.root.mainScript.ast.root.program.body).length(5);
   });
 });
