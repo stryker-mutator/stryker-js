@@ -16,10 +16,8 @@ export const print: Printer<SvelteAst> = ({ root, rawContent }, context) => {
   const sortedScripts = [root.mainScript, ...root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
   for (const script of sortedScripts) {
     svelte += rawContent.substring(currentIndex, script.range.start);
-    // Stryker disable once all
     svelte += '\n';
     svelte += context.print(script.ast, context);
-    // Stryker disable once all
     svelte += '\n';
     currentIndex = script.range.end;
   }
