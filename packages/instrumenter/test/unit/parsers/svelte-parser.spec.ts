@@ -135,7 +135,7 @@ describe('svelte-parser', async () => {
 
       const ast = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
-      expect(ast.root.bindingExpressions!.length).eq(11);
+      expect(ast.root.additionalScripts.length).eq(11);
     });
   });
 });

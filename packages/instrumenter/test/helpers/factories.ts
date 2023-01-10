@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, SvelteScriptTag } from '../../src/syntax/index.js';
+import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, SvelteNode } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
 import { InstrumenterOptions } from '../../src/index.js';
@@ -78,13 +78,12 @@ export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
     root: {
       mainScript: mainScript,
       additionalScripts: overrides?.root?.additionalScripts ?? [],
-      bindingExpressions: overrides?.root?.bindingExpressions ?? [],
     },
     ...overrides,
   };
 }
 
-export function createSvelteScriptTag(ast: JSAst, start: number, end: number): SvelteScriptTag {
+export function createSvelteScriptTag(ast: JSAst, start: number, end: number): SvelteNode {
   return {
     ast: ast,
     range: { start: start, end: end },
