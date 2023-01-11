@@ -144,9 +144,11 @@ describe('svelte-parser', async () => {
       const ast = await parse(svelte, 'index.svelte', contextStub as ParserContext);
 
       expect(ast.root.additionalScripts.length).eq(15);
-      expect(ast.root.additionalScripts[1].expression).to.be.true;
       ast.root.additionalScripts.forEach((node) => {
         expect(node.expression).to.be.true;
+      });
+      ast.root.additionalScripts.forEach((node) => {
+        expect(node.ast.root).to.exist;
       });
     });
   });

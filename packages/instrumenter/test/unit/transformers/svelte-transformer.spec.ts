@@ -64,7 +64,7 @@ describe('svelte-transformer', () => {
     expect(svelteAst.root.mainScript).not.eq(jsAstsOriginal[0]);
     expect(context.transform).callCount(3);
     expect(mutantCollector.mutants).lengthOf(2);
-    //expect(svelteAst.root.additionalScripts).eq(jsAstsTransformed.slice(1));
+    expect([svelteAst.root.mainScript, ...svelteAst.root.additionalScripts].map((script) => script.range.start)).eql([8, 50, 78]);
   });
 
   it('Should place header in empty script tag when there is a mutant', () => {
@@ -89,5 +89,6 @@ describe('svelte-transformer', () => {
 
     expect(svelteAst.root.mainScript.ast.rawContent).eq('');
     expect(svelteAst.root.mainScript.ast.root.program.body).length(4);
+    expect(svelteAst.root.additionalScripts[0].ast.root.program.body).length(5);
   });
 });

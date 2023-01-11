@@ -83,7 +83,7 @@ function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileNa
   return Promise.all(additionalScriptsAsPromised);
 }
 
-function collectBindingExpression(node: BaseNode) {
+function collectBindingExpression(node: BaseNode): BaseNode | null {
   switch (node.type) {
     case 'MustacheTag':
       return (node as MustacheTag).expression;
