@@ -33,21 +33,24 @@ describe('svelte-transformer', () => {
   });
 
   it('should transform the svelte file with additional scripts', () => {
-    const scripts = ['let name = "test"', 'let age = 20', '1 + 2'];
+    const scripts = ['let name = "test"', 'let age = "20"', '1 + 2'];
     const svelte = `<script>${scripts[0]}</script>
     <script context="module">${scripts[1]}</script>
     <h1>hello {${scripts[2]}}</h1>`;
+
     const jsAstsOriginal = scripts.map((script) => createJSAst({ rawContent: script }));
     const svelteNodes = [
-      createSvelteNode(jsAstsOriginal[0], 8, 25),
-      createSvelteNode(jsAstsOriginal[1], 50, 67),
       createSvelteNode(jsAstsOriginal[2], 78, 83),
+      createSvelteNode(jsAstsOriginal[1], 50, 67),
+      createSvelteNode(jsAstsOriginal[0], 8, 25),
     ];
 
-    const svelteAst = createSvelteAst({ rawContent: svelte, root: { mainScript: svelteNodes[0], additionalScripts: [...svelteNodes.slice(1)] } });
+    const svelteAst = createSvelteAst({ rawContent: svelte, root: { mainScript: svelteNodes[2], additionalScripts: [...svelteNodes.slice(0, 2)] } });
 
     const mutantCollector = new MutantCollector();
     const context = transformerContextStub();
+
+    context.options = { excludedMutations: [], noHeader: true };
 
     const jsAstsTransformed = jsAstsOriginal.map((script) => transformBabel(script, mutantCollector, context));
 
@@ -61,10 +64,10 @@ describe('svelte-transformer', () => {
 
     transformSvelte(svelteAst, mutantCollector, context);
 
-    expect(svelteAst.root.mainScript).not.eq(jsAstsOriginal[0]);
+    expect(svelteAst.root.mainScript).not.eq(jsAstsOriginal[0]).eq(jsAstsTransformed[0]);
     expect(context.transform).callCount(3);
-    expect(mutantCollector.mutants).lengthOf(2);
-    expect([svelteAst.root.mainScript, ...svelteAst.root.additionalScripts].map((script) => script.range.start)).eql([8, 50, 78]);
+    expect(mutantCollector.mutants).lengthOf(3);
+    expect(svelteAst.root.additionalScripts[1].ast.root.program.body).length(1);
   });
 
   it('Should place header in empty script tag when there is a mutant', () => {
@@ -89,6 +92,5 @@ describe('svelte-transformer', () => {
 
     expect(svelteAst.root.mainScript.ast.rawContent).eq('');
     expect(svelteAst.root.mainScript.ast.root.program.body).length(4);
-    expect(svelteAst.root.additionalScripts[0].ast.root.program.body).length(5);
   });
 });

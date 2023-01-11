@@ -1,6 +1,6 @@
 import { BaseNode, Program } from 'estree';
 import { parse as svelteParse, walk } from 'svelte/compiler';
-import { Ast as InternalSvelteAst, ConstTag, MustacheTag } from 'svelte/types/compiler/interfaces.js';
+import { Ast as InternalSvelteAst } from 'svelte/types/compiler/interfaces.js';
 
 import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode } from '../syntax/index.js';
 
@@ -86,19 +86,14 @@ function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileNa
 function collectBindingExpression(node: BaseNode): BaseNode | null {
   switch (node.type) {
     case 'MustacheTag':
-      return (node as MustacheTag).expression;
     case 'IfBlock':
-      return (node as any).expression;
     case 'ConstTag':
-      return (node as ConstTag).expression;
     case 'EachBlock':
-      return (node as any).expression;
     case 'AwaitBlock':
+    case 'KeyBlock':
       return (node as any).expression;
     case 'ArrowFunctionExpression':
       return (node as any).body;
-    case 'KeyBlock':
-      return (node as any).expression;
     default:
       return null;
   }
