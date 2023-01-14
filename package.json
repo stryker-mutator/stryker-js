@@ -38,7 +38,7 @@
     "jasmine-core": "4.5.0",
     "json-schema-to-typescript": "11.0.2",
     "lerna": "6.4.1",
-    "minimatch": "5.1.2",
+    "minimatch": "5.1.4",
     "mocha": "10.2.0",
     "prettier": "2.8.1",
     "rimraf": "3.0.2",
