@@ -1,8 +1,8 @@
-import { BaseNode, Program } from 'estree';
+import { BaseNode, Position, Program, SourceLocation } from 'estree';
 import { parse as svelteParse, walk } from 'svelte/compiler';
 import { Ast as InternalSvelteAst } from 'svelte/types/compiler/interfaces.js';
 
-import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode } from '../syntax/index.js';
+import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset } from '../syntax/index.js';
 
 import { ParserContext } from './parser-context.js';
 
@@ -37,9 +37,16 @@ async function astParse(root: InternalSvelteAst, text: string, fileName: string,
 }
 
 async function sliceScript(text: string, fileName: string, program: Program, context: ParserContext): Promise<SvelteNode> {
-  const { start, end } = program as unknown as { start: number; end: number };
-  const parsed = await context.parse(text.slice(start, end), fileName, AstFormat.JS);
-  return { ast: parsed, range: { start, end } };
+  const { start, end, loc } = program as unknown as { start: number; end: number; loc: SourceLocation };
+  const scriptText = text.slice(start, end);
+  const parsed = await context.parse(scriptText, fileName, AstFormat.JS);
+  return {
+    ast: {
+      ...parsed,
+      offset: toOffset(loc.start),
+    },
+    range: { start, end },
+  };
 }
 
 function getMainScript(ast: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode> {
@@ -60,8 +67,12 @@ function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileNa
   walk(svelteAst.html, {
     enter(node: any) {
       if (node.name === 'script' && node.children[0]) {
-        const promise = context.parse(node.children[0].data as string, fileName, AstFormat.JS).then((ast) => ({
-          ast,
+        const sourceText = node.children[0].data as string;
+        const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
+          ast: {
+            ...ast,
+            offset: toOffset(node.children[0].loc.start),
+          },
           range: { start: node.children[0].start, end: node.children[0].end },
         }));
         additionalScriptsAsPromised.push(promise);
@@ -69,9 +80,13 @@ function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileNa
 
       const bindingExpression = collectBindingExpression(node as BaseNode);
       if (bindingExpression) {
-        const { start, end } = bindingExpression as unknown as { start: number; end: number };
-        const promise = context.parse(text.substring(start, end), fileName, AstFormat.JS).then((ast) => ({
-          ast,
+        const { start, end, loc } = bindingExpression as unknown as { start: number; end: number; loc: SourceLocation };
+        const sourceText = text.substring(start, end);
+        const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
+          ast: {
+            ...ast,
+            offset: toOffset(loc.start),
+          },
           range: { start, end },
           expression: true,
         }));
@@ -97,4 +112,10 @@ function collectBindingExpression(node: BaseNode): BaseNode | null {
     default:
       return null;
   }
+}
+function toOffset(start: Position): Offset {
+  return {
+    line: start.line - 1,
+    position: start.column,
+  };
 }

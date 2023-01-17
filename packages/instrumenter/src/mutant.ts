@@ -39,7 +39,7 @@ export class Mutant implements Mutable {
     return {
       fileName: this.fileName,
       id: this.id,
-      location: toApiLocation(this.original.loc!, this.offset.line),
+      location: toApiLocation(this.original.loc!, this.offset),
       mutatorName: this.mutatorName,
       replacement: this.replacementCode,
       statusReason: this.ignoreReason,
@@ -78,16 +78,17 @@ export class Mutant implements Mutable {
   }
 }
 
-function toApiLocation(source: types.SourceLocation, lineOffset: number): Location {
-  return {
-    start: toPosition(source.start, lineOffset),
-    end: toPosition(source.end, lineOffset),
+function toApiLocation(source: types.SourceLocation, offset: Offset): Location {
+  const loc = {
+    start: toPosition(source.start, offset),
+    end: toPosition(source.end, offset),
   };
+  return loc;
 }
 
-function toPosition(source: Position, lineOffset: number): Position {
+function toPosition(source: Position, offset: Offset): Position {
   return {
-    column: source.column,
-    line: source.line + lineOffset - 1, // Stryker works 0-based internally
+    column: source.column + (source.line === 1 ? offset.position : 0),
+    line: source.line + offset.line - 1, // Stryker works 0-based internally
   };
 }

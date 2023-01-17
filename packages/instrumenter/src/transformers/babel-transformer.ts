@@ -139,7 +139,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
-      .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
+      .map((mutable) => {
+        const mutant = mutantCollector.collect(originFileName, path.node, mutable, offset);
+        return mutant;
+      })
       .filter((mutant) => !mutant.ignoreReason);
   }
 
