@@ -1,18 +1,18 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "title": "TypeScriptCheckerPluginOptions",
+  "title": "TypescriptCheckerPluginOptions",
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "typeScriptChecker": {
+    "typescriptChecker": {
       "description": "Configuration for @stryker-mutator/typescript-checker",
-      "title": "TypeScriptCheckerOptions",
+      "title": "TypescriptCheckerOptions",
       "additionalProperties": false,
       "type": "object",
       "default": {},
       "properties": {
         "prioritizePerformanceOverAccuracy": {
-          "description": "Configures the performance of the TypeScriptChecker. Setting this to false results in a slower, but more accurate result.",
+          "description": "Configures the performance of the TypescriptChecker. Setting this to false results in a slower, but more accurate result.",
           "type": "boolean",
           "default": true
         }

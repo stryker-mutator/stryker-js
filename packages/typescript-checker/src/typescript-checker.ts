@@ -11,7 +11,7 @@ import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
 import { toPosixFileName } from './tsconfig-helpers.js';
 import { TSFileNode } from './grouping/ts-file-node.js';
-import { TypeScriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
+import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
@@ -40,10 +40,10 @@ export class TypescriptChecker implements Checker {
    */
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
-  private readonly options: TypeScriptCheckerOptionsWithStrykerOptions;
+  private readonly options: TypescriptCheckerOptionsWithStrykerOptions;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
-    this.options = options as TypeScriptCheckerOptionsWithStrykerOptions;
+    this.options = options as TypescriptCheckerOptionsWithStrykerOptions;
   }
 
   /**
@@ -53,7 +53,7 @@ export class TypescriptChecker implements Checker {
     const errors = await this.tsCompiler.init();
 
     if (errors.length) {
-      throw new Error(`TypeScript error(s) found in dry run compilation: ${this.createErrorText(errors)}`);
+      throw new Error(`Typescript error(s) found in dry run compilation: ${this.createErrorText(errors)}`);
     }
   }
 
@@ -84,7 +84,7 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    if (!this.options.typeScriptChecker.prioritizePerformanceOverAccuracy) {
+    if (!this.options.typescriptChecker.prioritizePerformanceOverAccuracy) {
       return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.nodes;

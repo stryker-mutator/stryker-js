@@ -9,7 +9,7 @@ import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { createTypescriptChecker } from '../../src/index.js';
 import { TypescriptChecker } from '../../src/typescript-checker.js';
-import { TypeScriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
+import { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
@@ -25,7 +25,7 @@ describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
+    (testInjector.options as TypescriptCheckerOptionsWithStrykerOptions).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
