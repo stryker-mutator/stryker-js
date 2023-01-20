@@ -64,6 +64,15 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
     delete compilerOptions.declarationDir;
   }
 
+  if (useBuildMode) {
+    // Remove the options to place declarations files in different locations to decrease the complexity of searching the source file in the TypescriptCompiler class.
+    delete compilerOptions.inlineSourceMap;
+    delete compilerOptions.inlineSources;
+    delete compilerOptions.mapRoute;
+    delete compilerOptions.sourceRoot;
+    delete compilerOptions.outFile;
+  }
+
   return JSON.stringify({
     ...parsedConfig.config,
     compilerOptions,
@@ -91,4 +100,15 @@ export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromD
  */
 export function toPosixFileName(fileName: string): string {
   return fileName.replace(/\\/g, '/');
+}
+
+/**
+ * Find source file in declaration file
+ * @param content The content of the declaration file
+ * @returns URL of the source file or undefined if not found
+ */
+const findSourceMapRegex = /^\/\/# sourceMappingURL=(.+)$/;
+export function getSourceMappingURL(content: string): string | undefined {
+  findSourceMapRegex.lastIndex = 0;
+  return findSourceMapRegex.exec(content)?.[1];
 }

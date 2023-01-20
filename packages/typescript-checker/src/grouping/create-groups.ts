@@ -2,7 +2,7 @@ import { Mutant } from '@stryker-mutator/api/src/core/index.js';
 
 import { toPosixFileName } from '../tsconfig-helpers.js';
 
-import { TSFileNode } from './node.js';
+import { TSFileNode } from './ts-file-node.js';
 
 /**
  * To speed up the type-checking we want to check multiple mutants at once.
@@ -73,7 +73,7 @@ function addRangeOfNodesToSet(nodes: Set<TSFileNode>, nodesToAdd: Iterable<TSFil
 function findNode(fileName: string, nodes: Map<string, TSFileNode>) {
   const node = nodes.get(toPosixFileName(fileName));
   if (node == null) {
-    throw new Error(`Node not in graph: "${fileName}"`);
+    throw new Error(`Node not in graph: ${fileName}`);
   }
   return node;
 }

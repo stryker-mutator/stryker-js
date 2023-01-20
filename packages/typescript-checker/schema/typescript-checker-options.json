@@ -11,21 +11,18 @@
       "type": "object",
       "default": {},
       "properties": {
-        "strategy": {
-          "$ref": "#/definitions/typeScriptCheckerStrategy",
-          "default": "noGrouping"
+        "prioritizePerformanceOverAccuracy": {
+          "$ref": "#/definitions/typeScriptCheckerStrategy"
         }
       }
     }
   },
   "definitions": {
     "typeScriptCheckerStrategy": {
-      "title": "TypeScriptCheckerStrategy",
-      "description": "Specify which strategy should be used for the typescript checker",
-      "enum": [
-        "grouping",
-        "noGrouping"
-      ]
+      "title": "PrioritizePerformanceOverAccuracy",
+      "type": "boolean",
+      "default": true,
+      "description": "Configure the performance of the TypeScriptChecker. Setting this to false results in a slower, but more accurate result."
     }
   }
 }

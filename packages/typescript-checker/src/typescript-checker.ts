@@ -12,7 +12,7 @@ import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
 import { toPosixFileName } from './tsconfig-helpers.js';
-import { TSFileNode } from './grouping/node.js';
+import { TSFileNode } from './grouping/ts-file-node.js';
 import { TypeScriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
@@ -42,10 +42,10 @@ export class TypescriptChecker implements Checker {
    */
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
-  private readonly typeScriptCheckeroptions: TypeScriptCheckerOptions;
+  private readonly typeScriptCheckerOptions: TypeScriptCheckerOptions;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
-    this.typeScriptCheckeroptions = options as TypeScriptCheckerOptionsWithStrykerOptions;
+    this.typeScriptCheckerOptions = options as TypeScriptCheckerOptionsWithStrykerOptions;
   }
 
   /**
@@ -86,7 +86,7 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    if (this.typeScriptCheckeroptions.typeScriptChecker.strategy === 'noGrouping') {
+    if (!this.typeScriptCheckerOptions.typeScriptChecker.prioritizePerformanceOverAccuracy) {
       return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.nodes;

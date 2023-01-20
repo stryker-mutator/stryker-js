@@ -20,7 +20,7 @@ const resolveTestResource = path.resolve.bind(
 
 describe('Typescript checker errors', () => {
   it('should reject initialization if initial compilation failed', async () => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { strategy: 'grouping' };
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('compile-error', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
@@ -29,7 +29,7 @@ describe('Typescript checker errors', () => {
   });
 
   it('should reject initialization if tsconfig was invalid', async () => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { strategy: 'grouping' };
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('invalid-tsconfig', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
@@ -38,7 +38,7 @@ describe('Typescript checker errors', () => {
   });
 
   it("should reject when tsconfig file doesn't exist", async () => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { strategy: 'grouping' };
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('empty-dir', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(

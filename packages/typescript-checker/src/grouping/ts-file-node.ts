@@ -25,6 +25,7 @@ export class TSFileNode {
     return allChildReferences;
   }
 
+  // todo mogelijk mutants een map van maken [filename]: mutant[]
   public getMutantsWithReferenceToChildrenOrSelf(mutants: Mutant[], nodesChecked: string[] = []): Mutant[] {
     if (nodesChecked.includes(this.fileName)) {
       return [];
@@ -32,9 +33,8 @@ export class TSFileNode {
 
     nodesChecked.push(this.fileName);
 
-    // todo better name
-    const linkedMutants = mutants.filter((m) => m.fileName == this.fileName);
+    const relatedMutants = mutants.filter((m) => m.fileName == this.fileName);
     const childResult = this.children.flatMap((c) => c.getMutantsWithReferenceToChildrenOrSelf(mutants, nodesChecked));
-    return [...linkedMutants, ...childResult];
+    return [...relatedMutants, ...childResult];
   }
 }

@@ -8,8 +8,15 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { HybridFileSystem } from './fs/index.js';
-import { determineBuildModeEnabled, guardTSVersion, overrideOptions, retrieveReferencedProjects, toPosixFileName } from './tsconfig-helpers.js';
-import { TSFileNode } from './grouping/node.js';
+import {
+  determineBuildModeEnabled,
+  getSourceMappingURL,
+  guardTSVersion,
+  overrideOptions,
+  retrieveReferencedProjects,
+  toPosixFileName,
+} from './tsconfig-helpers.js';
+import { TSFileNode } from './grouping/ts-file-node.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 export interface ITypescriptCompiler {
@@ -80,7 +87,9 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         watchFile: (fileName: string, callback: ts.FileWatcherCallback) => {
           const file = this.fs.getFile(fileName);
 
-          if (file) file.watcher = callback;
+          if (file) {
+            file.watcher = callback;
+          }
 
           return {
             close: () => {
@@ -114,14 +123,16 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
                 program
                   .getAllDependencies(file)
                   .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
-                  .flatMap((importFile) => this.resolveFilename(importFile))
+                  .flatMap((importFile) => this.resolveTSInputFile(importFile))
               ),
             });
           });
 
         function filterDependency(file: ts.SourceFile) {
-          if (file.fileName.includes('.d.ts')) return false;
-          if (file.fileName.includes('node_modules')) return false;
+          if (file.fileName.endsWith('.d.ts') || file.fileName.includes('node_modules')) {
+            return false;
+          }
+
           return true;
         }
 
@@ -172,7 +183,9 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       for (const [fileName, file] of this.sourceFiles) {
         const node = this._nodes.get(fileName);
         if (node == null) {
-          throw new Error('todo');
+          throw new Error(
+            `Node for file '${fileName}' could not be found. This should not happen. This shouldn't happen, please open an issue on the stryker-js github`
+          );
         }
 
         const importFileNames = [...file.imports];
@@ -193,26 +206,38 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     return this._nodes;
   }
 
-  private resolveFilename(fileName: string): string[] {
-    if (!fileName.includes('.d.ts')) return [fileName];
+  /**
+   * Resolves TS files to TS source files.
+   * @param fileName The file name that may be a declaration file
+   * @returns TS source file if found (fallbacks to input filename)
+   */
+  private resolveTSInputFile(fileName: string): string {
+    if (!fileName.endsWith('.d.ts')) {
+      return fileName;
+    }
 
     const file = this.fs.getFile(fileName);
-    if (!file) throw new Error(`Could not find ${fileName}`);
-    const sourceMappingURL = this.getSourceMappingURL(file.content);
+    if (!file) {
+      throw new Error(`Could not find ${fileName}`);
+    }
 
-    if (!sourceMappingURL) return [fileName];
+    const sourceMappingURL = getSourceMappingURL(file.content);
+    if (!sourceMappingURL) {
+      return fileName;
+    }
 
     const sourceMapFileName = path.resolve(fileName, '..', sourceMappingURL);
     const sourceMap = this.fs.getFile(sourceMapFileName);
     if (!sourceMap) throw new Error(`Could not find ${sourceMapFileName}`);
 
-    const content = JSON.parse(sourceMap.content);
+    const sources: string[] = JSON.parse(sourceMap.content).sources;
 
-    return content.sources.map((sourcePath: string) => toPosixFileName(path.resolve(sourceMapFileName, '..', sourcePath)));
-  }
+    if (sources.length === 1) {
+      const sourcePath = sources[0];
+      return toPosixFileName(path.resolve(sourceMapFileName, '..', sourcePath));
+    }
 
-  private getSourceMappingURL(content: string): string | undefined {
-    return /\/\/# sourceMappingURL=(.+)$/.exec(content)?.[1];
+    return fileName;
   }
 
   private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {

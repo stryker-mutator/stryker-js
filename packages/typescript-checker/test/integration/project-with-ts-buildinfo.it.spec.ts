@@ -23,7 +23,7 @@ const resolveTestResource = path.resolve.bind(
 
 describe('project-with-ts-buildinfo', () => {
   it('should load project on init', async () => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { strategy: 'grouping' };
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     const group = await sut.group([createMutant('src/index.ts', '', '')]);

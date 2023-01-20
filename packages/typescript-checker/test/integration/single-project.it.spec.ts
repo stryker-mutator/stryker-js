@@ -25,7 +25,7 @@ describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { strategy: 'grouping' };
+    (testInjector.options as TypeScriptCheckerOptionsWithStrykerOptions).typeScriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();

@@ -2,11 +2,11 @@ import { expect } from 'chai';
 
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { TSFileNode } from '../../../src/grouping/node.js';
+import { TSFileNode } from '../../../src/grouping/ts-file-node.js';
 
 import { createGroups } from '../../../src/grouping/create-groups.js';
 
-describe('create-group createGroups', () => {
+describe(createGroups.name, () => {
   it('single mutant should create single group', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: 'mutant-1' })];
     const nodes = new Map<string, TSFileNode>([['a.js', new TSFileNode('a.js', [], [])]]);
@@ -103,5 +103,13 @@ describe('create-group createGroups', () => {
     expect(groups[1][2]).to.be.equal(mutantsClone[4].id);
     expect(groups[2][0]).to.be.equal(mutantsClone[3].id);
     expect(groups[3][0]).to.be.equal(mutantsClone[5].id);
+  });
+
+  it('should throw error when not is not in graph', () => {
+    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' })];
+    const nodeA = new TSFileNode('.js', [], []);
+    const nodes = new Map<string, TSFileNode>([[nodeA.fileName, nodeA]]);
+
+    expect(createGroups.bind(null, mutants, nodes)).throw('Node not in graph: a.js');
   });
 });
