@@ -6,8 +6,6 @@ import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-m
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { TypeScriptCheckerOptions } from '../src-generated/typescript-checker-options.js';
-
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
@@ -42,10 +40,10 @@ export class TypescriptChecker implements Checker {
    */
 
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
-  private readonly typeScriptCheckerOptions: TypeScriptCheckerOptions;
+  private readonly options: TypeScriptCheckerOptionsWithStrykerOptions;
 
   constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
-    this.typeScriptCheckerOptions = options as TypeScriptCheckerOptionsWithStrykerOptions;
+    this.options = options as TypeScriptCheckerOptionsWithStrykerOptions;
   }
 
   /**
@@ -86,7 +84,7 @@ export class TypescriptChecker implements Checker {
    * @param mutants All the mutants to group.
    */
   public async group(mutants: Mutant[]): Promise<string[][]> {
-    if (!this.typeScriptCheckerOptions.typeScriptChecker.prioritizePerformanceOverAccuracy) {
+    if (!this.options.typeScriptChecker.prioritizePerformanceOverAccuracy) {
       return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.nodes;

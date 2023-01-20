@@ -1,5 +1,5 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
-import { TypeScriptCheckerOptions } from '../src-generated/typescript-checker-options';
+import { TypeScriptCheckerPluginOptions } from '../src-generated/typescript-checker-options';
 
-export interface TypeScriptCheckerOptionsWithStrykerOptions extends TypeScriptCheckerOptions, StrykerOptions {}
+export interface TypeScriptCheckerOptionsWithStrykerOptions extends TypeScriptCheckerPluginOptions, StrykerOptions {}

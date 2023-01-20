@@ -207,26 +207,26 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   }
 
   /**
-   * Resolves TS files to TS source files.
-   * @param fileName The file name that may be a declaration file
+   * Resolves TS input file based on a dependency of a input file
+   * @param dependencyFileName The dependency file name. With TS project references this can be a declaration file
    * @returns TS source file if found (fallbacks to input filename)
    */
-  private resolveTSInputFile(fileName: string): string {
-    if (!fileName.endsWith('.d.ts')) {
-      return fileName;
+  private resolveTSInputFile(dependencyFileName: string): string {
+    if (!dependencyFileName.endsWith('.d.ts')) {
+      return dependencyFileName;
     }
 
-    const file = this.fs.getFile(fileName);
+    const file = this.fs.getFile(dependencyFileName);
     if (!file) {
-      throw new Error(`Could not find ${fileName}`);
+      throw new Error(`Could not find ${dependencyFileName}`);
     }
 
     const sourceMappingURL = getSourceMappingURL(file.content);
     if (!sourceMappingURL) {
-      return fileName;
+      return dependencyFileName;
     }
 
-    const sourceMapFileName = path.resolve(fileName, '..', sourceMappingURL);
+    const sourceMapFileName = path.resolve(dependencyFileName, '..', sourceMappingURL);
     const sourceMap = this.fs.getFile(sourceMapFileName);
     if (!sourceMap) throw new Error(`Could not find ${sourceMapFileName}`);
 
@@ -237,7 +237,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       return toPosixFileName(path.resolve(sourceMapFileName, '..', sourcePath));
     }
 
-    return fileName;
+    return dependencyFileName;
   }
 
   private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {

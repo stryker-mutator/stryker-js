@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "title": "TypeScriptCheckerOptions",
+  "title": "TypeScriptCheckerPluginOptions",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -12,17 +12,11 @@
       "default": {},
       "properties": {
         "prioritizePerformanceOverAccuracy": {
-          "$ref": "#/definitions/typeScriptCheckerStrategy"
+          "description": "Configures the performance of the TypeScriptChecker. Setting this to false results in a slower, but more accurate result.",
+          "type": "boolean",
+          "default": true
         }
       }
-    }
-  },
-  "definitions": {
-    "typeScriptCheckerStrategy": {
-      "title": "PrioritizePerformanceOverAccuracy",
-      "type": "boolean",
-      "default": true,
-      "description": "Configure the performance of the TypeScriptChecker. Setting this to false results in a slower, but more accurate result."
     }
   }
 }

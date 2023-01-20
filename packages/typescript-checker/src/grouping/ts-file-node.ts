@@ -25,7 +25,6 @@ export class TSFileNode {
     return allChildReferences;
   }
 
-  // todo mogelijk mutants een map van maken [filename]: mutant[]
   public getMutantsWithReferenceToChildrenOrSelf(mutants: Mutant[], nodesChecked: string[] = []): Mutant[] {
     if (nodesChecked.includes(this.fileName)) {
       return [];
