@@ -10,7 +10,6 @@ describe('typescript-checker', () => {
   let sut: TypescriptChecker;
   beforeEach(() => {
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
-    return sut.init();
   });
 
   describe(TypescriptChecker.prototype.group.name, () => {
