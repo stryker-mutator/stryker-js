@@ -74,7 +74,7 @@
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.7.0",
     "minimatch": "~5.1.0",
-    "mkdirp": "~1.0.3",
+    "mkdirp": "~2.1.0",
     "mutation-testing-elements": "1.7.12",
     "mutation-testing-metrics": "1.7.10",
     "mutation-testing-report-schema": "1.7.10",
