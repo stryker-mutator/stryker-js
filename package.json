@@ -36,7 +36,7 @@
     "install-local": "3.0.1",
     "jasmine": "4.5.0",
     "jasmine-core": "4.5.0",
-    "json-schema-to-typescript": "11.0.2",
+    "json-schema-to-typescript": "11.0.3",
     "lerna": "6.4.1",
     "minimatch": "5.1.4",
     "mocha": "10.2.0",
