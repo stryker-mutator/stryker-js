@@ -6,6 +6,8 @@ import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-m
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
+import { split } from '@stryker-mutator/util';
+
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
 import { createGroups } from './grouping/create-groups.js';
@@ -89,15 +91,13 @@ export class TypescriptChecker implements Checker {
     }
     const nodes = this.tsCompiler.nodes;
 
-    const mutantsOutSideProject = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) == null).map((m) => m.id);
-    const mutantsToTest = mutants.filter((m) => nodes.get(toPosixFileName(m.fileName)) != null);
+    const [mutantsOutsideProject, mutantsToTest] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
 
     const groups = createGroups(mutantsToTest, nodes).sort((a, b) => b.length - a.length);
-    this.logger.debug(`Created ${groups.length} groups with largest group of ${groups[0]?.length ?? 0} mutants`);
-
-    if (mutantsOutSideProject.length) {
-      groups.unshift(mutantsOutSideProject);
+    if (mutantsOutsideProject.length) {
+      groups.unshift(mutantsOutsideProject.map((m) => m.id));
     }
+    this.logger.debug(`Created ${groups.length} groups with largest group of ${groups[0]?.length ?? 0} mutants`);
 
     return groups;
   }
