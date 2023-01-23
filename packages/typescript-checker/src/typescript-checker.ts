@@ -93,11 +93,8 @@ export class TypescriptChecker implements Checker {
 
     const [mutantsOutsideProject, mutantsToTest] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
 
-    const groups = createGroups(mutantsToTest, nodes).sort((a, b) => b.length - a.length);
-    if (mutantsOutsideProject.length) {
-      groups.unshift(mutantsOutsideProject.map((m) => m.id));
-    }
-    this.logger.debug(`Created ${groups.length} groups with largest group of ${groups[0]?.length ?? 0} mutants`);
+    const groups = [mutantsOutsideProject.map((m) => m.id), ...createGroups(mutantsToTest, nodes)].sort((a, b) => b.length - a.length);
+    this.logger.info(`Created ${groups.length} groups with largest group of ${groups[0]?.length ?? 0} mutants`);
 
     return groups;
   }
