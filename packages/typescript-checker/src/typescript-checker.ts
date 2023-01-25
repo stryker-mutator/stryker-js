@@ -5,8 +5,7 @@ import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
-
-import { split } from '@stryker-mutator/util';
+import { split, strykerReportBugUrl } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
@@ -90,10 +89,9 @@ export class TypescriptChecker implements Checker {
       return mutants.map((m) => [m.id]);
     }
     const nodes = this.tsCompiler.nodes;
+    const [mutantsOutsideProject, mutantsInProject] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
 
-    const [mutantsOutsideProject, mutantsToTest] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
-
-    const groups = [mutantsOutsideProject.map((m) => m.id), ...createGroups(mutantsToTest, nodes)].sort((a, b) => b.length - a.length);
+    const groups = [mutantsOutsideProject.map((m) => m.id), ...createGroups(mutantsInProject, nodes)].sort((a, b) => b.length - a.length);
     this.logger.info(`Created ${groups.length} groups with largest group of ${groups[0]?.length ?? 0} mutants`);
 
     return groups;
@@ -116,13 +114,21 @@ export class TypescriptChecker implements Checker {
     for (const error of errors) {
       if (!error.file?.fileName) {
         throw new Error(
-          `Typescript error: '${error.messageText}' doesn\'t have a corresponding file, if you think this is a bug please open an issue on the stryker-js github`
+          `Typescript error: '${
+            error.messageText
+          }' was reported without a corresponding file. This shouldn't happen. Please open an issue using this link: ${strykerReportBugUrl(
+            `[BUG]: TypeScript checker reports compile error without a corresponding file: ${error.messageText}`
+          )}`
         );
       }
       const nodeErrorWasThrownIn = nodes.get(error.file?.fileName);
       if (!nodeErrorWasThrownIn) {
         throw new Error(
-          "Typescript error located in a file that is not part of your project or doesn't have a reference to your project. This shouldn't happen, please open an issue on the stryker-js github"
+          `Typescript error: '${error.messageText}' was reported in an unrelated file (${
+            error.file.fileName
+          }). This file is not part of your project, or referenced from your project. This shouldn't happen, please open an issue using this link: ${strykerReportBugUrl(
+            `[BUG]: TypeScript checker reports compile error in an unrelated file: ${error.messageText}`
+          )}`
         );
       }
       const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
