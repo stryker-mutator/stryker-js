@@ -29,13 +29,22 @@ describe(TypescriptChecker.name, () => {
     it('should not group mutants if prioritizePerformanceOverAccuracy is false', async () => {
       options.typescriptChecker.prioritizePerformanceOverAccuracy = false;
       const result = await sut.group([factory.mutant(), factory.mutant(), factory.mutant()]);
-      expect(result.length).to.be.eq(3);
+      expect(result).lengthOf(3);
     });
 
     it('should group mutants if prioritizePerformanceOverAccuracy is true', async () => {
       options.typescriptChecker.prioritizePerformanceOverAccuracy = true;
       const result = await sut.group([factory.mutant(), factory.mutant(), factory.mutant()]);
-      expect(result.length).to.be.eq(1);
+      expect(result).lengthOf(1);
+    });
+
+    it('should not add an empty group when there are no mutants that fall outside of the project', async () => {
+      const mutants = [factory.mutant({ fileName: 'foo.ts', id: '41' })];
+      compilerMock.nodes.set('foo.ts', new TSFileNode('foo.ts', [], []));
+
+      const result = await sut.group(mutants);
+      expect(result).lengthOf(1);
+      expect(result[0]).lengthOf(1);
     });
   });
 
