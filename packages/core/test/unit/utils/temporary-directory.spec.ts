@@ -14,7 +14,7 @@ import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 describe(TemporaryDirectory.name, () => {
   let randomStub: sinon.SinonStubbedMember<typeof objectUtils.random>;
   let deleteDirStub: sinon.SinonStub;
-  let mkdirStub: sinon.SinonStubbedMember<typeof fs.promises['mkdir']>;
+  let mkdirStub: sinon.SinonStubbedMember<(typeof fs.promises)['mkdir']>;
   const tempDirName = '.stryker-tmp';
 
   beforeEach(() => {
