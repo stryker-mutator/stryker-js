@@ -107,7 +107,7 @@ export function toPosixFileName(fileName: string): string {
  * @param content The content of the declaration file
  * @returns URL of the source file or undefined if not found
  */
-const findSourceMapRegex = /^\/\/# sourceMappingURL=(.+)$/;
+const findSourceMapRegex = /\/\/# sourceMappingURL=(.+)$/;
 export function getSourceMappingURL(content: string): string | undefined {
   findSourceMapRegex.lastIndex = 0;
   return findSourceMapRegex.exec(content)?.[1];

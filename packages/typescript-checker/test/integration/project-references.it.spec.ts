@@ -49,6 +49,13 @@ describe('Typescript checker on a project with project references', () => {
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
+
+  it('should create multiple groups if reference between project', async () => {
+    const mutantInSourceProject = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '', '42');
+    const mutantInProjectWithReference = createMutant('todo.spec.ts', "name = 'test'", "name = 'stryker'", '43');
+    const result = await sut.group([mutantInSourceProject, mutantInProjectWithReference]);
+    expect(result).to.have.lengthOf(2);
+  });
 });
 
 const fileContents = Object.freeze({

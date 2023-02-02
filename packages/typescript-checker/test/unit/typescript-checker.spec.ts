@@ -28,8 +28,9 @@ describe(TypescriptChecker.name, () => {
   describe(TypescriptChecker.prototype.group.name, () => {
     it('should not group mutants if prioritizePerformanceOverAccuracy is false', async () => {
       options.typescriptChecker.prioritizePerformanceOverAccuracy = false;
-      const result = await sut.group([factory.mutant(), factory.mutant(), factory.mutant()]);
+      const result = await sut.group([factory.mutant({ id: '1' }), factory.mutant({ id: '2' }), factory.mutant({ id: '3' })]);
       expect(result).lengthOf(3);
+      expect(result.reduce((prev, group) => prev + group.length, 0)).lengthOf(3);
     });
 
     it('should group mutants if prioritizePerformanceOverAccuracy is true', async () => {
