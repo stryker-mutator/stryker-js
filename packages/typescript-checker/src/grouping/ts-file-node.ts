@@ -1,5 +1,7 @@
 import { Mutant } from '@stryker-mutator/api/src/core';
 
+import { toPosixFileName } from '../tsconfig-helpers.js';
+
 // This class exist so we can have a two way dependency graph.
 // the two way dependency graph is used to search for mutants related to typescript errors
 export class TSFileNode {
@@ -32,7 +34,7 @@ export class TSFileNode {
 
     nodesChecked.push(this.fileName);
 
-    const relatedMutants = mutants.filter((m) => m.fileName == this.fileName);
+    const relatedMutants = mutants.filter((m) => toPosixFileName(m.fileName) == this.fileName);
     const childResult = this.children.flatMap((c) => c.getMutantsWithReferenceToChildrenOrSelf(mutants, nodesChecked));
     return [...relatedMutants, ...childResult];
   }

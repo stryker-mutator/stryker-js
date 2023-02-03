@@ -164,17 +164,19 @@ describe('typescript-helpers', () => {
           overrideOptions(
             {
               config: {
-                inlineSourceMap: '',
-                inlineSources: '',
-                mapRoute: '',
-                sourceRoot: '',
-                outFile: '',
+                compilerOptions: {
+                  inlineSourceMap: '.',
+                  inlineSources: '.',
+                  mapRoute: '.',
+                  sourceRoot: '.',
+                  outFile: '.',
+                },
               },
             },
             true
           )
         ).compilerOptions
-      ).deep.include({});
+      ).to.not.have.any.keys('inlineSourceMap', 'inlineSources', 'mapRoute', 'sourceRoot', 'outFile');
     });
   });
 

@@ -104,5 +104,29 @@ describe('TSFileNode', () => {
 
       expect(node.getMutantsWithReferenceToChildrenOrSelf(mutants)).to.have.lengthOf(1);
     });
+
+    it('should find mutant with backward slashes and forward slashes', () => {
+      const node = new TSFileNode('path/NodeA.js', [], []);
+      node.children = [node];
+
+      const mutants: Mutant[] = [
+        {
+          fileName: 'path/NodeA.js',
+          id: '0',
+          replacement: '-',
+          location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+          mutatorName: '',
+        },
+        {
+          fileName: 'path\\NodeA.js',
+          id: '0',
+          replacement: '-',
+          location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+          mutatorName: '',
+        },
+      ];
+
+      expect(node.getMutantsWithReferenceToChildrenOrSelf(mutants)).to.have.lengthOf(2);
+    });
   });
 });

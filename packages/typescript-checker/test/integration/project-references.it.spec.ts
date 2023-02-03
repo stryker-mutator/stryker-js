@@ -37,33 +37,36 @@ describe('Typescript checker on a project with project references', () => {
   });
 
   it('should be able to validate a mutant', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem ? 42 : 43');
+    const mutant = createMutant('job.ts', 'Starting job', 'stryker was here');
     const expectedResult: Record<string, CheckResult> = { [mutant.id]: { status: CheckStatus.Passed } };
     const actualResult = await sut.check([mutant]);
     expect(actualResult).deep.eq(expectedResult);
   });
 
   it('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42');
+    const mutant = createMutant('job.ts', 'toUpperCase(logText)', 'toUpperCase("")');
     const expectedResult: Record<string, CheckResult> = { [mutant.id]: { status: CheckStatus.Passed } };
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
 
   it('should create multiple groups if reference between project', async () => {
-    const mutantInSourceProject = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '', '42');
-    const mutantInProjectWithReference = createMutant('todo.spec.ts', "name = 'test'", "name = 'stryker'", '43');
-    const result = await sut.group([mutantInSourceProject, mutantInProjectWithReference]);
+    const mutantInSourceProject = createMutant('job.ts', 'Starting job', '', '42');
+    const mutantInProjectWithReference = createMutant('text.ts', 'toUpperCase()', 'toLowerCase()', '43');
+    const mutantOutsideOfReference = createMutant('math.ts', 'array.length', '1', '44');
+    const result = await sut.group([mutantInSourceProject, mutantInProjectWithReference, mutantOutsideOfReference]);
     expect(result).to.have.lengthOf(2);
   });
 });
 
 const fileContents = Object.freeze({
-  ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
-  ['todo.spec.ts']: fs.readFileSync(resolveTestResource('test', 'todo.spec.ts'), 'utf8'),
+  ['index.ts']: fs.readFileSync(resolveTestResource('src', 'index.ts'), 'utf8'),
+  ['job.ts']: fs.readFileSync(resolveTestResource('src', 'job.ts'), 'utf8'),
+  ['math.ts']: fs.readFileSync(resolveTestResource('utils', 'math.ts'), 'utf8'),
+  ['text.ts']: fs.readFileSync(resolveTestResource('utils', 'text.ts'), 'utf8'),
 });
 
-function createMutant(fileName: 'todo.spec.ts' | 'todo.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
+function createMutant(fileName: 'index.ts' | 'job.ts' | 'math.ts' | 'text.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
   const lines = fileContents[fileName].split('\n'); // todo fix this \n
   const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {

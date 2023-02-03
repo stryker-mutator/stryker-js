@@ -226,15 +226,18 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       return dependencyFileName;
     }
 
-    const sourceMapFileName = path.resolve(dependencyFileName, '..', sourceMappingURL);
+    const sourceMapFileName = path.resolve(path.dirname(dependencyFileName), sourceMappingURL);
     const sourceMap = this.fs.getFile(sourceMapFileName);
-    if (!sourceMap) throw new Error(`Could not find ${sourceMapFileName}`);
+    if (!sourceMap) {
+      this.log.warn(`Could not find sourcemap ${sourceMapFileName}`);
+      return dependencyFileName;
+    }
 
-    const sources: string[] = JSON.parse(sourceMap.content).sources;
+    const sources: string[] | undefined = JSON.parse(sourceMap.content).sources;
 
-    if (sources.length === 1) {
+    if (sources?.length === 1) {
       const sourcePath = sources[0];
-      return toPosixFileName(path.resolve(sourceMapFileName, '..', sourcePath));
+      return toPosixFileName(path.resolve(path.dirname(sourceMapFileName), sourcePath));
     }
 
     return dependencyFileName;
