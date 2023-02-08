@@ -40,7 +40,7 @@
     "lerna": "6.4.1",
     "minimatch": "5.1.6",
     "mocha": "10.2.0",
-    "prettier": "2.8.3",
+    "prettier": "2.8.4",
     "rimraf": "3.0.2",
     "sinon": "15.0.1",
     "sinon-chai": "3.7.0",
