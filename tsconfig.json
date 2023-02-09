@@ -10,6 +10,7 @@
     { "path": "packages/karma-runner" },
     { "path": "packages/mocha-runner" },
     { "path": "packages/cucumber-runner" },
+    { "path": "packages/eslint-checker" },
     { "path": "packages/typescript-checker" },
     { "path": "packages/test-helpers" }
   ]

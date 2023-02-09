@@ -28,5 +28,8 @@
     "features": ["my-feature.feature"],
     "profile": "stryker",
     "tags": ["@tag", "@tag2"]
+  },
+  "eslint": {
+    "configFile": "eslint.cjs"
   }
 }

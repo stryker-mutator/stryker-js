@@ -35,6 +35,8 @@
     "@types/node": "18.13.0"
   },
   "dependencies": {
+    "@stryker-mutator/api": "6.0.2",
+    "@stryker-mutator/util": "6.0.2",
     "lodash.flatmap": "~4.5.0"
   }
 }

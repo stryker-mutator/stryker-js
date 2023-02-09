@@ -1,0 +1,46 @@
+{
+  "name": "@stryker-mutator/eslint-checker",
+  "version": "6.0.0-beta.0",
+  "description": "An eslint checker plugin to be used in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "keywords": [
+    "eslint",
+    "stryker",
+    "checker",
+    "plugin"
+  ],
+  "author": "Tim Lehner <timothy.lehner.2011@live.rhul.ac.uk>",
+  "homepage": "https://github.com/stryker-mutator/stryker-js/eslint-checker",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/eslint-checker"
+  },
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "mocha": "mocha",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha 'dist/test/unit/**/*.spec.js'",
+    "test:integration": "mocha 'dist/test/integration/**/*.js'",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "6.0.2",
+    "@stryker-mutator/util": "6.0.2",
+    "typescript": "~4.6.3"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.0.2",
+    "@types/eslint": "~8.4.1",
+    "@types/mocha": "~9.1.0"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "~6.0.0-beta.0",
+    "eslint": "~8.12.0"
+  }
+}

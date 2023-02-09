@@ -5,11 +5,10 @@ import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Task, propertyPath } from '@stryker-mutator/util';
+import { Task, propertyPath, toPosixFileName, HybridFileSystem } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { HybridFileSystem } from './fs/index.js';
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion, toPosixFileName } from './tsconfig-helpers.js';
+import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from './tsconfig-helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 const diagnosticsHost: ts.FormatDiagnosticsHost = {
