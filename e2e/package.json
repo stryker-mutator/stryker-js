@@ -37,7 +37,7 @@
     "load-grunt-tasks": "5.1.0",
     "mocha": "10.2.0",
     "mutation-testing-metrics": "1.7.14",
-    "mutation-testing-report-schema": "1.7.10",
+    "mutation-testing-report-schema": "1.7.14",
     "rxjs": "7.8.0",
     "semver": "7.3.8",
     "ts-jest": "29.0.5",
