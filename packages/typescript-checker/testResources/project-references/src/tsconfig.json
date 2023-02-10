@@ -1,6 +1,10 @@
 {
   "extends": "../tsconfig.settings",
   "compilerOptions": {
+    "tsBuildInfoFile": "src.tsbuildinfo",
     "outDir": "../dist/src"
-  }
+  },
+  "references": [
+    { "path": "../utils" }
+  ]
 }
