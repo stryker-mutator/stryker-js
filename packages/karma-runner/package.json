@@ -36,8 +36,8 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.3.1",
-    "@types/express": "4.17.15",
-    "@types/node": "18.11.18",
+    "@types/express": "4.17.17",
+    "@types/node": "18.13.0",
     "@types/semver": "7.3.13",
     "jasmine-core": "4.5.0",
     "karma": "6.4.1",
@@ -54,7 +54,7 @@
     "@stryker-mutator/util": "6.3.1",
     "decamelize": "~6.0.0",
     "semver": "~7.3.0",
-    "tslib": "~2.4.0"
+    "tslib": "~2.5.0"
   },
   "contributors": [
     "nicojs <jansennico@gmail.com>",
