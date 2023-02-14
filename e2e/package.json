@@ -48,7 +48,7 @@
     "webpack-cli": "5.0.1"
   },
   "scripts": {
-    "bootstrap": "node ../node_modules/lerna/cli.js bootstrap",
+    "bootstrap": "lerna bootstrap",
     "postinstall": "(npm run bootstrap || npm run bootstrap) && npm run install-local-dependencies",
     "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "lint": "tsc -p tsconfig.json && eslint . --resolve-plugins-relative-to . --ext .ts,.js",
