@@ -1,4 +1,4 @@
-import { type types } from '@babel/core';
+import type { types } from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 

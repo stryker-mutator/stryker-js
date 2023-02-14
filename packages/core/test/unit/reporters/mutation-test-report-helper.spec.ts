@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { type requireResolve } from '@stryker-mutator/util';
+import type { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { CheckStatus } from '@stryker-mutator/api/check';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
