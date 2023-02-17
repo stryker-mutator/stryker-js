@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Bug Fixes
+
+- **deps:** update dependency angular-html-parser to v4 ([#3925](https://github.com/stryker-mutator/stryker-js/issues/3925)) ([f62c645](https://github.com/stryker-mutator/stryker-js/commit/f62c645f22a2cb5b3d87f5ffad7139db8367fe8c))
+- **deps:** update dependency commander to v10 ([#3936](https://github.com/stryker-mutator/stryker-js/issues/3936)) ([e8af5a4](https://github.com/stryker-mutator/stryker-js/commit/e8af5a4f8388c5ad9bf0e3c113b350239215b749))
+- **deps:** update dependency execa to v7 ([#3975](https://github.com/stryker-mutator/stryker-js/issues/3975)) ([6c36120](https://github.com/stryker-mutator/stryker-js/commit/6c361206520f0f22e9b3576ff0e3e3e2ac014b7d))
+- **deps:** update dependency glob to ~8.1.0 ([#3945](https://github.com/stryker-mutator/stryker-js/issues/3945)) ([edb767a](https://github.com/stryker-mutator/stryker-js/commit/edb767a20df6e3acf203492106caf642749e37bb))
+- **deps:** update dependency mkdirp to v2 ([#3946](https://github.com/stryker-mutator/stryker-js/issues/3946)) ([0ee9018](https://github.com/stryker-mutator/stryker-js/commit/0ee901820868562f979a60ae3623b6ebc3c2b3a4))
+- **deps:** update dependency mutation-testing-elements to v1.7.14 ([#3969](https://github.com/stryker-mutator/stryker-js/issues/3969)) ([2f3f481](https://github.com/stryker-mutator/stryker-js/commit/2f3f4819935fa03313d33afa32fd0af229eaa5ca))
+- **deps:** update dependency mutation-testing-metrics to v1.7.14 ([#3970](https://github.com/stryker-mutator/stryker-js/issues/3970)) ([ddf32ee](https://github.com/stryker-mutator/stryker-js/commit/ddf32ee7581cc6169390022f933f593b7049bd3e))
+- **deps:** update dependency mutation-testing-report-schema to v1.7.14 ([#3971](https://github.com/stryker-mutator/stryker-js/issues/3971)) ([a0d5743](https://github.com/stryker-mutator/stryker-js/commit/a0d57431e3a3c8b29ef53a9ef80f46aaf2900678))
+- **deps:** update dependency tslib to ~2.5.0 ([#3952](https://github.com/stryker-mutator/stryker-js/issues/3952)) ([7548287](https://github.com/stryker-mutator/stryker-js/commit/7548287ee000bc09f88e6f1f0848e6e8e625bbb5))
+- **project reader:** ignore configured output files by default. ([#3894](https://github.com/stryker-mutator/stryker-js/issues/3894)) ([2ff2f07](https://github.com/stryker-mutator/stryker-js/commit/2ff2f07b37007a359f453f987563877bc831beaf))
+
+### Features
+
+- **typescript checker:** group mutants to improve performance 🚀 ([#3900](https://github.com/stryker-mutator/stryker-js/issues/3900)) ([2f4adaa](https://github.com/stryker-mutator/stryker-js/commit/2f4adaa1eedbf70bd9385d15d3f6025027350cc6))
+
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 
 ### Bug Fixes
