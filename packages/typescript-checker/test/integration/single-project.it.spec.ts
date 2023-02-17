@@ -9,6 +9,7 @@ import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { createTypescriptChecker } from '../../src/index.js';
 import { TypescriptChecker } from '../../src/typescript-checker.js';
+import { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
@@ -24,6 +25,7 @@ describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
+    (testInjector.options as TypescriptCheckerOptionsWithStrykerOptions).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
@@ -92,16 +94,48 @@ describe('Typescript checker on a single project', () => {
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
+  it('should be able invalidate 2 mutants that do result in a compile errors', async () => {
+    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"', 'mutId');
+    const mutant2 = createMutant('counter.ts', 'return this.currentNumber;', 'return "This should not return a string 🙄"', 'mutId2');
+    const actual = await sut.check([mutant, mutant2]);
+    assertions.expectCompileError(actual.mutId);
+    assertions.expectCompileError(actual.mutId2);
+    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
+    expect(actual.mutId2.reason).has.string('counter.ts(7,5): error TS2322');
+  });
+  it('should be able invalidate 2 mutants that do result in a compile error in file above', async () => {
+    const mutant = createMutant('errorInFileAbove2Mutants/todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"', 'mutId');
+    const mutant2 = createMutant(
+      'errorInFileAbove2Mutants/counter.ts',
+      'return (this.currentNumber += numberToIncrementBy);',
+      'return "This should not return a string 🙄"',
+      'mutId2'
+    );
+    const actual = await sut.check([mutant, mutant2]);
+    assertions.expectCompileError(actual.mutId);
+    assertions.expectCompileError(actual.mutId2);
+    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
+    expect(actual.mutId2.reason).has.string('errorInFileAbove2Mutants/todo-counter.ts(7,7): error TS2322');
+  });
 });
 
 const fileContents = Object.freeze({
+  ['errorInFileAbove2Mutants/todo.ts']: fs.readFileSync(resolveTestResource('src', 'errorInFileAbove2Mutants', 'todo.ts'), 'utf8'),
+  ['errorInFileAbove2Mutants/counter.ts']: fs.readFileSync(resolveTestResource('src', 'errorInFileAbove2Mutants', 'counter.ts'), 'utf8'),
   ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
+  ['counter.ts']: fs.readFileSync(resolveTestResource('src', 'counter.ts'), 'utf8'),
   ['todo.spec.ts']: fs.readFileSync(resolveTestResource('src', 'todo.spec.ts'), 'utf8'),
   ['not-type-checked.js']: fs.readFileSync(resolveTestResource('src', 'not-type-checked.js'), 'utf8'),
 });
 
 function createMutant(
-  fileName: 'not-type-checked.js' | 'todo.spec.ts' | 'todo.ts',
+  fileName:
+    | 'counter.ts'
+    | 'errorInFileAbove2Mutants/counter.ts'
+    | 'errorInFileAbove2Mutants/todo.ts'
+    | 'not-type-checked.js'
+    | 'todo.spec.ts'
+    | 'todo.ts',
   findText: string,
   replacement: string,
   id = '42',

@@ -211,15 +211,17 @@ Default: `[]`<br />
 Command line: `--ignorePatterns dist,coverage`<br />
 Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
-These patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all.
+Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options).
 
-This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files. 
+These patterns are **always ignored**: `['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']`. The configured files in the `tempDirName`,`incrementalFile`, `htmlReporter.fileName` and `jsonReporter.fileName` options are also ignored. 
+Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `["!node_modules"]`.
+
+Overriding `--ignorePatterns` is only needed when you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. 
+For example, image or movie directories. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files. 
 
 This option has **no effect at all**, when used in combination with [`--inPlace`](#inplace-boolean).
 
-However to **select specific files** to be mutated, you better use [mutate](#mutate-string), but only if you are not happy with its default [see below](#mutate-string).
-
-Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options).
+Note that, to **select specific files to be mutated** , you should use use [mutate](#mutate-string).
 
 If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 

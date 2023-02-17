@@ -37,7 +37,7 @@ describe('add' () => {
   });
 });
 `;
-const testAddContentWithTestGeneration = `import { expect } from 'chai';
+const testAddContentWithTestGenerationAndAdditionalTest = `import { expect } from 'chai';
 import { add } from '../src/add.js';
 
 describe('add' () => {
@@ -52,7 +52,18 @@ describe('add' () => {
 });
 `;
 
-const testAddContentWithTestGenerationUpdated = `import { expect } from 'chai';
+const testAddContentWithTestGeneration = `import { add } from '../add.js';
+
+test.each\`
+  x    | y    | expected
+  ${1} | ${1} | ${2}
+  ${1} | ${2} | ${3}
+  ${2} | ${2} | ${4}
+\`("add($x, $y) = $expected", ({ x, y, expected }) => {
+  expect(add(x, y)).toBe(expected);
+});`;
+
+const testAddContentWithTestGenerationAndAdditionalTestUpdated = `import { expect } from 'chai';
 import { add } from '../src/add.js';
 
 describe('add' () => {
@@ -254,8 +265,35 @@ class ScenarioBuilder {
     return this;
   }
 
-  public withUpdatedTestGeneration(): this {
-    this.currentFiles.set(testAdd, testAddContentWithTestGenerationUpdated);
+  public withTestGeneration(): this {
+    this.currentFiles.set(testAdd, testAddContentWithTestGeneration);
+    const generateTest = (id: string, a: number, b: number, answer: number) =>
+      factory.testResult({ id, fileName: testAdd, name: `add(${a}, ${b}) = ${answer}`, startPosition: pos(8, 3) });
+
+    this.testCoverage.clear();
+    this.testCoverage.addTest(generateTest('spec1', 1, 1, 2), generateTest('spec2', 1, 2, 3), generateTest('spec3', 2, 2, 4));
+    this.testCoverage.addCoverage(this.mutantId, ['spec1', 'spec2', 'spec3']);
+    return this;
+  }
+
+  public withTestGenerationIncrementalReport(): this {
+    this.incrementalTestFiles[testAdd].source = testAddContentWithTestGeneration;
+    const generateTest = (id: string, a: number, b: number, answer: number) =>
+      factory.mutationTestReportSchemaTestDefinition({
+        id,
+        name: `add(${a}, ${b}) = ${answer}`,
+        location: loc(8, 3),
+      });
+    // clear all tests
+    while (this.incrementalTestFiles[testAdd].tests.shift()) {}
+    this.incrementalTestFiles[testAdd].tests.push(generateTest('spec4', 1, 1, 2), generateTest('spec5', 1, 2, 3), generateTest('spec6', 2, 2, 4));
+    this.incrementalFiles[srcAdd].mutants[0].coveredBy = ['spec4', 'spec5', 'spec6'];
+    this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec4'];
+    return this;
+  }
+
+  public withTestGenerationAndAdditionalTest(): this {
+    this.currentFiles.set(testAdd, testAddContentWithTestGenerationAndAdditionalTest);
     const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
       factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
 
@@ -267,14 +305,30 @@ class ScenarioBuilder {
     this.testCoverage.addCoverage(this.mutantId, ['new-spec-2', gen1.id, gen2.id]);
     return this;
   }
-  public withTestGenerationIncrementalReport(): this {
-    this.incrementalTestFiles[testAdd].source = testAddContentWithTestGeneration;
+
+  public withUpdatedTestGenerationAndAdditionalTest(): this {
+    this.currentFiles.set(testAdd, testAddContentWithTestGenerationAndAdditionalTestUpdated);
+    const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
+      factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
+
+    this.testCoverage.clear();
+    this.testCoverage.addTest(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
+    const gen1 = createAddWithTestGenerationTestResult(40, 2, 42);
+    const gen2 = createAddWithTestGenerationTestResult(45, -3, 42);
+    this.testCoverage.addTest(gen1, gen2);
+    this.testCoverage.addCoverage(this.mutantId, ['new-spec-2', gen1.id, gen2.id]);
+    return this;
+  }
+
+  public withTestGenerationAndAdditionalTestIncrementalReport(): this {
+    this.incrementalTestFiles[testAdd].source = testAddContentWithTestGenerationAndAdditionalTest;
     const createAddWithTestGenerationTestDefinition = (id: string, a: number, b: number, answer: number) =>
       factory.mutationTestReportSchemaTestDefinition({
         id,
         name: `should result in ${answer} for ${a} and ${b}`,
         location: loc(5, 4),
       });
+    // clear all tests
     while (this.incrementalTestFiles[testAdd].tests.shift()) {}
     this.incrementalTestFiles[testAdd].tests.push(
       factory.mutationTestReportSchemaTestDefinition({ id: 'spec3', name: 'should have name "add"', location: loc(9, 2) }),
@@ -649,7 +703,18 @@ describe(IncrementalDiffer.name, () => {
 
     it('should close locations for tests on the same location in the incremental report', () => {
       // Test cases can generate tests, make sure the correct end position is chosen in those cases
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withUpdatedTestGeneration().withTestGenerationIncrementalReport().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withUpdatedTestGenerationAndAdditionalTest()
+        .withTestGenerationAndAdditionalTestIncrementalReport()
+        .act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
+
+    // See #3909
+    it('should close locations for tests on the same location in the incremental report when they are the last tests', () => {
+      // Test cases can generate tests, make sure the correct end position is chosen in those cases
+      const actualDiff = new ScenarioBuilder().withMathProjectExample().withTestGeneration().withTestGenerationIncrementalReport().act();
       expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 

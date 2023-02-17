@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Bug Fixes
+
+- **deps:** update dependency mutation-testing-metrics to v1.7.14 ([#3970](https://github.com/stryker-mutator/stryker-js/issues/3970)) ([ddf32ee](https://github.com/stryker-mutator/stryker-js/commit/ddf32ee7581cc6169390022f933f593b7049bd3e))
+
+## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
+
+**Note:** Version bump only for package @stryker-mutator/test-helpers
+
 # [6.3.0](https://github.com/stryker-mutator/stryker-js/compare/v6.2.3...v6.3.0) (2022-10-30)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers

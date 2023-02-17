@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/cucumber-runner
+
+## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
+
+### Bug Fixes
+
+- **deps:** update dependency @cucumber/messages to v20 ([#3858](https://github.com/stryker-mutator/stryker-js/issues/3858)) ([29939c3](https://github.com/stryker-mutator/stryker-js/commit/29939c3a1a384db88dc91d95050c4a0903b879ff))
+
 # [6.3.0](https://github.com/stryker-mutator/stryker-js/compare/v6.2.3...v6.3.0) (2022-10-30)
 
 ### Features
