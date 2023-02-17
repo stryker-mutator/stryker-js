@@ -45,15 +45,15 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-exports.add = function (num1, num2) {
+export function add(num1: number, num2: number) {
   if (stryMutAct_9fa48("0")) {
     {}
   } else {
     stryCov_9fa48("0");
     return stryMutAct_9fa48("1") ? num1 - num2 : (stryCov_9fa48("1"), num1 + num2);
   }
-};
-exports.addOne = function (number) {
+}
+export function addOne(number: number) {
   if (stryMutAct_9fa48("2")) {
     {}
   } else {
@@ -61,16 +61,16 @@ exports.addOne = function (number) {
     stryMutAct_9fa48("3") ? number-- : (stryCov_9fa48("3"), number++);
     return number;
   }
-};
-exports.negate = function (number) {
+}
+export function negate(number: number) {
   if (stryMutAct_9fa48("4")) {
     {}
   } else {
     stryCov_9fa48("4");
     return stryMutAct_9fa48("5") ? +number : (stryCov_9fa48("5"), -number);
   }
-};
-exports.isNegativeNumber = function (number) {
+}
+export function isNegativeNumber(number: number) {
   if (stryMutAct_9fa48("6")) {
     {}
   } else {
@@ -86,4 +86,4 @@ exports.isNegativeNumber = function (number) {
     }
     return isNegative;
   }
-};
+}

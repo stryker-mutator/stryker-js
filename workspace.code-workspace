@@ -37,6 +37,10 @@
       "path": "packages/cucumber-runner"
     },
     {
+      "name": "vitest-runner",
+      "path": "packages/vitest-runner"
+    },
+    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
     },

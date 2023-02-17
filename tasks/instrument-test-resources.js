@@ -1,10 +1,10 @@
 // @ts-check
-import { readFileSync, writeFileSync } from 'fs';
-import { relative } from 'path';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, relative } from 'path';
 
 import { fileURLToPath } from 'url';
 
-import { File, INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
+import { INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
 import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 
 // @ts-expect-error
@@ -60,6 +60,12 @@ async function main() {
     },
     '__stryker2__'
   );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/simple-project/math.ts': './packages/vitest-runner/testResources/simple-project-instrumented/math.ts',
+    },
+    '__stryker2__'
+  );
 }
 
 /**
@@ -68,13 +74,14 @@ async function main() {
  * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
-  const files = Object.keys(fromTo).map((fileName) => new File(fileName, readFileSync(fileName)));
-  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [], mutationRanges: [] });
+  const files = Object.keys(fromTo).map((fileName) => ({ mutate: true, name: fileName, content: readFileSync(fileName, 'utf-8') }));
+  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [] });
   out.files.forEach((file) => {
     const toFileName = fromTo[file.name];
+    mkdirSync(dirname(toFileName), { recursive: true });
     writeFileSync(
       toFileName,
-      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.textContent.replace(
+      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.content.replace(
         new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'),
         globalNamespace
       )}`

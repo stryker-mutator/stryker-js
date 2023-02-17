@@ -1,0 +1,58 @@
+{
+  "name": "@stryker-mutator/vitest-runner",
+  "version": "6.4.0",
+  "description": "A plugin to use the vitest test runner and framework in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 30000 \"dist/test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/vitest-runner"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "keywords": [
+    "stryker",
+    "vitest",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Odin van der Linden <odinvanderlinden2001@gmail.com>",
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.4.0",
+    "@types/node": "18.13.0",
+    "@types/semver": "7.3.13",
+    "ts-node": "10.9.1"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "~6.3.0"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "6.4.0",
+    "@stryker-mutator/util": "6.4.0",
+    "semver": "~7.3.7",
+    "tslib": "~2.5.0",
+    "vitest": "^0.28.5"
+  },
+  "initStrykerConfig": {
+    "coverageAnalysis": "perTest"
+  }
+}
