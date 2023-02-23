@@ -14,9 +14,9 @@ import { fileUtils } from '../../../src/utils/file-utils.js';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;
-  let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
-  let readFileStub: sinon.SinonStubbedMember<(typeof fs.promises)['readFile']>;
-  let importModuleStub: sinon.SinonStubbedMember<(typeof fileUtils)['importModule']>;
+  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
+  let readFileStub: sinon.SinonStubbedMember<typeof fs.promises['readFile']>;
+  let importModuleStub: sinon.SinonStubbedMember<typeof fileUtils['importModule']>;
   let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
 
   beforeEach(() => {

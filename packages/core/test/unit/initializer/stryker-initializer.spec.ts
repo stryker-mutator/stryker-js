@@ -28,7 +28,7 @@ describe(StrykerInitializer.name, () => {
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
-  let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
+  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
   let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
