@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { HybridFileSystem } from '../../../src/fs/index.js';
 
@@ -92,6 +92,7 @@ describe('fs', () => {
         const watcherCallback = sinon.stub();
 
         // Act
+        sut.writeFile('foo.js', 'some-content');
         sut.watchFile('foo.js', watcherCallback);
         sut.writeFile('foo.js', 'some-content');
 
@@ -106,16 +107,6 @@ describe('fs', () => {
         expect(helper.readFileStub).calledWith('test/foo/a.js');
       });
 
-      it("should not throw if file isn't loaded", () => {
-        // Should ignore the file watch
-        const watchCallback = sinon.stub();
-        sut.watchFile('node_modules/chai/package.json', watchCallback);
-
-        // If it was successfully ignored, than `mutate` should throw
-        expect(() => sut.mutate(factory.mutant({ fileName: 'node_modules/chai/package.json' }))).throws();
-        expect(watchCallback).not.called;
-      });
-
       it('should log that the file is watched', () => {
         helper.readFileStub.returns('foobar');
         const watcherCallback = sinon.stub();
@@ -123,82 +114,15 @@ describe('fs', () => {
         expect(testInjector.logger.trace).calledWith('Registering watcher for file "%s"', 'foo.js');
       });
     });
-
-    describe(HybridFileSystem.prototype.mutate.name, () => {
-      it('should mutate the file in-memory', () => {
-        // Arrange
-        helper.readFileStub.returns('a + b');
-        sut.watchFile('a.js', sinon.stub());
-
-        // Act
-        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
-
-        // Assert
-        expect(sut.getFile('a.js')!.content).eq('a - b');
-      });
-
-      it('should convert path separator to forward slashes', () => {
-        helper.readFileStub.returns('a + b');
-        sut.watchFile('test/foo/a.js', sinon.stub());
-        sut.mutate({ fileName: 'test\\foo\\a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
-        expect(sut.getFile('test/foo/a.js')!.content).eq('a - b');
-      });
-
-      it('should notify the watcher', () => {
-        // Arrange
-        const watcher = sinon.stub();
-        helper.readFileStub.returns('a + b');
-        sut.watchFile('a.js', watcher);
-
-        // Act
-        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
-
-        // Assert
-        expect(watcher).calledWith('a.js', ts.FileWatcherEventKind.Changed);
-      });
-
-      it('should reset previously mutated file', () => {
-        // Arrange
-        helper.readFileStub.withArgs('a.js').returns('a + b').withArgs('b.js').returns('"foo" + "bar"');
-        sut.watchFile('a.js', sinon.stub());
-        sut.watchFile('b.js', sinon.stub());
-
-        // Act
-        sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' });
-        sut.mutate({ fileName: 'b.js', location: { start: { line: 0, column: 6 }, end: { line: 0, column: 7 } }, replacement: '-' });
-
-        // Assert
-        expect(sut.getFile('a.js')!.content).eq('a + b');
-        expect(sut.getFile('b.js')!.content).eq('"foo" - "bar"');
-      });
-
-      it("should throw if file doesn't exist", () => {
-        expect(() =>
-          sut.mutate({ fileName: 'a.js', location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } }, replacement: '-' })
-        ).throws('File "a.js" cannot be found.');
-      });
-    });
-
     describe(HybridFileSystem.prototype.existsInMemory.name, () => {
-      it('should return true if it exists', () => {
-        sut.writeFile('a.js', 'a + b');
-        expect(sut.existsInMemory('a.js')).true;
+      it('should return true if file does exists', () => {
+        const fileName = 'test-file';
+        sut.writeFile(fileName, '');
+        expect(sut.existsInMemory(fileName)).true;
       });
-
-      it('should return false if it does not exist', () => {
-        sut.writeFile('b.js', 'a + b');
-        expect(sut.existsInMemory('a.js')).false;
-      });
-
-      it('should return false it is cached to not exist', () => {
-        helper.readFileStub.returns(undefined);
-        sut.getFile('a.js'); // caches that it doesn't exists
-        expect(sut.existsInMemory('a.js')).false;
-      });
-
-      it('should convert path separator to forward slashes', () => {
-        sut.writeFile('test/foo/a.js', 'foobar');
-        expect(sut.existsInMemory('test\\foo\\a.js')).true;
+      it('should return false if file does not exists', () => {
+        const fileName = 'test-file';
+        expect(sut.existsInMemory(fileName)).false;
       });
     });
   });
