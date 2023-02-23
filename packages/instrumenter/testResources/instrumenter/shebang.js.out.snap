@@ -48,5 +48,10 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-console.log(stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'test'));"
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  stryMutAct_9fa48(\\"1\\") ? null : (stryCov_9fa48(\\"1\\"), console.log(stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'test')));
+}"
 `;

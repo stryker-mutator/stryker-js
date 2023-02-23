@@ -50,5 +50,10 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-directoryFiles[stryMutAct_9fa48(\\"0\\") ? file[0] : (stryCov_9fa48(\\"0\\"), file[0].substr(1))] = file[1];"
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  directoryFiles[stryMutAct_9fa48(\\"2\\") ? null : stryMutAct_9fa48(\\"1\\") ? file[0] : (stryCov_9fa48(\\"1\\", \\"2\\"), file[0].substr(1))] = file[1];
+}"
 `;

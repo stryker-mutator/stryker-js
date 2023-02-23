@@ -47,8 +47,28 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-stryMutAct_9fa48(\\"3\\") ? foo.bar?.trim?.() : stryMutAct_9fa48(\\"2\\") ? foo?.bar.trim?.() : stryMutAct_9fa48(\\"1\\") ? foo?.bar?.trim() : stryMutAct_9fa48(\\"0\\") ? foo?.bar : (stryCov_9fa48(\\"0\\", \\"1\\", \\"2\\", \\"3\\"), foo?.bar?.trim?.());
-stryMutAct_9fa48(\\"5\\") ? baz.trim() : stryMutAct_9fa48(\\"4\\") ? baz : (stryCov_9fa48(\\"4\\", \\"5\\"), baz?.trim());
-stryMutAct_9fa48(\\"7\\") ? qux.substring(3) : stryMutAct_9fa48(\\"6\\") ? qux.trim() : (stryCov_9fa48(\\"6\\", \\"7\\"), qux.trim().substring(3));
-stryMutAct_9fa48(\\"10\\") ? quux.trim().substring(3) : stryMutAct_9fa48(\\"9\\") ? quux.substring(3) : stryMutAct_9fa48(\\"8\\") ? quux.trim?.() : (stryCov_9fa48(\\"8\\", \\"9\\", \\"10\\"), quux.trim?.().substring(3));"
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  stryMutAct_9fa48(\\"4\\") ? foo.bar?.trim?.() : stryMutAct_9fa48(\\"3\\") ? foo?.bar.trim?.() : stryMutAct_9fa48(\\"2\\") ? foo?.bar?.trim() : stryMutAct_9fa48(\\"1\\") ? foo?.bar : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\", \\"4\\"), foo?.bar?.trim?.());
+}
+if (stryMutAct_9fa48(\\"5\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"5\\");
+  stryMutAct_9fa48(\\"7\\") ? baz.trim() : stryMutAct_9fa48(\\"6\\") ? baz : (stryCov_9fa48(\\"6\\", \\"7\\"), baz?.trim());
+}
+if (stryMutAct_9fa48(\\"8\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"8\\");
+  stryMutAct_9fa48(\\"12\\") ? null.substring(3) : stryMutAct_9fa48(\\"11\\") ? qux.substring(3) : stryMutAct_9fa48(\\"10\\") ? null : stryMutAct_9fa48(\\"9\\") ? qux.trim() : (stryCov_9fa48(\\"9\\", \\"10\\", \\"11\\", \\"12\\"), qux.trim().substring(3));
+}
+if (stryMutAct_9fa48(\\"13\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"13\\");
+  stryMutAct_9fa48(\\"16\\") ? quux.trim().substring(3) : stryMutAct_9fa48(\\"15\\") ? quux.substring(3) : stryMutAct_9fa48(\\"14\\") ? quux.trim?.() : (stryCov_9fa48(\\"14\\", \\"15\\", \\"16\\"), quux.trim?.().substring(3));
+}"
 `;

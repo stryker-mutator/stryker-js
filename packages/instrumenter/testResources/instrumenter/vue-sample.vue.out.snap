@@ -88,36 +88,56 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-export default stryMutAct_9fa48(\\"0\\") ? {} : (stryCov_9fa48(\\"0\\"), {
-  name: stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'HelloWorld'),
-  data() {
-    if (stryMutAct_9fa48(\\"2\\")) {
-      {}
-    } else {
-      stryCov_9fa48(\\"2\\");
-      return stryMutAct_9fa48(\\"3\\") ? {} : (stryCov_9fa48(\\"3\\"), {
-        msg: stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'Welcome to Your Vue.js App')
-      });
-    }
-  },
-  watch: stryMutAct_9fa48(\\"5\\") ? {} : (stryCov_9fa48(\\"5\\"), {
-    'category.type'(categoryType) {
-      if (stryMutAct_9fa48(\\"6\\")) {
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  export default stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
+    name: stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'HelloWorld'),
+    data() {
+      if (stryMutAct_9fa48(\\"3\\")) {
         {}
       } else {
-        stryCov_9fa48(\\"6\\");
-        if (stryMutAct_9fa48(\\"9\\") ? this.isNew || this.category : stryMutAct_9fa48(\\"8\\") ? false : stryMutAct_9fa48(\\"7\\") ? true : (stryCov_9fa48(\\"7\\", \\"8\\", \\"9\\"), this.isNew && this.category)) {
-          if (stryMutAct_9fa48(\\"10\\")) {
-            {}
+        stryCov_9fa48(\\"3\\");
+        if (stryMutAct_9fa48(\\"4\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"4\\");
+          return stryMutAct_9fa48(\\"5\\") ? {} : (stryCov_9fa48(\\"5\\"), {
+            msg: stryMutAct_9fa48(\\"6\\") ? \\"\\" : (stryCov_9fa48(\\"6\\"), 'Welcome to Your Vue.js App')
+          });
+        }
+      }
+    },
+    watch: stryMutAct_9fa48(\\"7\\") ? {} : (stryCov_9fa48(\\"7\\"), {
+      'category.type'(categoryType) {
+        if (stryMutAct_9fa48(\\"8\\")) {
+          {}
+        } else {
+          stryCov_9fa48(\\"8\\");
+          if (stryMutAct_9fa48(\\"9\\")) {
+            ;
           } else {
-            stryCov_9fa48(\\"10\\");
-            this.category.permissions = getDefaultDocumentCategoryPermissions(categoryType);
+            stryCov_9fa48(\\"9\\");
+            if (stryMutAct_9fa48(\\"12\\") ? this.isNew || this.category : stryMutAct_9fa48(\\"11\\") ? false : stryMutAct_9fa48(\\"10\\") ? true : (stryCov_9fa48(\\"10\\", \\"11\\", \\"12\\"), this.isNew && this.category)) {
+              if (stryMutAct_9fa48(\\"13\\")) {
+                {}
+              } else {
+                stryCov_9fa48(\\"13\\");
+                if (stryMutAct_9fa48(\\"14\\")) {
+                  ;
+                } else {
+                  stryCov_9fa48(\\"14\\");
+                  this.category.permissions = stryMutAct_9fa48(\\"15\\") ? null : (stryCov_9fa48(\\"15\\"), getDefaultDocumentCategoryPermissions(categoryType));
+                }
+              }
+            }
           }
         }
       }
-    }
-  })
-});
+    })
+  });
+}
 </script>
 <script>
 function stryNS_9fa48() {
@@ -166,7 +186,12 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-const b = stryMutAct_9fa48(\\"11\\") ? a - c : (stryCov_9fa48(\\"11\\"), a + c);
+if (stryMutAct_9fa48(\\"16\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"16\\");
+  const b = stryMutAct_9fa48(\\"17\\") ? a - c : (stryCov_9fa48(\\"17\\"), a + c);
+}
 </script>
 
 <!-- Add \\"scoped\\" attribute to limit CSS to this component only -->

@@ -1444,6 +1444,7 @@ Object {
             "start": 9,
             "type": "Identifier",
           },
+          "leadingComments": Array [],
           "loc": Object {
             "end": Object {
               "column": 1,
@@ -4845,32 +4846,11 @@ Object {
           "start": 871,
           "type": "FunctionDeclaration",
         },
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 18,
-              "id": Node {
-                "end": 9,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 9,
-                    "index": 9,
-                    "line": 1,
-                  },
-                  "filename": undefined,
-                  "identifierName": "foo",
-                  "start": Position {
-                    "column": 6,
-                    "index": 6,
-                    "line": 1,
-                  },
-                },
-                "name": "foo",
-                "start": 6,
-                "type": "Identifier",
-              },
-              "init": Object {
-                "alternate": Object {
+        Object {
+          "alternate": Object {
+            "body": Array [
+              Object {
+                "expression": Object {
                   "expressions": Array [
                     Object {
                       "arguments": Array [
@@ -4885,54 +4865,147 @@ Object {
                       },
                       "type": "CallExpression",
                     },
-                    Node {
-                      "end": 18,
-                      "innerComments": null,
-                      "leadingComments": null,
-                      "left": Node {
-                        "end": 14,
-                        "extra": Object {
-                          "raw": "40",
-                          "rawValue": 40,
-                        },
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 14,
-                            "index": 14,
-                            "line": 1,
-                          },
-                          "filename": undefined,
-                          "identifierName": undefined,
-                          "start": Position {
-                            "column": 12,
-                            "index": 12,
-                            "line": 1,
-                          },
-                        },
-                        "start": 12,
-                        "type": "NumericLiteral",
-                        "value": 40,
-                      },
+                  ],
+                  "type": "SequenceExpression",
+                },
+                "type": "ExpressionStatement",
+              },
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 18,
+                    "id": Node {
+                      "end": 9,
                       "loc": SourceLocation {
                         "end": Position {
-                          "column": 18,
-                          "index": 18,
+                          "column": 9,
+                          "index": 9,
                           "line": 1,
                         },
                         "filename": undefined,
-                        "identifierName": undefined,
+                        "identifierName": "foo",
                         "start": Position {
-                          "column": 12,
-                          "index": 12,
+                          "column": 6,
+                          "index": 6,
                           "line": 1,
                         },
                       },
-                      "operator": "+",
-                      "right": Node {
-                        "end": 18,
-                        "extra": Object {
-                          "raw": "2",
-                          "rawValue": 2,
+                      "name": "foo",
+                      "start": 6,
+                      "type": "Identifier",
+                    },
+                    "init": Object {
+                      "alternate": Object {
+                        "expressions": Array [
+                          Object {
+                            "arguments": Array [
+                              Object {
+                                "type": "StringLiteral",
+                                "value": "1",
+                              },
+                            ],
+                            "callee": Object {
+                              "name": "stryCov_9fa48",
+                              "type": "Identifier",
+                            },
+                            "type": "CallExpression",
+                          },
+                          Node {
+                            "end": 18,
+                            "innerComments": null,
+                            "leadingComments": null,
+                            "left": Node {
+                              "end": 14,
+                              "extra": Object {
+                                "raw": "40",
+                                "rawValue": 40,
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 14,
+                                  "index": 14,
+                                  "line": 1,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 12,
+                                  "index": 12,
+                                  "line": 1,
+                                },
+                              },
+                              "start": 12,
+                              "type": "NumericLiteral",
+                              "value": 40,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 18,
+                                "index": 18,
+                                "line": 1,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 12,
+                                "index": 12,
+                                "line": 1,
+                              },
+                            },
+                            "operator": "+",
+                            "right": Node {
+                              "end": 18,
+                              "extra": Object {
+                                "raw": "2",
+                                "rawValue": 2,
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 18,
+                                  "index": 18,
+                                  "line": 1,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 17,
+                                  "index": 17,
+                                  "line": 1,
+                                },
+                              },
+                              "start": 17,
+                              "type": "NumericLiteral",
+                              "value": 2,
+                            },
+                            "start": 12,
+                            "trailingComments": null,
+                            "type": "BinaryExpression",
+                          },
+                        ],
+                        "type": "SequenceExpression",
+                      },
+                      "consequent": Object {
+                        "left": Object {
+                          "extra": Object {
+                            "raw": "40",
+                            "rawValue": 40,
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 14,
+                              "index": 14,
+                              "line": 1,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 12,
+                              "index": 12,
+                              "line": 1,
+                            },
+                          },
+                          "type": "NumericLiteral",
+                          "value": 40,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -4943,64 +5016,53 @@ Object {
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
-                            "column": 17,
-                            "index": 17,
+                            "column": 12,
+                            "index": 12,
                             "line": 1,
                           },
                         },
-                        "start": 17,
-                        "type": "NumericLiteral",
-                        "value": 2,
+                        "operator": "-",
+                        "right": Object {
+                          "extra": Object {
+                            "raw": "2",
+                            "rawValue": 2,
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 18,
+                              "index": 18,
+                              "line": 1,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 17,
+                              "index": 17,
+                              "line": 1,
+                            },
+                          },
+                          "type": "NumericLiteral",
+                          "value": 2,
+                        },
+                        "type": "BinaryExpression",
                       },
-                      "start": 12,
-                      "trailingComments": null,
-                      "type": "BinaryExpression",
-                    },
-                  ],
-                  "type": "SequenceExpression",
-                },
-                "consequent": Object {
-                  "left": Object {
-                    "extra": Object {
-                      "raw": "40",
-                      "rawValue": 40,
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 14,
-                        "index": 14,
-                        "line": 1,
+                      "innerComments": Array [],
+                      "leadingComments": Array [],
+                      "test": Object {
+                        "arguments": Array [
+                          Object {
+                            "type": "StringLiteral",
+                            "value": "1",
+                          },
+                        ],
+                        "callee": Object {
+                          "name": "stryMutAct_9fa48",
+                          "type": "Identifier",
+                        },
+                        "type": "CallExpression",
                       },
-                      "filename": undefined,
-                      "identifierName": undefined,
-                      "start": Position {
-                        "column": 12,
-                        "index": 12,
-                        "line": 1,
-                      },
-                    },
-                    "type": "NumericLiteral",
-                    "value": 40,
-                  },
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 18,
-                      "index": 18,
-                      "line": 1,
-                    },
-                    "filename": undefined,
-                    "identifierName": undefined,
-                    "start": Position {
-                      "column": 12,
-                      "index": 12,
-                      "line": 1,
-                    },
-                  },
-                  "operator": "-",
-                  "right": Object {
-                    "extra": Object {
-                      "raw": "2",
-                      "rawValue": 2,
+                      "trailingComments": Array [],
+                      "type": "ConditionalExpression",
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -5011,70 +5073,67 @@ Object {
                       "filename": undefined,
                       "identifierName": undefined,
                       "start": Position {
-                        "column": 17,
-                        "index": 17,
+                        "column": 6,
+                        "index": 6,
                         "line": 1,
                       },
                     },
-                    "type": "NumericLiteral",
-                    "value": 2,
+                    "start": 6,
+                    "type": "VariableDeclarator",
                   },
-                  "type": "BinaryExpression",
-                },
-                "innerComments": Array [],
-                "leadingComments": Array [],
-                "test": Object {
-                  "arguments": Array [
-                    Object {
-                      "type": "StringLiteral",
-                      "value": "0",
-                    },
-                  ],
-                  "callee": Object {
-                    "name": "stryMutAct_9fa48",
-                    "type": "Identifier",
+                ],
+                "end": 18,
+                "innerComments": null,
+                "kind": "const",
+                "leadingComments": null,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 18,
+                    "index": 18,
+                    "line": 1,
                   },
-                  "type": "CallExpression",
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 0,
+                    "index": 0,
+                    "line": 1,
+                  },
                 },
-                "trailingComments": Array [],
-                "type": "ConditionalExpression",
+                "start": 0,
+                "trailingComments": null,
+                "type": "VariableDeclaration",
               },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 18,
-                  "index": 18,
-                  "line": 1,
-                },
-                "filename": undefined,
-                "identifierName": undefined,
-                "start": Position {
-                  "column": 6,
-                  "index": 6,
-                  "line": 1,
-                },
-              },
-              "start": 6,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 18,
-          "kind": "const",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 18,
-              "index": 18,
-              "line": 1,
-            },
-            "filename": undefined,
-            "identifierName": undefined,
-            "start": Position {
-              "column": 0,
-              "index": 0,
-              "line": 1,
-            },
+            ],
+            "directives": Array [],
+            "type": "BlockStatement",
           },
-          "start": 0,
-          "type": "VariableDeclaration",
+          "consequent": Object {
+            "body": Array [
+              Object {
+                "type": "EmptyStatement",
+              },
+            ],
+            "directives": Array [],
+            "type": "BlockStatement",
+          },
+          "innerComments": Array [],
+          "leadingComments": Array [],
+          "test": Object {
+            "arguments": Array [
+              Object {
+                "type": "StringLiteral",
+                "value": "0",
+              },
+            ],
+            "callee": Object {
+              "name": "stryMutAct_9fa48",
+              "type": "Identifier",
+            },
+            "type": "CallExpression",
+          },
+          "trailingComments": Array [],
+          "type": "IfStatement",
         },
       ],
       "directives": Array [],
@@ -6548,6 +6607,7 @@ Object {
             "start": 9,
             "type": "Identifier",
           },
+          "leadingComments": Array [],
           "loc": Object {
             "end": Object {
               "column": 1,
@@ -9949,70 +10009,11 @@ Object {
           "start": 871,
           "type": "FunctionDeclaration",
         },
-        Node {
-          "declarations": Array [
-            Node {
-              "end": 26,
-              "id": Node {
-                "end": 17,
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 17,
-                    "index": 17,
-                    "line": 1,
-                  },
-                  "filename": undefined,
-                  "identifierName": "foo",
-                  "start": Position {
-                    "column": 6,
-                    "index": 6,
-                    "line": 1,
-                  },
-                },
-                "name": "foo",
-                "start": 6,
-                "type": "Identifier",
-                "typeAnnotation": Node {
-                  "end": 17,
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 17,
-                      "index": 17,
-                      "line": 1,
-                    },
-                    "filename": undefined,
-                    "identifierName": undefined,
-                    "start": Position {
-                      "column": 9,
-                      "index": 9,
-                      "line": 1,
-                    },
-                  },
-                  "start": 9,
-                  "type": "TSTypeAnnotation",
-                  "typeAnnotation": Node {
-                    "end": 17,
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 17,
-                        "index": 17,
-                        "line": 1,
-                      },
-                      "filename": undefined,
-                      "identifierName": undefined,
-                      "start": Position {
-                        "column": 11,
-                        "index": 11,
-                        "line": 1,
-                      },
-                    },
-                    "start": 11,
-                    "type": "TSNumberKeyword",
-                  },
-                },
-              },
-              "init": Object {
-                "alternate": Object {
+        Object {
+          "alternate": Object {
+            "body": Array [
+              Object {
+                "expression": Object {
                   "expressions": Array [
                     Object {
                       "arguments": Array [
@@ -10027,54 +10028,185 @@ Object {
                       },
                       "type": "CallExpression",
                     },
-                    Node {
-                      "end": 26,
-                      "innerComments": null,
-                      "leadingComments": null,
-                      "left": Node {
-                        "end": 22,
-                        "extra": Object {
-                          "raw": "40",
-                          "rawValue": 40,
+                  ],
+                  "type": "SequenceExpression",
+                },
+                "type": "ExpressionStatement",
+              },
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 26,
+                    "id": Node {
+                      "end": 17,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 17,
+                          "index": 17,
+                          "line": 1,
                         },
+                        "filename": undefined,
+                        "identifierName": "foo",
+                        "start": Position {
+                          "column": 6,
+                          "index": 6,
+                          "line": 1,
+                        },
+                      },
+                      "name": "foo",
+                      "start": 6,
+                      "type": "Identifier",
+                      "typeAnnotation": Node {
+                        "end": 17,
                         "loc": SourceLocation {
                           "end": Position {
-                            "column": 22,
-                            "index": 22,
+                            "column": 17,
+                            "index": 17,
                             "line": 1,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
-                            "column": 20,
-                            "index": 20,
+                            "column": 9,
+                            "index": 9,
                             "line": 1,
                           },
                         },
-                        "start": 20,
-                        "type": "NumericLiteral",
-                        "value": 40,
-                      },
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 26,
-                          "index": 26,
-                          "line": 1,
+                        "start": 9,
+                        "type": "TSTypeAnnotation",
+                        "typeAnnotation": Node {
+                          "end": 17,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 17,
+                              "index": 17,
+                              "line": 1,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 11,
+                              "index": 11,
+                              "line": 1,
+                            },
+                          },
+                          "start": 11,
+                          "type": "TSNumberKeyword",
                         },
-                        "filename": undefined,
-                        "identifierName": undefined,
-                        "start": Position {
-                          "column": 20,
-                          "index": 20,
-                          "line": 1,
-                        },
                       },
-                      "operator": "+",
-                      "right": Node {
-                        "end": 26,
-                        "extra": Object {
-                          "raw": "2",
-                          "rawValue": 2,
+                    },
+                    "init": Object {
+                      "alternate": Object {
+                        "expressions": Array [
+                          Object {
+                            "arguments": Array [
+                              Object {
+                                "type": "StringLiteral",
+                                "value": "1",
+                              },
+                            ],
+                            "callee": Object {
+                              "name": "stryCov_9fa48",
+                              "type": "Identifier",
+                            },
+                            "type": "CallExpression",
+                          },
+                          Node {
+                            "end": 26,
+                            "innerComments": null,
+                            "leadingComments": null,
+                            "left": Node {
+                              "end": 22,
+                              "extra": Object {
+                                "raw": "40",
+                                "rawValue": 40,
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 22,
+                                  "index": 22,
+                                  "line": 1,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 20,
+                                  "index": 20,
+                                  "line": 1,
+                                },
+                              },
+                              "start": 20,
+                              "type": "NumericLiteral",
+                              "value": 40,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 26,
+                                "index": 26,
+                                "line": 1,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 20,
+                                "index": 20,
+                                "line": 1,
+                              },
+                            },
+                            "operator": "+",
+                            "right": Node {
+                              "end": 26,
+                              "extra": Object {
+                                "raw": "2",
+                                "rawValue": 2,
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 26,
+                                  "index": 26,
+                                  "line": 1,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 25,
+                                  "index": 25,
+                                  "line": 1,
+                                },
+                              },
+                              "start": 25,
+                              "type": "NumericLiteral",
+                              "value": 2,
+                            },
+                            "start": 20,
+                            "trailingComments": null,
+                            "type": "BinaryExpression",
+                          },
+                        ],
+                        "type": "SequenceExpression",
+                      },
+                      "consequent": Object {
+                        "left": Object {
+                          "extra": Object {
+                            "raw": "40",
+                            "rawValue": 40,
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 22,
+                              "index": 22,
+                              "line": 1,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 20,
+                              "index": 20,
+                              "line": 1,
+                            },
+                          },
+                          "type": "NumericLiteral",
+                          "value": 40,
                         },
                         "loc": SourceLocation {
                           "end": Position {
@@ -10085,64 +10217,53 @@ Object {
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
-                            "column": 25,
-                            "index": 25,
+                            "column": 20,
+                            "index": 20,
                             "line": 1,
                           },
                         },
-                        "start": 25,
-                        "type": "NumericLiteral",
-                        "value": 2,
+                        "operator": "-",
+                        "right": Object {
+                          "extra": Object {
+                            "raw": "2",
+                            "rawValue": 2,
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 26,
+                              "index": 26,
+                              "line": 1,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 25,
+                              "index": 25,
+                              "line": 1,
+                            },
+                          },
+                          "type": "NumericLiteral",
+                          "value": 2,
+                        },
+                        "type": "BinaryExpression",
                       },
-                      "start": 20,
-                      "trailingComments": null,
-                      "type": "BinaryExpression",
-                    },
-                  ],
-                  "type": "SequenceExpression",
-                },
-                "consequent": Object {
-                  "left": Object {
-                    "extra": Object {
-                      "raw": "40",
-                      "rawValue": 40,
-                    },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 22,
-                        "index": 22,
-                        "line": 1,
+                      "innerComments": Array [],
+                      "leadingComments": Array [],
+                      "test": Object {
+                        "arguments": Array [
+                          Object {
+                            "type": "StringLiteral",
+                            "value": "1",
+                          },
+                        ],
+                        "callee": Object {
+                          "name": "stryMutAct_9fa48",
+                          "type": "Identifier",
+                        },
+                        "type": "CallExpression",
                       },
-                      "filename": undefined,
-                      "identifierName": undefined,
-                      "start": Position {
-                        "column": 20,
-                        "index": 20,
-                        "line": 1,
-                      },
-                    },
-                    "type": "NumericLiteral",
-                    "value": 40,
-                  },
-                  "loc": SourceLocation {
-                    "end": Position {
-                      "column": 26,
-                      "index": 26,
-                      "line": 1,
-                    },
-                    "filename": undefined,
-                    "identifierName": undefined,
-                    "start": Position {
-                      "column": 20,
-                      "index": 20,
-                      "line": 1,
-                    },
-                  },
-                  "operator": "-",
-                  "right": Object {
-                    "extra": Object {
-                      "raw": "2",
-                      "rawValue": 2,
+                      "trailingComments": Array [],
+                      "type": "ConditionalExpression",
                     },
                     "loc": SourceLocation {
                       "end": Position {
@@ -10153,70 +10274,67 @@ Object {
                       "filename": undefined,
                       "identifierName": undefined,
                       "start": Position {
-                        "column": 25,
-                        "index": 25,
+                        "column": 6,
+                        "index": 6,
                         "line": 1,
                       },
                     },
-                    "type": "NumericLiteral",
-                    "value": 2,
+                    "start": 6,
+                    "type": "VariableDeclarator",
                   },
-                  "type": "BinaryExpression",
-                },
-                "innerComments": Array [],
-                "leadingComments": Array [],
-                "test": Object {
-                  "arguments": Array [
-                    Object {
-                      "type": "StringLiteral",
-                      "value": "0",
-                    },
-                  ],
-                  "callee": Object {
-                    "name": "stryMutAct_9fa48",
-                    "type": "Identifier",
+                ],
+                "end": 26,
+                "innerComments": null,
+                "kind": "const",
+                "leadingComments": null,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 26,
+                    "index": 26,
+                    "line": 1,
                   },
-                  "type": "CallExpression",
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 0,
+                    "index": 0,
+                    "line": 1,
+                  },
                 },
-                "trailingComments": Array [],
-                "type": "ConditionalExpression",
+                "start": 0,
+                "trailingComments": null,
+                "type": "VariableDeclaration",
               },
-              "loc": SourceLocation {
-                "end": Position {
-                  "column": 26,
-                  "index": 26,
-                  "line": 1,
-                },
-                "filename": undefined,
-                "identifierName": undefined,
-                "start": Position {
-                  "column": 6,
-                  "index": 6,
-                  "line": 1,
-                },
-              },
-              "start": 6,
-              "type": "VariableDeclarator",
-            },
-          ],
-          "end": 26,
-          "kind": "const",
-          "loc": SourceLocation {
-            "end": Position {
-              "column": 26,
-              "index": 26,
-              "line": 1,
-            },
-            "filename": undefined,
-            "identifierName": undefined,
-            "start": Position {
-              "column": 0,
-              "index": 0,
-              "line": 1,
-            },
+            ],
+            "directives": Array [],
+            "type": "BlockStatement",
           },
-          "start": 0,
-          "type": "VariableDeclaration",
+          "consequent": Object {
+            "body": Array [
+              Object {
+                "type": "EmptyStatement",
+              },
+            ],
+            "directives": Array [],
+            "type": "BlockStatement",
+          },
+          "innerComments": Array [],
+          "leadingComments": Array [],
+          "test": Object {
+            "arguments": Array [
+              Object {
+                "type": "StringLiteral",
+                "value": "0",
+              },
+            ],
+            "callee": Object {
+              "name": "stryMutAct_9fa48",
+              "type": "Identifier",
+            },
+            "type": "CallExpression",
+          },
+          "trailingComments": Array [],
+          "type": "IfStatement",
         },
       ],
       "directives": Array [],
@@ -11696,6 +11814,7 @@ Object {
                   "start": 9,
                   "type": "Identifier",
                 },
+                "leadingComments": Array [],
                 "loc": Object {
                   "end": Object {
                     "column": 1,
@@ -15097,32 +15216,11 @@ Object {
                 "start": 871,
                 "type": "FunctionDeclaration",
               },
-              Node {
-                "declarations": Array [
-                  Node {
-                    "end": 18,
-                    "id": Node {
-                      "end": 9,
-                      "loc": SourceLocation {
-                        "end": Position {
-                          "column": 9,
-                          "index": 9,
-                          "line": 1,
-                        },
-                        "filename": undefined,
-                        "identifierName": "foo",
-                        "start": Position {
-                          "column": 6,
-                          "index": 6,
-                          "line": 1,
-                        },
-                      },
-                      "name": "foo",
-                      "start": 6,
-                      "type": "Identifier",
-                    },
-                    "init": Object {
-                      "alternate": Object {
+              Object {
+                "alternate": Object {
+                  "body": Array [
+                    Object {
+                      "expression": Object {
                         "expressions": Array [
                           Object {
                             "arguments": Array [
@@ -15137,54 +15235,147 @@ Object {
                             },
                             "type": "CallExpression",
                           },
-                          Node {
-                            "end": 18,
-                            "innerComments": null,
-                            "leadingComments": null,
-                            "left": Node {
-                              "end": 14,
-                              "extra": Object {
-                                "raw": "40",
-                                "rawValue": 40,
-                              },
-                              "loc": SourceLocation {
-                                "end": Position {
-                                  "column": 14,
-                                  "index": 14,
-                                  "line": 1,
-                                },
-                                "filename": undefined,
-                                "identifierName": undefined,
-                                "start": Position {
-                                  "column": 12,
-                                  "index": 12,
-                                  "line": 1,
-                                },
-                              },
-                              "start": 12,
-                              "type": "NumericLiteral",
-                              "value": 40,
-                            },
+                        ],
+                        "type": "SequenceExpression",
+                      },
+                      "type": "ExpressionStatement",
+                    },
+                    Node {
+                      "declarations": Array [
+                        Node {
+                          "end": 18,
+                          "id": Node {
+                            "end": 9,
                             "loc": SourceLocation {
                               "end": Position {
-                                "column": 18,
-                                "index": 18,
+                                "column": 9,
+                                "index": 9,
                                 "line": 1,
                               },
                               "filename": undefined,
-                              "identifierName": undefined,
+                              "identifierName": "foo",
                               "start": Position {
-                                "column": 12,
-                                "index": 12,
+                                "column": 6,
+                                "index": 6,
                                 "line": 1,
                               },
                             },
-                            "operator": "+",
-                            "right": Node {
-                              "end": 18,
-                              "extra": Object {
-                                "raw": "2",
-                                "rawValue": 2,
+                            "name": "foo",
+                            "start": 6,
+                            "type": "Identifier",
+                          },
+                          "init": Object {
+                            "alternate": Object {
+                              "expressions": Array [
+                                Object {
+                                  "arguments": Array [
+                                    Object {
+                                      "type": "StringLiteral",
+                                      "value": "1",
+                                    },
+                                  ],
+                                  "callee": Object {
+                                    "name": "stryCov_9fa48",
+                                    "type": "Identifier",
+                                  },
+                                  "type": "CallExpression",
+                                },
+                                Node {
+                                  "end": 18,
+                                  "innerComments": null,
+                                  "leadingComments": null,
+                                  "left": Node {
+                                    "end": 14,
+                                    "extra": Object {
+                                      "raw": "40",
+                                      "rawValue": 40,
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 14,
+                                        "index": 14,
+                                        "line": 1,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Position {
+                                        "column": 12,
+                                        "index": 12,
+                                        "line": 1,
+                                      },
+                                    },
+                                    "start": 12,
+                                    "type": "NumericLiteral",
+                                    "value": 40,
+                                  },
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 18,
+                                      "index": 18,
+                                      "line": 1,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": undefined,
+                                    "start": Position {
+                                      "column": 12,
+                                      "index": 12,
+                                      "line": 1,
+                                    },
+                                  },
+                                  "operator": "+",
+                                  "right": Node {
+                                    "end": 18,
+                                    "extra": Object {
+                                      "raw": "2",
+                                      "rawValue": 2,
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 18,
+                                        "index": 18,
+                                        "line": 1,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Position {
+                                        "column": 17,
+                                        "index": 17,
+                                        "line": 1,
+                                      },
+                                    },
+                                    "start": 17,
+                                    "type": "NumericLiteral",
+                                    "value": 2,
+                                  },
+                                  "start": 12,
+                                  "trailingComments": null,
+                                  "type": "BinaryExpression",
+                                },
+                              ],
+                              "type": "SequenceExpression",
+                            },
+                            "consequent": Object {
+                              "left": Object {
+                                "extra": Object {
+                                  "raw": "40",
+                                  "rawValue": 40,
+                                },
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 14,
+                                    "index": 14,
+                                    "line": 1,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Position {
+                                    "column": 12,
+                                    "index": 12,
+                                    "line": 1,
+                                  },
+                                },
+                                "type": "NumericLiteral",
+                                "value": 40,
                               },
                               "loc": SourceLocation {
                                 "end": Position {
@@ -15195,64 +15386,53 @@ Object {
                                 "filename": undefined,
                                 "identifierName": undefined,
                                 "start": Position {
-                                  "column": 17,
-                                  "index": 17,
+                                  "column": 12,
+                                  "index": 12,
                                   "line": 1,
                                 },
                               },
-                              "start": 17,
-                              "type": "NumericLiteral",
-                              "value": 2,
+                              "operator": "-",
+                              "right": Object {
+                                "extra": Object {
+                                  "raw": "2",
+                                  "rawValue": 2,
+                                },
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 18,
+                                    "index": 18,
+                                    "line": 1,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Position {
+                                    "column": 17,
+                                    "index": 17,
+                                    "line": 1,
+                                  },
+                                },
+                                "type": "NumericLiteral",
+                                "value": 2,
+                              },
+                              "type": "BinaryExpression",
                             },
-                            "start": 12,
-                            "trailingComments": null,
-                            "type": "BinaryExpression",
-                          },
-                        ],
-                        "type": "SequenceExpression",
-                      },
-                      "consequent": Object {
-                        "left": Object {
-                          "extra": Object {
-                            "raw": "40",
-                            "rawValue": 40,
-                          },
-                          "loc": SourceLocation {
-                            "end": Position {
-                              "column": 14,
-                              "index": 14,
-                              "line": 1,
+                            "innerComments": Array [],
+                            "leadingComments": Array [],
+                            "test": Object {
+                              "arguments": Array [
+                                Object {
+                                  "type": "StringLiteral",
+                                  "value": "1",
+                                },
+                              ],
+                              "callee": Object {
+                                "name": "stryMutAct_9fa48",
+                                "type": "Identifier",
+                              },
+                              "type": "CallExpression",
                             },
-                            "filename": undefined,
-                            "identifierName": undefined,
-                            "start": Position {
-                              "column": 12,
-                              "index": 12,
-                              "line": 1,
-                            },
-                          },
-                          "type": "NumericLiteral",
-                          "value": 40,
-                        },
-                        "loc": SourceLocation {
-                          "end": Position {
-                            "column": 18,
-                            "index": 18,
-                            "line": 1,
-                          },
-                          "filename": undefined,
-                          "identifierName": undefined,
-                          "start": Position {
-                            "column": 12,
-                            "index": 12,
-                            "line": 1,
-                          },
-                        },
-                        "operator": "-",
-                        "right": Object {
-                          "extra": Object {
-                            "raw": "2",
-                            "rawValue": 2,
+                            "trailingComments": Array [],
+                            "type": "ConditionalExpression",
                           },
                           "loc": SourceLocation {
                             "end": Position {
@@ -15263,70 +15443,67 @@ Object {
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
-                              "column": 17,
-                              "index": 17,
+                              "column": 6,
+                              "index": 6,
                               "line": 1,
                             },
                           },
-                          "type": "NumericLiteral",
-                          "value": 2,
+                          "start": 6,
+                          "type": "VariableDeclarator",
                         },
-                        "type": "BinaryExpression",
-                      },
-                      "innerComments": Array [],
-                      "leadingComments": Array [],
-                      "test": Object {
-                        "arguments": Array [
-                          Object {
-                            "type": "StringLiteral",
-                            "value": "0",
-                          },
-                        ],
-                        "callee": Object {
-                          "name": "stryMutAct_9fa48",
-                          "type": "Identifier",
+                      ],
+                      "end": 18,
+                      "innerComments": null,
+                      "kind": "const",
+                      "leadingComments": null,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 18,
+                          "index": 18,
+                          "line": 1,
                         },
-                        "type": "CallExpression",
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 0,
+                          "index": 0,
+                          "line": 1,
+                        },
                       },
-                      "trailingComments": Array [],
-                      "type": "ConditionalExpression",
+                      "start": 0,
+                      "trailingComments": null,
+                      "type": "VariableDeclaration",
                     },
-                    "loc": SourceLocation {
-                      "end": Position {
-                        "column": 18,
-                        "index": 18,
-                        "line": 1,
-                      },
-                      "filename": undefined,
-                      "identifierName": undefined,
-                      "start": Position {
-                        "column": 6,
-                        "index": 6,
-                        "line": 1,
-                      },
-                    },
-                    "start": 6,
-                    "type": "VariableDeclarator",
-                  },
-                ],
-                "end": 18,
-                "kind": "const",
-                "loc": SourceLocation {
-                  "end": Position {
-                    "column": 18,
-                    "index": 18,
-                    "line": 1,
-                  },
-                  "filename": undefined,
-                  "identifierName": undefined,
-                  "start": Position {
-                    "column": 0,
-                    "index": 0,
-                    "line": 1,
-                  },
+                  ],
+                  "directives": Array [],
+                  "type": "BlockStatement",
                 },
-                "start": 0,
-                "type": "VariableDeclaration",
+                "consequent": Object {
+                  "body": Array [
+                    Object {
+                      "type": "EmptyStatement",
+                    },
+                  ],
+                  "directives": Array [],
+                  "type": "BlockStatement",
+                },
+                "innerComments": Array [],
+                "leadingComments": Array [],
+                "test": Object {
+                  "arguments": Array [
+                    Object {
+                      "type": "StringLiteral",
+                      "value": "0",
+                    },
+                  ],
+                  "callee": Object {
+                    "name": "stryMutAct_9fa48",
+                    "type": "Identifier",
+                  },
+                  "type": "CallExpression",
+                },
+                "trailingComments": Array [],
+                "type": "IfStatement",
               },
             ],
             "directives": Array [],

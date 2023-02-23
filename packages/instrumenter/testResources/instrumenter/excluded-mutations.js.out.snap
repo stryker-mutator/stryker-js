@@ -52,7 +52,12 @@ function add(a, b) {
     {}
   } else {
     stryCov_9fa48(\\"0\\");
-    return a + b;
+    if (stryMutAct_9fa48(\\"1\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"1\\");
+      return a + b;
+    }
   }
 }"
 `;

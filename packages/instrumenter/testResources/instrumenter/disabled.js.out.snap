@@ -52,18 +52,61 @@ function factorial(num) {
     {}
   } else {
     stryCov_9fa48(\\"0\\");
-    if (stryMutAct_9fa48(\\"3\\") ? typeof num === 'number' : stryMutAct_9fa48(\\"2\\") ? false : stryMutAct_9fa48(\\"1\\") ? true : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), typeof num !== (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'number')))) throw new Error(stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), \\"Input must be a number.\\"));
-    if (stryMutAct_9fa48(\\"9\\") ? num >= 0 : stryMutAct_9fa48(\\"8\\") ? num <= 0 : stryMutAct_9fa48(\\"7\\") ? false : stryMutAct_9fa48(\\"6\\") ? true : (stryCov_9fa48(\\"6\\", \\"7\\", \\"8\\", \\"9\\"), num < 0)) throw new Error(stryMutAct_9fa48(\\"10\\") ? \\"\\" : (stryCov_9fa48(\\"10\\"), \\"Input must not be negative.\\"));
-    var i = 2,
-      o = 1;
-
-    // Stryker disable next-line BlockStatement: Infinite loop
-    while (stryMutAct_9fa48(\\"13\\") ? i > num : stryMutAct_9fa48(\\"12\\") ? i < num : stryMutAct_9fa48(\\"11\\") ? false : (stryCov_9fa48(\\"11\\", \\"12\\", \\"13\\"), i <= num)) {
-      // Stryker disable next-line UpdateOperator: Infinite loop
-      stryMutAct_9fa48(\\"15\\") ? o /= i++ : (stryCov_9fa48(\\"15\\"), o *= i++);
+    if (stryMutAct_9fa48(\\"1\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"1\\");
+      if (stryMutAct_9fa48(\\"4\\") ? typeof num === 'number' : stryMutAct_9fa48(\\"3\\") ? false : stryMutAct_9fa48(\\"2\\") ? true : (stryCov_9fa48(\\"2\\", \\"3\\", \\"4\\"), typeof num !== (stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), 'number')))) if (stryMutAct_9fa48(\\"6\\")) {
+        ;
+      } else {
+        stryCov_9fa48(\\"6\\");
+        throw new Error(stryMutAct_9fa48(\\"7\\") ? \\"\\" : (stryCov_9fa48(\\"7\\"), \\"Input must be a number.\\"));
+      }
     }
-    return o;
+    if (stryMutAct_9fa48(\\"8\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"8\\");
+      if (stryMutAct_9fa48(\\"12\\") ? num >= 0 : stryMutAct_9fa48(\\"11\\") ? num <= 0 : stryMutAct_9fa48(\\"10\\") ? false : stryMutAct_9fa48(\\"9\\") ? true : (stryCov_9fa48(\\"9\\", \\"10\\", \\"11\\", \\"12\\"), num < 0)) if (stryMutAct_9fa48(\\"13\\")) {
+        ;
+      } else {
+        stryCov_9fa48(\\"13\\");
+        throw new Error(stryMutAct_9fa48(\\"14\\") ? \\"\\" : (stryCov_9fa48(\\"14\\"), \\"Input must not be negative.\\"));
+      }
+    }
+    if (stryMutAct_9fa48(\\"15\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"15\\");
+      var i = 2,
+        o = 1;
+    } // Stryker disable next-line BlockStatement: Infinite loop
+    if (stryMutAct_9fa48(\\"16\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"16\\");
+      while (stryMutAct_9fa48(\\"19\\") ? i > num : stryMutAct_9fa48(\\"18\\") ? i < num : stryMutAct_9fa48(\\"17\\") ? false : (stryCov_9fa48(\\"17\\", \\"18\\", \\"19\\"), i <= num)) {
+        // Stryker disable next-line UpdateOperator: Infinite loop
+        if (stryMutAct_9fa48(\\"21\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"21\\");
+          stryMutAct_9fa48(\\"22\\") ? o /= i++ : (stryCov_9fa48(\\"22\\"), o *= i++);
+        }
+      }
+    }
+    if (stryMutAct_9fa48(\\"24\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"24\\");
+      return o;
+    }
   }
 }
-;"
+if (stryMutAct_9fa48(\\"25\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"25\\");
+  ;
+}"
 `;

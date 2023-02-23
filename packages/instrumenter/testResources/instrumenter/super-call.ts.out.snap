@@ -49,7 +49,7 @@ function stryMutAct_9fa48(id) {
 }
 export class InjectionError extends TypedInjectError {
   constructor(public readonly path: InjectionTarget[], public readonly cause: Error) {
-    super(stryMutAct_9fa48(\\"0\\") ? \`\` : (stryCov_9fa48(\\"0\\"), \`Could not \${describeInjectAction(path[0])} \${path.map(name).join(stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), ' -> '))}. Cause: \${cause.message}\`));
+    stryMutAct_9fa48(\\"0\\") ? null : (stryCov_9fa48(\\"0\\"), super(stryMutAct_9fa48(\\"1\\") ? \`\` : (stryCov_9fa48(\\"1\\"), \`Could not \${stryMutAct_9fa48(\\"2\\") ? null : (stryCov_9fa48(\\"2\\"), describeInjectAction(path[0]))} \${stryMutAct_9fa48(\\"4\\") ? null.join(' -> ') : stryMutAct_9fa48(\\"3\\") ? null : (stryCov_9fa48(\\"3\\", \\"4\\"), path.map(name).join(stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), ' -> ')))}. Cause: \${cause.message}\`)));
   }
 }"
 `;
