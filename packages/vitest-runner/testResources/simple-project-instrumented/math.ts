@@ -1,6 +1,6 @@
 // This file is generated with tasks/instrument-test-resources.js
- function stryNS_9fa48() {
-  var g = new Function("return this")();
+function stryNS_9fa48() {
+  var g = new Function('return this')();
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
@@ -14,10 +14,12 @@
 stryNS_9fa48();
 function stryCov_9fa48() {
   var ns = stryNS_9fa48();
-  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
-    static: {},
-    perTest: {}
-  });
+  var cov =
+    ns.mutantCoverage ||
+    (ns.mutantCoverage = {
+      static: {},
+      perTest: {},
+    });
   function cover() {
     var c = cov.static;
     if (ns.currentTestId) {
@@ -46,42 +48,57 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 export function add(num1: number, num2: number) {
-  if (stryMutAct_9fa48("0")) {
-    {}
+  if (stryMutAct_9fa48('0')) {
+    {
+    }
   } else {
-    stryCov_9fa48("0");
-    return stryMutAct_9fa48("1") ? num1 - num2 : (stryCov_9fa48("1"), num1 + num2);
+    stryCov_9fa48('0');
+    return stryMutAct_9fa48('1') ? num1 - num2 : (stryCov_9fa48('1'), num1 + num2);
   }
 }
 export function addOne(number: number) {
-  if (stryMutAct_9fa48("2")) {
-    {}
+  if (stryMutAct_9fa48('2')) {
+    {
+    }
   } else {
-    stryCov_9fa48("2");
-    stryMutAct_9fa48("3") ? number-- : (stryCov_9fa48("3"), number++);
+    stryCov_9fa48('2');
+    stryMutAct_9fa48('3') ? number-- : (stryCov_9fa48('3'), number++);
     return number;
   }
 }
 export function negate(number: number) {
-  if (stryMutAct_9fa48("4")) {
-    {}
+  if (stryMutAct_9fa48('4')) {
+    {
+    }
   } else {
-    stryCov_9fa48("4");
-    return stryMutAct_9fa48("5") ? +number : (stryCov_9fa48("5"), -number);
+    stryCov_9fa48('4');
+    return stryMutAct_9fa48('5') ? +number : (stryCov_9fa48('5'), -number);
   }
 }
 export function isNegativeNumber(number: number) {
-  if (stryMutAct_9fa48("6")) {
-    {}
+  if (stryMutAct_9fa48('6')) {
+    {
+    }
   } else {
-    stryCov_9fa48("6");
-    var isNegative = stryMutAct_9fa48("7") ? true : (stryCov_9fa48("7"), false);
-    if (stryMutAct_9fa48("11") ? number >= 0 : stryMutAct_9fa48("10") ? number <= 0 : stryMutAct_9fa48("9") ? false : stryMutAct_9fa48("8") ? true : (stryCov_9fa48("8", "9", "10", "11"), number < 0)) {
-      if (stryMutAct_9fa48("12")) {
-        {}
+    stryCov_9fa48('6');
+    var isNegative = stryMutAct_9fa48('7') ? true : (stryCov_9fa48('7'), false);
+    if (
+      stryMutAct_9fa48('11')
+        ? number >= 0
+        : stryMutAct_9fa48('10')
+        ? number <= 0
+        : stryMutAct_9fa48('9')
+        ? false
+        : stryMutAct_9fa48('8')
+        ? true
+        : (stryCov_9fa48('8', '9', '10', '11'), number < 0)
+    ) {
+      if (stryMutAct_9fa48('12')) {
+        {
+        }
       } else {
-        stryCov_9fa48("12");
-        isNegative = stryMutAct_9fa48("13") ? false : (stryCov_9fa48("13"), true);
+        stryCov_9fa48('12');
+        isNegative = stryMutAct_9fa48('13') ? false : (stryCov_9fa48('13'), true);
       }
     }
     return isNegative;
