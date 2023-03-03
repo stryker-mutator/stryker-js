@@ -13,7 +13,7 @@
         "testFiles": {
           "description": "Specify glob expressions to test files to run. Defaults to \"\"",
           "type": "array",
-          "items": { "type": "string" }
+          "items": { "type": "string" },
           "default": ["**/+(test|tests|__tests__)/**/*.+(js|mjs|tsx|ts|jsx|cjs)", "**/*.+(spec|test).+(js|mjs|tsx|ts|jsx|cjs)"]
         },
         "features": {

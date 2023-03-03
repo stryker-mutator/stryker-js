@@ -4,7 +4,7 @@ import { relative } from 'path';
 
 import { fileURLToPath } from 'url';
 
-import { File, INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
+import { INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
 import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 
 // @ts-expect-error
@@ -60,6 +60,13 @@ async function main() {
     },
     '__stryker2__'
   );
+  await instrument(
+    {
+      './packages/tap-runner/testResources/example/src/math.js': './packages/tap-runner/testResources/example-instrumented/src/math.js',
+      './packages/tap-runner/testResources/example/src/formatter.js': './packages/tap-runner/testResources/example-instrumented/src/formatter.js',
+    },
+    '__stryker2__'
+  );
 }
 
 /**
@@ -68,13 +75,13 @@ async function main() {
  * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
-  const files = Object.keys(fromTo).map((fileName) => new File(fileName, readFileSync(fileName)));
-  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [], mutationRanges: [] });
+  const files = Object.keys(fromTo).map((fileName) => ({ name: fileName, content: readFileSync(fileName, 'utf-8'), mutate: true }));
+  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [] });
   out.files.forEach((file) => {
     const toFileName = fromTo[file.name];
     writeFileSync(
       toFileName,
-      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.textContent.replace(
+      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.content.replace(
         new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'),
         globalNamespace
       )}`

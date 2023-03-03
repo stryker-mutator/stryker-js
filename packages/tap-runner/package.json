@@ -28,7 +28,8 @@
     "access": "public"
   },
   "contributors": [
-    "Nico Jansen <jansennico@gmail.com>"
+    "Nico Jansen <jansennico@gmail.com>",
+    "Danny Berkelaar <dannyberkelaar@gmail.com>"
   ],
   "license": "Apache-2.0",
   "bugs": {
