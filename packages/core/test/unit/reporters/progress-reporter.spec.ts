@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
 import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -17,8 +16,6 @@ describe(ProgressBarReporter.name, () => {
   let sut: ProgressBarReporter;
   let progressBar: Mock<ProgressBar>;
   let progressBarConstructorStub: sinon.SinonStub;
-  const progressBarContent =
-    'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:mutants Mutants tested (:survived survived, :timedOut timed out)';
 
   beforeEach(() => {
     sinon.useFakeTimers();
