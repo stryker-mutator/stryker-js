@@ -23,7 +23,7 @@ function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
   return !(
     types.isImportDeclaration(parent) ||
     types.isExportDeclaration(parent) ||
-    types.isModuleDeclaration(parent) ||
+    types.isImportOrExportDeclaration(parent) ||
     types.isTSExternalModuleReference(parent) ||
     types.isJSXAttribute(parent) ||
     types.isExpressionStatement(parent) ||
