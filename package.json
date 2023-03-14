@@ -31,7 +31,7 @@
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unicorn": "46.0.0",
-    "execa": "7.0.0",
+    "execa": "7.1.1",
     "glob": "8.1.0",
     "install-local": "3.0.1",
     "jasmine": "4.5.0",
