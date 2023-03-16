@@ -4,7 +4,7 @@ import { TestResult } from '@stryker-mutator/api/test-runner';
 import { MutantRunPlan, MutantTestPlan, PlanKind, Mutant, StrykerOptions, MutantStatus, MutantEarlyResultPlan } from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
-import { I, notEmpty } from '@stryker-mutator/util';
+import { I, notEmpty, split } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
@@ -174,11 +174,11 @@ export class MutantTestPlanner {
       const ABSOLUTE_CUT_OFF_PERUNAGE = 0.4;
       const RELATIVE_CUT_OFF_FACTOR = 2;
       const zeroIfNaN = (n: number) => (isNaN(n) ? 0 : n);
+      const totalNetTime = (runPlans: MutantRunPlan[]) => runPlans.reduce((acc, { netTime }) => acc + netTime, 0);
       const runPlans = mutantPlans.filter(isRunPlan);
-      const staticRunPlans = runPlans.filter(({ mutant }) => mutant.static);
-      const runTimeRunPlans = runPlans.filter(({ mutant }) => !mutant.static);
-      const estimatedTimeForStaticMutants = staticRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
-      const estimatedTimeForRunTimeMutants = runTimeRunPlans.reduce((acc, { netTime }) => acc + netTime, 0);
+      const [staticRunPlans, runTimeRunPlans] = split(runPlans, ({ mutant }) => Boolean(mutant.static));
+      const estimatedTimeForStaticMutants = totalNetTime(staticRunPlans);
+      const estimatedTimeForRunTimeMutants = totalNetTime(runTimeRunPlans);
       const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
       const avgTimeForAStaticMutant = zeroIfNaN(estimatedTimeForStaticMutants / staticRunPlans.length);
       const avgTimeForARunTimeMutant = zeroIfNaN(estimatedTimeForRunTimeMutants / runTimeRunPlans.length);
