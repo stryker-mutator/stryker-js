@@ -133,11 +133,12 @@ export class DryRunExecutor {
       files: dryRunFiles,
     });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
+    const capabilities = await testRunner.capabilities();
     this.validateResultCompleted(result);
 
     this.remapSandboxFilesToOriginalFiles(result);
     const timing = this.calculateTiming(grossTimeMS, result.tests);
-    const dryRunCompleted = { result, timing };
+    const dryRunCompleted = { result, timing, capabilities };
     this.reporter.onDryRunCompleted(dryRunCompleted);
     return dryRunCompleted;
   }
