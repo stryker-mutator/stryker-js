@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { I, normalizeWhitespaces } from '@stryker-mutator/util';
 
-import { FileDescriptions } from '@stryker-mutator/api/src/core/file-description.js';
+import { FileDescriptions } from '@stryker-mutator/api/core';
 
 import { Sandbox } from '../../../src/sandbox/sandbox.js';
 import { coreTokens } from '../../../src/di/index.js';

@@ -1,6 +1,6 @@
 import { MutantResult, MutantStatus, MutantRunPlan, MutantTestPlan, PlanKind } from '@stryker-mutator/api/core';
 import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
-import { TestRunnerCapabilities } from '@stryker-mutator/api/src/test-runner/test-runner-capabilities.js';
+import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
 import { Timer } from '../utils/timer.js';
 

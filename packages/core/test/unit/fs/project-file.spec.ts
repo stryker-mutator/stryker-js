@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { MutateDescription } from '@stryker-mutator/api/src/core/index.js';
+import { MutateDescription } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/instrumenter';
 import { expect } from 'chai';
 import sinon from 'sinon';
