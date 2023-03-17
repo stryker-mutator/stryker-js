@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 
 import { readFile, rm } from 'fs/promises';
 
+import os from 'os';
+
 import * as tap from 'tap-parser';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -131,8 +133,9 @@ export class TapTestRunner implements TestRunner {
       });
 
       parser.on('bailout', () => {
-        // todo enable this, but it does not create an output file (on windows at least)
-        // tapProcess.kill();
+        if (os.platform() !== 'win32') {
+          tapProcess.kill();
+        }
       });
 
       parser.on('fail', (reason: tap.TapError) => {
