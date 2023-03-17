@@ -195,17 +195,16 @@ describe('typescript-helpers', () => {
   });
 
   describe(guardTSVersion.name, () => {
-    it('should throw if typescript@2.5.0', () => {
-      sinon.stub(ts, 'version').value('3.5.0');
-      expect(guardTSVersion).throws('@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0');
+    it('should throw if typescript@3.5.0', () => {
+      expect(guardTSVersion.bind(undefined, '3.5.0')).throws(
+        '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0'
+      );
     });
     it('should not throw if typescript@3.6.0', () => {
-      sinon.stub(ts, 'version').value('3.6.0');
-      expect(guardTSVersion).not.throws();
+      expect(guardTSVersion.bind(undefined, '3.6.0')).not.throws();
     });
     it('should not throw if typescript@4.0.0', () => {
-      sinon.stub(ts, 'version').value('4.0.0');
-      expect(guardTSVersion).not.throws();
+      expect(guardTSVersion.bind(undefined, '4.0.0')).not.throws();
     });
   });
 
