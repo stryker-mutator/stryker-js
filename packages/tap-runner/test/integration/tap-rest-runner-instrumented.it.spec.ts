@@ -1,6 +1,8 @@
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
 
+import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
+
 import { createTapTestRunnerFactory, TapTestRunner } from '../../src/index.js';
 
 describe('Running in an example project', () => {
@@ -24,6 +26,19 @@ describe('Running in an example project', () => {
     const run = await sut.mutantRun(mutantRunOptions);
 
     // Assert
+    // todo fix this
     expect(true).to.be.true;
+  });
+
+  it('should todo hitlimit', async () => {
+    // Act
+    const mutantRunOptions = factory.mutantRunOptions({ hitLimit: 10, activeMutant: factory.mutant({ id: '7' }) });
+    const run = await sut.mutantRun(mutantRunOptions);
+
+    // Assert
+    expect(run.status).eq(MutantRunStatus.Timeout);
+    if (run.status === MutantRunStatus.Timeout) {
+      expect(run.reason).eq('Hit limit reached (11/10)');
+    }
   });
 });

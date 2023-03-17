@@ -26,10 +26,10 @@ import {
   TestStatus,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
+import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as pluginTokens from './plugin-tokens.js';
-import { FindTestyLookingFiles } from './tap-helper.js';
+import { findTestyLookingFiles } from './tap-helper.js';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -62,7 +62,7 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    this.testFiles = await FindTestyLookingFiles();
+    this.testFiles = await findTestyLookingFiles();
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -78,12 +78,17 @@ export class TapTestRunner implements TestRunner {
       const testFiles = testFilter ?? this.testFiles;
 
       const runs: TestResult[] = [];
+      const totalCoverage: MutantCoverage = {
+        static: {},
+        perTest: {},
+      };
 
       for (const testFile of testFiles) {
-        const run = await this.runFile(testFile, disableBail, activeMutant, hitLimit);
-        runs.push(run);
+        const { testResult, coverage } = await this.runFile(testFile, disableBail, activeMutant, hitLimit);
+        runs.push(testResult);
+        totalCoverage.perTest[testFile] = coverage?.static ?? {};
 
-        if (run.status !== TestStatus.Success && !disableBail) {
+        if (testResult.status !== TestStatus.Success && !disableBail) {
           break;
         }
       }
@@ -91,6 +96,7 @@ export class TapTestRunner implements TestRunner {
       return {
         status: DryRunStatus.Complete,
         tests: runs,
+        mutantCoverage: totalCoverage,
       };
     } catch (e) {
       if (e instanceof HitLimitError) {
@@ -104,9 +110,13 @@ export class TapTestRunner implements TestRunner {
     }
   }
 
-  private async runFile(testFile: string, disableBail: boolean, activeMutant?: string, hitLimit?: number): Promise<TestResult> {
-    // todo reject if exit code is not 0
-    return new Promise<TestResult>((resolve) => {
+  private async runFile(
+    testFile: string,
+    disableBail: boolean,
+    activeMutant?: string,
+    hitLimit?: number
+  ): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
+    return new Promise((resolve, reject) => {
       const env: NodeJS.ProcessEnv = {
         ...process.env,
         ['__stryker__hit-limit']: hitLimit?.toString(),
@@ -122,14 +132,15 @@ export class TapTestRunner implements TestRunner {
         const fileName = `stryker-output-${tapProcess.pid}.json`;
         const fileContent = await readFile(fileName, 'utf-8');
         await rm(fileName);
-        const file = JSON.parse(fileContent);
+        const file = JSON.parse(fileContent) as InstrumenterContext;
 
-        const hitLimitReached = determineHitLimitReached(+file.Count, hitLimit);
-        if (!disableBail && hitLimitReached) {
-          throw new HitLimitError(hitLimitReached.reason);
+        const hitLimitReached = determineHitLimitReached(file.hitCount, hitLimit);
+        if (hitLimitReached) {
+          reject(new HitLimitError(hitLimitReached.reason));
+          return;
         }
 
-        resolve(this.tapResultToTestResult(testFile, result, failedTests));
+        resolve({ testResult: this.tapResultToTestResult(testFile, result, failedTests), coverage: file.mutantCoverage });
       });
 
       parser.on('bailout', () => {
@@ -164,8 +175,18 @@ export class TapTestRunner implements TestRunner {
       return {
         ...generic,
         status: TestStatus.Failed,
-        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', '),
+        failureMessage: getFailureMessage(),
       };
+    }
+
+    function getFailureMessage(): string {
+      if (failedTests.length) {
+        return failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ');
+      }
+      if (typeof result.bailout == 'string') {
+        return result.bailout;
+      }
+      return 'Unknown reason to failure';
     }
   }
 }

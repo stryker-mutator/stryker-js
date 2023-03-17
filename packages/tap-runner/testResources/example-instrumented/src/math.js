@@ -53,3 +53,22 @@ export function add(a, b) {
     return stryMutAct_9fa48("1") ? a - b : (stryCov_9fa48("1"), a + b);
   }
 }
+export function slowAdd(a, b) {
+  if (stryMutAct_9fa48("2")) {
+    {}
+  } else {
+    stryCov_9fa48("2");
+    let result = a;
+    let i = 0;
+    while (stryMutAct_9fa48("5") ? i >= b : stryMutAct_9fa48("4") ? i <= b : stryMutAct_9fa48("3") ? false : (stryCov_9fa48("3", "4", "5"), i < b)) {
+      if (stryMutAct_9fa48("6")) {
+        {}
+      } else {
+        stryCov_9fa48("6");
+        stryMutAct_9fa48("7") ? result -= 1 : (stryCov_9fa48("7"), result += 1);
+        stryMutAct_9fa48("8") ? i-- : (stryCov_9fa48("8"), i++);
+      }
+    }
+    return result;
+  }
+}

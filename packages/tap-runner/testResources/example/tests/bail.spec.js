@@ -3,6 +3,7 @@ import { concat } from '../src/formatter.js';
 
 tap.test('Failing test', ({ equal, end }) => {
   equal(concat('3', 'hours'), '3 minutes', 'This test will fail')
+  equal(concat('3', 'hours'), '4 hours', 'This test will fail also')
   end();
 });
 

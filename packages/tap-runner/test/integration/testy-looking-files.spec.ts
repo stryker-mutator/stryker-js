@@ -2,7 +2,7 @@ import path from 'path';
 
 import { expect } from 'chai';
 
-import { FindTestyLookingFiles } from '../../src/tap-helper.js';
+import { findTestyLookingFiles } from '../../src/tap-helper.js';
 
 describe('Running in an testy-looking-files project', () => {
   beforeEach(async () => {
@@ -12,7 +12,7 @@ describe('Running in an testy-looking-files project', () => {
 
   it('should find all testy looking files', async () => {
     // Act
-    const files = await FindTestyLookingFiles();
+    const files = await findTestyLookingFiles();
 
     // Assert
     const expectedFiles = [
@@ -28,9 +28,10 @@ describe('Running in an testy-looking-files project', () => {
       'a.spec.js',
       'a.test.js',
       'a.tests.js',
+      'src/math.spec.js',
     ];
 
-    expect(files).lengthOf(expectedFiles.length);
-    expect(files).to.include.members(expectedFiles);
+    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+    expect(files.sort()).deep.equals(expectedFiles.sort());
   });
 });

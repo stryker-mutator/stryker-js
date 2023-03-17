@@ -46,10 +46,10 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 export function concat(text1, text2) {
-  if (stryMutAct_9fa48("2")) {
+  if (stryMutAct_9fa48("9")) {
     {}
   } else {
-    stryCov_9fa48("2");
-    return stryMutAct_9fa48("3") ? text1 - text2 : (stryCov_9fa48("3"), text1 + text2);
+    stryCov_9fa48("9");
+    return stryMutAct_9fa48("10") ? text1 - text2 : (stryCov_9fa48("10"), text1 + text2);
   }
 }
