@@ -39,7 +39,7 @@
     "@types/semver": "7.3.13"
   },
   "peerDependencies": {
-    "@cucumber/cucumber": "^8.0.0 || ^9.0.0",
+    "@cucumber/cucumber": ">=8.0.0",
     "@stryker-mutator/core": "^6.4.0"
   },
   "dependencies": {
