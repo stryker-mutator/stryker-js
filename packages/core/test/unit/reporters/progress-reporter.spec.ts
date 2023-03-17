@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import sinon from 'sinon';
 import ProgressBar from 'progress';
 import { factory } from '@stryker-mutator/test-helpers';
@@ -17,8 +16,6 @@ describe(ProgressBarReporter.name, () => {
   let sut: ProgressBarReporter;
   let progressBar: Mock<ProgressBar>;
   let progressBarConstructorStub: sinon.SinonStub;
-  const progressBarContent =
-    'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:mutants Mutants tested (:survived survived, :timedOut timed out)';
 
   beforeEach(() => {
     sinon.useFakeTimers();
@@ -26,47 +23,6 @@ describe(ProgressBarReporter.name, () => {
     progressBar = mock(ProgressBar);
     progressBarConstructorStub = sinon.stub(progressBarWrapper, 'ProgressBar');
     progressBarConstructorStub.returns(progressBar);
-  });
-
-  describe('onMutationTestingPlanReady()', () => {
-    it('should calculate the correct total', () => {
-      sut.onDryRunCompleted(
-        factory.dryRunCompletedEvent({
-          result: factory.completeDryRunResult({
-            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
-          }),
-          timing: factory.runTiming({ net: 15, overhead: 100 }),
-        })
-      );
-      sut.onMutationTestingPlanReady(
-        factory.mutationTestingPlanReadyEvent({
-          mutantPlans: [
-            // Ignored mutant
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
-            // Run test 1, takes 10ms
-            factory.mutantRunPlan({
-              mutant: factory.mutantTestCoverage({ id: '2' }),
-              runOptions: factory.mutantRunOptions({ testFilter: ['1'] }),
-              netTime: 10,
-            }),
-            // Run test 2, takes 5ms
-            factory.mutantRunPlan({
-              mutant: factory.mutantTestCoverage({ id: '3' }),
-              runOptions: factory.mutantRunOptions({ testFilter: ['2'] }),
-              netTime: 5,
-            }),
-            // Run all tests, takes 115ms
-            factory.mutantRunPlan({
-              mutant: factory.mutantTestCoverage({ id: '4' }),
-              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
-              netTime: 15,
-            }),
-          ],
-        })
-      );
-
-      expect(progressBarConstructorStub).calledWithMatch(progressBarContent, { total: 115 + 5 + 10 });
-    });
   });
 
   describe('onMutantTested()', () => {

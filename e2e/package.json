@@ -22,8 +22,8 @@
     "cross-env": "7.0.3",
     "enzyme-to-json": "3.6.2",
     "grunt": "1.6.1",
-    "jasmine": "4.5.0",
-    "jasmine-core": "4.5.0",
+    "jasmine": "4.6.0",
+    "jasmine-core": "4.6.0",
     "jest": "29.5.0",
     "jest-environment-jsdom": "29.5.0",
     "jest-environment-jsdom-sixteen": "1.0.3",
@@ -43,8 +43,8 @@
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.2",
     "ts-node": "10.9.1",
-    "typescript": "4.9.5",
-    "webpack": "5.76.1",
+    "typescript": "5.0.2",
+    "webpack": "5.76.2",
     "webpack-cli": "5.0.1"
   },
   "scripts": {

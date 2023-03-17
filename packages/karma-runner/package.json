@@ -39,7 +39,7 @@
     "@types/express": "4.17.17",
     "@types/node": "18.15.3",
     "@types/semver": "7.3.13",
-    "jasmine-core": "4.5.0",
+    "jasmine-core": "4.6.0",
     "karma": "6.4.1",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.1.1",
