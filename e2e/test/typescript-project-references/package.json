@@ -5,7 +5,7 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf dist .stryker-tmp reports",
     "prebuild": "npm run clean",
     "build": "tsc -b tsconfig.json",
     "pretest:unit": "npm run build",
@@ -16,7 +16,7 @@
   },
   "mocha": {
     "spec":  [
-      "test/**/*.js"
+      "dist/test/*.js"
     ]
   },
   "author": "",
