@@ -1,17 +1,13 @@
+import path from 'path';
+
 import { expect } from 'chai';
-import { TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 
 import { FindTestyLookingFiles } from '../../src/tap-helper.js';
 
 describe('Running in an testy-looking-files project', () => {
-  let sandbox: TempTestDirectorySandbox;
-
   beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox('testy-looking-files');
-    await sandbox.init();
-  });
-  afterEach(async () => {
-    await sandbox.dispose();
+    const testPath = path.resolve('testResources', 'testy-looking-files');
+    process.chdir(testPath);
   });
 
   it('should find all testy looking files', async () => {
