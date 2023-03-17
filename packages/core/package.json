@@ -65,7 +65,7 @@
     "commander": "~10.0.0",
     "diff-match-patch": "1.0.5",
     "emoji-regex": "~10.2.1",
-    "execa": "~7.0.0",
+    "execa": "~7.1.0",
     "file-url": "~4.0.0",
     "get-port": "~6.1.0",
     "glob": "~8.1.0",
