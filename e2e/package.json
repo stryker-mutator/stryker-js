@@ -68,6 +68,7 @@
     "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
     "@stryker-mutator/cucumber-runner": "../packages/cucumber-runner",
     "@stryker-mutator/util": "../packages/util",
+    "@stryker-mutator/tap-runner": "../packages/tap-runner",
     "@stryker-mutator/typescript-checker": "../packages/typescript-checker"
   }
 }
