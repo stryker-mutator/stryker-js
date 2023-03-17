@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
 import { MutantStatus } from 'mutation-testing-report-schema';
 
-import { DryRunCompletedEvent, MutationTestingPlanReadyEvent } from '@stryker-mutator/api/src/report/index.js';
+import { DryRunCompletedEvent, MutationTestingPlanReadyEvent } from '@stryker-mutator/api/report';
 
 import { ProgressKeeper } from '../../../src/reporters/progress-keeper.js';
 

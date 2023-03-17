@@ -1,5 +1,5 @@
 import { CheckResult } from '@stryker-mutator/api/check';
-import { Mutant } from '@stryker-mutator/api/src/core';
+import { Mutant } from '@stryker-mutator/api/core';
 
 import { Resource } from '../concurrent/index.js';
 
