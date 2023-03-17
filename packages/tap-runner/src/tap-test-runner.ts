@@ -6,8 +6,6 @@ import { fileURLToPath } from 'url';
 
 import { readFile, rm } from 'fs/promises';
 
-import glob from 'glob';
-
 import * as tap from 'tap-parser';
 
 import { Logger } from '@stryker-mutator/api/logging';
@@ -29,6 +27,7 @@ import {
 import { INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as pluginTokens from './plugin-tokens.js';
+import { FindTestyLookingFiles } from './tap-helper.js';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -61,10 +60,7 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    // regex used by node-tap
-    // ((\/|^)(tests?|__tests?__)\/.*|\.(tests?|spec)|^\/?tests?)\.([mc]js|[jt]sx?)$
-    // todo make async and fix the glob pattern
-    this.testFiles = glob.sync('**/+(tests|__tests__)/**/*.js');
+    this.testFiles = await FindTestyLookingFiles();
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -79,8 +75,16 @@ export class TapTestRunner implements TestRunner {
     try {
       const testFiles = testFilter ?? this.testFiles;
 
-      // todo: bail all processes if one fails
-      const runs: TestResult[] = await Promise.all(testFiles.map((testFile) => this.runFile(testFile, disableBail, activeMutant, hitLimit)));
+      const runs: TestResult[] = [];
+
+      for (const testFile of testFiles) {
+        const run = await this.runFile(testFile, disableBail, activeMutant, hitLimit);
+        runs.push(run);
+
+        if (run.status !== TestStatus.Success && !disableBail) {
+          break;
+        }
+      }
 
       return {
         status: DryRunStatus.Complete,
@@ -109,7 +113,7 @@ export class TapTestRunner implements TestRunner {
       };
       const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
 
-      const fails: tap.TapError[] = [];
+      const failedTests: tap.TapError[] = [];
       const config = { bail: !disableBail };
 
       const parser = new tap.Parser(config, async (result) => {
@@ -123,7 +127,7 @@ export class TapTestRunner implements TestRunner {
           throw new HitLimitError(hitLimitReached.reason);
         }
 
-        resolve(this.tapResultToTestResult(testFile, result, fails));
+        resolve(this.tapResultToTestResult(testFile, result, failedTests));
       });
 
       parser.on('bailout', () => {
@@ -132,14 +136,14 @@ export class TapTestRunner implements TestRunner {
       });
 
       parser.on('fail', (reason: tap.TapError) => {
-        fails.push(reason);
+        failedTests.push(reason);
       });
 
       tapProcess.stdout.pipe(parser);
     });
   }
 
-  private tapResultToTestResult(fileName: string, result: tap.FinalResults, fails: tap.TapError[]): TestResult {
+  private tapResultToTestResult(fileName: string, result: tap.FinalResults, failedTests: tap.TapError[]): TestResult {
     const generic: BaseTestResult = {
       id: fileName,
       name: fileName,
@@ -157,7 +161,7 @@ export class TapTestRunner implements TestRunner {
       return {
         ...generic,
         status: TestStatus.Failed,
-        failureMessage: fails.map((f) => `${f.fullname}: ${f.name}`).join(', '),
+        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', '),
       };
     }
   }
