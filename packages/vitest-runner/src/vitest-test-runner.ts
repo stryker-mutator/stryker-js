@@ -1,10 +1,6 @@
-import path from 'path';
-
-import { fileURLToPath } from 'url';
-
 import fs from 'fs/promises';
 
-import { INSTRUMENTER_CONSTANTS, Mutant, StrykerOptions } from '@stryker-mutator/api/core';
+import { INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -17,16 +13,15 @@ import {
   DryRunStatus,
   TestResult,
   toMutantRunResult,
+  determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
 
 import { createVitest, Vitest } from 'vitest/node';
 
 import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
-import { convertTestToTestResult } from './utils/convert-test-to-test-result.js';
-
-function resolveSetupFile(fileName: string) {
-  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', fileName);
-}
+import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
+import { resolveSetupFile } from './utils/resolve-setup-file.js';
+import { setDryRunValue, setHitLimit, setActiveMutant } from './vitest-file-communication.js';
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.logger, commonTokens.options, 'globalNamespace'] as const;
@@ -40,64 +35,61 @@ export class VitestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     this.ctx = await createVitest('test', {
-      setupFiles: [
-        resolveSetupFile('active-mutant.js'),
-        resolveSetupFile('dry-run.js'),
-        resolveSetupFile(`global-namespace-${this.globalNamespace}.js`),
-        resolveSetupFile('vitest-setup.js'),
-      ],
       threads: false,
       watch: false,
+      onConsoleLog: () => false,
     });
+    this.ctx.config.setupFiles = [
+      resolveSetupFile('active-mutant.js'),
+      resolveSetupFile('dry-run.js'),
+      resolveSetupFile(`global-namespace-${this.globalNamespace}.js`),
+      resolveSetupFile('vitest-setup.js'),
+      resolveSetupFile('hit-limit.js'),
+      ...this.ctx.config.setupFiles,
+    ];
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    await this.setDryRunValue(true);
-    const testResult = await this.run();
+    await setDryRunValue(true);
+    const testResult = await this.run(options.files);
+    const mutantCoverage = JSON.parse(await fs.readFile(resolveSetupFile('__stryker__.json'), 'utf-8')).mutantCoverage;
+    await fs.writeFile(resolveSetupFile('__stryker__.json'), '');
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
         tests: testResult.tests,
-        mutantCoverage: JSON.parse(await fs.readFile(resolveSetupFile('__stryker__.json'), 'utf-8')).mutantCoverage,
+        mutantCoverage,
       };
     }
     return testResult;
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    await this.setDryRunValue(false);
-    await this.setActiveMutant(options.activeMutant);
-    this.ctx.config.filters = options.testFilter;
-    const dryRunResult = await this.run();
+    await setDryRunValue(false);
+    await setActiveMutant(options.activeMutant, options.mutantActivation !== 'static', this.globalNamespace);
+    const dryRunResult = await this.run(options.testFilter, options.hitLimit);
     return toMutantRunResult(dryRunResult);
   }
 
-  private async setDryRunValue(dryRun: boolean) {
-    try {
-      const content = `globalThis.${this.globalNamespace}.strykerDryRun = ${dryRun}`;
-      const fileName = resolveSetupFile('dry-run.js');
-      await fs.writeFile(fileName, content);
-    } catch (err) {
-      console.error(err);
+  private async run(testIds: string[] = [], hitLimit?: number): Promise<DryRunResult> {
+    await setHitLimit(this.globalNamespace, hitLimit);
+    if (testIds.length > 0) {
+      await this.ctx.start(testIds.map(fromTestId).map(({ file }) => file));
+      // this.ctx.filenamePattern = testIds
+      //   .map(fromTestId)
+      //   .map(({ name }) => name)
+      //   .join('|');
+      //testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+      //TODO add test Filter
+      //Find related test vitest cli uitzoeken
+    } else {
+      await this.ctx.start();
     }
-  }
-
-  private async run(): Promise<DryRunResult> {
-    await this.ctx.start();
+    const hitCount = JSON.parse(await fs.readFile(resolveSetupFile('__stryker__.json'), 'utf-8')) as number;
+    const timeOut = determineHitLimitReached(hitCount, hitLimit);
     const tests = this.ctx.state.getFiles().flatMap((file) => collectTestsFromSuite(file));
     const testResults: TestResult[] = tests.map((test) => convertTestToTestResult(test));
-    return { tests: testResults, status: DryRunStatus.Complete };
-  }
-
-  private async setActiveMutant(mutant: Mutant) {
-    try {
-      const content = `(function (ns) {
-          ns.activeMutant = '${mutant.id}'
-          })(globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {}))`;
-      await fs.writeFile(resolveSetupFile('active-mutant.js'), content);
-    } catch (err) {
-      console.error(err);
-    }
+    return timeOut ? timeOut : { tests: testResults, status: DryRunStatus.Complete };
   }
 }
 

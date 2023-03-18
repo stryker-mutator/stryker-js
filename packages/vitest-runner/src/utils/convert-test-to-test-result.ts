@@ -24,10 +24,19 @@ function convertTaskStateToTestStatus(taskState: TaskState | undefined): TestSta
 
 export function convertTestToTestResult(test: Test): TestResult {
   return {
-    id: test.id,
+    id: toTestId(test),
     name: test.name,
     timeSpentMs: test.result?.duration ?? 0,
     status: convertTaskStateToTestStatus(test.result?.state),
     failureMessage: test.result?.errors?.[0]?.message ?? '',
   };
+}
+
+export function toTestId(test: Test): string {
+  return `${test.file?.name}#${test.name}`;
+}
+
+export function fromTestId(id: string): { file: string; name: string } {
+  const [file, ...name] = id.split('#');
+  return { file, name: name.join('#') };
 }

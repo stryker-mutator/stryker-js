@@ -23,6 +23,13 @@ describe('VitestRunner integration', () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
     });
+
+    it('should report mutant coverage', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expect(runResult.mutantCoverage).to.not.be.undefined;
+    });
   });
 
   describe('mutantRun', () => {
@@ -31,22 +38,37 @@ describe('VitestRunner integration', () => {
       await sandbox.init();
       sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
     });
-    it('should kill mutant 1', async () => {
+    it('should kill mutant 1 with mutantActivation static', async () => {
       await sut.init();
       const mutantRunOptions = factory.mutantRunOptions({
+        mutantActivation: 'static',
         activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['**/*.spec.ts'],
+        testFilter: ['math.spec.ts'],
       });
       mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
-      expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, ''))
-        .contains('Expected: 7')
-        .contains('Received: -3');
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
+    });
+    it('should kill mutant 1 with mutantActivation runtime', async () => {
+      await sut.init();
+      const mutantRunOptions = factory.mutantRunOptions({
+        mutantActivation: 'runtime',
+        activeMutant: factory.mutant({ id: '1' }),
+        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
+        testFilter: ['math.spec.ts'],
+      });
+      mutantRunOptions.activeMutant.id = '1';
+
+      const runResult = await sut.mutantRun(mutantRunOptions);
+
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
   });
 });
