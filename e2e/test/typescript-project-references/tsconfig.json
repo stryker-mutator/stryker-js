@@ -1,3 +1,8 @@
 {
-  "include": ["src/core", "src/utils", "test"]
+  "files": [],
+  "references": [
+    { "path": "src/core" },
+    { "path": "src/utils" },
+    { "path": "src/test" }
+  ]
 }

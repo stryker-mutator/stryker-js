@@ -37,7 +37,7 @@ describe('The Stryker meta schema', () => {
   });
   it('should invalidate an invalid schema', async () => {
     expect(validator(invalid)).false;
-    expect(validator.errors).deep.eq(expectedErrors);
+    expect(validator.errors.sort(orderByInstancePath)).deep.eq(expectedErrors);
   });
   const expectedErrors = [
     {
@@ -94,5 +94,15 @@ describe('The Stryker meta schema', () => {
       },
       message: 'must be object',
     },
-  ];
+  ].sort(orderByInstancePath);
+
+  /**
+   *
+   * @param {import('ajv').ErrorObject} a
+   * @param {import('ajv').ErrorObject} b
+   * @returns {number}
+   */
+  function orderByInstancePath(a, b) {
+    return a.instancePath.localeCompare(b.instancePath);
+  }
 });

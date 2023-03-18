@@ -1,12 +1,11 @@
 import path from 'path';
 import fs from 'fs';
-import { promisify } from 'util';
 
 import rimraf from 'rimraf';
 import { isErrnoException } from '@stryker-mutator/util';
 
 export const fileUtils = {
-  deleteDir: promisify(rimraf),
+  deleteDir: rimraf,
 
   async cleanFolder(folderName: string): Promise<string | undefined> {
     try {
