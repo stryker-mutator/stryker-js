@@ -7,8 +7,8 @@ This page describes the available configuration options in Stryker's core packag
 
 ## Command Line vs. Config File
 
-All configuration options can either be set via the command line or via a [config file](./config-file#usage).
-Keep in mind, that each option used on the command line will **completely replace** (**not** supplement !) whatever is defined in the [config file](./config-file) for this particular parameter.
+All configuration options can either be set via the command line or via a [config file](./config-file.md#usage).
+Keep in mind, that each option used on the command line will **completely replace** (**not** supplement !) whatever is defined in the [config file](./config-file.md) for this particular parameter.
 
 ## Usage of Globbing Expressions on options
 
