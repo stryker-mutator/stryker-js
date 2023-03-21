@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.4.1",
-    "@types/node": "18.15.3"
+    "@types/node": "18.15.5"
   },
   "dependencies": {
     "@stryker-mutator/api": "6.4.1",
