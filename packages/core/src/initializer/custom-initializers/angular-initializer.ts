@@ -45,8 +45,9 @@ export class AngularInitializer implements CustomInitializer {
   public async createConfig(): Promise<CustomInitializerConfiguration> {
     const [karmaConfigExists, ngVersionOutput] = await Promise.all([fileUtils.exists(karmaConfigFile), this.getCurrentAngularVersion()]);
     if (!karmaConfigExists && ngVersionOutput && semver.gte(ngVersionOutput, '15.1.0')) {
-      this.log.info('No `karma.conf.js` file found, running command: "npx ng generate config karma"');
-      const { stdout } = await this.execa('npx ng generate config karma');
+      const command = 'npx ng generate config karma';
+      this.log.info(`No "karma.conf.js" file found, running command: "${command}"`);
+      const { stdout } = await this.execa(command);
       this.log.info(`\n${stdout}`);
     }
     return { config: this.config, guideUrl, dependencies: this.dependencies };
@@ -57,7 +58,8 @@ export class AngularInitializer implements CustomInitializer {
       const packageLocation = this.resolve('@angular/cli/package.json');
       return JSON.parse(await fs.readFile(packageLocation, 'utf8')).version;
     } catch (err) {
-      this.log.warn(`Could not discover your local angular-cli version. Continuing without generating karma configuration. ${err}`);
+      const error = err as Error;
+      this.log.warn(`Could not discover your local angular-cli version. Continuing without generating karma configuration. ${error.stack}`);
       return undefined;
     }
   }
