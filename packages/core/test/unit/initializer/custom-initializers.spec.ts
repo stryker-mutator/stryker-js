@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import os from 'os';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { resolveFromCwd } from '@stryker-mutator/util';
@@ -6,6 +7,8 @@ import { expect } from 'chai';
 import { execaCommand, ExecaReturnValue } from 'execa';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
+
+import { PartialStrykerOptions } from '@stryker-mutator/api/src/core/partial-stryker-options.js';
 
 import { coreTokens } from '../../../src/di/index.js';
 
@@ -27,12 +30,24 @@ describe('CustomInitializers', () => {
     let resolveStub: sinon.SinonStubbedMember<typeof resolveFromCwd>;
     let existsStub: sinon.SinonStubbedMember<typeof fileUtils.exists>;
     let readFileStub: sinon.SinonStubbedMember<typeof fs.readFile>;
+    let cpusStub: sinon.SinonStubbedMember<typeof os.cpus>;
 
     beforeEach(() => {
       existsStub = sinon.stub(fileUtils, 'exists');
       readFileStub = sinon.stub(fs, 'readFile');
       execaStub = sinon.stub();
       resolveStub = sinon.stub();
+      cpusStub = sinon.stub(os, 'cpus');
+      const sevenCores = [
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+        { model: 'Intel(R) Core(TM) i7' },
+      ] as os.CpuInfo[];
+      cpusStub.returns(sevenCores);
       sut = testInjector.injector
         .provideValue(coreTokens.execa, execaStub as unknown as typeof execaCommand)
         .provideValue(coreTokens.resolveFromCwd, resolveStub)
@@ -43,9 +58,24 @@ describe('CustomInitializers', () => {
       expect(sut.name).to.eq('angular-cli');
     });
 
-    it('should use the angular-cli project type', async () => {
-      const config = await sut.createConfig();
-      expect((config.config.karma as any).projectType).to.eq('angular-cli');
+    it('should provide expected config', async () => {
+      const { config } = await sut.createConfig();
+      const expectedConfig: PartialStrykerOptions = {
+        mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
+        testRunner: 'karma',
+        karma: {
+          configFile: 'karma.conf.js',
+          projectType: 'angular-cli',
+          config: {
+            browsers: ['ChromeHeadless'],
+          },
+        },
+        reporters: ['progress', 'clear-text', 'html'],
+        concurrency: 3,
+        concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',
+        coverageAnalysis: 'perTest',
+      };
+      expect(config).deep.eq(expectedConfig);
     });
 
     it('should create a karma config when none is found and `@angular/cli` version supports it', async () => {
@@ -59,6 +89,7 @@ describe('CustomInitializers', () => {
       await sut.createConfig();
 
       // Assert
+      sinon.assert.calledOnceWithExactly(resolveStub, '@angular/cli/package.json');
       sinon.assert.calledOnceWithExactly(existsStub, 'karma.conf.js');
       sinon.assert.calledOnceWithExactly(execaStub, 'npx ng generate config karma');
       sinon.assert.calledOnceWithExactly(readFileStub, './node_modules/@angular/cli/package.json', 'utf8');
