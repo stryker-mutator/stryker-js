@@ -19,7 +19,7 @@ export const fileUtils = {
 
   async exists(fileName: string): Promise<boolean> {
     try {
-      await fs.promises.stat(fileName);
+      await fs.promises.access(fileName);
       return true;
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {
