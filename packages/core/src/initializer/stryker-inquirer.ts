@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
 
 import { ChoiceType } from './choice-type.js';
-import { Preset } from './presets/preset.js';
+import { CustomInitializer } from './custom-initializers/custom-initializer.js';
 import { PromptOption } from './prompt-option.js';
 
 export interface PromptResult {
@@ -12,7 +12,7 @@ export interface PromptResult {
 }
 
 export class StrykerInquirer {
-  public async promptPresets(options: Preset[]): Promise<Preset | undefined> {
+  public async promptPresets(options: CustomInitializer[]): Promise<CustomInitializer | undefined> {
     const choices: ChoiceType[] = options.map((_) => _.name);
     choices.push(new inquirer.Separator());
     choices.push('None/other');

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **cucumber:** officially support cucumber 9 ([#4041](https://github.com/stryker-mutator/stryker-js/issues/4041)) ([e4f10d1](https://github.com/stryker-mutator/stryker-js/commit/e4f10d10a750c92831b1d025dcccdc7fe24527b2))
+
 ## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
 
 ### Bug Fixes

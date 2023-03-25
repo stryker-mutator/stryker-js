@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import {start} from '../src/core/job';
+import {start} from '../core/job';
 
 describe(start.name, () => {
   it('should format a correct message', () => {

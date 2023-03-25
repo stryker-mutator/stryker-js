@@ -2,7 +2,7 @@ import { execaCommand } from 'execa';
 import { Injector, tokens, commonTokens, PluginContext } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { Reporter } from '@stryker-mutator/api/src/report';
+import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';

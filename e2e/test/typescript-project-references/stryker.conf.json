@@ -7,7 +7,6 @@
   "coverageAnalysis": "perTest",
   "reporters": ["json", "html", "progress", "clear-text"],
   "checkers": ["typescript"],
-  "tsconfigFile": "src/core/tsconfig.json",
   "fileLogLevel": "warn",
   "buildCommand": "npm run build",
   "plugins": [

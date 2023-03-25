@@ -1,12 +1,11 @@
 import path from 'path';
 import fs from 'fs';
-import { promisify } from 'util';
 
 import rimraf from 'rimraf';
 import { isErrnoException } from '@stryker-mutator/util';
 
 export const fileUtils = {
-  deleteDir: promisify(rimraf),
+  deleteDir: rimraf,
 
   async cleanFolder(folderName: string): Promise<string | undefined> {
     try {
@@ -20,7 +19,7 @@ export const fileUtils = {
 
   async exists(fileName: string): Promise<boolean> {
     try {
-      await fs.promises.stat(fileName);
+      await fs.promises.access(fileName);
       return true;
     } catch (err) {
       if (isErrnoException(err) && err.code === 'ENOENT') {

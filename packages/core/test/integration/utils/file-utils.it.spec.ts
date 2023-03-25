@@ -1,15 +1,11 @@
 import os from 'os';
 import path from 'path';
 import { promises as fsPromises } from 'fs';
-import { promisify } from 'util';
 
-import mkdirp from 'mkdirp';
 import { expect } from 'chai';
-import nodeGlob from 'glob';
+import { glob } from 'glob';
 
 import { fileUtils } from '../../../src/utils/file-utils.js';
-
-const glob = promisify(nodeGlob);
 
 describe('fileUtils', () => {
   describe('moveDirectoryRecursiveSync', () => {
@@ -95,7 +91,7 @@ describe('fileUtils', () => {
   async function writeAll(files: Record<string, string>): Promise<void> {
     await Promise.all(
       Object.entries(files).map(async ([fileName, fileContent]) => {
-        await mkdirp(path.dirname(fileName));
+        await fsPromises.mkdir(path.dirname(fileName), { recursive: true });
         await fsPromises.writeFile(fileName, fileContent);
       })
     );
