@@ -1,0 +1,20 @@
+{
+    // Temp workaround until native support for node's module system is added to typescript (.cts files, so we can move this file back in the src directory)
+  // see https://www.typescriptlang.org/docs/handbook/esm-node.html
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "resolveJsonModule": true,
+    "types": [
+      "node" // Exclude global mocha functions for the sources
+    ],
+    "module": "commonjs"
+  },
+  "include": [
+    "src/cjs",
+    "src/cjs/package.json"
+  ],
+}

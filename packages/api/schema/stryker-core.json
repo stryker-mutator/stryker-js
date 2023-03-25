@@ -1,0 +1,512 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "StrykerOptions",
+  "description": "JSON schema for the Stryker Mutator configuration file",
+  "type": "object",
+  "definitions": {
+    "commandRunnerOptions": {
+      "title": "CommandRunnerOptions",
+      "type": "object",
+      "properties": {
+        "command": {
+          "description": "The command to test each mutant. For example \"npm run mocha\". Defaults to \"npm test\".",
+          "type": "string",
+          "default": "npm test"
+        }
+      }
+    },
+    "logLevel": {
+      "title": "LogLevel",
+      "type": "string",
+      "enum": [
+        "off",
+        "fatal",
+        "error",
+        "warn",
+        "info",
+        "debug",
+        "trace"
+      ],
+      "tsEnumNames": [
+        "Off",
+        "Fatal",
+        "Error",
+        "Warning",
+        "Information",
+        "Debug",
+        "Trace"
+      ]
+    },
+    "coverageAnalysis": {
+      "title": "CoverageAnalysis",
+      "type": "string",
+      "enum": [
+        "off",
+        "all",
+        "perTest"
+      ]
+    },
+    "reportType": {
+      "title": "ReportType",
+      "type": "string",
+      "enum": [
+        "full",
+        "mutationScore"
+      ],
+      "tsEnumNames": [
+        "Full",
+        "MutationScore"
+      ]
+    },
+    "clearTextReporterOptions": {
+      "title": "ClearTextReporterOptions",
+      "type": "object",
+      "properties": {
+        "allowColor": {
+          "description": "Indicates whether or not to use color coding in output.",
+          "type": "boolean",
+          "default": true
+        },
+        "allowEmojis": {
+          "description": "Enable emojis in your clear text report (experimental).",
+          "type": "boolean",
+          "default": false
+        },
+        "logTests": {
+          "description": "Indicates whether or not to log which tests were executed for a given mutant.",
+          "type": "boolean",
+          "default": true
+        },
+        "maxTestsToLog": {
+          "description": "Indicates the maximum amount of test to log when `logTests` is enabled",
+          "type": "integer",
+          "minimum": 0,
+          "default": 3
+        }
+      }
+    },
+    "dashboardOptions": {
+      "title": "DashboardOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "project": {
+          "description": "Indicates which project to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Indicates which version to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "module": {
+          "description": "Indicates which module to use if the \"dashboard\" reporter is enabled.",
+          "type": "string"
+        },
+        "baseUrl": {
+          "description": "Indicates the base url of the stryker dashboard.",
+          "type": "string",
+          "default": "https://dashboard.stryker-mutator.io/api/reports"
+        },
+        "reportType": {
+          "description": "Indicates wether to send a full report (inc. source code and mutant results) or only the mutation score.",
+          "$ref": "#/definitions/reportType",
+          "default": "full"
+        }
+      }
+    },
+    "eventRecorderOptions": {
+      "title": "EventRecorderOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "baseDir": {
+          "description": "The base dir to write the events to",
+          "type": "string",
+          "default": "reports/mutation/events"
+        }
+      }
+    },
+    "htmlReporterOptions": {
+      "title": "HtmlReporterOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "fileName": {
+          "description": "The `fileName` of the html report.",
+          "type": "string",
+          "default": "reports/mutation/mutation.html"
+        }
+      }
+    },
+    "jsonReporterOptions": {
+      "title": "JsonReporterOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "fileName": {
+          "description": "The relative filename for the json report.",
+          "type": "string",
+          "default": "reports/mutation/mutation.json"
+        }
+      }
+    },
+    "mutationScoreThresholds": {
+      "title": "MutationScoreThresholds",
+      "additionalProperties": false,
+      "type": "object",
+      "properties": {
+        "high": {
+          "$ref": "#/definitions/percentage",
+          "default": 80
+        },
+        "low": {
+          "$ref": "#/definitions/percentage",
+          "default": 60
+        },
+        "break": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/percentage"
+            }
+          ],
+          "default": null
+        }
+      }
+    },
+    "percentage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "mutatorDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plugins": {
+          "description": "Override the default babel plugins Stryker uses to parse your JavaScript files. The default list of plugins is extensive and normally doesn't need overriding. Stryker also loads your babel plugins by default (if you have them). If Stryker's default babel plugins conflicts with your plugins, try to override this list with an empty array.",
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "array"
+                ]
+              }
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "excludedMutations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "warningOptions": {
+      "title": "WarningOptions",
+      "type": "object",
+      "default": {},
+      "properties": {
+        "unknownOptions": {
+          "description": "decide whether or not to log warnings when additional stryker options are configured",
+          "type": "boolean",
+          "default": true
+        },
+        "preprocessorErrors": {
+          "description": "decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.",
+          "type": "boolean",
+          "default": true
+        },
+        "unserializableOptions": {
+          "description": "decide whether or not to log warnings when a configuration options are unserializable. For example, using a `/regex/` or `function` in your configuration options.",
+          "type": "boolean",
+          "default": true
+        },
+        "slow": {
+          "description": "decide whether or not to log warnings when Stryker detects a slow part of mutation that can be sped up by changing some configuration. For example using `--ignoreStatic`.",
+          "type": "boolean",
+          "default": true
+        }
+      }
+    }
+  },
+  "properties": {
+    "allowConsoleColors": {
+      "description": "The 'allowConsoleColors' value indicates whether Stryker should use colors in console.",
+      "type": "boolean",
+      "default": true
+    },
+    "buildCommand": {
+      "type": "string",
+      "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+      "examples": [
+        "tsc -b",
+        "babel src --out-dir lib",
+        "npm run build"
+      ]
+    },
+    "checkers": {
+      "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "checkerNodeArgs": {
+      "description": "Configure arguments to be passed as exec arguments to the checker child process(es). For example, running Stryker with `--concurrency 1 --checkerNodeArgs --inspect-brk` will allow you to debug the checker child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "concurrency": {
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
+      "type": "number"
+    },
+    "commandRunner": {
+      "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",
+      "$ref": "#/definitions/commandRunnerOptions",
+      "default": {}
+    },
+    "coverageAnalysis": {
+      "$ref": "#/definitions/coverageAnalysis",
+      "description": "Indicates which coverage analysis strategy to use. During mutation testing, Stryker will try to only run the tests that cover a particular mutant.\n\n'perTest': Analyse coverage per test.\n'all': Analyse the coverage for the entire test suite.\n'off' (default): Don't use coverage analysis",
+      "default": "perTest"
+    },
+    "clearTextReporter": {
+      "description": "The options for the clear text reporter.",
+      "$ref": "#/definitions/clearTextReporterOptions",
+      "default": {}
+    },
+    "dashboard": {
+      "description": "The options for the dashboard reporter.",
+      "$ref": "#/definitions/dashboardOptions",
+      "default": {}
+    },
+    "dryRunOnly": {
+      "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",
+      "type":"boolean",
+      "default": false
+    },
+    "eventReporter": {
+      "description": "The options for the event recorder reporter.",
+      "$ref": "#/definitions/eventRecorderOptions",
+      "default": {}
+    },
+    "ignorePatterns": {
+      "description": "A comma separated list of patterns used for specifying which files need to be ignored. This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. Note: This option will have NO effect when using the `--inPlace` option. The directories `node_modules`, `.git` and some others are always ignored. Example: `--ignorePatterns dist`. These patterns are ALWAYS ignored: [`node_modules`, `.git`, `/reports`, `*.tsbuildinfo`, `/stryker.log`, `.stryker-tmp`]. Because Stryker always ignores these, you should rarely have to adjust the `ignorePatterns` setting at all. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files. Specify the patterns to all files or directories that are not used to run your tests and thus should NOT be copied to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options). If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`. However to SELECT specific files TO BE mutated, you better use `--mutate`.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "ignoreStatic": {
+      "description": "Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file. This means that Stryker has to reload the entire environment in order to test the mutant AND has to run all tests. Therefore, it might make sense to ignore static mutants.",
+      "type": "boolean",
+      "default": false
+    },
+    "incremental": {
+      "description": "Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run",
+      "type": "boolean",
+      "default": false
+    },
+    "incrementalFile": {
+      "description": "Specify the file to use for incremental mode.",
+      "type": "string",
+      "default": "reports/stryker-incremental.json"
+    },
+    "force": {
+      "description": "Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.",
+      "type": "boolean",
+      "default": false
+    },
+    "fileLogLevel": {
+      "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
+      "$ref": "#/definitions/logLevel", 
+      "default": "off"
+    },
+    "inPlace": {
+      "type": "boolean",
+      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also with `true` the `ignorePatterns` has no effect any more.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
+      "default": false
+    },
+    "logLevel": {
+      "description": "Set the log level that Stryker uses to write to the console.",
+      "$ref": "#/definitions/logLevel",
+      "default": "info"
+    },
+    "maxConcurrentTestRunners": {
+      "description": "[DEPRECATED please use \"concurrency\" instead]. Specifies the maximum number of concurrent test runners to spawn. Mutation testing is time consuming. By default, Stryker tries to make the most of your CPU's, by spawning as many test runners as you have CPU cores (`Number.MAX_SAFE_INTEGER`).",
+      "type": "number",
+      "default": 9007199254740991
+    },
+    "maxTestRunnerReuse": {
+      "description": "Restart each test runner worker process after `n` runs. Not recommended unless you are experiencing memory leaks that you are unable to resolve. Configuring `0` here means infinite reuse.",
+      "type": "number",
+      "default": 0
+    },
+    "mutate": {
+      "description": "With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files.\n(Whereas with `ignorePatterns` you prevent non-relevant files from being copied to the sandbox directory in the first place)\nThe default will try to guess your production code files based on sane defaults. It reads like this:\n- Include all js-like files inside the `src` or `lib` dir\n- Except files inside `__tests__` directories and file names ending with `test` or `spec`.\nIf the defaults are not sufficient for you, for example in a angular project you might want to\n **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.\nIt is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Example: src/index.js:1:3-1:5",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+        "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)"
+      ]
+    },
+    "mutator": {
+      "description": "Configure how Stryker mutates your code.",
+      "$ref": "#/definitions/mutatorDescriptor",
+      "default": {}
+    },
+    "packageManager": {
+      "enum": [
+        "npm",
+        "yarn",
+        "pnpm"
+      ],
+      "description": "The package manager Stryker can use to install missing dependencies."
+    },
+    "plugins": {
+      "description": "With 'plugins', you can add additional Node modules for Stryker to load (or require). By default, all node_modules starting with @stryker-mutator/* will be loaded, so you would normally not need to specify this option. These modules should be installed right next to stryker. For a current list of plugins, you can consult 'npm' or 'stryker-mutator.io.'",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "@stryker-mutator/*"
+      ]
+    },
+    "appendPlugins": {
+      "description": "A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "reporters": {
+      "description": "With reporters, you can set the reporters for stryker to use.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "clear-text",
+        "progress",
+        "html"
+      ]
+    },
+    "htmlReporter": {
+      "description": "The options for the html reporter",
+      "$ref": "#/definitions/htmlReporterOptions",
+      "default": {}
+    },
+    "jsonReporter": {
+      "description": "The options for the json reporter",
+      "$ref": "#/definitions/jsonReporterOptions",
+      "default": {}
+    },
+    "disableTypeChecks": {
+      "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
+      "oneOf": [
+        {
+          "enum": [
+            false,
+            true
+          ]
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"
+    },
+    "symlinkNodeModules": {
+      "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
+      "type": "boolean",
+      "default": true
+    },
+    "tempDirName": {
+      "description": "Choose a different temp dir that Stryker uses for mutation testing. This directory will contain copies of your source code during a mutation test run. It will be created if it not exists and is *entirely deleted* after a successful run, so change this with caution.",
+      "type": "string",
+      "default": ".stryker-tmp"
+    },
+    "cleanTempDir": {
+      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes)",
+      "type": "boolean",
+      "default": true
+    },
+    "testRunner": {
+      "description": "With 'testRunner' you specify the test runner that Stryker uses to run your tests. The default value is command. The command runner runs a configurable bash/cmd command and bases the result on the exit code of that program (0 for success, otherwise failed). You can configure this command via the config file using the 'commandRunner: { command: 'npm run mocha' }'. It uses 'npm test' as the command by default.",
+      "type": "string",
+      "default": "command"
+    },
+    "testRunnerNodeArgs": {
+      "description": "Configure arguments to be passed as exec arguments to the test runner child process. For example, running Stryker with `--timeoutMS 9999999 --concurrency 1 --testRunnerNodeArgs --inspect-brk` will allow you to debug the test runner child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options)",
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
+    "thresholds": {
+      "description": "Specify the thresholds for mutation score.",
+      "$ref": "#/definitions/mutationScoreThresholds",
+      "default": {}
+    },
+    "timeoutFactor": {
+      "description": "Configure the allowed timeout deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops (for that, use `timeoutMS`)",
+      "type": "number",
+      "default": 1.5
+    },
+    "timeoutMS": {
+      "description": "Configure an absolute timeout deviation. Tweak this if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.",
+      "type": "number",
+      "default": 5000
+    },
+    "dryRunTimeoutMinutes": {
+      "description": "Configure an absolute timeout for the initial test run. (It can take a while, therefore we use minutes as time unit.)",
+      "type": "number",
+      "minimum": 0,
+      "default": 5
+    },
+    "tsconfigFile": {
+      "description": "Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin",
+      "type": "string",
+      "default": "tsconfig.json"
+    },
+    "warnings": {
+      "default": true,
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "$ref": "#/definitions/warningOptions"
+        }
+      ],
+      "description": "Enable or disable certain warnings"
+    },
+    "disableBail": {
+      "description": "Disables the default of bailing after first failing test. When true runs all tests covering a mutant. Useful when the subject under test is not completely isolated by mocks and you want to know which tests are killing the mutants. This will impact performance.",
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

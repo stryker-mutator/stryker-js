@@ -1,0 +1,71 @@
+{
+  "name": "@stryker-mutator/karma-runner",
+  "version": "6.4.2",
+  "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 180000 --exit \"dist/test/integration/**/*.js\"",
+    "test:integration_comment": "echo 'Chrome.exe can be extremely slow to start on windows, which is why we choose this very high timeout'",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/karma-runner"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "keywords": [
+    "stryker",
+    "karma",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Nico Jansen <nicoj@infosupport.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.4.2",
+    "@types/express": "4.17.17",
+    "@types/node": "18.15.9",
+    "@types/semver": "7.3.13",
+    "jasmine-core": "4.6.0",
+    "karma": "6.4.1",
+    "karma-chai": "0.1.0",
+    "karma-chrome-launcher": "3.1.1",
+    "karma-jasmine": "5.1.0",
+    "karma-mocha": "2.0.1"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "^6.4.0"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "6.4.2",
+    "@stryker-mutator/util": "6.4.2",
+    "decamelize": "~6.0.0",
+    "semver": "~7.3.0",
+    "tslib": "~2.5.0"
+  },
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>"
+  ],
+  "initStrykerConfig": {
+    "karma": {
+      "projectType": "custom",
+      "configFile": "karma.conf.js",
+      "config": {}
+    }
+  }
+}

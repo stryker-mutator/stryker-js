@@ -1,0 +1,56 @@
+{
+  "name": "@stryker-mutator/jasmine-runner",
+  "version": "6.4.2",
+  "description": "A plugin to use the Jasmine (NodeJS) test runner in Stryker, the mutation testing framework for JavaScript and friends",
+  "main": "dist/src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "mocha \"dist/test/**/*.js\"",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "nyc": {
+    "exclude": [
+      "test",
+      "testResources"
+    ]
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/jasmine-runner"
+  },
+  "keywords": [
+    "stryker",
+    "jasmine",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Nico Jansen",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/jasmine-runner",
+  "peerDependencies": {
+    "@stryker-mutator/core": "^6.4.0",
+    "jasmine": ">=3.10 <5"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.4.2",
+    "@types/node": "18.15.9"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "6.4.2",
+    "@stryker-mutator/util": "6.4.2"
+  },
+  "initStrykerConfig": {
+    "jasmineConfigFile": "spec/support/jasmine.json"
+  },
+  "contributors": []
+}

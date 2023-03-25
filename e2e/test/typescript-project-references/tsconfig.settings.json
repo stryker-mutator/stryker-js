@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2019",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "lib": ["es2019"],
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // These settings should be overridden by the typescript checker
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+
+    "types": ["node"]
+  }
+}

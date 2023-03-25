@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "types": [
+      "mocha",
+      "webpack-env"
+    ],
+    "outDir": "../dist-test",
+    "target": "es2015"
+  },
+  "references": [
+    {
+      "path": "../src"
+    }
+  ]
+}

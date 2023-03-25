@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutator": {
+    "plugins": []
+  },
+  "tempDirName": "stryker-tmp",
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "concurrency": 2,
+  "coverageAnalysis": "off",
+  "reporters": [
+    "json",
+    "event-recorder",
+    "progress",
+    "clear-text",
+    "html"
+  ]
+}

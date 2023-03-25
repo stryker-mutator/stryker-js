@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "jasmine",
+  "concurrency": 2,
+  "mutate": ["lib/**/*.js"],
+  "coverageAnalysis": "perTest",
+  "reporters": [
+    "clear-text",
+    "html",
+    "json"
+  ],
+  "plugins": [
+    "@stryker-mutator/jasmine-runner"
+  ],
+  "fileLogLevel": "debug",
+  "jasmineConfigFile": "spec/support/jasmine.json"
+}

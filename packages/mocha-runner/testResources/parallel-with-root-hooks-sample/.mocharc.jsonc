@@ -1,0 +1,6 @@
+{
+  "ui": "bdd",
+  "parallel": true,
+  "require": "./test/setup.js",
+  "spec": "test/unit/*.js"
+}

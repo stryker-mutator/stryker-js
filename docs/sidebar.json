@@ -1,0 +1,27 @@
+[
+  "stryker-js/introduction",
+  "stryker-js/getting-started",
+  "stryker-js/usage",
+  "stryker-js/config-file",
+  "stryker-js/configuration",
+  "stryker-js/disable-mutants",
+  "stryker-js/incremental",
+  "stryker-js/parallel-workers",
+  "stryker-js/plugins",
+  "stryker-js/cucumber-runner",
+  "stryker-js/jasmine-runner",
+  "stryker-js/jest-runner",
+  "stryker-js/karma-runner",
+  "stryker-js/mocha-runner",
+  "stryker-js/typescript-checker",
+  "stryker-js/troubleshooting",
+  {
+    "Guides": [
+      "stryker-js/guides/angular",
+      "stryker-js/guides/react",
+      "stryker-js/guides/vuejs",
+      "stryker-js/guides/nodejs",
+      "stryker-js/guides/create-a-plugin"
+    ]
+  }
+]

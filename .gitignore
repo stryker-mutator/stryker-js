@@ -1,0 +1,25 @@
+node_modules
+lerna-debug.log
+npm-debug.log
+stryker.log
+lint.log
+coverage
+reports
+.tscache
+stryker-tmp
+.stryker-tmp
+.stryker-tmp-2
+.nyc_output
+.DS_Store
+*.map
+src-generated
+dist
+dist-test
+packages/*/testResources/tmp
+packages/report.*.json # Ignore heap dumps
+.idea
+*.iml
+*.tmp.txt
+tsconfig.*.tsbuildinfo
+packages/core/schema
+__filterSpecs.js

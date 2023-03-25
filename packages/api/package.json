@@ -1,0 +1,81 @@
+{
+  "name": "@stryker-mutator/api",
+  "version": "6.4.2",
+  "description": "The api for the extendable JavaScript mutation testing framework Stryker",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/api"
+  },
+  "exports": {
+    "./check": "./dist/src/check/index.js",
+    "./core": "./dist/src/core/index.js",
+    "./logging": "./dist/src/logging/index.js",
+    "./plugin": "./dist/src/plugin/index.js",
+    "./report": "./dist/src/report/index.js",
+    "./test-runner": "./dist/src/test-runner/index.js"
+  },
+  "typesVersions": {
+    "*": {
+      "check": [
+        "./dist/src/check/index.d.ts"
+      ],
+      "core": [
+        "./dist/src/core/index.d.ts"
+      ],
+      "logging": [
+        "./dist/src/logging/index.d.ts"
+      ],
+      "plugin": [
+        "./dist/src/plugin/index.d.ts"
+      ],
+      "report": [
+        "./dist/src/report/index.d.ts"
+      ],
+      "test-runner": [
+        "./dist/src/test-runner/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "stryker": "node ../core/bin/stryker.js run",
+    "test": "c8 npm run test:unit",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\""
+  },
+  "keywords": [
+    "mutation testing",
+    "mutation",
+    "testing",
+    "test",
+    "js",
+    "stryker"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    "nicojs <jansennico@gmail.com>",
+    "Alex van Assem <avassem@gmail.com>",
+    "Jeremy Nagel <jeremy.nagel@learnosity.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/",
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "dependencies": {
+    "mutation-testing-metrics": "1.7.14",
+    "mutation-testing-report-schema": "1.7.14",
+    "tslib": "~2.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.9",
+    "typed-inject": "3.0.1"
+  }
+}

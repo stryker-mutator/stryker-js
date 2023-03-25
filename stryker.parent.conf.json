@@ -1,0 +1,22 @@
+{
+  "$schema": "./packages/core/schema/stryker-schema.json",
+  "coverageAnalysis": "perTest",
+  "testRunner": "mocha",
+  "reporters": [
+    "json",
+    "progress",
+    "html",
+    "dashboard"
+  ],  
+  "plugins": [
+    "../mocha-runner/dist/src/index.js",
+    "../typescript-checker/dist/src/index.js"
+  ],
+  "ignoreStatic": true,
+  "checkers": ["typescript"],
+  "dashboard": {},
+  "buildCommand": "tsc -b",
+  "mochaOptions": {
+    "spec": ["dist/test/unit/**/*.js"]
+  }
+}

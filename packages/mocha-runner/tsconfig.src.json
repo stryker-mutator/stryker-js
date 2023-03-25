@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "module":"ES2020",
+  },
+  "include": [
+    "schema/*.json",
+    "src",
+    "src-generated",
+    "typings"
+  ],
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ]
+}

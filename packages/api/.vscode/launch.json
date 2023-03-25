@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "💬 Unit tests",
+      "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "${workspaceRoot}/dist/test/helpers/**/*.js",
+        "${workspaceRoot}/dist/test/unit/**/*.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "outFiles": [
+        "${workspaceRoot}/dist/**/*.js"
+      ],
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}

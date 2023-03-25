@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/api" },
+    { "path": "packages/util" },
+    { "path": "packages/core" },
+    { "path": "packages/instrumenter" },
+    { "path": "packages/jasmine-runner" },
+    { "path": "packages/jest-runner" },
+    { "path": "packages/karma-runner" },
+    { "path": "packages/mocha-runner" },
+    { "path": "packages/cucumber-runner" },
+    { "path": "packages/typescript-checker" },
+    { "path": "packages/test-helpers" }
+  ]
+}

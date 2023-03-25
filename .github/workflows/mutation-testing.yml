@@ -1,0 +1,47 @@
+name: mutation testing
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build
+      - name: Run Stryker
+        run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- --concurrency 3
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+  dependencies_and_plugins:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build
+      - name: Run Stryker
+        run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,jest-runner,karma-runner,mocha-runner,jasmine-runner,cucumber-runner}" --concurrency 1 --stream stryker -- --concurrency 3
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+
+  typescript-checker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install & Build
+        run: |
+          npm install
+          npm run build
+      - name: Run Stryker
+        run: npx lerna run --scope "@stryker-mutator/typescript-checker" --concurrency 1 --stream stryker -- --concurrency 2
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}

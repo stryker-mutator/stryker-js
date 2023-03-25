@@ -1,0 +1,14 @@
+{
+  "name": "ignore-static",
+  "description": "e2e test for testing --ignoreStatic",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test:cucumber": "cucumber-js",
+    "test:jasmine": "jasmine --config=jasmine.json",
+    "test:mocha": "mocha",
+    "test:jest": "jest",
+    "test:karma": "karma start",
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}

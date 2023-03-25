@@ -1,0 +1,26 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": [
+    "src/components/mutation-test-totals.ts"
+  ],
+  "packageManager": "npm",
+  "testRunner": "karma",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "reporters": [
+    "json",
+    "html",
+    "clear-text",
+    "progress",
+    "event-recorder"
+  ],
+  "karma": {
+    "configFile": "karma.conf.js",
+    "projectType": "custom"
+  },
+  "tsconfigFile": "tsconfig.json",
+  "logLevel": "trace",
+  "plugins": [
+    "@stryker-mutator/karma-runner"
+  ]
+}

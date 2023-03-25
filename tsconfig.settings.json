@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "es2020",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": true,
+    "composite": true,
+    "declarationMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "noImplicitReturns": true,
+    "types": [
+      "node"
+    ],
+    "lib": [
+      "es2019"
+    ]
+  }
+}

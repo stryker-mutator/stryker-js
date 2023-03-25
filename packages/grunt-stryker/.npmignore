@@ -1,0 +1,22 @@
+# General code
+*.ts
+!*.d.ts
+*.js.map
+test
+testResources
+/coverage
+# General related files
+.editorconfig
+.gitattributes
+.gitignore
+.npmignore
+.nycrc
+.nyc_output
+.stryker-temp
+.tmp
+.tscache
+.vscode
+stryker.conf.js
+tsconfig.json
+/coverage
+reports

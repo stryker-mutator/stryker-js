@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "noImplicitThis": true,
+    "types": ["karma", "node"]
+  },
+  "include": ["src", "src-generated", "typings", "schema/*.json"],
+  // "exclude": ["src/karma-plugins"],
+  "references": [
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "disableTypeChecks": true,
+  "testRunner": "mocha",
+  "concurrency": 1,
+  "coverageAnalysis": "perTest",
+  "reporters": ["json", "html", "progress", "clear-text"],
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.json",
+  "fileLogLevel": "warn",
+  "buildCommand": "npm run build",
+  "plugins": [
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/typescript-checker"
+  ]
+}

@@ -1,0 +1,43 @@
+$nav-height: 50px;
+$hover-color: #d3d3d3;
+
+nav {
+  background-color: #2d398e;
+  height: $nav-height;
+  padding: 0 50px;
+  color: white;
+
+  &.kanti-sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 1200px;
+    z-index: 999;
+  }
+
+  .menu {
+    float: left;
+    line-height: $nav-height;
+  }
+
+  .nav-cart {
+    float: right;
+    line-height: $nav-height;
+
+    &:hover {
+      color: $hover-color;
+      cursor: pointer;
+    }
+  }
+
+  .menu-item {
+    padding-right: 10px;
+    color: white;
+
+    &:hover,
+    &:active {
+      color: $hover-color;
+      text-decoration: none;
+    }
+  }
+}

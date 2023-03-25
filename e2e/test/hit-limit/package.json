@@ -1,0 +1,18 @@
+{
+  "name": "hit-limit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit limit)",
+  "main": "index.js",
+  "scripts": {
+    "test:jest": "jest",
+    "test:cucumber": "cucumber-js",
+    "test:mocha": "mocha",
+    "test:jasmine": "jasmine",
+    "test:karma": "karma start",
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

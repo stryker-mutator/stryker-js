@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Verify stryker has ran correctly should report correct score 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 2,
+  "mutationScore": 40,
+  "mutationScoreBasedOnCoveredCode": 40,
+  "noCoverage": 0,
+  "runtimeErrors": 0,
+  "survived": 3,
+  "timeout": 0,
+  "totalCovered": 5,
+  "totalDetected": 2,
+  "totalInvalid": 0,
+  "totalMutants": 5,
+  "totalUndetected": 3,
+  "totalValid": 5,
+}
+`;

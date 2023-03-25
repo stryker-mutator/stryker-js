@@ -1,0 +1,31 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "resolveJsonModule": true,
+    "types": [
+      "node" // Exclude global mocha functions for the sources
+    ]
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": ["src/cjs"],
+  "references": [
+    {
+      "path": "./tsconfig.src.cjs.json"
+    },
+    {
+      "path": "../api/tsconfig.src.json"
+    },
+    {
+      "path": "../instrumenter/tsconfig.src.json"
+    },
+    {
+      "path": "../util/tsconfig.src.json"
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "additionalProperties": false,
+  "title": "MochaRunnerOptions",
+  "type": "object",
+  "properties": {
+    "mochaOptions": {
+      "title": "MochaOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "description": "Configuration for @stryker-mutator/mocha-runner",
+      "default": {},
+      "properties": {
+        "require": {
+          "description": "Set mocha's [`require` option](https://mochajs.org/#-r---require-module-name)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ignore": {
+          "description": "Set mocha's [`ignore option](https://github.com/mochajs/mocha/blob/master/example/config/.mocharc.yml#L26)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "file": {
+          "description": "Set mocha's [`file options`](https://mochajs.org/#-file-filedirectoryglob)",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "opts": {
+          "description": "Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file. Disable loading of an additional mocha.opts file with `false`. The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the @stryker-mutator/mocha-runner.",
+          "type": "string"
+        },
+        "config": {
+          "description": "Explicit path to the [mocha config file](https://mochajs.org/#-config-path)",
+          "type": "string"
+        },
+        "package": {
+          "description": "Specify an explicit path to a package.json file (ostensibly containing configuration in a mocha property). See https://mochajs.org/#-package-path.",
+          "type": "string"
+        },
+        "no-package": {
+          "type": "boolean",
+          "description": "Explicit turn off [mocha package file](https://mochajs.org/#-package-path)"
+        },
+        "no-opts": {
+          "type": "boolean",
+          "description": "Explicit turn off [mocha opts file](https://mochajs.org/#-opts-path)"
+        },
+        "no-config": {
+          "type": "boolean",
+          "description": "Explicit turn off [mocha config file](https://mochajs.org/#-config-path)"
+        },
+        "async-only": {
+          "description": "Set mocha's [`async-only` option](https://mochajs.org/#-async-only-a)",
+          "type": "boolean"
+        },
+        "ui": {
+          "description": "Set the name of your [mocha ui](https://mochajs.org/#-u---ui-name)",
+          "type": "string",
+          "enum": ["bdd", "tdd", "qunit", "exports"]
+        },
+        "files": {
+          "description": "DEPRECATED, use `spec` instead.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "spec": {
+          "description": "Choose which files to include. This is comparable to [mocha's test directory](https://mochajs.org/#the-test-directory) although there is no support for `--recursive`.\n\nIf you want to load all files recursively: use a globbing expression (`'test/**/*.js'`). If you want to decide on the order of files, use multiple globbing expressions. For example: use `['test/helpers/**/*.js', 'test/unit/**/*.js']` if you want to make sure your helpers are loaded before your unit tests.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grep": {
+          "description": "Specify a mocha [`grep`](https://mochajs.org/#grep) command, to single out individual tests.",
+          "type": "string"
+        },
+        "extension": {
+          "description": "Specify mocha [--extension](https://mochajs.org/#-extension-ext) property.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "babel-transpiling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A module to test stryker-babel with stryker-javascript-mutator",
+  "main": "index.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "tmp": "echo %cd%",
+    "build": "babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "test:unit": "mocha",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {}
+}

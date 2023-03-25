@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "concurrency": 1,
+  "concurrency_comment": "Concurrency 1 so we can test the reuse of the test runner for subsequent runs",
+  "reporters": ["json"],
+  "ignoreStatic": true,
+  "jasmineConfigFile": "jasmine.json",
+  "karma": {
+    "configFile": "karma.conf.js"
+  },
+  "jest": {
+    "configFile": "jest.config.json"
+  }
+}

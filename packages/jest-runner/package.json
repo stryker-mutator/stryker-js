@@ -1,0 +1,85 @@
+{
+  "name": "@stryker-mutator/jest-runner",
+  "version": "6.4.2",
+  "description": "A plugin to use the jest test runner and framework in Stryker, the JavaScript mutation testing framework",
+  "main": "dist/src/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/jest-plugins/cjs/index.js"
+    },
+    "./jest-env/jsdom": {
+      "import": "./jest-env/jsdom.js",
+      "require": "./jest-env/jsdom.js"
+    },
+    "./jest-env/node": {
+      "import": "./jest-env/node.js",
+      "require": "./jest-env/node.js"
+    },
+    "./jest-env/jsdom-sixteen": {
+      "import": "./jest-env/jsdom-sixteen.js",
+      "require": "./jest-env/jsdom-sixteen.js"
+    }
+  },
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 30000 \"dist/test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/jest-runner"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  },
+  "keywords": [
+    "stryker",
+    "jest",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "author": "Sander koenders <sanderkoenders@gmail.com>",
+  "contributors": [
+    "Maarten Mulders <mthmulders@users.noreply.github.com>",
+    "mshogren <m_shogren@yahoo.com>",
+    "Nico Jansen <jansennico@gmail.com>",
+    "Simon de Lang <simondelang@gmail.com>",
+    "Philipp Weissenbacher <philipp.weissenbacher@gmail.com>",
+    "Sander koenders <sanderkoenders@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "6.4.2",
+    "@types/node": "18.15.9",
+    "@types/semver": "7.3.13",
+    "jest": "29.5.0",
+    "jest-circus": "29.5.0",
+    "jest-environment-jsdom": "29.5.0",
+    "jest-environment-jsdom-sixteen": "2.0.0",
+    "jest-jasmine2": "29.5.0",
+    "ts-node": "10.9.1"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "^6.4.0"
+  },
+  "dependencies": {
+    "@stryker-mutator/api": "6.4.2",
+    "@stryker-mutator/util": "6.4.2",
+    "semver": "~7.3.7",
+    "tslib": "~2.5.0"
+  },
+  "initStrykerConfig": {
+    "coverageAnalysis": "perTest"
+  }
+}

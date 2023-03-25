@@ -1,0 +1,54 @@
+<div class="container">
+  <h5 *ngIf="!winkelwagen.getWinkelwagenRegels().length">Geen artikelen in winkelwagen.</h5>
+
+  <div *ngIf="winkelwagen.getWinkelwagenRegels().length">
+    <table id="cart" class="table table-hover table-condensed">
+      <thead>
+      <tr>
+        <th style="width:50%">Artikel</th>
+        <th style="width:10%">Prijs/Stuk</th>
+        <th style="width:8%">Aantal</th>
+        <th style="width:22%" class="text-center">Subtotaal</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let regel of winkelwagen.getWinkelwagenRegels()">
+        <td data-th="Product">
+          <div class="row">
+            <div class="col-sm-2 hidden-xs"><img src="/assets/images/artikelen/{{regel.artikel.afbeeldingUrl}}"
+                                                 alt="..." class="img-responsive"/>
+            </div>
+            <div class="col-sm-10">
+              <h5 class="my-3">{{regel.artikel.naam}}</h5>
+            </div>
+          </div>
+        </td>
+        <td data-th="Price">{{regel.artikel.prijs | currency : "€"}}</td>
+        <td data-th="Quantity">
+          <input type="number" min="0" class="form-control text-center" value="{{ regel.aantal }}" disabled>
+        </td>
+        <td data-th="Subtotal" class="text-center">{{regel.artikel.prijs * regel.aantal | currency : "€"}}</td>
+      </tr>
+      </tbody>
+
+      <tfoot>
+      <tr>
+        <td colspan="2" class="hidden-xs"></td>
+        <td class="hidden-xs text-center">
+          <a title="Winkelwagen legen" (click)="service.clearWinkelwagen()"><i
+            class="fa fa-trash btn btn-danger"></i></a>
+        </td>
+        <td class="text-center">
+          <!--<a href="#" class="btn btn-success btn-block">Checkout<i class="fa fa-angle-right"></i></a>-->
+          Totaalprijs: {{ getTotaalPrijs() | currency : "€"}}<br>
+          inclusief BTW
+        </td>
+      </tr>
+      </tfoot>
+    </table>
+
+    <input routerLink="/bestelling-plaatsen" [disabled]="winkelwagen.getWinkelwagenRegels().length == 0" type="button"
+           class="kantilever-button btn float-right" value="volgende">
+  </div>
+</div>

@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mochaOptions": {
+    "spec": "this should have been an array"
+  },
+  "jasmineConfigFile": {
+    "should": "be a string"
+  },
+  "karma": {
+    "projectType": "Project type not supported"
+  },
+  "commandRunner": {
+    "command": "echo 'no-test'"
+  }
+}

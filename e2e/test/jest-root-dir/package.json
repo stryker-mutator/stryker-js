@@ -1,0 +1,10 @@
+{
+  "name": "jest-root-dir",
+  "description": "Test for jest with different root dir",
+  "scripts": {
+    "test:unit": "jest",
+    "pretest": "rimraf stryker-tmp",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}

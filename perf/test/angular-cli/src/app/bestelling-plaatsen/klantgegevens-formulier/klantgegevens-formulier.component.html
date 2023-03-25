@@ -1,0 +1,234 @@
+<div class="container">
+  <h3 class="text-center">Voer uw klantgegevens in:</h3>
+  <form (ngSubmit)="bestellingPlaatsen(klantGegevensForm.value)" name="klantGegevensForm"
+        [formGroup]="klantGegevensForm">
+    <div class="card card-body">
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="label float-md-right vertical-center">Naam:</span>
+        </div>
+        <div class="col-md-4">
+          <input id="voornaam"
+                 type="text"
+                 class="form-control"
+                 name="voornaam"
+                 placeholder="Voornaam"
+                 formControlName="voornaam"
+                 required/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('voornaam').invalid && klantGegevensForm.get('voornaam').touched && klantGegevensForm.get('voornaam').value.length == 0"
+            class="invalid-field">
+            Voornaam is verplicht
+          </div>
+          <!--Error when field is invalid, touched and has a value-->
+          <div *ngIf="klantGegevensForm.get('voornaam').invalid && klantGegevensForm.get('voornaam').touched && klantGegevensForm.get('voornaam').value.length != 0"
+               class="invalid-field">
+            Vul een geldige voornaam in.
+          </div>
+        </div>
+        <div class="col-md-4">
+          <input id="achternaam"
+                 type="text"
+                 class="form-control"
+                 name="achternaam"
+                 placeholder="Achternaam"
+                 formControlName="achternaam"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('achternaam').invalid && klantGegevensForm.get('achternaam').touched && klantGegevensForm.get('achternaam').value.length == 0"
+            class="invalid-field">
+            Achternaam is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div
+            *ngIf="klantGegevensForm.get('achternaam').invalid && klantGegevensForm.get('achternaam').touched && klantGegevensForm.get('achternaam').value.length != 0"
+            class="invalid-field">
+            Vul een geldige achternaam in.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="float-md-right">Adres:</span>
+        </div>
+        <div class="col-md-4">
+          <input id="straat"
+                 type="text"
+                 class="form-control"
+                 name="straat"
+                 placeholder="Straat"
+                 formControlName="straat"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('straat').invalid && klantGegevensForm.get('straat').touched && klantGegevensForm.get('straat').value.length == 0"
+            class="invalid-field">
+            Straatnaam is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div *ngIf="klantGegevensForm.get('straat').invalid && klantGegevensForm.get('straat').touched && klantGegevensForm.get('straat').value.length != 0"
+               class="invalid-field">
+            Vul een geldige straatnaam in.
+          </div>
+        </div>
+        <div class="col-md-2">
+          <input id="huisnummer"
+                 type="text"
+                 class="form-control"
+                 name="huisnummer"
+                 placeholder="Nr."
+                 formControlName="huisnummer"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('huisnummer').invalid && klantGegevensForm.get('huisnummer').touched && klantGegevensForm.get('huisnummer').value.length == 0"
+            class="invalid-field">
+            Huisnummer is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div
+            *ngIf="klantGegevensForm.get('huisnummer').invalid && klantGegevensForm.get('huisnummer').touched && klantGegevensForm.get('huisnummer').value.length != 0"
+            class="invalid-field">
+            Vul een geldige huisnummer in.
+          </div>
+        </div>
+        <div class="col-md-2">
+          <input id="huisnummertoevoeging"
+                 type="text"
+                 class="form-control"
+                 name="huisnummertoevoeging"
+                 placeholder="Toev"
+                 formControlName="huisnummertoevoeging"/>
+          <!--Error when field is invalid and has a value-->
+          <div *ngIf="klantGegevensForm.get('huisnummertoevoeging').invalid" class="invalid-field">
+            Vul een geldige huisnummertoevoeging in.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="float-md-right">Plaats:</span>
+        </div>
+        <div class="col-md-4">
+          <input id="postcode"
+                 type="text"
+                 class="form-control"
+                 name="postcode"
+                 placeholder="Postcode"
+                 formControlName="postcode"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('postcode').invalid && klantGegevensForm.get('postcode').touched && klantGegevensForm.get('postcode').value.length == 0"
+            class="invalid-field">
+            Postcode is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div *ngIf="klantGegevensForm.get('postcode').invalid &&  klantGegevensForm.get('postcode').touched && klantGegevensForm.get('postcode').value.length != 0"
+               class="invalid-field">
+            Vul een geldige postcode in.
+          </div>
+        </div>
+        <div class="col-md-4">
+          <input id="plaats"
+                 type="text"
+                 class="form-control"
+                 name="plaats"
+                 placeholder="Plaats."
+                 formControlName="plaats"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('plaats').invalid && klantGegevensForm.get('plaats').touched && klantGegevensForm.get('plaats').value.length == 0"
+            class="invalid-field">
+            Plaats is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div *ngIf="klantGegevensForm.get('plaats').invalid && klantGegevensForm.get('plaats').touched && klantGegevensForm.get('plaats').value.length != 0"
+               class="invalid-field">
+            Vul een geldige plaats in.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="float-md-right">Land:</span>
+        </div>
+        <div class="col-md-8">
+          <select id="land"
+                  class="form-control"
+                  name="land"
+                  formControlName="land">
+            <!--Options-->
+            <option *ngFor="let land of landen" [value]="land.landCode">{{ land.landNaam }}</option>
+          </select>
+          <!--Error when field is invalid, touched and plaats does not equal to 'land'-->
+          <div
+            *ngIf="klantGegevensForm.get('land').invalid && klantGegevensForm.get('land').touched && klantGegevensForm.get('plaats').value != 'land'"
+            class="invalid-field">
+            Plaats is verplicht
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="float-md-right">Emailadres:</span>
+        </div>
+        <div class="col-md-8">
+          <input id="emailadres"
+                 type="text"
+                 class="form-control"
+                 name="emailadres"
+                 placeholder="Emailadres"
+                 formControlName="emailadres"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('emailadres').invalid && klantGegevensForm.get('emailadres').touched && klantGegevensForm.get('emailadres').value.length == 0"
+            class="invalid-field">
+            Emailadres is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div
+            *ngIf="klantGegevensForm.get('emailadres').invalid && klantGegevensForm.get('emailadres').touched &&  klantGegevensForm.get('emailadres').value.length != 0"
+            class="invalid-field">
+            Vul een geldige emailadres in. Een geldig emailadres moet een @ en een . bevatten.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row form-group">
+        <div class="col-md-2">
+          <span class="float-md-right">Telefoonnummer:</span>
+        </div>
+        <div class="col-md-8">
+          <input id="telefoonnummer"
+                 type="text"
+                 class="form-control"
+                 name="telefoonnummer"
+                 placeholder="Telefoonnummer"
+                 formControlName="telefoonnummer"/>
+          <!--Error when field is invalid, touched and empty-->
+          <div
+            *ngIf="klantGegevensForm.get('telefoonnummer').invalid && klantGegevensForm.get('telefoonnummer').touched && klantGegevensForm.get('telefoonnummer').value.length == 0"
+            class="invalid-field">
+            Telefoonnummer is verplicht
+          </div>
+          <!--Error when field is invalid and has a value-->
+          <div
+            *ngIf="klantGegevensForm.get('telefoonnummer').invalid && klantGegevensForm.get('telefoonnummer').touched && klantGegevensForm.get('telefoonnummer').value.length != 0"
+            class="invalid-field">
+            Vul een geldige telefoonnummer in.
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-md-2 offset-md-8">
+          <button type="submit" [disabled]="klantGegevensForm.invalid" name="klantGegevensForm"
+                  class="bestel-button btn kantilever-button">Bestellen
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,6 @@
+<section id="catalogus">
+  <ksw-catalogus-artikel *ngFor="let artikel of artikelen" [artikel]="artikel"></ksw-catalogus-artikel>
+  <div *ngIf="artikelen.length === 0">
+    <h5>Geen artikelen gevonden.</h5>
+  </div>
+</section>

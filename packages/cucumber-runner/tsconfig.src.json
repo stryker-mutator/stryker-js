@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["node"],
+    "rootDir": "."
+  },
+  "include": ["src/*.ts", "src-generated", "schema/*.json", "typings"],
+  "references": [
+    {
+      "path": "./tsconfig.src.cjs.json"
+    }
+  ]
+}

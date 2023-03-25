@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🐷 Run sample test",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/grunt-cli/bin/grunt",
+      "stopOnEntry": false,
+      "args": [
+        "test"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true
+    }
+  ]
+}

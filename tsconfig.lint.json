@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.settings.json",
+  "compilerOptions": {
+    "allowJs": true
+  },
+  // This file is a workaround for: https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser#parseroptionsproject
+  "include": [
+    "packages/*/bin",
+    "packages/*/src",
+    "packages/*/typings",
+    "packages/*/test",
+    "packages/jest-runner/jest-env/*.js",
+    "packages/*/stryker.conf.js",
+    "tasks/**/*.js"
+  ]
+}

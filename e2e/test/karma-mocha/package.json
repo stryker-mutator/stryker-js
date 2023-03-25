@@ -1,0 +1,18 @@
+{
+  "name": "karma-mocha",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "npm run test:not-in-place && npm run test:in-place",
+    "test:not-in-place": "stryker run",
+    "posttest:not-in-place": "npm run verify",
+    "test:in-place": "stryker run --inPlace",
+    "posttest:in-place": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

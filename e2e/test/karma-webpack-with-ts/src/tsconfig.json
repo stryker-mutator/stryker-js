@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "types": [
+      "webpack-env"
+    ],
+    "outDir": "../dist",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "lib": [
+      "es5",
+      "es2015",
+      "es2017.object",
+      "dom",
+      "dom.iterable"
+    ]
+  }
+}

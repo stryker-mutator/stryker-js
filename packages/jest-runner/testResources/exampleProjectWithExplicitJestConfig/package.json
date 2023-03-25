@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "name": "example-project",
+  "version": "0.0.0",
+  "description": "A testResource for jest-test-runner",
+  "jest": {
+    "moduleFileExtensions": [],
+    "testEnvironment": "some-invalid-test-environment",
+    "testRegex": "not-a-regular-expression",
+    "testRunner": "this-testRunner-does-not-exist",
+    "testResultProcessor": "an-invalid-testResult-processor",
+    "collectCoverage": true,
+    "verbose": true,
+    "bail": false
+  }
+}

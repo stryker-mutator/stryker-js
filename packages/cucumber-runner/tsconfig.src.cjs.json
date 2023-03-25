@@ -1,0 +1,12 @@
+{
+  // This is a workaround project until native support for node's module system is added to typescript (.cts files)
+  // @see https://www.typescriptlang.org/docs/handbook/esm-node.html
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "types": ["node"],
+    "module": "commonjs",
+    "rootDir": "."
+  },
+  "include": ["src/cjs/*.ts", "src/cjs/package.json"],
+}

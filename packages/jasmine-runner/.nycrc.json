@@ -1,0 +1,11 @@
+{
+  "exclude-after-remap": false,
+  "check-coverage": true,
+  "reporter": ["text", "html"],
+  "report-dir": "reports/coverage",
+  "lines": 99,
+  "functions": 99,
+  "statements": 99,
+  "branches": 95,
+  "include": "dist/src/**/*.js"
+}

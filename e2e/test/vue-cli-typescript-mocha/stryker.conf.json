@@ -1,0 +1,25 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "testRunner": "mocha",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "symlinkNodeModules": false,
+  "reporters": ["json", "progress", "clear-text", "event-recorder"],
+  "buildCommand": "node webpack-run.js",
+  "mochaOptions": {
+    "package": "package.json",
+    "require": [
+      "@vue/cli-plugin-unit-mocha/setup.js"
+    ],
+    "spec": ["dist/js/chunk-vendors.js", "dist/js/tests.js"]
+  },
+  "tsconfigFile": "tsconfig.json",
+  "plugins": [
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/typescript-checker"
+  ],
+  "checkers": [
+    "typescript"
+  ]
+}

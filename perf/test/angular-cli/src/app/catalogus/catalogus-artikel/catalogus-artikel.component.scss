@@ -1,0 +1,12 @@
+.artikel-card {
+  min-height: 100%;
+
+  .artikel-card-body {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+  }
+}

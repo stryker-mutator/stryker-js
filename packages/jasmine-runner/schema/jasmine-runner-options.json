@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JasmineRunnerOptions",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "jasmineConfigFile": {
+      "description": "Specify your [jasmine configuration file](https://jasmine.github.io/setup/nodejs.html#configuration) to be loaded. Leaving this blank will result in the jasmine defaults, which are undocumented (see [source code here](https://github.com/jasmine/jasmine-npm/blob/master/lib/jasmine.js#L10-L38)).",
+      "type": "string"
+    }
+  }
+}

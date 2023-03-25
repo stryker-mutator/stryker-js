@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es5",
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "outDir": "dist",
+
+    // These settings should be overridden by the typescript checker
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    
+    "types": []
+  }
+}
