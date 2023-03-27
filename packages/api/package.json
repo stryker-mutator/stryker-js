@@ -75,7 +75,7 @@
     "tslib": "~2.5.0"
   },
   "devDependencies": {
-    "@types/node": "18.15.9",
+    "@types/node": "18.15.10",
     "typed-inject": "3.0.1"
   }
 }
