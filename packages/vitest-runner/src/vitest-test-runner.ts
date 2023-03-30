@@ -18,6 +18,8 @@ import {
 
 import { createVitest, Vitest } from 'vitest/node';
 
+import { escapeRegExp } from '@stryker-mutator/util';
+
 import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
 import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
 import { resolveSetupFile } from './utils/resolve-setup-file.js';
@@ -74,14 +76,14 @@ export class VitestTestRunner implements TestRunner {
   private async run(testIds: string[] = [], hitLimit?: number): Promise<DryRunResult> {
     await setHitLimit(this.globalNamespace, hitLimit);
     if (testIds.length > 0) {
-      await this.ctx.start(testIds.map(fromTestId).map(({ file }) => file));
-      // this.ctx.filenamePattern = testIds
-      //   .map(fromTestId)
-      //   .map(({ name }) => name)
-      //   .join('|');
-      //testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
-      //TODO add test Filter
-      //Find related test vitest cli uitzoeken
+      const regexTestNameFilter = testIds
+        .map(fromTestId)
+        .map(({ name }) => escapeRegExp(name))
+        .join('|');
+      const regex = new RegExp(regexTestNameFilter);
+      const testFiles = testIds.map(fromTestId).map(({ file }) => file);
+      this.ctx.config.testNamePattern = regex;
+      await this.ctx.start(testFiles);
     } else {
       await this.ctx.start();
     }

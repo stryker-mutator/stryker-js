@@ -1,7 +1,10 @@
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { TaskState, Test } from 'vitest';
+import { RunMode, TaskState, Test } from 'vitest';
 
-function convertTaskStateToTestStatus(taskState: TaskState | undefined): TestStatus.Failed | TestStatus.Skipped | TestStatus.Success {
+function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
+  if (testMode === 'skip') {
+    return TestStatus.Skipped;
+  }
   if (taskState) {
     switch (taskState) {
       case 'pass': {
@@ -27,7 +30,7 @@ export function convertTestToTestResult(test: Test): TestResult {
     id: toTestId(test),
     name: test.name,
     timeSpentMs: test.result?.duration ?? 0,
-    status: convertTaskStateToTestStatus(test.result?.state),
+    status: convertTaskStateToTestStatus(test.result?.state, test.mode),
     failureMessage: test.result?.errors?.[0]?.message ?? '',
   };
 }
