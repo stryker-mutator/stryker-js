@@ -176,15 +176,8 @@ export class TapTestRunner implements TestRunner {
       return {
         ...generic,
         status: TestStatus.Failed,
-        failureMessage: getFailureMessage(),
+        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ') ?? 'Unkown issue',
       };
-    }
-
-    function getFailureMessage(): string {
-      if (failedTests.length) {
-        return failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ');
-      }
-      return 'Unknown reason to failure';
     }
   }
 }
