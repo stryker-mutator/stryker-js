@@ -1,4 +1,4 @@
-import { add, addOne, isNegativeNumber, negate } from '../math';
+import { add, addOne, isNegativeNumber, negate } from '../src/math';
 import { expect, test, describe } from 'vitest';
 
 describe('math', () => {
