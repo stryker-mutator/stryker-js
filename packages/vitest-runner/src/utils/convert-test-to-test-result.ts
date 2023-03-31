@@ -1,6 +1,8 @@
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { RunMode, TaskState, Test } from 'vitest';
 
+import { toTestId } from './collect-test-name.js';
+
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
   if (testMode === 'skip') {
     return TestStatus.Skipped;
@@ -33,10 +35,6 @@ export function convertTestToTestResult(test: Test): TestResult {
     status: convertTaskStateToTestStatus(test.result?.state, test.mode),
     failureMessage: test.result?.errors?.[0]?.message ?? '',
   };
-}
-
-export function toTestId(test: Test): string {
-  return `${test.file?.name}#${test.name}`;
 }
 
 export function fromTestId(id: string): { file: string; name: string } {

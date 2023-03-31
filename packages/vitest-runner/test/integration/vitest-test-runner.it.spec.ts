@@ -20,13 +20,13 @@ describe('VitestRunner integration', () => {
 
     it('should run the specs', async () => {
       await sut.init();
-      const runResult = await sut.dryRun(factory.dryRunOptions());
+      const runResult = await sut.dryRun();
       assertions.expectCompleted(runResult);
     });
 
     it('should report mutant coverage', async () => {
       await sut.init();
-      const runResult = await sut.dryRun(factory.dryRunOptions());
+      const runResult = await sut.dryRun();
       assertions.expectCompleted(runResult);
       expect(runResult.mutantCoverage).to.not.be.undefined;
     });

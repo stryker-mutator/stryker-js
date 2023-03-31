@@ -4,7 +4,8 @@ import { expect } from 'chai';
 
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { convertTestToTestResult, fromTestId, toTestId } from '../../src/utils/convert-test-to-test-result.js';
+import { convertTestToTestResult, fromTestId } from '../../src/utils/convert-test-to-test-result.js';
+import { toTestId } from '../../src/utils/collect-test-name.js';
 
 describe('convert test to test result', () => {
   it('toTestId should return correct testId', () => {

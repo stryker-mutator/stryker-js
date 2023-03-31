@@ -2,18 +2,19 @@ import fs from 'fs/promises';
 
 import { beforeEach, afterAll, beforeAll } from 'vitest';
 
-import { collectTestName } from '../utils/collect-test-name.js';
+import { toTestId } from '../utils/collect-test-name.js';
+import { setupFiles } from '../vitest-file-communication.js';
 
 beforeEach(async (a) => {
   const context = globalThis[globalThis.strykerGlobalNamespaceName] ?? (globalThis[globalThis.strykerGlobalNamespaceName] = {});
-  context.currentTestId = collectTestName(a.meta);
+  context.currentTestId = toTestId(a.meta);
 });
 
 afterAll(async () => {
   if (globalThis.strykerDryRun) {
-    await fs.writeFile(new URL('__stryker__.json', import.meta.url), JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]));
+    await fs.writeFile(setupFiles.coverageFile, JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.mutantCoverage));
   } else {
-    await fs.writeFile(new URL('__stryker__.json', import.meta.url), JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.hitCount));
+    await fs.writeFile(setupFiles.hitCountFile, JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.hitCount));
   }
 });
 

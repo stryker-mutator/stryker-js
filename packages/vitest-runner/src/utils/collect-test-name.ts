@@ -1,8 +1,15 @@
-import { Suite } from 'vitest';
+import { Suite, Test } from 'vitest';
 
-export function collectTestName(suite: { name: string; suite?: Suite } | undefined): string {
-  if (!suite) {
-    return '';
+export function toTestId(test: Test): string {
+  return `${test.file?.name}#${collectTestName(test)}`;
+}
+
+function collectTestName({ name, suite }: { name: string; suite?: Suite }): string {
+  const nameParts = [name];
+  let currentSuite = suite;
+  while (currentSuite) {
+    nameParts.unshift(currentSuite.name);
+    currentSuite = currentSuite.suite;
   }
-  return `${collectTestName(suite.suite)}${suite.name}`;
+  return nameParts.join(' ').trim();
 }

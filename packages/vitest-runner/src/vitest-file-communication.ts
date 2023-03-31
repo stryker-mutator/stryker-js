@@ -1,28 +1,50 @@
 import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { Mutant } from '@stryker-mutator/api/core';
 
-import { resolveSetupFile } from './utils/resolve-setup-file.js';
+export const setupFiles = {
+  coverageFile: resolveSetupFile('__stryker-coverage__.json'),
+  dryRun: resolveSetupFile('dry-run.js'),
+  globalNamespace: (globalNamespace: '__stryker__' | '__stryker2__'): string => resolveSetupFile(`global-namespace-${globalNamespace}.js`),
+  hitCountFile: resolveSetupFile('hitCount.txt'),
+  activeMutant: resolveSetupFile('active-mutant.js'),
+  vitestSetup: resolveSetupFile('vitest-setup.js'),
+  hitLimit: resolveSetupFile('hit-limit.js'),
+};
+function resolveSetupFile(fileName: string): string {
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), './setup', fileName);
+}
 
 export async function setDryRunValue(dryRun: boolean): Promise<void> {
-  const content = `
-        globalThis.strykerDryRun = ${dryRun}
-      `;
-  const fileName = resolveSetupFile('dry-run.js');
-  await fs.writeFile(fileName, content);
+  await fs.writeFile(
+    setupFiles.dryRun,
+    `
+  globalThis.strykerDryRun = ${dryRun}
+`
+  );
 }
 
 export async function setHitLimit(globalNamespace: string, hitLimit?: number): Promise<void> {
-  if (hitLimit) {
-    const content = `
+  const content = hitLimit
+    ? `
         const ns = globalThis.${globalNamespace} || (globalThis.${globalNamespace} = {});
         ns.hitLimit = ${hitLimit}
-      `;
-    const fileName = resolveSetupFile('hit-limit.js');
-    await fs.writeFile(fileName, content);
-  }
+      `
+    : '';
+  await fs.writeFile(setupFiles.hitLimit, content);
 }
 
+export type StrykerNamespace = '__stryker__' | '__stryker2__';
+
+export async function disableMutant(globalNamespace: StrykerNamespace): Promise<void> {
+  await fs.writeFile(
+    setupFiles.activeMutant,
+    `const ns = globalThis.${globalNamespace} || (globalThis.${globalNamespace} = {});
+  ns.activeMutant = undefined`
+  );
+}
 export async function setActiveMutant(mutant: Mutant, setInBeforeEach: boolean, globalNamespace: string): Promise<void> {
   let content = '';
   if (setInBeforeEach) {
@@ -37,5 +59,5 @@ export async function setActiveMutant(mutant: Mutant, setInBeforeEach: boolean, 
           ns.activeMutant = '${mutant.id}'
           })(globalThis.${globalNamespace} || (globalThis.${globalNamespace} = {}))`;
   }
-  await fs.writeFile(resolveSetupFile('active-mutant.js'), content);
+  await fs.writeFile(setupFiles.activeMutant, content);
 }
