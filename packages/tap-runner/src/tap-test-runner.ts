@@ -66,7 +66,8 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(options.disableBail, options.files);
+    // todo what todo with options.files
+    return this.run(options.disableBail);
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -182,9 +183,6 @@ export class TapTestRunner implements TestRunner {
     function getFailureMessage(): string {
       if (failedTests.length) {
         return failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ');
-      }
-      if (typeof result.bailout == 'string') {
-        return result.bailout;
       }
       return 'Unknown reason to failure';
     }
