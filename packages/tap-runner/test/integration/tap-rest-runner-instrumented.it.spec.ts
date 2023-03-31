@@ -1,7 +1,5 @@
 import { expect } from 'chai';
-import { factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
-
-import { MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
 
 import { createTapTestRunnerFactory, TapTestRunner } from '../../src/index.js';
 
@@ -19,26 +17,25 @@ describe('Running in an example project', () => {
     await sandbox.dispose();
   });
 
-  it('should be to run in the example', async () => {
+  it('should be able run instrumented file', async () => {
     // Act
-    // const result = await sut.dryRun(factory.dryRunOptions({}));
+    await sut.dryRun(factory.dryRunOptions({}));
     const mutantRunOptions = factory.mutantRunOptions({ hitLimit: 10, activeMutant: factory.mutant({ id: '1' }) });
     const run = await sut.mutantRun(mutantRunOptions);
 
     // Assert
-    // todo fix this
-    expect(true).to.be.true;
+    assertions.expectKilled(run);
+    expect(run.failureMessage).eq('Adding two numbers: Adding 10 and 5 equal to 15');
   });
 
-  it('should todo hitlimit', async () => {
+  it('should be able to determine hit limit', async () => {
     // Act
     const mutantRunOptions = factory.mutantRunOptions({ hitLimit: 10, activeMutant: factory.mutant({ id: '7' }) });
+    await sut.dryRun(factory.dryRunOptions({}));
     const run = await sut.mutantRun(mutantRunOptions);
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Timeout);
-    if (run.status === MutantRunStatus.Timeout) {
-      expect(run.reason).eq('Hit limit reached (11/10)');
-    }
+    assertions.expectTimeout(run);
+    expect(run.reason).eq('Hit limit reached (11/10)');
   });
 });

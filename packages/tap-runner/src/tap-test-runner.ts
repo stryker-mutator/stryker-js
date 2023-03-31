@@ -66,7 +66,7 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(options.disableBail);
+    return this.run(options.disableBail, options.files);
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {

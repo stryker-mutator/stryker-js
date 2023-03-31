@@ -2,7 +2,7 @@ import os from 'os';
 
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { DryRunStatus, KilledMutantRunResult, MutantRunStatus, SurvivedMutantRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus, KilledMutantRunResult, SurvivedMutantRunResult } from '@stryker-mutator/api/test-runner';
 
 import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
@@ -28,7 +28,7 @@ describe('Running in an example project', () => {
 
   it('should be able complete a dry run', async () => {
     // Act
-    const run = await sut.dryRun(factory.dryRunOptions());
+    const run = await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
 
     // Assert
     expect(run.status).eq(DryRunStatus.Complete);
@@ -36,40 +36,39 @@ describe('Running in an example project', () => {
 
   it('should be to run mutantRun that survives', async () => {
     // Act
-    const run = (await sut.mutantRun(factory.mutantRunOptions({ testFilter }))) as SurvivedMutantRunResult;
+    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter }));
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Survived);
+    assertions.expectSurvived(run);
     expect(run.nrOfTests).eq(5);
   });
 
   it('should be to run mutantRun that gets killed', async () => {
     // Act
-    const run = (await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }))) as KilledMutantRunResult;
+    const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Killed);
+    assertions.expectKilled(run);
     expect(run.killedBy).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
-    // todo fix expect(run.failureMessage).eq('');
+    expect(run.failureMessage).eq('Failing test: This test will fail, Failing test: This test will fail also');
   });
 
   it('should be able to run test file with random output', async () => {
     const testFiles = ['tests/random-output.spec.js'];
 
     // Act
-    const run = (await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }))) as SurvivedMutantRunResult;
-
+    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
     // Assert
-    expect(run.status).eq(MutantRunStatus.Survived);
+    assertions.expectSurvived(run);
   });
 
   it('should be able to run test file without output', async () => {
     const testFiles = ['tests/no-output.spec.js'];
     // Act
-    const run = (await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }))) as SurvivedMutantRunResult;
+    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Survived);
+    assertions.expectSurvived(run);
   });
 
   it('should bail out when disableBail is false', async () => {
@@ -80,7 +79,6 @@ describe('Running in an example project', () => {
 
     // Assert
     assertions.expectKilled(run);
-    expect(run.status).eq(MutantRunStatus.Killed);
     expect(run.nrOfTests).eq(1);
     expect(run.killedBy[0]).eq('tests/bail.spec.js');
   });
@@ -89,10 +87,10 @@ describe('Running in an example project', () => {
     const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
 
     // Act
-    const run = (await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }))) as KilledMutantRunResult;
+    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Killed);
+    assertions.expectKilled(run);
     expect(run.nrOfTests).eq(testFiles.length);
   });
 
@@ -123,7 +121,7 @@ describe('Running in an example project', () => {
     const endTime = Date.now();
 
     // Assert
-    expect(run.status).eq(MutantRunStatus.Killed);
+    assertions.expectKilled(run);
     expect(endTime - startTime).gte(4000);
   });
 });
