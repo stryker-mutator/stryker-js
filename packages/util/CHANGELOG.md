@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **angular:** generate karma.conf.js file when it is missing ([#4054](https://github.com/stryker-mutator/stryker-js/issues/4054)) ([915c6d8](https://github.com/stryker-mutator/stryker-js/commit/915c6d85db5cbe8a5276e18cd3a07e399d604cfa))
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/util
+
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Features
+
+- **typescript checker:** group mutants to improve performance 🚀 ([#3900](https://github.com/stryker-mutator/stryker-js/issues/3900)) ([2f4adaa](https://github.com/stryker-mutator/stryker-js/commit/2f4adaa1eedbf70bd9385d15d3f6025027350cc6))
+
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 
 **Note:** Version bump only for package @stryker-mutator/util

@@ -38,6 +38,7 @@ import {
   ErrorMutantRunResult,
   TestStatus,
   TestResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
@@ -376,9 +377,12 @@ export const runTiming = factoryMethod<RunTiming>(() => ({
   overhead: 765,
 }));
 
+export const testRunnerCapabilities = factoryMethod<TestRunnerCapabilities>(() => ({ reloadEnvironment: false }));
+
 export const dryRunCompletedEvent = factoryMethod<DryRunCompletedEvent>(() => ({
   result: completeDryRunResult(),
   timing: runTiming(),
+  capabilities: testRunnerCapabilities(),
 }));
 
 export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {

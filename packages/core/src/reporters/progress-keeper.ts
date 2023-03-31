@@ -1,11 +1,13 @@
 import { MutantResult, MutantStatus, MutantRunPlan, MutantTestPlan, PlanKind } from '@stryker-mutator/api/core';
 import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
+import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
 import { Timer } from '../utils/timer.js';
 
 export abstract class ProgressKeeper implements Reporter {
   private timer!: Timer;
   private timing!: RunTiming;
+  private capabilities!: TestRunnerCapabilities;
   private ticksByMutantId!: Map<string, number>;
   protected progress = {
     survived: 0,
@@ -16,8 +18,9 @@ export abstract class ProgressKeeper implements Reporter {
     ticks: 0,
   };
 
-  public onDryRunCompleted({ timing }: DryRunCompletedEvent): void {
+  public onDryRunCompleted({ timing, capabilities }: DryRunCompletedEvent): void {
     this.timing = timing;
+    this.capabilities = capabilities;
   }
 
   /**
@@ -29,7 +32,7 @@ export abstract class ProgressKeeper implements Reporter {
     this.ticksByMutantId = new Map(
       mutantPlans.filter(isRunPlan).map(({ netTime, mutant, runOptions }) => {
         let ticks = netTime;
-        if (runOptions.reloadEnvironment) {
+        if (!this.capabilities.reloadEnvironment && runOptions.reloadEnvironment) {
           ticks += this.timing.overhead;
         }
         return [mutant.id, ticks];

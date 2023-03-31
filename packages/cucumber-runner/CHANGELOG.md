@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **cucumber:** officially support cucumber 9 ([#4041](https://github.com/stryker-mutator/stryker-js/issues/4041)) ([e4f10d1](https://github.com/stryker-mutator/stryker-js/commit/e4f10d10a750c92831b1d025dcccdc7fe24527b2))
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
+
+### Bug Fixes
+
+- **deps:** set correct stryker peer dep version ([c88c537](https://github.com/stryker-mutator/stryker-js/commit/c88c537c61d03e50362e98e9dddc7569b0c88200))
+
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/cucumber-runner
+
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 
 ### Bug Fixes

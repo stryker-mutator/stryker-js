@@ -15,21 +15,21 @@ const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object
 const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   noEmit: true,
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
+  tsBuildInfoFile: undefined,
   composite: false,
-  declaration: false,
-  declarationMap: false,
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
 const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
   emitDeclarationOnly: true,
   noEmit: false,
-  declarationMap: false,
+  declarationMap: true,
+  declaration: true,
 });
 
-export function guardTSVersion(): void {
-  if (!semver.satisfies(ts.version, '>=3.6')) {
-    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@${ts.version}`);
+export function guardTSVersion(version = ts.version): void {
+  if (!semver.satisfies(version, '>=3.6')) {
+    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@${version}`);
   }
 }
 
@@ -64,6 +64,15 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
     delete compilerOptions.declarationDir;
   }
 
+  if (useBuildMode) {
+    // Remove the options to place declarations files in different locations to decrease the complexity of searching the source file in the TypescriptCompiler class.
+    delete compilerOptions.inlineSourceMap;
+    delete compilerOptions.inlineSources;
+    delete compilerOptions.mapRoute;
+    delete compilerOptions.sourceRoot;
+    delete compilerOptions.outFile;
+  }
+
   return JSON.stringify({
     ...parsedConfig.config,
     compilerOptions,
@@ -91,4 +100,15 @@ export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromD
  */
 export function toPosixFileName(fileName: string): string {
   return fileName.replace(/\\/g, '/');
+}
+
+/**
+ * Find source file in declaration file
+ * @param content The content of the declaration file
+ * @returns URL of the source file or undefined if not found
+ */
+const findSourceMapRegex = /\/\/# sourceMappingURL=(.+)$/;
+export function getSourceMappingURL(content: string): string | undefined {
+  findSourceMapRegex.lastIndex = 0;
+  return findSourceMapRegex.exec(content)?.[1];
 }

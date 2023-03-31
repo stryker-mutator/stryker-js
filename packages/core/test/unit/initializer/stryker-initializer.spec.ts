@@ -13,14 +13,13 @@ import { fileUtils } from '../../../src/utils/file-utils.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
 import { NpmClient, NpmPackage } from '../../../src/initializer/npm-client.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
-import { Preset } from '../../../src/initializer/presets/preset.js';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
 import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
 import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
+import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -28,18 +27,18 @@ describe(StrykerInitializer.name, () => {
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
-  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
+  let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
   let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
   let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
   let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
   let out: sinon.SinonStub;
-  let presets: Preset[];
-  let presetMock: Mock<Preset>;
+  let customInitializers: CustomInitializer[];
+  let customInitializerMock: Mock<CustomInitializer>;
 
   beforeEach(() => {
     out = sinon.stub();
-    presets = [];
-    presetMock = {
+    customInitializers = [];
+    customInitializerMock = {
       createConfig: sinon.stub(),
       name: 'awesome-preset',
     };
@@ -58,7 +57,7 @@ describe(StrykerInitializer.name, () => {
       .provideValue(initializerTokens.restClientNpmSearch, restClientSearch as unknown as RestClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
-      .provideValue(initializerTokens.strykerPresets, presets)
+      .provideValue(initializerTokens.customInitializers, customInitializers)
       .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
       .provideValue(initializerTokens.gitignoreWriter, gitignoreWriter as unknown as GitignoreWriter)
       .injectClass(StrykerInitializer);
@@ -84,7 +83,7 @@ describe(StrykerInitializer.name, () => {
         '@stryker-mutator/jest-runner': null,
       });
       fsWriteFile.resolves();
-      presets.push(presetMock);
+      customInitializers.push(customInitializerMock);
     });
 
     it('should prompt for preset, test runner, reporters, package manager and config type', async () => {
@@ -573,13 +572,8 @@ describe(StrykerInitializer.name, () => {
     inquirerPrompt.resolves(answers);
   }
 
-  function resolvePresetConfig(presetConfigOverrides?: Partial<PresetConfiguration>) {
-    const presetConfig: PresetConfiguration = {
-      config: {},
-      dependencies: [],
-      guideUrl: '',
-    };
-    presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
+  function resolvePresetConfig(overrides?: Partial<CustomInitializerConfiguration>) {
+    customInitializerMock.createConfig.resolves({ config: {}, dependencies: [], guideUrl: '', ...overrides });
   }
 
   function expectStrykerConfWritten(expectedRawConfig: string) {

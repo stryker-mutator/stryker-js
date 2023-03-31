@@ -1,6 +1,14 @@
 import { expect } from 'chai';
 
-import { normalizeWhitespaces, propertyPath, escapeRegExpLiteral, escapeRegExp, normalizeFileName, normalizeLineEndings } from '../../src/index.js';
+import {
+  normalizeWhitespaces,
+  propertyPath,
+  escapeRegExpLiteral,
+  escapeRegExp,
+  normalizeFileName,
+  normalizeLineEndings,
+  strykerReportBugUrl,
+} from '../../src/index.js';
 
 describe('stringUtils', () => {
   describe(normalizeWhitespaces.name, () => {
@@ -117,6 +125,18 @@ describe('stringUtils', () => {
     });
     it('should normalize `/`', () => {
       expect(normalizeFileName('test/util/foo.spec.js')).eq('test/util/foo.spec.js');
+    });
+  });
+
+  describe(strykerReportBugUrl.name, () => {
+    it('should format a correct url', () => {
+      expect(strykerReportBugUrl('theTitle')).eq(
+        'https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=theTitle'
+      );
+    });
+
+    it('should url-encode the title suggestion', () => {
+      expect(strykerReportBugUrl('the title').endsWith('the&title'));
     });
   });
 });

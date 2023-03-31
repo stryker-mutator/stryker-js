@@ -4,7 +4,13 @@ import sinon from 'sinon';
 import ts from 'typescript';
 import { expect } from 'chai';
 
-import { determineBuildModeEnabled, overrideOptions, retrieveReferencedProjects, guardTSVersion } from '../../src/tsconfig-helpers.js';
+import {
+  determineBuildModeEnabled,
+  overrideOptions,
+  retrieveReferencedProjects,
+  guardTSVersion,
+  getSourceMappingURL,
+} from '../../src/tsconfig-helpers.js';
 
 describe('typescript-helpers', () => {
   describe(determineBuildModeEnabled.name, () => {
@@ -53,8 +59,6 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: false,
-        declarationMap: false,
       });
       expect(
         JSON.parse(
@@ -65,8 +69,6 @@ describe('typescript-helpers', () => {
                   noEmit: false,
                   incremental: true,
                   composite: true,
-                  declaration: true,
-                  declarationMap: false,
                 },
               },
             },
@@ -77,8 +79,6 @@ describe('typescript-helpers', () => {
         noEmit: true,
         incremental: false,
         composite: false,
-        declaration: false,
-        declarationMap: false,
       });
     });
 
@@ -93,7 +93,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
-                  declarationMap: false,
+                  declarationMap: true,
                   declarationDir: '.',
                 },
               },
@@ -112,7 +112,7 @@ describe('typescript-helpers', () => {
                   incremental: true,
                   composite: true,
                   declaration: true,
-                  declarationMap: false,
+                  declarationMap: true,
                   declarationDir: '',
                 },
               },
@@ -127,7 +127,7 @@ describe('typescript-helpers', () => {
       expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
       });
       expect(
         JSON.parse(
@@ -147,8 +147,36 @@ describe('typescript-helpers', () => {
       ).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
-        declarationMap: false,
+        declarationMap: true,
       });
+    });
+
+    it('should set --declarationMap and --declaration options when `--build` mode is on', () => {
+      expect(JSON.parse(overrideOptions({ config: { declarationMap: false, declaration: false } }, true)).compilerOptions).deep.include({
+        declarationMap: true,
+        declaration: true,
+      });
+    });
+
+    it('should delete declarations properties if `--build` mode is on', () => {
+      expect(
+        JSON.parse(
+          overrideOptions(
+            {
+              config: {
+                compilerOptions: {
+                  inlineSourceMap: '.',
+                  inlineSources: '.',
+                  mapRoute: '.',
+                  sourceRoot: '.',
+                  outFile: '.',
+                },
+              },
+            },
+            true
+          )
+        ).compilerOptions
+      ).to.not.have.any.keys('inlineSourceMap', 'inlineSources', 'mapRoute', 'sourceRoot', 'outFile');
     });
   });
 
@@ -167,17 +195,39 @@ describe('typescript-helpers', () => {
   });
 
   describe(guardTSVersion.name, () => {
-    it('should throw if typescript@2.5.0', () => {
-      sinon.stub(ts, 'version').value('3.5.0');
-      expect(guardTSVersion).throws('@stryker-mutator/typescript-checker only supports typescript@3.6 our higher. Found typescript@3.5.0');
+    it('should throw if typescript@3.5.0', () => {
+      expect(guardTSVersion.bind(undefined, '3.5.0')).throws(
+        '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0'
+      );
     });
     it('should not throw if typescript@3.6.0', () => {
-      sinon.stub(ts, 'version').value('3.6.0');
-      expect(guardTSVersion).not.throws();
+      expect(guardTSVersion.bind(undefined, '3.6.0')).not.throws();
     });
     it('should not throw if typescript@4.0.0', () => {
-      sinon.stub(ts, 'version').value('4.0.0');
-      expect(guardTSVersion).not.throws();
+      expect(guardTSVersion.bind(undefined, '4.0.0')).not.throws();
+    });
+  });
+
+  describe(getSourceMappingURL.name, () => {
+    it('should return undefined when no sourceMap is provided', () => {
+      const content = 'let sum = 2 + 6;';
+      const result = getSourceMappingURL(content);
+      expect(result).to.be.undefined;
+    });
+
+    it('should be able to get multiple sourceFiles in sequence', () => {
+      const content = '//# sourceMappingURL=/url.ts';
+      const result1 = getSourceMappingURL(content);
+      const result2 = getSourceMappingURL(content);
+      expect(result1).to.be.eq('/url.ts');
+      expect(result2).to.be.eq('/url.ts');
+    });
+
+    it('should not hit when sourceMappingURL is not on the end of the file', () => {
+      const content = `const regex = //# sourceMappingURL=/url.ts
+                       console.log(regex);`;
+      const result = getSourceMappingURL(content);
+      expect(result).to.be.undefined;
     });
   });
 });

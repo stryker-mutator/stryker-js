@@ -30,7 +30,10 @@ You can configure the typescript checker in the `stryker.conf.js` (or `stryker.c
 ```json
 {
   "checkers": ["typescript"],
-  "tsconfigFile": "tsconfig.json"
+  "tsconfigFile": "tsconfig.json",
+  "typescriptChecker": {
+    "prioritizePerformanceOverAccuracy": true
+  }
 }
 ```
 
@@ -51,6 +54,12 @@ _Note: the following compiler options are always overridden by @stryker-mutator/
   }
 }
 ```
+
+### `typescriptChecker.prioritizePerformanceOverAccuracy` [`boolean`]
+
+Default: `true`
+
+Sets the performance strategy for the typescript-checker. Defaults to `true` which the fastest strategy with the consequence of losing some accuracy. The accuracy that is lost comes down to having mutants with a status other than `CompileError` while they should have this status. This result in a report that may not be 100% accurate. Setting this option to `false` results in an accurate report but may take (way) longer.
 
 ## Peer dependencies
 

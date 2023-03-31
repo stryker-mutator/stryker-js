@@ -5,8 +5,13 @@ custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/
 
 Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). The number of such processes forked is determined by the configuration option [`--concurrency`](./configuration.md#concurrency-number). 
 
-However, imagine running these parallel processes on a test suite which uses resources like a database connection, web server or file system. This means these processes can conflict if they write to the same database, file or utilize the same port. 
+However, imagine running these parallel processes on a test suite which uses resources like a database connection, web server or file system. This means these processes can conflict if they write to the same database, file or utilize the same port.
 
+:::note 
+
+Although Stryker creates a sandbox with a copy of the sources, this directory does not isolate test runners, since all test runners use the same files. If a test suite creates a file within the project directory it will be visible to all other test runners which can have unintended consequences.
+
+:::
 
 What exactly is this conflict? Let us dive deep. Assume an example of a simple application with two routes, namely - `GET /home` and `POST /echo`. The `GET` api returns a plain string 'Hello World!' (of course!) and the `POST` api returns in the response body the same as what is sent in the request body. 
 

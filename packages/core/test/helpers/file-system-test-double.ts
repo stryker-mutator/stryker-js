@@ -1,6 +1,6 @@
 import { Dirent, PathLike } from 'fs';
 
-import { FileDescriptions, MutateDescription } from '@stryker-mutator/api/src/core/index.js';
+import { FileDescriptions, MutateDescription } from '@stryker-mutator/api/core';
 import { factory } from '@stryker-mutator/test-helpers';
 import { I } from '@stryker-mutator/util';
 
