@@ -122,6 +122,7 @@ describe(sut.name, () => {
       ['toLocaleLowerCase', 'toLocaleUpperCase'],
       ['toLowerCase', 'toUpperCase'],
       ['trimEnd', 'trimStart'],
+      ['min', 'max'],
     ]) {
       it(`should replace ${key} with ${value}`, () => {
         expectJSMutation(sut, `text.${key}();`, `text.${value}();`);
