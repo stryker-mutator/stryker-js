@@ -20,23 +20,28 @@ import { escapeRegExp } from '@stryker-mutator/util';
 
 import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
 import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
-import { setDryRunValue, setHitLimit, setActiveMutant, setupFiles, disableMutant } from './vitest-file-communication.js';
+import {
+  setDryRunValue,
+  setHitLimit,
+  setActiveMutant,
+  setupFiles,
+  disableMutant,
+  setGlobalNamespace,
+  StrykerNamespace,
+} from './vitest-file-communication.js';
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.logger, commonTokens.options, 'globalNamespace'] as const;
   private ctx!: Vitest;
 
-  constructor(
-    private readonly log: Logger,
-    private readonly options: StrykerOptions,
-    private readonly globalNamespace: '__stryker__' | '__stryker2__'
-  ) {}
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly globalNamespace: StrykerNamespace) {}
 
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: false };
   }
 
   public async init(): Promise<void> {
+    await setGlobalNamespace(this.globalNamespace);
     this.ctx = await createVitest('test', {
       threads: false,
       watch: false,
@@ -45,7 +50,7 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.config.setupFiles = [
       setupFiles.activeMutant,
       setupFiles.dryRun,
-      setupFiles.globalNamespace(this.globalNamespace),
+      setupFiles.globalNamespace,
       setupFiles.vitestSetup,
       setupFiles.hitLimit,
       ...this.ctx.config.setupFiles,

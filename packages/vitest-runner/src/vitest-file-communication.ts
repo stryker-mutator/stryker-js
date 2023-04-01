@@ -4,10 +4,12 @@ import { fileURLToPath } from 'url';
 
 import { Mutant } from '@stryker-mutator/api/core';
 
+export type StrykerNamespace = '__stryker__' | '__stryker2__';
+
 export const setupFiles = {
   coverageFile: resolveSetupFile('__stryker-coverage__.json'),
   dryRun: resolveSetupFile('dry-run.js'),
-  globalNamespace: (globalNamespace: '__stryker__' | '__stryker2__'): string => resolveSetupFile(`global-namespace-${globalNamespace}.js`),
+  globalNamespace: resolveSetupFile('global-namespace.js'),
   hitCountFile: resolveSetupFile('hitCount.txt'),
   activeMutant: resolveSetupFile('active-mutant.js'),
   vitestSetup: resolveSetupFile('vitest-setup.js'),
@@ -26,6 +28,10 @@ export async function setDryRunValue(dryRun: boolean): Promise<void> {
   );
 }
 
+export async function setGlobalNamespace(globalNamespace: StrykerNamespace): Promise<void> {
+  await fs.writeFile(setupFiles.globalNamespace, `globalThis.strykerGlobalNamespace = '${globalNamespace}'`);
+}
+
 export async function setHitLimit(globalNamespace: string, hitLimit?: number): Promise<void> {
   const content = hitLimit
     ? `
@@ -35,8 +41,6 @@ export async function setHitLimit(globalNamespace: string, hitLimit?: number): P
     : '';
   await fs.writeFile(setupFiles.hitLimit, content);
 }
-
-export type StrykerNamespace = '__stryker__' | '__stryker2__';
 
 export async function disableMutant(globalNamespace: StrykerNamespace): Promise<void> {
   await fs.writeFile(
