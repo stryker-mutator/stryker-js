@@ -61,7 +61,12 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dryRun(): Promise<DryRunResult> {
-    await Promise.all([setDryRunValue(true), setHitLimit(this.globalNamespace), disableMutant(this.globalNamespace)]);
+    await Promise.all([
+      setGlobalNamespace(this.globalNamespace),
+      setDryRunValue(true),
+      setHitLimit(this.globalNamespace),
+      disableMutant(this.globalNamespace),
+    ]);
     const testResult = await this.run();
     const mutantCoverage: MutantCoverage = JSON.parse(await fs.readFile(setupFiles.coverageFile, 'utf-8'));
     await fs.rm(setupFiles.coverageFile);
