@@ -73,7 +73,7 @@
     "lodash.flatmap": "~4.5.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.0",
-    "minimatch": "~7.4.2",
+    "minimatch": "~8.0.0",
     "mutation-testing-elements": "1.7.14",
     "mutation-testing-metrics": "1.7.14",
     "mutation-testing-report-schema": "1.7.14",
