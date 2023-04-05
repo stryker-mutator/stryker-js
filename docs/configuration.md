@@ -27,6 +27,14 @@ Config file: `"allowConsoleColors": true`
 
 The `allowConsoleColors` value indicates whether Stryker should use colors in console.
 
+### `appendPlugins` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--appendPlugins my_plugin`<br />
+Config file: `"appendPlugins": ["my_plugin"]`
+
+A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.
+
 ### `buildCommand` [`string`]
 
 Default: `undefined`<br />
@@ -188,6 +196,16 @@ Config file: `"dryRunTimeoutMinutes": 5`
 
 Use this option to configure an absolute timeout for the initial test run. Since it can take a while we use minutes as time unit.
 
+### `eventReporter` [`object`]
+
+Default: `{ baseDir: "reports/mutation/events" }`<br />
+Command line: _none_<br />
+Config file: `"eventReporter": { "baseDir": "coverage/events" }`
+
+The options for the event recorder reporter:
+
+- `baseDir`: The relative base dir to write the events to.
+
 ### `fileLogLevel` [`string`]
 
 Default: `off`<br />
@@ -204,6 +222,16 @@ Config file: `"force": true`<br />
 
 Run all mutants, even if [`incremental`](#incremental-boolean) is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.
 See [incremental](./incremental.md#forcing-reruns)
+
+### `htmlReporter` [`object`]
+
+Default: `{ fileName: "reports/mutation/mutation.html" }`<br />
+Command line: _none_<br />
+Config file: `"htmlReporter": { "fileName": "coverage/stryker.html" }`
+
+The options for the html reporter:
+
+- `fileName`: The relative `fileName` of the html report.
 
 ### `ignorePatterns` [`string[]`]
 
@@ -286,6 +314,16 @@ When `true`, Stryker will override your files, but it will keep a copy of the or
 
 When `false` (default) Stryker will work in the copy of your code inside the temp directory.
 
+### `jsonReporter` [`object`]
+
+Default: `{ fileName: "reports/mutation/mutation.json" }`<br />
+Command line: _none_<br />
+Config file: `"jsonReporter": { "fileName": "coverage/stryker.json" }`
+
+The options for the json reporter:
+
+- `fileName`: The relative `fileName` of the json report.
+
 ### `logLevel` [`string`]
 
 Default: `info`<br />
@@ -350,6 +388,14 @@ Config file: `"mutator": { "plugins": ["classProperties"], "excludedMutations": 
 - `excludedMutations`: allow you to specify a [list of mutator names](https://stryker-mutator.io/docs/mutation-testing-elements/supported-mutators/#supported-mutators) to be excluded (`ignored`) from the test run. See [Disable mutants](./disable-mutants.md) for more options of how to disable specific mutants.
 
 _Note: prior to Stryker version 4, the mutator also needed a `name` (or be defined as `string`). This is removed in version 4. Stryker now supports mutating of JavaScript and friend files out of the box, without the need for a mutator plugin._
+
+### `packageManager` [`string`]
+
+Default: `"npm"`<br />
+Command line: _none_<br />
+Config file: `"packageManager": "yarn"`
+
+The package manager Stryker can use to install missing dependencies.
 
 ### `plugins` [`string[]`]
 
@@ -447,7 +493,6 @@ Default: `{ high: 80, low: 60, break: null }`<br />
 Command line: _none_<br />
 Config file: `"thresholds": { "high": 80, "low": 60, "break": null }`
 
-Description
 Specify the thresholds for mutation score.
 
 - `mutation score >= high`: Awesome! Reporters should color this green and happy.
@@ -487,3 +532,27 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 ### `transpilers` (DEPRECATED)
 
 _Note: Support for "transpilers" plugins is removed since Stryker 4. You can now configure your own [buildCommand](#buildCommand-string)_
+
+### `tsconfigFile` [`string`]
+
+Default: `"tsconfig.json"`<br />
+Command line: _none_<br />
+Config file: `"tsconfigFile": "typescript.config.json"`
+
+Configure the (root) tsconfig file for typescript projects. This will allow Stryker to rewrite the `extends` and `references` settings in this and related tsconfig files in your sandbox. Defaults to `tsconfig.json`. This setting is also used when you enable the `@stryker-mutator/typescript-checker plugin`.
+
+### `warnings` [`boolean` or `object`]
+
+Default: `true`<br />
+Command line: _none_<br />
+Config file: `"warnings": { "slow": false }`
+
+Enable or disable certain warnings:
+
+- `true`: Enable all warnings.
+- `false`: Disable all warnings.
+- An object to specify:
+  - `unknownOptions`: Decide whether or not to log warnings when additional stryker options are configured.
+  - `preprocessorErrors`: Decide whether or not to log warnings when a preprocessor error occurs. For example, when the disabling of type errors fails.
+  - `unserializableOptions`: Decide whether or not to log warnings when a configuration options are unserializable. For example, using a `/regex/` or `function` in your configuration options.
+  - `slow`: Decide whether or not to log warnings when Stryker detects a slow part of mutation that can be sped up by changing some configuration. For example using `--ignoreStatic`.
