@@ -249,7 +249,7 @@ For example, image or movie directories. This is useful to speed up Stryker by i
 
 This option has **no effect at all**, when used in combination with [`--inPlace`](#inplace-boolean).
 
-Note that, to **select specific files to be mutated** , you should use use [mutate](#mutate-string).
+Note that, to **select specific files to be mutated**, you should use [`mutate`](#mutate-string).
 
 If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 
