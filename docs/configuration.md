@@ -225,7 +225,7 @@ See [incremental](./incremental.md#forcing-reruns)
 
 ### `htmlReporter` [`object`]
 
-Default: `{ fileName: "reports/mutation/mutation.html" }`<br />
+Default: `{ fileName: "reports/mutation.html" }`<br />
 Command line: _none_<br />
 Config file: `"htmlReporter": { "fileName": "coverage/stryker.html" }`
 
