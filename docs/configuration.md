@@ -15,7 +15,7 @@ Keep in mind, that each option used on the command line will **completely replac
 The [`ignorePatterns`](#ignorepatterns-string), [`mutate`](#mutate-string) and other options referring to source files support globbing expressions using [node glob](https://github.com/isaacs/node-glob). See [the config file documentation](./config-file.md#glob-patterns) for more information. We suggest using [https://globster.xyz/](https://globster.xyz/) or referring to [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
  when auditing more complex glob with `*` or `**` expressions; it can help you get them just right.
 
-When used on the **command line**, you need to 'escape' not only the stars `*`, `**`, but also alls strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent your shell from expanding on them. For example, if you use `bash` or MS-Windows `cmd` or `powershell` as you shell , you need to use double quotes, backslash or other methods to prevent the shell from doing so. 
+When used on the **command line**, you need to 'escape' not only the stars `*`, `**`, but also alls strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent your shell from expanding on them. For example, if you use `bash` or MS-Windows `cmd` or `powershell` as you shell, you need to use double quotes, backslash or other methods to prevent the shell from doing so. 
 
 ## Configuration Options
 
@@ -258,7 +258,7 @@ When using the command line, the list can only contain a comma separated list of
 - `--ignorePatterns "/src/**/*.css"`
 - `--ignorePatterns` with `"!"` (= undo) for example:
   - `--ignorePatterns "src/**","!str/app/important/*.ts"` (for details on usage of glob patterns like `!`, `*`, `**` see [above](#usage-of-globbing-expressions-on-options) ) 
-  - or in the config file: `"ignorePatterns": ["src/**","!str/app/important/*.ts"]` This would ignore everything in and below `src` - directory **except** the typescript files in `src/app/important` directory, but the `--mutate` might be the better option in that case , see [below](#mutate-string)
+  - or in the config file: `"ignorePatterns": ["src/**","!str/app/important/*.ts"]` This would ignore everything in and below `src` - directory **except** the typescript files in `src/app/important` directory, but the `--mutate` might be the better option in that case, see [below](#mutate-string)
   - Keep in mind that you should **not accidentally ignore any other configuration** files your test runner might need for running the tests in the sandbox directory. 
 
 ### `ignoreStatic` [`boolean`]
