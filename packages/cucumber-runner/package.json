@@ -43,7 +43,7 @@
     "@stryker-mutator/core": "^6.4.0"
   },
   "dependencies": {
-    "@cucumber/messages": "^21.0.0",
+    "@cucumber/messages": "^22.0.0",
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
     "semver": "^7.3.7"
