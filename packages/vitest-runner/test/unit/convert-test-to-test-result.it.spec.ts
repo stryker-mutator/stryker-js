@@ -32,7 +32,7 @@ describe('convert test to test result', () => {
       },
     };
     const result = toTestId(test);
-    expect(result).to.be.equal('file.js#test1');
+    expect(result).to.be.equal('file.js#suite test1');
   });
 
   it('fromTestId should return correct fileName', () => {

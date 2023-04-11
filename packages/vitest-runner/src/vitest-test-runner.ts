@@ -13,6 +13,7 @@ import {
   TestResult,
   toMutantRunResult,
   determineHitLimitReached,
+  DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
 
 import { createVitest, Vitest } from 'vitest/node';
@@ -20,56 +21,40 @@ import { escapeRegExp } from '@stryker-mutator/util';
 
 import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
 import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
-import {
-  setDryRunValue,
-  setHitLimit,
-  setActiveMutant,
-  setupFiles,
-  disableMutant,
-  setGlobalNamespace,
-  StrykerNamespace,
-} from './vitest-file-communication.js';
+import { FileCommunicator } from './file-communicator.js';
+
+type StrykerNamespace = '__stryker__' | '__stryker2__';
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.logger, commonTokens.options, 'globalNamespace'] as const;
   private ctx!: Vitest;
+  private readonly fileCommunicator: FileCommunicator;
 
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly globalNamespace: StrykerNamespace) {}
+  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly globalNamespace: StrykerNamespace) {
+    this.fileCommunicator = new FileCommunicator(globalNamespace);
+  }
 
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: false };
   }
 
   public async init(): Promise<void> {
-    await setGlobalNamespace(this.globalNamespace);
     this.ctx = await createVitest('test', {
       threads: false,
       watch: false,
       onConsoleLog: () => false,
     });
-    this.ctx.config.setupFiles = [
-      setupFiles.activeMutant,
-      setupFiles.dryRun,
-      setupFiles.globalNamespace,
-      setupFiles.vitestSetup,
-      setupFiles.hitLimit,
-      ...this.ctx.config.setupFiles,
-    ];
+    this.ctx.config.setupFiles = [this.fileCommunicator.setupFile, ...this.ctx.config.setupFiles];
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
     }
   }
 
-  public async dryRun(): Promise<DryRunResult> {
-    await Promise.all([
-      setGlobalNamespace(this.globalNamespace),
-      setDryRunValue(true),
-      setHitLimit(this.globalNamespace),
-      disableMutant(this.globalNamespace),
-    ]);
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    await this.fileCommunicator.setDryRun(options);
     const testResult = await this.run();
-    const mutantCoverage: MutantCoverage = JSON.parse(await fs.readFile(setupFiles.coverageFile, 'utf-8'));
-    await fs.rm(setupFiles.coverageFile);
+    const mutantCoverage: MutantCoverage = JSON.parse(await fs.readFile(this.fileCommunicator.coverageFile, 'utf-8'));
+    await fs.rm(this.fileCommunicator.coverageFile);
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
@@ -81,13 +66,10 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    await Promise.all([
-      setDryRunValue(false),
-      setActiveMutant(options.activeMutant, options.mutantActivation !== 'static', this.globalNamespace),
-      setHitLimit(this.globalNamespace, options.hitLimit),
-    ]);
+    await this.fileCommunicator.setMutantRun(options);
     const dryRunResult = await this.run(options.testFilter);
-    const hitCount = parseInt(await fs.readFile(setupFiles.hitCountFile, 'utf-8'));
+    const hitCount = parseInt(await fs.readFile(this.fileCommunicator.hitCountFile, 'utf-8'));
+    await fs.rm(this.fileCommunicator.hitCountFile);
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
   }

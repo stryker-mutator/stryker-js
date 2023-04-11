@@ -20,13 +20,15 @@ describe('VitestRunner integration', () => {
 
     it('should run the specs', async () => {
       await sut.init();
-      const runResult = await sut.dryRun();
+      const options = factory.dryRunOptions();
+      const runResult = await sut.dryRun(options);
       assertions.expectCompleted(runResult);
     });
 
     it('should report mutant coverage', async () => {
       await sut.init();
-      const runResult = await sut.dryRun();
+      const options = factory.dryRunOptions();
+      const runResult = await sut.dryRun(options);
       assertions.expectCompleted(runResult);
       expect(runResult.mutantCoverage).to.not.be.undefined;
     });
@@ -51,7 +53,7 @@ describe('VitestRunner integration', () => {
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -67,7 +69,7 @@ describe('VitestRunner integration', () => {
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -83,7 +85,7 @@ describe('VitestRunner integration', () => {
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['math.spec.ts#should be able to add two numbers'],
+        testFilter: ['math.spec.ts#math should be able to add two numbers'],
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -91,7 +93,7 @@ describe('VitestRunner integration', () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.nrOfTests).eq(1);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -101,7 +103,7 @@ describe('VitestRunner integration', () => {
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['math.spec.ts#should be able to add two numbers', 'math.spec.ts#should be able to add one to a number'],
+        testFilter: ['math.spec.ts#math should be able to add two numbers', 'math.spec.ts#math should be able to add one to a number'],
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -109,7 +111,7 @@ describe('VitestRunner integration', () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.nrOfTests).eq(2);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -119,12 +121,12 @@ describe('VitestRunner integration', () => {
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
         sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['math.spec.ts#should be able to add two numbers'],
+        testFilter: ['math.spec.ts#math should be able to add two numbers'],
       });
       mutantRunOptions.activeMutant.id = '1';
 
       await sut.mutantRun(mutantRunOptions);
-      mutantRunOptions.testFilter = ['math.spec.ts#should be able to add one to a number'];
+      mutantRunOptions.testFilter = ['math.spec.ts#math should be able to add one to a number'];
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectSurvived(runResult);
