@@ -1,20 +1,14 @@
 // @ts-check
-import fs from 'fs';
+import { writeFile, mkdir, readFile } from 'fs/promises';
 import path from 'path';
-
-import { promisify } from 'util';
 import { fileURLToPath } from 'url';
 
-import glob from 'glob';
+import { glob } from 'glob';
 import { compile } from 'json-schema-to-typescript';
-
-const writeFile = promisify(fs.writeFile);
-const mkdir = promisify(fs.mkdir);
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const resolveFromParent = path.resolve.bind(path, dirname, '..');
-const globAsPromised = promisify(glob);
 
 /**
  *
@@ -22,7 +16,7 @@ const globAsPromised = promisify(glob);
  */
 async function generate(schemaFile) {
   const parsedFile = path.parse(schemaFile);
-  const schema = preprocessSchema(JSON.parse(await fs.promises.readFile(schemaFile, 'utf-8')));
+  const schema = preprocessSchema(JSON.parse(await readFile(schemaFile, 'utf-8')));
   const resolveOutputDir = path.resolve.bind(path, parsedFile.dir, '..', 'src-generated');
   const outFile = resolveOutputDir(`${parsedFile.name}.ts`);
   await mkdir(resolveOutputDir(), { recursive: true });
@@ -52,7 +46,7 @@ async function generate(schemaFile) {
 }
 
 async function generateAllSchemas() {
-  const files = await globAsPromised('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
+  const files = await glob('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
   await Promise.all(files.map((fileName) => generate(resolveFromParent(fileName))));
 }
 generateAllSchemas().catch((err) => {
