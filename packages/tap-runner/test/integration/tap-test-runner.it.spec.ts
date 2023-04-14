@@ -2,7 +2,7 @@ import os from 'os';
 
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { DryRunStatus, KilledMutantRunResult, SurvivedMutantRunResult } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
 import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
@@ -108,7 +108,7 @@ describe('Running in an example project', () => {
       // Assert
       assertions.expectKilled(run);
       expect(run.failureMessage).contains('This test will fail');
-      expect(endTime - startTime).lt(4000);
+      expect(endTime - startTime).at.most(4000);
     }
   });
 
@@ -117,7 +117,7 @@ describe('Running in an example project', () => {
     const startTime = Date.now();
 
     // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
+    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
     const endTime = Date.now();
 
     // Assert
