@@ -15,7 +15,7 @@
     "directory": "packages/instrumenter"
   },
   "engines": {
-    "node": ">=14.18.0"
+    "node": ">=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -41,7 +41,7 @@
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
     "angular-html-parser": "~4.0.0",
-    "weapon-regex": "~1.0.2"
+    "weapon-regex": "~1.1.0"
   },
   "devDependencies": {
     "@babel/preset-react": "7.18.6",
