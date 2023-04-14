@@ -12,9 +12,9 @@ describe(TapTestRunner.name, () => {
   });
 
   describe('capabilities', () => {
-    it('should communicate reloadEnvironment =false', () => {
+    it('should communicate reloadEnvironment = true', () => {
       const expectedCapabilities: TestRunnerCapabilities = {
-        reloadEnvironment: false,
+        reloadEnvironment: true,
       };
 
       expect(sut.capabilities()).deep.eq(expectedCapabilities);

@@ -30,6 +30,7 @@ import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOpt
 
 import * as pluginTokens from './plugin-tokens.js';
 import { findTestyLookingFiles } from './tap-helper.js';
+import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -50,19 +51,22 @@ export class TapTestRunner implements TestRunner {
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.globalNamespace);
   private testFiles: string[] = [];
   private static readonly hookFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs');
+  private readonly options: TapRunnerOptionsWithStrykerOptions;
 
   constructor(
     private readonly logger: Logger,
-    private readonly options: StrykerOptions,
+    options: StrykerOptions,
     private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
-  ) {}
+  ) {
+    this.options = options as TapRunnerOptionsWithStrykerOptions;
+  }
 
   public capabilities(): Promise<TestRunnerCapabilities> | TestRunnerCapabilities {
-    return { reloadEnvironment: false };
+    return { reloadEnvironment: true };
   }
 
   public async init(): Promise<void> {
-    this.testFiles = await findTestyLookingFiles();
+    this.testFiles = await findTestyLookingFiles(this.options.tap.testFiles);
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -145,6 +149,7 @@ export class TapTestRunner implements TestRunner {
       });
 
       parser.on('bailout', () => {
+        // Bailout within a test file is not supported on windows, because when the process is killed the exit handler which saves the file with the result does not run.
         if (os.platform() !== 'win32') {
           tapProcess.kill();
         }

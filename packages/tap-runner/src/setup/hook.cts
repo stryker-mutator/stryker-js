@@ -24,5 +24,8 @@ process.on('exit', finalCleanup);
 );
 
 function finalCleanup() {
+  if (global[strykerGlobalNamespace].dryRun) {
+    delete global[strykerGlobalNamespace].mutantCoverage;
+  }
   fs.writeFileSync(`stryker-output-${process.pid}.json`, JSON.stringify(global[strykerGlobalNamespace]));
 }

@@ -7,6 +7,8 @@ import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
+import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
+import { defaultTestFilesGlob } from '../helpers/tap-test-runner-constants.js';
 
 describe('Running in an example project', () => {
   let sut: TapTestRunner;
@@ -16,11 +18,14 @@ describe('Running in an example project', () => {
   beforeEach(async () => {
     sandbox = new TempTestDirectorySandbox('example');
     await sandbox.init();
+    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap = {
+      testFiles: defaultTestFilesGlob,
+    };
     sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
     await sut.init();
 
     const excludeFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
-    testFilter = (await findTestyLookingFiles()).filter((file) => !excludeFiles.includes(file));
+    testFilter = (await findTestyLookingFiles(defaultTestFilesGlob)).filter((file) => !excludeFiles.includes(file));
   });
   afterEach(async () => {
     await sandbox.dispose();
