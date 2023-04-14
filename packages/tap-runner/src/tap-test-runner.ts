@@ -10,7 +10,6 @@ import os from 'os';
 
 import * as tap from 'tap-parser';
 
-import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
   BaseTestResult,
@@ -48,16 +47,12 @@ export const createTapTestRunner = createTapTestRunnerFactory();
 class HitLimitError extends Error {}
 
 export class TapTestRunner implements TestRunner {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.globalNamespace);
+  public static inject = tokens(commonTokens.options, pluginTokens.globalNamespace);
   private testFiles: string[] = [];
   private static readonly hookFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs');
   private readonly options: TapRunnerOptionsWithStrykerOptions;
 
-  constructor(
-    private readonly logger: Logger,
-    options: StrykerOptions,
-    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
-  ) {
+  constructor(options: StrykerOptions, private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__') {
     this.options = options as TapRunnerOptionsWithStrykerOptions;
   }
 
@@ -70,7 +65,6 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    // todo what todo with options.files
     return this.run(options.disableBail);
   }
 
