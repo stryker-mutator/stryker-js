@@ -30,6 +30,7 @@ import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOpt
 import * as pluginTokens from './plugin-tokens.js';
 import { findTestyLookingFiles } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
+import { strykerHitLimit, strykerNamespace } from './setup/env.cjs';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -115,11 +116,12 @@ export class TapTestRunner implements TestRunner {
     activeMutant?: string,
     hitLimit?: number
   ): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
+    // todo dry run meegeven
     return new Promise((resolve, reject) => {
       const env: NodeJS.ProcessEnv = {
         ...process.env,
-        ['__stryker__hit-limit']: hitLimit?.toString(),
-        ['__stryker__namespace']: this.globalNamespace,
+        [strykerHitLimit]: hitLimit?.toString(),
+        [strykerNamespace]: this.globalNamespace,
         [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutant,
       };
       const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
