@@ -39,7 +39,7 @@
   "dependencies": {
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
-    "tap-parser": "~12.0.1",
+    "tap-parser": "~13.0.0",
     "tslib": "~2.4.0"
   },
   "devDependencies": {
