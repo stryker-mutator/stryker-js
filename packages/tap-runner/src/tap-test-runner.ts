@@ -30,7 +30,7 @@ import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOpt
 import * as pluginTokens from './plugin-tokens.js';
 import { findTestyLookingFiles } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
-import { strykerHitLimit, strykerNamespace } from './setup/env.cjs';
+import { strykerHitLimit, strykerNamespace, strykerDryRun } from './setup/env.cjs';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -46,6 +46,13 @@ export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTA
 export const createTapTestRunner = createTapTestRunnerFactory();
 
 class HitLimitError extends Error {}
+
+interface TapRunOptions {
+  disableBail: boolean;
+  activeMutant?: string;
+  hitLimit?: number;
+  dryRun?: boolean;
+}
 
 export class TapTestRunner implements TestRunner {
   public static inject = tokens(commonTokens.options, pluginTokens.globalNamespace);
@@ -66,14 +73,16 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(options.disableBail);
+    return this.run({ disableBail: options.disableBail, dryRun: true });
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    return toMutantRunResult(await this.run(options.disableBail, options.testFilter, options.activeMutant.id, options.hitLimit));
+    return toMutantRunResult(
+      await this.run({ disableBail: options.disableBail, activeMutant: options.activeMutant.id, hitLimit: options.hitLimit }, options.testFilter)
+    );
   }
 
-  private async run(disableBail: boolean, testFilter?: string[], activeMutant?: string, hitLimit?: number): Promise<DryRunResult> {
+  private async run(testOptions: TapRunOptions, testFilter?: string[]): Promise<DryRunResult> {
     try {
       const testFiles = testFilter ?? this.testFiles;
 
@@ -84,11 +93,11 @@ export class TapTestRunner implements TestRunner {
       };
 
       for (const testFile of testFiles) {
-        const { testResult, coverage } = await this.runFile(testFile, disableBail, activeMutant, hitLimit);
+        const { testResult, coverage } = await this.runFile(testFile, testOptions);
         runs.push(testResult);
         totalCoverage.perTest[testFile] = coverage?.static ?? {};
 
-        if (testResult.status !== TestStatus.Success && !disableBail) {
+        if (testResult.status !== TestStatus.Success && !testOptions.disableBail) {
           break;
         }
       }
@@ -110,24 +119,20 @@ export class TapTestRunner implements TestRunner {
     }
   }
 
-  private async runFile(
-    testFile: string,
-    disableBail: boolean,
-    activeMutant?: string,
-    hitLimit?: number
-  ): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
+  private async runFile(testFile: string, testOptions: TapRunOptions): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
     // todo dry run meegeven
     return new Promise((resolve, reject) => {
       const env: NodeJS.ProcessEnv = {
         ...process.env,
-        [strykerHitLimit]: hitLimit?.toString(),
+        [strykerHitLimit]: testOptions.hitLimit?.toString(),
         [strykerNamespace]: this.globalNamespace,
-        [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutant,
+        [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
+        [strykerDryRun]: testOptions.dryRun?.toString(),
       };
       const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
 
       const failedTests: tap.TapError[] = [];
-      const config = { bail: !disableBail };
+      const config = { bail: !testOptions.disableBail };
 
       const parser = new tap.Parser(config, async (result) => {
         const fileName = `stryker-output-${tapProcess.pid}.json`;
@@ -135,7 +140,7 @@ export class TapTestRunner implements TestRunner {
         await rm(fileName);
         const file = JSON.parse(fileContent) as InstrumenterContext;
 
-        const hitLimitReached = determineHitLimitReached(file.hitCount, hitLimit);
+        const hitLimitReached = determineHitLimitReached(file.hitCount, testOptions.hitLimit);
         if (hitLimitReached) {
           reject(new HitLimitError(hitLimitReached.reason));
           return;
