@@ -120,7 +120,6 @@ export class TapTestRunner implements TestRunner {
   }
 
   private async runFile(testFile: string, testOptions: TapRunOptions): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
-    // todo dry run meegeven
     return new Promise((resolve, reject) => {
       const env: NodeJS.ProcessEnv = {
         ...process.env,
