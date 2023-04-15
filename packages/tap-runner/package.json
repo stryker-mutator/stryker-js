@@ -46,7 +46,7 @@
     "@stryker-mutator/test-helpers": "6.4.2",
     "@types/glob": "8.0.0",
     "@types/node": "18.15.11",
-    "tap": "^16.3.2"
+    "tap": "16.3.4"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^6.4.0"
