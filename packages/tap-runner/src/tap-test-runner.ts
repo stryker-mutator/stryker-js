@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 
 import path from 'path';
 
@@ -129,6 +129,7 @@ export class TapTestRunner implements TestRunner {
         [strykerDryRun]: testOptions.dryRun?.toString(),
       };
       const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
+      const tapProcessExitPromise = this.getExitPromiseOfProcess(tapProcess);
 
       const failedTests: tap.TapError[] = [];
       const config = { bail: !testOptions.disableBail };
@@ -145,6 +146,8 @@ export class TapTestRunner implements TestRunner {
           return;
         }
 
+        // wait for the process to end before continuing, because the tapParser sometimes results before the process ends which causes a start of a new process while to current one is still running.
+        await tapProcessExitPromise;
         resolve({ testResult: this.tapResultToTestResult(testFile, result, failedTests), coverage: file.mutantCoverage });
       });
 
@@ -161,6 +164,10 @@ export class TapTestRunner implements TestRunner {
 
       tapProcess.stdout.pipe(parser);
     });
+  }
+
+  private getExitPromiseOfProcess(process: ChildProcess): Promise<void> {
+    return new Promise((resolve) => process.on('exit', resolve));
   }
 
   private tapResultToTestResult(fileName: string, result: tap.FinalResults, failedTests: tap.TapError[]): TestResult {
