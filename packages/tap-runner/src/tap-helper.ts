@@ -20,7 +20,7 @@ export function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail
   return new Promise<TapResult>((resolve) => {
     const failedTests: tap.TapError[] = [];
     const config = { bail: !disableBail };
-    const parser = new tap.Parser(config, async (result) => {
+    const parser = new tap.Parser(config, (result) => {
       resolve({ result, failedTests });
     });
 
