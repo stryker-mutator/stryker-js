@@ -269,11 +269,10 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['foo.js'].mutants).lengthOf(2);
       });
 
-      it('should log a warning if source file could not be found', async () => {
+      it('should remove result if source file could not be found', async () => {
         const inputMutants = [factory.killedMutantResult({ fileName: 'not-found.js' })];
         const [actualReport] = await actReportAll(inputMutants);
-        expect(actualReport.files['not-found.js'].mutants).lengthOf(1);
-        expect(testInjector.logger.warn).calledWithMatch('File "not-found.js" not found');
+        expect(Object.keys(actualReport.files)).lengthOf(0);
       });
 
       it('should report file names as normalized and relative to the cwd', async () => {
@@ -394,10 +393,10 @@ describe(MutationTestReportHelper.name, () => {
         expect(testFile.tests).lengthOf(1);
       });
 
-      it('should log a warning the test file could not be found', async () => {
+      it('should remove the test file could not be found', async () => {
         testCoverage.addTest(factory.testResult({ fileName: 'foo.spec.js' }));
-        await actReportAll();
-        expect(testInjector.logger.warn).calledWithMatch('Test file "foo.spec.js" not found in input files');
+        const [actualReport] = await actReportAll();
+        expect(Object.keys(actualReport.testFiles!)).lengthOf(0);
       });
     });
 
@@ -444,14 +443,24 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should not set exit code = 1 if `threshold.break` === score', async () => {
         testInjector.options.thresholds.break = 50;
-        await actReportAll([factory.mutantResult({ status: MutantStatus.Survived }), factory.mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        fileSystemTestDouble.files['foo.js'] = '';
+        fileSystemTestDouble.files['bar.js'] = '';
+        await actReportAll([
+          factory.mutantResult({ fileName: 'foo.js', status: MutantStatus.Survived }),
+          factory.mutantResult({ fileName: 'bar.js', status: MutantStatus.Killed }),
+        ]); // 50 %
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.info).calledWith('Final mutation score of 50.00 is greater than or equal to break threshold 50');
       });
 
       it('should set exit code = 1 if `threshold.break` > score', async () => {
         testInjector.options.thresholds.break = 50.01;
-        await actReportAll([factory.mutantResult({ status: MutantStatus.Survived }), factory.mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        fileSystemTestDouble.files['foo.js'] = '';
+        fileSystemTestDouble.files['bar.js'] = '';
+        await actReportAll([
+          factory.mutantResult({ fileName: 'foo.js', status: MutantStatus.Survived }),
+          factory.mutantResult({ fileName: 'bar.js', status: MutantStatus.Killed }),
+        ]); // 50 %
         expect(setExitCodeStub).calledWith(1);
         expect(testInjector.logger.error).calledWith('Final mutation score 50.00 under breaking threshold 50.01, setting exit code to 1 (failure).');
         expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');

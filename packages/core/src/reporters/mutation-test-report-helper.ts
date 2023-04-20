@@ -4,7 +4,7 @@ import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, s
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { I, normalizeFileName, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
+import { I, normalizeFileName, type requireResolve } from '@stryker-mutator/util';
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
@@ -165,7 +165,7 @@ export class MutationTestReportHelper {
     results: readonly MutantResult[],
     remapTestIds: (ids: string[] | undefined) => string[] | undefined
   ): Promise<schema.FileResultDictionary> {
-    const fileResultsByName = new Map<string, schema.FileResult>(
+    const fileResultsByName = new Map<string, schema.FileResult | null>(
       await Promise.all(
         [...new Set(results.map(({ fileName }) => fileName))].map(async (fileName) => [fileName, await this.toFileResult(fileName)] as const)
       )
@@ -173,14 +173,18 @@ export class MutationTestReportHelper {
 
     return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
       const reportFileName = normalizeReportFileName(mutantResult.fileName);
-      const fileResult = acc[reportFileName] ?? (acc[reportFileName] = fileResultsByName.get(mutantResult.fileName)!);
+      const fileResult = fileResultsByName.get(mutantResult.fileName);
+      if (!fileResult) {
+        return acc;
+      }
       fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
+      acc[reportFileName] = fileResult;
       return acc;
     }, {});
   }
 
   private async toTestFiles(remapTestId: (id: string) => string): Promise<schema.TestFileDefinitionDictionary> {
-    const testFilesByName = new Map<string, schema.TestFile>(
+    const testFilesByName = new Map<string, schema.TestFile | null>(
       await Promise.all(
         [...new Set([...this.testCoverage.testsById.values()].map(({ fileName }) => fileName))].map(
           async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const
@@ -191,13 +195,17 @@ export class MutationTestReportHelper {
     return [...this.testCoverage.testsById.values()].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
       const reportFileName = normalizeReportFileName(testResult.fileName);
-      const testFile = acc[reportFileName] ?? (acc[reportFileName] = testFilesByName.get(reportFileName)!);
+      const testFile = testFilesByName.get(reportFileName);
+      if (!testFile) {
+        return acc;
+      }
       testFile.tests.push(test);
+      acc[reportFileName] = testFile;
       return acc;
     }, {});
   }
 
-  private async toFileResult(fileName: string): Promise<schema.FileResult> {
+  private async toFileResult(fileName: string): Promise<schema.FileResult | null> {
     const fileResult: schema.FileResult = {
       language: this.determineLanguage(fileName),
       mutants: [],
@@ -207,25 +215,19 @@ export class MutationTestReportHelper {
     if (sourceFile) {
       fileResult.source = await sourceFile.readOriginal();
     } else {
-      this.log.warn(
-        normalizeWhitespaces(`File "${fileName}" not found
-    in input files, but did receive mutant result for it. This shouldn't happen`)
-      );
+      return null;
     }
     return fileResult;
   }
 
-  private async toTestFile(fileName: string | undefined): Promise<schema.TestFile> {
+  private async toTestFile(fileName: string | undefined): Promise<schema.TestFile | null> {
     const testFile: schema.TestFile = { tests: [] };
     if (fileName) {
       const file = this.project.files.get(fileName);
       if (file) {
         testFile.source = await file.readOriginal();
       } else {
-        this.log.warn(
-          normalizeWhitespaces(`Test file "${fileName}" not found
-        in input files, but did receive test result for it. This shouldn't happen.`)
-        );
+        return null;
       }
     }
     return testFile;
