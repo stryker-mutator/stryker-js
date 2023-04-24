@@ -230,7 +230,12 @@ export class IncrementalDiffer {
       Object.entries(testFiles ?? {}).forEach(([fileName, oldTestFile]) => {
         const relativeFileName = toRelativeNormalizedFileName(fileName);
         const currentFileSource = currentRelativeFiles.get(relativeFileName);
-        if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
+        if (currentFileSource === undefined && fileName !== '') {
+          // An empty file name means the test runner cannot report test file locations.
+          // If the current file is undefined while the test runner can report test file locations, it means it has been deleted
+          log.debug('Test file removed: %s', relativeFileName);
+          testStatisticsCollector.count(relativeFileName, 'removed', oldTestFile.tests.length);
+        } else if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
           log.trace('Diffing %s', relativeFileName);
           const locatedTests = closeLocations(oldTestFile);
           const { results, removeCount } = performFileDiff(oldTestFile.source, currentFileSource, locatedTests);
