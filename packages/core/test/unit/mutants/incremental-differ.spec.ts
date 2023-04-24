@@ -131,8 +131,10 @@ class ScenarioBuilder {
     });
     this.incrementalTestFiles[testAdd] = factory.mutationTestReportSchemaTestFile({
       tests: [{ id: this.oldSpecId, name: 'add(2, 0) = 2' }],
+      source: testAddContent,
     });
     this.currentFiles.set(srcAdd, srcAddContent);
+    this.currentFiles.set(testAdd, testAddContent);
     this.testCoverage.addTest(factory.testResult({ id: this.newTestId, fileName: testAdd, name: 'add(2, 0) = 2' }));
 
     if (isStatic) {
@@ -252,7 +254,9 @@ class ScenarioBuilder {
     this.testCoverage.addCoverage(this.mutantId, [secondTest.id]);
     return this;
   }
+
   public withSecondTestInIncrementalReport({ isKillingTest = false } = {}): this {
+    this.currentFiles.set(testAdd, testAddContentTwoTests);
     this.incrementalTestFiles[testAdd].tests.unshift(
       factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) })
     );
