@@ -421,6 +421,13 @@ class ScenarioBuilder {
     return this;
   }
 
+  public withRemovedTestFile(): this {
+    this.currentFiles.delete(testAdd);
+    this.testCoverage.clear();
+    this.testCoverage.hasCoverage = false;
+    return this;
+  }
+
   public act() {
     this.sut = testInjector.injector.injectClass(IncrementalDiffer);
     deepFreeze(this.mutants); // make sure mutants aren't changed at all
@@ -774,6 +781,17 @@ describe(IncrementalDiffer.name, () => {
       const changes = actualCollector.changesByFile.get(testAdd)!;
       expect(changes).property('added', 1);
       expect(changes).property('removed', 0);
+    });
+
+    it('should collect a removed test', () => {
+      const scenario = new ScenarioBuilder().withMathProjectExample().withRemovedTestFile();
+      scenario.act();
+      const actualCollector = scenario.sut!.testStatisticsCollector!;
+      expect(actualCollector.changesByFile).lengthOf(1);
+      const changes = actualCollector.changesByFile.get(testAdd)!;
+      expect(changes).property('added', 0);
+      expect(changes).property('removed', 1);
+      sinon.assert.calledWithExactly(testInjector.logger.debug, 'Test file removed: %s', testAdd);
     });
 
     it('should collect an added and removed test when a test changes', () => {
