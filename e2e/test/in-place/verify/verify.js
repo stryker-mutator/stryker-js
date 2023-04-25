@@ -1,6 +1,5 @@
 import { promises as fsPromises } from 'fs';
 import path from 'path';
-import { promisify } from 'util';
 import { fileURLToPath, URL } from 'url';
 
 import chai from 'chai';
@@ -13,7 +12,6 @@ import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-const rm = promisify(rimraf);
 
 const rootResolve = path.resolve.bind(path, fileURLToPath(new URL('..', import.meta.url)));
 
@@ -29,8 +27,8 @@ describe('in place', () => {
     originalAddJSContent = await readAddJS();
   });
   afterEach(async () => {
-    await rm(rootResolve('reports'));
-    await rm(rootResolve('.lock'));
+    await rimraf(rootResolve('reports'));
+    await rimraf(rootResolve('.lock'));
   });
   it('should reset files after a successful run', async () => {
     execaSync('stryker', ['run']);

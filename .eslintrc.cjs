@@ -32,6 +32,7 @@ module.exports = {
 
     // prettier rules
     'prettier/prettier': ['error'],
+    '@typescript-eslint/lines-around-comment': 'off',
 
     // customized typescript-eslint rules
     '@typescript-eslint/array-type': [

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { FileDescription, MutateDescription } from '@stryker-mutator/api/src/core';
+import { FileDescription, MutateDescription } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/instrumenter';
 import { I } from '@stryker-mutator/util';
 

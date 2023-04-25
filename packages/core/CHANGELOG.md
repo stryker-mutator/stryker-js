@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **angular:** generate karma.conf.js file when it is missing ([#4054](https://github.com/stryker-mutator/stryker-js/issues/4054)) ([915c6d8](https://github.com/stryker-mutator/stryker-js/commit/915c6d85db5cbe8a5276e18cd3a07e399d604cfa))
+- **deps:** update dependency execa to v7.1.1 ([#4025](https://github.com/stryker-mutator/stryker-js/issues/4025)) ([13bc0b5](https://github.com/stryker-mutator/stryker-js/commit/13bc0b56cf5c02a17429d805ddd1bf9f5f77725b))
+- **deps:** update dependency log4js to ~6.9.0 ([#3988](https://github.com/stryker-mutator/stryker-js/issues/3988)) ([fca777f](https://github.com/stryker-mutator/stryker-js/commit/fca777f40185cbcbc3cd2b7bff7652a56823324c))
+- **progress reporter:** improve ETC prediction ([#4024](https://github.com/stryker-mutator/stryker-js/issues/4024)) ([956bbe9](https://github.com/stryker-mutator/stryker-js/commit/956bbe9a7ae3afb2e339f9027fe553c428c0c195)), closes [#4018](https://github.com/stryker-mutator/stryker-js/issues/4018)
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/core
+
 # [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
 
 ### Bug Fixes

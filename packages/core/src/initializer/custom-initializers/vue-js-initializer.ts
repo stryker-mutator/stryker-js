@@ -1,8 +1,7 @@
 import inquirer from 'inquirer';
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 
-import { Preset } from './preset.js';
-import { PresetConfiguration } from './preset-configuration.js';
+import { CustomInitializer, CustomInitializerConfiguration } from './custom-initializer.js';
 
 const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/vuejs';
 
@@ -10,7 +9,7 @@ const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/vuejs';
  * More information can be found in the Stryker handbook:
  * https://stryker-mutator.io/docs/stryker-js/guides/vuejs
  */
-export class VueJsPreset implements Preset {
+export class VueJsInitializer implements CustomInitializer {
   public readonly name = 'vue-cli';
 
   private readonly jestConf: PartialStrykerOptions = {
@@ -38,7 +37,7 @@ export class VueJsPreset implements Preset {
     coverageAnalysis: 'perTest',
   };
 
-  public async createConfig(): Promise<PresetConfiguration> {
+  public async createConfig(): Promise<CustomInitializerConfiguration> {
     const testRunnerChoices = ['mocha', 'jest'];
     const testRunnerAnswers = await inquirer.prompt<{ testRunner: string }>({
       choices: testRunnerChoices,

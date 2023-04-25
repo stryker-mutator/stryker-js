@@ -31,7 +31,7 @@ You can configure the typescript checker in the `stryker.conf.js` (or `stryker.c
 {
   "checkers": ["typescript"],
   "tsconfigFile": "tsconfig.json",
-  "typeScriptChecker": {
+  "typescriptChecker": {
     "prioritizePerformanceOverAccuracy": true
   }
 }
@@ -55,7 +55,7 @@ _Note: the following compiler options are always overridden by @stryker-mutator/
 }
 ```
 
-### `typeScriptChecker.prioritizePerformanceOverAccuracy` [`boolean`]
+### `typescriptChecker.prioritizePerformanceOverAccuracy` [`boolean`]
 
 Default: `true`
 

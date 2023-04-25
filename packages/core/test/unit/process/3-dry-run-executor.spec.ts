@@ -3,7 +3,14 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  CompleteDryRunResult,
+  ErrorDryRunResult,
+  TimeoutDryRunResult,
+  DryRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable, mergeMap } from 'rxjs';
 import { I } from '@stryker-mutator/util';
@@ -22,6 +29,7 @@ import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
   let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
+  let testRunnerCapabilities: TestRunnerCapabilities;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -33,7 +41,9 @@ describe(DryRunExecutor.name, () => {
   beforeEach(() => {
     reporterStub = factory.reporter();
     timerMock = sinon.createStubInstance(Timer);
+    testRunnerCapabilities = factory.testRunnerCapabilities();
     testRunnerMock = factory.testRunner();
+    testRunnerMock.capabilities.resolves(testRunnerCapabilities);
     testRunnerPoolMock = createTestRunnerPoolMock();
     (
       testRunnerPoolMock.schedule as sinon.SinonStub<
@@ -170,6 +180,7 @@ describe(DryRunExecutor.name, () => {
           overhead: expectedOverHeadTimeMs,
           net: expectedNetTime,
         },
+        capabilities: testRunnerCapabilities,
       });
     });
 

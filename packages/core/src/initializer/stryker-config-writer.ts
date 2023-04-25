@@ -9,8 +9,8 @@ import { fileUtils } from '../utils/file-utils.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
 import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../config/index.js';
 
-import { PresetConfiguration } from './presets/preset-configuration.js';
 import { PromptOption } from './prompt-option.js';
+import { CustomInitializerConfiguration } from './custom-initializers/custom-initializer.js';
 
 import { initializerTokens } from './index.js';
 
@@ -72,10 +72,10 @@ export class StrykerConfigWriter {
    * Create config based on the chosen preset
    * @function
    */
-  public async writePreset(presetConfig: PresetConfiguration, exportAsJson: boolean): Promise<string> {
+  public async writePreset(initializerConfig: CustomInitializerConfiguration, exportAsJson: boolean): Promise<string> {
     const config = {
-      _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${presetConfig.guideUrl}`,
-      ...presetConfig.config,
+      _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${initializerConfig.guideUrl}`,
+      ...initializerConfig.config,
     };
 
     return this.writeStrykerConfig(config, exportAsJson);
