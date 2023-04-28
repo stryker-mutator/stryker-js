@@ -41,7 +41,7 @@
     "@types/node": "18.13.0",
     "@types/semver": "7.3.13",
     "ts-node": "10.9.1",
-    "vitest": "0.30.1"
+    "vitest": "0.29.8"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~6.4.0"
