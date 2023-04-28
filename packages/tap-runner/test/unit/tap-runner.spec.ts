@@ -63,6 +63,7 @@ describe(TapTestRunner.name, () => {
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ testFilter: ['test.js'] }));
       let processFinished = false;
 
+      // End the tapParser manually so the process is not killed
       tapParser.end('');
 
       childProcessMock.on('exit', () => {
@@ -74,6 +75,7 @@ describe(TapTestRunner.name, () => {
         childProcessMock.emit('exit', 0);
       }, 1000);
 
+      // Should wait for the process to finish before resolving
       await runPromise;
       expect(processFinished).to.be.true;
     });
