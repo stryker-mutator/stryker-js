@@ -76,7 +76,7 @@
   "dependencies": {
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
-    "semver": "~7.4.0",
+    "semver": "~7.5.0",
     "tslib": "~2.5.0"
   },
   "initStrykerConfig": {
