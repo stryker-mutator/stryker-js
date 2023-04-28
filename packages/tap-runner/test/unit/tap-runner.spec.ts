@@ -60,6 +60,9 @@ describe(TapTestRunner.name, () => {
 
   describe('mutantRun', () => {
     it('should wait for process to exit before returning result', async () => {
+      // Added this test because it was possible that two process were trying to use the same mutated files resulting in a locked file error.
+      // For more info see: https://github.com/stryker-mutator/stryker-js/issues/4122
+
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ testFilter: ['test.js'] }));
       let processFinished = false;
 
