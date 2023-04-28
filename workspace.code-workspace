@@ -41,6 +41,10 @@
       "path": "packages/vitest-runner"
     },
     {
+      "name": "tap-runner",
+      "path": "packages/tap-runner"
+    },
+    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
     },

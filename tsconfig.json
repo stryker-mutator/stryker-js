@@ -11,6 +11,7 @@
     { "path": "packages/mocha-runner" },
     { "path": "packages/cucumber-runner" },
     { "path": "packages/vitest-runner" },
+    { "path": "packages/tap-runner" },
     { "path": "packages/typescript-checker" },
     { "path": "packages/test-helpers" }
   ]
