@@ -1,0 +1,25 @@
+{
+  "name": "vitest-noconfig-old",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A module to perform an integration test",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC",
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/vitest-runner": "../../../packages/vitest-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "devDependencies": {
+    "vitest": "0.28.0"
+  }
+}
