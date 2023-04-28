@@ -1,7 +1,7 @@
-import { spawn } from 'child_process';
+import childProcess from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { readFile, rm } from 'fs/promises';
+import fs from 'fs/promises';
 
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -121,14 +121,14 @@ export class TapTestRunner implements TestRunner {
       [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
       [strykerDryRun]: testOptions.dryRun?.toString(),
     };
-    const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
+    const tapProcess = childProcess.spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
     const exitAsPromised = new Promise((resolve) => tapProcess.on('exit', resolve));
     const result = await parseTap(tapProcess, testOptions.disableBail);
     // wait for the process to end before continuing, because the tapParser sometimes results before the process ends which causes a start of a new process while to current one is still running.
     await exitAsPromised;
     const fileName = tempTapOutputFileName(tapProcess.pid);
-    const fileContent = await readFile(fileName, 'utf-8');
-    await rm(fileName);
+    const fileContent = await fs.readFile(fileName, 'utf-8');
+    await fs.rm(fileName);
     const file = JSON.parse(fileContent) as InstrumenterContext;
     const hitLimitReached = determineHitLimitReached(file.hitCount, testOptions.hitLimit);
     if (hitLimitReached) {

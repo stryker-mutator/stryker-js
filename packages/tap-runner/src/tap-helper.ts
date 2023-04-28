@@ -5,6 +5,8 @@ import { ChildProcessWithoutNullStreams } from 'child_process';
 import nodeGlob from 'glob';
 import * as tap from 'tap-parser';
 
+import { TapParser } from './tap-parser-factory.js';
+
 const glob = promisify(nodeGlob);
 
 export async function findTestyLookingFiles(globPattern: string): Promise<string[]> {
@@ -20,7 +22,7 @@ export function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail
   return new Promise<TapResult>((resolve) => {
     const failedTests: tap.TapError[] = [];
     const config = { bail: !disableBail };
-    const parser = new tap.Parser(config, (result) => {
+    const parser = TapParser.Parser(config, (result) => {
       resolve({ result, failedTests });
     });
 
