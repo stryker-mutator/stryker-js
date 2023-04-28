@@ -59,7 +59,7 @@ describe(TapTestRunner.name, () => {
   });
 
   describe('mutantRun', () => {
-    it.only('should wait for process to exit before returning result', async () => {
+    it('should wait for process to exit before returning result', async () => {
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ testFilter: ['test.js'] }));
       let processFinished = false;
 
