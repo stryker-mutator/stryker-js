@@ -16,8 +16,9 @@ export class FileCommunicator {
   );
 
   private readonly setupFiles = {
-    coverageFile: path.resolve(this.communicationDir, '__stryker-coverage__.json'),
-    hitCountFile: path.resolve(this.communicationDir, 'hitCount.txt'),
+    // Replace function is to have a valid windows path
+    coverageFile: path.resolve(this.communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
+    hitCountFile: path.resolve(this.communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
   };
 
   constructor(private readonly globalNamespace: string) {
