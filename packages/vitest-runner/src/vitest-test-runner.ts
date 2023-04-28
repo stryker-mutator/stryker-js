@@ -87,6 +87,7 @@ export class VitestTestRunner implements TestRunner {
     } else {
       await this.ctx.start();
     }
+    await this.ctx.close();
     const tests = this.ctx.state.getFiles().flatMap((file) => collectTestsFromSuite(file));
     const testResults: TestResult[] = tests.map((test) => convertTestToTestResult(test));
     return { tests: testResults, status: DryRunStatus.Complete };
