@@ -71,7 +71,7 @@
   },
   "dependencies": {
     "mutation-testing-metrics": "1.7.14",
-    "mutation-testing-report-schema": "1.7.14",
+    "mutation-testing-report-schema": "2.0.0",
     "tslib": "~2.5.0"
   },
   "devDependencies": {

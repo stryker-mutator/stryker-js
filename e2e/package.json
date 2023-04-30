@@ -37,7 +37,7 @@
     "karma-webpack": "5.0.0",
     "mocha": "10.2.0",
     "mutation-testing-metrics": "1.7.14",
-    "mutation-testing-report-schema": "1.7.14",
+    "mutation-testing-report-schema": "2.0.0",
     "rxjs": "7.8.1",
     "semver": "7.4.0",
     "tap": "16.3.4",
