@@ -8,6 +8,7 @@ Object {
   "mutationScore": 53.191489361702125,
   "mutationScoreBasedOnCoveredCode": 53.191489361702125,
   "noCoverage": 0,
+  "pending": 0,
   "runtimeErrors": 1,
   "survived": 22,
   "timeout": 0,
