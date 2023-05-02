@@ -49,6 +49,8 @@ export function getEmojiForStatus(status: schema.MutantStatus): string {
     case MutantStatus.Survived:
       return '👽';
     case MutantStatus.Timeout:
+      return '⏰';
+    case MutantStatus.Pending:
       return '⌛';
     case MutantStatus.RuntimeError:
     case MutantStatus.CompileError:

@@ -156,6 +156,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
 }));
 
 export const metrics = factoryMethod<Metrics>(() => ({
+  pending: 0,
   compileErrors: 0,
   killed: 0,
   mutationScore: 0,
@@ -173,11 +174,7 @@ export const metrics = factoryMethod<Metrics>(() => ({
   totalValid: 0,
 }));
 
-export const metricsResult = factoryMethod<MetricsResult>(() => ({
-  childResults: [],
-  metrics: metrics({}),
-  name: '',
-}));
+export const metricsResult = factoryMethod<MetricsResult>(() => new MetricsResult('', [], metrics({})));
 
 export function logger(): sinon.SinonStubbedInstance<Logger> {
   return {
