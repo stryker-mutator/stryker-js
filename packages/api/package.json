@@ -70,7 +70,7 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "mutation-testing-metrics": "1.7.14",
+    "mutation-testing-metrics": "2.0.0",
     "mutation-testing-report-schema": "1.7.14",
     "tslib": "~2.5.0"
   },

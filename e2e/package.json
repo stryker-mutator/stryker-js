@@ -36,7 +36,7 @@
     "karma-sourcemap-loader": "0.4.0",
     "karma-webpack": "5.0.0",
     "mocha": "10.2.0",
-    "mutation-testing-metrics": "1.7.14",
+    "mutation-testing-metrics": "2.0.0",
     "mutation-testing-report-schema": "1.7.14",
     "rxjs": "7.8.1",
     "semver": "7.4.0",
