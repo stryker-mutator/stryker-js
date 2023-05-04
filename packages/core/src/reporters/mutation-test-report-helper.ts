@@ -269,7 +269,7 @@ export class MutationTestReportHelper {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),
       coveredBy: remapTestIds(coveredBy),
-      location: this.toLocation(location),
+      location,
     };
   }
 

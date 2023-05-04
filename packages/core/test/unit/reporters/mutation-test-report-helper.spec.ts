@@ -237,13 +237,13 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['6.js'].mutants[0]).include({ status: MutantStatus.CompileError });
       });
 
-      it('should offset location correctly', async () => {
+      it('should not offset the location when reporting all mutants', async () => {
         const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
         inputMutants.forEach(({ fileName }) => {
           fileSystemTestDouble.files[fileName] = '';
         });
         const [actualReport] = await actReportAll(inputMutants);
-        expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
+        expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 3, column: 4 }, start: { line: 1, column: 2 } });
       });
 
       it('should group mutants by file name', async () => {
