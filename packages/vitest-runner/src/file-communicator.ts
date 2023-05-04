@@ -28,103 +28,53 @@ export class FileCommunicator {
   }
 
   public async setDryRun(): Promise<void> {
-    // ... write content to the setup file
     await fs.writeFile(
       // Write hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
       this.files.vitestSetup,
-      `
-        ${this.getStrykerGlobalNameSpaceCode()}
-        ${this.getSetupCode()}
-        ${this.getDryRunCode(true)}
-        ${this.getRemoveActiveMutantCode()}
-    `
+      this.setupFileTemplate(`
+      ns.activeMutant = undefined;
+      ${toTestId.toString()}
+  
+      beforeEach(async (a) => {
+        ns.currentTestId = toTestId(a.meta);
+      });
+  
+      afterAll(async () => {
+        await fs.writeFile('${this.files.coverage}', JSON.stringify(ns.mutantCoverage));
+      });`)
     );
   }
 
   public async setMutantRun(options: MutantRunOptions): Promise<void> {
-    // ... write content to the setup file
-    // Write active mutant, hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
-
     await fs.writeFile(
       this.files.vitestSetup,
-      `
-        ${this.getStrykerGlobalNameSpaceCode()}
-        ${this.getSetupCode()}
-        ${this.getActiveMutantCode(options)}
-        ${this.getDryRunCode(false)}
-        ${this.getHitLimitCode(options)}
-      `
+      this.setupFileTemplate(`
+      ns.hitLimit = ${options.hitLimit};
+      beforeAll(() => {
+        ns.hitCount = 0;
+      });
+  
+      ${
+        options.mutantActivation === 'static'
+          ? `ns.activeMutant = '${options.activeMutant.id}';`
+          : `
+            beforeEach(() => {
+              ns.activeMutant = '${options.activeMutant.id}';
+            })`
+      }
+      afterAll(async () => {
+        await fs.writeFile('${this.files.hitCount}', ns.hitCount.toString());
+      });`)
     );
   }
 
-  private getRemoveActiveMutantCode() {
+  private setupFileTemplate(body: string) {
     return `
-      const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
-      ns.activeMutant = undefined
-    `;
-  }
+    import fs from 'fs/promises';
 
-  private getStrykerGlobalNameSpaceCode() {
-    return `
-      globalThis.strykerGlobalNamespaceName = '${this.globalNamespace}'
-    `;
-  }
+    import { beforeEach, afterAll, beforeAll } from 'vitest';
 
-  private getActiveMutantCode(options: MutantRunOptions): string {
-    if (options.mutantActivation !== 'static') {
-      return `
-          beforeEach(() => {
-            const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
-            ns.activeMutant = '${options.activeMutant.id}'
-          })`;
-    } else {
-      return `
-      function foo(ns) {
-          ns.activeMutant = '${options.activeMutant.id}'
-          }
-      foo(globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {}))
-      console.log(foo.toString())`;
-    }
-  }
-
-  private getDryRunCode(isDryRun: boolean) {
-    return `
-      globalThis.strykerDryRun = ${isDryRun}
-    `;
-  }
-
-  private getHitLimitCode(options: MutantRunOptions) {
-    return `
-      const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
-      ns.hitLimit = ${options.hitLimit}
-      `;
-  }
-
-  private getSetupCode() {
-    return `
-      import fs from 'fs/promises';
-
-      import { beforeEach, afterAll, beforeAll } from 'vitest';
-
-      ${toTestId.toString()}
-
-      beforeEach(async (a) => {
-        const context = globalThis[globalThis.strykerGlobalNamespaceName] ?? (globalThis[globalThis.strykerGlobalNamespaceName] = {});
-        context.currentTestId = toTestId(a.meta);
-      });
-
-      afterAll(async () => {
-        if (globalThis.strykerDryRun) {
-          await fs.writeFile('${this.files.coverage}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.mutantCoverage));
-        } else {
-          await fs.writeFile('${this.files.hitCount}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.hitCount));
-        }
-      });
-
-      beforeAll(() => {
-        const context = globalThis[globalThis.strykerGlobalNamespaceName] ?? (globalThis[globalThis.strykerGlobalNamespaceName] = {});
-        context.hitCount = 0;
-      });
-    `;
+    const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
+    ${body}`;
   }
 }
