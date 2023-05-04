@@ -554,7 +554,7 @@ describe(MutationTestReportHelper.name, () => {
         const input = factory.mutantTestCoverage({
           fileName: 'add.js',
           id: '3',
-          location: factory.location(),
+          location: { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } },
           mutatorName: 'fooMutator',
           replacement: '"bar"',
           coveredBy: ['1'],
