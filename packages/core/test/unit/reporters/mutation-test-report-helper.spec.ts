@@ -237,13 +237,13 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['6.js'].mutants[0]).include({ status: MutantStatus.CompileError });
       });
 
-      it('should offset location correctly', async () => {
+      it('should not offset the location when reporting all mutants', async () => {
         const inputMutants = [factory.mutantResult({ location: { end: { line: 3, column: 4 }, start: { line: 1, column: 2 } } })];
         inputMutants.forEach(({ fileName }) => {
           fileSystemTestDouble.files[fileName] = '';
         });
         const [actualReport] = await actReportAll(inputMutants);
-        expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 4, column: 5 }, start: { line: 2, column: 3 } });
+        expect(actualReport.files['file.js'].mutants[0].location).deep.eq({ end: { line: 3, column: 4 }, start: { line: 1, column: 2 } });
       });
 
       it('should group mutants by file name', async () => {
@@ -491,12 +491,12 @@ describe(MutationTestReportHelper.name, () => {
         // Assert
         const expected: Partial<MutantResult> = {
           id: '32',
-          location,
+          location: { end: { column: 2, line: 4 }, start: { column: 6, line: 2 } },
           mutatorName: 'fooMutator',
           fileName: 'add.js',
           replacement: '{}',
         };
-        expect(actual).include(expected);
+        expect(actual).to.deep.include(expected);
       });
 
       it('should report statusReason', () => {
@@ -540,13 +540,33 @@ describe(MutationTestReportHelper.name, () => {
           status: MutantStatus.NoCoverage,
           fileName: 'add.js',
           id: '3',
-          location: factory.location(),
+          location: { start: { column: 1, line: 1 }, end: { column: 1, line: 1 } },
           mutatorName: 'fooMutator',
           replacement: '"bar"',
           coveredBy: ['1'],
           static: false,
         };
         expect(actual).deep.include(expected);
+      });
+
+      it('should not modify the original location property', () => {
+        // Arrange
+        const input = factory.mutantTestCoverage({
+          fileName: 'add.js',
+          id: '3',
+          location: { start: { column: 0, line: 0 }, end: { column: 0, line: 0 } },
+          mutatorName: 'fooMutator',
+          replacement: '"bar"',
+          coveredBy: ['1'],
+          static: false,
+        });
+        const sut = createSut();
+
+        // Act
+        sut.reportMutantStatus(input, MutantStatus.NoCoverage);
+
+        // Assert
+        expect(input).to.not.deep.include({ start: { column: 1, line: 1 }, end: { column: 1, line: 1 } });
       });
     });
 
