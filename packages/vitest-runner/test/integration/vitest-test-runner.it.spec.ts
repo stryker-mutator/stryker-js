@@ -8,6 +8,7 @@ describe('VitestRunner integration', () => {
   let sandbox: TempTestDirectorySandbox;
 
   afterEach(async () => {
+    await sut.dispose();
     await sandbox.dispose();
   });
 
@@ -20,15 +21,13 @@ describe('VitestRunner integration', () => {
 
     it('should run the specs', async () => {
       await sut.init();
-      const options = factory.dryRunOptions();
-      const runResult = await sut.dryRun(options);
+      const runResult = await sut.dryRun();
       assertions.expectCompleted(runResult);
     });
 
     it('should report mutant coverage', async () => {
       await sut.init();
-      const options = factory.dryRunOptions();
-      const runResult = await sut.dryRun(options);
+      const runResult = await sut.dryRun();
       assertions.expectCompleted(runResult);
       expect(runResult.mutantCoverage).to.not.be.undefined;
     });
@@ -71,12 +70,6 @@ describe('VitestRunner integration', () => {
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
-    });
-
-    it('capabilities should return reloadenvironment false', async () => {
-      await sut.init();
-      const capabilities = sut.capabilities();
-      expect(capabilities).to.deep.eq({ reloadEnvironment: false });
     });
 
     it('mutant run with single filter should only run 1 test', async () => {

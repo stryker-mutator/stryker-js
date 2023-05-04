@@ -3,7 +3,7 @@
 // import { factory, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 // import { expect } from 'chai';
 
-// import { setActiveMutant, setDryRunValue, setHitLimit, setupFiles } from '../../src/vitest-file-communication.js';
+// import { FileCommunicator } from '../../src/file-communicator.js';
 
 // describe('Vitest file communication', () => {
 //   let sandbox: TempTestDirectorySandbox;

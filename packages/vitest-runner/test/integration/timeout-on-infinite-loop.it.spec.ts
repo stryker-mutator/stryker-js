@@ -13,6 +13,7 @@ describe('Infinite loop', () => {
     sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
   });
   afterEach(async () => {
+    await sut.dispose();
     await sandbox.dispose();
   });
 

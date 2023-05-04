@@ -4,22 +4,22 @@ import fsSync from 'fs';
 
 import { fileURLToPath } from 'url';
 
-import { DryRunOptions, MutantRunOptions } from '@stryker-mutator/api/src/test-runner';
+import { MutantRunOptions } from '@stryker-mutator/api/src/test-runner';
 
 import { toTestId } from './utils/collect-test-name.js';
 
 export class FileCommunicator {
-  // private readonly communicationDir = path.resolve(`.vitest-runner-${process.env.STRYKER_MUTATOR_WORKER}`);
   private readonly communicationDir = path.resolve(
     path.dirname(fileURLToPath(import.meta.url)),
     `.vitest-runner-${process.env.STRYKER_MUTATOR_WORKER}`
   );
 
-  private readonly setupFiles = {
+  public readonly files = Object.freeze({
     // Replace function is to have a valid windows path
-    coverageFile: path.resolve(this.communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
-    hitCountFile: path.resolve(this.communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
-  };
+    coverage: path.resolve(this.communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
+    hitCount: path.resolve(this.communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
+    vitestSetup: path.resolve(this.communicationDir, 'vitest.setup.js'),
+  });
 
   constructor(private readonly globalNamespace: string) {
     if (!fsSync.existsSync(this.communicationDir)) {
@@ -27,27 +27,11 @@ export class FileCommunicator {
     }
   }
 
-  public get setupFile(): string {
-    return path.resolve(this.communicationDir, 'vitest.setup.js');
-  }
-
-  public get coverageFile(): string {
-    return this.setupFiles.coverageFile;
-  }
-
-  public get hitCountFile(): string {
-    return this.setupFiles.hitCountFile;
-  }
-
-  public get activeMutantFile(): string {
-    return path.resolve(this.communicationDir, 'active-mutant.js');
-  }
-
-  public async setDryRun(options: DryRunOptions): Promise<void> {
+  public async setDryRun(): Promise<void> {
     // ... write content to the setup file
     await fs.writeFile(
       // Write hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
-      this.setupFile,
+      this.files.vitestSetup,
       `
         ${this.getStrykerGlobalNameSpaceCode()}
         ${this.getSetupCode()}
@@ -62,7 +46,7 @@ export class FileCommunicator {
     // Write active mutant, hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
 
     await fs.writeFile(
-      this.setupFile,
+      this.files.vitestSetup,
       `
         ${this.getStrykerGlobalNameSpaceCode()}
         ${this.getSetupCode()}
@@ -131,9 +115,9 @@ export class FileCommunicator {
 
       afterAll(async () => {
         if (globalThis.strykerDryRun) {
-          await fs.writeFile('${this.coverageFile}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.mutantCoverage));
+          await fs.writeFile('${this.files.coverage}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.mutantCoverage));
         } else {
-          await fs.writeFile('${this.hitCountFile}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.hitCount));
+          await fs.writeFile('${this.files.hitCount}', JSON.stringify(globalThis[globalThis.strykerGlobalNamespaceName]?.hitCount));
         }
       });
 
