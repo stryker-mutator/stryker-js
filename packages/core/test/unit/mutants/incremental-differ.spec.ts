@@ -428,6 +428,15 @@ class ScenarioBuilder {
     return this;
   }
 
+  public withEmptyFileNameTestFile(): this {
+    this.incrementalTestFiles[''] = this.incrementalTestFiles[testAdd];
+    delete this.incrementalTestFiles[testAdd];
+    this.testCoverage.clear();
+    this.testCoverage.addTest(factory.testResult({ id: this.newTestId, name: 'add(2, 0) = 2' }));
+    this.testCoverage.addCoverage(this.mutantId, [this.newTestId]);
+    return this;
+  }
+
   public act() {
     this.sut = testInjector.injector.injectClass(IncrementalDiffer);
     deepFreeze(this.mutants); // make sure mutants aren't changed at all
@@ -534,6 +543,11 @@ describe(IncrementalDiffer.name, () => {
 
     it('should reuse the status when there is no test coverage', () => {
       const actualDiff = new ScenarioBuilder().withMathProjectExample().withoutTestCoverage().act();
+      expect(actualDiff[0].status).eq(MutantStatus.Killed);
+    });
+
+    it('should reuse the status when there is a test with empty file name', () => {
+      const actualDiff = new ScenarioBuilder().withMathProjectExample().withEmptyFileNameTestFile().act();
       expect(actualDiff[0].status).eq(MutantStatus.Killed);
     });
 
