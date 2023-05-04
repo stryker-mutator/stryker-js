@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-import { INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
