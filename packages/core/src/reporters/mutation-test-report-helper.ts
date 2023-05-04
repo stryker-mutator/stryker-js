@@ -97,6 +97,7 @@ export class MutationTestReportHelper {
   }
 
   private reportOne(result: MutantResult): MutantResult {
+    result.location = this.toLocation(result.location);
     this.reporter.onMutantTested(result);
     return result;
   }
