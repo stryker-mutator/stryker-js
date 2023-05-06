@@ -28,8 +28,12 @@ import {
   INSTRUMENTER_CONSTANTS,
   StrykerOptions,
 } from '@stryker-mutator/api/core';
-import type { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types.js';
-import type { IConfiguration, IRunOptions } from '@cucumber/cucumber/api';
+import type {
+  IConfiguration,
+  IRunOptions,
+  ISupportCodeCoordinatesOrLibrary,
+  ISourcesCoordinates,
+} from '@cucumber/cucumber/api';
 
 import { CucumberSetup } from '../src-generated/cucumber-runner-options.js';
 
@@ -40,6 +44,11 @@ import {
   version as cucumberVersion,
 } from './cjs/cucumber-wrapper.js';
 import * as pluginTokens from './plugin-tokens.js';
+
+type ISupportCodeLibrary = Exclude<
+  ISupportCodeCoordinatesOrLibrary,
+  ISourcesCoordinates
+>;
 
 cucumberTestRunnerFactory.inject = [commonTokens.injector];
 export function cucumberTestRunnerFactory(
@@ -57,7 +66,7 @@ const require_ = createRequire(import.meta.url);
 const strykerFormatterFile = require_.resolve('./cjs/stryker-formatter');
 
 // Workaround while the StrykerFormatter needs to be a commonjs module
-const StrykerFormatter: typeof import('./cjs/stryker-formatter').default =
+const StrykerFormatter: typeof import('./cjs/stryker-formatter.js').default =
   require_('./cjs/stryker-formatter.js').default;
 
 interface ResolvedConfiguration {

@@ -7,8 +7,7 @@ import { switchCaseMutantPlacer as sut } from '../../../src/mutant-placers/switc
 import { createMutant } from '../../helpers/factories.js';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
 
-// @ts-expect-error CJS typings not in line with synthetic esm
-const generate: typeof generator = generator.default;
+const generate = generator.default;
 const { types } = babel;
 
 describe('switchCaseMutantPlacer', () => {

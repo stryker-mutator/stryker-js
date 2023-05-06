@@ -1,4 +1,4 @@
-import { Primitive } from './primitive';
+import { Primitive } from './primitive.js';
 
 type ImmutablePrimitive = Primitive | ((...args: any[]) => any);
 

@@ -1,14 +1,13 @@
 import fs from 'fs/promises';
 import os from 'os';
 
-import { testInjector } from '@stryker-mutator/test-helpers';
-import { resolveFromCwd } from '@stryker-mutator/util';
+import sinon from 'sinon';
 import { expect } from 'chai';
 import { execaCommand, ExecaReturnValue } from 'execa';
 import inquirer from 'inquirer';
-import sinon from 'sinon';
-
-import { PartialStrykerOptions } from '@stryker-mutator/api/src/core/partial-stryker-options.js';
+import { testInjector } from '@stryker-mutator/test-helpers';
+import { resolveFromCwd } from '@stryker-mutator/util';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { coreTokens } from '../../../src/di/index.js';
 

@@ -19,7 +19,7 @@ export const mochaHooks = {
     }
     sinon.restore();
     testInjector.reset();
-    StrykerFormatter.instance = undefined;
+    StrykerFormatter.default.instance = undefined;
     delete global.__stryker2__;
   },
 };

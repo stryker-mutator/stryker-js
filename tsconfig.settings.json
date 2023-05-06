@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "strict": true,
-    "module": "es2020",
+    "module": "Node16",
     "target": "es2019",
-    "moduleResolution": "node",
+    "moduleResolution": "Node16",
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": true,
@@ -14,6 +14,7 @@
     "resolveJsonModule": true,
     "importHelpers": true,
     "noImplicitReturns": true,
+    "skipLibCheck": true,
     "types": [
       "node"
     ],

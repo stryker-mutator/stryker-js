@@ -5,9 +5,9 @@
   "main": "dist/src/index.js",
   "exports": {
     ".": {
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/jest-plugins/cjs/index.js"
+      "import": "./dist/src/index.js"
     },
+    "./package.json": "./package.json",
     "./jest-env/jsdom": {
       "import": "./jest-env/jsdom.js",
       "require": "./jest-env/jsdom.js"

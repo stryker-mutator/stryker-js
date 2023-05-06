@@ -1,5 +1,5 @@
-import { KnownKeys } from './known-keys';
-import { Primitive } from './primitive';
+import { KnownKeys } from './known-keys.js';
+import { Primitive } from './primitive.js';
 
 type OnlyObject<T> = Exclude<T, Primitive>;
 
