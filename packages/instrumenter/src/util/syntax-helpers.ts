@@ -16,9 +16,10 @@ const { types, traverse, parse } = babel;
  * Returns syntax for the header if JS/TS files
  */
 export const instrumentationBabelHeader = deepFreeze(
+  // `globalThis` implementation is based on core-js's implementation. See https://github.com/stryker-mutator/stryker-js/issues/4035
   parse(
     `function ${STRYKER_NAMESPACE_HELPER}(){
-  var g = new Function("return this")();
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
     ns.${ID.ACTIVE_MUTANT} = g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE};
