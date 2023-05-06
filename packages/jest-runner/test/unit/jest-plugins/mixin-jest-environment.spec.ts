@@ -6,9 +6,9 @@ import { expect } from 'chai';
 
 import * as producers from '../../helpers/producers.js';
 import { mixinJestEnvironment } from '../../../src/jest-plugins/index.js';
-import { state } from '../../../src/jest-plugins/cjs/messaging.js';
+import { state } from '../../../src/jest-plugins/messaging.cjs';
 
-import { JestEnvironmentNode } from './cjs/jest-environment-node.js';
+import { JestEnvironmentNode } from './jest-environment-node.cjs';
 
 describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   class TestJestEnvironment extends JestEnvironmentNode {

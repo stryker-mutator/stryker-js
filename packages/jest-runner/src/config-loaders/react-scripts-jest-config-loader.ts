@@ -7,7 +7,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 
 import { pluginTokens } from '../plugin-di.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
-import { state } from '../jest-plugins/cjs/messaging.js';
+import { state } from '../jest-plugins/messaging.cjs';
 
 import { JestConfigLoader } from './jest-config-loader.js';
 

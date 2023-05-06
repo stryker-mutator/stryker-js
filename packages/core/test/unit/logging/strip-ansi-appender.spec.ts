@@ -2,8 +2,8 @@ import { deepFreeze } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { RuntimeAppender } from '../../../src/cjs/logging/runtime-appender.js';
-import { StripAnsiAppender, configure } from '../../../src/cjs/logging/strip-ansi-appender.js';
+import { RuntimeAppender } from '../../../src/logging/runtime-appender.cjs';
+import { StripAnsiAppender, configure } from '../../../src/logging/strip-ansi-appender.cjs';
 
 import { createLoggingEvent } from './helpers.js';
 
