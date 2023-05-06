@@ -76,6 +76,6 @@
   },
   "devDependencies": {
     "@types/node": "18.16.5",
-    "typed-inject": "3.0.1"
+    "typed-inject": "4.0.0"
   }
 }
