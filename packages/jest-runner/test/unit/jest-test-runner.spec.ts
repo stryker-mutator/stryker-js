@@ -20,7 +20,7 @@ import { pluginTokens } from '../../src/plugin-di.js';
 import { JestConfigLoader } from '../../src/config-loaders/jest-config-loader.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
 import { JestRunResult } from '../../src/jest-run-result.js';
-import { state } from '../../src/jest-plugins/cjs/messaging.js';
+import { state } from '../../src/jest-plugins/messaging.cjs';
 import { JestWrapper } from '../../src/utils/jest-wrapper.js';
 
 describe(JestTestRunner.name, () => {
@@ -334,7 +334,7 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            testEnvironment: fileURLToPath(new URL('../../src/jest-plugins/cjs/jest-environment-generic.js', import.meta.url)),
+            testEnvironment: fileURLToPath(new URL('../../src/jest-plugins/jest-environment-generic.cjs', import.meta.url)),
           }),
         });
         expect(state.jestEnvironment).eq(testEnvironment);
@@ -362,7 +362,7 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url))],
+            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url))],
           }),
         });
       });
@@ -374,7 +374,7 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url))],
+            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url))],
           }),
         });
       });
@@ -415,7 +415,7 @@ describe(JestTestRunner.name, () => {
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
             setupFilesAfterEnv: [
-              fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.js', import.meta.url)),
+              fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url)),
               'setup/env.js',
               'setup/unit.js',
             ],

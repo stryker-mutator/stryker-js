@@ -1,6 +1,6 @@
 import type { JestEnvironment } from '@jest/environment';
 
-import { state } from './messaging.js';
+import { state } from './messaging.cjs';
 
 export function loadJestEnvironment(name: string): typeof JestEnvironment {
   // eslint-disable-next-line @typescript-eslint/no-require-imports

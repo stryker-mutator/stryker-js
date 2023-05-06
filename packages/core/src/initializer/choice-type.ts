@@ -1,4 +1,4 @@
-import Separator from 'inquirer/lib/objects/separator';
+import type Separator from 'inquirer/lib/objects/separator.js';
 
 /**
  * The "ChoiceType" is used often and is annoying to keep in sync (types change often).

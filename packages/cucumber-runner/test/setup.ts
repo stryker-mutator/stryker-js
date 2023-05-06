@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import StrykerFormatter from '../src/cjs/stryker-formatter.js';
+import StrykerFormatter from '../src/stryker-formatter.cjs';
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -19,7 +19,7 @@ export const mochaHooks = {
     }
     sinon.restore();
     testInjector.reset();
-    StrykerFormatter.instance = undefined;
+    StrykerFormatter.default.instance = undefined;
     delete global.__stryker2__;
   },
 };

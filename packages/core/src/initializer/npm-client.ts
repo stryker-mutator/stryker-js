@@ -1,7 +1,7 @@
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { errorToString } from '@stryker-mutator/util';
-import { IRestResponse, RestClient } from 'typed-rest-client/RestClient';
+import type { IRestResponse, RestClient } from 'typed-rest-client/RestClient.js';
 
 import { PackageInfo } from './package-info.js';
 import { PromptOption } from './prompt-option.js';

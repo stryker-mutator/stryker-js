@@ -6,19 +6,20 @@
   "exports": {
     ".": {
       "import": "./dist/src/index.js",
-      "require": "./dist/src/jest-plugins/cjs/index.js"
+      "require": "./dist/src/jest-plugins/mixin-jest-environment.cjs"
     },
+    "./package.json": "./package.json",
     "./jest-env/jsdom": {
-      "import": "./jest-env/jsdom.js",
-      "require": "./jest-env/jsdom.js"
+      "import": "./dist/src/jest-plugins/jest-environment-jsdom.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-jsdom.cjs"
     },
     "./jest-env/node": {
-      "import": "./jest-env/node.js",
-      "require": "./jest-env/node.js"
+      "import": "./dist/src/jest-plugins/jest-environment-node.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-node.cjs"
     },
     "./jest-env/jsdom-sixteen": {
-      "import": "./jest-env/jsdom-sixteen.js",
-      "require": "./jest-env/jsdom-sixteen.js"
+      "import": "./dist/src/jest-plugins/jest-environment-jsdom-sixteen.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-jsdom-sixteen.cjs"
     }
   },
   "type": "module",

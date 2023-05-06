@@ -10,6 +10,7 @@ const settings = JSON.parse(
   )
 );
 settings.dashboard.module = import.meta.url.split('/').slice(-2)[0];
+settings.mochaOptions.spec.push('dist/test/integration/**/*.js');
 /**
  * @type {import('../api/dist/src/core/index.js').PartialStrykerOptions}
  */

@@ -2,8 +2,13 @@
   "name": "@stryker-mutator/core",
   "version": "6.4.2",
   "description": "The extendable JavaScript mutation testing framework",
-  "main": "dist/src/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "start": "tsc -w",
     "test": "c8 npm run test:all",

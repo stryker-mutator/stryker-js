@@ -18,10 +18,12 @@ import type {
   CoverageAnalysis,
   InstrumenterContext,
   Position,
+  // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/49721#issuecomment-1319854183
 } from '@stryker-mutator/api/core';
+// @ts-expect-error see https://github.com/microsoft/TypeScript/issues/49721#issuecomment-1319854183
 import type { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { Formatter } from './cucumber-wrapper.js';
+import { Formatter } from './cucumber-wrapper.cjs';
 
 interface DescribedScenario extends Scenario {
   fileName: string;

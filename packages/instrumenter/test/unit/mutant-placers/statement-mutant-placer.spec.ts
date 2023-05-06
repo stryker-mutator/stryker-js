@@ -8,8 +8,7 @@ import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
 import { Mutant } from '../../../src/mutant.js';
 import { createMutant } from '../../helpers/factories.js';
 
-// @ts-expect-error CJS typings not in line with synthetic esm
-const generate: typeof generator = generator.default;
+const generate = generator.default;
 const { types } = babel;
 
 describe('statementMutantPlacer', () => {

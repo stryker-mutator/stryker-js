@@ -2,7 +2,7 @@ import fs from 'fs';
 import { URL } from 'url';
 
 import { expect } from 'chai';
-import Ajv from 'ajv';
+import ajvModule from 'ajv';
 import Axios from 'axios';
 import { beforeEach } from 'mocha';
 
@@ -15,6 +15,7 @@ const monoSchema = JSON.parse(
 const valid = JSON.parse(fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'));
 const invalid = JSON.parse(fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'));
 
+const Ajv = ajvModule.default;
 const ajv = new Ajv({
   strict: false,
   allErrors: true,

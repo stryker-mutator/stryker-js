@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import log4js from 'log4js';
 
-import { configure } from '../../../src/cjs/logging/multi-appender.js';
-import { RuntimeAppender } from '../../../src/cjs/logging/runtime-appender.js';
+import { configure } from '../../../src/logging/multi-appender.cjs';
+import { RuntimeAppender } from '../../../src/logging/runtime-appender.cjs';
 
 import { createLoggingEvent } from './helpers.js';
 

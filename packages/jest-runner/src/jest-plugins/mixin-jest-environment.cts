@@ -1,8 +1,9 @@
 import type { JestEnvironment, EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import type { Circus } from '@jest/types';
-import { InstrumenterContext } from '@stryker-mutator/api/core';
+// @ts-expect-error see https://github.com/microsoft/TypeScript/issues/49721#issuecomment-1319854183
+import type { InstrumenterContext } from '@stryker-mutator/api/core';
 
-import { state } from './messaging.js';
+import { state } from './messaging.cjs';
 
 function fullNameDescribeBlock(describe: Circus.DescribeBlock): string {
   if (describe.parent) {
