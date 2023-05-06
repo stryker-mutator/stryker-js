@@ -15,6 +15,8 @@ import { updateOperatorMutator } from './update-operator-mutator.js';
 import { regexMutator } from './regex-mutator.js';
 import { optionalChainingMutator } from './optional-chaining-mutator.js';
 import { assignmentOperatorMutator } from './assignment-operator-mutator.js';
+import { statementRemoverMutator } from './statement-remover-mutator.js';
+import { functioncallRemoverMutator } from './functioncall-remover-mutator.js';
 
 export const allMutators: NodeMutator[] = [
   arithmeticOperatorMutator,
@@ -33,4 +35,6 @@ export const allMutators: NodeMutator[] = [
   regexMutator,
   optionalChainingMutator,
   assignmentOperatorMutator,
+  statementRemoverMutator,
+  functioncallRemoverMutator,
 ];

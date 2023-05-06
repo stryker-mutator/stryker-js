@@ -54,18 +54,28 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 import { Vue, Component, Prop, Watch, Emit } from 'vue-property-decorator';
-@Component({
-  name: 'example-tsx-component'
-})
-export default class AuditDrawerInfo extends Vue {
-  public renderFunction = (h, context) => {
-    if (stryMutAct_9fa48(\\"0\\")) {
-      {}
-    } else {
-      stryCov_9fa48(\\"0\\");
-      return <button>button</button>;
-    }
-  };
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  @Component({
+    name: 'example-tsx-component'
+  })
+  export default class AuditDrawerInfo extends Vue {
+    public renderFunction = (h, context) => {
+      if (stryMutAct_9fa48(\\"1\\")) {
+        {}
+      } else {
+        stryCov_9fa48(\\"1\\");
+        if (stryMutAct_9fa48(\\"2\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"2\\");
+          return <button>button</button>;
+        }
+      }
+    };
+  }
 }
 </script>
 <style lang=\\"scss\\">

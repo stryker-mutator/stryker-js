@@ -11,21 +11,21 @@ describe('transformers integration', () => {
     htmlAst.root.scripts.push(createJSAst({ rawContent: 'const foo = 40 + 2' }));
     const mutantCollector = new MutantCollector();
     transform(htmlAst, mutantCollector, { options: createTransformerOptions(), mutateDescription: true, logger: testInjector.logger });
-    expect(mutantCollector.mutants).lengthOf(1);
+    expect(mutantCollector.mutants).lengthOf(2);
     expect(htmlAst).matchSnapshot();
   });
   it('should transform a js file', () => {
     const jsAst = createJSAst({ rawContent: 'const foo = 40 + 2' });
     const mutantCollector = new MutantCollector();
     transform(jsAst, mutantCollector, { options: createTransformerOptions(), mutateDescription: true, logger: testInjector.logger });
-    expect(mutantCollector.mutants).lengthOf(1);
+    expect(mutantCollector.mutants).lengthOf(2);
     expect(jsAst).matchSnapshot();
   });
   it('should transform a ts file', () => {
     const tsAst = createTSAst({ rawContent: 'const foo: number = 40 + 2' });
     const mutantCollector = new MutantCollector();
     transform(tsAst, mutantCollector, { options: createTransformerOptions(), mutateDescription: true, logger: testInjector.logger });
-    expect(mutantCollector.mutants).lengthOf(1);
+    expect(mutantCollector.mutants).lengthOf(2);
     expect(tsAst).matchSnapshot();
   });
 });

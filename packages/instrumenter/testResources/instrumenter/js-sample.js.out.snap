@@ -52,8 +52,18 @@ function add(a, b) {
     {}
   } else {
     stryCov_9fa48(\\"0\\");
-    return stryMutAct_9fa48(\\"1\\") ? a - b : (stryCov_9fa48(\\"1\\"), a + b);
+    if (stryMutAct_9fa48(\\"1\\")) {
+      ;
+    } else {
+      stryCov_9fa48(\\"1\\");
+      return stryMutAct_9fa48(\\"2\\") ? a - b : (stryCov_9fa48(\\"2\\"), a + b);
+    }
   }
 }
-add(40, 2);"
+if (stryMutAct_9fa48(\\"3\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"3\\");
+  stryMutAct_9fa48(\\"4\\") ? null : (stryCov_9fa48(\\"4\\"), add(40, 2));
+}"
 `;

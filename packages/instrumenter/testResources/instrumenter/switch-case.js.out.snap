@@ -47,18 +47,43 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-switch (foo) {
-  case stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'bar'):
-    if (stryMutAct_9fa48(\\"0\\")) {} else {
-      stryCov_9fa48(\\"0\\");
-      console.log(stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'bar'));
-      break;
-    }
-  case stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'baz'):
-    if (stryMutAct_9fa48(\\"3\\")) {} else {
-      stryCov_9fa48(\\"3\\");
-      console.log(stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), 'baz'));
-      break;
-    }
+if (stryMutAct_9fa48(\\"0\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"0\\");
+  switch (foo) {
+    case stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'bar'):
+      if (stryMutAct_9fa48(\\"1\\")) {} else {
+        stryCov_9fa48(\\"1\\");
+        if (stryMutAct_9fa48(\\"3\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"3\\");
+          stryMutAct_9fa48(\\"4\\") ? null : (stryCov_9fa48(\\"4\\"), console.log(stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), 'bar')));
+        }
+        if (stryMutAct_9fa48(\\"6\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"6\\");
+          break;
+        }
+      }
+    case stryMutAct_9fa48(\\"8\\") ? \\"\\" : (stryCov_9fa48(\\"8\\"), 'baz'):
+      if (stryMutAct_9fa48(\\"7\\")) {} else {
+        stryCov_9fa48(\\"7\\");
+        if (stryMutAct_9fa48(\\"9\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"9\\");
+          stryMutAct_9fa48(\\"10\\") ? null : (stryCov_9fa48(\\"10\\"), console.log(stryMutAct_9fa48(\\"11\\") ? \\"\\" : (stryCov_9fa48(\\"11\\"), 'baz')));
+        }
+        if (stryMutAct_9fa48(\\"12\\")) {
+          ;
+        } else {
+          stryCov_9fa48(\\"12\\");
+          break;
+        }
+      }
+  }
 }"
 `;

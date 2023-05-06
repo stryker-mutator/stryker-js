@@ -14,9 +14,9 @@ import { fileUtils } from '../../../src/utils/file-utils.js';
 
 describe(ConfigReader.name, () => {
   let sut: ConfigReader;
-  let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
-  let readFileStub: sinon.SinonStubbedMember<(typeof fs.promises)['readFile']>;
-  let importModuleStub: sinon.SinonStubbedMember<(typeof fileUtils)['importModule']>;
+  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
+  let readFileStub: sinon.SinonStubbedMember<typeof fs.promises['readFile']>;
+  let importModuleStub: sinon.SinonStubbedMember<typeof fileUtils['importModule']>;
   let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
 
   beforeEach(() => {
@@ -256,7 +256,7 @@ describe(ConfigReader.name, () => {
 
       // Assert
       expect(error).instanceOf(ConfigError);
-      expect(((error as ConfigError).innerError as Error).message).eq('Unexpected token n in JSON at position 2');
+      expect(((error as ConfigError).innerError as Error).message).eq("Expected property name or '}' in JSON at position 2");
     });
 
     it('should the final configuration to debug', async () => {
