@@ -5,7 +5,8 @@
   "main": "dist/src/index.js",
   "exports": {
     ".": {
-      "import": "./dist/src/index.js"
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/jest-plugins/mixin-jest-environment.cjs"
     },
     "./package.json": "./package.json",
     "./jest-env/jsdom": {
