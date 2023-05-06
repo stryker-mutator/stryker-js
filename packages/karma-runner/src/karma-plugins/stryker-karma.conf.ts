@@ -149,6 +149,7 @@ function configureStrykerMutantCoverageAdapter(config: Config) {
     watched: false,
     served: true,
     nocache: true,
+    type: 'module',
   });
 }
 
