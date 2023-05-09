@@ -1,7 +1,16 @@
 import path from 'path';
 
 import { TestResult } from '@stryker-mutator/api/test-runner';
-import { MutantRunPlan, MutantTestPlan, PlanKind, Mutant, StrykerOptions, MutantStatus, MutantEarlyResultPlan } from '@stryker-mutator/api/core';
+import {
+  MutantRunPlan,
+  MutantTestPlan,
+  PlanKind,
+  Mutant,
+  StrykerOptions,
+  MutantStatus,
+  MutantEarlyResultPlan,
+  MutantResult,
+} from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I, notEmpty, split } from '@stryker-mutator/util';
@@ -12,6 +21,8 @@ import { Sandbox } from '../sandbox/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { optionsPath } from '../utils/index.js';
 import { Project } from '../fs/project.js';
+
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 
 import { IncrementalDiffer, toRelativeNormalizedFileName } from './incremental-differ.js';
 import { TestCoverage } from './test-coverage.js';
@@ -37,6 +48,7 @@ export class MutantTestPlanner {
     coreTokens.sandbox,
     coreTokens.project,
     coreTokens.timeOverheadMS,
+    coreTokens.mutationTestReportHelper,
     commonTokens.options,
     commonTokens.logger
   );
@@ -49,6 +61,7 @@ export class MutantTestPlanner {
     private readonly sandbox: I<Sandbox>,
     private readonly project: I<Project>,
     private readonly timeOverheadMS: number,
+    private readonly mutationTestReportHelper: MutationTestReportHelper,
     private readonly options: StrykerOptions,
     private readonly logger: Logger
   ) {
@@ -58,7 +71,9 @@ export class MutantTestPlanner {
   public async makePlan(mutants: readonly Mutant[]): Promise<readonly MutantTestPlan[]> {
     const mutantsDiff = await this.incrementalDiff(mutants);
     const mutantPlans = mutantsDiff.map((mutant) => this.planMutant(mutant));
-    this.reporter.onMutationTestingPlanReady({ mutantPlans });
+    const earlyResults = this.earlyResults(mutantPlans);
+    const report = await this.mutationTestReportHelper.mutationTestReport(earlyResults);
+    this.reporter.onMutationTestingPlanReady({ mutantPlans, report });
     this.warnAboutSlow(mutantPlans);
     return mutantPlans;
   }
@@ -166,6 +181,10 @@ export class MutantTestPlanner {
         reloadEnvironment: !testFilter,
       },
     };
+  }
+
+  private earlyResults(mutantPlans: MutantTestPlan[]): MutantResult[] {
+    return mutantPlans.map((plan) => plan.mutant) as MutantResult[];
   }
 
   private warnAboutSlow(mutantPlans: readonly MutantTestPlan[]) {

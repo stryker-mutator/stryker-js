@@ -89,8 +89,8 @@ export class DryRunExecutor {
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
-      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
       .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
+      .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator);
   }
 

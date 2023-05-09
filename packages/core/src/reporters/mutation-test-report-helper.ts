@@ -149,7 +149,7 @@ export class MutationTestReportHelper {
     }
   }
 
-  private async mutationTestReport(results: readonly MutantResult[]): Promise<schema.MutationTestResult> {
+  public async mutationTestReport(results: readonly MutantResult[]): Promise<schema.MutationTestResult> {
     // Mocha, jest and karma use test titles as test ids.
     // This can mean a lot of duplicate strings in the json report.
     // Therefore we remap the test ids here to numbers.
