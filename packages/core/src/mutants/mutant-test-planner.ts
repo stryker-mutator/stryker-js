@@ -66,7 +66,7 @@ export class MutantTestPlanner {
   private planMutant(mutant: Mutant): MutantTestPlan {
     const isStatic = this.testCoverage.hasStaticCoverage(mutant.id);
 
-    if (mutant.status) {
+    if (mutant.status !== MutantStatus.Pending) {
       // If this mutant was already ignored, early result
       return this.createMutantEarlyResultPlan(mutant, {
         isStatic,
@@ -155,6 +155,7 @@ export class MutantTestPlanner {
           location: mutant.location,
           mutatorName: mutant.mutatorName,
           replacement: mutant.replacement,
+          status: mutant.status,
         },
         mutantActivation: testFilter ? 'runtime' : 'static',
         timeout,

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { Mutant } from '@stryker-mutator/api/core';
+import { Mutant, MutantStatus } from '@stryker-mutator/api/core';
 
 import { TSFileNode } from '../../../src/grouping/ts-file-node.js';
 
@@ -67,6 +67,7 @@ describe('TSFileNode', () => {
           replacement: '-',
           location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
           mutatorName: '',
+          status: MutantStatus.Pending,
         },
       ];
       expect(node.getMutantsWithReferenceToChildrenOrSelf(mutants)).to.have.lengthOf(1);
@@ -83,6 +84,7 @@ describe('TSFileNode', () => {
           replacement: '-',
           location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
           mutatorName: '',
+          status: MutantStatus.Pending,
         },
       ];
       expect(node.getMutantsWithReferenceToChildrenOrSelf(mutants)).to.have.lengthOf(1);
@@ -99,6 +101,7 @@ describe('TSFileNode', () => {
           replacement: '-',
           location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
           mutatorName: '',
+          status: MutantStatus.Pending,
         },
       ];
 
@@ -116,6 +119,7 @@ describe('TSFileNode', () => {
           replacement: '-',
           location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
           mutatorName: '',
+          status: MutantStatus.Pending,
         },
         {
           fileName: 'path\\NodeA.js',
@@ -123,6 +127,7 @@ describe('TSFileNode', () => {
           replacement: '-',
           location: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
           mutatorName: '',
+          status: MutantStatus.Pending,
         },
       ];
 

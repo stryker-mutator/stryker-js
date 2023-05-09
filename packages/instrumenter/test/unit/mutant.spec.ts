@@ -59,7 +59,7 @@ describe(Mutant.name, () => {
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
         statusReason: undefined,
-        status: undefined,
+        status: MutantStatus.Pending,
       };
       expect(mutant.toApiMutant()).deep.include(expected);
     });

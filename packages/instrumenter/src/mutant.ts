@@ -42,7 +42,7 @@ export class Mutant implements Mutable {
       mutatorName: this.mutatorName,
       replacement: this.replacementCode,
       statusReason: this.ignoreReason,
-      status: this.ignoreReason ? MutantStatus.Ignored : undefined,
+      status: this.ignoreReason ? MutantStatus.Ignored : MutantStatus.Pending,
     };
   }
 
