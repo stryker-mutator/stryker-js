@@ -1,4 +1,4 @@
-import { MutantResult } from 'mutation-testing-report-schema';
+import { MutantResult } from '@stryker-mutator/api/core';
 
 import { SseClient } from './sse-client.js';
 

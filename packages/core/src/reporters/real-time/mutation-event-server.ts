@@ -1,11 +1,10 @@
-import { MutantResult } from 'mutation-testing-report-schema';
+import { MutantResult } from '@stryker-mutator/api/core';
 
 import { SseServer } from './sse-server.js';
 import { SseClient } from './sse-client.js';
 import { MutationEventSender } from './mutation-event-sender.js';
 
 export class MutationEventServer {
-  #queue = new Set<Partial<MutantResult>>();
   #mutationEventSenders = new Set<MutationEventSender>();
   #sseServer: SseServer;
 

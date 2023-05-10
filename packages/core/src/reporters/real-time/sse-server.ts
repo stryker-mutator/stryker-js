@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { type Server, createServer, type ServerResponse } from 'http';
+import type { Server, ServerResponse } from 'http';
 
 import { AddressInfo } from 'net';
 
@@ -11,10 +11,10 @@ export class SseServer extends EventEmitter {
   #server: Server;
   #clients = new Set<SseClient>();
 
-  constructor() {
+  constructor(server: Server) {
     super();
 
-    this.#server = createServer();
+    this.#server = server;
     this.#server.on('request', (_, res) => this.#handleRequest(res));
   }
 

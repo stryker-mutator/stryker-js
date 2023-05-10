@@ -3,6 +3,8 @@ import fs from 'fs';
 
 import { createRequire } from 'module';
 
+import { createServer } from 'http';
+
 import fileUrl from 'file-url';
 import { MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -18,7 +20,7 @@ export class HtmlReporter implements Reporter {
   #mutationEventServer: MutationEventServer;
 
   constructor(private readonly options: StrykerOptions, private readonly log: Logger) {
-    this.#mutationEventServer = new MutationEventServer(new SseServer());
+    this.#mutationEventServer = new MutationEventServer(new SseServer(createServer()));
     this.#mutationEventServer.start();
   }
 
@@ -29,15 +31,12 @@ export class HtmlReporter implements Reporter {
       return;
     }
 
-    // In wsl the file will be located at (prefixed with) `file://///wsl.localhost/Ubuntu/`
     void this.generateReport(event.report, `http://localhost:${this.#mutationEventServer.port}/`);
   }
 
   public onMutantTested(result: Partial<MutantResult>): void {
     // Copy as to not change the original object.
-    const mutant = { ...result };
-    // Not a valid property in the schema, so remove it to prevent errors in mte.
-    delete mutant.fileName;
+    const { fileName, ...mutant } = result;
 
     this.#mutationEventServer.sendMutantTested(mutant);
   }

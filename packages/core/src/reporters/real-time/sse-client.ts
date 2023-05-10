@@ -11,6 +11,14 @@ export class SseClient extends EventEmitter {
     this.#response.on('finish', () => this.emit('writing-finished'));
   }
 
+  public on(eventType: 'writing-finished', callback: () => void): this {
+    return super.on(eventType, callback);
+  }
+
+  public emit(eventType: 'writing-finished'): boolean {
+    return super.emit(eventType);
+  }
+
   public send<T>(event: string, payload: T): void {
     this.#response.write(`event: ${event}\n`);
     this.#response.write(`data: ${JSON.stringify(payload)}\n\n`);
