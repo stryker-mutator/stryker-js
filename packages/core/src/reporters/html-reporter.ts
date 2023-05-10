@@ -10,8 +10,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
 
 import { reporterUtil } from './reporter-util.js';
-import { MutationEventServer } from './realtime/mutation-event-server.js';
-import { SseServer } from './realtime/sse-server.js';
+import { MutationEventServer } from './real-time/mutation-event-server.js';
+import { SseServer } from './real-time/sse-server.js';
 
 export class HtmlReporter implements Reporter {
   #mainPromise: Promise<void> | undefined;
