@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs/promises';
-import fsSync from 'fs';
 
 import { fileURLToPath } from 'url';
 
@@ -21,13 +20,10 @@ export class FileCommunicator {
     vitestSetup: path.resolve(this.communicationDir, 'vitest.setup.js'),
   });
 
-  constructor(private readonly globalNamespace: string) {
-    if (!fsSync.existsSync(this.communicationDir)) {
-      fsSync.mkdirSync(this.communicationDir);
-    }
-  }
+  constructor(private readonly globalNamespace: string) {}
 
   public async setDryRun(): Promise<void> {
+    await this.ensureCommunicatorDirectoryExists();
     await fs.writeFile(
       // Write hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
       this.files.vitestSetup,
@@ -46,6 +42,7 @@ export class FileCommunicator {
   }
 
   public async setMutantRun(options: MutantRunOptions): Promise<void> {
+    await this.ensureCommunicatorDirectoryExists();
     await fs.writeFile(
       this.files.vitestSetup,
       this.setupFileTemplate(`
@@ -60,7 +57,7 @@ export class FileCommunicator {
           : `
             beforeEach(() => {
               ns.activeMutant = '${options.activeMutant.id}';
-            })`
+            });`
       }
       afterAll(async () => {
         await fs.writeFile('${this.files.hitCount}', ns.hitCount.toString());
@@ -76,5 +73,13 @@ export class FileCommunicator {
 
     const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
     ${body}`;
+  }
+
+  private async ensureCommunicatorDirectoryExists() {
+    try {
+      await fs.access(this.communicationDir);
+    } catch {
+      await fs.mkdir(this.communicationDir);
+    }
   }
 }

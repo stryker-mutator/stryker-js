@@ -1,49 +1,68 @@
-// import fs from 'fs/promises';
+import fs from 'fs/promises';
 
-// import { factory, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
-// import { expect } from 'chai';
+import { TempTestDirectorySandbox, factory } from '@stryker-mutator/test-helpers';
+import { expect } from 'chai';
 
-// import { FileCommunicator } from '../../src/file-communicator.js';
+import { FileCommunicator } from '../../src/file-communicator.js';
 
-// describe('Vitest file communication', () => {
-//   let sandbox: TempTestDirectorySandbox;
-//   afterEach(async () => {
-//     await sandbox.dispose();
-//   });
-//   beforeEach(async () => {
-//     sandbox = new TempTestDirectorySandbox('file-communication');
-//     await sandbox.init();
-//   });
-//   it('setHitLimit should write hitLimit to correct namespace', async () => {
-//     await setHitLimit('__stryker__', 2);
-//     await fs.readFile(setupFiles.hitLimit, 'utf8').then((data) => {
-//       expect(data).to.contain('const ns = globalThis.__stryker__ || (globalThis.__stryker__ = {});');
-//       expect(data).to.contain('ns.hitLimit = 2');
-//     });
-//   });
+describe(FileCommunicator.name, () => {
+  let sandbox: TempTestDirectorySandbox;
+  let sut: FileCommunicator;
+  const globalStrykerNamespace = '__stryker2__';
 
-//   it('setDryRunValue should set strykerDryRun to on globalThis', async () => {
-//     await setDryRunValue(true);
-//     await fs.readFile(setupFiles.dryRun, 'utf8').then((data) => {
-//       expect(data).to.contain('globalThis.strykerDryRun = true');
-//     });
-//   });
+  beforeEach(async () => {
+    sandbox = new TempTestDirectorySandbox('file-communication');
+    await sandbox.init();
+    sut = new FileCommunicator(globalStrykerNamespace);
+  });
 
-//   it('setActiveMutant with setInBeforeEach true should set activeMutant in vitest before each', async () => {
-//     await setActiveMutant(factory.mutant({ id: '1' }), true, '__stryker__');
-//     await fs.readFile(setupFiles.activeMutant, 'utf8').then((data) => {
-//       expect(data).to.contain('beforeEach(() => {');
-//       expect(data).to.contain('const ns = globalThis.__stryker__ || (globalThis.__stryker__ = {});');
-//       expect(data).to.contain("ns.activeMutant = '1'");
-//     });
-//   });
+  afterEach(async () => {
+    await sandbox.dispose();
+  });
 
-//   it('setActiveMutant with setInBeforeEach false should set activeMutant without vitest before each', async () => {
-//     await setActiveMutant(factory.mutant({ id: '1' }), false, '__stryker__');
-//     await fs.readFile(setupFiles.activeMutant, 'utf8').then((data) => {
-//       expect(data).to.contain('(function (ns) {');
-//       expect(data).to.contain("ns.activeMutant = '1'");
-//       expect(data).to.contain('})(globalThis.__stryker__ || (globalThis.__stryker__ = {}))');
-//     });
-//   });
-// });
+  it('setDryRun should write activeMutant to undefined', async () => {
+    await sut.setDryRun();
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    expect(data).to.contain('activeMutant = undefined;');
+  });
+
+  it('setDryRun should use globalNamespace', async () => {
+    await sut.setDryRun();
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    expect(data).to.contain(`globalThis.${globalStrykerNamespace}`);
+  });
+
+  it('setDryRun should write to coverage file', async () => {
+    await sut.setDryRun();
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    expect(data).to.contain(`writeFile('${sut.files.coverage}',`);
+  });
+
+  it('setMutantRun should use globalNamespace', async () => {
+    await sut.setMutantRun(factory.mutantRunOptions());
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    expect(data).to.contain(`globalThis.${globalStrykerNamespace}`);
+  });
+
+  it('setMutantRun should set active mutant without before if mutant is static', async () => {
+    const id = '12345';
+    await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'static', activeMutant: factory.mutant({ id }) }));
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    const regex = /beforeEach\((.*)\);/gs;
+    const beforeEachData = regex.exec(data);
+
+    expect(beforeEachData).to.be.null;
+    expect(data).to.contain(`ns.activeMutant = '${id}'`);
+  });
+
+  it('setMutantRun should set active mutant in before each if mutant is runtime', async () => {
+    const id = '12345';
+    await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'runtime', activeMutant: factory.mutant({ id }) }));
+    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
+    const regex = /beforeEach\((.*)\);/gs;
+    const beforeEachData = regex.exec(data);
+
+    expect(beforeEachData).to.be.not.null;
+    expect(beforeEachData![1]).to.contain(`ns.activeMutant = '${id}'`);
+  });
+});
