@@ -1,3 +1,4 @@
+// Stryker disable all
 import { Suite, Test } from 'vitest';
 
 export function toTestId(test: Test): string {
