@@ -1,8 +1,13 @@
 {
   "name": "@stryker-mutator/vitest-runner",
-  "version": "6.4.0",
+  "version": "6.4.2",
   "description": "A plugin to use the vitest test runner and framework in Stryker, the JavaScript mutation testing framework",
-  "main": "dist/src/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "type": "module",
   "scripts": {
     "test": "c8 npm run test:all",
@@ -44,11 +49,11 @@
     "vitest": "0.29.8"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~6.4.0"
+    "@stryker-mutator/core": "~6.4.2"
   },
   "dependencies": {
-    "@stryker-mutator/api": "6.4.0",
-    "@stryker-mutator/util": "6.4.0",
+    "@stryker-mutator/api": "6.4.2",
+    "@stryker-mutator/util": "6.4.2",
     "semver": "~7.3.7",
     "tslib": "~2.5.0"
   },

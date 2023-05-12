@@ -4,7 +4,7 @@ import fsSync from 'fs';
 
 import { fileURLToPath } from 'url';
 
-import { MutantRunOptions } from '@stryker-mutator/api/src/test-runner';
+import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 
 import { toTestId } from './utils/collect-test-name.js';
 
