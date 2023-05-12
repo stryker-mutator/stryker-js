@@ -33,6 +33,37 @@ describe('VitestRunner integration', () => {
     });
   });
 
+  describe('using multiple-configs project', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('multiple-configs');
+      await sandbox.init();
+    });
+
+    it('should load default vitest config when config file is not set', async () => {
+      testInjector.options.vitest = { config: undefined };
+      sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
+
+      await sut.init();
+      const runResult = await sut.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).to.have.lengthOf(1);
+      expect(runResult.tests[0].name).eq('should be able to add two numbers');
+    });
+
+    it('should load custom vitest config when config file is set', async () => {
+      testInjector.options.vitest = { config: 'vitest.only.addOne.conifg.ts' };
+      sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
+
+      await sut.init();
+      const runResult = await sut.dryRun();
+
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).to.have.lengthOf(1);
+      expect(runResult.tests[0].name).eq('should be able to add one to a number');
+    });
+  });
+
   describe('mutantRun', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('simple-project-instrumented');

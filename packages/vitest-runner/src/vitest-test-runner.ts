@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import { INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -21,15 +21,18 @@ import { escapeRegExp } from '@stryker-mutator/util';
 import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
 import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
 import { FileCommunicator } from './file-communicator.js';
+import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
 type StrykerNamespace = '__stryker__' | '__stryker2__';
 
 export class VitestTestRunner implements TestRunner {
-  public static inject = [commonTokens.logger, 'globalNamespace'] as const;
+  public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
   private ctx!: Vitest;
   private readonly fileCommunicator: FileCommunicator;
+  private readonly options: VitestRunnerOptionsWithStrykerOptions;
 
-  constructor(private readonly log: Logger, globalNamespace: StrykerNamespace) {
+  constructor(options: StrykerOptions, private readonly log: Logger, globalNamespace: StrykerNamespace) {
+    this.options = options as VitestRunnerOptionsWithStrykerOptions;
     this.fileCommunicator = new FileCommunicator(globalNamespace);
   }
 
@@ -39,6 +42,7 @@ export class VitestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     this.ctx = await createVitest('test', {
+      config: this.options.vitest?.config,
       threads: false,
       watch: false,
       onConsoleLog: () => false,

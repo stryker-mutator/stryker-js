@@ -36,7 +36,7 @@ export class FileCommunicator {
       });
   
       afterAll(async () => {
-        await fs.writeFile('${this.files.coverage}', JSON.stringify(ns.mutantCoverage));
+        await fs.writeFile('${this.files.coverage}', JSON.stringify(ns.mutantCoverage ?? {}));
       });`)
     );
   }
