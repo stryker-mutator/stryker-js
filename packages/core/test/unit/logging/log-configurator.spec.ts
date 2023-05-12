@@ -127,7 +127,7 @@ describe('LogConfigurator', () => {
     return {
       appenders: {
         all: {
-          type: fileURLToPath(new URL('../../../src/cjs/logging/multi-appender.js', import.meta.url)),
+          type: fileURLToPath(new URL('../../../src/logging/multi-appender.cjs', import.meta.url)),
           appenders: ['filterLevelConsole', 'filterLevelFile'],
         },
         console: { type: 'stdout', layout: consoleLayout },
@@ -136,7 +136,7 @@ describe('LogConfigurator', () => {
         filterLog4jsCategoryFile: { type: 'categoryFilter', appender: 'stripAnsi', exclude: 'log4js' },
         filterLevelConsole: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryConsole', level: consoleLevel },
         stripAnsi: {
-          type: fileURLToPath(new URL('../../../src/cjs/logging/strip-ansi-appender.js', import.meta.url)),
+          type: fileURLToPath(new URL('../../../src/logging/strip-ansi-appender.cjs', import.meta.url)),
           appender: 'file',
         },
         filterLevelFile: { type: 'logLevelFilter', appender: 'filterLog4jsCategoryFile', level: fileLevel },

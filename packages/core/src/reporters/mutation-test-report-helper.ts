@@ -50,21 +50,27 @@ export class MutationTestReportHelper {
   ) {}
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
+    const location = this.toLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status: this.checkStatusToResultStatus(checkResult.status),
       statusReason: checkResult.reason,
+      location,
     });
   }
 
   public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
+    const location = this.toLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status,
+      location,
     });
   }
 
   public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
+    const location = this.toLocation(mutant.location);
+
     // Prune fields used for Stryker bookkeeping
     switch (result.status) {
       case MutantRunStatus.Error:
@@ -72,6 +78,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: MutantStatus.RuntimeError,
           statusReason: result.errorMessage,
+          location,
         });
       case MutantRunStatus.Killed:
         return this.reportOne({
@@ -80,18 +87,21 @@ export class MutationTestReportHelper {
           testsCompleted: result.nrOfTests,
           killedBy: result.killedBy,
           statusReason: result.failureMessage,
+          location,
         });
       case MutantRunStatus.Timeout:
         return this.reportOne({
           ...mutant,
           status: MutantStatus.Timeout,
           statusReason: result.reason,
+          location,
         });
       case MutantRunStatus.Survived:
         return this.reportOne({
           ...mutant,
           status: MutantStatus.Survived,
           testsCompleted: result.nrOfTests,
+          location,
         });
     }
   }
@@ -259,7 +269,7 @@ export class MutationTestReportHelper {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),
       coveredBy: remapTestIds(coveredBy),
-      location: this.toLocation(location),
+      location,
     };
   }
 

@@ -86,7 +86,7 @@ describe('Running in an example project', () => {
     const require = createRequire(import.meta.url);
     testInjector.logger.isDebugEnabled.returns(true);
     const expectedConfig: Partial<IConfiguration> = {
-      format: [require.resolve('../../src/cjs/stryker-formatter')],
+      format: [require.resolve('../../src/stryker-formatter.cjs')],
       retry: 0,
       parallel: 0,
       failFast: true,

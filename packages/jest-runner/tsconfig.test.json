@@ -7,13 +7,9 @@
     "skipLibCheck": true
   },
   "include": ["test", "typings"],
-  "exclude": ["test/unit/jest-plugins/cjs"],
   "references": [
     {
       "path": "./tsconfig.src.json"
-    },
-    {
-      "path": "./tsconfig.test.cjs.json"
     },
     {
       "path": "../test-helpers/tsconfig.src.json"

@@ -5,8 +5,7 @@ import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
 
-// @ts-expect-error CJS typings not in line with synthetic esm
-const generate: typeof generator = generator.default;
+const generate = generator.default;
 
 const plugins = [
   'doExpressions',

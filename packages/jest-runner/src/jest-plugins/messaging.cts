@@ -1,3 +1,4 @@
+// @ts-expect-error
 import type { CoverageAnalysis, InstrumenterContext } from '@stryker-mutator/api/core';
 
 class State {

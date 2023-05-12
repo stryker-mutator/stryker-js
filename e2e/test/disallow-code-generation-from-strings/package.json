@@ -1,0 +1,15 @@
+{
+  "name": "disallow-code-generation-from-strings",
+  "version": "1.0.0",
+  "description": "A e2e test for running node with --disallow-code-generation-from-strings. See https://github.com/stryker-mutator/stryker-js/issues/4035",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test:unit": "cross-env NODE_OPTIONS='--disallow-code-generation-from-strings' mocha",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-timeout verify/verify.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

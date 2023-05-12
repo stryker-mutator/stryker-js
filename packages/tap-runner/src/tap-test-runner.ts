@@ -1,14 +1,7 @@
-import { spawn } from 'child_process';
-
+import childProcess from 'child_process';
 import path from 'path';
-
 import { fileURLToPath } from 'url';
-
-import { readFile, rm } from 'fs/promises';
-
-import os from 'os';
-
-import * as tap from 'tap-parser';
+import fs from 'fs/promises';
 
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -23,14 +16,15 @@ import {
   TestRunner,
   TestRunnerCapabilities,
   TestStatus,
+  TimeoutDryRunResult,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as pluginTokens from './plugin-tokens.js';
-import { findTestyLookingFiles } from './tap-helper.js';
+import { findTestyLookingFiles, parseTap, TapResult } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
-import { strykerHitLimit, strykerNamespace, strykerDryRun } from './setup/env.cjs';
+import { strykerHitLimit, strykerNamespace, strykerDryRun, tempTapOutputFileName } from './setup/env.cjs';
 
 export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): TapTestRunner;
@@ -45,7 +39,11 @@ export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTA
 
 export const createTapTestRunner = createTapTestRunnerFactory();
 
-class HitLimitError extends Error {}
+class HitLimitError extends Error {
+  constructor(public readonly result: TimeoutDryRunResult) {
+    super(result.reason);
+  }
+}
 
 interface TapRunOptions {
   disableBail: boolean;
@@ -107,63 +105,39 @@ export class TapTestRunner implements TestRunner {
         tests: runs,
         mutantCoverage: totalCoverage,
       };
-    } catch (e) {
-      if (e instanceof HitLimitError) {
-        return {
-          status: DryRunStatus.Timeout,
-          reason: e.message,
-        };
+    } catch (err) {
+      if (err instanceof HitLimitError) {
+        return err.result;
       }
-
-      throw e;
+      throw err;
     }
   }
 
   private async runFile(testFile: string, testOptions: TapRunOptions): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
-    return new Promise((resolve, reject) => {
-      const env: NodeJS.ProcessEnv = {
-        ...process.env,
-        [strykerHitLimit]: testOptions.hitLimit?.toString(),
-        [strykerNamespace]: this.globalNamespace,
-        [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
-        [strykerDryRun]: testOptions.dryRun?.toString(),
-      };
-      const tapProcess = spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
-
-      const failedTests: tap.TapError[] = [];
-      const config = { bail: !testOptions.disableBail };
-
-      const parser = new tap.Parser(config, async (result) => {
-        const fileName = `stryker-output-${tapProcess.pid}.json`;
-        const fileContent = await readFile(fileName, 'utf-8');
-        await rm(fileName);
-        const file = JSON.parse(fileContent) as InstrumenterContext;
-
-        const hitLimitReached = determineHitLimitReached(file.hitCount, testOptions.hitLimit);
-        if (hitLimitReached) {
-          reject(new HitLimitError(hitLimitReached.reason));
-          return;
-        }
-
-        resolve({ testResult: this.tapResultToTestResult(testFile, result, failedTests), coverage: file.mutantCoverage });
-      });
-
-      parser.on('bailout', () => {
-        // Bailout within a test file is not supported on windows, because when the process is killed the exit handler which saves the file with the result does not run.
-        if (os.platform() !== 'win32') {
-          tapProcess.kill();
-        }
-      });
-
-      parser.on('fail', (reason: tap.TapError) => {
-        failedTests.push(reason);
-      });
-
-      tapProcess.stdout.pipe(parser);
-    });
+    const env: NodeJS.ProcessEnv = {
+      ...process.env,
+      [strykerHitLimit]: testOptions.hitLimit?.toString(),
+      [strykerNamespace]: this.globalNamespace,
+      [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
+      [strykerDryRun]: testOptions.dryRun?.toString(),
+    };
+    const tapProcess = childProcess.spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
+    const exitAsPromised = new Promise((resolve) => tapProcess.on('exit', resolve));
+    const result = await parseTap(tapProcess, testOptions.disableBail);
+    // wait for the process to end before continuing, because the tapParser sometimes results before the process ends which causes a start of a new process while to current one is still running.
+    await exitAsPromised;
+    const fileName = tempTapOutputFileName(tapProcess.pid);
+    const fileContent = await fs.readFile(fileName, 'utf-8');
+    await fs.rm(fileName);
+    const file = JSON.parse(fileContent) as InstrumenterContext;
+    const hitLimitReached = determineHitLimitReached(file.hitCount, testOptions.hitLimit);
+    if (hitLimitReached) {
+      throw new HitLimitError(hitLimitReached);
+    }
+    return { testResult: this.tapResultToTestResult(testFile, result), coverage: file.mutantCoverage };
   }
 
-  private tapResultToTestResult(fileName: string, result: tap.FinalResults, failedTests: tap.TapError[]): TestResult {
+  private tapResultToTestResult(fileName: string, { result, failedTests }: TapResult): TestResult {
     const generic: BaseTestResult = {
       id: fileName,
       name: fileName,
@@ -181,7 +155,7 @@ export class TapTestRunner implements TestRunner {
       return {
         ...generic,
         status: TestStatus.Failed,
-        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ') ?? 'Unkown issue',
+        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ') ?? 'Unknown issue',
       };
     }
   }

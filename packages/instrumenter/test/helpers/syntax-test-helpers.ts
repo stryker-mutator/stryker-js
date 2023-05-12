@@ -2,12 +2,14 @@ import { createRequire } from 'module';
 
 import babel, { type NodePath, type types } from '@babel/core';
 import { expect } from 'chai';
-import generate from '@babel/generator';
+import generator from '@babel/generator';
 
 /* eslint-disable @typescript-eslint/no-duplicate-imports */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 /* eslint-enable @typescript-eslint/no-duplicate-imports */
+
+const generate = generator.default;
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
 

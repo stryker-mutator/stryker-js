@@ -6,19 +6,20 @@
   "exports": {
     ".": {
       "import": "./dist/src/index.js",
-      "require": "./dist/src/jest-plugins/cjs/index.js"
+      "require": "./dist/src/jest-plugins/mixin-jest-environment.cjs"
     },
+    "./package.json": "./package.json",
     "./jest-env/jsdom": {
-      "import": "./jest-env/jsdom.js",
-      "require": "./jest-env/jsdom.js"
+      "import": "./dist/src/jest-plugins/jest-environment-jsdom.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-jsdom.cjs"
     },
     "./jest-env/node": {
-      "import": "./jest-env/node.js",
-      "require": "./jest-env/node.js"
+      "import": "./dist/src/jest-plugins/jest-environment-node.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-node.cjs"
     },
     "./jest-env/jsdom-sixteen": {
-      "import": "./jest-env/jsdom-sixteen.js",
-      "require": "./jest-env/jsdom-sixteen.js"
+      "import": "./dist/src/jest-plugins/jest-environment-jsdom-sixteen.cjs",
+      "require": "./dist/src/jest-plugins/jest-environment-jsdom-sixteen.cjs"
     }
   },
   "type": "module",
@@ -61,8 +62,8 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.4.2",
-    "@types/node": "18.16.2",
-    "@types/semver": "7.3.13",
+    "@types/node": "18.16.8",
+    "@types/semver": "7.5.0",
     "jest": "29.5.0",
     "jest-circus": "29.5.0",
     "jest-environment-jsdom": "29.5.0",
@@ -76,7 +77,7 @@
   "dependencies": {
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
-    "semver": "~7.4.0",
+    "semver": "~7.5.0",
     "tslib": "~2.5.0"
   },
   "initStrykerConfig": {

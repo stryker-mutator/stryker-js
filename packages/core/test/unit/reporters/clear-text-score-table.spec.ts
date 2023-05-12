@@ -13,21 +13,16 @@ import { stringWidth } from '../../../src/utils/string-utils.js';
 describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
     it('should report the clear text table with correct values', () => {
-      const metricsResult: MetricsResult = {
-        childResults: [
-          {
-            childResults: [
-              {
-                childResults: [],
-                metrics: factory.metrics({ mutationScore: 59.99 }),
-                name: 'some/test/for/a/deep/file.js',
-              },
-            ],
-            metrics: factory.metrics({ mutationScore: 60 }),
-            name: 'child1',
-          },
+      const metricsResult: MetricsResult = new MetricsResult(
+        'root',
+        [
+          new MetricsResult(
+            'child1',
+            [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99 }))],
+            factory.metrics({ mutationScore: 60 })
+          ),
         ],
-        metrics: factory.metrics({
+        factory.metrics({
           compileErrors: 7,
           killed: 1,
           mutationScore: 80,
@@ -35,9 +30,8 @@ describe(ClearTextScoreTable.name, () => {
           runtimeErrors: 4,
           survived: 3,
           timeout: 2,
-        }),
-        name: 'root',
-      };
+        })
+      );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
       const table = sut.draw();
@@ -55,13 +49,13 @@ describe(ClearTextScoreTable.name, () => {
     });
 
     it('should grow columns widths based on value size', () => {
-      const metricsResult: MetricsResult = {
-        childResults: [],
-        metrics: factory.metrics({
+      const metricsResult: MetricsResult = new MetricsResult(
+        'root',
+        [],
+        factory.metrics({
           killed: 1000000000,
-        }),
-        name: 'root',
-      };
+        })
+      );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
       const table = sut.draw();

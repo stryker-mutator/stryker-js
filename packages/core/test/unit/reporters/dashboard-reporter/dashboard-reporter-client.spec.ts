@@ -2,7 +2,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { HttpClient } from 'typed-rest-client/HttpClient.js';
-import { IHttpClientResponse } from 'typed-rest-client/Interfaces';
+import type { IHttpClientResponse } from 'typed-rest-client/Interfaces.js';
 
 import { DashboardReporterClient } from '../../../../src/reporters/dashboard-reporter/dashboard-reporter-client.js';
 import { dashboardReporterTokens } from '../../../../src/reporters/dashboard-reporter/tokens.js';

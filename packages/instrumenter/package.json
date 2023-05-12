@@ -4,6 +4,12 @@
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test": "c8 npm run mocha",
     "mocha": "mocha",

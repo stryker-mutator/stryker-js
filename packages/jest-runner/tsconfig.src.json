@@ -6,11 +6,7 @@
     "skipLibCheck": true
   },
   "include": ["src", "src-generated", "typings", "schema/*.json"],
-  "exclude": ["src/jest-plugins/cjs"],
   "references": [
-    {
-      "path": "./tsconfig.src.cjs.json"
-    },
     {
       "path": "../api/tsconfig.src.json"
     },

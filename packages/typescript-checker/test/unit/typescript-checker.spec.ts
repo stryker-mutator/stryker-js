@@ -5,7 +5,7 @@ import { strykerReportBugUrl } from '@stryker-mutator/util';
 import ts from 'typescript';
 
 import { TypescriptChecker } from '../../src/typescript-checker.js';
-import { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options';
+import type { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
 import { TypescriptCompiler } from '../../src/typescript-compiler.js';
 import { TSFileNode } from '../../src/grouping/ts-file-node.js';
 import * as pluginTokens from '../../src/plugin-tokens.js';

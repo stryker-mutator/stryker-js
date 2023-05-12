@@ -1,6 +1,6 @@
 import { LoggingEvent } from 'log4js';
 
-import { RuntimeAppender } from './runtime-appender.js';
+import { RuntimeAppender } from './runtime-appender.cjs';
 
 /**
  * Pattern that can find ANSI escape codes
