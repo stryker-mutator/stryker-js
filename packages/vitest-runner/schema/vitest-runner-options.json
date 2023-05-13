@@ -10,7 +10,7 @@
       "type": "object",
       "default": {},
       "properties": {
-        "config": {
+        "configFile": {
           "description": "Path to the config file. Default resolving to `vitest.config.*`, `vite.config.*`",
           "type": "string"
         }
