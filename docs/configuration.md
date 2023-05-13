@@ -62,14 +62,13 @@ Config file: `"checkerNodeArgs": ["--inspect-brk", "--cpu-prof"]`
 
 Configure arguments to be passed as exec arguments to the checker child process. For example, running Stryker with `--concurrency 1 --checkerNodeArgs "--inspect-brk"` will allow you to debug the checker child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
 
-### `cleanTempDir` [`boolean`]
+### `cleanTempDir` [`CleanTempDirOptions`]
 
 Default: `true`<br />
 Command line: `--cleanTempDir false`<br />
 Config file: `"cleanTempDir": false`
 
-Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run.
-The temp dir will never be removed when the run failed for some reason (for debugging purposes).
+Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a run. The behavior depends on the value selected: if set to `true`, the temp dir will be removed only after a successful run; if set to `false`, the temp dir will be left in place after a run. If set to `'always'`, the temp dir will be removed after every run, regardless of whether it was successful or not.
 
 ### `clearTextReporter` [`ClearTextOptions`]
 

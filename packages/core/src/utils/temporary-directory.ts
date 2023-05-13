@@ -12,7 +12,7 @@ import { objectUtils } from './object-utils.js';
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
   private isInitialized = false;
-  public removeDuringDisposal: boolean;
+  public removeDuringDisposal: boolean | string;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
@@ -48,7 +48,7 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    if (this.removeDuringDisposal) {
+    if (this.removeDuringDisposal || this.removeDuringDisposal === 'always') {
       this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
       try {
         await fileUtils.deleteDir(this.temporaryDirectory);
