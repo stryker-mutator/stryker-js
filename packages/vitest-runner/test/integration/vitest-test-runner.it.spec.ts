@@ -2,10 +2,17 @@ import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@st
 import { expect } from 'chai';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
+import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 
 describe('VitestRunner integration', () => {
   let sut: VitestTestRunner;
   let sandbox: TempTestDirectorySandbox;
+  let options: VitestRunnerOptionsWithStrykerOptions;
+
+  beforeEach(() => {
+    options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
+    options.vitest = {};
+  });
 
   afterEach(async () => {
     await sut.dispose();
@@ -40,7 +47,7 @@ describe('VitestRunner integration', () => {
     });
 
     it('should load default vitest config when config file is not set', async () => {
-      testInjector.options.vitest = { config: undefined };
+      options.vitest.configFile = undefined;
       sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
 
       await sut.init();
@@ -52,7 +59,7 @@ describe('VitestRunner integration', () => {
     });
 
     it('should load custom vitest config when config file is set', async () => {
-      testInjector.options.vitest = { config: 'vitest.only.addOne.conifg.ts' };
+      options.vitest.configFile = 'vitest.only.addOne.config.ts';
       sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
 
       await sut.init();

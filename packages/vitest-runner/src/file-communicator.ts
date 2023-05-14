@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 
-import { toTestId } from './utils/collect-test-name.js';
+import { toTestId } from './vitest-helpers.js';
 
 export class FileCommunicator {
   private readonly communicationDir = path.resolve(

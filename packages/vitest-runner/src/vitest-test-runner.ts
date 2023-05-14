@@ -18,8 +18,7 @@ import {
 import { createVitest, Vitest } from 'vitest/node';
 import { escapeRegExp } from '@stryker-mutator/util';
 
-import { collectTestsFromSuite } from './utils/collect-tests-from-suite.js';
-import { convertTestToTestResult, fromTestId } from './utils/convert-test-to-test-result.js';
+import { convertTestToTestResult, fromTestId, collectTestsFromSuite } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -42,7 +41,7 @@ export class VitestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     this.ctx = await createVitest('test', {
-      config: this.options.vitest?.config,
+      config: this.options.vitest?.configFile,
       threads: false,
       watch: false,
       onConsoleLog: () => false,

@@ -68,6 +68,12 @@ async function main() {
     },
     '__stryker2__'
   );
+  await instrument({
+    './packages/vitest-runner/testResources/workspace/packages/bar/src/math.orig.js':
+      './packages/vitest-runner/testResources/workspace/packages/bar/src/math.js',
+    './packages/vitest-runner/testResources/workspace/packages/foo/src/math.orig.js':
+      './packages/vitest-runner/testResources/workspace/packages/foo/src/math.js',
+  });
 }
 
 /**
