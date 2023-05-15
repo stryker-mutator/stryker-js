@@ -21,7 +21,7 @@ describe(FileCommunicator.name, () => {
     syncBuiltinESMExports();
   });
 
-  const communicationDir = fileURLToPath(new URL('../../src/.vitest-runner-undefined', import.meta.url));
+  const communicationDir = fileURLToPath(new URL(`../../src/.vitest-runner-${process.env.STRYKER_MUTATOR_WORKER}`, import.meta.url));
 
   function assertVitestSetupContains(containsText: string) {
     sinon.assert.calledOnceWithExactly(writeFileStub, sut.files.vitestSetup, sinon.match(containsText));
