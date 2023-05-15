@@ -66,6 +66,6 @@ export function toTestId(test: Test): string {
     }
     return nameParts.join(' ').trim();
   }
-  return `${test.file?.name}#${collectTestName(test)}`;
+  return `${test.file?.filepath}#${collectTestName(test)}`;
 }
 // Stryker restore all

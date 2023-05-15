@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
@@ -83,14 +85,14 @@ describe('VitestRunner integration', () => {
       const mutantRunOptions = factory.mutantRunOptions({
         mutantActivation: 'static',
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
+        sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
       });
       mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq([`${path.resolve('tests', 'math.spec.ts')}#math should be able to add two numbers`]);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -99,24 +101,24 @@ describe('VitestRunner integration', () => {
       const mutantRunOptions = factory.mutantRunOptions({
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
+        sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
       });
-      mutantRunOptions.activeMutant.id = '1';
 
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq([`${path.resolve('tests', 'math.spec.ts')}#math should be able to add two numbers`]);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
     it('mutant run with single filter should only run 1 test', async () => {
       await sut.init();
+      const expectedTestId = `${path.resolve('tests', 'math.spec.ts')}#math should be able to add two numbers`;
       const mutantRunOptions = factory.mutantRunOptions({
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['math.spec.ts#math should be able to add two numbers'],
+        sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+        testFilter: [expectedTestId],
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -124,17 +126,19 @@ describe('VitestRunner integration', () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.nrOfTests).eq(1);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq([expectedTestId]);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
     it('mutant run with 2 filters should run 2 tests', async () => {
+      const expectedKillingTestId = `${path.resolve(sandbox.tmpDir, 'tests', 'math.spec.ts')}#math should be able to add two numbers`;
+      const otherTestId = `${path.resolve(sandbox.tmpDir, 'tests', 'math.spec.ts')}#math should be able to add one to a number`;
       await sut.init();
       const mutantRunOptions = factory.mutantRunOptions({
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
-        testFilter: ['math.spec.ts#math should be able to add two numbers', 'math.spec.ts#math should be able to add one to a number'],
+        sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+        testFilter: [expectedKillingTestId, otherTestId],
       });
       mutantRunOptions.activeMutant.id = '1';
 
@@ -142,7 +146,7 @@ describe('VitestRunner integration', () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.nrOfTests).eq(2);
-      expect(runResult.killedBy).deep.eq(['tests/math.spec.ts#math should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq([expectedKillingTestId]);
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, '')).contains('expected -3 to be 7');
     });
 
@@ -151,7 +155,7 @@ describe('VitestRunner integration', () => {
       const mutantRunOptions = factory.mutantRunOptions({
         mutantActivation: 'runtime',
         activeMutant: factory.mutant({ id: '1' }),
-        sandboxFileName: `${sandbox.tmpDir}/math.ts`,
+        sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
         testFilter: ['math.spec.ts#math should be able to add two numbers'],
       });
       mutantRunOptions.activeMutant.id = '1';
