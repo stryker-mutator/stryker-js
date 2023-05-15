@@ -1,68 +1,96 @@
 import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
+import { syncBuiltinESMExports } from 'module';
+import path from 'path';
 
-import { TempTestDirectorySandbox, factory } from '@stryker-mutator/test-helpers';
+import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import { FileCommunicator } from '../../src/file-communicator.js';
 
 describe(FileCommunicator.name, () => {
-  let sandbox: TempTestDirectorySandbox;
   let sut: FileCommunicator;
-  const globalStrykerNamespace = '__stryker2__';
+  let writeFileStub: sinon.SinonStubbedMember<typeof fs.writeFile>;
+  let mkdirStub: sinon.SinonStubbedMember<typeof fs.mkdir>;
 
-  beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox('file-communication');
-    await sandbox.init();
-    sut = new FileCommunicator(globalStrykerNamespace);
+  beforeEach(() => {
+    sut = new FileCommunicator('__stryker__');
+    writeFileStub = sinon.stub(fs, 'writeFile');
+    mkdirStub = sinon.stub(fs, 'mkdir');
+    syncBuiltinESMExports();
   });
 
-  afterEach(async () => {
-    await sandbox.dispose();
+  const communicationDir = fileURLToPath(new URL('../../src/.vitest-runner-undefined', import.meta.url));
+
+  function assertVitestSetupContains(containsText: string) {
+    sinon.assert.calledOnceWithExactly(writeFileStub, sut.files.vitestSetup, sinon.match(containsText));
+  }
+
+  describe('files' satisfies keyof FileCommunicator, () => {
+    it('should have the correct values', () => {
+      expect(sut.files).to.deep.equal({
+        coverage: path.resolve(communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
+        hitCount: path.resolve(communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
+        vitestSetup: path.resolve(communicationDir, 'vitest.setup.js'),
+      });
+    });
+    it('should be frozen', () => {
+      expect(sut.files).frozen;
+    });
   });
 
-  it('setDryRun should write activeMutant to undefined', async () => {
-    await sut.setDryRun();
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    expect(data).to.contain('activeMutant = undefined;');
+  describe(FileCommunicator.prototype.setDryRun.name, () => {
+    it('should write activeMutant to undefined', async () => {
+      await sut.setDryRun();
+      assertVitestSetupContains('activeMutant = undefined;');
+    });
+    it('should use globalNamespace', async () => {
+      await sut.setDryRun();
+      assertVitestSetupContains('globalThis.__stryker__');
+    });
+
+    it('should write to coverage file', async () => {
+      await sut.setDryRun();
+      assertVitestSetupContains(`writeFile('${sut.files.coverage}'`);
+    });
+
+    it('should ensure the communication directory exists', async () => {
+      await sut.setDryRun();
+      sinon.assert.calledOnceWithExactly(mkdirStub, communicationDir, { recursive: true });
+    });
   });
 
-  it('setDryRun should use globalNamespace', async () => {
-    await sut.setDryRun();
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    expect(data).to.contain(`globalThis.${globalStrykerNamespace}`);
-  });
+  describe(FileCommunicator.prototype.setMutantRun.name, () => {
+    it('should use globalNamespace', async () => {
+      await sut.setMutantRun(factory.mutantRunOptions());
+      assertVitestSetupContains('globalThis.__stryker__');
+    });
 
-  it('setDryRun should write to coverage file', async () => {
-    await sut.setDryRun();
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    expect(data).to.contain(`writeFile('${sut.files.coverage}',`);
-  });
+    it('should set active mutant without before if mutant is static', async () => {
+      const id = '12345';
+      await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'static', activeMutant: factory.mutant({ id }) }));
+      const data = writeFileStub.firstCall.args[1] as string;
+      const regex = /beforeEach\((.*)\);/gs;
+      const beforeEachData = regex.exec(data);
+      expect(beforeEachData).to.be.null;
+      expect(data).to.contain(`ns.activeMutant = '${id}'`);
+    });
 
-  it('setMutantRun should use globalNamespace', async () => {
-    await sut.setMutantRun(factory.mutantRunOptions());
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    expect(data).to.contain(`globalThis.${globalStrykerNamespace}`);
-  });
+    it('should set active mutant in before each if mutant is runtime', async () => {
+      const id = '12345';
+      await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'runtime', activeMutant: factory.mutant({ id }) }));
+      const data = writeFileStub.firstCall.args[1] as string;
+      const regex = /beforeEach\((.*)\);/gs;
+      const beforeEachData = regex.exec(data);
 
-  it('setMutantRun should set active mutant without before if mutant is static', async () => {
-    const id = '12345';
-    await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'static', activeMutant: factory.mutant({ id }) }));
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    const regex = /beforeEach\((.*)\);/gs;
-    const beforeEachData = regex.exec(data);
+      expect(beforeEachData).to.be.not.null;
+      expect(beforeEachData![1]).to.contain(`ns.activeMutant = '${id}'`);
+    });
 
-    expect(beforeEachData).to.be.null;
-    expect(data).to.contain(`ns.activeMutant = '${id}'`);
-  });
-
-  it('setMutantRun should set active mutant in before each if mutant is runtime', async () => {
-    const id = '12345';
-    await sut.setMutantRun(factory.mutantRunOptions({ mutantActivation: 'runtime', activeMutant: factory.mutant({ id }) }));
-    const data = await fs.readFile(sut.files.vitestSetup, 'utf8');
-    const regex = /beforeEach\((.*)\);/gs;
-    const beforeEachData = regex.exec(data);
-
-    expect(beforeEachData).to.be.not.null;
-    expect(beforeEachData![1]).to.contain(`ns.activeMutant = '${id}'`);
+    it('should ensure the communication directory exists', async () => {
+      await sut.setMutantRun(factory.mutantRunOptions());
+      sinon.assert.calledOnceWithExactly(mkdirStub, communicationDir, { recursive: true });
+    });
   });
 });

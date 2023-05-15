@@ -76,10 +76,6 @@ export class FileCommunicator {
   }
 
   private async ensureCommunicatorDirectoryExists() {
-    try {
-      await fs.access(this.communicationDir);
-    } catch {
-      await fs.mkdir(this.communicationDir);
-    }
+    await fs.mkdir(this.communicationDir, { recursive: true });
   }
 }
