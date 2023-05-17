@@ -79,7 +79,7 @@ export class DryRunExecutor {
     const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.executeDryRun(testRunner)));
 
     this.logInitialTestRunSucceeded(result.tests, timing);
-    if (!result.tests.length) {
+    if (!result.tests.length && !this.options.allowEmpty) {
       throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
     }
 
@@ -164,6 +164,11 @@ export class DryRunExecutor {
   }
 
   private logInitialTestRunSucceeded(tests: TestResult[], timing: RunTiming) {
+    if (!tests.length) {
+      this.log.info('No tests were found');
+      return;
+    }
+
     this.log.info(
       'Initial test run succeeded. Ran %s tests in %s (net %s ms, overhead %s ms).',
       tests.length,

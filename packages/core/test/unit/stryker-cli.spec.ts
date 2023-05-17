@@ -37,6 +37,7 @@ describe(StrykerCli.name, () => {
       [['--checkerNodeArgs', '--inspect=1337 --gc'], { checkerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--disableBail'], { disableBail: true }],
       [['--dryRunOnly'], { dryRunOnly: true }],
+      [['--allowEmpty'], { allowEmpty: true }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],

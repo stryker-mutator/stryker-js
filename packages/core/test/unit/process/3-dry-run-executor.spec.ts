@@ -269,11 +269,18 @@ describe(DryRunExecutor.name, () => {
         );
       });
 
-      it('should log when there were no tests', async () => {
+      it('should log when there were no tests and allowEmpty is set to false', async () => {
+        testInjector.options.allowEmpty = false;
         await expect(sut.execute()).rejectedWith(
           ConfigError,
           'No tests were executed. Stryker will exit prematurely. Please check your configuration.'
         );
+      });
+
+      it('should prevent dryRun to throw an error when no tests are found and allowEmpty is set to true', async () => {
+        testInjector.options.allowEmpty = true;
+        await sut.execute();
+        expect(testInjector.logger.info).to.have.been.calledWith('No tests were found');
       });
     });
     describe('with failed tests', () => {
