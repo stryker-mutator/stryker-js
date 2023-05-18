@@ -7,7 +7,6 @@ import { fileURLToPath } from 'url';
 import { INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
 import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 
-// @ts-expect-error
 const instrumenter = new Instrumenter({
   ...console,
   isDebugEnabled() {
@@ -68,12 +67,15 @@ async function main() {
     },
     '__stryker2__'
   );
-  await instrument({
-    './packages/vitest-runner/testResources/workspace/packages/bar/src/math.orig.js':
-      './packages/vitest-runner/testResources/workspace/packages/bar/src/math.js',
-    './packages/vitest-runner/testResources/workspace/packages/foo/src/math.orig.js':
-      './packages/vitest-runner/testResources/workspace/packages/foo/src/math.js',
-  });
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/workspaces/packages/bar/src/math.orig.js':
+        './packages/vitest-runner/testResources/workspaces/packages/bar/src/math.js',
+      './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.orig.js':
+        './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.js',
+    },
+    '__stryker2__'
+  );
 }
 
 /**

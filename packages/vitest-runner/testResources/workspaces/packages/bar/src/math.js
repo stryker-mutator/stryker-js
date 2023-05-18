@@ -1,7 +1,7 @@
 // This file is generated with tasks/instrument-test-resources.js
  function stryNS_9fa48() {
-  var g = new Function("return this")();
-  var ns = g.__stryker__ || (g.__stryker__ = {});
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
+  var ns = g.__stryker2__ || (g.__stryker2__ = {});
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
@@ -45,11 +45,11 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-export function min(a, b) {
-  if (stryMutAct_9fa48("2")) {
+export function add(a, b) {
+  if (stryMutAct_9fa48("0")) {
     {}
   } else {
-    stryCov_9fa48("2");
-    return stryMutAct_9fa48("3") ? a + b : (stryCov_9fa48("3"), a - b);
+    stryCov_9fa48("0");
+    return stryMutAct_9fa48("1") ? a - b : (stryCov_9fa48("1"), a + b);
   }
 }

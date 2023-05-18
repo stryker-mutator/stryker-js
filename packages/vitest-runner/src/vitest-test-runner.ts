@@ -1,6 +1,8 @@
 import fs from 'fs/promises';
 
-import { INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import path from 'path';
+
+import { CoverageData, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
 import {
@@ -46,7 +48,9 @@ export class VitestTestRunner implements TestRunner {
       watch: false,
       onConsoleLog: () => false,
     });
-    this.ctx.config.setupFiles = [this.fileCommunicator.files.vitestSetup, ...this.ctx.config.setupFiles];
+    this.ctx.projects.forEach((project) => {
+      project.config.setupFiles = [this.fileCommunicator.files.vitestSetup, ...project.config.setupFiles];
+    });
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
     }
@@ -55,8 +59,8 @@ export class VitestTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     await this.fileCommunicator.setDryRun();
     const testResult = await this.run();
-    const mutantCoverage: MutantCoverage = JSON.parse(await fs.readFile(this.fileCommunicator.files.coverage, 'utf-8'));
-    await fs.rm(this.fileCommunicator.files.coverage);
+    const mutantCoverage: MutantCoverage = await this.readMutantCoverage();
+    await fs.rm(this.fileCommunicator.files.coverageDir, { recursive: true, force: true });
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
@@ -70,8 +74,7 @@ export class VitestTestRunner implements TestRunner {
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     await this.fileCommunicator.setMutantRun(options);
     const dryRunResult = await this.run(options.testFilter);
-    const hitCount = parseInt(await fs.readFile(this.fileCommunicator.files.hitCount, 'utf-8'));
-    await fs.rm(this.fileCommunicator.files.hitCount);
+    const hitCount = await this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
   }
@@ -84,9 +87,14 @@ export class VitestTestRunner implements TestRunner {
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
       const testFiles = testIds.map(fromTestId).map(({ file }) => file);
-      this.ctx.config.testNamePattern = regex;
+      this.ctx.projects.forEach((project) => {
+        project.config.testNamePattern = regex;
+      });
       await this.ctx.start(testFiles);
     } else {
+      this.ctx.projects.forEach((project) => {
+        project.config.testNamePattern = undefined;
+      });
       await this.ctx.start();
     }
     const tests = this.ctx.state.getFiles().flatMap((file) => collectTestsFromSuite(file));
@@ -94,8 +102,55 @@ export class VitestTestRunner implements TestRunner {
     return { tests: testResults, status: DryRunStatus.Complete };
   }
 
+  private async readHitCount() {
+    const projectHitCountFiles = await fs.readdir(this.fileCommunicator.files.hitCountDir);
+    const projectHitCounts = await Promise.all(
+      projectHitCountFiles.map(async (hitCountFile) =>
+        parseInt(await fs.readFile(path.resolve(this.fileCommunicator.files.hitCountDir, hitCountFile), 'utf-8'))
+      )
+    );
+    return projectHitCounts.reduce((acc, hitCount) => acc + hitCount, 0);
+  }
+
+  private async readMutantCoverage(): Promise<MutantCoverage> {
+    // Read coverage from all projects
+    const projectCoverageFiles = await fs.readdir(this.fileCommunicator.files.coverageDir);
+    const projectCoverages: MutantCoverage[] = await Promise.all(
+      projectCoverageFiles.map(async (coverageFile) =>
+        JSON.parse(await fs.readFile(path.resolve(this.fileCommunicator.files.coverageDir, coverageFile), 'utf-8'))
+      )
+    );
+    if (projectCoverages.length > 1) {
+      return projectCoverages.reduce((acc, projectCoverage) => {
+        // perTest contains the coverage per test id
+        Object.entries(projectCoverage.perTest).forEach(([testId, testCoverage]) => {
+          if (testId in acc.perTest) {
+            // Keys are mutant ids, the numbers are the amount of times it was hit.
+            mergeCoverage(acc.perTest[testId], testCoverage);
+          } else {
+            acc.perTest[testId] = testCoverage;
+          }
+        });
+        mergeCoverage(acc.static, projectCoverage.static);
+        return acc;
+      });
+    }
+    return projectCoverages[0];
+
+    function mergeCoverage(to: CoverageData, from: CoverageData) {
+      Object.entries(from).forEach(([mutantId, hitCount]) => {
+        if (mutantId in to) {
+          to[mutantId] += hitCount;
+        } else {
+          to[mutantId] = hitCount;
+        }
+      });
+    }
+  }
+
   public async dispose(): Promise<void> {
-    await this.ctx.exit(/*force*/ false);
+    await this.ctx.close();
+    await this.ctx.closingPromise;
   }
 }
 

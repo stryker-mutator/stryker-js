@@ -73,6 +73,50 @@ describe('VitestRunner integration', () => {
     });
   });
 
+  describe('using a project using workspaces', () => {
+    let fooTestId: string;
+    let barTestId: string;
+
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('workspaces');
+      await sandbox.init();
+      sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
+      fooTestId = `${path.resolve('packages', 'foo', 'src', 'math.spec.js')}#min should min 44, 2 = 42`;
+      barTestId = `${path.resolve('packages', 'bar', 'src', 'math.spec.js')}#add should add 40, 2 = 42`;
+    });
+
+    it('should report mutant coverage', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun();
+      assertions.expectCompleted(runResult);
+      expect(runResult.mutantCoverage).deep.eq({
+        static: {},
+        perTest: {
+          [barTestId]: {
+            '0': 1,
+            '1': 1,
+          },
+          [fooTestId]: {
+            '2': 1,
+            '3': 1,
+          },
+        },
+      });
+    });
+
+    it('should be able to kill a mutant inside one of the projects', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'packages', 'bar', 'src', 'math.js'),
+        })
+      );
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).deep.eq([barTestId]);
+    });
+  });
+
   describe('mutantRun', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('simple-project-instrumented');

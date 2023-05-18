@@ -1,8 +1,8 @@
 {
-  "name": "vitest-noconfig-old",
+  "name": "vitest-old-version",
   "version": "0.0.0",
   "private": true,
-  "description": "A module to perform an integration test",
+  "description": "The e2e test for the oldest supported vitest version",
   "main": "index.js",
   "scripts": {
     "pretest": "rimraf \"reports\"",
@@ -20,6 +20,6 @@
     "@stryker-mutator/util": "../../../packages/util"
   },
   "devDependencies": {
-    "vitest": "0.28.0"
+    "vitest": "0.30.0"
   }
 }

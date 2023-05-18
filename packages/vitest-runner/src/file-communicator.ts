@@ -15,15 +15,15 @@ export class FileCommunicator {
 
   public readonly files = Object.freeze({
     // Replace function is to have a valid windows path
-    coverage: path.resolve(this.communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
-    hitCount: path.resolve(this.communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
+    coverageDir: path.resolve(this.communicationDir, 'coverage').replace(/\\/g, '/'),
+    hitCountDir: path.resolve(this.communicationDir, 'hitCount').replace(/\\/g, '/'),
     vitestSetup: path.resolve(this.communicationDir, 'vitest.setup.js'),
   });
 
   constructor(private readonly globalNamespace: string) {}
 
   public async setDryRun(): Promise<void> {
-    await this.ensureCommunicatorDirectoryExists();
+    await this.cleanCommunicationDirectories();
     await fs.writeFile(
       // Write hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
       this.files.vitestSetup,
@@ -32,17 +32,20 @@ export class FileCommunicator {
       ${toTestId.toString()}
   
       beforeEach(async (a) => {
+        debugger;
         ns.currentTestId = toTestId(a.meta);
       });
   
-      afterAll(async () => {
-        await fs.writeFile('${this.files.coverage}', JSON.stringify(ns.mutantCoverage ?? {}));
+      afterAll(async (suite) => {
+        await fs.writeFile(path.resolve('${
+          this.files.coverageDir
+        }', String(suite.projectName)), JSON.stringify(ns.mutantCoverage ?? { perTest: {}, static: {}}));
       });`)
     );
   }
 
   public async setMutantRun(options: MutantRunOptions): Promise<void> {
-    await this.ensureCommunicatorDirectoryExists();
+    await this.cleanCommunicationDirectories();
     await fs.writeFile(
       this.files.vitestSetup,
       this.setupFileTemplate(`
@@ -59,14 +62,15 @@ export class FileCommunicator {
               ns.activeMutant = '${options.activeMutant.id}';
             });`
       }
-      afterAll(async () => {
-        await fs.writeFile('${this.files.hitCount}', ns.hitCount.toString());
+      afterAll(async (suite) => {
+        await fs.writeFile(path.resolve('${this.files.hitCountDir}', String(suite.projectName)), ns.hitCount.toString());
       });`)
     );
   }
 
   private setupFileTemplate(body: string) {
     return `
+    import path from 'path';
     import fs from 'fs/promises';
 
     import { beforeEach, afterAll, beforeAll } from 'vitest';
@@ -75,7 +79,9 @@ export class FileCommunicator {
     ${body}`;
   }
 
-  private async ensureCommunicatorDirectoryExists() {
-    await fs.mkdir(this.communicationDir, { recursive: true });
+  private async cleanCommunicationDirectories() {
+    await fs.rm(this.communicationDir, { recursive: true, force: true });
+    await fs.mkdir(this.files.coverageDir, { recursive: true });
+    await fs.mkdir(this.files.hitCountDir, { recursive: true });
   }
 }

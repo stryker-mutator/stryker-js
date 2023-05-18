@@ -13,11 +13,13 @@ describe(FileCommunicator.name, () => {
   let sut: FileCommunicator;
   let writeFileStub: sinon.SinonStubbedMember<typeof fs.writeFile>;
   let mkdirStub: sinon.SinonStubbedMember<typeof fs.mkdir>;
+  let rmStub: sinon.SinonStubbedMember<typeof fs.rm>;
 
   beforeEach(() => {
     sut = new FileCommunicator('__stryker__');
     writeFileStub = sinon.stub(fs, 'writeFile');
     mkdirStub = sinon.stub(fs, 'mkdir');
+    rmStub = sinon.stub(fs, 'rm');
     syncBuiltinESMExports();
   });
 
@@ -30,10 +32,10 @@ describe(FileCommunicator.name, () => {
   describe('files' satisfies keyof FileCommunicator, () => {
     it('should have the correct values', () => {
       expect(sut.files).to.deep.equal({
-        coverage: path.resolve(communicationDir, '__stryker-coverage__.json').replace(/\\/g, '/'),
-        hitCount: path.resolve(communicationDir, 'hitCount.txt').replace(/\\/g, '/'),
+        coverageDir: path.resolve(communicationDir, 'coverage').replace(/\\/g, '/'),
+        hitCountDir: path.resolve(communicationDir, 'hitCount').replace(/\\/g, '/'),
         vitestSetup: path.resolve(communicationDir, 'vitest.setup.js'),
-      });
+      } satisfies typeof sut.files);
     });
     it('should be frozen', () => {
       expect(sut.files).frozen;
@@ -52,12 +54,17 @@ describe(FileCommunicator.name, () => {
 
     it('should write to coverage file', async () => {
       await sut.setDryRun();
-      assertVitestSetupContains(`writeFile('${sut.files.coverage}'`);
+      assertVitestSetupContains(
+        `fs.writeFile(path.resolve('${sut.files.coverageDir}', String(suite.projectName)), JSON.stringify(ns.mutantCoverage ?? { perTest: {}, static: {}}))`
+      );
     });
 
-    it('should ensure the communication directory exists', async () => {
+    it('should clean the communication directory', async () => {
       await sut.setDryRun();
-      sinon.assert.calledOnceWithExactly(mkdirStub, communicationDir, { recursive: true });
+      sinon.assert.calledOnceWithExactly(rmStub, communicationDir, { recursive: true, force: true });
+      sinon.assert.calledWithExactly(mkdirStub, sut.files.coverageDir, { recursive: true });
+      sinon.assert.calledWithExactly(mkdirStub, sut.files.hitCountDir, { recursive: true });
+      sinon.assert.callOrder(rmStub, mkdirStub, mkdirStub);
     });
   });
 
@@ -88,9 +95,12 @@ describe(FileCommunicator.name, () => {
       expect(beforeEachData![1]).to.contain(`ns.activeMutant = '${id}'`);
     });
 
-    it('should ensure the communication directory exists', async () => {
+    it('should clean the communication directory', async () => {
       await sut.setMutantRun(factory.mutantRunOptions());
-      sinon.assert.calledOnceWithExactly(mkdirStub, communicationDir, { recursive: true });
+      sinon.assert.calledOnceWithExactly(rmStub, communicationDir, { recursive: true, force: true });
+      sinon.assert.calledWithExactly(mkdirStub, sut.files.coverageDir, { recursive: true });
+      sinon.assert.calledWithExactly(mkdirStub, sut.files.hitCountDir, { recursive: true });
+      sinon.assert.callOrder(rmStub, mkdirStub, mkdirStub);
     });
   });
 });
