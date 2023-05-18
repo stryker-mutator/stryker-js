@@ -12,12 +12,12 @@ import { objectUtils } from './object-utils.js';
 export class TemporaryDirectory implements Disposable {
   private readonly temporaryDirectory: string;
   private isInitialized = false;
-  public removeDuringDisposal: boolean | string;
+  public removeDuringDisposal: boolean;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
     this.temporaryDirectory = path.resolve(options.tempDirName);
-    this.removeDuringDisposal = options.cleanTempDir;
+    this.removeDuringDisposal = typeof options.cleanTempDir === 'boolean' ? options.cleanTempDir : options.cleanTempDir == 'always' ? true : false;
   }
 
   public async initialize(): Promise<void> {
@@ -48,7 +48,7 @@ export class TemporaryDirectory implements Disposable {
     if (!this.isInitialized) {
       throw new Error('initialize() was not called!');
     }
-    if (this.removeDuringDisposal || this.removeDuringDisposal === 'always') {
+    if (this.removeDuringDisposal) {
       this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
       try {
         await fileUtils.deleteDir(this.temporaryDirectory);

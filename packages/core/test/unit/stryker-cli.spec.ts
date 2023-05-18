@@ -56,6 +56,7 @@ describe(StrykerCli.name, () => {
       [['--ignoreStatic'], { ignoreStatic: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
+      [['--cleanTempDir', 'always'], { cleanTempDir: 'always' }],
       [['-c', '6'], { concurrency: 6 }],
       [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
     ];

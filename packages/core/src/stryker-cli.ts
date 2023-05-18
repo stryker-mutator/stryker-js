@@ -183,7 +183,7 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true | false | always>',
-        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a run. The behavior depends on the value selected: if set to 'true', the temp dir will be removed only after a successful run; if set to 'false', the temp dir will be left in place after a run. If set to 'always', the temp dir will be removed after every run, regardless of whether it was successful or not.`,
+        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a run.\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - always: Always delete the temp dir, regardless of whether the run was successful.`,
         parseCleanDirOption
       )
       .showSuggestionAfterError()

@@ -44,8 +44,8 @@ export class Stryker {
 
         return mutantResults;
       } catch (error) {
-        const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
-        if (mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal !== 'always') {
+        if (mutantInstrumenterInjector.resolve(commonTokens.options).cleanTempDir !== 'always') {
+          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
           log.debug('Not removing the temp dir because an error occurred');
           mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
         }

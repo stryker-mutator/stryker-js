@@ -448,11 +448,11 @@
       "default": ".stryker-tmp"
     },
     "cleanTempDir": {
-      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default) after a run. The behavior depends on the value selected: if set to `true`, the temp dir will be removed only after a successful run; if set to `false`, the temp dir will be left in place after a run. If set to `always`, the temp dir will be removed after every run, regardless of whether it was successful or not.",
+      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default).\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - \"always\": Always delete the temp dir, regardless of whether the run was successful.",
       "enum": [
+        "always",
         false,
-        true,
-        "always"
+        true
         ],
       "default": true
     },
