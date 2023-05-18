@@ -48,12 +48,12 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "mutation-testing-metrics": "2.0.0",
-    "mutation-testing-report-schema": "2.0.0",
+    "mutation-testing-metrics": "2.0.1",
+    "mutation-testing-report-schema": "2.0.1",
     "tslib": "~2.5.0"
   },
   "devDependencies": {
-    "@types/node": "18.16.8",
+    "@types/node": "18.16.12",
     "typed-inject": "4.0.0"
   }
 }
