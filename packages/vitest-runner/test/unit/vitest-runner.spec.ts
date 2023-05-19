@@ -11,8 +11,9 @@ describe(VitestTestRunner.name, () => {
     sut = testInjector.injector.provideValue('globalNamespace', '__stryker2__' as const).injectClass(VitestTestRunner);
   });
 
-  it('should have reload capabilities', () => {
-    const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+  it('should not have reload capabilities', () => {
+    // The files under test are cached between runs
+    const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
     expect(sut.capabilities()).deep.eq(expectedCapabilities);
   });
 });

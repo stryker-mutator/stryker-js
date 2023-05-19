@@ -20,7 +20,7 @@ import {
 import { createVitest, Vitest } from 'vitest/node';
 import { escapeRegExp } from '@stryker-mutator/util';
 
-import { convertTestToTestResult, fromTestId, collectTestsFromSuite } from './vitest-helpers.js';
+import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -38,18 +38,26 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public capabilities(): TestRunnerCapabilities {
-    return { reloadEnvironment: true };
+    return { reloadEnvironment: false };
   }
 
   public async init(): Promise<void> {
     this.ctx = await createVitest('test', {
       config: this.options.vitest?.configFile,
-      threads: false,
+      threads: true,
+      coverage: { enabled: false },
+      singleThread: true,
       watch: false,
       onConsoleLog: () => false,
     });
+
+    // The vitest setup file needs to be inlined
+    // See https://github.com/vitest-dev/vitest/issues/3403#issuecomment-1554057966
+    const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.files.vitestSetup));
+    addToInlineDeps(this.ctx.config, vitestSetupMatcher);
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.files.vitestSetup, ...project.config.setupFiles];
+      addToInlineDeps(project.config, vitestSetupMatcher);
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
@@ -60,7 +68,6 @@ export class VitestTestRunner implements TestRunner {
     await this.fileCommunicator.setDryRun();
     const testResult = await this.run();
     const mutantCoverage: MutantCoverage = await this.readMutantCoverage();
-    await fs.rm(this.fileCommunicator.files.coverageDir, { recursive: true, force: true });
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
@@ -80,6 +87,9 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async run(testIds: string[] = []): Promise<DryRunResult> {
+    // Clear the state from the previous run
+    // Note that this is kind of a hack, see https://github.com/vitest-dev/vitest/discussions/3017#discussioncomment-5901751
+    this.ctx.state.filesMap.clear();
     if (testIds.length > 0) {
       const regexTestNameFilter = testIds
         .map(fromTestId)

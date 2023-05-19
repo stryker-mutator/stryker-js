@@ -61,9 +61,19 @@ async function main() {
   );
   await instrument(
     {
-      './packages/vitest-runner/testResources/simple-project/math.ts': './packages/vitest-runner/testResources/simple-project-instrumented/math.ts',
       './packages/tap-runner/testResources/example/src/math.js': './packages/tap-runner/testResources/example-instrumented/src/math.js',
       './packages/tap-runner/testResources/example/src/formatter.js': './packages/tap-runner/testResources/example-instrumented/src/formatter.js',
+    },
+    '__stryker2__'
+  );
+  await instrument(
+    { './packages/vitest-runner/testResources/simple-project/math.orig.ts': './packages/vitest-runner/testResources/simple-project/math.ts' },
+    '__stryker2__'
+  );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.orig.js':
+        './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.js',
     },
     '__stryker2__'
   );

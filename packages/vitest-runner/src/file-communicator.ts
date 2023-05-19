@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 
-import { toTestId } from './vitest-helpers.js';
+import { collectTestName, toTestId } from './vitest-helpers.js';
 
 export class FileCommunicator {
   private readonly communicationDir = path.resolve(
@@ -29,11 +29,15 @@ export class FileCommunicator {
       this.files.vitestSetup,
       this.setupFileTemplate(`
       ns.activeMutant = undefined;
+      ${collectTestName.toString()}
       ${toTestId.toString()}
   
-      beforeEach(async (a) => {
-        debugger;
+      beforeEach((a) => {
         ns.currentTestId = toTestId(a.meta);
+      });
+
+      afterEach(() => {
+        ns.currentTestId = undefined;
       });
   
       afterAll(async (suite) => {
@@ -73,7 +77,7 @@ export class FileCommunicator {
     import path from 'path';
     import fs from 'fs/promises';
 
-    import { beforeEach, afterAll, beforeAll } from 'vitest';
+    import { beforeEach, afterAll, beforeAll, afterEach } from 'vitest';
 
     const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
     ${body}`;

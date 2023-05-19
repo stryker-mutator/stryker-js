@@ -8,7 +8,7 @@ describe('Infinite loop', () => {
   let sandbox: TempTestDirectorySandbox;
 
   beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
+    sandbox = new TempTestDirectorySandbox('infinite-loop');
     await sandbox.init();
     sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
   });
