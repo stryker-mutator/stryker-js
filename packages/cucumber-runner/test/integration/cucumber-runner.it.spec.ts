@@ -39,7 +39,7 @@ describe('Running in an example project', () => {
 
     // Assert
     const fileName = path.join('features', 'simple_math.feature');
-    const expectedTests: Array<Partial<TestResult>> = [
+    const expectedTests: Array<Partial<TestResult> & Pick<TestResult, 'id'>> = [
       {
         status: TestStatus.Success,
         id: `${fileName}:7`,

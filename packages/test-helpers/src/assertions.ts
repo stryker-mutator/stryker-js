@@ -71,18 +71,22 @@ function fileToJson(file: File) {
   };
 }
 
+type PartialTestResult = Partial<TestResult> & Pick<TestResult, 'id'>;
+
 /**
  * Compares test results while trimming failure messages to their first line (no stack traces)
  */
-export function expectTestResults(actual: DryRunResult, expectedTestResults: Array<Partial<TestResult>>): void {
+export function expectTestResults(actual: DryRunResult, expectedTestResults: PartialTestResult[]): void {
   expectCompleted(actual);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   const actualPruned = pruneUnexpected(actual.tests, expectedTestResults as any);
   actualPruned.forEach((test) => {
     if (test.status === TestStatus.Failed && test.failureMessage) {
-      test.failureMessage = test.failureMessage.substr(0, test.failureMessage.indexOf('\n'));
+      test.failureMessage = test.failureMessage.substring(0, test.failureMessage.indexOf('\n'));
     }
   });
+  actualPruned.sort((a, b) => a.id.localeCompare(b.id));
+  expectedTestResults.sort((a, b) => a.id.localeCompare(b.id));
   expect(actualPruned).deep.eq(expectedTestResults);
 }
 
@@ -93,25 +97,27 @@ export function expectTestResults(actual: DryRunResult, expectedTestResults: Arr
  * @param expected Some expected result you want to match to
  * @returns A new `actual` object with all unexpected values pruned.
  */
-export function pruneUnexpected<T>(actual: T, expected: Partial<T>): T extends Array<infer U> ? Array<Partial<U>> : Partial<T> {
-  if (actual !== null && typeof actual === 'object') {
-    if (Array.isArray(actual) && Array.isArray(expected)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      return actual.map((actualItem, index) => pruneUnexpected(actualItem, expected[index])) as unknown as T extends Array<infer U>
-        ? Array<Partial<U>>
-        : Partial<T>;
-    }
-    if (expected) {
-      return Object.keys(expected).reduce<Partial<T>>((acc, key) => {
-        const actualValue = actual[key as keyof T];
-        if (actualValue !== undefined) {
-          acc[key as keyof T] = actualValue;
-        }
-        return acc;
-      }, {}) as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+function pruneUnexpected(actual: TestResult[], expected: PartialTestResult[]): PartialTestResult[] {
+  return actual.map(({ id, ...actualTestData }) => {
+    const expectedTest = expected.find((test) => test.id === id);
+    if (expectedTest) {
+      return {
+        id,
+        ...Object.keys(expectedTest).reduce<Partial<TestResult>>((acc, key) => {
+          const prop = key as keyof TestResult;
+          if (prop !== 'id') {
+            (acc as any)[prop] = actualTestData[prop];
+          }
+          return acc;
+        }, {}),
+      };
     } else {
-      return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+      // Test will fail, because expected does not exist,
+      // but we still want to see the actual result in the diff
+      return {
+        id,
+        ...actualTestData,
+      };
     }
-  }
-  return actual as unknown as T extends Array<infer U> ? Array<Partial<U>> : Partial<T>;
+  });
 }
