@@ -95,6 +95,24 @@ describe('The Stryker meta schema', () => {
       },
       message: 'must be object',
     },
+    {
+      instancePath: '/tap',
+      keyword: 'additionalProperties',
+      message: 'must NOT have additional properties',
+      params: {
+        additionalProperty: 'specFiles',
+      },
+      schemaPath: '#/properties/tap/additionalProperties',
+    },
+    {
+      instancePath: '/vitest',
+      keyword: 'additionalProperties',
+      message: 'must NOT have additional properties',
+      params: {
+        additionalProperty: 'options',
+      },
+      schemaPath: '#/properties/vitest/additionalProperties',
+    },
   ].sort(orderByInstancePath);
 
   /**

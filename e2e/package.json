@@ -44,6 +44,7 @@
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.2",
     "ts-node": "10.9.1",
+    "vitest": "0.31.1",
     "typescript": "5.0.4",
     "webpack": "5.83.1",
     "webpack-cli": "5.1.1"
@@ -68,6 +69,7 @@
     "@stryker-mutator/cucumber-runner": "../packages/cucumber-runner",
     "@stryker-mutator/util": "../packages/util",
     "@stryker-mutator/tap-runner": "../packages/tap-runner",
-    "@stryker-mutator/typescript-checker": "../packages/typescript-checker"
+    "@stryker-mutator/typescript-checker": "../packages/typescript-checker",
+    "@stryker-mutator/vitest-runner": "../packages/vitest-runner"
   }
 }
