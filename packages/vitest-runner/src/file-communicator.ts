@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 
 import { collectTestName, toTestId } from './vitest-helpers.js';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 export class FileCommunicator {
   private readonly communicationDir = path.resolve(
@@ -17,7 +18,7 @@ export class FileCommunicator {
     // Replace function is to have a valid windows path
     coverageDir: path.resolve(this.communicationDir, 'coverage').replace(/\\/g, '/'),
     hitCountDir: path.resolve(this.communicationDir, 'hitCount').replace(/\\/g, '/'),
-    vitestSetup: path.resolve(this.communicationDir, 'vitest.setup.js'),
+    vitestSetup: normalizeFileName( path.resolve(this.communicationDir, 'vitest.setup.js')),
   });
 
   constructor(private readonly globalNamespace: string) {}

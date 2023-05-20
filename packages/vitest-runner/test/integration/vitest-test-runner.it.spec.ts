@@ -8,6 +8,7 @@ import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 describe('VitestRunner integration', () => {
   let sut: VitestTestRunner;
@@ -36,11 +37,13 @@ describe('VitestRunner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('simple-project');
       await sandbox.init();
-      test1 = `${path.resolve('tests', 'add.spec.ts')}#add should be able to add two numbers`;
-      test2 = `${path.resolve('tests', 'math.spec.ts')}#math should be able negate a number`;
-      test3 = `${path.resolve('tests', 'math.spec.ts')}#math should be able to add one to a number`;
-      test4 = `${path.resolve('tests', 'math.spec.ts')}#math should be able to recognize a negative number`;
-      test5 = `${path.resolve('tests', 'pi.spec.ts')}#pi should be 3.14`;
+
+      // Use normalizeFileName here, because vitest uses posix file names underneath
+      test1 = `${normalizeFileName(path.resolve('tests', 'add.spec.ts'))}#add should be able to add two numbers`;
+      test2 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able negate a number`;
+      test3 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able to add one to a number`;
+      test4 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able to recognize a negative number`;
+      test5 = `${normalizeFileName(path.resolve('tests', 'pi.spec.ts'))}#pi should be 3.14`;
       sandboxFileName = path.resolve(sandbox.tmpDir, 'math.ts');
       await sut.init();
     });
@@ -192,7 +195,7 @@ describe('VitestRunner integration', () => {
       it('mutant run with single filter should only run 1 test', async () => {
         const mutantRunOptions = factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '1' }),
-          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          sandboxFileName,
           testFilter: [test1],
         });
         mutantRunOptions.activeMutant.id = '1';
@@ -208,7 +211,7 @@ describe('VitestRunner integration', () => {
         const mutantRunOptions = factory.mutantRunOptions({
           mutantActivation: 'runtime',
           activeMutant: factory.mutant({ id: '2' }),
-          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          sandboxFileName,
           testFilter: [test1, test3],
         });
 
@@ -260,8 +263,8 @@ describe('VitestRunner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('workspaces');
       await sandbox.init();
-      fooTestId = `${path.resolve('packages', 'foo', 'src', 'math.spec.js')}#min should min 44, 2 = 42`;
-      barTestId = `${path.resolve('packages', 'bar', 'src', 'math.spec.js')}#add should add 40, 2 = 42`;
+      fooTestId = `${normalizeFileName(path.resolve('packages', 'foo', 'src', 'math.spec.js'))}#min should min 44, 2 = 42`;
+      barTestId = `${normalizeFileName(path.resolve('packages', 'bar', 'src', 'math.spec.js'))}#add should add 40, 2 = 42`;
     });
 
     it('should report mutant coverage', async () => {
