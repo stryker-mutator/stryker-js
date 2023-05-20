@@ -17,7 +17,7 @@ export class TemporaryDirectory implements Disposable {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(private readonly log: Logger, options: StrykerOptions) {
     this.temporaryDirectory = path.resolve(options.tempDirName);
-    this.removeDuringDisposal = typeof options.cleanTempDir === 'boolean' ? options.cleanTempDir : options.cleanTempDir == 'always' ? true : false;
+    this.removeDuringDisposal = Boolean(options.cleanTempDir);
   }
 
   public async initialize(): Promise<void> {
