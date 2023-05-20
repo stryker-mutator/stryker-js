@@ -21,7 +21,7 @@ describe('Infinite loop', () => {
     // Arrange
     await sut.init();
     const options = factory.mutantRunOptions({
-      activeMutant: factory.mutant({ id: '19' }),
+      activeMutant: factory.mutant({ id: '4' }),
       testFilter: ['infinite-loop.spec.js'],
       hitLimit: 10,
     });
@@ -38,7 +38,7 @@ describe('Infinite loop', () => {
     await sut.init();
     const firstResult = await sut.mutantRun(
       factory.mutantRunOptions({
-        activeMutant: factory.mutant({ id: '19' }),
+        activeMutant: factory.mutant({ id: '4' }),
         testFilter: ['infinite-loop.spec.js'],
         hitLimit: 10,
         mutantActivation: 'static',
@@ -46,8 +46,8 @@ describe('Infinite loop', () => {
     );
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
-        // 22 is a 'normal' mutant that should be killed
-        activeMutant: factory.mutant({ id: '22' }),
+        // 7 is a 'normal' mutant that should be killed
+        activeMutant: factory.mutant({ id: '7' }),
         testFilter: ['infinite-loop.spec.js'],
         hitLimit: 10,
         mutantActivation: 'static',

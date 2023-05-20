@@ -38,7 +38,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public capabilities(): TestRunnerCapabilities {
-    return { reloadEnvironment: false };
+    return { reloadEnvironment: true };
   }
 
   public async init(): Promise<void> {
@@ -87,9 +87,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async run(testIds: string[] = []): Promise<DryRunResult> {
-    // Clear the state from the previous run
-    // Note that this is kind of a hack, see https://github.com/vitest-dev/vitest/discussions/3017#discussioncomment-5901751
-    this.ctx.state.filesMap.clear();
+    this.resetContext();
     if (testIds.length > 0) {
       const regexTestNameFilter = testIds
         .map(fromTestId)
@@ -110,6 +108,27 @@ export class VitestTestRunner implements TestRunner {
     const tests = this.ctx.state.getFiles().flatMap((file) => collectTestsFromSuite(file));
     const testResults: TestResult[] = tests.map((test) => convertTestToTestResult(test));
     return { tests: testResults, status: DryRunStatus.Complete };
+  }
+
+  private resetContext() {
+    // Clear the state from the previous run
+    // Note that this is kind of a hack, see https://github.com/vitest-dev/vitest/discussions/3017#discussioncomment-5901751
+    this.ctx.state.filesMap.clear();
+
+    // Since we:
+    // 1. are reusing the same vitest instance
+    // 2. have changed the vitest setup file contents (see FileCommunicator.setMutantRun)
+    // 3. the vitest setup file is inlined (see VitestTestRunner.init)
+    // 4. we're not using the vitest watch mode
+    // We need to invalidate the module cache for the vitest setup file
+    // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
+    this.ctx.projects.forEach((project) => {
+      const moduleGraph = project.server.moduleGraph;
+      const module = moduleGraph.getModuleById(this.fileCommunicator.files.vitestSetup);
+      if (module) {
+        moduleGraph.invalidateModule(module);
+      }
+    });
   }
 
   private async readHitCount() {

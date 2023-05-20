@@ -13,7 +13,7 @@ describe(VitestTestRunner.name, () => {
 
   it('should not have reload capabilities', () => {
     // The files under test are cached between runs
-    const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+    const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
     expect(sut.capabilities()).deep.eq(expectedCapabilities);
   });
 });
