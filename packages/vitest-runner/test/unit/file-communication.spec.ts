@@ -6,6 +6,7 @@ import path from 'path';
 import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 import { FileCommunicator } from '../../src/file-communicator.js';
 
@@ -32,9 +33,9 @@ describe(FileCommunicator.name, () => {
   describe('files' satisfies keyof FileCommunicator, () => {
     it('should have the correct values', () => {
       expect(sut.files).to.deep.equal({
-        coverageDir: path.resolve(communicationDir, 'coverage').replace(/\\/g, '/'),
-        hitCountDir: path.resolve(communicationDir, 'hitCount').replace(/\\/g, '/'),
-        vitestSetup: path.resolve(communicationDir, 'vitest.setup.js'),
+        coverageDir: normalizeFileName(path.resolve(communicationDir, 'coverage')),
+        hitCountDir: normalizeFileName(path.resolve(communicationDir, 'hitCount')),
+        vitestSetup: normalizeFileName(path.resolve(communicationDir, 'vitest.setup.js')),
       } satisfies typeof sut.files);
     });
     it('should be frozen', () => {

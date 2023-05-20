@@ -15,8 +15,8 @@ export class FileCommunicator {
 
   public readonly files = Object.freeze({
     // Replace function is to have a valid windows path
-    coverageDir: path.resolve(this.communicationDir, 'coverage').replace(/\\/g, '/'),
-    hitCountDir: path.resolve(this.communicationDir, 'hitCount').replace(/\\/g, '/'),
+    coverageDir: normalizeFileName(path.resolve(this.communicationDir, 'coverage')),
+    hitCountDir: normalizeFileName(path.resolve(this.communicationDir, 'hitCount')),
     vitestSetup: normalizeFileName(path.resolve(this.communicationDir, 'vitest.setup.js')),
   });
 
