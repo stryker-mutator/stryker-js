@@ -3,12 +3,11 @@ import path from 'path';
 
 import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-
 import { TestStatus } from '@stryker-mutator/api/test-runner';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
-import { normalizeFileName } from '@stryker-mutator/util';
 
 describe('VitestRunner integration', () => {
   let sut: VitestTestRunner;
