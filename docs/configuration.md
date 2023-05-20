@@ -13,9 +13,9 @@ Keep in mind, that each option used on the command line will **completely replac
 ## Usage of Globbing Expressions on options
 
 The [`ignorePatterns`](#ignorepatterns-string), [`mutate`](#mutate-string) and other options referring to source files support globbing expressions using [node glob](https://github.com/isaacs/node-glob). See [the config file documentation](./config-file.md#glob-patterns) for more information. We suggest using [https://globster.xyz/](https://globster.xyz/) or referring to [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).
-when auditing more complex glob with `*` or `**` expressions; it can help you get them just right.
+ when auditing more complex glob with `*` or `**` expressions; it can help you get them just right.
 
-When used on the **command line**, you need to 'escape' not only the stars `*`, `**`, but also alls strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent your shell from expanding on them. For example, if you use `bash` or MS-Windows `cmd` or `powershell` as you shell, you need to use double quotes, backslash or other methods to prevent the shell from doing so.
+When used on the **command line**, you need to 'escape' not only the stars `*`, `**`, but also alls strings that contain `!`, `?`, `+` `[]`, `()` and `@` in order to prevent your shell from expanding on them. For example, if you use `bash` or MS-Windows `cmd` or `powershell` as you shell, you need to use double quotes, backslash or other methods to prevent the shell from doing so. 
 
 ## Configuration Options
 
@@ -62,21 +62,23 @@ Config file: `"checkerNodeArgs": ["--inspect-brk", "--cpu-prof"]`
 
 Configure arguments to be passed as exec arguments to the checker child process. For example, running Stryker with `--concurrency 1 --checkerNodeArgs "--inspect-brk"` will allow you to debug the checker child process. See `execArgv` of [`child_process.fork`](https://nodejs.org/api/child_process.html#child_process_child_process_fork_modulepath_args_options).
 
-### `cleanTempDir` [`boolean`]
+### `cleanTempDir` [`boolean | 'always'`]
 
 Default: `true`<br />
 Command line: `--cleanTempDir false`<br />
 Config file: `"cleanTempDir": false`
 
-Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default) after a successful run.
-The temp dir will never be removed when the run failed for some reason (for debugging purposes).
+Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the current working directory by default).
+
+ - `false`: Never delete the temp dir; 
+ - `true`: Delete the tmp dir after a successful run;
+ - `'always'`: Always delete the temp dir, regardless of whether the run was successful.
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
 Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
 
-Config file:
-
+Config file: 
 ```json
 {
   "clearTextReporter": {
@@ -89,7 +91,6 @@ Config file:
 ```
 
 Settings for the `clear-text` reporter.
-
 ### `concurrency` [`number`]
 
 Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`<br />
@@ -223,7 +224,7 @@ Command line: `--fileLogLevel info`<br />
 Config file: `"fileLogLevel": "info"`<br />
 
 Set the log level that Stryker uses to write to the "stryker.log" file. Possible values: `off`, `fatal`, `error`, `warn`, `info`, `debug` and `trace`
-
+ 
 ### `force` [`boolean`]
 
 Default: `false`<br />
@@ -251,11 +252,11 @@ Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
 Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options).
 
-These patterns are **always ignored**: `['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']`. The configured files in the `tempDirName`,`incrementalFile`, `htmlReporter.fileName` and `jsonReporter.fileName` options are also ignored.
+These patterns are **always ignored**: `['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']`. The configured files in the `tempDirName`,`incrementalFile`, `htmlReporter.fileName` and `jsonReporter.fileName` options are also ignored. 
 Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `["!node_modules"]`.
 
-Overriding `--ignorePatterns` is only needed when you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests.
-For example, image or movie directories. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files.
+Overriding `--ignorePatterns` is only needed when you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. 
+For example, image or movie directories. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files. 
 
 This option has **no effect at all**, when used in combination with [`--inPlace`](#inplace-boolean).
 
@@ -264,13 +265,12 @@ Note that, to **select specific files to be mutated**, you should use [`mutate`]
 If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.
 
 When using the command line, the list can only contain a comma separated list of globbing expressions.
-
 - `--ignorePatterns ".idea",".angular","/src/assets/*.png","/src/assets/*.jpg"`
 - `--ignorePatterns "/src/**/*.css"`
 - `--ignorePatterns` with `"!"` (= undo) for example:
-  - `--ignorePatterns "src/**","!str/app/important/*.ts"` (for details on usage of glob patterns like `!`, `*`, `**` see [above](#usage-of-globbing-expressions-on-options) )
+  - `--ignorePatterns "src/**","!str/app/important/*.ts"` (for details on usage of glob patterns like `!`, `*`, `**` see [above](#usage-of-globbing-expressions-on-options) ) 
   - or in the config file: `"ignorePatterns": ["src/**","!str/app/important/*.ts"]` This would ignore everything in and below `src` - directory **except** the typescript files in `src/app/important` directory, but the `--mutate` might be the better option in that case, see [below](#mutate-string)
-  - Keep in mind that you should **not accidentally ignore any other configuration** files your test runner might need for running the tests in the sandbox directory.
+  - Keep in mind that you should **not accidentally ignore any other configuration** files your test runner might need for running the tests in the sandbox directory. 
 
 ### `ignoreStatic` [`boolean`]
 
@@ -286,7 +286,7 @@ For example:
 const hi = '👋'; // Mutant 👽 StringLiteral
 
 export function greet(name) {
-  return `${hi} ${name}`;
+  return `${hi} ${name}`
 }
 ```
 
@@ -316,7 +316,7 @@ See [incremental](./incremental.md) for more details.
 
 Default: `false`<br />
 Command line: `--inPlace`<br />
-Config file: `"inPlace": true`<br />
+Config file: `"inPlace": true`<br /> 
 
 Determines whether or not Stryker should mutate your files in place.
 Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like "app-root-path" for example).
@@ -363,8 +363,8 @@ Restart each test runner worker process after `n` runs. Not recommended unless y
 Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{src,lib}/**/?(*.)+(spec|test).js?(x)', '!{src,lib}/**/*+(Spec|Test).js?(x)']`<br />
 
 - Config file: `"mutate": ["src/**/*.js", "a.js"]` or `"mutate": ["src/**/*.ts","!src/**/*.spec.ts","!src/**/*.module.ts"]`
-- Command line:
-  - `--mutate "src/**/*.js", "a.js"`, `-m "src/**/*.js", "a.js"`
+- Command line: 
+  - `--mutate "src/**/*.js", "a.js"`, `-m "src/**/*.js", "a.js"` 
   - `--mutate "src/**/*.ts","!src/**/*.spec.ts","!src/**/*.module.ts"` (For usage of `*`, `**` and other [globbing expressions see above](#usage-of-globbing-expressions-on-options))
   - `--mutate src/app/home/home.component.ts`, for one specific file
   - `--mutate "src/app/home/*.ts","!src/app/home/*.spec.ts"`, if you want to mutate just one specific directory
