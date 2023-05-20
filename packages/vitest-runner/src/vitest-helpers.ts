@@ -1,5 +1,5 @@
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { RunMode, Suite, TaskState, Test, type ProjectConfig, ResolvedConfig } from 'vitest';
+import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
   if (testMode === 'skip') {
