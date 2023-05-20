@@ -34,6 +34,11 @@ function parseBoolean(val: string) {
   return v !== 'false' && v !== '0';
 }
 
+function parseCleanDirOption(val: string) {
+  const v = val.toLocaleLowerCase();
+  return v === 'always' ? v : v !== 'false' && v !== '0';
+}
+
 export class StrykerCli {
   private command = '';
   private strykerConfig: string | null = null;
@@ -177,9 +182,9 @@ export class StrykerCli {
         'Set the name of the directory that is used by Stryker as a working directory. This directory will be cleaned after a successful run'
       )
       .option(
-        '--cleanTempDir <true/false>',
-        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes).`,
-        parseBoolean
+        '--cleanTempDir <true | false | always>',
+        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a run.\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - always: Always delete the temp dir, regardless of whether the run was successful.`,
+        parseCleanDirOption
       )
       .showSuggestionAfterError()
       .parse(this.argv);
