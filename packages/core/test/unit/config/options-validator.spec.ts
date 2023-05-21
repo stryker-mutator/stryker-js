@@ -30,6 +30,7 @@ describe(OptionsValidator.name, () => {
       sut.validate(options);
       const expectedOptions: StrykerOptions = {
         allowConsoleColors: true,
+        allowEmpty: false,
         appendPlugins: [],
         checkers: [],
         cleanTempDir: true,

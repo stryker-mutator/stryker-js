@@ -82,6 +82,7 @@ export class StrykerCli {
         '--incremental',
         "Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run"
       )
+      .option('--allowEmpty', 'Allows stryker to exit without any errors in cases where no tests are found ')
       .option('--incrementalFile <file>', 'Specify the file to use for incremental mode.')
       .option(
         '--force',

@@ -175,6 +175,14 @@ As you can see, when you disable bail, a lot more tests get the "Killing" status
 
 _Note: Disable bail needs to be supported by the test runner plugin in order to work. All official test runner plugins (`@stryker-mutator/xxx-runner`) support this feature except for Jest. Jest always runs without --bail (see [#11766](https://github.com/facebook/jest/issues/11766)) inside Stryker, however it will report only the first failing test when disableBail=false and all failing tests when disableBail=true_
 
+### `allowEmpty` [`boolean`]
+
+Default: `false`<br />
+Command: `--allowEmpty`<br />
+Config file: `"allowEmpty": true`
+
+By default test runner will exit with the `No tests found error` when there were no tests executed during the initial dry run. The error encourages you to verify your Stryker configuration if there are indeed no related tests to the given mutate option. By setting this option to true, it prevents the test runner to exit with an error in such cases.
+
 ### `disableTypeChecks` [`boolean` | `string`]
 
 Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
