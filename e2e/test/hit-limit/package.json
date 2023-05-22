@@ -10,7 +10,7 @@
     "test:mocha": "mocha",
     "test:jasmine": "jasmine",
     "test:karma": "karma start",
-    "test:tap": "tap test/loop.tap.spec.js",
+    "test:tap": "tap test/loop.tap.js",
     "test:vitest": "vitest run",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },

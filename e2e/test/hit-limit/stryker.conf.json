@@ -11,6 +11,6 @@
   },
   "concurrency": 1,
   "tap": {
-    "testFiles": "test/loop.tap.spec.js"
+    "testFiles": "test/loop.tap.js"
   }
 }
