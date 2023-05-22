@@ -9,5 +9,8 @@
     "configFile": "karma.conf.js",
     "config": {}
   },
-  "concurrency": 1
+  "concurrency": 1,
+  "tap": {
+    "testFiles": "test/loop.tap.js"
+  }
 }
