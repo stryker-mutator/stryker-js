@@ -38,9 +38,16 @@ export class ClearTextReporter implements Reporter {
 
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
     this.writeLine();
-    this.reportAllTests(metrics);
-    this.reportAllMutants(metrics);
-    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
+
+    if (this.options.clearTextReporter.reportAllTests) {
+      this.reportAllTests(metrics);
+    }
+    if (this.options.clearTextReporter.reportAllMutants) {
+      this.reportAllMutants(metrics);
+    }
+    if (this.options.clearTextReporter.reportScoreTable) {
+      this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
+    }
   }
 
   private reportAllTests(metrics: MutationTestMetricsResult) {

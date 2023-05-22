@@ -82,6 +82,21 @@
           "type": "integer",
           "minimum": 0,
           "default": 3
+        },
+        "reportAllTests": {
+          "description": "Indicates whether or not to log all tests.",
+          "type": "boolean",
+          "default": true
+        },
+        "reportAllMutants": {
+          "description": "Indicates whether or not to log all mutants.",
+          "type": "boolean",
+          "default": true
+        },
+        "reportScoreTable": {
+          "description": "Indicates whether or not to log score table.",
+          "type": "boolean",
+          "default": true
         }
       }
     },

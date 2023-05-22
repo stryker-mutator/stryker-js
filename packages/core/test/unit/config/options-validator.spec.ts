@@ -46,6 +46,9 @@ describe(OptionsValidator.name, () => {
           allowEmojis: false,
           logTests: true,
           maxTestsToLog: 3,
+          reportAllTests: true,
+          reportAllMutants: true,
+          reportScoreTable: true,
         },
         commandRunner: {
           command: 'npm test',

@@ -76,7 +76,7 @@ Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the 
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
-Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportAllTests": true, "reportAllMutants": true, "reportScoreTable": true }`<br />
 
 Config file: 
 ```json
@@ -85,7 +85,10 @@ Config file:
     "allowColor": true,
     "allowEmojis": false,
     "logTests": true,
-    "maxTestsToLog": 3
+    "maxTestsToLog": 3,
+    "reportAllTests": true,
+    "reportAllMutants": true,
+    "reportScoreTable": true
   }
 }
 ```
@@ -439,6 +442,9 @@ The `clear-text` reporter supports three additional config options:
 - `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
 - `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
 - `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
+- `reportAllTests` to log all tests. By default, only the first three are logged. This defaults to `true`, so specify as `clearTextReporter: { reportAllTests: false },` to disable if you must.
+- `reportAllMutants` to log all mutants. By default, only the first three are logged. This defaults to `true`, so specify as `clearTextReporter: { reportAllMutants: false },` to disable if you must.
+- `reportScoreTable` to log score table. By default, only the first three are logged. This defaults to `true`, so specify as `clearTextReporter: { reportScoreTable: false },` to disable if you must.
 
 The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.\*](#dashboard-dashboardoptions) configuration options.
 
