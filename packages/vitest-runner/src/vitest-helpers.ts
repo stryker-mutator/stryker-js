@@ -1,38 +1,44 @@
-import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
   if (testMode === 'skip') {
     return TestStatus.Skipped;
   }
-  if (taskState) {
-    switch (taskState) {
-      case 'pass': {
-        return TestStatus.Success;
-      }
-      case 'fail': {
-        return TestStatus.Failed;
-      }
-      case 'skip':
-      case 'todo': {
-        return TestStatus.Skipped;
-      }
-      default: {
-        return TestStatus.Failed;
-      }
-    }
+  switch (taskState) {
+    case 'pass':
+      return TestStatus.Success;
+    case 'fail':
+      return TestStatus.Failed;
+    case 'skip':
+    case 'todo':
+      return TestStatus.Skipped;
+    default: // taskState is undefined | "run" | "only". This should not happen
   }
   return TestStatus.Failed;
 }
 
 export function convertTestToTestResult(test: Test): TestResult {
-  return {
+  const status = convertTaskStateToTestStatus(test.result?.state, test.mode);
+  const baseTestResult: BaseTestResult = {
     id: toTestId(test),
     name: collectTestName(test),
     timeSpentMs: test.result?.duration ?? 0,
-    status: convertTaskStateToTestStatus(test.result?.state, test.mode),
-    failureMessage: test.result?.errors?.[0]?.message ?? '',
+    fileName: test.file?.filepath,
+    startPosition: test.meta,
   };
+  if (status === TestStatus.Failed) {
+    return {
+      ...baseTestResult,
+      status,
+      failureMessage: test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
+    };
+  } else {
+    return {
+      ...baseTestResult,
+      status,
+    };
+  }
 }
 
 export function fromTestId(id: string): { file: string; name: string } {
