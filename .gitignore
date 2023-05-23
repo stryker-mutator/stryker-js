@@ -16,6 +16,7 @@ src-generated
 dist
 dist-test
 packages/*/testResources/tmp
+packages/vitest-runner/.vitest-runner-undefined
 packages/report.*.json # Ignore heap dumps
 .idea
 *.iml

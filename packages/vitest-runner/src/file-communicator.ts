@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { fileURLToPath } from 'url';
 
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { normalizeFileName } from '@stryker-mutator/util';
@@ -8,10 +7,7 @@ import { normalizeFileName } from '@stryker-mutator/util';
 import { collectTestName, toTestId } from './vitest-helpers.js';
 
 export class FileCommunicator {
-  private readonly communicationDir = path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
-    `.vitest-runner-${process.env.STRYKER_MUTATOR_WORKER}`
-  );
+  private readonly communicationDir = path.resolve(`.vitest-runner-${process.env.STRYKER_MUTATOR_WORKER}`);
 
   public readonly files = Object.freeze({
     // Replace function is to have a valid windows path
@@ -79,15 +75,18 @@ export class FileCommunicator {
     import { normalizeFileName } from '@stryker-mutator/util';
 
     import { beforeEach, afterAll, beforeAll, afterEach } from 'vitest';
-    const cwd = process.cwd();
 
     const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
     ${body}`;
   }
 
   private async cleanCommunicationDirectories() {
-    await fs.rm(this.communicationDir, { recursive: true, force: true });
+    await this.dispose();
     await fs.mkdir(this.files.coverageDir, { recursive: true });
     await fs.mkdir(this.files.hitCountDir, { recursive: true });
+  }
+
+  public async dispose(): Promise<void> {
+    await fs.rm(this.communicationDir, { recursive: true, force: true });
   }
 }

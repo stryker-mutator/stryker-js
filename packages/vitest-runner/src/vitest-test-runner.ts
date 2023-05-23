@@ -178,6 +178,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
+    await this.fileCommunicator.dispose();
     await this.ctx.close();
     await this.ctx.closingPromise;
   }
