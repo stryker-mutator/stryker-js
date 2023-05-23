@@ -76,8 +76,10 @@ export class FileCommunicator {
     return `
     import path from 'path';
     import fs from 'fs/promises';
+    import { normalizeFileName } from '@stryker-mutator/util';
 
     import { beforeEach, afterAll, beforeAll, afterEach } from 'vitest';
+    const cwd = process.cwd();
 
     const ns = globalThis.${this.globalNamespace} || (globalThis.${this.globalNamespace} = {});
     ${body}`;

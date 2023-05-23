@@ -4,6 +4,8 @@ import { Suite, Test } from 'vitest';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
+import { normalizeFileName } from '@stryker-mutator/util';
+
 import { collectTestsFromSuite, convertTestToTestResult, fromTestId, toTestId } from '../../src/vitest-helpers.js';
 
 describe('vitest-helpers', () => {
@@ -24,7 +26,8 @@ describe('vitest-helpers', () => {
         context: {} as any,
         file: {
           name: 'file.js',
-          filepath: path.resolve('file.js'),
+          // Using normalizeFileName here mimics the behavior of vitest on windows: using forward slashes
+          filepath: normalizeFileName(path.resolve('src', 'file.js')),
           type: 'suite',
           id: '1',
           mode: 'run',
@@ -32,7 +35,7 @@ describe('vitest-helpers', () => {
         },
       };
       const result = toTestId(test);
-      expect(result).to.be.equal(`${path.resolve('file.js')}#suite test1`);
+      expect(result).to.be.equal('src/file.js#suite test1');
     });
   });
 

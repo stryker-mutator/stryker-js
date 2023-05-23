@@ -2220,7 +2220,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/concat.spec.js#concat should concat a and b",
+        "spec/concat.spec.js#concat should concat a and b",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2244,7 +2244,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/concat.spec.js#concat should concat a and b",
+        "spec/concat.spec.js#concat should concat a and b",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2290,7 +2290,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/concat.spec.js#greet should greet me",
+        "spec/concat.spec.js#greet should greet me",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2314,7 +2314,7 @@ Array [
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/concat.spec.js#greet should greet me",
+        "spec/concat.spec.js#greet should greet me",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2338,7 +2338,7 @@ Array [
     "fileName": "src/log.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/log.spec.js#log should not throw",
+        "spec/log.spec.js#log should not throw",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2362,7 +2362,7 @@ Array [
     "fileName": "src/log.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/log.spec.js#log should not throw",
+        "spec/log.spec.js#log should not throw",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2386,7 +2386,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/math.spec.js#add should add two numbers",
+        "spec/math.spec.js#add should add two numbers",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2410,7 +2410,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/math.spec.js#add should add two numbers",
+        "spec/math.spec.js#add should add two numbers",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2434,7 +2434,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/math.spec.js#multiply should multiply the numbers",
+        "spec/math.spec.js#multiply should multiply the numbers",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -2458,7 +2458,7 @@ Array [
     "fileName": "src/math.js",
     "mutant": Object {
       "coveredBy": Array [
-        "/home/nicojs/github/stryker-js/e2e/test/incremental/.stryker-tmp/sandbox3509700/spec/math.spec.js#multiply should multiply the numbers",
+        "spec/math.spec.js#multiply should multiply the numbers",
       ],
       "killedBy": undefined,
       "location": Object {
