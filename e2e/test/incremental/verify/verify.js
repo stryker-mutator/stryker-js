@@ -41,6 +41,8 @@ describe('incremental', () => {
     withFullTestResults: 4,
     // We know which test files are changed and assume each test in that file changed
     withoutTestLocations: 2,
+    // We know which test file the test originated from, but we can't differentiate between tests in the file (TAP runner)
+    withoutTestDeviation: 6,
     // Don't know from which test files the tests originated
     withoutTestFiles: 7,
   });
@@ -53,6 +55,9 @@ describe('incremental', () => {
     ['jest', reuseCountExpectation.withFullTestResults, { testRunnerNodeArgs: ['--experimental-vm-modules'], tempDirName: 'stryker-tmp' }],
 
     ['mocha', reuseCountExpectation.withoutTestLocations],
+    ['vitest', reuseCountExpectation.withoutTestLocations],
+
+    ['tap', reuseCountExpectation.withoutTestDeviation],
 
     ['karma', reuseCountExpectation.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
     ['jasmine', reuseCountExpectation.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],

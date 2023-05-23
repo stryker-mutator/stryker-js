@@ -4,7 +4,6 @@ import path from 'path';
 import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
-import { normalizeFileName } from '@stryker-mutator/util';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
@@ -26,23 +25,16 @@ describe('VitestRunner integration', () => {
   });
 
   describe('using the simple-project project', () => {
-    let test1: string;
-    let test2: string;
-    let test3: string;
-    let test4: string;
-    let test5: string;
+    const test1 = 'tests/add.spec.ts#add should be able to add two numbers';
+    const test2 = 'tests/math.spec.ts#math should be able negate a number';
+    const test3 = 'tests/math.spec.ts#math should be able to add one to a number';
+    const test4 = 'tests/math.spec.ts#math should be able to recognize a negative number';
+    const test5 = 'tests/pi.spec.ts#pi should be 3.14';
     let sandboxFileName: string;
 
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('simple-project');
       await sandbox.init();
-
-      // Use normalizeFileName here, because vitest uses posix file names underneath
-      test1 = `${normalizeFileName(path.resolve('tests', 'add.spec.ts'))}#add should be able to add two numbers`;
-      test2 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able negate a number`;
-      test3 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able to add one to a number`;
-      test4 = `${normalizeFileName(path.resolve('tests', 'math.spec.ts'))}#math should be able to recognize a negative number`;
-      test5 = `${normalizeFileName(path.resolve('tests', 'pi.spec.ts'))}#pi should be 3.14`;
       sandboxFileName = path.resolve(sandbox.tmpDir, 'math.ts');
       await sut.init();
     });
@@ -262,8 +254,8 @@ describe('VitestRunner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('workspaces');
       await sandbox.init();
-      fooTestId = `${normalizeFileName(path.resolve('packages', 'foo', 'src', 'math.spec.js'))}#min should min 44, 2 = 42`;
-      barTestId = `${normalizeFileName(path.resolve('packages', 'bar', 'src', 'math.spec.js'))}#add should add 40, 2 = 42`;
+      fooTestId = 'packages/foo/src/math.spec.js#min should min 44, 2 = 42';
+      barTestId = 'packages/bar/src/math.spec.js#add should add 40, 2 = 42';
     });
 
     it('should report mutant coverage', async () => {
