@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.4.2",
-    "@types/node": "18.16.13"
+    "@types/node": "18.16.14"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "^6.4.0",
