@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "6.4.2",
-    "@types/node": "18.16.13",
+    "@types/node": "18.16.14",
     "typed-inject": "4.0.0"
   }
 }
