@@ -1,0 +1,26 @@
+{
+  "name": "tap-old-version",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A project using the oldest supported version of node-tap",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "tap test/*.spec.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/tap-runner": "../../../packages/tap-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "devDependencies": {
+    "tap": "12.7.0"
+  }
+}
