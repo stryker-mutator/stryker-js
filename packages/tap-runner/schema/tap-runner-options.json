@@ -13,7 +13,7 @@
         "testFiles": {
           "description": "Specify glob expressions to test files to run. Defaults to {**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)",
           "type": "string",
-          "default": "{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)"
+          "default": "{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx|mts|cts)"
         }
       }
     }

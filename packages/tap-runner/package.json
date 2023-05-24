@@ -44,12 +44,13 @@
   "dependencies": {
     "@stryker-mutator/api": "6.4.2",
     "@stryker-mutator/util": "6.4.2",
+    "glob": "~10.2.6",
     "tap-parser": "~13.0.0",
     "tslib": "~2.4.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.4.2",
-    "@types/glob": "8.0.0",
+    "@types/glob": "8.1.0",
     "@types/node": "18.16.14",
     "tap": "16.3.4"
   },
