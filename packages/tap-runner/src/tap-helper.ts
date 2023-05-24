@@ -1,16 +1,13 @@
 import os from 'os';
-import { promisify } from 'util';
 import { ChildProcessWithoutNullStreams } from 'child_process';
 
-import nodeGlob from 'glob';
+import { glob } from 'glob';
 import * as tap from 'tap-parser';
 
 import { TapParser } from './tap-parser-factory.js';
 
-const glob = promisify(nodeGlob);
-
-export async function findTestyLookingFiles(globPattern: string): Promise<string[]> {
-  return glob(globPattern, { ignore: ['**/node_modules/**'] });
+export function findTestyLookingFiles(globPattern: string): Promise<string[]> {
+  return glob(globPattern, { ignore: ['**/node_modules/**'], posix: true });
 }
 
 export interface TapResult {

@@ -9,6 +9,8 @@
     "test:mocha": "mocha",
     "test:jest": "jest",
     "test:karma": "karma start",
+    "test:vitest": "vitest run",
+    "test:tap": "tap spec/**/*.tap.js",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

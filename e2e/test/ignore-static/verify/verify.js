@@ -34,4 +34,15 @@ describe('Ignore static e2e test', () => {
     expect(exitCode).eq(0);
     await expectMetricsJsonToMatchSnapshot();
   });
+  it('should work for vitest', async () => {
+    const { exitCode } = execStryker('stryker run --testRunner vitest');
+    expect(exitCode).eq(0);
+    await expectMetricsJsonToMatchSnapshot();
+  });
+  it('should work for tap', async () => {
+    const { exitCode } = execStryker('stryker run --testRunner tap');
+    expect(exitCode).eq(0);
+    // Tap doesn't support 'ignoreStatic', verify that mutation score = 100
+    await expectMetricsJsonToMatchSnapshot();
+  });
 });

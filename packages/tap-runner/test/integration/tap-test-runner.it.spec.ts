@@ -54,8 +54,9 @@ describe('Running in an example project', () => {
 
     // Assert
     assertions.expectKilled(run);
-    expect(run.killedBy).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
-    expect(run.failureMessage).eq('Failing test: This test will fail, Failing test: This test will fail also');
+    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+    expect([...run.killedBy].sort()).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
+    expect(run.failureMessage).eq('Concat two strings: An error occurred');
   });
 
   it('should be able to run test file with random output', async () => {
