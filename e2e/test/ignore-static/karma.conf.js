@@ -7,7 +7,8 @@ module.exports = function(config) {
     frameworks: ['chai', 'jasmine'],
     files: [
       'src/**/*.js',
-      'spec/**/*.js'
+      'spec/chai-setup.js',
+      'spec/**/*.spec.js'
     ],
     reporters: ['progress'],
     port: 9876,
