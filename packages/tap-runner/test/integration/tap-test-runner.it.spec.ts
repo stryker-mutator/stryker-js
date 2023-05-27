@@ -8,126 +8,173 @@ import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
-import { defaultTestFilesGlob } from '../helpers/tap-test-runner-constants.js';
+import { tapRunnerOptions } from '../helpers/factory.js';
 
-describe('Running in an example project', () => {
+describe('tap-runner integration', () => {
   let sut: TapTestRunner;
   let sandbox: TempTestDirectorySandbox;
-  let testFilter: string[] = [];
+  let options: TapRunnerOptionsWithStrykerOptions;
 
-  beforeEach(async () => {
-    sandbox = new TempTestDirectorySandbox('example');
-    await sandbox.init();
-    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap = {
-      testFiles: defaultTestFilesGlob,
-    };
-    sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
-    await sut.init();
-
-    const excludeFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
-    testFilter = (await findTestyLookingFiles(defaultTestFilesGlob)).filter((file) => !excludeFiles.includes(file));
+  beforeEach(() => {
+    options = testInjector.options as TapRunnerOptionsWithStrykerOptions;
+    options.tap = tapRunnerOptions();
   });
   afterEach(async () => {
     await sandbox.dispose();
   });
 
-  it('should be able complete a dry run', async () => {
-    // Act
-    const run = await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
+  describe('Running in an example project', () => {
+    let testFilter: string[] = [];
 
-    // Assert
-    expect(run.status).eq(DryRunStatus.Complete);
-  });
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('example');
+      await sandbox.init();
+      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      await sut.init();
 
-  it('should be to run mutantRun that survives', async () => {
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter }));
+      const excludeFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
+      testFilter = (await findTestyLookingFiles(options.tap.testFiles)).filter((file) => !excludeFiles.includes(file));
+    });
 
-    // Assert
-    assertions.expectSurvived(run);
-    expect(run.nrOfTests).eq(5);
-  });
+    it('should be able complete a dry run', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
 
-  it('should be to run mutantRun that gets killed', async () => {
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
+      // Assert
+      expect(run.status).eq(DryRunStatus.Complete);
+    });
 
-    // Assert
-    assertions.expectKilled(run);
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
-    expect([...run.killedBy].sort()).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
-    expect(run.failureMessage).eq('Concat two strings: An error occurred');
-  });
+    it('should be to run mutantRun that survives', async () => {
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter }));
 
-  it('should be able to run test file with random output', async () => {
-    const testFiles = ['tests/random-output.spec.js'];
+      // Assert
+      assertions.expectSurvived(run);
+      expect(run.nrOfTests).eq(5);
+    });
 
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
-    // Assert
-    assertions.expectSurvived(run);
-  });
+    it('should be to run mutantRun that gets killed', async () => {
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
 
-  it('should be able to run test file without output', async () => {
-    const testFiles = ['tests/no-output.spec.js'];
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
+      // Assert
+      assertions.expectKilled(run);
+      // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+      expect([...run.killedBy].sort()).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
+      expect(run.failureMessage).eq('Concat two strings: An error occurred');
+    });
 
-    // Assert
-    assertions.expectSurvived(run);
-  });
+    it('should be able to run test file with random output', async () => {
+      const testFiles = ['tests/random-output.spec.js'];
 
-  it('should bail out when disableBail is false', async () => {
-    const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
+      // Assert
+      assertions.expectSurvived(run);
+    });
 
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
+    it('should be able to run test file without output', async () => {
+      const testFiles = ['tests/no-output.spec.js'];
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
 
-    // Assert
-    assertions.expectKilled(run);
-    expect(run.nrOfTests).eq(1);
-    expect(run.killedBy[0]).eq('tests/bail.spec.js');
-  });
+      // Assert
+      assertions.expectSurvived(run);
+    });
 
-  it('should not bail out when disableBail is true', async () => {
-    const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
+    it('should bail out when disableBail is false', async () => {
+      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
 
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
 
-    // Assert
-    assertions.expectKilled(run);
-    expect(run.nrOfTests).eq(testFiles.length);
-  });
+      // Assert
+      assertions.expectKilled(run);
+      expect(run.nrOfTests).eq(1);
+      expect(run.killedBy[0]).eq('tests/bail.spec.js');
+    });
 
-  it('should bail out current process when disableBail is false and os type is not windows', async function () {
-    if (os.platform() === 'win32') {
-      this.skip();
-    } else {
+    it('should not bail out when disableBail is true', async () => {
+      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
+
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
+
+      // Assert
+      assertions.expectKilled(run);
+      expect(run.nrOfTests).eq(testFiles.length);
+    });
+
+    it('should bail out current process when disableBail is false and os type is not windows', async function () {
+      if (os.platform() === 'win32') {
+        this.skip();
+      } else {
+        const testFiles = ['tests/bail.spec.js'];
+        const startTime = Date.now();
+
+        // Act
+        const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
+        const endTime = Date.now();
+
+        // Assert
+        assertions.expectKilled(run);
+        expect(run.failureMessage).contains('This test will fail');
+        expect(endTime - startTime).at.most(4000);
+      }
+    });
+
+    it('should not bail out current process when disableBail is true', async () => {
       const testFiles = ['tests/bail.spec.js'];
       const startTime = Date.now();
 
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
       const endTime = Date.now();
 
       // Assert
       assertions.expectKilled(run);
-      expect(run.failureMessage).contains('This test will fail');
-      expect(endTime - startTime).at.most(4000);
-    }
+      expect(endTime - startTime).gte(4000);
+    });
   });
 
-  it('should not bail out current process when disableBail is true', async () => {
-    const testFiles = ['tests/bail.spec.js'];
-    const startTime = Date.now();
+  describe('Running on a bogus project', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('bogus');
+      await sandbox.init();
+      options.tap = tapRunnerOptions({
+        testFiles: 'readme.md', // WAT??? -> Not even a .js file
+      });
+      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      await sut.init();
+    });
 
-    // Act
-    const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
-    const endTime = Date.now();
+    it('should report an error on dry run', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions());
 
-    // Assert
-    assertions.expectKilled(run);
-    expect(endTime - startTime).gte(4000);
+      // Assert
+      assertions.expectErrored(run);
+      expect(run.errorMessage).contains('Error running file "readme.md". Tap process exited with code 1');
+    });
+  });
+
+  describe('Running on a typescript project', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('ts-example');
+      await sandbox.init();
+      options.tap = tapRunnerOptions({
+        nodeArgs: ['--loader', 'ts-node/esm'],
+      });
+      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      await sut.init();
+    });
+
+    it('should be able to run with a --loader', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
+      assertions.expectCompleted(run);
+    });
   });
 });

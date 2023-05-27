@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "tap",
+  "concurrency": 1,
+  "reporters": ["json", "clear-text", "html", "event-recorder"],
+  "testRunnerNodeArgs_comment": ["--inspect-brk"],
+  "tap": {
+    "nodeArgs": ["--loader", "ts-node/esm"]
+  },
+  "plugins": [
+    "@stryker-mutator/tap-runner"
+  ]
+}

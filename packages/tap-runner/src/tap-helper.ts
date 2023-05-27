@@ -15,7 +15,7 @@ export interface TapResult {
   failedTests: tap.TapError[];
 }
 
-export function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail: boolean): Promise<TapResult> {
+function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail: boolean) {
   return new Promise<TapResult>((resolve) => {
     const failedTests: tap.TapError[] = [];
     const config = { bail: !disableBail };
@@ -35,4 +35,26 @@ export function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail
     });
     tapProcess.stdout.pipe(parser);
   });
+}
+
+export async function captureTapResult(tapProcess: ChildProcessWithoutNullStreams, disableBail: boolean): Promise<TapResult> {
+  const exitAsPromised = new Promise<number>((resolve) => tapProcess.on('exit', resolve));
+  const stderrOutput: Buffer[] = [];
+  tapProcess.stderr.on('data', (chunk: Buffer) => {
+    stderrOutput.push(chunk);
+  });
+  const [exitCodeResult, tapResult] = await Promise.all([exitAsPromised, parseTap(tapProcess, disableBail)]);
+
+  if (exitCodeResult !== 0 && !tapResult.failedTests.length) {
+    // The tap process errored, but we don't have any failed tests. This is probably a syntax error in the test file.
+    throw new Error(
+      `Tap process exited with code ${exitCodeResult}. To reproduce it yourself, use the following command: 
+      cd "${process.cwd()}"
+      ${tapProcess.spawnargs.map((arg, index) => (index === 0 ? arg : `"${arg}"`)).join(' ')}
+      
+      Stderr output:
+      ${stderrOutput.join('')}`
+    );
+  }
+  return tapResult;
 }

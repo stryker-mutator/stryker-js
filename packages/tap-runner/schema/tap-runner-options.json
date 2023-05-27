@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "type": "object",
   "additionalProperties": false,
+  "title": "StrykerTapRunnerOptions",
   "properties": {
     "tap": {
       "description": "Configuration for @stryker-mutator/tap-runner",
@@ -14,6 +15,14 @@
           "description": "Specify glob expressions to test files to run. Defaults to {**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)",
           "type": "string",
           "default": "{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx|mts|cts)"
+        },
+        "nodeArgs": {
+          "description": "Specify additional node arguments to be passed when running your test files. Note that stryker will always pass an additional `--require` flag to enable coverage analysis.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
         }
       }
     }

@@ -3,7 +3,7 @@ import path from 'path';
 import { expect } from 'chai';
 
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
-import { defaultTestFilesGlob } from '../helpers/tap-test-runner-constants.js';
+import { tapRunnerOptions } from '../helpers/factory.js';
 
 describe('Running in an testy-looking-files project', () => {
   beforeEach(async () => {
@@ -13,7 +13,7 @@ describe('Running in an testy-looking-files project', () => {
 
   it('should find all testy looking files', async () => {
     // Act
-    const files = await findTestyLookingFiles(defaultTestFilesGlob);
+    const files = await findTestyLookingFiles(tapRunnerOptions().testFiles);
 
     // Assert
     const expectedFiles = [
