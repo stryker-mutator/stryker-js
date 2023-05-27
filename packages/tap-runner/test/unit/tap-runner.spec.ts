@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 import sinon from 'sinon';
 
 import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import * as tap from 'tap-parser';

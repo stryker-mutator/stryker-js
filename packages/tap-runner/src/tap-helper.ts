@@ -1,6 +1,5 @@
 import os from 'os';
 import { ChildProcessWithoutNullStreams } from 'child_process';
-import type { Readable } from 'stream';
 
 import { glob } from 'glob';
 import * as tap from 'tap-parser';
