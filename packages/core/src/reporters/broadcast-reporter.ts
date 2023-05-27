@@ -62,7 +62,7 @@ export class BroadcastReporter implements StrictReporter {
   public onMutantTested(result: MutantResult): void {
     void this.broadcast('onMutantTested', result);
   }
-  
+
   public onMutationTestReportReady(report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
     void this.broadcast('onMutationTestReportReady', report, metrics);
   }
