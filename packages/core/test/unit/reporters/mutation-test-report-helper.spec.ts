@@ -50,16 +50,6 @@ describe(MutationTestReportHelper.name, () => {
         expect(reporterMock.onMutationTestReportReady).calledOnce;
       });
 
-      it('should report "onAllMutantsTested"', async () => {
-        await actReportAll();
-        expect(reporterMock.onAllMutantsTested).calledOnce;
-      });
-
-      it('should report "onAllMutantsTested" before mutationTestReportReady', async () => {
-        await actReportAll();
-        expect(reporterMock.onAllMutantsTested).calledBefore(reporterMock.onMutationTestReportReady);
-      });
-
       it('should copy thresholds', async () => {
         const [actualReport] = await actReportAll();
         expect(actualReport.thresholds).eq(testInjector.options.thresholds);

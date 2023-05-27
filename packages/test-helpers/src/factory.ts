@@ -322,7 +322,6 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onDryRunCompleted',
   'onMutationTestingPlanReady',
   'onMutantTested',
-  'onAllMutantsTested',
   'onMutationTestReportReady',
   'wrapUp',
 ];

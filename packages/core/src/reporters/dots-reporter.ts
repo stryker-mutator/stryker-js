@@ -27,7 +27,7 @@ export class DotsReporter implements Reporter {
     process.stdout.write(toLog);
   }
 
-  public onAllMutantsTested(): void {
+  public onMutationTestReportReady(): void {
     process.stdout.write(os.EOL);
   }
 }

@@ -14,7 +14,7 @@ export class ProgressAppendOnlyReporter extends ProgressKeeper {
     }
   }
 
-  public onAllMutantsTested(): void {
+  public onMutationTestReportReady(): void {
     if (this.intervalReference) {
       clearInterval(this.intervalReference);
     }

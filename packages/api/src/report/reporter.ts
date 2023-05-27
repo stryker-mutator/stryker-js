@@ -28,12 +28,6 @@ export interface Reporter {
   onMutantTested?(result: Readonly<MutantResult>): void;
 
   /**
-   * Called when all mutants were tested
-   * @param results The immutable results
-   */
-  onAllMutantsTested?(results: ReadonlyArray<Readonly<MutantResult>>): void;
-
-  /**
    * Called when mutation testing is done
    * @param report the mutation test result that is valid according to the mutation-testing-report-schema (json schema)
    * @see https://github.com/stryker-mutator/mutation-testing-elements/blob/master/packages/report-schema/src/mutation-testing-report-schema.json
