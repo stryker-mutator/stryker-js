@@ -158,7 +158,7 @@ describe('tap-runner integration', () => {
     });
   });
 
-  describe.only('Running on a typescript project', () => {
+  describe('Running on a typescript project', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('ts-example');
       await sandbox.init();
