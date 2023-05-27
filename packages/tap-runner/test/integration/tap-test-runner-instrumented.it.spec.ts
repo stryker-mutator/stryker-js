@@ -3,7 +3,7 @@ import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@st
 
 import { createTapTestRunnerFactory, TapTestRunner } from '../../src/index.js';
 import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
-import { defaultTestFilesGlob } from '../helpers/tap-test-runner-constants.js';
+import { tapRunnerOptions } from '../helpers/factory.js';
 
 describe('Running in an example project', () => {
   let sut: TapTestRunner;
@@ -12,9 +12,7 @@ describe('Running in an example project', () => {
   beforeEach(async () => {
     sandbox = new TempTestDirectorySandbox('example-instrumented');
     await sandbox.init();
-    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap = {
-      testFiles: defaultTestFilesGlob,
-    };
+    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap = tapRunnerOptions();
     sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
     await sut.init();
   });

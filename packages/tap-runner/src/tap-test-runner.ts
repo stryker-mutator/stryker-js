@@ -22,7 +22,7 @@ import {
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 
 import * as pluginTokens from './plugin-tokens.js';
-import { findTestyLookingFiles, parseTap, TapResult } from './tap-helper.js';
+import { findTestyLookingFiles, captureTapResult, TapResult } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
 import { strykerHitLimit, strykerNamespace, strykerDryRun, tempTapOutputFileName } from './setup/env.cjs';
 
@@ -81,16 +81,16 @@ export class TapTestRunner implements TestRunner {
   }
 
   private async run(testOptions: TapRunOptions, testFilter?: string[]): Promise<DryRunResult> {
-    try {
-      const testFiles = testFilter ?? this.testFiles;
+    const testFiles = testFilter ?? this.testFiles;
 
-      const runs: TestResult[] = [];
-      const totalCoverage: MutantCoverage = {
-        static: {},
-        perTest: {},
-      };
+    const runs: TestResult[] = [];
+    const totalCoverage: MutantCoverage = {
+      static: {},
+      perTest: {},
+    };
 
-      for (const testFile of testFiles) {
+    for (const testFile of testFiles) {
+      try {
         const { testResult, coverage } = await this.runFile(testFile, testOptions);
         runs.push(testResult);
         totalCoverage.perTest[testFile] = coverage?.static ?? {};
@@ -98,19 +98,23 @@ export class TapTestRunner implements TestRunner {
         if (testResult.status !== TestStatus.Success && !testOptions.disableBail) {
           break;
         }
+      } catch (err) {
+        if (err instanceof HitLimitError) {
+          return err.result;
+        } else if (err instanceof Error) {
+          return {
+            status: DryRunStatus.Error,
+            errorMessage: `Error running file "${testFile}". ${err.message}`,
+          };
+        }
+        throw err;
       }
-
-      return {
-        status: DryRunStatus.Complete,
-        tests: runs,
-        mutantCoverage: totalCoverage,
-      };
-    } catch (err) {
-      if (err instanceof HitLimitError) {
-        return err.result;
-      }
-      throw err;
     }
+    return {
+      status: DryRunStatus.Complete,
+      tests: runs,
+      mutantCoverage: totalCoverage,
+    };
   }
 
   private async runFile(testFile: string, testOptions: TapRunOptions): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
@@ -121,11 +125,8 @@ export class TapTestRunner implements TestRunner {
       [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
       [strykerDryRun]: testOptions.dryRun?.toString(),
     };
-    const tapProcess = childProcess.spawn('node', ['-r', TapTestRunner.hookFile, testFile], { env });
-    const exitAsPromised = new Promise((resolve) => tapProcess.on('exit', resolve));
-    const result = await parseTap(tapProcess, testOptions.disableBail);
-    // wait for the process to end before continuing, because the tapParser sometimes results before the process ends which causes a start of a new process while to current one is still running.
-    await exitAsPromised;
+    const tapProcess = childProcess.spawn('node', ['-r', TapTestRunner.hookFile, ...this.options.tap.nodeArgs, testFile], { env });
+    const result = await captureTapResult(tapProcess, testOptions.disableBail);
     const fileName = tempTapOutputFileName(tapProcess.pid);
     const fileContent = await fs.readFile(fileName, 'utf-8');
     await fs.rm(fileName);

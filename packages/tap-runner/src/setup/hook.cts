@@ -2,13 +2,9 @@ import fs from 'fs';
 
 import { tempTapOutputFileName, strykerDryRun, strykerHitLimit, strykerNamespace } from './env.cjs';
 
-const strykerGlobalNamespace = process.env[strykerNamespace] as '__stryker__' | '__stryker2__';
+const strykerGlobalNamespace = (process.env[strykerNamespace] as '__stryker__' | '__stryker2__' | undefined) ?? '__stryker__';
 const dryRun = process.env[strykerDryRun] === 'true';
 const hitLimit = process.env[strykerHitLimit] ? +process.env[strykerHitLimit] : undefined;
-
-if (!strykerGlobalNamespace) {
-  throw new Error('Stryker global namespace not set');
-}
 
 global[strykerGlobalNamespace] = {};
 
