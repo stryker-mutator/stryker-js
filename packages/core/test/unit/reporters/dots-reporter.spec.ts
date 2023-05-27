@@ -18,7 +18,7 @@ describe(DotsReporter.name, () => {
     sinon.stub(process.stdout, 'write');
   });
 
-  describe('onMutantTested()', () => {
+  describe(DotsReporter.prototype.onMutantTested.name, () => {
     it('should log "." when status is Killed', () => {
       sut.onMutantTested(factory.killedMutantResult());
       expect(process.stdout.write).to.have.been.calledWith('.');
@@ -35,9 +35,9 @@ describe(DotsReporter.name, () => {
     });
   });
 
-  describe('onAllMutantsTested()', () => {
+  describe(DotsReporter.prototype.onMutationTestReportReady.name, () => {
     it('should write a new line', () => {
-      sut.onAllMutantsTested();
+      sut.onMutationTestReportReady();
       expect(process.stdout.write).to.have.been.calledWith(os.EOL);
     });
   });

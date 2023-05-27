@@ -56,10 +56,6 @@ export class EventRecorderReporter implements StrictReporter {
     this.work('onMutationTestReportReady', report);
   }
 
-  public onAllMutantsTested(results: MutantResult[]): void {
-    this.work('onAllMutantsTested', results);
-  }
-
   public async wrapUp(): Promise<void> {
     await this.createBaseFolderTask;
     await Promise.all(this.allWork);

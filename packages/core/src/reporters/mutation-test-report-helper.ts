@@ -121,7 +121,6 @@ export class MutationTestReportHelper {
   public async reportAll(results: MutantResult[]): Promise<void> {
     const report = await this.mutationTestReport(results);
     const metrics = calculateMutationTestMetrics(report);
-    this.reporter.onAllMutantsTested(results);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
       await this.fs.mkdir(path.dirname(this.options.incrementalFile), { recursive: true });
