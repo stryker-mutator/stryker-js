@@ -1920,8 +1920,10 @@ Array [
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": Array [],
-      "killedBy": Array [],
+      "coveredBy": Array [
+        "spec/concat.tap.js",
+      ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -1935,16 +1937,17 @@ Array [
       "mutatorName": "BlockStatement",
       "replacement": "{}",
       "static": false,
-      "status": "NoCoverage",
-      "testsCompleted": undefined,
+      "status": undefined,
     },
-    "plan": "EarlyResult",
+    "plan": "Run",
   },
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": Array [],
-      "killedBy": Array [],
+      "coveredBy": Array [
+        "spec/concat.tap.js",
+      ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 19,
@@ -1958,16 +1961,15 @@ Array [
       "mutatorName": "StringLiteral",
       "replacement": "\`\`",
       "static": false,
-      "status": "NoCoverage",
-      "testsCompleted": undefined,
+      "status": undefined,
     },
-    "plan": "EarlyResult",
+    "plan": "Run",
   },
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
       "coveredBy": Array [
-        "spec/concat.spec.js",
+        "spec/concat.tap.js",
       ],
       "killedBy": undefined,
       "location": Object {
@@ -1990,7 +1992,9 @@ Array [
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": Array [],
+      "coveredBy": Array [
+        "spec/concat.tap.js",
+      ],
       "killedBy": undefined,
       "location": Object {
         "end": Object {
@@ -2012,7 +2016,9 @@ Array [
   Object {
     "fileName": "src/concat.js",
     "mutant": Object {
-      "coveredBy": Array [],
+      "coveredBy": Array [
+        "spec/concat.tap.js",
+      ],
       "killedBy": undefined,
       "location": Object {
         "end": Object {
@@ -2078,7 +2084,9 @@ Array [
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": Array [],
+      "coveredBy": Array [
+        "spec/math.tap.js",
+      ],
       "killedBy": undefined,
       "location": Object {
         "end": Object {
@@ -2100,7 +2108,9 @@ Array [
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": Array [],
+      "coveredBy": Array [
+        "spec/math.tap.js",
+      ],
       "killedBy": undefined,
       "location": Object {
         "end": Object {
@@ -2122,8 +2132,10 @@ Array [
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": Array [],
-      "killedBy": Array [],
+      "coveredBy": Array [
+        "spec/math.tap.js",
+      ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 1,
@@ -2137,16 +2149,17 @@ Array [
       "mutatorName": "BlockStatement",
       "replacement": "{}",
       "static": false,
-      "status": "NoCoverage",
-      "testsCompleted": undefined,
+      "status": undefined,
     },
-    "plan": "EarlyResult",
+    "plan": "Run",
   },
   Object {
     "fileName": "src/math.js",
     "mutant": Object {
-      "coveredBy": Array [],
-      "killedBy": Array [],
+      "coveredBy": Array [
+        "spec/math.tap.js",
+      ],
+      "killedBy": undefined,
       "location": Object {
         "end": Object {
           "column": 14,
@@ -2160,10 +2173,9 @@ Array [
       "mutatorName": "ArithmeticOperator",
       "replacement": "a / b",
       "static": false,
-      "status": "NoCoverage",
-      "testsCompleted": undefined,
+      "status": undefined,
     },
-    "plan": "EarlyResult",
+    "plan": "Run",
   },
   Object {
     "fileName": "src/math.js",

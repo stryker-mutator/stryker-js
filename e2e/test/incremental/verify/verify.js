@@ -20,14 +20,14 @@ describe('incremental', () => {
 
   beforeEach(async () => {
     await fsPromises.rm(incrementalFile, { force: true });
-    /**
-     * @type {import('@stryker-mutator/api/core').LogLevel}
-     */
     strykerOptions = {
       incremental: true,
       concurrency: 1,
       plugins: ['./verify/mutation-run-plan-reporter.js'],
       reporters: ['mutation-run-plan', 'html'],
+      tap: {
+        testFiles: 'spec/*.tap.js',
+      },
     };
     await changeFiles('original'); // change the files back to there original state
   });
@@ -42,7 +42,7 @@ describe('incremental', () => {
     // We know which test files are changed and assume each test in that file changed
     withoutTestLocations: 2,
     // We know which test file the test originated from, but we can't differentiate between tests in the file (TAP runner)
-    withoutTestDeviation: 6,
+    withoutTestDeviation: 2,
     // Don't know from which test files the tests originated
     withoutTestFiles: 7,
   });
