@@ -7,4 +7,9 @@ describe(add.name, () => {
 
     expect(actual).toBe(7);
   });
+  it('should be able to add a negative number', () => {
+    const actual = add(2, -5);
+
+    expect(actual).toBe(-3);
+  });
 });

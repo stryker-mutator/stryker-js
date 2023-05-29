@@ -27,7 +27,7 @@ export function convertTestToTestResult(test: Test): TestResult {
     id: toTestId(test),
     name: collectTestName(test),
     timeSpentMs: test.result?.duration ?? 0,
-    fileName: test.file?.filepath,
+    fileName: test.file?.filepath && path.resolve(test.file.filepath),
     startPosition: test.meta,
   };
   if (status === TestStatus.Failed) {
