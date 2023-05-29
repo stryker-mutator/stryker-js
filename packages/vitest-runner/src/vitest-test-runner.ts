@@ -12,7 +12,6 @@ import {
   MutantRunResult,
   TestRunnerCapabilities,
   DryRunStatus,
-  TestResult,
   toMutantRunResult,
   determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
