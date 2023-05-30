@@ -9,33 +9,46 @@ describe('disableBail', () => {
     await fs.promises.rm('reports', { recursive: true, force: true });
   });
   it('should be supported in the jest runner', async () => {
-    execStryker('stryker run --testRunner jest');
-    await assertBailWasDisabled();
+    await arrangeActAssertBailWasDisabled('jest');
   });
   it('should be supported in the karma runner', async () => {
-    execStryker('stryker run --testRunner karma');
-    await assertBailWasDisabled();
+    await arrangeActAssertBailWasDisabled('karma');
   });
   it('should be supported in the jasmine runner', async () => {
-    execStryker('stryker run --testRunner jasmine');
-    await assertBailWasDisabled();
+    await arrangeActAssertBailWasDisabled('jasmine');
   });
   it('should be supported in the mocha runner', async () => {
-    execStryker('stryker run --testRunner mocha');
-    await assertBailWasDisabled();
+    await arrangeActAssertBailWasDisabled('mocha');
+  });
+  it('should be supported in the vitest runner', async () => {
+    await arrangeActAssertBailWasDisabled('vitest');
   });
   it('should be supported in the cucumber runner', async () => {
-    execStryker('stryker run --testRunner cucumber');
-    await assertBailWasDisabled(['Feature: Add -- Scenario: Add 40 and 2', 'Feature: Add -- Scenario: Add 41 and 1']);
+    await arrangeActAssertBailWasDisabled('cucumber', ['Feature: Add -- Scenario: Add 40 and 2', 'Feature: Add -- Scenario: Add 41 and 1']);
+  });
+  it('should be supported in the tap runner', async () => {
+    await arrangeActAssertBailWasDisabled('tap', ['test/math1.tap.js', 'test/math2.tap.js']);
   });
 });
-/** @returns {Promise<void>} */
-async function assertBailWasDisabled(
-  [killedByName1, killedByName2] = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1']
+
+/**
+ * @param {string} testRunner
+ * @returns {Promise<void>}
+ */
+async function arrangeActAssertBailWasDisabled(
+  testRunner,
+  expectedKilledBy = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1']
 ) {
+  const { exitCode } = execStryker(`stryker run --testRunner ${testRunner}`);
+  expect(exitCode).eq(0);
+
   const result = await readMutationTestingJsonResultAsMetricsResult();
   const theMutant = result.systemUnderTestMetrics.childResults[0].file.mutants.find((mutant) => mutant.replacement === 'a - b');
   expect(theMutant.killedByTests).lengthOf(2);
-  expect(theMutant.killedByTests[0].name).eq(killedByName1);
-  expect(theMutant.killedByTests[1].name).eq(killedByName2);
+  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+  const actualKilledBy = theMutant.killedByTests.map(({ name }) => name).sort();
+  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+  expectedKilledBy.sort();
+
+  expect(actualKilledBy).deep.eq(expectedKilledBy);
 }

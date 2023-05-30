@@ -26,29 +26,39 @@ describe('VitestRunner integration', () => {
 
   describe('using the simple-project project', () => {
     const test1 = 'tests/add.spec.ts#add should be able to add two numbers';
-    const test2 = 'tests/math.spec.ts#math should be able negate a number';
-    const test3 = 'tests/math.spec.ts#math should be able to add one to a number';
-    const test4 = 'tests/math.spec.ts#math should be able to recognize a negative number';
-    const test5 = 'tests/pi.spec.ts#pi should be 3.14';
+    const test2 = 'tests/add.spec.ts#add should be able to add a negative number';
+    const test3 = 'tests/math.spec.ts#math should be able negate a number';
+    const test4 = 'tests/math.spec.ts#math should be able to add one to a number';
+    const test5 = 'tests/math.spec.ts#math should be able to recognize a negative number';
+    const test6 = 'tests/pi.spec.ts#pi should be 3.14';
     let sandboxFileName: string;
 
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('simple-project');
       await sandbox.init();
       sandboxFileName = path.resolve(sandbox.tmpDir, 'math.ts');
-      await sut.init();
     });
 
     describe(VitestTestRunner.prototype.dryRun.name, () => {
+      beforeEach(async () => {
+        await sut.init();
+      });
+
       it('should run the specs', async () => {
         const runResult = await sut.dryRun();
         assertions.expectCompleted(runResult);
         assertions.expectTestResults(runResult, [
-          { id: test1, name: 'add should be able to add two numbers', status: TestStatus.Success },
-          { id: test2, name: 'math should be able negate a number', status: TestStatus.Success },
-          { id: test3, name: 'math should be able to add one to a number', status: TestStatus.Success },
-          { id: test4, name: 'math should be able to recognize a negative number', status: TestStatus.Success },
-          { id: test5, name: 'pi should be 3.14', status: TestStatus.Success },
+          { id: test1, fileName: path.resolve('tests/add.spec.ts'), name: 'add should be able to add two numbers', status: TestStatus.Success },
+          { id: test2, fileName: path.resolve('tests/add.spec.ts'), name: 'add should be able to add a negative number', status: TestStatus.Success },
+          { id: test3, fileName: path.resolve('tests/math.spec.ts'), name: 'math should be able negate a number', status: TestStatus.Success },
+          { id: test4, fileName: path.resolve('tests/math.spec.ts'), name: 'math should be able to add one to a number', status: TestStatus.Success },
+          {
+            id: test5,
+            fileName: path.resolve('tests/math.spec.ts'),
+            name: 'math should be able to recognize a negative number',
+            status: TestStatus.Success,
+          },
+          { id: test6, fileName: path.resolve('tests/pi.spec.ts'), name: 'pi should be 3.14', status: TestStatus.Success },
         ]);
       });
 
@@ -65,14 +75,18 @@ describe('VitestRunner integration', () => {
               '2': 1,
             },
             [test2]: {
+              '1': 1,
+              '2': 1,
+            },
+            [test3]: {
               '5': 1,
               '6': 1,
             },
-            [test3]: {
+            [test4]: {
               '3': 1,
               '4': 1,
             },
-            [test4]: {
+            [test5]: {
               '7': 1,
               '8': 1,
               '9': 1,
@@ -89,6 +103,7 @@ describe('VitestRunner integration', () => {
 
     describe(VitestTestRunner.prototype.mutantRun.name, () => {
       it('should be able to kill a mutant', async () => {
+        await sut.init();
         const runResult = await sut.mutantRun(
           factory.mutantRunOptions({
             activeMutant: factory.mutant({ id: '2' }),
@@ -101,8 +116,40 @@ describe('VitestRunner integration', () => {
         expect(runResult.killedBy).deep.eq([test1]);
       });
 
+      it('should bail after the first failing test', async () => {
+        await sut.init();
+        const runResult = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            sandboxFileName,
+            mutantActivation: 'runtime',
+            testFilter: [test1, test2], // tests both kill the mutant
+          })
+        );
+        assertions.expectKilled(runResult);
+        expect(runResult.nrOfTests).deep.eq(1);
+        expect(runResult.killedBy).deep.eq([test1]);
+      });
+
+      it('should report all killing tests if disableBail is enabled', async () => {
+        options.disableBail = true;
+        await sut.init();
+        const runResult = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            sandboxFileName,
+            mutantActivation: 'runtime',
+            testFilter: [test1, test2], // tests both kill the mutant
+          })
+        );
+        assertions.expectKilled(runResult);
+        expect(runResult.nrOfTests).deep.eq(2);
+        expect(runResult.killedBy).deep.eq([test1, test2]);
+      });
+
       it('should be able to survive after killing mutant', async () => {
         // Arrange
+        await sut.init();
         await sut.mutantRun(
           factory.mutantRunOptions({
             activeMutant: factory.mutant({ id: '2' }),
@@ -118,7 +165,7 @@ describe('VitestRunner integration', () => {
             activeMutant: factory.mutant({ id: '11' }), // Should survive
             sandboxFileName,
             mutantActivation: 'runtime',
-            testFilter: [test5],
+            testFilter: [test6],
           })
         );
 
@@ -129,23 +176,25 @@ describe('VitestRunner integration', () => {
 
       it('should be able to kill a static mutant', async () => {
         // Act
+        await sut.init();
         const runResult = await sut.mutantRun(
           factory.mutantRunOptions({
             activeMutant: factory.mutant({ id: '0' }), // Static mutant
             sandboxFileName,
             mutantActivation: 'static',
-            testFilter: [test5],
+            testFilter: [test6],
           })
         );
 
         // Assert
         assertions.expectKilled(runResult);
-        expect(runResult.killedBy).deep.eq([test5]);
+        expect(runResult.killedBy).deep.eq([test6]);
         expect(runResult.failureMessage).contains('expected 2.86 to be 3.14');
       });
 
       it('should be able to reload the environment after a static mutant is tested', async () => {
         // Arrange
+        await sut.init();
         await sut.mutantRun(
           factory.mutantRunOptions({
             activeMutant: factory.mutant({ id: '0' }), // Pollute the environment with a static mutant
@@ -170,12 +219,13 @@ describe('VitestRunner integration', () => {
 
       it('should not be able to kill a static mutant when mutantActivation is runTime', async () => {
         // Act
+        await sut.init();
         const runResult = await sut.mutantRun(
           factory.mutantRunOptions({
             activeMutant: factory.mutant({ id: '0' }), // Static mutant
             sandboxFileName,
             mutantActivation: 'runtime',
-            testFilter: [test5],
+            testFilter: [test6],
           })
         );
 
@@ -184,6 +234,7 @@ describe('VitestRunner integration', () => {
       });
 
       it('mutant run with single filter should only run 1 test', async () => {
+        await sut.init();
         const mutantRunOptions = factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '1' }),
           sandboxFileName,
@@ -199,11 +250,12 @@ describe('VitestRunner integration', () => {
 
       it('mutant run with 2 filters should run 2 tests', async () => {
         // Arrange
+        await sut.init();
         const mutantRunOptions = factory.mutantRunOptions({
           mutantActivation: 'runtime',
           activeMutant: factory.mutant({ id: '2' }),
           sandboxFileName,
-          testFilter: [test1, test3],
+          testFilter: [test1, test4],
         });
 
         // Act

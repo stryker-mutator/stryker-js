@@ -12,7 +12,6 @@ import {
   MutantRunResult,
   TestRunnerCapabilities,
   DryRunStatus,
-  TestResult,
   toMutantRunResult,
   determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
@@ -48,6 +47,7 @@ export class VitestTestRunner implements TestRunner {
       coverage: { enabled: false },
       singleThread: true,
       watch: false,
+      bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
 
@@ -105,8 +105,11 @@ export class VitestTestRunner implements TestRunner {
       });
       await this.ctx.start();
     }
-    const tests = this.ctx.state.getFiles().flatMap((file) => collectTestsFromSuite(file));
-    const testResults: TestResult[] = tests.map((test) => convertTestToTestResult(test));
+    const tests = this.ctx.state
+      .getFiles()
+      .flatMap((file) => collectTestsFromSuite(file))
+      .filter((test) => test.result); // if no result: it was skipped because of bail
+    const testResults = tests.map((test) => convertTestToTestResult(test));
     return { tests: testResults, status: DryRunStatus.Complete };
   }
 

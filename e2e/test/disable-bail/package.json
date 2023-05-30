@@ -9,6 +9,8 @@
     "test:jasmine": "jasmine",
     "test:karma": "karma start",
     "test:jest": "jest",
+    "test:tap": "tap test/*.tap.js",
+    "test:vitest": "vitest run",
     "test": "mocha --no-config --no-timeout verify/verify.js"
   },
   "keywords": [],
