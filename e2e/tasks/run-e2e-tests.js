@@ -7,7 +7,7 @@ import { execa } from 'execa';
 import semver from 'semver';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
