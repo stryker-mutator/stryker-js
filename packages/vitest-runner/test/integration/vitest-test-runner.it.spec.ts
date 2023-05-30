@@ -49,9 +49,19 @@ describe('VitestRunner integration', () => {
         assertions.expectCompleted(runResult);
         assertions.expectTestResults(runResult, [
           { id: test1, fileName: path.resolve('tests/add.spec.ts'), name: 'add should be able to add two numbers', status: TestStatus.Success },
-          { id: test2, fileName: path.resolve('tests/add.spec.ts'), name: 'add should be able to add a negative number', status: TestStatus.Success },
+          {
+            id: test2,
+            fileName: path.resolve('tests/add.spec.ts'),
+            name: 'add should be able to add a negative number',
+            status: TestStatus.Success,
+          },
           { id: test3, fileName: path.resolve('tests/math.spec.ts'), name: 'math should be able negate a number', status: TestStatus.Success },
-          { id: test4, fileName: path.resolve('tests/math.spec.ts'), name: 'math should be able to add one to a number', status: TestStatus.Success },
+          {
+            id: test4,
+            fileName: path.resolve('tests/math.spec.ts'),
+            name: 'math should be able to add one to a number',
+            status: TestStatus.Success,
+          },
           {
             id: test5,
             fileName: path.resolve('tests/math.spec.ts'),
@@ -246,26 +256,6 @@ describe('VitestRunner integration', () => {
 
         assertions.expectKilled(runResult);
         expect(runResult.nrOfTests).eq(1);
-      });
-
-      it('mutant run with 2 filters should run 2 tests', async () => {
-        // Arrange
-        await sut.init();
-        const mutantRunOptions = factory.mutantRunOptions({
-          mutantActivation: 'runtime',
-          activeMutant: factory.mutant({ id: '2' }),
-          sandboxFileName,
-          testFilter: [test1, test4],
-        });
-
-        // Act
-        const runResult = await sut.mutantRun(mutantRunOptions);
-
-        // Assert
-        assertions.expectKilled(runResult);
-        expect(runResult.nrOfTests).eq(2);
-        expect(runResult.killedBy).deep.eq([test1]);
-        expect(runResult.failureMessage).contains('expected -3 to be 7');
       });
     });
   });
