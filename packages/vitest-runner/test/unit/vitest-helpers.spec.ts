@@ -18,10 +18,12 @@ describe('vitest-helpers', () => {
           tasks: [],
           id: '1',
           name: 'suite',
+          meta: {},
           mode: 'run',
         },
         id: '1',
         name: 'test1',
+        meta: {},
         mode: 'run',
         context: {} as any,
         file: {
@@ -32,6 +34,7 @@ describe('vitest-helpers', () => {
           id: '1',
           mode: 'run',
           tasks: [],
+          meta: {},
         },
       };
       const result = toTestId(test);
@@ -57,8 +60,10 @@ describe('vitest-helpers', () => {
           id: '1',
           name: 'suite',
           mode: 'run',
+          meta: {},
         },
         id: '1',
+        meta: {},
         name: 'test1',
         mode: 'run',
         context: {} as any,
@@ -69,6 +74,7 @@ describe('vitest-helpers', () => {
           id: '1',
           mode: 'run',
           tasks: [],
+          meta: {},
         },
         result: {
           state: 'skip',
@@ -78,7 +84,7 @@ describe('vitest-helpers', () => {
       expect(result.status).to.be.equal(TestStatus.Skipped);
     });
 
-    it('should have status skipped if taskstate is todo', () => {
+    it('should have status skipped if task state is todo', () => {
       const test: Test = {
         type: 'test',
         suite: {
@@ -87,13 +93,16 @@ describe('vitest-helpers', () => {
           id: '1',
           name: 'suite',
           mode: 'run',
+          meta: {},
         },
+        meta: {},
         id: '1',
         name: 'test1',
         mode: 'run',
         context: {} as any,
         file: {
           name: 'file.js',
+          meta: {},
           filepath: 'file.js',
           type: 'suite',
           id: '1',
@@ -110,12 +119,14 @@ describe('vitest-helpers', () => {
 
     it('should have status Failed if result is undefined', () => {
       const test: Test = {
+        meta: {},
         type: 'test',
         suite: {
           type: 'suite',
           tasks: [],
           id: '1',
           name: 'suite',
+          meta: {},
           mode: 'run',
         },
         id: '1',
@@ -126,6 +137,7 @@ describe('vitest-helpers', () => {
           name: 'file.js',
           filepath: 'file.js',
           type: 'suite',
+          meta: {},
           id: '1',
           mode: 'run',
           tasks: [],
@@ -143,6 +155,7 @@ describe('vitest-helpers', () => {
         tasks: [],
         id: '1',
         name: 'suite',
+        meta: {},
         mode: 'run',
       };
       const result = collectTestsFromSuite(suite);
@@ -151,6 +164,7 @@ describe('vitest-helpers', () => {
     it('should return 1 test for a suite with 1 test', () => {
       const suite: Suite = {
         type: 'suite',
+        meta: {},
         id: '1',
         name: 'suite',
         mode: 'run',
@@ -162,6 +176,7 @@ describe('vitest-helpers', () => {
             mode: 'run',
             context: {} as any,
             suite: {} as any,
+            meta: {},
           },
         ],
       };
@@ -175,6 +190,7 @@ describe('vitest-helpers', () => {
         id: '1',
         name: 'suite',
         mode: 'run',
+        meta: {},
         tasks: [
           {
             type: 'test',
@@ -183,6 +199,7 @@ describe('vitest-helpers', () => {
             mode: 'run',
             context: {} as any,
             suite: {} as any,
+            meta: {},
           },
           {
             type: 'test',
@@ -191,6 +208,7 @@ describe('vitest-helpers', () => {
             mode: 'run',
             context: {} as any,
             suite: {} as any,
+            meta: {},
           },
         ],
       };
@@ -203,6 +221,7 @@ describe('vitest-helpers', () => {
         type: 'suite',
         id: '1',
         name: 'suite1',
+        meta: {},
         mode: 'run',
         tasks: [
           {
@@ -218,6 +237,7 @@ describe('vitest-helpers', () => {
                 mode: 'run',
                 context: {} as any,
                 suite: {} as any,
+                meta: {},
               },
               {
                 type: 'test',
@@ -226,8 +246,10 @@ describe('vitest-helpers', () => {
                 mode: 'run',
                 context: {} as any,
                 suite: {} as any,
+                meta: {},
               },
             ],
+            meta: {},
           },
         ],
       };

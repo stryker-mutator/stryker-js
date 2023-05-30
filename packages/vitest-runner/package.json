@@ -45,11 +45,11 @@
     "@stryker-mutator/test-helpers": "6.4.2",
     "@types/node": "18.16.16",
     "ts-node": "10.9.1",
-    "vitest": "0.31.1"
+    "vitest": "0.31.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~6.4.2",
-    "vitest": ">=0.30.0"
+    "vitest": ">=0.31.2"
   },
   "dependencies": {
     "@stryker-mutator/api": "6.4.2",

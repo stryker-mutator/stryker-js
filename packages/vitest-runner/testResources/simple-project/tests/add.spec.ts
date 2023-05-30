@@ -1,5 +1,5 @@
 import { expect, it, describe } from 'vitest';
-import { add } from '../math';
+import { add } from '../math.js';
 
 describe(add.name, () => {
   it('should be able to add two numbers', () => {

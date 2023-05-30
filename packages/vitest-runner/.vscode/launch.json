@@ -30,6 +30,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "outputCapture": "std",
       "args": [
         "--no-timeout",
         "dist/test/integration/**/*.js"    
