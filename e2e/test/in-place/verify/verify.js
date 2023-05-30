@@ -4,7 +4,6 @@ import { fileURLToPath, URL } from 'url';
 
 import chai from 'chai';
 import { execa, execaSync } from 'execa';
-import rimraf from 'rimraf';
 import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
 
@@ -27,8 +26,8 @@ describe('in place', () => {
     originalAddJSContent = await readAddJS();
   });
   afterEach(async () => {
-    await rimraf(rootResolve('reports'));
-    await rimraf(rootResolve('.lock'));
+    await fsPromises.rm(rootResolve('reports'), { force: true, recursive: true });
+    await fsPromises.rm(rootResolve('.lock'), { force: true, recursive: true });
   });
   it('should reset files after a successful run', async () => {
     execaSync('stryker', ['run']);

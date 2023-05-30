@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 
-import glob from 'glob';
+import { glob } from 'glob';
 import ajvModule, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
