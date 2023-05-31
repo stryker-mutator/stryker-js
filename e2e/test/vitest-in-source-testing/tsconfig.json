@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "types": ["vitest/importMeta"],
+    "module": "es2020",
+    "moduleResolution": "node16"
+  }
+}

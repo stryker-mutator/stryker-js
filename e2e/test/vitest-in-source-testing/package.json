@@ -1,0 +1,15 @@
+{
+  "name": "vitest-in-source-testing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "An e2e test for vitest in-source testing: https://vitest.dev/guide/in-source.html",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC"
+}
