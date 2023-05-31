@@ -1,7 +1,3 @@
-import fs from 'fs/promises';
-
-import path from 'path';
-
 import { CoverageData, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
@@ -15,9 +11,9 @@ import {
   toMutantRunResult,
   determineHitLimitReached,
 } from '@stryker-mutator/api/test-runner';
+import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
-import { createVitest, Vitest } from 'vitest/node';
-import { escapeRegExp } from '@stryker-mutator/util';
+import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 
 import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
@@ -41,7 +37,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    this.ctx = await createVitest('test', {
+    this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
       threads: true,
       coverage: { enabled: false },
@@ -51,12 +47,18 @@ export class VitestTestRunner implements TestRunner {
       onConsoleLog: () => false,
     });
 
+    if (this.ctx.config.browser.enabled) {
+      throw new Error(
+        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.'
+      );
+    }
+
     // The vitest setup file needs to be inlined
     // See https://github.com/vitest-dev/vitest/issues/3403#issuecomment-1554057966
-    const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.files.vitestSetup));
+    const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.vitestSetup));
     addToInlineDeps(this.ctx.config, vitestSetupMatcher);
     this.ctx.projects.forEach((project) => {
-      project.config.setupFiles = [this.fileCommunicator.files.vitestSetup, ...project.config.setupFiles];
+      project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
       addToInlineDeps(project.config, vitestSetupMatcher);
     });
     if (this.log.isDebugEnabled()) {
@@ -127,7 +129,7 @@ export class VitestTestRunner implements TestRunner {
     // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
     this.ctx.projects.forEach((project) => {
       const moduleGraph = project.server.moduleGraph;
-      const module = moduleGraph.getModuleById(this.fileCommunicator.files.vitestSetup);
+      const module = moduleGraph.getModuleById(this.fileCommunicator.vitestSetup);
       if (module) {
         moduleGraph.invalidateModule(module);
       }
@@ -135,25 +137,22 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async readHitCount() {
-    const projectHitCountFiles = await fs.readdir(this.fileCommunicator.files.hitCountDir);
-    const projectHitCounts = await Promise.all(
-      projectHitCountFiles.map(async (hitCountFile) =>
-        parseInt(await fs.readFile(path.resolve(this.fileCommunicator.files.hitCountDir, hitCountFile), 'utf-8'))
-      )
-    );
-    return projectHitCounts.reduce((acc, hitCount) => acc + hitCount, 0);
+    const hitCounters: number[] = this.ctx.state
+      .getFiles()
+      .map((file) => (file.meta as { hitCount?: number }).hitCount)
+      .filter(notEmpty);
+
+    return hitCounters.reduce((acc, hitCount) => acc + hitCount, 0);
   }
 
   private async readMutantCoverage(): Promise<MutantCoverage> {
     // Read coverage from all projects
-    const projectCoverageFiles = await fs.readdir(this.fileCommunicator.files.coverageDir);
-    const projectCoverages: MutantCoverage[] = await Promise.all(
-      projectCoverageFiles.map(async (coverageFile) =>
-        JSON.parse(await fs.readFile(path.resolve(this.fileCommunicator.files.coverageDir, coverageFile), 'utf-8'))
-      )
-    );
-    if (projectCoverages.length > 1) {
-      return projectCoverages.reduce((acc, projectCoverage) => {
+    const coverages: MutantCoverage[] = [...new Map(this.ctx.state.getFiles().map((file) => [file.projectName, file] as const)).entries()]
+      .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
+      .filter(notEmpty);
+
+    if (coverages.length > 1) {
+      return coverages.reduce((acc, projectCoverage) => {
         // perTest contains the coverage per test id
         Object.entries(projectCoverage.perTest).forEach(([testId, testCoverage]) => {
           if (testId in acc.perTest) {
@@ -167,7 +166,7 @@ export class VitestTestRunner implements TestRunner {
         return acc;
       });
     }
-    return projectCoverages[0];
+    return coverages[0];
 
     function mergeCoverage(to: CoverageData, from: CoverageData) {
       Object.entries(from).forEach(([mutantId, hitCount]) => {

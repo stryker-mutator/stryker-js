@@ -1,7 +1,6 @@
 import path from 'path';
 
 import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { normalizeFileName } from '@stryker-mutator/util';
 import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
@@ -28,7 +27,6 @@ export function convertTestToTestResult(test: Test): TestResult {
     name: collectTestName(test),
     timeSpentMs: test.result?.duration ?? 0,
     fileName: test.file?.filepath && path.resolve(test.file.filepath),
-    startPosition: test.meta,
   };
   if (status === TestStatus.Failed) {
     return {
@@ -94,6 +92,6 @@ export function collectTestName({ name, suite }: { name: string; suite?: Suite }
 }
 
 export function toTestId(test: Test): string {
-  return `${normalizeFileName(path.relative(process.cwd(), test.file?.filepath ?? 'unknown.js'))}#${collectTestName(test)}`;
+  return `${path.relative(process.cwd(), test.file?.filepath ?? 'unknown.js').replace(/\\/g, '/')}#${collectTestName(test)}`;
 }
 // Stryker restore all
