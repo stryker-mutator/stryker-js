@@ -16,6 +16,7 @@
   "checkers": ["typescript"],
   "dashboard": {},
   "buildCommand": "tsc -b",
+  "disableTypeChecks": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}",
   "mochaOptions": {
     "spec": ["dist/test/unit/**/*.js"]
   }

@@ -55,7 +55,7 @@ describe(OptionsValidator.name, () => {
           baseUrl: 'https://dashboard.stryker-mutator.io/api/reports',
           reportType: ReportType.Full,
         },
-        disableTypeChecks: '{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}',
+        disableTypeChecks: true,
         dryRunOnly: false,
         dryRunTimeoutMinutes: 5,
         eventReporter: {
