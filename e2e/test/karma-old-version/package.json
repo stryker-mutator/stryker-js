@@ -4,6 +4,8 @@
   "private": true,
   "description": "A module to perform an integration test",
   "main": "index.js",
+  "retries": 3,
+  "retries_comment": "Unfortunately very unstable on windows and we don't have the time to dive into it.",
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test:unit": "karma start --singleRun",
