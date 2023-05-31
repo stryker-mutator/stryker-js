@@ -52,7 +52,7 @@ export class ProjectReader {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
     const project = new Project(this.fs, fileDescriptions, await this.readIncrementalReport());
-    project.logFiles(this.log, this.ignoreRules, this.force);
+    project.logFiles(this.log, this.ignoreRules, this.force, this.mutatePatterns);
     return project;
   }
 

@@ -2,7 +2,7 @@ import path from 'path';
 
 import { MutateDescription, MutationRange } from '@stryker-mutator/api/core';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { I, normalizeFileName } from '@stryker-mutator/util';
+import { I, normalizeFileName, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -234,7 +234,13 @@ describe(ProjectReader.name, () => {
 
         // Assert
         expect(testInjector.logger.warn).calledWith(
-          'No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything. You can configure the `mutate` property in your config file (or use `--mutate` via command line).'
+          normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions.
+            As a result, a dry-run will be performed without actually modifying anything. 
+            If you intended to mutate files, please check and adjust the configuration. 
+            Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)", 
+            "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)".
+            To enable file mutation, consider configuring the \`mutate\` 
+            property in your configuration file or using the --mutate option via the command line.`)
         );
       });
     });
