@@ -426,16 +426,16 @@
       "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
       "oneOf": [
         {
-          "enum": [
-            false,
-            true
-          ]
+          "type": "boolean"
         },
         {
           "type": "string"
         }
       ],
-      "default": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"
+      "examples": [
+        "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"
+      ],
+      "default": true
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",

@@ -233,6 +233,7 @@ describe(DryRunExecutor.name, () => {
       });
 
       it('should remap test locations when type checking was disabled for a test file', async () => {
+        testInjector.options.disableTypeChecks = '{src,test}/**/*.js';
         runResult.tests.push(
           factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
           factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } })
