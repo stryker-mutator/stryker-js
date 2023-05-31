@@ -29,7 +29,7 @@ export class Project {
     return this.files.size === 0;
   }
 
-  public logFiles(log: Logger, ignoreRules: readonly string[], force: boolean): void {
+  public logFiles(log: Logger, ignoreRules: readonly string[], force: boolean, mutatePatterns: readonly string[]): void {
     if (this.isEmpty) {
       log.warn(
         normalizeWhitespaces(`No files found in directory ${process.cwd()} using ignore rules: ${JSON.stringify(ignoreRules)}. 
@@ -48,10 +48,15 @@ export class Project {
 
         log.info(`Found ${this.filesToMutate.size} of ${this.files.size} file(s) to be mutated${incrementalInfo}.`);
       } else {
-        log.warn(
-          normalizeWhitespaces(`No files marked to be mutated, Stryker will perform a dry-run without actually mutating anything.
-        You can configure the \`mutate\` property in your config file (or use \`--mutate\` via command line).`)
-        );
+        const msg =
+          normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions. As a result, a dry-run will be performed without actually modifying anything. 
+          If you intended to mutate files, please check and adjust the configuration.
+          Current glob pattern(s) used:
+          ${mutatePatterns.map((pattern) => `"${pattern}"`).join(', ')}.
+          To enable file mutation, consider configuring the \`${propertyPath<StrykerOptions>()(
+            'mutate'
+          )}\` property in your configuration file or using the --mutate option via the command line.`);
+        log.warn(msg);
       }
       if (log.isDebugEnabled()) {
         log.debug(`All input files: ${JSON.stringify([...this.files.keys()], null, 2)}`);
