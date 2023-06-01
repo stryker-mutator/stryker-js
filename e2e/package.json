@@ -44,7 +44,7 @@
     "ts-jest": "29.0.5",
     "ts-loader": "9.4.3",
     "ts-node": "10.9.1",
-    "vitest": "0.31.3",
+    "vitest": "0.31.4",
     "typescript": "5.0.4",
     "webpack": "5.85.0",
     "webpack-cli": "5.1.1"
