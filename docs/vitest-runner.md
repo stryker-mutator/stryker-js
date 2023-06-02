@@ -55,11 +55,11 @@ The following options will be set by Stryker and cannot be overridden:
 
 As you can see, the vitest runner:
 - Will run your tests in a **single thread**  
-  This is done because StrykerJS uses it's own [parallel workers]('./parallel-workers.md').
+  This is done because StrykerJS uses it's own [parallel workers](./parallel-workers.md).
 - Will **bail** on the first test failure (unless you set `disableBail` to `true`).  
   This is done to boost performance.
 - Will **disable code coverage reporting**  
-  This is done because StrykerJS uses it's own [coverage analysis]('./configuration.md/#coverageanalysis-string'), which _is_ supported.
+  This is done because StrykerJS uses it's own [coverage analysis](./configuration.md/#coverageanalysis-string), which _is_ supported.
 
 ## In-source testing
 
