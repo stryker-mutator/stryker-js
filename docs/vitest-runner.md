@@ -3,7 +3,7 @@ title: Vitest Runner
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/vitest-runner.md
 ---
 
-## Installation
+_Since v7.0_
 
 A plugin to use the [vitest](https://vitest.dev/) test runner in Stryker.
 

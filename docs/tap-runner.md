@@ -3,6 +3,8 @@ title: Tap Runner
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/tap-runner.md
 ---
 
+_Since v7.0_
+
 A plugin to use test files producing TAP-output in StrykerJS.
 
 :::tip
