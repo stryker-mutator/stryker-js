@@ -142,7 +142,7 @@ describe('tap-runner integration', () => {
       sandbox = new TempTestDirectorySandbox('bogus');
       await sandbox.init();
       options.tap = tapRunnerOptions({
-        testFiles: 'readme.md', // WAT??? -> Not even a .js file
+        testFiles: ['readme.md'], // WAT??? -> Not even a .js file
       });
       sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
       await sut.init();

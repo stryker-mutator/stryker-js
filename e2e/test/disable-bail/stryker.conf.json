@@ -7,6 +7,6 @@
     "configFile": "karma.conf.js"
   },
   "tap": {
-    "testFiles": "test/*.tap.js"
+    "testFiles": ["test/*.tap.js"]
   }
 }
