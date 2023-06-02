@@ -61,6 +61,29 @@ As you can see, the vitest runner:
 - Will **disable code coverage reporting**  
   This is done because StrykerJS uses it's own [coverage analysis]('./configuration.md/#coverageanalysis-string'), which _is_ supported.
 
+## In-source testing
+
+Vitest's [in-source testing](https://vitest.dev/guide/in-source.html) is supported. However, since your tests are in the same file as your code-under-test, you will need to make sure to exclude your tests from being mutated.
+
+For example, you can add the Stryker disable comment (`// Stryker disable all`) right before `if (import.meta.vitest)` like so:
+
+```diff
+ export function add(...args: number[]) {
+   return args.reduce((a, b) => a + b, 0)
+ }
+ 
+ 
+ // in-source test suites
++// Stryker disable all: Unit tests start here
+ if (import.meta.vitest) {
+   const { it, expect } = import.meta.vitest
+   it('add', () => {
+     expect(add(1, 2, 3)).toBe(6)
+   })
+ }
+```
+
+
 ## Limitations
 
 The vitest runner has the following limitations:
