@@ -19,9 +19,10 @@ npx stryker run --incremental
 
 _Setting `"incremental": true` in your stryker.conf.json file is also supported_
 
-StrykerJS stores the previous result in a "reports/stryker-incremental.json" file (determined by the [--incrementalFile](./configuration.md#incrementalfile-string) option). The next time StrykerJS runs, it will read this JSON file and try to reuse as much of it as possible. 
+StrykerJS stores the previous result in a "reports/stryker-incremental.json" file (determined by the [--incrementalFile](./configuration.md#incrementalfile-string) option). The next time StrykerJS runs, it will read this JSON file and try to reuse as much of it as possible.
 
 Reuse is possible when:
+
 - A mutant was "Killed"; the culprit test still exists, and it didn't change.
 - A mutant was not "Killed"; no new test covers it, and no tests changed.
 
@@ -36,6 +37,7 @@ You can see the statistics of the incremental analysis right after the dry run i
 ```
 
 Here you can see that:
+
 - One file with mutants changed (2 mutants added, 2 mutants removed)
 - Two test files changed (22 tests added and 21 tests removed)
 - In total, Stryker will reuse 3731 mutant results, and only 234 mutants need to run.
@@ -45,20 +47,23 @@ Here you can see that:
 ## Limitations
 
 Running in incremental mode, Stryker will do its best to produce an accurate mutation testing report. However, there are some limitations here:
+
 - Stryker will not detect any changes you've made in files other than mutated files and test files.
 - Detecting test file changes is only supported if the test runner plugin supports reporting the test files. (see support table below)
 - Detecting test changes is only supported if the test runner plugin supports reporting test locations. (see support table below)
 - Any other changes to your environment are not detected, such as updates to other files, updated (dev) dependencies, changes to environment variables, changes to `.snap` files, readme files, etc.
 - [Static mutants](../../mutation-testing-elements/static-mutants/) don't have test coverage; thus, Stryker won't detect test changes for them.
 
-| Test runner plugin | Test reporting                  |
-| ------------------ | ------------------------------- |
-| 🃏 Jest            | ✅ Full                            |
+| Test runner plugin | Test reporting                    |
+| ------------------ | --------------------------------- |
+| 🃏 Jest            | ✅ Full                           |
 | ☕ Mocha           | ⚠ Tests per file without location |
 | 🟣 Jasmine         | ⚠ Test names only                 |
 | 🔵 Karma           | ⚠ Test names only                 |
-| 🥒 CucumberJS      | ✅ Full                            |
-| ▶ Command          | ❌ Nothing                         |
+| 🥒 CucumberJS      | ✅ Full                           |
+| 📼 Tap             | ⚠ Tests per file without location |
+| ⚡ Vitest          | ⚠ Tests per file without location |
+| ▶ Command          | ❌ Nothing                        |
 
 You can use this table to understand why StrykerJS decides not to rerun a specific mutant even though you've changed tests covering that mutant.
 
