@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.4.2...v7.0.0) (2023-06-02)
+
+### Bug Fixes
+
+- **core:** improve no-mutate warning ([#4248](https://github.com/stryker-mutator/stryker-js/issues/4248)) ([6bf7a56](https://github.com/stryker-mutator/stryker-js/commit/6bf7a565bff2c730ed70ad64e5432de2d503864a))
+- **deps:** update babel monorepo ([#4233](https://github.com/stryker-mutator/stryker-js/issues/4233)) ([a8f2c1e](https://github.com/stryker-mutator/stryker-js/commit/a8f2c1e364a611982a2c3f12b6be32a4a2f2ffec))
+- **deps:** update dependency @cucumber/messages to v22 ([#4091](https://github.com/stryker-mutator/stryker-js/issues/4091)) ([ad6f82b](https://github.com/stryker-mutator/stryker-js/commit/ad6f82b525fde969a18a0d3c1a82cf2ee6b0a0c3))
+- **deps:** update dependency inquirer to ~9.2.0 ([#4137](https://github.com/stryker-mutator/stryker-js/issues/4137)) ([d985780](https://github.com/stryker-mutator/stryker-js/commit/d9857800c94002b87d399d126160a777318e5daa))
+- **deps:** update dependency minimatch to v8 ([#4079](https://github.com/stryker-mutator/stryker-js/issues/4079)) ([af4a62c](https://github.com/stryker-mutator/stryker-js/commit/af4a62cb750648d23e1e7a2e64fbb5ba5ae6cc47))
+- **deps:** update dependency mutation-testing-elements to v2 ([#4148](https://github.com/stryker-mutator/stryker-js/issues/4148)) ([50071e6](https://github.com/stryker-mutator/stryker-js/commit/50071e6448656fbc55a0c62d38779056a5847b97))
+- **deps:** update dependency semver to v7.4.0 ([#4101](https://github.com/stryker-mutator/stryker-js/issues/4101)) ([c317294](https://github.com/stryker-mutator/stryker-js/commit/c3172941d5c8718f589fdaad9746033c1cf7e6fc))
+- **deps:** update dependency semver to v7.5.0 ([#4121](https://github.com/stryker-mutator/stryker-js/issues/4121)) ([4c8dade](https://github.com/stryker-mutator/stryker-js/commit/4c8dade076b18d9e4792fef2028d4b0c93ea27bb))
+- **deps:** update dependency tap-parser to v13 ([#4116](https://github.com/stryker-mutator/stryker-js/issues/4116)) ([161f099](https://github.com/stryker-mutator/stryker-js/commit/161f0993ca20a25619e262969deb1cd27633d0d4))
+- **deps:** update dependency tslib to v2.5.2 ([#4241](https://github.com/stryker-mutator/stryker-js/issues/4241)) ([4cd2a86](https://github.com/stryker-mutator/stryker-js/commit/4cd2a86503a243fd2998bc72245b8bda00d30d49))
+- **deps:** update dependency weapon-regex to ~1.1.0 ([#4102](https://github.com/stryker-mutator/stryker-js/issues/4102)) ([899ae6e](https://github.com/stryker-mutator/stryker-js/commit/899ae6effae0fd4cf9cec3b71a7c75e078005082))
+- **deps:** update mutation-testing-elements monorepo to v2.0.1 ([#4182](https://github.com/stryker-mutator/stryker-js/issues/4182)) ([c1b7312](https://github.com/stryker-mutator/stryker-js/commit/c1b7312a238b67f43630101b084ff33780eda1c5))
+- **deps:** update mutation-testing-metrics and mutation-report-schema to v2 ([#4154](https://github.com/stryker-mutator/stryker-js/issues/4154)) ([9b77a3f](https://github.com/stryker-mutator/stryker-js/commit/9b77a3f6fdeb7036b1e15610f03dd8c85a502670))
+- **incremental:** correctly identify removed test files ([#4134](https://github.com/stryker-mutator/stryker-js/issues/4134)) ([7342ac6](https://github.com/stryker-mutator/stryker-js/commit/7342ac6cb4b6c09207e9ba84da5c85a24bcc62f4))
+- **instrumenter:** Use `globalThis` when available ([#4169](https://github.com/stryker-mutator/stryker-js/issues/4169)) ([7d1e58e](https://github.com/stryker-mutator/stryker-js/commit/7d1e58eb150237c102c3a3a7ad0044e5031ce07e))
+- **Reporter API:** use 1-based locations with `onMutantTested` ([#4158](https://github.com/stryker-mutator/stryker-js/issues/4158)) ([f5227e0](https://github.com/stryker-mutator/stryker-js/commit/f5227e0907efcc7433dbc93848f1f9057fb86978))
+- **tap-runner:** add `glob` as a dependency ([#4225](https://github.com/stryker-mutator/stryker-js/issues/4225)) ([ba6bb7e](https://github.com/stryker-mutator/stryker-js/commit/ba6bb7ebc02e1f08c4f4fa29af0961555ead6510))
+- **vitest:** explicitly error when browser-mode is enabled ([#4243](https://github.com/stryker-mutator/stryker-js/issues/4243)) ([e70ff30](https://github.com/stryker-mutator/stryker-js/commit/e70ff3044a60f98cf03f2c5c593b58f43e595d62))
+- **vitest:** use cwd for communication dir ([#4217](https://github.com/stryker-mutator/stryker-js/issues/4217)) ([736d97c](https://github.com/stryker-mutator/stryker-js/commit/736d97c39e3191a5acbc7ab012c31d2971345267))
+
+### chore
+
+- **esm:** use "exports" and module "Node16" ([#4171](https://github.com/stryker-mutator/stryker-js/issues/4171)) ([cdf4a34](https://github.com/stryker-mutator/stryker-js/commit/cdf4a342b73d922423eb46a919eb3b38c4c43c46))
+
+### Features
+
+- **config:** add `--allowEmpty` option ([#4198](https://github.com/stryker-mutator/stryker-js/issues/4198)) ([44e355e](https://github.com/stryker-mutator/stryker-js/commit/44e355ee727bbceff1a4069055844c49c0ea2118))
+- **config:** add `'always'` option to `cleanTempDir` ([#4187](https://github.com/stryker-mutator/stryker-js/issues/4187)) ([f02efb2](https://github.com/stryker-mutator/stryker-js/commit/f02efb2db08d13be132c0bd318dfa6d3f6399788))
+- **mutations:** add Math method expression mutants ([#4076](https://github.com/stryker-mutator/stryker-js/issues/4076)) ([b281163](https://github.com/stryker-mutator/stryker-js/commit/b28116359eb1557fa157a296d04105b3751d1a69))
+- **node:** Drop support for node 14 ([#4105](https://github.com/stryker-mutator/stryker-js/issues/4105)) ([a88744f](https://github.com/stryker-mutator/stryker-js/commit/a88744f1a5fa47274ee0f30abc635831b18113fa))
+- **reporter-api:** remove `onAllMutantsTested` ([#4234](https://github.com/stryker-mutator/stryker-js/issues/4234)) ([762c023](https://github.com/stryker-mutator/stryker-js/commit/762c023e5ac0ae6e2967be0458663c41d31e82ea))
+- **TAP runner:** add support for the node TAP runner ([371baf0](https://github.com/stryker-mutator/stryker-js/commit/371baf07fe8fd47935829c8a38ddc50861614ee4))
+- **tap-runner:** support `"nodeArgs"` ([#4235](https://github.com/stryker-mutator/stryker-js/issues/4235)) ([c149b34](https://github.com/stryker-mutator/stryker-js/commit/c149b346ec0e5146dd303cbda245ce7827aef5e2))
+- **tap:** allow multiple patterns for `testFiles` ([#4253](https://github.com/stryker-mutator/stryker-js/issues/4253)) ([76b53f1](https://github.com/stryker-mutator/stryker-js/commit/76b53f122d8a8c65fc2f4037171656f22ac2a64b))
+- **type-checking:** disable type check by default ([#4246](https://github.com/stryker-mutator/stryker-js/issues/4246)) ([d45350a](https://github.com/stryker-mutator/stryker-js/commit/d45350ad2440d455b7ba215aae1f87712e22fdc5))
+- **vitest:** support `bail` ([#4239](https://github.com/stryker-mutator/stryker-js/issues/4239)) ([6b2eb4d](https://github.com/stryker-mutator/stryker-js/commit/6b2eb4d6ede903f3f1abeea821fa994f1983ae4c))
+- **vitest:** support vitest test runner ([7394e95](https://github.com/stryker-mutator/stryker-js/commit/7394e95ff27361c39755a60b53ba0839080cadfc))
+
+### BREAKING CHANGES
+
+- **type-checking:** `disableTypeChecks` is now `true` by default. You can use this configuration to opt out:
+
+```json
+{
+  "disableTypeChecks": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"
+}
+```
+
+- **reporter-api:** The event `onAllMutantsTested` has been removed. Plugin creators should use `onMutationTestReportReady` instead.
+- **esm:** Deep (and undocumented) imports from `@stryker-mutator/core` or one of the plugins will no longer work. If you want to import something that's not available, please let us know by [opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new/choose)
+- **node:** Node 14 is no longer supported. Please install an LTS version of node: nodejs.org/
+
 ## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
 
 ### Bug Fixes
