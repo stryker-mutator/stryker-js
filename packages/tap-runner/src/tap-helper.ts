@@ -6,8 +6,8 @@ import * as tap from 'tap-parser';
 
 import { TapParser } from './tap-parser-factory.js';
 
-export function findTestyLookingFiles(globPattern: string): Promise<string[]> {
-  return glob(globPattern, { ignore: ['**/node_modules/**'], posix: true });
+export function findTestyLookingFiles(globPatterns: string[]): Promise<string[]> {
+  return glob(globPatterns, { ignore: ['**/node_modules/**'], posix: true });
 }
 
 export interface TapResult {

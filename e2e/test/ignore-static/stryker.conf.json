@@ -12,6 +12,6 @@
     "configFile": "jest.config.json"
   },
   "tap": {
-    "testFiles": "spec/*.tap.js"
+    "testFiles": ["spec/*.tap.js"]
   }
 }

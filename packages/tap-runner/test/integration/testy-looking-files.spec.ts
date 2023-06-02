@@ -35,4 +35,15 @@ describe('Running in an testy-looking-files project', () => {
     // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     expect(files.sort()).deep.equals(expectedFiles.sort());
   });
+
+  it('should de-duplicate files when multiple patterns are provided', async () => {
+    // Act
+    const files = await findTestyLookingFiles(['test/a.js', 'test/a.*']);
+
+    // Assert
+    const expectedFiles = ['test/a.cjs', 'test/a.js', 'test/a.jsx', 'test/a.mjs', 'test/a.ts', 'test/a.tsx'];
+
+    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+    expect(files.sort()).deep.equals(expectedFiles.sort());
+  });
 });
