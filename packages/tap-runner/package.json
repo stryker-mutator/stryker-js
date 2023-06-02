@@ -46,7 +46,7 @@
     "@stryker-mutator/util": "6.4.2",
     "glob": "~10.2.6",
     "tap-parser": "~13.0.0",
-    "tslib": "~2.4.0"
+    "tslib": "~2.5.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "6.4.2",
