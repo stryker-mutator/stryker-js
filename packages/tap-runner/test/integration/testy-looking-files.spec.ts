@@ -5,10 +5,15 @@ import { expect } from 'chai';
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
 import { tapRunnerOptions } from '../helpers/factory.js';
 
+const cwd = process.cwd();
+
 describe('Running in an testy-looking-files project', () => {
   beforeEach(async () => {
     const testPath = path.resolve('testResources', 'testy-looking-files');
     process.chdir(testPath);
+  });
+  afterEach(() => {
+    process.chdir(cwd);
   });
 
   it('should find all testy looking files', async () => {
