@@ -25,9 +25,6 @@ describe('incremental', () => {
       concurrency: 1,
       plugins: ['./verify/mutation-run-plan-reporter.js'],
       reporters: ['mutation-run-plan', 'html'],
-      tap: {
-        testFiles: 'spec/*.tap.js',
-      },
     };
     await changeFiles('original'); // change the files back to there original state
   });
@@ -57,7 +54,7 @@ describe('incremental', () => {
     ['mocha', reuseCountExpectation.withoutTestLocations],
     ['vitest', reuseCountExpectation.withoutTestLocations],
 
-    ['tap', reuseCountExpectation.withoutTestDeviation],
+    ['tap', reuseCountExpectation.withoutTestDeviation, { tap: { testFiles: ['spec/*.tap.js'] } }],
 
     ['karma', reuseCountExpectation.withoutTestFiles, { karma: { configFile: 'karma.conf.cjs' } }],
     ['jasmine', reuseCountExpectation.withoutTestFiles, { jasmineConfigFile: 'jasmine.json' }],
