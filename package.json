@@ -60,7 +60,8 @@
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
     "perf": "cd perf && npm ci && npm run lint && npm t && cd ..",
     "start": "tsc -b -w",
-    "release": "lerna version"
+    "release": "lerna version",
+    "version": "node tasks/bump-peer-deps.js"
   },
   "engines": {
     "node": ">=16.0.0"
