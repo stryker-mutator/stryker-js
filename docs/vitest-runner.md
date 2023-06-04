@@ -9,7 +9,7 @@ A plugin to use the [vitest](https://vitest.dev/) test runner in Stryker.
 
 ## Install
 
-Install `@stryker-mutator/vitest-runner locally within your project folder, like so:
+Install `@stryker-mutator/vitest-runner` locally within your project folder, like so:
 
 ```bash
 npm i --save-dev @stryker-mutator/vitest-runner
