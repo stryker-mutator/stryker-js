@@ -61,7 +61,9 @@ describe('tap-runner integration', () => {
       await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
 
       // Assert
-      expect(testInjector.logger.debug).calledWithMatch(`Running: \`node "-r" "${hooksFile}" "--enable-source-maps" "${testFile}"`);
+      expect(testInjector.logger.debug).calledWithExactly(
+        `Running: \`node "-r" "${hooksFile}" "--enable-source-maps" "${testFile}"\` in ${process.cwd()}`
+      );
     });
 
     it('should not log the run command if debug log level is not enabled', async () => {
