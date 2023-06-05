@@ -1,8 +1,14 @@
 import os from 'os';
 
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
+
+import { LogLevel } from '@stryker-mutator/api/core';
 
 import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
@@ -14,6 +20,7 @@ describe('tap-runner integration', () => {
   let sut: TapTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: TapRunnerOptionsWithStrykerOptions;
+  const hooksFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'setup', 'hook.cjs');
 
   beforeEach(() => {
     options = testInjector.options as TapRunnerOptionsWithStrykerOptions;
@@ -42,6 +49,30 @@ describe('tap-runner integration', () => {
 
       // Assert
       expect(run.status).eq(DryRunStatus.Complete);
+    });
+
+    it('should log the run command to debug level', async () => {
+      // Arrange
+      testInjector.logger.isDebugEnabled.returns(true);
+      options.tap.nodeArgs = ['--enable-source-maps']; // for testing purposes
+      const testFile = testFilter[0];
+
+      // Act
+      await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
+
+      // Assert
+      expect(testInjector.logger.debug).calledWithMatch(`Running: \`node "-r" "${hooksFile}" "--enable-source-maps" "${testFile}"`);
+    });
+
+    it('should not log the run command if debug log level is not enabled', async () => {
+      // Arrange
+      testInjector.logger.isDebugEnabled.returns(false);
+
+      // Act
+      await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
+
+      // Assert
+      expect(testInjector.logger.debug).not.called;
     });
 
     it('should be to run mutantRun that survives', async () => {
