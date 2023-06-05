@@ -72,7 +72,7 @@
     "emoji-regex": "~10.2.1",
     "execa": "~7.1.0",
     "file-url": "~4.0.0",
-    "get-port": "~6.1.0",
+    "get-port": "~7.0.0",
     "glob": "~10.2.6",
     "inquirer": "~9.2.0",
     "lodash.flatmap": "~4.5.0",
