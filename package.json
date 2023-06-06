@@ -28,7 +28,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unicorn": "47.0.0",
     "execa": "7.1.1",
-    "glob": "10.2.6",
+    "glob": "10.2.7",
     "install-local": "3.0.1",
     "jasmine": "4.6.0",
     "jasmine-core": "5.0.0",
