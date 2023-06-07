@@ -21,6 +21,8 @@ import {
 } from '@stryker-mutator/api/test-runner';
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 
+import { Logger } from '@stryker-mutator/api/logging';
+
 import * as pluginTokens from './plugin-tokens.js';
 import { findTestyLookingFiles, captureTapResult, TapResult } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
@@ -53,12 +55,16 @@ interface TapRunOptions {
 }
 
 export class TapTestRunner implements TestRunner {
-  public static inject = tokens(commonTokens.options, pluginTokens.globalNamespace);
+  public static inject = tokens(commonTokens.options, commonTokens.logger, pluginTokens.globalNamespace);
   private testFiles: string[] = [];
   private static readonly hookFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs');
   private readonly options: TapRunnerOptionsWithStrykerOptions;
 
-  constructor(options: StrykerOptions, private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__') {
+  constructor(
+    options: StrykerOptions,
+    private readonly log: Logger,
+    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+  ) {
     this.options = options as TapRunnerOptionsWithStrykerOptions;
   }
 
@@ -125,7 +131,11 @@ export class TapTestRunner implements TestRunner {
       [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
       [strykerDryRun]: testOptions.dryRun?.toString(),
     };
-    const tapProcess = childProcess.spawn('node', ['-r', TapTestRunner.hookFile, ...this.options.tap.nodeArgs, testFile], { env });
+    const args = ['-r', TapTestRunner.hookFile, ...this.options.tap.nodeArgs, testFile];
+    if (this.log.isDebugEnabled()) {
+      this.log.debug(`Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`);
+    }
+    const tapProcess = childProcess.spawn('node', args, { env });
     const result = await captureTapResult(tapProcess, testOptions.disableBail);
     const fileName = tempTapOutputFileName(tapProcess.pid);
     const fileContent = await fs.readFile(fileName, 'utf-8');
