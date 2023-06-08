@@ -66,8 +66,12 @@ jobs:
       run: npm ci || npm ci # retry once, install on windows is flaky...
     - name: Build packages
       run: npm run build
+    - name: e2e install
+      run: 'npm run e2e:install'
+    - name: e2e lint
+      run: 'npm run e2e:lint'
     - name: Run e2e tests
-      run: npm run e2e
+      run: 'npm run e2e:run'
     - uses: actions/upload-artifact@v3
       if: failure()
       with:
