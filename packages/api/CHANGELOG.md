@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
+
+### Bug Fixes
+
+- **config:** regression in import options ([#4277](https://github.com/stryker-mutator/stryker-js/issues/4277)) ([0e9b997](https://github.com/stryker-mutator/stryker-js/commit/0e9b997b489554f02b038fb9d5072a55c373ecd2))
+
 ## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
 
 **Note:** Version bump only for package @stryker-mutator/api

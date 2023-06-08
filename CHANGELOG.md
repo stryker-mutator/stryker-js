@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
+
+### Bug Fixes
+
+- **config:** regression in import options ([#4277](https://github.com/stryker-mutator/stryker-js/issues/4277)) ([0e9b997](https://github.com/stryker-mutator/stryker-js/commit/0e9b997b489554f02b038fb9d5072a55c373ecd2))
+- **deps:** update dependency get-port to v7 ([#4260](https://github.com/stryker-mutator/stryker-js/issues/4260)) ([c9d384c](https://github.com/stryker-mutator/stryker-js/commit/c9d384c5894cf22c61eb108629a3caf7a77208e4))
+- **deps:** update dependency tslib to v2.5.3 ([#4255](https://github.com/stryker-mutator/stryker-js/issues/4255)) ([8084d15](https://github.com/stryker-mutator/stryker-js/commit/8084d15ded945958ac3b5b27935cc2f3822f5bc8))
+- **tap:** log command to run on debug ([#4263](https://github.com/stryker-mutator/stryker-js/issues/4263)) ([dd8b53d](https://github.com/stryker-mutator/stryker-js/commit/dd8b53db86dac08bcc01d6851c7df1554579f6c6))
+
 ## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
 
 ### Bug Fixes

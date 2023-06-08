@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
+
+### Bug Fixes
+
+- **deps:** update dependency get-port to v7 ([#4260](https://github.com/stryker-mutator/stryker-js/issues/4260)) ([c9d384c](https://github.com/stryker-mutator/stryker-js/commit/c9d384c5894cf22c61eb108629a3caf7a77208e4))
+- **deps:** update dependency tslib to v2.5.3 ([#4255](https://github.com/stryker-mutator/stryker-js/issues/4255)) ([8084d15](https://github.com/stryker-mutator/stryker-js/commit/8084d15ded945958ac3b5b27935cc2f3822f5bc8))
+
 ## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
 
 **Note:** Version bump only for package @stryker-mutator/core
