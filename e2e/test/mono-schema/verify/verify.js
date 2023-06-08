@@ -161,7 +161,6 @@ function tsc(...args) {
     const program = ts.createProgram(fileNames, { ...config.compilerOptions, ...options });
     const emitResult = program.emit();
     const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
-    console.log(allDiagnostics);
     return allDiagnostics;
   } finally {
     process.chdir(path.dirname(fileURLToPath(import.meta.url)));
