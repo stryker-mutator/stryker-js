@@ -17,5 +17,12 @@ describe('tap-helper', () => {
       // Assert
       expect(result).deep.eq(['--file=hook.js', '--test=test.js']);
     });
+
+    it('should be able to replace multiple occurrences of template variables', () => {
+      const result = parseArguments(['{{hookFile}}', '--{{hookFile}}={{hookFile}}', '--{{testFile}}={{testFile}}'], 'hook.js', 'test.js');
+
+      // Assert
+      expect(result).deep.eq(['hook.js', '--hook.js=hook.js', '--test.js=test.js']);
+    });
   });
 });

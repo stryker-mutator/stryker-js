@@ -71,5 +71,5 @@ export function parseArguments(args: string[], hookFile: string, testFile: strin
     args = [...args, testFilePlaceholder];
   }
 
-  return args.map((arg) => arg.replace(testFilePlaceholder, testFile).replace(hookFilePlaceholder, hookFile));
+  return args.map((arg) => arg.replaceAll(testFilePlaceholder, testFile).replaceAll(hookFilePlaceholder, hookFile));
 }
