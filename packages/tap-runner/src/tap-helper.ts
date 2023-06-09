@@ -60,16 +60,16 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
 }
 
 export function parseArguments(args: string[], hookFile: string, testFile: string): string[] {
-  const newArgs = [...args];
-const hooksFilePlaceholder = '{{hooksFile}}';
-const testFilePlaceholder = '{{testFile}}';
-if(!args.some(arg => arg.includes(hooksFilePlaceholder )){
-   args = ['-r', hooksFilePlaceholder , ...args];
-}
-if(!args.some(arg => arg.includes(testFilePlaceholder ){
-  args = [...args, testFilePlaceholder];
-}
-return args.map(arg => arg.replaceAll(testFilePlaceholder, testFile).replaceAll(hooksFilePlaceholder, hooksFile);
+  const hookFilePlaceholder = '{{hookFile}}';
+  const testFilePlaceholder = '{{testFile}}';
 
-  return newArgs;
+  if (!args.some((arg) => arg.includes(hookFilePlaceholder))) {
+    args = ['-r', hookFilePlaceholder, ...args];
+  }
+
+  if (!args.some((arg) => arg.includes(testFilePlaceholder))) {
+    args = [...args, testFilePlaceholder];
+  }
+
+  return args.map((arg) => arg.replace(testFilePlaceholder, testFile).replace(hookFilePlaceholder, hookFile));
 }
