@@ -208,4 +208,24 @@ describe('tap-runner integration', () => {
       assertions.expectCompleted(run);
     });
   });
+
+  describe('Running on a ava project', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('ava');
+      await sandbox.init();
+      options.tap = tapRunnerOptions({
+        nodeArgs: ['../../../node_modules/.bin/ava', '--tap'],
+      });
+      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      await sut.init();
+    });
+
+    it.only('should be able to run', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
+      assertions.expectCompleted(run);
+    });
+  });
 });
