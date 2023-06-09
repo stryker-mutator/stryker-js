@@ -51,6 +51,16 @@ Specify [glob expressions](./config-file.md/#glob-patterns) to your test files. 
 
 ### `tap.nodeArgs` [`string[]`]
 
+<details>
+
+<summary>History</summary>
+
+| Version | Changes                                                   |
+| ------- | --------------------------------------------------------- |
+| 7.1     | Add `{{hookFile}}` and `{{testFile}}` placeholder support |
+
+</details>
+
 Default: `["-r", "{{hookFile}}", "{{testFile}}"]`
 
 Specify node arguments to be used when running the tests. You can use the following placeholders:
