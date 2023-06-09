@@ -15,7 +15,7 @@ describe('tap-helper', () => {
       const result = parseArguments(['--file={{hookFile}}', '--test={{testFile}}'], 'hook.js', 'test.js');
 
       // Assert
-      expect(result).to.eql(['--file=hook.js', '--test=test.js']);
+      expect(result).deep.eql(['--file=hook.js', '--test=test.js']);
     });
   });
 });
