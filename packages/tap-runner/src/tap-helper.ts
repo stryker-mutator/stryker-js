@@ -59,7 +59,7 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
   return tapResult;
 }
 
-export function parseArguments(args: string[], hookFile: string, testFile: string): string[] {
+export function buildArguments(args: string[], hookFile: string, testFile: string): string[] {
   const hookFilePlaceholder = '{{hookFile}}';
   const testFilePlaceholder = '{{testFile}}';
 
