@@ -61,24 +61,15 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
 
 export function parseArguments(args: string[], hookFile: string, testFile: string): string[] {
   const newArgs = [...args];
-  const argsCopy = [
-    { key: '{{hookFile}}', addition: ['-r', hookFile], replacement: hookFile, placeInFront: true },
-    { key: '{{testFile}}', addition: [testFile], replacement: testFile, placeInFront: false },
-  ];
-
-  argsCopy.forEach((arg) => {
-    const index = newArgs.findIndex((a: string) => a.includes(arg.key));
-
-    if (index >= 0) {
-      newArgs[index] = newArgs[index].replace(arg.key, arg.replacement);
-    } else {
-      if (arg.placeInFront) {
-        newArgs.unshift(...arg.addition);
-      } else {
-        newArgs.push(...arg.addition);
-      }
-    }
-  });
+const hooksFilePlaceholder = '{{hooksFile}}';
+const testFilePlaceholder = '{{testFile}}';
+if(!args.some(arg => arg.includes(hooksFilePlaceholder )){
+   args = ['-r', hooksFilePlaceholder , ...args];
+}
+if(!args.some(arg => arg.includes(testFilePlaceholder ){
+  args = [...args, testFilePlaceholder];
+}
+return args.map(arg => arg.replaceAll(testFilePlaceholder, testFile).replaceAll(hooksFilePlaceholder, hooksFile);
 
   return newArgs;
 }
