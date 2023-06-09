@@ -3,6 +3,7 @@
   "testRunner": "tap",
   "concurrency": 1,
   "reporters": ["json", "clear-text", "html", "event-recorder"],
+  "disableBail": true,
   "plugins": [
     "@stryker-mutator/tap-runner"
   ],
