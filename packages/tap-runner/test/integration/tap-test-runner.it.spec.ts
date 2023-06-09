@@ -239,7 +239,7 @@ describe('tap-runner integration', () => {
 
     function getAvaLocation() {
       if (os.platform() === 'win32') {
-        return `${sandbox.tmpDir}/../../../node_modules/ava/entrypoints/cli.mjs`;
+        return path.resolve(sandbox.tmpDir, '..', '..', '..', 'node_modules', 'ava', 'entrypoints', 'cli.mjs');
       }
 
       return `${sandbox.tmpDir}/../../../node_modules/.bin/ava`;
