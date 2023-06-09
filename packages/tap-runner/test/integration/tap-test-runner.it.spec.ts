@@ -113,45 +113,29 @@ describe('tap-runner integration', () => {
       assertions.expectSurvived(run);
     });
 
-    it('should bail out when disableBail is false', async () => {
-      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
-
-      // Assert
-      assertions.expectKilled(run);
-      expect(run.nrOfTests).eq(1);
-      expect(run.killedBy[0]).eq('tests/bail.spec.js');
-    });
-
-    it('should not bail out when disableBail is true', async () => {
-      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
-
-      // Assert
-      assertions.expectKilled(run);
-      expect(run.nrOfTests).eq(testFiles.length);
-    });
-
-    it('should bail out current process when disableBail is false and os type is not windows', async function () {
-      if (os.platform() === 'win32') {
-        this.skip();
-      } else {
+    [
+      { disableBail: false, forceBail: false, shouldBail: false },
+      { disableBail: true, forceBail: false, shouldBail: false },
+      { disableBail: true, forceBail: true, shouldBail: false },
+      { disableBail: false, forceBail: true, shouldBail: true },
+    ].forEach(({ disableBail, forceBail, shouldBail }) => {
+      it(`should ${shouldBail ? 'bail' : 'not bail'} out process when disableBail is ${disableBail} and forceBail is ${forceBail}`, async () => {
+        options.tap.forceBail = forceBail;
         const testFiles = ['tests/bail.spec.js'];
         const startTime = Date.now();
 
         // Act
-        const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
-        const endTime = Date.now();
+        const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: disableBail }));
+        const timeDiff = Date.now() - startTime;
 
         // Assert
         assertions.expectKilled(run);
-        expect(run.failureMessage).contains('This test will fail');
-        expect(endTime - startTime).at.most(4000);
-      }
+        if (shouldBail) {
+          expect(timeDiff).lte(4000);
+        } else {
+          expect(timeDiff).gte(4000);
+        }
+      });
     });
 
     it('should not bail out current process when disableBail is true', async () => {

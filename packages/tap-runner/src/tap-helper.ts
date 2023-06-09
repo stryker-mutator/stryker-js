@@ -15,10 +15,10 @@ export interface TapResult {
   failedTests: tap.TapError[];
 }
 
-function parseTap(tapProcess: ChildProcessWithoutNullStreams, disableBail: boolean) {
+function parseTap(tapProcess: ChildProcessWithoutNullStreams, forceBail: boolean) {
   return new Promise<TapResult>((resolve) => {
     const failedTests: tap.TapError[] = [];
-    const config = { bail: !disableBail };
+    const config = { bail: forceBail };
     const parser = TapParser.Parser(config, (result) => {
       resolve({ result, failedTests });
     });

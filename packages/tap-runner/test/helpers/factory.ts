@@ -5,6 +5,7 @@ export function tapRunnerOptions(overrides?: Partial<TapRunnerOptions>): TapRunn
   return {
     testFiles: [...strykerValidationSchema.properties.tap.properties.testFiles.default],
     nodeArgs: [...strykerValidationSchema.properties.tap.properties.nodeArgs.default],
+    forceBail: true,
     ...overrides,
   };
 }

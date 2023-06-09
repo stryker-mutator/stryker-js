@@ -26,6 +26,11 @@
             "type": "string"
           },
           "default": []
+        },
+        "forceBail": {
+          "description": "Force process to bail after first test failure",
+          "type": "boolean",
+          "default": true
         }
       }
     }
