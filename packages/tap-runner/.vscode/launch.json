@@ -9,6 +9,7 @@
       "request": "launch",
       "name": "📼 Unit tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "autoAttachChildProcesses": false,
       "args": [
         "--timeout",
         "0",
@@ -29,6 +30,7 @@
       "request": "launch",
       "name": "📼 Integration tests",
       "program": "${workspaceFolder}/../../node_modules/mocha/bin/_mocha",
+      "autoAttachChildProcesses": false,
       "args": [
         "--timeout",
         "0",

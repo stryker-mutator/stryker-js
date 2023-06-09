@@ -20,11 +20,11 @@ import {
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
-
 import { Logger } from '@stryker-mutator/api/logging';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
-import { findTestyLookingFiles, captureTapResult, TapResult } from './tap-helper.js';
+import { findTestyLookingFiles, captureTapResult, TapResult, buildArguments } from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
 import { strykerHitLimit, strykerNamespace, strykerDryRun, tempTapOutputFileName } from './setup/env.cjs';
 
@@ -57,7 +57,7 @@ interface TapRunOptions {
 export class TapTestRunner implements TestRunner {
   public static inject = tokens(commonTokens.options, commonTokens.logger, pluginTokens.globalNamespace);
   private testFiles: string[] = [];
-  private static readonly hookFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs');
+  private static readonly hookFile = normalizeFileName(path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs'));
   private readonly options: TapRunnerOptionsWithStrykerOptions;
 
   constructor(
@@ -131,7 +131,8 @@ export class TapTestRunner implements TestRunner {
       [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
       [strykerDryRun]: testOptions.dryRun?.toString(),
     };
-    const args = ['-r', TapTestRunner.hookFile, ...this.options.tap.nodeArgs, testFile];
+    const args = buildArguments(this.options.tap.nodeArgs, TapTestRunner.hookFile, testFile);
+
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`);
     }

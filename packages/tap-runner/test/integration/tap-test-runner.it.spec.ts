@@ -8,6 +8,8 @@ import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
+import { normalizeFileName } from '@stryker-mutator/util';
+
 import { TapTestRunner } from '../../src/index.js';
 import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
@@ -18,7 +20,7 @@ describe('tap-runner integration', () => {
   let sut: TapTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: TapRunnerOptionsWithStrykerOptions;
-  const hooksFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'setup', 'hook.cjs');
+  const hooksFile = normalizeFileName(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'setup', 'hook.cjs'));
 
   beforeEach(() => {
     options = testInjector.options as TapRunnerOptionsWithStrykerOptions;
@@ -201,6 +203,28 @@ describe('tap-runner integration', () => {
     });
 
     it('should be able to run with a --loader', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
+      assertions.expectCompleted(run);
+    });
+  });
+
+  describe('Running on a ava project', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('ava');
+      await sandbox.init();
+      const avaLocation = path.resolve(sandbox.tmpDir, '..', '..', '..', 'node_modules', 'ava', 'entrypoints', 'cli.mjs');
+      options.disableBail = true;
+      options.tap = tapRunnerOptions({
+        nodeArgs: [avaLocation, '--tap'],
+      });
+      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      await sut.init();
+    });
+
+    it('should be able to run', async function () {
       // Act
       const run = await sut.dryRun(factory.dryRunOptions());
 

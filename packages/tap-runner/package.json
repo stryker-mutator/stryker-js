@@ -51,7 +51,8 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.0.2",
     "@types/node": "18.16.16",
-    "tap": "16.3.6"
+    "tap": "16.3.6",
+    "ava": "5.3.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~7.0.0"
