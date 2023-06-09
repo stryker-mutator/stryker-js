@@ -214,18 +214,26 @@ describe('tap-runner integration', () => {
       sandbox = new TempTestDirectorySandbox('ava');
       await sandbox.init();
       options.tap = tapRunnerOptions({
-        nodeArgs: ['../../../node_modules/.bin/ava', '--tap'],
+        nodeArgs: [`${sandbox.tmpDir}/../../../node_modules/.bin/ava`, '--tap'],
       });
       sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
       await sut.init();
     });
 
-    it.only('should be able to run', async () => {
-      // Act
-      const run = await sut.dryRun(factory.dryRunOptions());
+    it.only('should be able to run', async function () {
+      // Test fails if debugger is used, because ava doesn't support debugging and tap output simultaneously.
+      // See: https://github.com/avajs/ava/blob/568fe40c987dd6c593dfbcf4144d1d1627955d46/lib/cli.js#L307
+      const { default: inspector } = await import('node:inspector');
 
-      // Assert
-      assertions.expectCompleted(run);
+      if (inspector.url() !== undefined) {
+        this.skip();
+      } else {
+        // Act
+        const run = await sut.dryRun(factory.dryRunOptions());
+
+        // Assert
+        assertions.expectCompleted(run);
+      }
     });
   });
 });
