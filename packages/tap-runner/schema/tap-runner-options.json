@@ -20,7 +20,7 @@
           "default": ["{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx|mts|cts)"]
         },
         "nodeArgs": {
-          "description": "Specify additional node arguments to be passed when running your test files. The following template variables could be used: `{{hookFile}}` and `{{testFile}}`. Note that stryker will always pass an additional `--require` flag to enable coverage analysis. In addition stryker will also prepand `-r {{hookFile}}` and prepand `{{testFile}}` if not found the template variable is not found.",
+          "description": "Specify additional node arguments to be passed when running your test files. The following template variables could be used: `{{hookFile}}` and `{{testFile}}`. Note that stryker will always pass an additional `--require` flag to enable coverage analysis. In addition stryker will also prepend `-r {{hookFile}}` and prepend `{{testFile}}` if not found the template variable is not found.",
           "type": "array",
           "items": {
             "type": "string"
