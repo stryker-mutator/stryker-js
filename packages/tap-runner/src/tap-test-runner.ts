@@ -20,8 +20,8 @@ import {
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
-
 import { Logger } from '@stryker-mutator/api/logging';
+import { normalizeFileName } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
 import { findTestyLookingFiles, captureTapResult, TapResult, buildArguments } from './tap-helper.js';
@@ -57,7 +57,7 @@ interface TapRunOptions {
 export class TapTestRunner implements TestRunner {
   public static inject = tokens(commonTokens.options, commonTokens.logger, pluginTokens.globalNamespace);
   private testFiles: string[] = [];
-  private static readonly hookFile = path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs');
+  private static readonly hookFile = normalizeFileName(path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs'));
   private readonly options: TapRunnerOptionsWithStrykerOptions;
 
   constructor(
