@@ -89,6 +89,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async run(testIds: string[] = []): Promise<DryRunResult> {
+    this.setEnv();
     this.resetContext();
     if (testIds.length > 0) {
       const regexTestNameFilter = testIds
@@ -113,6 +114,11 @@ export class VitestTestRunner implements TestRunner {
       .filter((test) => test.result); // if no result: it was skipped because of bail
     const testResults = tests.map((test) => convertTestToTestResult(test));
     return { tests: testResults, status: DryRunStatus.Complete };
+  }
+
+  private setEnv() {
+    // Set node environment for issues like these: https://github.com/stryker-mutator/stryker-js/issues/4289
+    process.env.NODE_ENV = 'test';
   }
 
   private resetContext() {
