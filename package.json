@@ -16,7 +16,7 @@
     "@types/source-map-support": "0.5.6",
     "@typescript-eslint/eslint-plugin": "5.59.11",
     "@typescript-eslint/parser": "5.59.11",
-    "c8": "7.14.0",
+    "c8": "8.0.0",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
