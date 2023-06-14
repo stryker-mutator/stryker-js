@@ -5,8 +5,8 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { NpmClient, NpmPackage } from './npm-client.js';
-import { PackageInfo } from './package-info.js';
+import { NpmClient } from './npm-client.js';
+import { PackageInfo, PackageSummary } from './package-info.js';
 import { CustomInitializer } from './custom-initializers/custom-initializer.js';
 import { PromptOption } from './prompt-option.js';
 import { StrykerConfigWriter } from './stryker-config-writer.js';
@@ -218,7 +218,7 @@ export class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<NpmPackage[]> {
+  private async fetchAdditionalConfig(dependencies: PackageSummary[]): Promise<PackageInfo[]> {
     return await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)));
   }
 }
