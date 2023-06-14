@@ -16,15 +16,13 @@ import { StrykerInquirer } from './stryker-inquirer.js';
 import { createInitializers } from './custom-initializers/index.js';
 import { GitignoreWriter } from './gitignore-writer.js';
 
-const BASE_NPM_SEARCH = 'https://api.npms.io';
-const BASE_NPM_PACKAGE = 'https://www.unpkg.com';
+const NPM_REGISTRY = 'https://registry.npmjs.com';
 
 export function initializerFactory(): StrykerInitializer {
   LogConfigurator.configureMainProcess(LogLevel.Information);
   return provideLogger(createInjector())
     .provideValue(initializerTokens.out, console.log)
-    .provideValue(initializerTokens.restClientNpmSearch, new RestClient('npmSearch', BASE_NPM_SEARCH))
-    .provideValue(initializerTokens.restClientNpm, new RestClient('npm', BASE_NPM_PACKAGE))
+    .provideValue(initializerTokens.restClientNpm, new RestClient('npm', NPM_REGISTRY))
     .provideClass(initializerTokens.npmClient, NpmClient)
     .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
     .provideClass(initializerTokens.gitignoreWriter, GitignoreWriter)
