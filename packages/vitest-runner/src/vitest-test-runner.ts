@@ -37,6 +37,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
+    this.setEnv();
     this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
       threads: true,
@@ -112,6 +113,11 @@ export class VitestTestRunner implements TestRunner {
       .filter((test) => test.result); // if no result: it was skipped because of bail
     const testResults = tests.map((test) => convertTestToTestResult(test));
     return { tests: testResults, status: DryRunStatus.Complete };
+  }
+
+  private setEnv() {
+    // Set node environment for issues like these: https://github.com/stryker-mutator/stryker-js/issues/4289
+    process.env.NODE_ENV = 'test';
   }
 
   private resetContext() {
