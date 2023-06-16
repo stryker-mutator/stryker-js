@@ -45,7 +45,7 @@
     "@stryker-mutator/test-helpers": "7.0.2",
     "@types/node": "18.16.18",
     "ts-node": "10.9.1",
-    "vitest": "0.32.1"
+    "vitest": "0.32.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~7.0.0",
