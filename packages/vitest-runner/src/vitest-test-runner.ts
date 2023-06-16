@@ -37,6 +37,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
+    this.setEnv();
     this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
       threads: true,
@@ -89,7 +90,6 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async run(testIds: string[] = []): Promise<DryRunResult> {
-    this.setEnv();
     this.resetContext();
     if (testIds.length > 0) {
       const regexTestNameFilter = testIds
