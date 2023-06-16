@@ -23,7 +23,7 @@ type StrykerNamespace = '__stryker__' | '__stryker2__';
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
-  private ctx!: Vitest;
+  private ctx?: Vitest;
   private readonly fileCommunicator: FileCommunicator;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
 
@@ -98,18 +98,17 @@ export class VitestTestRunner implements TestRunner {
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
       const testFiles = testIds.map(fromTestId).map(({ file }) => file);
-      this.ctx.projects.forEach((project) => {
+      this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
-      await this.ctx.start(testFiles);
+      await this.ctx!.start(testFiles);
     } else {
-      this.ctx.projects.forEach((project) => {
+      this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = undefined;
       });
-      await this.ctx.start();
+      await this.ctx!.start();
     }
-    const tests = this.ctx.state
-      .getFiles()
+    const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
     const testResults = tests.map((test) => convertTestToTestResult(test));
@@ -124,7 +123,7 @@ export class VitestTestRunner implements TestRunner {
   private resetContext() {
     // Clear the state from the previous run
     // Note that this is kind of a hack, see https://github.com/vitest-dev/vitest/discussions/3017#discussioncomment-5901751
-    this.ctx.state.filesMap.clear();
+    this.ctx!.state.filesMap.clear();
 
     // Since we:
     // 1. are reusing the same vitest instance
@@ -133,7 +132,7 @@ export class VitestTestRunner implements TestRunner {
     // 4. we're not using the vitest watch mode
     // We need to invalidate the module cache for the vitest setup file
     // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
-    this.ctx.projects.forEach((project) => {
+    this.ctx!.projects.forEach((project) => {
       const moduleGraph = project.server.moduleGraph;
       const module = moduleGraph.getModuleById(this.fileCommunicator.vitestSetup);
       if (module) {
@@ -143,8 +142,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   private async readHitCount() {
-    const hitCounters: number[] = this.ctx.state
-      .getFiles()
+    const hitCounters: number[] = this.ctx!.state.getFiles()
       .map((file) => (file.meta as { hitCount?: number }).hitCount)
       .filter(notEmpty);
 
@@ -153,7 +151,7 @@ export class VitestTestRunner implements TestRunner {
 
   private async readMutantCoverage(): Promise<MutantCoverage> {
     // Read coverage from all projects
-    const coverages: MutantCoverage[] = [...new Map(this.ctx.state.getFiles().map((file) => [file.projectName, file] as const)).entries()]
+    const coverages: MutantCoverage[] = [...new Map(this.ctx!.state.getFiles().map((file) => [file.projectName, file] as const)).entries()]
       .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
       .filter(notEmpty);
 
@@ -187,8 +185,8 @@ export class VitestTestRunner implements TestRunner {
 
   public async dispose(): Promise<void> {
     await this.fileCommunicator.dispose();
-    await this.ctx.close();
-    await this.ctx.closingPromise;
+    await this.ctx?.close();
+    await this.ctx?.closingPromise;
   }
 }
 

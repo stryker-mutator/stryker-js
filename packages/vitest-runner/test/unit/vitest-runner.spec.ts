@@ -38,4 +38,10 @@ describe(VitestTestRunner.name, () => {
       );
     });
   });
+
+  describe(VitestTestRunner.prototype.dispose.name, () => {
+    it('should not throw when not initialized', async () => {
+      await expect(sut.dispose()).not.rejected;
+    });
+  });
 });
