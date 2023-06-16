@@ -3,7 +3,7 @@ title: Config file
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/config-file.md
 ---
 
-Although a config file is not mandatory, it is recommended. You can define your Stryker configuration in either a `.js` or `.json` file. If you use a `.js` file, it should contain a NodeJS module that exports the configuration object. Autocompletion is supported using JSON schema or using [`@type` JS docs](https://jsdoc.app/).
+Although a config file is not mandatory, it is recommended. You can define your Stryker configuration in either a JavaScript or JSON file. If you use a JavaScript file, it should export the configuration object. Autocompletion is supported using JSON schema or using [`@type` JS docs](https://jsdoc.app/).
 
 ## Configuration options
 
@@ -50,18 +50,14 @@ You can use your editor's autocompletion to help you author your configuration f
 ## Usage
 
 By default, Stryker will look for a config file in the current working directory. The default config file names are:
-- `stryker.conf.json`
-- `stryker.conf.js`
-- `stryker.conf.cjs`
-- `stryker.conf.mjs`
-- `.stryker.conf.json`
-- `.stryker.conf.js`
-- `.stryker.conf.cjs`
-- `.stryker.conf.mjs`
+- `stryker.conf.{json,js,mjs,cjs}`
+- `.stryker.conf.{json,js,mjs,cjs}`
+- `stryker.config.{json,js,mjs,cjs}`
+- `.stryker.config.{json,js,mjs,cjs}`
 
 You can also use a different configuration file with a second argument to the `run` command.
 ```shell
-# Use "stryker.conf.[js,json,mjs]" or ".stryker.conf.[js,json,mjs]" in the cwd
+# Use default config file names in the current working directory
 npx stryker run
 # Use "alternative-stryker.conf.json"
 npx stryker run alternative-stryker.conf.json
@@ -69,7 +65,7 @@ npx stryker run alternative-stryker.conf.json
 
 ## Glob patterns
 
-Some options allow for a glob pattern to be defined. These glob patterns are defined relative to the cwd. 
+Some options allow for a glob pattern to be defined. These glob patterns are defined relative to the cwd.
 
 For example, using `"mutate": [ "src/components/**/*.component.js" ]` will make sure only files ending with ".component.js" in the "src/components" directory are mutated.
 

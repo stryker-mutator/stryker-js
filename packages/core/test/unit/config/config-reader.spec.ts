@@ -60,28 +60,12 @@ describe(ConfigReader.name, () => {
     expect(testInjector.logger.warn).not.called;
   });
 
-  it('should load stryker.conf.json file by default', async () => {
-    // Arrange
-    const expectedOptions = { testRunner: 'my-runner' };
-    existsStub.withArgs('stryker.conf.json').resolves(true);
-    readFileStub.resolves(JSON.stringify(expectedOptions));
-
-    // Act
-    const result = await sut.readConfig({});
-
-    // Assert
-    sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
-    expect(result).deep.eq(expectedOptions);
-  });
-
-  ['js', 'mjs', 'cjs'].forEach((ext) => {
-    it(`should load stryker.conf.${ext} by default`, async () => {
+  ['stryker.conf', '.stryker.conf', 'stryker.config', '.stryker.config'].forEach((base) => {
+    it(`should load ${base}.json file by default`, async () => {
       // Arrange
-      const strykerConfFile = `stryker.conf.${ext}`;
       const expectedOptions = { testRunner: 'my-runner' };
-      existsStub.withArgs(strykerConfFile).resolves(true);
+      existsStub.withArgs(`${base}.json`).resolves(true);
       readFileStub.resolves(JSON.stringify(expectedOptions));
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
 
       // Act
       const result = await sut.readConfig({});
@@ -91,20 +75,22 @@ describe(ConfigReader.name, () => {
       expect(result).deep.eq(expectedOptions);
     });
 
-    it(`should load .stryker.conf.${ext} by default`, async () => {
-      // Arrange
-      const strykerConfFile = `.stryker.conf.${ext}`;
-      const expectedOptions = { testRunner: 'my-runner' };
-      existsStub.withArgs(strykerConfFile).resolves(true);
-      readFileStub.resolves(JSON.stringify(expectedOptions));
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
+    ['js', 'mjs', 'cjs'].forEach((ext) => {
+      it(`should load ${base}.${ext} by default`, async () => {
+        // Arrange
+        const strykerConfFile = `${base}.${ext}`;
+        const expectedOptions = { testRunner: 'my-runner' };
+        existsStub.withArgs(strykerConfFile).resolves(true);
+        readFileStub.resolves(JSON.stringify(expectedOptions));
+        importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
 
-      // Act
-      const result = await sut.readConfig({});
+        // Act
+        const result = await sut.readConfig({});
 
-      // Assert
-      sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
-      expect(result).deep.eq(expectedOptions);
+        // Assert
+        sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+        expect(result).deep.eq(expectedOptions);
+      });
     });
   });
 

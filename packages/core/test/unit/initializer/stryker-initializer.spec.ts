@@ -17,7 +17,7 @@ import { StrykerInitializer } from '../../../src/initializer/stryker-initializer
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
-import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 
@@ -485,23 +485,16 @@ describe(StrykerInitializer.name, () => {
     });
   });
 
-  SUPPORTED_CONFIG_FILE_EXTENSIONS.forEach((ext) => {
-    it(`should log an error and quit when \`stryker.conf${ext}\` file already exists`, async () => {
-      existsStub.withArgs(`stryker.conf${ext}`).resolves(true);
+  SUPPORTED_CONFIG_FILE_BASE_NAMES.forEach((base) => {
+    SUPPORTED_CONFIG_FILE_EXTENSIONS.forEach((ext) => {
+      it(`should log an error and quit when \`${base}${ext}\` file already exists`, async () => {
+        existsStub.withArgs(`${base}${ext}`).resolves(true);
 
-      await expect(sut.initialize()).to.be.rejected;
-      expect(testInjector.logger.error).calledWith(
-        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
-      );
-    });
-
-    it(`should log an error and quit when \`.stryker.conf${ext}\` file already exists`, async () => {
-      existsStub.withArgs(`.stryker.conf${ext}`).resolves(true);
-
-      await expect(sut.initialize()).to.be.rejected;
-      expect(testInjector.logger.error).calledWith(
-        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
-      );
+        await expect(sut.initialize()).to.be.rejected;
+        expect(testInjector.logger.error).calledWith(
+          `Stryker config file "${base}${ext}" already exists in the current directory. Please remove it and try again.`
+        );
+      });
     });
   });
 
