@@ -1,6 +1,6 @@
 import { determineHitLimitReached, DryRunResult, DryRunStatus, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { MutantCoverage } from '@stryker-mutator/api/core';
-import karma from 'karma';
+import type karma from 'karma';
 import { Task } from '@stryker-mutator/util';
 
 export interface KarmaSpec {

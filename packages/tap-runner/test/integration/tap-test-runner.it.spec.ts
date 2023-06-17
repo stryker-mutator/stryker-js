@@ -215,7 +215,7 @@ describe('tap-runner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('ava');
       await sandbox.init();
-      const avaLocation = path.resolve(sandbox.tmpDir, '..', '..', '..', 'node_modules', 'ava', 'entrypoints', 'cli.mjs');
+      const avaLocation = path.resolve(sandbox.tmpDir, '..', '..', '..', '..', '..', 'node_modules', 'ava', 'entrypoints', 'cli.mjs');
       options.disableBail = true;
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],
