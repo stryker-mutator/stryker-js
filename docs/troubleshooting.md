@@ -151,7 +151,7 @@ If that happens, add `"skipLibCheck": true` to your `tsconfig` file.
 
 When running Stryker mutations, you may get an error similar to the following one:
 ```
-16:58:25 (17452) INFO ConfigReader Using stryker.conf.json
+16:58:25 (17452) INFO ConfigReader Using stryker.config.json
 16:58:26 (17452) INFO InputFileResolver Found 2 of 2557 file(s) to be mutated.
 16:58:27 (17452) INFO Instrumenter Instrumented 2 source file(s) with 118 mutant(s)
 16:58:28 (17452) INFO ConcurrencyTokenProvider Creating 6 checker process(es) and 5 test runner process(es).
@@ -170,7 +170,7 @@ FATAL ERROR: Committing semi space failed. Allocation failed - JavaScript heap o
 
 **Solution**:
 
-To solve that, you need to limit the number of workers. In the example about, 11 workers were created in total (6 checker processes and 5 test runner processes). In order to solve this issue, you may try to set `--concurrency` setting in your stryker config. In case of the sample issue, adding `"concurrency": 4` to `stryker.conf.json` solved the problem.
+To solve that, you need to limit the number of workers. In the example about, 11 workers were created in total (6 checker processes and 5 test runner processes). In order to solve this issue, you may try to set `--concurrency` setting in your stryker config. In case of the sample issue, adding `"concurrency": 4` to `stryker.config.json` solved the problem.
 
 ### Mutating fails: Cannot use the decorators and decorators-legacy plugin together
 
@@ -253,7 +253,7 @@ It has to choose to either let this mutant go unchecked or throw an error and st
 
 **Solution**
 
-The solution is to include all files that are mutated in your project's tsconfig.json file. If you have multiple tsconfig.json files, you probably need to change the one you've configured in your stryker.conf.json. For example (for an angular project)
+The solution is to include all files that are mutated in your project's tsconfig.json file. If you have multiple tsconfig.json files, you probably need to change the one you've configured in your stryker.config.json. For example (for an angular project)
 
 ```diff
 {

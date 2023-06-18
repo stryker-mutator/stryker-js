@@ -29,7 +29,7 @@ npm i --save-dev @stryker-mutator/tap-runner
 
 ## Configuring
 
-You can configure the tap test runner in the `stryker.conf.json` (or `stryker.conf.js`) file.
+You can configure the tap test runner in the `stryker.config.json` (or `stryker.config.js`) file.
 
 ```json
 {

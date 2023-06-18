@@ -17,8 +17,8 @@ Follow this guide if you're using the if you're using the [unit-jest](https://cl
 
 1. Install the `@stryker-mutator/jest-runner` plugin: `npm i -D @stryker-mutator/jest-runner` or `yarn add --dev @stryker-mutator/jest-runner`.
 1. Install `crossenv` plugin(if you haven't already): `npm i -D cross-env` or `yarn add -D cross-env`.
-1. Create a "stryker.conf.json" file that looks like this:
-   ```
+1. Create a `stryker.config.json` file that looks like this:
+   ```json
    {
      "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
      "mutator": {
@@ -110,7 +110,7 @@ This needs to work first before progressing to the next step. You might need to 
 Once mocha runs successfully on the webpack output, you're ready to install and run Stryker:
 
 1. Install the `@stryker-mutator/mocha-runner` plugin: `npm i -D @stryker-mutator/mocha-runner` or `yarn add --dev @stryker-mutator/mocha-runner`.
-2. Create your `stryker.conf.json` file:
+2. Create your `stryker.config.json` file:
    ```json
    {
      "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",

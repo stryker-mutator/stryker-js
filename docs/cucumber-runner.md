@@ -29,7 +29,7 @@ You can find the [`peerDependencies` in @stryker-mutator/cucumber-runner's packa
 
 ## Configuring
 
-You can configure the cucumber test runner in the `stryker.conf.json` (or `stryker.conf.js`) file.
+You can configure the cucumber test runner in the `stryker.config.json` (or `stryker.config.js`) file.
 
 ```json
 {

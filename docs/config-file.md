@@ -11,7 +11,7 @@ See [configuration](./configuration.md) for a list of available options.
 
 ## Setup
 
-With a `stryker.conf.json`:
+With a `stryker.config.json`:
 
 ```json
 {
@@ -20,7 +20,7 @@ With a `stryker.conf.json`:
 }
 ```
 
-Or as `stryker.conf.js`:
+Or as `stryker.config.js`:
 
 ```js
 // @ts-check
@@ -59,8 +59,8 @@ You can also use a different configuration file with a second argument to the `r
 ```shell
 # Use default config file names in the current working directory
 npx stryker run
-# Use "alternative-stryker.conf.json"
-npx stryker run alternative-stryker.conf.json
+# Use "alternative-stryker.config.json"
+npx stryker run alternative-stryker.config.json
 ```
 
 ## Glob patterns
@@ -73,7 +73,7 @@ We suggest using [https://globster.xyz/](https://globster.xyz/) when auditing mo
 
 ## Example
 
-The following is an example `stryker.conf.json` file. It specifies running mocha tests with the mocha test runner.
+The following is an example `stryker.config.json` file. It specifies running mocha tests with the mocha test runner.
 
 ```json
 {

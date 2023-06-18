@@ -25,7 +25,7 @@ uses *your very own karma* version. It can also work with `@angular/cli`, see [C
 
 ## Configuring
 
-You can configure the `@stryker-mutator/karma-runner` using the `stryker.conf.js` (or `stryker.conf.json`) config file.
+You can configure the `@stryker-mutator/karma-runner` using the `stryker.config.json` (or `stryker.config.js`) config file.
 
 ```json
 {
@@ -54,7 +54,7 @@ Specify which kind of project you're using. This determines which command is use
 Default: `undefined`
 
 Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded.
-Options specified directly in your stryker.conf.js file using `karma.config` will overrule options in your karma.conf.js file.
+Options specified directly in your stryker.config.js file using `karma.config` will overrule options in your karma.conf.js file.
 
 ### `karma.config` [`object`]
 
@@ -107,7 +107,7 @@ Please follow the [angular guide](./guides/angular.md).
 
 As Stryker runs karma in its own process, its logging output will be consumed by Stryker.
 
-To see all logging from karma, set the log level to `trace` in `stryker.conf.json`.
+To see all logging from karma, set the log level to `trace` in `stryker.config.json`.
 
 ```json
 {
