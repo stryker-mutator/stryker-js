@@ -10,6 +10,7 @@ import {
   DryRunStatus,
   toMutantRunResult,
   determineHitLimitReached,
+  TestStatus,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
@@ -111,7 +112,19 @@ export class VitestTestRunner implements TestRunner {
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
-    const testResults = tests.map((test) => convertTestToTestResult(test));
+    let failure = false;
+    const testResults = tests.map((test) => {
+      const testResult = convertTestToTestResult(test);
+      failure ||= testResult.status === TestStatus.Failed;
+      return testResult;
+    });
+    if (!failure && this.ctx!.state.errorsSet.size > 0) {
+      const errorText = [...this.ctx!.state.errorsSet].map((val) => JSON.stringify(val)).join('\n');
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: `An error occurred outside of a test run, please be sure to properly await your promises! ${errorText}`,
+      };
+    }
     return { tests: testResults, status: DryRunStatus.Complete };
   }
 
