@@ -42,7 +42,7 @@
     "mutation-testing-report-schema": "2.0.1",
     "rxjs": "7.8.1",
     "semver": "7.5.2",
-    "tap": "16.3.6",
+    "tap": "16.3.7",
     "ts-jest": "29.1.0",
     "ts-loader": "9.4.3",
     "ts-node": "10.9.1",
