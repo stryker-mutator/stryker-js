@@ -19,7 +19,6 @@ Keep in mind that you may have to change some configuration settings such as pat
    {
      "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
      "testRunner": "vitest",
-     "concurrency": 1,
      "coverageAnalysis": "perTest",
      "plugins": ["@stryker-mutator/vitest-runner"]
    }
