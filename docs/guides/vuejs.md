@@ -17,7 +17,7 @@ Keep in mind that you may have to change some configuration settings such as pat
 1. Create a "stryker.conf.json" file that looks like this:
    ```json
    {
-     "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+     "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
      "testRunner": "vitest",
      "plugins": ["@stryker-mutator/vitest-runner"]
    }
