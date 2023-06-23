@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { DryRunStatus } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus, KilledMutantRunResult } from '@stryker-mutator/api/test-runner';
 
 import { normalizeFileName } from '@stryker-mutator/util';
 
@@ -87,12 +87,13 @@ describe('tap-runner integration', () => {
 
     it('should be able to run mutantRun that gets killed', async () => {
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
+      const testFiles = ['tests/error.spec.js'];
+      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true, testFilter: testFiles }));
 
       // Assert
       assertions.expectKilled(run);
       // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
-      expect([...run.killedBy].sort()).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
+      expect([...run.killedBy].sort()).deep.eq(['tests/error.spec.js']);
       expect(run.failureMessage).eq('Concat two strings: An error occurred');
     });
 
@@ -114,30 +115,55 @@ describe('tap-runner integration', () => {
       assertions.expectSurvived(run);
     });
 
-    [
-      { disableBail: false, forceBail: false, shouldBail: false },
-      { disableBail: true, forceBail: false, shouldBail: false },
-      { disableBail: true, forceBail: true, shouldBail: false },
-      { disableBail: false, forceBail: true, shouldBail: os.platform() === 'win32' ? false : true },
-    ].forEach(({ disableBail, forceBail, shouldBail }) => {
-      it(`should ${shouldBail ? 'bail' : 'not bail'} out process when disableBail is ${disableBail} and forceBail is ${forceBail}`, async () => {
-        options.tap.forceBail = forceBail;
-        const testFiles = ['tests/bail.spec.js'];
-        const startTime = Date.now();
+    const bailedFailureMessage = 'Failing test: This test will fail';
+    const notBailedFailureMessage = 'Failing test: This test will fail, This long tests could be bailed: 3hours is not 3hours';
+    it('should not bail out process when disableBail is false and forceBail is false', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(false, false);
 
-        // Act
-        const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: disableBail }));
-        const timeDiff = Date.now() - startTime;
-
-        // Assert
-        assertions.expectKilled(run);
-        if (shouldBail) {
-          expect(timeDiff).lte(2000);
-        } else {
-          expect(timeDiff).gte(2000);
-        }
-      });
+      // Assert
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(1);
     });
+
+    it('should not bail out process when disableBail is false and forceBail is true', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(true, true);
+
+      // Assert
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(2);
+    });
+
+    it('should not bail out process when disableBail is true and forceBail is false', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(true, false);
+
+      // Assert
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(2);
+    });
+
+    it('should bail out process when disableBail is false and forceBail is true (on not windows platforms)', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(false, true);
+      const expected = os.platform() === 'win32' ? notBailedFailureMessage : bailedFailureMessage;
+
+      // Assert
+      expect(run.failureMessage).eq(expected);
+      expect(run.killedBy).lengthOf(1);
+    });
+
+    async function arrangeBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
+      options.tap.forceBail = forceBail;
+      const testFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
+
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: disableBail }));
+
+      assertions.expectKilled(run);
+      return run;
+    }
   });
 
   describe('Running on a bogus project', () => {
