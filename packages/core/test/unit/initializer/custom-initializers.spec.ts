@@ -174,30 +174,17 @@ describe('CustomInitializers', () => {
       sut = testInjector.injector.injectClass(VueJsInitializer);
       inquirerPrompt.resolves({
         script: 'typescript',
-        testRunner: 'jest',
+        testRunner: 'vitest',
       });
     });
 
-    it('should have the name "vue-cli"', () => {
-      expect(sut.name).to.eq('vue-cli');
+    it('should have the name "vue"', () => {
+      expect(sut.name).to.eq('vue');
     });
 
-    it('should install @stryker-mutator/mocha-runner when mocha is chosen', async () => {
-      inquirerPrompt.resolves({
-        script: 'typescript',
-        testRunner: 'mocha',
-      });
+    it('should install @stryker-mutator/vitest-runner when jest is chosen', async () => {
       const config = await sut.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/mocha-runner');
-    });
-
-    it('should install @stryker-mutator/jest-runner when jest is chosen', async () => {
-      inquirerPrompt.resolves({
-        script: 'typescript',
-        testRunner: 'jest',
-      });
-      const config = await sut.createConfig();
-      expect(config.dependencies).to.include('@stryker-mutator/jest-runner');
+      expect(config.dependencies).to.include('@stryker-mutator/vitest-runner');
     });
   });
 });
