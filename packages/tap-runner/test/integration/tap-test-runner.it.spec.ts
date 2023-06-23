@@ -86,7 +86,7 @@ describe('tap-runner integration', () => {
       expect(run.nrOfTests).eq(5);
     });
 
-    it('should be to run mutantRun that gets killed', async () => {
+    it('should be able to run mutantRun that gets killed', async () => {
       // Act
       const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
 
@@ -199,7 +199,7 @@ describe('tap-runner integration', () => {
         'entrypoints',
         'cli.mjs'
       );
-      options.disableBail = true;
+      options.forceBail = false;
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],
       });
