@@ -144,14 +144,43 @@ describe('tap-runner integration', () => {
       expect(run.killedBy).lengthOf(2);
     });
 
-    it('should bail out process when disableBail is false and forceBail is true (on not windows platforms)', async () => {
+    it('should bail out process when disableBail is false and forceBail is true', async () => {
       // Arrange/Act
       const run = await arrangeBail(false, true);
-      const expected = os.platform() === 'win32' ? notBailedFailureMessage : bailedFailureMessage;
 
       // Assert
-      expect(run.failureMessage).eq(expected);
+      expect(run.failureMessage).eq(bailedFailureMessage);
       expect(run.killedBy).lengthOf(1);
+    });
+
+    it('should return result faster when bailing (on unix)', async function () {
+      if (os.platform() === 'win32') {
+        this.skip();
+      }
+
+      // Arrange/Act
+      const start = new Date();
+      await arrangeBail(false, true);
+      const end = new Date();
+      const timeDiff = end.getTime() - start.getTime();
+
+      // Assert
+      expect(timeDiff).lte(500);
+    });
+
+    it('should return result slow when not bailing (on unix)', async function () {
+      if (os.platform() === 'win32') {
+        this.skip();
+      }
+
+      // Arrange/Act
+      const start = new Date();
+      await arrangeBail(false, false);
+      const end = new Date();
+      const timeDiff = end.getTime() - start.getTime();
+
+      // Assert
+      expect(timeDiff).gte(500);
     });
 
     async function arrangeBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
