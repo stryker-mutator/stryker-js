@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { AggregatedResult } from '@jest/test-result';
+import type { AggregatedResult } from '@jest/test-result';
 
 /**
  * Verifies that coverage is reported for all files and, if not, will return an error message

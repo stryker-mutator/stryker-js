@@ -12,6 +12,7 @@ module.exports = {
   rules: {
     ...rules,
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'import/no-extraneous-dependencies': 'off',
   },
   overrides,
 };

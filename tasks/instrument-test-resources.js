@@ -86,6 +86,12 @@ async function main() {
     },
     '__stryker2__'
   );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/async-failure/src/add.orig.ts': './packages/vitest-runner/testResources/async-failure/src/add.ts',
+    },
+    '__stryker2__'
+  );
 }
 
 /**

@@ -58,3 +58,18 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
   }
   return tapResult;
 }
+
+export function buildArguments(args: string[], hookFile: string, testFile: string): string[] {
+  const hookFilePlaceholder = '{{hookFile}}';
+  const testFilePlaceholder = '{{testFile}}';
+
+  if (!args.some((arg) => arg.includes(hookFilePlaceholder))) {
+    args = ['-r', hookFilePlaceholder, ...args];
+  }
+
+  if (!args.some((arg) => arg.includes(testFilePlaceholder))) {
+    args = [...args, testFilePlaceholder];
+  }
+
+  return args.map((arg) => arg.replaceAll(testFilePlaceholder, testFile).replaceAll(hookFilePlaceholder, hookFile));
+}
