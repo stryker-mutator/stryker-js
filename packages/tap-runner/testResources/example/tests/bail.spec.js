@@ -11,6 +11,6 @@ tap.test('This long tests should be bailed', ({ equal, end }) => {
   setTimeout(() => {
     equal(concat('3', 'hours'), '3hours', 'Adding 10 and 5 equal to 15')
     end();
-  }, 4000);
+  }, 2000);
 });
 

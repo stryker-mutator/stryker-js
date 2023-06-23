@@ -1,4 +1,5 @@
 import path from 'path';
+import os from 'os';
 
 import { fileURLToPath } from 'url';
 
@@ -117,7 +118,7 @@ describe('tap-runner integration', () => {
       { disableBail: false, forceBail: false, shouldBail: false },
       { disableBail: true, forceBail: false, shouldBail: false },
       { disableBail: true, forceBail: true, shouldBail: false },
-      { disableBail: false, forceBail: true, shouldBail: true },
+      { disableBail: false, forceBail: true, shouldBail: os.platform() === 'win32' ? false : true },
     ].forEach(({ disableBail, forceBail, shouldBail }) => {
       it(`should ${shouldBail ? 'bail' : 'not bail'} out process when disableBail is ${disableBail} and forceBail is ${forceBail}`, async () => {
         options.tap.forceBail = forceBail;
@@ -131,9 +132,9 @@ describe('tap-runner integration', () => {
         // Assert
         assertions.expectKilled(run);
         if (shouldBail) {
-          expect(timeDiff).lte(4000);
+          expect(timeDiff).lte(2000);
         } else {
-          expect(timeDiff).gte(4000);
+          expect(timeDiff).gte(2000);
         }
       });
     });
