@@ -1,12 +1,11 @@
-import os from 'os';
-
 import path from 'path';
+import os from 'os';
 
 import { fileURLToPath } from 'url';
 
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { DryRunStatus } from '@stryker-mutator/api/test-runner';
+import { DryRunStatus, KilledMutantRunResult } from '@stryker-mutator/api/test-runner';
 
 import { normalizeFileName } from '@stryker-mutator/util';
 
@@ -86,14 +85,15 @@ describe('tap-runner integration', () => {
       expect(run.nrOfTests).eq(5);
     });
 
-    it('should be to run mutantRun that gets killed', async () => {
+    it('should be able to run mutantRun that gets killed', async () => {
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
+      const testFiles = ['tests/error.spec.js'];
+      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true, testFilter: testFiles }));
 
       // Assert
       assertions.expectKilled(run);
       // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
-      expect([...run.killedBy].sort()).deep.eq(['tests/bail.spec.js', 'tests/error.spec.js']);
+      expect([...run.killedBy].sort()).deep.eq(['tests/error.spec.js']);
       expect(run.failureMessage).eq('Concat two strings: An error occurred');
     });
 
@@ -115,59 +115,84 @@ describe('tap-runner integration', () => {
       assertions.expectSurvived(run);
     });
 
-    it('should bail out when disableBail is false', async () => {
-      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
-
-      // Assert
-      assertions.expectKilled(run);
-      expect(run.nrOfTests).eq(1);
-      expect(run.killedBy[0]).eq('tests/bail.spec.js');
-    });
-
-    it('should not bail out when disableBail is true', async () => {
-      const testFiles = ['tests/bail.spec.js', 'tests/formatter.spec.js'];
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
+    const bailedFailureMessage = 'Failing test: This test will fail';
+    const notBailedFailureMessage = 'Failing test: This test will fail, This long tests could be bailed: 3hours is not 3hours';
+    it('should not bail out process when disableBail is false and forceBail is false', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(false, false);
 
       // Assert
-      assertions.expectKilled(run);
-      expect(run.nrOfTests).eq(testFiles.length);
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(1);
     });
 
-    it('should bail out current process when disableBail is false and os type is not windows', async function () {
+    it('should not bail out process when disableBail is false and forceBail is true', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(true, true);
+
+      // Assert
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(2);
+    });
+
+    it('should not bail out process when disableBail is true and forceBail is false', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(true, false);
+
+      // Assert
+      expect(run.failureMessage).eq(notBailedFailureMessage);
+      expect(run.killedBy).lengthOf(2);
+    });
+
+    it('should bail out process when disableBail is false and forceBail is true', async () => {
+      // Arrange/Act
+      const run = await arrangeBail(false, true);
+
+      // Assert
+      expect(run.failureMessage).eq(bailedFailureMessage);
+      expect(run.killedBy).lengthOf(1);
+    });
+
+    it('should return result faster when bailing (on unix)', async function () {
       if (os.platform() === 'win32') {
         this.skip();
-      } else {
-        const testFiles = ['tests/bail.spec.js'];
-        const startTime = Date.now();
-
-        // Act
-        const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: false }));
-        const endTime = Date.now();
-
-        // Assert
-        assertions.expectKilled(run);
-        expect(run.failureMessage).contains('This test will fail');
-        expect(endTime - startTime).at.most(4000);
       }
-    });
 
-    it('should not bail out current process when disableBail is true', async () => {
-      const testFiles = ['tests/bail.spec.js'];
-      const startTime = Date.now();
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
-      const endTime = Date.now();
+      // Arrange/Act
+      const start = new Date();
+      await arrangeBail(false, true);
+      const end = new Date();
+      const timeDiff = end.getTime() - start.getTime();
 
       // Assert
-      assertions.expectKilled(run);
-      expect(endTime - startTime).gte(4000);
+      expect(timeDiff).lte(500);
     });
+
+    it('should return result slow when not bailing (on unix)', async function () {
+      if (os.platform() === 'win32') {
+        this.skip();
+      }
+
+      // Arrange/Act
+      const start = new Date();
+      await arrangeBail(false, false);
+      const end = new Date();
+      const timeDiff = end.getTime() - start.getTime();
+
+      // Assert
+      expect(timeDiff).gte(500);
+    });
+
+    async function arrangeBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
+      options.tap.forceBail = forceBail;
+      const testFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
+
+      // Act
+      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: disableBail }));
+
+      assertions.expectKilled(run);
+      return run;
+    }
   });
 
   describe('Running on a bogus project', () => {
@@ -228,7 +253,7 @@ describe('tap-runner integration', () => {
         'entrypoints',
         'cli.mjs'
       );
-      options.disableBail = true;
+      options.forceBail = false;
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],
       });

@@ -137,7 +137,7 @@ export class TapTestRunner implements TestRunner {
       this.log.debug(`Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`);
     }
     const tapProcess = childProcess.spawn('node', args, { env });
-    const result = await captureTapResult(tapProcess, testOptions.disableBail);
+    const result = await captureTapResult(tapProcess, !testOptions.disableBail && this.options.tap.forceBail);
     const fileName = tempTapOutputFileName(tapProcess.pid);
     const fileContent = await fs.readFile(fileName, 'utf-8');
     await fs.rm(fileName);
