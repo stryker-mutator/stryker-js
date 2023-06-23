@@ -19,11 +19,9 @@ Keep in mind that you may have to change some configuration settings such as pat
    {
      "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
      "testRunner": "vitest",
-     "coverageAnalysis": "perTest",
      "plugins": ["@stryker-mutator/vitest-runner"]
    }
    ```
-1. Add `stryker-tmp` to your `.gitignore` file.
 1. Add this script to your package.json:
    ```json
    {

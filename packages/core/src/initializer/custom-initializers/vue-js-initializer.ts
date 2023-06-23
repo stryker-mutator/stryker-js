@@ -13,9 +13,6 @@ export class VueJsInitializer implements CustomInitializer {
 
   private readonly vitestConf: PartialStrykerOptions = {
     testRunner: 'vitest',
-    mutator: {
-      plugins: [],
-    },
     reporters: ['progress', 'clear-text', 'html'],
   };
 
