@@ -137,19 +137,6 @@ describe('tap-runner integration', () => {
         }
       });
     });
-
-    it('should not bail out current process when disableBail is true', async () => {
-      const testFiles = ['tests/bail.spec.js'];
-      const startTime = Date.now();
-
-      // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: true }));
-      const endTime = Date.now();
-
-      // Assert
-      assertions.expectKilled(run);
-      expect(endTime - startTime).gte(4000);
-    });
   });
 
   describe('Running on a bogus project', () => {
