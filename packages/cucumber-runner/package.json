@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=8.0.0",
-    "@stryker-mutator/core": "~7.0.0"
+    "@stryker-mutator/core": "~7.1.0"
   },
   "dependencies": {
     "@cucumber/messages": "^22.0.0",
