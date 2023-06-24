@@ -41,6 +41,8 @@ Specify a ['vitest.config.js' file](https://vitest.dev/config/) to be loaded. By
 
 ### `vitest.dir` [`string` | `undefined`]
 
+_Since v7.1_
+
 Default: `undefined`
 
 Configure the `--dir <path>` command line option. See https://vitest.dev/guide/cli.html#options.
