@@ -27,7 +27,8 @@ You can configure the `@stryker-mutator/vitest-runner` using the `stryker.conf.j
 {
   "testRunner": "vitest",
   "vitest": {
-    "configFile": "vitest.config.js"
+    "configFile": "vitest.config.js",
+    "dir": "packages"
   }
 }
 ```
@@ -37,6 +38,12 @@ You can configure the `@stryker-mutator/vitest-runner` using the `stryker.conf.j
 Default: `undefined`
 
 Specify a ['vitest.config.js' file](https://vitest.dev/config/) to be loaded. By default vitest will look for a `vitest.config.js` (or `.ts`) file in the root of your project.
+
+### `vitest.dir` [`string` | `undefined`]
+
+Default: `undefined`
+
+Configure the `--dir <path>` command line option. See https://vitest.dev/guide/cli.html#options.
 
 ## Non overridable options
 

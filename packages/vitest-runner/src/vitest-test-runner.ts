@@ -45,6 +45,7 @@ export class VitestTestRunner implements TestRunner {
       coverage: { enabled: false },
       singleThread: true,
       watch: false,
+      dir: this.options.vitest.dir,
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
