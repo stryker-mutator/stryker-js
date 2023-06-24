@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
+
+### Bug Fixes
+
+- **vitest:** allow `dispose` without `init` ([#4284](https://github.com/stryker-mutator/stryker-js/issues/4284)) ([55464e0](https://github.com/stryker-mutator/stryker-js/commit/55464e0ec975667899847d9e8c08c42610cde014))
+- **vitest:** harden against forgotten `await` ([#4319](https://github.com/stryker-mutator/stryker-js/issues/4319)) ([441b645](https://github.com/stryker-mutator/stryker-js/commit/441b6451bf72a7d3ca8deb1e6daa15f3846b1d59))
+
+### Features
+
+- **vitest-runner:** add `"dir"` config option ([#4329](https://github.com/stryker-mutator/stryker-js/issues/4329)) ([eb06075](https://github.com/stryker-mutator/stryker-js/commit/eb06075c27b05a64b76156bd3a67d1e7cee6959b))
+- **vitest:** set NODE_ENV to test ([#4290](https://github.com/stryker-mutator/stryker-js/issues/4290)) ([40033f6](https://github.com/stryker-mutator/stryker-js/commit/40033f62e23c00c079cc58c1e6adadf57536b8df))
+
 ## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
 
 **Note:** Version bump only for package @stryker-mutator/vitest-runner

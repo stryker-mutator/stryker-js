@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
+
+### Bug Fixes
+
+- **deps:** update dependency glob to v10.3.0 ([#4321](https://github.com/stryker-mutator/stryker-js/issues/4321)) ([72615b6](https://github.com/stryker-mutator/stryker-js/commit/72615b66517ab053df040a6cfbecc20da478e8b6))
+
+### Features
+
+- **tap-runner:** add forceBail configuration option ([#4326](https://github.com/stryker-mutator/stryker-js/issues/4326)) ([55a5357](https://github.com/stryker-mutator/stryker-js/commit/55a5357b4f6f1973123eed73fe0465cf3abd3d14))
+- **tap-runner:** allow custom node arguments ([#4283](https://github.com/stryker-mutator/stryker-js/issues/4283)) ([5ef0edd](https://github.com/stryker-mutator/stryker-js/commit/5ef0edd2ccf3d409e8c5d0747edd09071de43f09))
+
 ## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
 
 ### Bug Fixes

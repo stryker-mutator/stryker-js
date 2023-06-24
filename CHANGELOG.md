@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
+
+### Bug Fixes
+
+- **deps:** update dependency commander to v11 ([#4304](https://github.com/stryker-mutator/stryker-js/issues/4304)) ([f9d5673](https://github.com/stryker-mutator/stryker-js/commit/f9d567383584929da43b8dec99d4ac9b2762cb11))
+- **deps:** update dependency glob to v10.3.0 ([#4321](https://github.com/stryker-mutator/stryker-js/issues/4321)) ([72615b6](https://github.com/stryker-mutator/stryker-js/commit/72615b66517ab053df040a6cfbecc20da478e8b6))
+- **vitest:** allow `dispose` without `init` ([#4284](https://github.com/stryker-mutator/stryker-js/issues/4284)) ([55464e0](https://github.com/stryker-mutator/stryker-js/commit/55464e0ec975667899847d9e8c08c42610cde014))
+- **vitest:** harden against forgotten `await` ([#4319](https://github.com/stryker-mutator/stryker-js/issues/4319)) ([441b645](https://github.com/stryker-mutator/stryker-js/commit/441b6451bf72a7d3ca8deb1e6daa15f3846b1d59))
+
+### Features
+
+- **init:** use registry.npmjs.com for queries ([#4298](https://github.com/stryker-mutator/stryker-js/issues/4298)) ([a952edf](https://github.com/stryker-mutator/stryker-js/commit/a952edf7795aecc8119215d1a8662c61b917dc0b))
+- **init:** use vitest runner for vue projects ([#4327](https://github.com/stryker-mutator/stryker-js/issues/4327)) ([ab7313d](https://github.com/stryker-mutator/stryker-js/commit/ab7313d113b8144e25401e33c3f29b1b82e5db45))
+- **tap-runner:** add forceBail configuration option ([#4326](https://github.com/stryker-mutator/stryker-js/issues/4326)) ([55a5357](https://github.com/stryker-mutator/stryker-js/commit/55a5357b4f6f1973123eed73fe0465cf3abd3d14))
+- **tap-runner:** allow custom node arguments ([#4283](https://github.com/stryker-mutator/stryker-js/issues/4283)) ([5ef0edd](https://github.com/stryker-mutator/stryker-js/commit/5ef0edd2ccf3d409e8c5d0747edd09071de43f09))
+- **vitest-runner:** add `"dir"` config option ([#4329](https://github.com/stryker-mutator/stryker-js/issues/4329)) ([eb06075](https://github.com/stryker-mutator/stryker-js/commit/eb06075c27b05a64b76156bd3a67d1e7cee6959b))
+- **vitest:** set NODE_ENV to test ([#4290](https://github.com/stryker-mutator/stryker-js/issues/4290)) ([40033f6](https://github.com/stryker-mutator/stryker-js/commit/40033f62e23c00c079cc58c1e6adadf57536b8df))
+
 ## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
 
 ### Bug Fixes
