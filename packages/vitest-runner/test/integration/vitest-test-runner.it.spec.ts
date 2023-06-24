@@ -356,4 +356,26 @@ describe('VitestRunner integration', () => {
       assertions.expectSurvived(runResult);
     });
   });
+
+  // See https://github.com/stryker-mutator/stryker-js/issues/4257
+  describe('using a project using "--dir <path>"', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('deep-project');
+      await sandbox.init();
+    });
+
+    it('should be able to report an ErrorResult', async () => {
+      options.vitest.dir = 'packages';
+      await sut.init();
+      const runResult = await sut.dryRun();
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).lengthOf(1);
+      assertions.expectTestResults(runResult, [
+        {
+          id: 'packages/app/src/math.spec.js#math should be 5 for add(2, 3)',
+          status: TestStatus.Success,
+        },
+      ]);
+    });
+  });
 });
