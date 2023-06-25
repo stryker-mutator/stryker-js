@@ -272,8 +272,8 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithMatch(sinon.match('[Survived] Math'));
       });
 
-      it('should not report a Survived mutant to stdout when reportAllMutants is not true', async () => {
-        testInjector.options.clearTextReporter.reportAllMutants = false;
+      it('should not report a Survived mutant to stdout when reportMutants is not true', async () => {
+        testInjector.options.clearTextReporter.reportMutants = false;
         mutant.status = MutantStatus.Survived;
         act(report);
         expect(stdoutStub).not.calledWithMatch(sinon.match('[Survived] Math'));
@@ -386,8 +386,8 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithMatch(sinon.match('  ✘ quux should corge (covered 0)'));
       });
 
-      it('should not report a list of tests if file names are unknown when reportAllTests is not true', () => {
-        testInjector.options.clearTextReporter.reportAllTests = false;
+      it('should not report a list of tests if file names are unknown when reportTests is not true', () => {
+        testInjector.options.clearTextReporter.reportTests = false;
         const report = factory.mutationTestReportSchemaMutationTestResult({
           files: {
             'foo.js': factory.mutationTestReportSchemaFileResult({

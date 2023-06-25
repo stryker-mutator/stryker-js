@@ -39,18 +39,18 @@ export class ClearTextReporter implements Reporter {
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
     this.writeLine();
 
-    if (this.options.clearTextReporter.reportAllTests) {
-      this.reportAllTests(metrics);
+    if (this.options.clearTextReporter.reportTests) {
+      this.reportTests(metrics);
     }
-    if (this.options.clearTextReporter.reportAllMutants) {
-      this.reportAllMutants(metrics);
+    if (this.options.clearTextReporter.reportMutants) {
+      this.reportMutants(metrics);
     }
     if (this.options.clearTextReporter.reportScoreTable) {
       this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
     }
   }
 
-  private reportAllTests(metrics: MutationTestMetricsResult) {
+  private reportTests(metrics: MutationTestMetricsResult) {
     function indent(depth: number) {
       return new Array(depth).fill('  ').join('');
     }
@@ -87,7 +87,7 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  private reportAllMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
+  private reportMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
     this.writeLine();
     let totalTests = 0;
 

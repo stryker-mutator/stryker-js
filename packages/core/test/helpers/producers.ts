@@ -46,8 +46,8 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   allowEmojis: false,
   logTests: true,
   maxTestsToLog: 3,
-  reportAllTests: true,
-  reportAllMutants: true,
+  reportTests: true,
+  reportMutants: true,
   reportScoreTable: true,
 }));
 

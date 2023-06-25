@@ -46,8 +46,8 @@ describe(OptionsValidator.name, () => {
           allowEmojis: false,
           logTests: true,
           maxTestsToLog: 3,
-          reportAllTests: true,
-          reportAllMutants: true,
+          reportTests: true,
+          reportMutants: true,
           reportScoreTable: true,
         },
         commandRunner: {
