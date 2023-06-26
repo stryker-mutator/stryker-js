@@ -279,6 +279,13 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).not.calledWithMatch(sinon.match('[Survived] Math'));
       });
 
+      it('should not report a NoCoverage mutant to stdout when reportMutants is not true', async () => {
+        testInjector.options.clearTextReporter.reportMutants = false;
+        mutant.status = MutantStatus.NoCoverage;
+        act(report);
+        expect(stdoutStub).not.calledWithMatch(sinon.match('[NoCoverage] Math'));
+      });
+
       it('should report a Timeout mutant to stdout', async () => {
         mutant.status = MutantStatus.Timeout;
         act(report);
