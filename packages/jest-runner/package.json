@@ -78,7 +78,7 @@
     "@stryker-mutator/api": "7.1.0",
     "@stryker-mutator/util": "7.1.0",
     "semver": "~7.5.0",
-    "tslib": "~2.5.0"
+    "tslib": "~2.6.0"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "perTest"
