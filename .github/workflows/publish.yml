@@ -8,7 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-
+    permissions:
+      id-token: write # to enable use of OIDC for npm provenance
     steps:
     - uses: actions/checkout@v3
     - name: Set NPM Env
