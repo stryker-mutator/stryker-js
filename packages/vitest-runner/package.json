@@ -43,7 +43,7 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.1.0",
-    "@types/node": "18.16.18",
+    "@types/node": "18.16.19",
     "ts-node": "10.9.1",
     "vitest": "0.32.4"
   },
