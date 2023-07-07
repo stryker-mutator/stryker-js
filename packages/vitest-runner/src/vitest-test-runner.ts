@@ -43,7 +43,8 @@ export class VitestTestRunner implements TestRunner {
       config: this.options.vitest?.configFile,
       threads: true,
       coverage: { enabled: false },
-      singleThread: true,
+      singleThread: false,
+      maxConcurrency: 1,
       watch: false,
       dir: this.options.vitest.dir,
       bail: this.options.disableBail ? 0 : 1,
@@ -165,7 +166,7 @@ export class VitestTestRunner implements TestRunner {
 
   private async readMutantCoverage(): Promise<MutantCoverage> {
     // Read coverage from all projects
-    const coverages: MutantCoverage[] = [...new Map(this.ctx!.state.getFiles().map((file) => [file.projectName, file] as const)).entries()]
+    const coverages: MutantCoverage[] = [...new Map(this.ctx!.state.getFiles().map((file) => [file.name, file] as const)).entries()]
       .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
       .filter(notEmpty);
 
