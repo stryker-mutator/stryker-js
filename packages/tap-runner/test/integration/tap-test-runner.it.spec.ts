@@ -261,12 +261,21 @@ describe('tap-runner integration', () => {
       await sut.init();
     });
 
-    it('should be able to run', async function () {
+    it('should be able to run', async () => {
       // Act
       const run = await sut.dryRun(factory.dryRunOptions());
 
       // Assert
       assertions.expectCompleted(run);
+    });
+
+    it('should return a valid timeSpentMs', async () => {
+      // Act
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // Assert
+      assertions.expectCompleted(run);
+      expect(run.tests[0].timeSpentMs).to.be.greaterThan(0);
     });
   });
 });
