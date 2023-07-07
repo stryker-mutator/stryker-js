@@ -136,8 +136,11 @@ export class TapTestRunner implements TestRunner {
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`);
     }
+    const now = () => new Date().getTime();
+    const before = now();
     const tapProcess = childProcess.spawn('node', args, { env });
     const result = await captureTapResult(tapProcess, !testOptions.disableBail && this.options.tap.forceBail);
+    const timeSpentMs = now() - before;
     const fileName = tempTapOutputFileName(tapProcess.pid);
     const fileContent = await fs.readFile(fileName, 'utf-8');
     await fs.rm(fileName);
@@ -146,14 +149,14 @@ export class TapTestRunner implements TestRunner {
     if (hitLimitReached) {
       throw new HitLimitError(hitLimitReached);
     }
-    return { testResult: this.tapResultToTestResult(testFile, result), coverage: file.mutantCoverage };
+    return { testResult: this.tapResultToTestResult(testFile, result, timeSpentMs), coverage: file.mutantCoverage };
   }
 
-  private tapResultToTestResult(fileName: string, { result, failedTests }: TapResult): TestResult {
+  private tapResultToTestResult(fileName: string, { result, failedTests }: TapResult, timeSpentMs: number): TestResult {
     const generic: BaseTestResult = {
       id: fileName,
       name: fileName,
-      timeSpentMs: result.time ?? 0,
+      timeSpentMs: result.time ?? timeSpentMs,
       fileName: fileName,
       startPosition: undefined,
     };
