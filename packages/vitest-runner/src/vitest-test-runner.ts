@@ -166,7 +166,9 @@ export class VitestTestRunner implements TestRunner {
 
   private async readMutantCoverage(): Promise<MutantCoverage> {
     // Read coverage from all projects
-    const coverages: MutantCoverage[] = [...new Map(this.ctx!.state.getFiles().map((file) => [file.name, file] as const)).entries()]
+    const coverages: MutantCoverage[] = [
+      ...new Map(this.ctx!.state.getFiles().map((file) => [`${file.projectName}-${file.name}`, file] as const)).entries(),
+    ]
       .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
       .filter(notEmpty);
 
