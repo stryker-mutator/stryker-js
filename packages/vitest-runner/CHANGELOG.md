@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
+
+### Bug Fixes
+
+- **deps:** update dependency tslib to v2.6.0 ([#4335](https://github.com/stryker-mutator/stryker-js/issues/4335)) ([e4c00ef](https://github.com/stryker-mutator/stryker-js/commit/e4c00ef9cddcc72b1bf0df5f10893933caaed7ef))
+
+### Features
+
+- **vitest-runner:** Support JSDOM ([#4359](https://github.com/stryker-mutator/stryker-js/issues/4359)) ([cef1689](https://github.com/stryker-mutator/stryker-js/commit/cef1689c173f161622f8de2fbaa34e4abecc8bd4))
+
 # [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
 
 ### Bug Fixes

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
+
+### Bug Fixes
+
+- **deps:** update dependency chalk to v5 ([#4343](https://github.com/stryker-mutator/stryker-js/issues/4343)) ([ed265e5](https://github.com/stryker-mutator/stryker-js/commit/ed265e55d14ecefea876c62c9408ba688849545f))
+- **deps:** update dependency tslib to v2.6.0 ([#4335](https://github.com/stryker-mutator/stryker-js/issues/4335)) ([e4c00ef](https://github.com/stryker-mutator/stryker-js/commit/e4c00ef9cddcc72b1bf0df5f10893933caaed7ef))
+- **tap:** use custom time spent logic as fallback ([#4358](https://github.com/stryker-mutator/stryker-js/issues/4358)) ([354a660](https://github.com/stryker-mutator/stryker-js/commit/354a660a5b3eebfe4f84029f26e31dbe223f2bf5))
+
+### Features
+
+- **ci:** add npm package provenance ([cf5d4d0](https://github.com/stryker-mutator/stryker-js/commit/cf5d4d04ee24a1e2b65c1f7ae35dbc840edbd48a))
+- **vitest-runner:** Support JSDOM ([#4359](https://github.com/stryker-mutator/stryker-js/issues/4359)) ([cef1689](https://github.com/stryker-mutator/stryker-js/commit/cef1689c173f161622f8de2fbaa34e4abecc8bd4))
+
 # [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
 
 ### Bug Fixes
