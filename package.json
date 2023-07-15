@@ -29,7 +29,7 @@
     "eslint-import-resolver-typescript": "3.5.5",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-prettier": "4.2.1",
-    "eslint-plugin-unicorn": "47.0.0",
+    "eslint-plugin-unicorn": "48.0.0",
     "execa": "7.1.1",
     "glob": "10.3.3",
     "install-local": "3.0.1",
