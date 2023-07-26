@@ -37,7 +37,7 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.1.1",
     "@types/lodash.flatmap": "4.5.7",
-    "@types/node": "18.16.20"
+    "@types/node": "18.17.1"
   },
   "dependencies": {
     "lodash.flatmap": "~4.5.0"
