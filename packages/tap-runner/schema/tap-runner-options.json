@@ -26,6 +26,11 @@
             "type": "string"
           },
           "default": ["-r", "{{hookFile}}", "{{testFile}}"]
+        },
+        "forceBail": {
+          "description": "Force a running test process to hard-exit after first bail test failure when disableBail is false.",
+          "type": "boolean",
+          "default": true
         }
       }
     }

@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { Config } from '@jest/types';
+import type { Config } from '@jest/types';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { propertyPath, type requireResolve } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';

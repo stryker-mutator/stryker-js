@@ -10,6 +10,7 @@ import {
   DryRunStatus,
   toMutantRunResult,
   determineHitLimitReached,
+  TestStatus,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
@@ -37,12 +38,15 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
+    this.setEnv();
     this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
       threads: true,
       coverage: { enabled: false },
-      singleThread: true,
+      singleThread: false,
+      maxConcurrency: 1,
       watch: false,
+      dir: this.options.vitest.dir,
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
@@ -110,8 +114,25 @@ export class VitestTestRunner implements TestRunner {
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
-    const testResults = tests.map((test) => convertTestToTestResult(test));
+    let failure = false;
+    const testResults = tests.map((test) => {
+      const testResult = convertTestToTestResult(test);
+      failure ||= testResult.status === TestStatus.Failed;
+      return testResult;
+    });
+    if (!failure && this.ctx!.state.errorsSet.size > 0) {
+      const errorText = [...this.ctx!.state.errorsSet].map((val) => JSON.stringify(val)).join('\n');
+      return {
+        status: DryRunStatus.Error,
+        errorMessage: `An error occurred outside of a test run, please be sure to properly await your promises! ${errorText}`,
+      };
+    }
     return { tests: testResults, status: DryRunStatus.Complete };
+  }
+
+  private setEnv() {
+    // Set node environment for issues like these: https://github.com/stryker-mutator/stryker-js/issues/4289
+    process.env.NODE_ENV = 'test';
   }
 
   private resetContext() {
@@ -145,7 +166,9 @@ export class VitestTestRunner implements TestRunner {
 
   private async readMutantCoverage(): Promise<MutantCoverage> {
     // Read coverage from all projects
-    const coverages: MutantCoverage[] = [...new Map(this.ctx!.state.getFiles().map((file) => [file.projectName, file] as const)).entries()]
+    const coverages: MutantCoverage[] = [
+      ...new Map(this.ctx!.state.getFiles().map((file) => [`${file.projectName}-${file.name}`, file] as const)).entries(),
+    ]
       .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
       .filter(notEmpty);
 

@@ -61,7 +61,6 @@ describe('js-parser', () => {
         (t) => t.isUnaryExpression() && t.node.operator === 'throw'
       );
 
-      // @ts-expect-error not (yet) defined in the types
       itShouldSupportAst('partial-application', 'const addOne = add(1, ?);', (t) => t.isArgumentPlaceholder());
       itShouldSupportAst('decorators', '@annotation class MyClass { }', (t) => t.isDecorator());
     });
@@ -69,7 +68,6 @@ describe('js-parser', () => {
     describe('language extensions (https://babeljs.io/docs/en/babel-parser#language-extensions)', () => {
       it('should support v8intrinsic', async () => {
         const { root } = await createParser(createParserOptions())('%DebugPrint(foo);', 'test.js');
-        // @ts-expect-error not (yet) defined in the types
         expectAst(root, (t) => t.isV8IntrinsicIdentifier());
       });
     });

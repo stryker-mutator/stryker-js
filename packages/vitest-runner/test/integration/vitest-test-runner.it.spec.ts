@@ -331,4 +331,51 @@ describe('VitestRunner integration', () => {
       expect(runResult.killedBy).deep.eq([barTestId]);
     });
   });
+
+  describe('using a project with tests without properly awaited assertions', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('async-failure');
+      await sandbox.init();
+    });
+
+    async function actErroredMutant() {
+      await sut.init();
+      return sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }) }));
+    }
+
+    // See https://github.com/stryker-mutator/stryker-js/issues/4306
+    it('should be able to report an ErrorResult', async () => {
+      const runResult = await actErroredMutant();
+      assertions.expectErrored(runResult);
+      expect(runResult.errorMessage).contains('An error occurred outside of a test run');
+    });
+
+    it('should be able recover from an error result', async () => {
+      await actErroredMutant();
+      const runResult = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
+      assertions.expectSurvived(runResult);
+    });
+  });
+
+  // See https://github.com/stryker-mutator/stryker-js/issues/4257
+  describe('using a project using "--dir <path>"', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('deep-project');
+      await sandbox.init();
+    });
+
+    it('should be able to report an ErrorResult', async () => {
+      options.vitest.dir = 'packages';
+      await sut.init();
+      const runResult = await sut.dryRun();
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).lengthOf(1);
+      assertions.expectTestResults(runResult, [
+        {
+          id: 'packages/app/src/math.spec.js#math should be 5 for add(2, 3)',
+          status: TestStatus.Success,
+        },
+      ]);
+    });
+  });
 });

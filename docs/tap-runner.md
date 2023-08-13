@@ -36,7 +36,8 @@ You can configure the tap test runner in the `stryker.config.json` (or `stryker.
   "testRunner": "tap",
   "tap": {
     "testFiles": ["test/**/*.@(js|ts)"],
-    "nodeArgs": ["--loader", "ts-node/esm"]
+    "nodeArgs": ["--loader", "ts-node/esm"],
+    "forceBail": true
   }
 }
 ```
@@ -85,6 +86,12 @@ When the placeholder are not used, the defaults will be applied as described abo
 The hook file is used to capture test metrics. It is important that it is loaded inside the test environment. Usually, this is done by using the [`-r` node argument](https://nodejs.org/api/cli.html#-r---require-module). However, some test runners (like Ava) run the test files in a separate [process or worker_thread](https://nodejs.org/api/process.html). For those use cases you should consult the documentation of the test runner in question to find a way to provide the hook file in the test environment.
 
 :::
+
+### `tap.forceBail` [`boolean`]
+
+Default: `true`
+
+This option is typically set to false when a test runner uses child processes to run the tests. When set to `true`, the tap runner will force the test runner to stop after the first failed test. This is useful when you want to speed up mutation testing, as it will prevent the test runner from running all tests, even when the first test already failed. But when the test runner uses child processes, it can cause the test runner to stop prematurely which results in Stryker failing to complete.
 
 ## Tips and tricks
 

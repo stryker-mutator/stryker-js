@@ -44,4 +44,12 @@ describe(VitestTestRunner.name, () => {
       await expect(sut.dispose()).not.rejected;
     });
   });
+
+  it('should set the NODE_ENV environment variable to test in init', async () => {
+    delete process.env.NODE_ENV;
+
+    await sut.init();
+
+    expect(process.env.NODE_ENV).to.equal('test');
+  });
 });

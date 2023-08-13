@@ -1,4 +1,4 @@
-import { Config } from '@jest/types';
+import type { Config } from '@jest/types';
 
 import { JestRunResult } from '../jest-run-result.js';
 

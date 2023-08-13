@@ -10,6 +10,12 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   extends: ['plugin:@typescript-eslint/all', 'prettier'],
   plugins: ['@typescript-eslint', 'prettier', 'import', 'unicorn'],
+  settings: {
+    'import/resolver': {
+      typescript: true,
+      node: true
+    }
+  },
   rules: {
     // unicorn rules
     'unicorn/filename-case': [
@@ -29,6 +35,7 @@ module.exports = {
       },
     ],
     'import/no-default-export': 'error',
+    'import/no-extraneous-dependencies': ['error', {'devDependencies': false, 'optionalDependencies': false, 'peerDependencies': true}],
 
     // prettier rules
     'prettier/prettier': ['error'],
@@ -135,5 +142,11 @@ module.exports = {
         '@typescript-eslint/explicit-member-accessibility': 'off',
       },
     },
+    {
+      files: ['packages/*/test/**/*.+(ts|cts|mts)', 'tasks/*.js', 'packages/test-helpers/**/*.+(ts|cts|mts)'],
+      rules: {
+        'import/no-extraneous-dependencies': 'off',
+      }
+    }
   ],
 };

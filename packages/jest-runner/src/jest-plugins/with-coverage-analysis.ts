@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
 
-import { Config } from '@jest/types';
+import type { Config } from '@jest/types';
 import { CoverageAnalysis, StrykerOptions } from '@stryker-mutator/api/core';
 import { propertyPath } from '@stryker-mutator/util';
 import semver from 'semver';
