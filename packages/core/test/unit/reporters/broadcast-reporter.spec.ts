@@ -81,9 +81,6 @@ describe(BroadcastReporter.name, () => {
     it('should forward "onMutantTested"', async () => {
       await actAssertShouldForward('onMutantTested', factory.mutantResult());
     });
-    it('should forward "onAllMutantsTested"', async () => {
-      await actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
-    });
     it('should forward "onMutationTestReportReady"', async () => {
       await actAssertShouldForward(
         'onMutationTestReportReady',
@@ -154,9 +151,6 @@ describe(BroadcastReporter.name, () => {
       });
       it('should still broadcast "onMutantTested"', async () => {
         await actAssertShouldForward('onMutantTested', factory.mutantResult());
-      });
-      it('should still broadcast "onAllMutantsTested"', async () => {
-        await actAssertShouldForward('onAllMutantsTested', [factory.mutantResult()]);
       });
       it('should still broadcast "onMutationTestReportReady"', async () => {
         await actAssertShouldForward(

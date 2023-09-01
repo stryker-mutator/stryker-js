@@ -306,7 +306,7 @@
       "default": {}
     },
     "ignorePatterns": {
-      "description": "Specify patterns to files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each pattern in this array should be a [`.gitignore`-style glob pattern](https://git-scm.com/docs/gitignore#_pattern_format).\n\nThis should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. This option has no effect when used in combination with `inPlace`.\n\nThese patterns are **always ignored**: `['node_modules', '.git', '/reports' '*.tsbuildinfo', '/stryker.log', '.stryker-tmp']`. Because Stryker always ignores these, you should rarely have to adjust the `\"ignorePatterns\"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `['!node_modules']`.\n\nIf a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`.\n\nWhen using the command line, the list can only contain a comma separated list of globbing expressions.",
+      "description": "A comma separated list of patterns used for specifying which files need to be ignored. This should only be used in cases where you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests. For example, image or movie directories. Note: This option will have NO effect when using the `--inPlace` option. The directories `node_modules`, `.git` and some others are always ignored. Example: `--ignorePatterns dist`. These patterns are ALWAYS ignored: [`node_modules`, `.git`, `/reports`, `*.tsbuildinfo`, `/stryker.log`, `.stryker-tmp`]. Because Stryker always ignores these, you should rarely have to adjust the `ignorePatterns` setting at all. This is useful to speed up Stryker by ignoring big directories/files you might have in your repo that has nothing to do with your code. For example, 1.5GB of movie/image files. Specify the patterns to all files or directories that are not used to run your tests and thus should NOT be copied to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options). If a glob pattern starts with `/`, the pattern is relative to the current working directory. For example, `/foo.js` matches to `foo.js` but not `subdir/foo.js`. However to SELECT specific files TO BE mutated, you better use `--mutate`.",
       "type": "array",
       "items": {
         "type": "string"
@@ -335,12 +335,12 @@
     },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
-      "$ref": "#/definitions/logLevel",
+      "$ref": "#/definitions/logLevel", 
       "default": "off"
     },
     "inPlace": {
       "type": "boolean",
-      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
+      "description": "Determines whether or not Stryker should mutate your files in place. Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like \"app-root-path\" for example).\n\nWhen `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also with `true` the `ignorePatterns` has no effect any more.\n\nWhen `false` (default) Stryker will work in the copy of your code inside the temp directory.",
       "default": false
     },
     "logLevel": {
@@ -359,7 +359,7 @@
       "default": 0
     },
     "mutate": {
-      "description": "With mutate you configure the subset of files to use for mutation testing. Generally speaking, these should be your own source files.",
+      "description": "With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files.\n(Whereas with `ignorePatterns` you prevent non-relevant files from being copied to the sandbox directory in the first place)\nThe default will try to guess your production code files based on sane defaults. It reads like this:\n- Include all js-like files inside the `src` or `lib` dir\n- Except files inside `__tests__` directories and file names ending with `test` or `spec`.\nIf the defaults are not sufficient for you, for example in a angular project you might want to\n **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.\nIt is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Example: src/index.js:1:3-1:5",
       "type": "array",
       "items": {
         "type": "string"
@@ -426,16 +426,16 @@
       "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
       "oneOf": [
         {
-          "enum": [
-            false,
-            true
-          ]
+          "type": "boolean"
         },
         {
           "type": "string"
         }
       ],
-      "default": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"
+      "examples": [
+        "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"
+      ],
+      "default": true
     },
     "symlinkNodeModules": {
       "description": "The 'symlinkNodeModules' value indicates whether Stryker should create a symbolic link to your current node_modules directory in the sandbox directories. This makes running your tests by Stryker behave more like your would run the tests yourself in your project directory. Only disable this setting if you really know what you are doing.",
@@ -448,8 +448,12 @@
       "default": ".stryker-tmp"
     },
     "cleanTempDir": {
-      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default) after a successful run. The temp dir will never be removed when the run failed for some reason (for debugging purposes)",
-      "type": "boolean",
+      "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default).\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - \"always\": Always delete the temp dir, regardless of whether the run was successful.",
+      "enum": [
+        "always",
+        false,
+        true
+        ],
       "default": true
     },
     "testRunner": {
@@ -505,6 +509,11 @@
     },
     "disableBail": {
       "description": "Disables the default of bailing after first failing test. When true runs all tests covering a mutant. Useful when the subject under test is not completely isolated by mocks and you want to know which tests are killing the mutants. This will impact performance.",
+      "type": "boolean",
+      "default": false
+    },
+    "allowEmpty": {
+      "description": "Allows stryker to exit without any errors in cases where no tests are found",
       "type": "boolean",
       "default": false
     }

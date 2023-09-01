@@ -6,6 +6,7 @@
     "noImplicitThis": true,
     "strictBindCallApply": true,
     "resolveJsonModule": true,
+    "importHelpers": true,
     "types": [
       "node" // Exclude global mocha functions for the sources
     ]
@@ -13,11 +14,7 @@
   "include": [
     "src"
   ],
-  "exclude": ["src/cjs"],
   "references": [
-    {
-      "path": "./tsconfig.src.cjs.json"
-    },
     {
       "path": "../api/tsconfig.src.json"
     },

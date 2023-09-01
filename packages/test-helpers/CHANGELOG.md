@@ -3,17 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.4.0-beta.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.1...v6.4.0-beta.2) (2023-01-17)
+## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers
 
-# [6.4.0-beta.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.0...v6.4.0-beta.1) (2023-01-17)
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers
 
-# [6.4.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0-beta.0) (2023-01-17)
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers
+
+## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
+
+**Note:** Version bump only for package @stryker-mutator/test-helpers
+
+# [7.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.4.2...v7.0.0) (2023-06-02)
+
+### Bug Fixes
+
+- **deps:** update mutation-testing-elements monorepo to v2.0.1 ([#4182](https://github.com/stryker-mutator/stryker-js/issues/4182)) ([c1b7312](https://github.com/stryker-mutator/stryker-js/commit/c1b7312a238b67f43630101b084ff33780eda1c5))
+- **deps:** update mutation-testing-metrics and mutation-report-schema to v2 ([#4154](https://github.com/stryker-mutator/stryker-js/issues/4154)) ([9b77a3f](https://github.com/stryker-mutator/stryker-js/commit/9b77a3f6fdeb7036b1e15610f03dd8c85a502670))
+
+### chore
+
+- **esm:** use "exports" and module "Node16" ([#4171](https://github.com/stryker-mutator/stryker-js/issues/4171)) ([cdf4a34](https://github.com/stryker-mutator/stryker-js/commit/cdf4a342b73d922423eb46a919eb3b38c4c43c46))
+
+### Features
+
+- **reporter-api:** remove `onAllMutantsTested` ([#4234](https://github.com/stryker-mutator/stryker-js/issues/4234)) ([762c023](https://github.com/stryker-mutator/stryker-js/commit/762c023e5ac0ae6e2967be0458663c41d31e82ea))
+- **vitest:** support vitest test runner ([7394e95](https://github.com/stryker-mutator/stryker-js/commit/7394e95ff27361c39755a60b53ba0839080cadfc))
+
+### BREAKING CHANGES
+
+- **reporter-api:** The event `onAllMutantsTested` has been removed. Plugin creators should use `onMutationTestReportReady` instead.
+- **esm:** Deep (and undocumented) imports from `@stryker-mutator/core` or one of the plugins will no longer work. If you want to import something that's not available, please let us know by [opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new/choose)
+
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **progress reporter:** improve ETC prediction ([#4024](https://github.com/stryker-mutator/stryker-js/issues/4024)) ([956bbe9](https://github.com/stryker-mutator/stryker-js/commit/956bbe9a7ae3afb2e339f9027fe553c428c0c195)), closes [#4018](https://github.com/stryker-mutator/stryker-js/issues/4018)
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/test-helpers
+
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Bug Fixes
+
+- **deps:** update dependency mutation-testing-metrics to v1.7.14 ([#3970](https://github.com/stryker-mutator/stryker-js/issues/3970)) ([ddf32ee](https://github.com/stryker-mutator/stryker-js/commit/ddf32ee7581cc6169390022f933f593b7049bd3e))
 
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 

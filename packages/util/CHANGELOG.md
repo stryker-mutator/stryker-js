@@ -3,17 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.4.0-beta.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.1...v6.4.0-beta.2) (2023-01-17)
+## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
 
 **Note:** Version bump only for package @stryker-mutator/util
 
-# [6.4.0-beta.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.0...v6.4.0-beta.1) (2023-01-17)
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
 
 **Note:** Version bump only for package @stryker-mutator/util
 
-# [6.4.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0-beta.0) (2023-01-17)
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
 
 **Note:** Version bump only for package @stryker-mutator/util
+
+## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
+
+**Note:** Version bump only for package @stryker-mutator/util
+
+# [7.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.4.2...v7.0.0) (2023-06-02)
+
+### chore
+
+- **esm:** use "exports" and module "Node16" ([#4171](https://github.com/stryker-mutator/stryker-js/issues/4171)) ([cdf4a34](https://github.com/stryker-mutator/stryker-js/commit/cdf4a342b73d922423eb46a919eb3b38c4c43c46))
+
+### BREAKING CHANGES
+
+- **esm:** Deep (and undocumented) imports from `@stryker-mutator/core` or one of the plugins will no longer work. If you want to import something that's not available, please let us know by [opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new/choose)
+
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **angular:** generate karma.conf.js file when it is missing ([#4054](https://github.com/stryker-mutator/stryker-js/issues/4054)) ([915c6d8](https://github.com/stryker-mutator/stryker-js/commit/915c6d85db5cbe8a5276e18cd3a07e399d604cfa))
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
+
+**Note:** Version bump only for package @stryker-mutator/util
+
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Features
+
+- **typescript checker:** group mutants to improve performance 🚀 ([#3900](https://github.com/stryker-mutator/stryker-js/issues/3900)) ([2f4adaa](https://github.com/stryker-mutator/stryker-js/commit/2f4adaa1eedbf70bd9385d15d3f6025027350cc6))
 
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 

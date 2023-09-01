@@ -1,13 +1,12 @@
 // @ts-check
-import { readFileSync, writeFileSync } from 'fs';
-import { relative } from 'path';
+import { mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { dirname, relative } from 'path';
 
 import { fileURLToPath } from 'url';
 
-import { File, INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
+import { INSTRUMENTER_CONSTANTS } from '../packages/api/dist/src/core/index.js';
 import { Instrumenter } from '../packages/instrumenter/dist/src/index.js';
 
-// @ts-expect-error
 const instrumenter = new Instrumenter({
   ...console,
   isDebugEnabled() {
@@ -60,6 +59,39 @@ async function main() {
     },
     '__stryker2__'
   );
+  await instrument(
+    {
+      './packages/tap-runner/testResources/example/src/math.js': './packages/tap-runner/testResources/example-instrumented/src/math.js',
+      './packages/tap-runner/testResources/example/src/formatter.js': './packages/tap-runner/testResources/example-instrumented/src/formatter.js',
+    },
+    '__stryker2__'
+  );
+  await instrument(
+    { './packages/vitest-runner/testResources/simple-project/math.orig.ts': './packages/vitest-runner/testResources/simple-project/math.ts' },
+    '__stryker2__'
+  );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.orig.js':
+        './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.js',
+    },
+    '__stryker2__'
+  );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/workspaces/packages/bar/src/math.orig.js':
+        './packages/vitest-runner/testResources/workspaces/packages/bar/src/math.js',
+      './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.orig.js':
+        './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.js',
+    },
+    '__stryker2__'
+  );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/async-failure/src/add.orig.ts': './packages/vitest-runner/testResources/async-failure/src/add.ts',
+    },
+    '__stryker2__'
+  );
 }
 
 /**
@@ -68,13 +100,14 @@ async function main() {
  * @param {'__stryker__' | '__stryker2__'} globalNamespace
  */
 async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMESPACE) {
-  const files = Object.keys(fromTo).map((fileName) => new File(fileName, readFileSync(fileName)));
-  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [], mutationRanges: [] });
+  const files = Object.keys(fromTo).map((fileName) => ({ mutate: true, name: fileName, content: readFileSync(fileName, 'utf-8') }));
+  const out = await instrumenter.instrument(files, { plugins: null, excludedMutations: [] });
   out.files.forEach((file) => {
     const toFileName = fromTo[file.name];
+    mkdirSync(dirname(toFileName), { recursive: true });
     writeFileSync(
       toFileName,
-      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.textContent.replace(
+      `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.content.replace(
         new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'),
         globalNamespace
       )}`

@@ -5,4 +5,4 @@ declare var __stryker2__: import('@stryker-mutator/api/core').InstrumenterContex
 
 declare var __strykerGlobalNamespace__: '__stryker__' | '__stryker2__';
 
-declare var jasmine: import('./jasmine').Jasmine;
+declare var jasmine: import('./jasmine.js').Jasmine;

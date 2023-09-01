@@ -1,5 +1,5 @@
-import { KnownKeys } from './known-keys';
-import { Primitive } from './primitive';
+import { KnownKeys } from './known-keys.js';
+import { Primitive } from './primitive.js';
 
 type OnlyObject<T> = Exclude<T, Primitive>;
 
@@ -56,4 +56,14 @@ export function escapeRegExp(input: string): string {
  */
 export function normalizeFileName(fileName: string): string {
   return fileName.replace(/\\/g, '/');
+}
+
+/**
+ * Creates a URL to the page where you can report a bug.
+ * @param titleSuggestion The title to be prefilled in.
+ */
+export function strykerReportBugUrl(titleSuggestion: string): string {
+  return `https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
+    titleSuggestion
+  )}`;
 }

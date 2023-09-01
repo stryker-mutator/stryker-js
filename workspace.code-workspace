@@ -37,6 +37,14 @@
       "path": "packages/cucumber-runner"
     },
     {
+      "name": "vitest-runner",
+      "path": "packages/vitest-runner"
+    },
+    {
+      "name": "tap-runner",
+      "path": "packages/tap-runner"
+    },
+    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
     },
@@ -116,7 +124,7 @@
       "Whitespaces"
     ],
     "cSpell.language": "en",
-    "liveServer.settings.multiRootWorkspaceName": "core"
+    "liveServer.settings.multiRootWorkspaceName": "typescript-checker"
   },
   "extensions": {
     "recommendations": ["dbaeumer.vscode-eslint", "EditorConfig.EditorConfig"]

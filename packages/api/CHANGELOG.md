@@ -3,17 +3,76 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [6.4.0-beta.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.1...v6.4.0-beta.2) (2023-01-17)
+## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
+
+### Bug Fixes
+
+- **deps:** update dependency tslib to v2.6.0 ([#4335](https://github.com/stryker-mutator/stryker-js/issues/4335)) ([e4c00ef](https://github.com/stryker-mutator/stryker-js/commit/e4c00ef9cddcc72b1bf0df5f10893933caaed7ef))
+
+# [7.1.0](https://github.com/stryker-mutator/stryker-js/compare/v7.0.2...v7.1.0) (2023-06-24)
 
 **Note:** Version bump only for package @stryker-mutator/api
 
-# [6.4.0-beta.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0-beta.0...v6.4.0-beta.1) (2023-01-17)
+## [7.0.2](https://github.com/stryker-mutator/stryker-js/compare/v7.0.1...v7.0.2) (2023-06-08)
+
+### Bug Fixes
+
+- **config:** regression in import options ([#4277](https://github.com/stryker-mutator/stryker-js/issues/4277)) ([0e9b997](https://github.com/stryker-mutator/stryker-js/commit/0e9b997b489554f02b038fb9d5072a55c373ecd2))
+
+## [7.0.1](https://github.com/stryker-mutator/stryker-js/compare/v7.0.0...v7.0.1) (2023-06-03)
 
 **Note:** Version bump only for package @stryker-mutator/api
 
-# [6.4.0-beta.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0-beta.0) (2023-01-17)
+# [7.0.0](https://github.com/stryker-mutator/stryker-js/compare/v6.4.2...v7.0.0) (2023-06-02)
+
+### Bug Fixes
+
+- **deps:** update mutation-testing-elements monorepo to v2.0.1 ([#4182](https://github.com/stryker-mutator/stryker-js/issues/4182)) ([c1b7312](https://github.com/stryker-mutator/stryker-js/commit/c1b7312a238b67f43630101b084ff33780eda1c5))
+- **deps:** update mutation-testing-metrics and mutation-report-schema to v2 ([#4154](https://github.com/stryker-mutator/stryker-js/issues/4154)) ([9b77a3f](https://github.com/stryker-mutator/stryker-js/commit/9b77a3f6fdeb7036b1e15610f03dd8c85a502670))
+
+### chore
+
+- **esm:** use "exports" and module "Node16" ([#4171](https://github.com/stryker-mutator/stryker-js/issues/4171)) ([cdf4a34](https://github.com/stryker-mutator/stryker-js/commit/cdf4a342b73d922423eb46a919eb3b38c4c43c46))
+
+### Features
+
+- **config:** add `--allowEmpty` option ([#4198](https://github.com/stryker-mutator/stryker-js/issues/4198)) ([44e355e](https://github.com/stryker-mutator/stryker-js/commit/44e355ee727bbceff1a4069055844c49c0ea2118))
+- **config:** add `'always'` option to `cleanTempDir` ([#4187](https://github.com/stryker-mutator/stryker-js/issues/4187)) ([f02efb2](https://github.com/stryker-mutator/stryker-js/commit/f02efb2db08d13be132c0bd318dfa6d3f6399788))
+- **node:** Drop support for node 14 ([#4105](https://github.com/stryker-mutator/stryker-js/issues/4105)) ([a88744f](https://github.com/stryker-mutator/stryker-js/commit/a88744f1a5fa47274ee0f30abc635831b18113fa))
+- **reporter-api:** remove `onAllMutantsTested` ([#4234](https://github.com/stryker-mutator/stryker-js/issues/4234)) ([762c023](https://github.com/stryker-mutator/stryker-js/commit/762c023e5ac0ae6e2967be0458663c41d31e82ea))
+- **type-checking:** disable type check by default ([#4246](https://github.com/stryker-mutator/stryker-js/issues/4246)) ([d45350a](https://github.com/stryker-mutator/stryker-js/commit/d45350ad2440d455b7ba215aae1f87712e22fdc5))
+
+### BREAKING CHANGES
+
+- **type-checking:** `disableTypeChecks` is now `true` by default. You can use this configuration to opt out:
+
+```json
+{
+  "disableTypeChecks": "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"
+}
+```
+
+- **reporter-api:** The event `onAllMutantsTested` has been removed. Plugin creators should use `onMutationTestReportReady` instead.
+- **esm:** Deep (and undocumented) imports from `@stryker-mutator/core` or one of the plugins will no longer work. If you want to import something that's not available, please let us know by [opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new/choose)
+- **node:** Node 14 is no longer supported. Please install an LTS version of node: nodejs.org/
+
+## [6.4.2](https://github.com/stryker-mutator/stryker-js/compare/v6.4.1...v6.4.2) (2023-03-24)
+
+### Bug Fixes
+
+- **progress reporter:** improve ETC prediction ([#4024](https://github.com/stryker-mutator/stryker-js/issues/4024)) ([956bbe9](https://github.com/stryker-mutator/stryker-js/commit/956bbe9a7ae3afb2e339f9027fe553c428c0c195)), closes [#4018](https://github.com/stryker-mutator/stryker-js/issues/4018)
+
+## [6.4.1](https://github.com/stryker-mutator/stryker-js/compare/v6.4.0...v6.4.1) (2023-02-17)
 
 **Note:** Version bump only for package @stryker-mutator/api
+
+# [6.4.0](https://github.com/stryker-mutator/stryker-js/compare/v6.3.1...v6.4.0) (2023-02-17)
+
+### Bug Fixes
+
+- **deps:** update dependency mutation-testing-metrics to v1.7.14 ([#3970](https://github.com/stryker-mutator/stryker-js/issues/3970)) ([ddf32ee](https://github.com/stryker-mutator/stryker-js/commit/ddf32ee7581cc6169390022f933f593b7049bd3e))
+- **deps:** update dependency mutation-testing-report-schema to v1.7.14 ([#3971](https://github.com/stryker-mutator/stryker-js/issues/3971)) ([a0d5743](https://github.com/stryker-mutator/stryker-js/commit/a0d57431e3a3c8b29ef53a9ef80f46aaf2900678))
+- **deps:** update dependency tslib to ~2.5.0 ([#3952](https://github.com/stryker-mutator/stryker-js/issues/3952)) ([7548287](https://github.com/stryker-mutator/stryker-js/commit/7548287ee000bc09f88e6f1f0848e6e8e625bbb5))
 
 ## [6.3.1](https://github.com/stryker-mutator/stryker-js/compare/v6.3.0...v6.3.1) (2022-12-18)
 

@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "tap",
+  "concurrency": 1,
+  "reporters": ["json", "clear-text", "html", "event-recorder"],
+  "plugins": [
+    "@stryker-mutator/tap-runner"
+  ],
+  "tap": {
+    "nodeArgs": ["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r {{hookFile}}'"],
+    "forceBail": false
+  }
+}

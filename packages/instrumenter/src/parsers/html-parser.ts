@@ -1,5 +1,5 @@
-import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast';
-import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util';
+import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast.js';
+import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util.js';
 
 import { HtmlAst, AstFormat, HtmlRootNode, ScriptFormat, AstByFormat, ScriptAst } from '../syntax/index.js';
 

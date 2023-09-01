@@ -1,9 +1,15 @@
 {
   "name": "@stryker-mutator/instrumenter",
-  "version": "6.4.0-beta.2",
+  "version": "7.1.1",
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "test": "c8 npm run mocha",
     "mocha": "mocha",
@@ -15,7 +21,7 @@
     "directory": "packages/instrumenter"
   },
   "engines": {
-    "node": ">=14.18.0"
+    "node": ">=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,23 +37,22 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.20.0",
-    "@babel/generator": "~7.20.0",
-    "@babel/parser": "~7.20.0",
+    "@babel/core": "~7.22.0",
+    "@babel/generator": "~7.22.0",
+    "@babel/parser": "~7.22.0",
     "@babel/plugin-proposal-class-properties": "~7.18.0",
-    "@babel/plugin-proposal-decorators": "~7.20.0",
+    "@babel/plugin-proposal-decorators": "~7.22.0",
     "@babel/plugin-proposal-private-methods": "~7.18.0",
-    "@babel/preset-typescript": "~7.18.0",
-    "@stryker-mutator/api": "6.4.0-beta.2",
-    "@stryker-mutator/util": "6.4.0-beta.2",
-    "angular-html-parser": "~3.0.0",
-    "svelte": "^3.52.0",
-    "weapon-regex": "~1.0.2"
+    "@babel/preset-typescript": "~7.22.0",
+    "@stryker-mutator/api": "7.1.1",
+    "@stryker-mutator/util": "7.1.1",
+    "angular-html-parser": "~4.0.0",
+    "weapon-regex": "~1.1.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.18.6",
-    "@stryker-mutator/test-helpers": "6.4.0-beta.2",
-    "@types/babel__core": "7.1.20",
+    "@babel/preset-react": "7.22.5",
+    "@stryker-mutator/test-helpers": "7.1.1",
+    "@types/babel__core": "7.20.1",
     "@types/babel__generator": "7.6.4",
     "@types/estree": "^1.0.0",
     "babel-plugin-transform-decorators-legacy": "1.3.5"

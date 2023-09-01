@@ -7,20 +7,19 @@ import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/u
 import { expect } from 'chai';
 import inquirer from 'inquirer';
 import sinon from 'sinon';
-import typedRestClient, { type RestClient, type IRestResponse } from 'typed-rest-client/RestClient.js';
+import typedRestClient, { type RestClient } from 'typed-rest-client/RestClient.js';
 
 import { fileUtils } from '../../../src/utils/file-utils.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
-import { NpmClient, NpmPackage } from '../../../src/initializer/npm-client.js';
-import { PackageInfo } from '../../../src/initializer/package-info.js';
-import { Preset } from '../../../src/initializer/presets/preset.js';
-import { PresetConfiguration } from '../../../src/initializer/presets/preset-configuration.js';
+import { NpmClient, NpmSearchResult } from '../../../src/initializer/npm-client.js';
 import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
 import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
+import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
+import { PackageInfo } from '../../../src/initializer/package-info.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -28,18 +27,17 @@ describe(StrykerInitializer.name, () => {
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
-  let existsStub: sinon.SinonStubbedMember<typeof fileUtils['exists']>;
-  let restClientPackage: sinon.SinonStubbedInstance<RestClient>;
-  let restClientSearch: sinon.SinonStubbedInstance<RestClient>;
+  let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
+  let npmRestClient: sinon.SinonStubbedInstance<RestClient>;
   let gitignoreWriter: sinon.SinonStubbedInstance<GitignoreWriter>;
   let out: sinon.SinonStub;
-  let presets: Preset[];
-  let presetMock: Mock<Preset>;
+  let customInitializers: CustomInitializer[];
+  let customInitializerMock: Mock<CustomInitializer>;
 
   beforeEach(() => {
     out = sinon.stub();
-    presets = [];
-    presetMock = {
+    customInitializers = [];
+    customInitializerMock = {
       createConfig: sinon.stub(),
       name: 'awesome-preset',
     };
@@ -48,43 +46,40 @@ describe(StrykerInitializer.name, () => {
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     existsStub = sinon.stub(fileUtils, 'exists');
-    restClientSearch = sinon.createStubInstance(typedRestClient.RestClient);
-    restClientPackage = sinon.createStubInstance(typedRestClient.RestClient);
+    npmRestClient = sinon.createStubInstance(typedRestClient.RestClient);
     gitignoreWriter = sinon.createStubInstance(GitignoreWriter);
     syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
-      .provideValue(initializerTokens.restClientNpm, restClientPackage as unknown as RestClient)
-      .provideValue(initializerTokens.restClientNpmSearch, restClientSearch as unknown as RestClient)
+      .provideValue(initializerTokens.restClientNpm, npmRestClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
-      .provideValue(initializerTokens.strykerPresets, presets)
+      .provideValue(initializerTokens.customInitializers, customInitializers)
       .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
-      .provideValue(initializerTokens.gitignoreWriter, gitignoreWriter as unknown as GitignoreWriter)
+      .provideValue(initializerTokens.gitignoreWriter, gitignoreWriter)
       .injectClass(StrykerInitializer);
   });
 
   describe('initialize()', () => {
     beforeEach(() => {
       stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner', '@stryker-mutator/jest-runner');
-      stubMutators('@stryker-mutator/typescript', '@stryker-mutator/javascript-mutator');
       stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
       stubPackageClient({
-        '@stryker-mutator/awesome-runner': null,
-        '@stryker-mutator/javascript-mutator': null,
-        '@stryker-mutator/mars-reporter': null,
-        '@stryker-mutator/typescript': null,
-        '@stryker-mutator/webpack': null,
-        'stryker-dimension-reporter': null,
-        'stryker-ghost-runner': null,
+        '@stryker-mutator/awesome-runner': undefined,
+        '@stryker-mutator/javascript-mutator': undefined,
+        '@stryker-mutator/mars-reporter': undefined,
+        '@stryker-mutator/typescript': undefined,
+        '@stryker-mutator/webpack': undefined,
+        'stryker-dimension-reporter': undefined,
+        'stryker-ghost-runner': undefined,
         'stryker-hyper-runner': {
           files: [],
           someOtherSetting: 'enabled',
         },
-        '@stryker-mutator/jest-runner': null,
+        '@stryker-mutator/jest-runner': undefined,
       });
       fsWriteFile.resolves();
-      presets.push(presetMock);
+      customInitializers.push(customInitializerMock);
     });
 
     it('should prompt for preset, test runner, reporters, package manager and config type', async () => {
@@ -434,10 +429,9 @@ describe(StrykerInitializer.name, () => {
 
   describe('initialize() when no internet', () => {
     it('should log error and continue when fetching test runners', async () => {
-      restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').rejects();
-      stubMutators('stryker-javascript');
+      npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin').rejects();
       stubReporters();
-      stubPackageClient({ 'stryker-javascript': null, 'stryker-webpack': null });
+      stubPackageClient({ 'stryker-javascript': undefined, 'stryker-webpack': undefined });
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
@@ -447,34 +441,32 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/test-runner-plugin). Please check your internet connection.'
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection."
       );
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"testRunner": "command"'));
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
-      stubMutators('stryker-javascript');
-      restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').rejects();
+      npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin').rejects();
       inquirerPrompt.resolves({
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
         configType: 'JSON',
       });
-      stubPackageClient({ 'stryker-awesome-runner': null, 'stryker-javascript': null, 'stryker-webpack': null });
+      stubPackageClient({ 'stryker-awesome-runner': undefined, 'stryker-javascript': undefined, 'stryker-webpack': undefined });
 
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        'Unable to reach npms.io (for query /v2/search?q=keywords:@stryker-mutator/reporter-plugin). Please check your internet connection.'
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection."
       );
       expect(fs.promises.writeFile).called;
     });
 
     it('should log warning and continue when fetching custom config', async () => {
       stubTestRunners('stryker-awesome-runner');
-      stubMutators();
       stubReporters();
       inquirerPrompt.resolves({
         packageManager: 'npm',
@@ -482,7 +474,7 @@ describe(StrykerInitializer.name, () => {
         testRunner: 'awesome',
         configType: 'JSON',
       });
-      restClientPackage.get.rejects();
+      npmRestClient.get.rejects();
 
       await sut.initialize();
 
@@ -514,42 +506,44 @@ describe(StrykerInitializer.name, () => {
   });
 
   const stubTestRunners = (...testRunners: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/test-runner-plugin').resolves({
-      result: {
-        results: testRunners.map((testRunner) => ({ package: { name: testRunner, version: '1.1.1' } })),
-      },
-      statusCode: 200,
-    } as unknown as IRestResponse<PackageInfo[]>);
-  };
+    const testRunnersResult: NpmSearchResult = {
+      total: testRunners.length,
+      objects: testRunners.map((testRunner) => ({
+        package: { name: testRunner, version: '1.1.1', keywords: ['@stryker-mutator/test-runner-plugin'] },
+      })),
+    };
 
-  const stubMutators = (...mutators: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/mutator-plugin').resolves({
-      result: {
-        results: mutators.map((mutator) => ({ package: { name: mutator, version: '1.1.1' } })),
-      },
+    npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin').resolves({
+      result: testRunnersResult,
       statusCode: 200,
-    } as unknown as IRestResponse<PackageInfo[]>);
+      headers: {},
+    });
   };
 
   const stubReporters = (...reporters: string[]) => {
-    restClientSearch.get.withArgs('/v2/search?q=keywords:@stryker-mutator/reporter-plugin').resolves({
-      result: {
-        results: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1' } })),
-      },
-      statusCode: 200,
-    } as unknown as IRestResponse<PackageInfo[]>);
+    const reportersResult: NpmSearchResult = {
+      total: reporters.length,
+      objects: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1', keywords: ['@stryker-mutator/reporter-plugin'] } })),
+    };
+    npmRestClient.get
+      .withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin')
+      .resolves({ statusCode: 200, headers: {}, result: reportersResult });
   };
-  const stubPackageClient = (initStrykerConfigPerPackage: Record<string, Record<string, unknown> | null>, homepage?: string | null) => {
-    Object.keys(initStrykerConfigPerPackage).forEach((packageName) => {
-      const cfg = initStrykerConfigPerPackage[packageName];
-      restClientPackage.get.withArgs(`/${packageName}@1.1.1/package.json`).resolves({
-        result: {
-          name: packageName,
-          homepage: homepage,
-          initStrykerConfig: cfg ?? null,
-        },
+  const stubPackageClient = (initStrykerConfigPerPackage: Record<string, Record<string, unknown> | undefined>, homepage?: string) => {
+    Object.keys(initStrykerConfigPerPackage).forEach((name) => {
+      const initStrykerConfig = initStrykerConfigPerPackage[name];
+      const result: PackageInfo = {
+        name,
+        homepage,
+        initStrykerConfig,
+        keywords: [],
+        version: '1.1.1',
+      };
+      npmRestClient.get.withArgs(`/${encodeURIComponent(name)}@1.1.1`).resolves({
+        result,
         statusCode: 200,
-      } as unknown as IRestResponse<NpmPackage[]>);
+        headers: {},
+      });
     });
   };
 
@@ -573,13 +567,8 @@ describe(StrykerInitializer.name, () => {
     inquirerPrompt.resolves(answers);
   }
 
-  function resolvePresetConfig(presetConfigOverrides?: Partial<PresetConfiguration>) {
-    const presetConfig: PresetConfiguration = {
-      config: {},
-      dependencies: [],
-      guideUrl: '',
-    };
-    presetMock.createConfig.resolves(Object.assign({}, presetConfig, presetConfigOverrides));
+  function resolvePresetConfig(overrides?: Partial<CustomInitializerConfiguration>) {
+    customInitializerMock.createConfig.resolves({ config: {}, dependencies: [], guideUrl: '', ...overrides });
   }
 
   function expectStrykerConfWritten(expectedRawConfig: string) {

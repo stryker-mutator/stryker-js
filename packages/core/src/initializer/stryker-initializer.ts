@@ -5,9 +5,9 @@ import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { notEmpty } from '@stryker-mutator/util';
 
-import { NpmClient, NpmPackage } from './npm-client.js';
-import { PackageInfo } from './package-info.js';
-import { Preset } from './presets/preset.js';
+import { NpmClient } from './npm-client.js';
+import { PackageInfo, PackageSummary } from './package-info.js';
+import { CustomInitializer } from './custom-initializers/custom-initializer.js';
 import { PromptOption } from './prompt-option.js';
 import { StrykerConfigWriter } from './stryker-config-writer.js';
 import { StrykerInquirer } from './stryker-inquirer.js';
@@ -26,7 +26,7 @@ export class StrykerInitializer {
     commonTokens.logger,
     initializerTokens.out,
     initializerTokens.npmClient,
-    initializerTokens.strykerPresets,
+    initializerTokens.customInitializers,
     initializerTokens.configWriter,
     initializerTokens.gitignoreWriter,
     initializerTokens.inquirer
@@ -35,7 +35,7 @@ export class StrykerInitializer {
     private readonly log: Logger,
     private readonly out: typeof console.log,
     private readonly client: NpmClient,
-    private readonly strykerPresets: Preset[],
+    private readonly customInitializers: CustomInitializer[],
     private readonly configWriter: StrykerConfigWriter,
     private readonly gitignoreWriter: GitignoreWriter,
     private readonly inquirer: StrykerInquirer
@@ -48,10 +48,10 @@ export class StrykerInitializer {
   public async initialize(): Promise<void> {
     await this.configWriter.guardForExistingConfig();
     this.patchProxies();
-    const selectedPreset = await this.selectPreset();
+    const selectedPreset = await this.selectCustomInitializer();
     let configFileName: string;
     if (selectedPreset) {
-      configFileName = await this.initiatePreset(this.configWriter, selectedPreset);
+      configFileName = await this.initiateInitializer(this.configWriter, selectedPreset);
     } else {
       configFileName = await this.initiateCustom(this.configWriter);
     }
@@ -74,18 +74,18 @@ export class StrykerInitializer {
     copyEnvVariable('https_proxy', 'HTTPS_PROXY');
   }
 
-  private async selectPreset(): Promise<Preset | undefined> {
-    const presetOptions: Preset[] = this.strykerPresets;
-    if (presetOptions.length) {
-      this.log.debug(`Found presets: ${JSON.stringify(presetOptions)}`);
-      return this.inquirer.promptPresets(presetOptions);
+  private async selectCustomInitializer(): Promise<CustomInitializer | undefined> {
+    const customInitializer: CustomInitializer[] = this.customInitializers;
+    if (customInitializer.length) {
+      this.log.debug(`Found presets: ${JSON.stringify(customInitializer)}`);
+      return this.inquirer.promptPresets(customInitializer);
     } else {
       this.log.debug('No presets have been configured, reverting to custom configuration');
       return undefined;
     }
   }
 
-  private async initiatePreset(configWriter: StrykerConfigWriter, selectedPreset: Preset) {
+  private async initiateInitializer(configWriter: StrykerConfigWriter, selectedPreset: CustomInitializer) {
     const presetConfig = await selectedPreset.createConfig();
     const isJsonSelected = await this.selectJsonConfigType();
     const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
@@ -218,7 +218,7 @@ export class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageInfo[]): Promise<NpmPackage[]> {
+  private async fetchAdditionalConfig(dependencies: PackageSummary[]): Promise<PackageInfo[]> {
     return await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)));
   }
 }

@@ -1,4 +1,4 @@
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
@@ -51,7 +51,9 @@ describe(Stryker.name, () => {
       .withArgs(commonTokens.getLogger)
       .returns(getLoggerStub)
       .withArgs(coreTokens.temporaryDirectory)
-      .returns(temporaryDirectoryMock);
+      .returns(temporaryDirectoryMock)
+      .withArgs(commonTokens.options)
+      .returns(testInjector.options);
     getLoggerStub.returns(loggerMock);
 
     prepareExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
@@ -137,6 +139,13 @@ describe(Stryker.name, () => {
       expect(getLoggerStub).calledWith('Stryker');
       expect(loggerMock.debug).calledWith('Not removing the temp dir because an error occurred');
       expect(temporaryDirectoryMock.removeDuringDisposal).false;
+    });
+
+    it('should not disable `removeDuringDisposal` on the temp dir when dry run rejects and cleanTempDir is set to `always`', async () => {
+      dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
+      testInjector.options.cleanTempDir = 'always';
+      await expect(sut.runMutationTest()).rejected;
+      expect(temporaryDirectoryMock.removeDuringDisposal).not.false;
     });
 
     it('should log the error when dry run rejects unexpectedly', async () => {

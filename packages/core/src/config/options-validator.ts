@@ -1,8 +1,8 @@
 import os from 'os';
 import path from 'path';
 
-import glob from 'glob';
-import Ajv, { ValidateFunction } from 'ajv';
+import { glob } from 'glob';
+import ajvModule, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { noopLogger, findUnserializables, Immutable, deepFreeze } from '@stryker-mutator/util';
@@ -17,7 +17,16 @@ import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../fs/index.js';
 
 import { describeErrors } from './validation-errors.js';
 
-const ajv = new Ajv({ useDefaults: true, allErrors: true, jsPropertySyntax: true, verbose: true, logger: false, strict: false });
+const Ajv = ajvModule.default;
+
+const ajv = new Ajv({
+  useDefaults: true,
+  allErrors: true,
+  jsPropertySyntax: true,
+  verbose: true,
+  logger: false,
+  strict: false,
+});
 
 export class OptionsValidator {
   private readonly validateFn: ValidateFunction;

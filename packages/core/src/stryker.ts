@@ -44,9 +44,11 @@ export class Stryker {
 
         return mutantResults;
       } catch (error) {
-        const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
-        log.debug('Not removing the temp dir because an error occurred');
-        mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
+        if (mutantInstrumenterInjector.resolve(commonTokens.options).cleanTempDir !== 'always') {
+          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+          log.debug('Not removing the temp dir because an error occurred');
+          mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
+        }
         throw error;
       }
     } catch (error) {

@@ -20,6 +20,7 @@ const replacements = new Map([
   ['toLowerCase', 'toUpperCase'],
   ['trim', null],
   ['trimEnd', 'trimStart'],
+  ['min', 'max'],
 ]);
 
 for (const [key, value] of Array.from(replacements)) {

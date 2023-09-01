@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.settings",
+  "compilerOptions": {
+    "outDir": "../../dist/core"
+  },
+  "references": [
+    { "path": "../utils" }
+  ]
+}

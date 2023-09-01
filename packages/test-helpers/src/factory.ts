@@ -1,4 +1,4 @@
-import Ajv from 'ajv';
+import ajvModule from 'ajv';
 import {
   Location,
   MutationScoreThresholds,
@@ -38,9 +38,11 @@ import {
   ErrorMutantRunResult,
   TestStatus,
   TestResult,
+  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
 
+const Ajv = ajvModule.default;
 const ajv = new Ajv({ useDefaults: true, strict: false });
 
 /**
@@ -155,6 +157,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
 }));
 
 export const metrics = factoryMethod<Metrics>(() => ({
+  pending: 0,
   compileErrors: 0,
   killed: 0,
   mutationScore: 0,
@@ -172,11 +175,7 @@ export const metrics = factoryMethod<Metrics>(() => ({
   totalValid: 0,
 }));
 
-export const metricsResult = factoryMethod<MetricsResult>(() => ({
-  childResults: [],
-  metrics: metrics({}),
-  name: '',
-}));
+export const metricsResult = factoryMethod<MetricsResult>(() => new MetricsResult('', [], metrics({})));
 
 export function logger(): sinon.SinonStubbedInstance<Logger> {
   return {
@@ -323,7 +322,6 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'onDryRunCompleted',
   'onMutationTestingPlanReady',
   'onMutantTested',
-  'onAllMutantsTested',
   'onMutationTestReportReady',
   'wrapUp',
 ];
@@ -376,9 +374,12 @@ export const runTiming = factoryMethod<RunTiming>(() => ({
   overhead: 765,
 }));
 
+export const testRunnerCapabilities = factoryMethod<TestRunnerCapabilities>(() => ({ reloadEnvironment: false }));
+
 export const dryRunCompletedEvent = factoryMethod<DryRunCompletedEvent>(() => ({
   result: completeDryRunResult(),
   timing: runTiming(),
+  capabilities: testRunnerCapabilities(),
 }));
 
 export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {

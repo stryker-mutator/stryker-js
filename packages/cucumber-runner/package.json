@@ -1,8 +1,13 @@
 {
   "name": "@stryker-mutator/cucumber-runner",
-  "version": "6.4.0-beta.2",
+  "version": "7.1.1",
   "description": "A plugin to use the cucumber test runner in Stryker, the JavaScript mutation testing framework",
-  "main": "dist/src/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "type": "module",
   "scripts": {
     "test": "c8 npm run test:all",
@@ -17,7 +22,7 @@
     "directory": "packages/cucumber-runner"
   },
   "engines": {
-    "node": ">=14.18.0"
+    "node": ">=16.0.0"
   },
   "keywords": [
     "stryker",
@@ -34,18 +39,18 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "8.9.0",
-    "@stryker-mutator/test-helpers": "6.4.0-beta.2",
-    "@types/semver": "7.3.13"
+    "@cucumber/cucumber": "9.3.0",
+    "@stryker-mutator/test-helpers": "7.1.1",
+    "@types/semver": "7.5.1"
   },
   "peerDependencies": {
-    "@cucumber/cucumber": "^8.0.0",
-    "@stryker-mutator/core": "~6.4.0"
+    "@cucumber/cucumber": ">=8.0.0",
+    "@stryker-mutator/core": "~7.1.0"
   },
   "dependencies": {
-    "@cucumber/messages": "^21.0.0",
-    "@stryker-mutator/api": "6.4.0-beta.2",
-    "@stryker-mutator/util": "6.4.0-beta.2",
+    "@cucumber/messages": "^22.0.0",
+    "@stryker-mutator/api": "7.1.1",
+    "@stryker-mutator/util": "7.1.1",
     "semver": "^7.3.7"
   }
 }

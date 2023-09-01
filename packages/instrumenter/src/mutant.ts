@@ -7,8 +7,7 @@ import { deepCloneNode, eqNode } from './util/index.js';
 
 const { traverse } = babel;
 
-// @ts-expect-error CJS typings not in line with synthetic esm
-const generator: typeof generate = generate.default;
+const generator = generate.default;
 
 export interface Mutable {
   mutatorName: string;

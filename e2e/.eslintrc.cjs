@@ -1,4 +1,4 @@
-const {parser, env, extends: extend, rules, plugins, overrides} = require('../.eslintrc.cjs')
+const { parser, env, extends: extend, rules, plugins, overrides } = require('../.eslintrc.cjs');
 module.exports = {
   root: true,
   env,
@@ -9,6 +9,10 @@ module.exports = {
   parser,
   extends: extend,
   plugins,
-  rules,
+  rules: {
+    ...rules,
+    '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'import/no-extraneous-dependencies': 'off',
+  },
   overrides,
 };

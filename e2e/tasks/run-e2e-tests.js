@@ -7,7 +7,7 @@ import { execa } from 'execa';
 import semver from 'semver';
 import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
@@ -47,7 +47,7 @@ runE2eTests().subscribe({
  * @param {boolean} stream
  * @returns {Promise<import('execa').ExecaReturnValue<string>>}
  */
-function execNpm(command, testDir, stream) {
+async function execNpm(command, testDir, stream) {
   const currentTestDir = path.resolve(testRootDir, testDir);
   console.log(`Exec ${testDir} npm ${command}`);
   const testProcess = execa('npm', [command], { timeout: 500000, cwd: currentTestDir, stdio: 'pipe' });
@@ -65,12 +65,14 @@ function execNpm(command, testDir, stream) {
       console.log(chunk.toString());
     }
   });
-  return testProcess.catch((error) => {
+  try {
+    return await testProcess;
+  } catch (error) {
     console.log(`X ${testDir}`);
     console.log(stdout);
     console.error(stderr);
     throw error;
-  });
+  }
 }
 
 /**
@@ -93,11 +95,29 @@ function satisfiesNodeVersion(testDir) {
 
 /**
  * @param {string} testDir
+ * @returns {Promise<number>}
+ */
+async function retryCount(testDir) {
+  const pkg = await fs.promises.readFile(path.resolve(testRootDir, testDir, 'package.json'), 'utf-8');
+  return JSON.parse(pkg).retries ?? 0;
+}
+
+/**
+ * @param {string} testDir
  * @returns {Promise<string>}
  */
-async function runTest(testDir) {
+async function runTest(testDir, count = 0) {
   if (satisfiesNodeVersion(testDir)) {
-    await execNpm('test', testDir, false);
+    try {
+      await execNpm('test', testDir, false);
+    } catch (err) {
+      const retries = await retryCount(testDir);
+      if (retries > count) {
+        console.log(`~ ${testDir} Retrying ${retries - count} more time(s)...`);
+        return runTest(testDir, count + 1);
+      }
+      throw err;
+    }
   }
   return testDir;
 }

@@ -3,7 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
+import type { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
 import { noopLogger, requireResolve } from '@stryker-mutator/util';
 
 import { StrykerReporter, strykerReporterFactory } from './stryker-reporter.js';
@@ -149,6 +149,7 @@ function configureStrykerMutantCoverageAdapter(config: Config) {
     watched: false,
     served: true,
     nocache: true,
+    type: 'module',
   });
 }
 

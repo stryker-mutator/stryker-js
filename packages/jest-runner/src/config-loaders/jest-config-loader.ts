@@ -6,7 +6,7 @@
  * The loaderConfig method will return a usable config for Jest to use.
  */
 
-import { Config } from '@jest/types';
+import type { Config } from '@jest/types';
 
 export interface JestConfigLoader {
   /*

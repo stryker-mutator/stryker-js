@@ -5,5 +5,8 @@
   "disableBail": true,
   "karma": {
     "configFile": "karma.conf.js"
+  },
+  "tap": {
+    "testFiles": ["test/*.tap.js"]
   }
 }

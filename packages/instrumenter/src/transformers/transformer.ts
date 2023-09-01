@@ -1,7 +1,7 @@
 import { MutateDescription } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
 
-import { Logger } from '@stryker-mutator/api/src/logging/logger';
+import { Logger } from '@stryker-mutator/api/logging';
 
 import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
 

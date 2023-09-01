@@ -10,8 +10,7 @@ import { parseJS, findNodePath } from '../helpers/syntax-test-helpers.js';
 
 const { types } = babel;
 
-// @ts-expect-error CJS typings not in line with synthetic esm
-const generate: typeof generator = generator.default;
+const generate = generator.default;
 
 describe(Mutant.name, () => {
   describe('constructor', () => {

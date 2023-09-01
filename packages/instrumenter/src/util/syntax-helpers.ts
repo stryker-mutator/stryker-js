@@ -1,10 +1,8 @@
 import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
 import babel from '@babel/core';
-import { deepFreeze, I } from '@stryker-mutator/util';
+import { deepFreeze } from '@stryker-mutator/util';
 
 import { Mutant } from '../mutant.js';
-import { MutantCollector } from '../transformers/index.js';
-import { MutatorOptions } from '../mutators/index.js';
 
 export { ID };
 
@@ -14,8 +12,14 @@ const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
 
 const { types, traverse, parse } = babel;
 
-export const instrumentationBabelHeaderAsString = `function ${STRYKER_NAMESPACE_HELPER}(){
-  var g = new Function("return this")();
+/**
+ * Returns syntax for the header if JS/TS files
+ */
+export const instrumentationBabelHeader = deepFreeze(
+  // `globalThis` implementation is based on core-js's implementation. See https://github.com/stryker-mutator/stryker-js/issues/4035
+  parse(
+    `function ${STRYKER_NAMESPACE_HELPER}(){
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
   if (ns.${ID.ACTIVE_MUTANT} === undefined && g.process && g.process.env && g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE}) {
     ns.${ID.ACTIVE_MUTANT} = g.process.env.${ID.ACTIVE_MUTANT_ENV_VARIABLE};
@@ -57,13 +61,10 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   }
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);
-}`;
-
-/**
- * Returns syntax for the header if JS/TS files
- */
-export const instrumentationBabelHeader = deepFreeze(parse(instrumentationBabelHeaderAsString, { configFile: false }) as babel.types.File).program
-  .body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
+}`,
+    { configFile: false }
+  ) as babel.types.File
+).program.body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
 
 /**
  * returns syntax for `global.activeMutant === $mutantId`
@@ -215,26 +216,4 @@ export function locationOverlaps(a: babel.types.SourceLocation, b: babel.types.S
  */
 export function deepCloneNode<TNode extends babel.types.Node>(node: TNode): TNode {
   return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
-}
-
-export function placeHeaderIfNeeded(
-  mutantCollector: I<MutantCollector>,
-  originFileName: string,
-  options: MutatorOptions,
-  root: babel.types.File
-): void {
-  if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
-    // Be sure to leave comments like `// @flow` in.
-    let header = instrumentationBabelHeader;
-    if (Array.isArray(root.program.body[0]?.leadingComments)) {
-      header = [
-        {
-          ...instrumentationBabelHeader[0],
-          leadingComments: root.program.body[0]?.leadingComments,
-        },
-        ...instrumentationBabelHeader.slice(1),
-      ];
-    }
-    root.program.body.unshift(...header);
-  }
 }

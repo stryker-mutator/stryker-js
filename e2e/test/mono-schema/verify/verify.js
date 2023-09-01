@@ -1,8 +1,10 @@
 import fs from 'fs';
-import { URL } from 'url';
+import { URL, fileURLToPath } from 'url';
+import path from 'path';
 
+import ts from 'typescript';
 import { expect } from 'chai';
-import Ajv from 'ajv';
+import ajvModule from 'ajv';
 import Axios from 'axios';
 import { beforeEach } from 'mocha';
 
@@ -15,6 +17,7 @@ const monoSchema = JSON.parse(
 const valid = JSON.parse(fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'));
 const invalid = JSON.parse(fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'));
 
+const Ajv = ajvModule.default;
 const ajv = new Ajv({
   strict: false,
   allErrors: true,
@@ -37,7 +40,7 @@ describe('The Stryker meta schema', () => {
   });
   it('should invalidate an invalid schema', async () => {
     expect(validator(invalid)).false;
-    expect(validator.errors).deep.eq(expectedErrors);
+    expect(validator.errors.sort(orderByInstancePath)).deep.eq(expectedErrors);
   });
   const expectedErrors = [
     {
@@ -94,5 +97,72 @@ describe('The Stryker meta schema', () => {
       },
       message: 'must be object',
     },
-  ];
+    {
+      instancePath: '/tap',
+      keyword: 'additionalProperties',
+      message: 'must NOT have additional properties',
+      params: {
+        additionalProperty: 'specFiles',
+      },
+      schemaPath: '#/properties/tap/additionalProperties',
+    },
+    {
+      instancePath: '/vitest',
+      keyword: 'additionalProperties',
+      message: 'must NOT have additional properties',
+      params: {
+        additionalProperty: 'options',
+      },
+      schemaPath: '#/properties/vitest/additionalProperties',
+    },
+  ].sort(orderByInstancePath);
+
+  /**
+   *
+   * @param {import('ajv').ErrorObject} a
+   * @param {import('ajv').ErrorObject} b
+   * @returns {number}
+   */
+  function orderByInstancePath(a, b) {
+    return a.instancePath.localeCompare(b.instancePath);
+  }
 });
+
+describe('PartialStrykerOptions', () => {
+  ['Node', 'Node16'].forEach((moduleResolution) => {
+    describe(`with --moduleResolution ${moduleResolution}`, () => {
+      it('should validate a valid schema', async () => {
+        const diagnostics = tsc('--moduleResolution', moduleResolution, 'valid.js');
+        expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
+      });
+      it('should invalidate an invalid schema', async () => {
+        const diagnostics = tsc('--moduleResolution', moduleResolution, 'invalid.js');
+        expect(diagnostics).not.empty;
+        // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+        expect(diagnostics.map(({ messageText }) => messageText).sort()).deep.eq([
+          "Type 'string' is not assignable to type '(string | undefined)[]'.",
+          "Type '{ name: string; }' is not assignable to type 'string'.",
+        ]);
+      });
+    });
+  });
+});
+
+/** @param  {...string} args */
+function tsc(...args) {
+  try {
+    process.chdir(fileURLToPath(new URL('../test', import.meta.url)));
+    const tsconfigFile = ts.findConfigFile('tsconfig.json', ts.sys.fileExists);
+    const { config } = ts.readConfigFile(tsconfigFile, ts.sys.readFile);
+    const { fileNames, options } = ts.parseCommandLine(args, (file) => {
+      return ts.sys.readFile(file);
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const program = ts.createProgram(fileNames, { ...config.compilerOptions, ...options });
+    const emitResult = program.emit();
+    const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+    return allDiagnostics;
+  } finally {
+    process.chdir(path.dirname(fileURLToPath(import.meta.url)));
+  }
+}

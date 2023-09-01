@@ -6,4 +6,4 @@ declare var __stryker__:
 declare var __stryker2__:
   | import('@stryker-mutator/api/core').InstrumenterContext
   | undefined;
-declare var sinonClock: import('sinon').SinonFakeTimers;
+declare var mockedClock: { tick(ms: number): void };

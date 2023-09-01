@@ -1,24 +1,18 @@
 // @ts-check
-import { writeFile as _writeFile, readFile as _readFile, mkdir as _mkdir } from 'fs';
+import { writeFile, readFile, mkdir } from 'fs/promises';
 import path from 'path';
-
-import { promisify } from 'util';
 import { fileURLToPath } from 'url';
 
-import glob from 'glob';
+import { glob } from 'glob';
 
-const writeFile = promisify(_writeFile);
-const readFile = promisify(_readFile);
-const mkdir = promisify(_mkdir);
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const resolveFromParent = path.resolve.bind(path, dirname, '..');
-const globAsPromised = promisify(glob);
 
 /**
  * Build the mono schema based on all schemas from the plugin as well as the Stryker core schema
  */
 async function buildMonoSchema() {
-  const schemaFiles = await globAsPromised('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
+  const schemaFiles = await glob('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
   const allContent = await Promise.all(schemaFiles.map((schemaFile) => readFile(resolveFromParent(schemaFile), 'utf8')));
   const allSchemas = allContent.map((content) => JSON.parse(content));
   const monoSchema = {

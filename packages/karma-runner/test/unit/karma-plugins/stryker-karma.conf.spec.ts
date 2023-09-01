@@ -227,6 +227,7 @@ describe('stryker-karma.conf.js', () => {
       watched: false,
       served: true,
       nocache: true,
+      type: 'module',
     });
   });
 

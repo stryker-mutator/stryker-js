@@ -1,3 +1,4 @@
 {
-  "require": ["test/chai-setup.js"]
+  "require": ["test/chai-setup.js"],
+  "spec": "test/math.spec.js"
 }

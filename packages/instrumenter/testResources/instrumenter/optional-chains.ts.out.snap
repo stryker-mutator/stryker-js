@@ -2,7 +2,7 @@
 
 exports[`instrumenter integration should be able to instrument optional chains 1`] = `
 "function stryNS_9fa48() {
-  var g = new Function(\\"return this\\")();
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
@@ -52,5 +52,6 @@ stryMutAct_9fa48(\\"5\\") ? qux().map() : (stryCov_9fa48(\\"5\\"), qux()?.map())
 const directiveRanges = stryMutAct_9fa48(\\"6\\") ? comments.map(tryParseTSDirective) : (stryCov_9fa48(\\"6\\"), comments?.map(tryParseTSDirective));
 const qux = quux(stryMutAct_9fa48(\\"7\\") ? corge.cov() : (stryCov_9fa48(\\"7\\"), corge?.cov()));
 stryMutAct_9fa48(\\"8\\") ? input.id!.toString() : (stryCov_9fa48(\\"8\\"), input?.id!.toString());
-stryMutAct_9fa48(\\"9\\") ? bar.baz[0] : (stryCov_9fa48(\\"9\\"), bar?.baz[0]);"
+stryMutAct_9fa48(\\"9\\") ? bar.baz[0] : (stryCov_9fa48(\\"9\\"), bar?.baz[0]);
+state.stats[stryMutAct_9fa48(\\"10\\") ? organization.organization_id : (stryCov_9fa48(\\"10\\"), organization?.organization_id)] = action.payload.stats;"
 `;

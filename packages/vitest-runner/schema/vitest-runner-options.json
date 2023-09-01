@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "title": "StrykerVitestRunnerOptions",
+  "additionalProperties": false,
+  "properties": {
+    "vitest": {
+      "description": "Configuration for @stryker-mutator/vitest-runner",
+      "title": "VitestRunnerOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "default": {},
+      "properties": {
+        "dir": {
+          "description": "Configure the `--dir <path>` command line option",
+          "type": "string"
+        },
+        "configFile": {
+          "description": "Path to the config file. Default resolving to `vitest.config.*`, `vite.config.*`",
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -37,6 +37,7 @@ describe(StrykerCli.name, () => {
       [['--checkerNodeArgs', '--inspect=1337 --gc'], { checkerNodeArgs: ['--inspect=1337', '--gc'] }],
       [['--disableBail'], { disableBail: true }],
       [['--dryRunOnly'], { dryRunOnly: true }],
+      [['--allowEmpty'], { allowEmpty: true }],
       [['--mutate', 'foo.js,bar.js'], { mutate: ['foo.js', 'bar.js'] }],
       [['--reporters', 'foo,bar'], { reporters: ['foo', 'bar'] }],
       [['--plugins', 'foo,bar'], { plugins: ['foo', 'bar'] }],
@@ -56,6 +57,7 @@ describe(StrykerCli.name, () => {
       [['--ignoreStatic'], { ignoreStatic: true }],
       [['--concurrency', '5'], { concurrency: 5 }],
       [['--cleanTempDir', 'false'], { cleanTempDir: false }],
+      [['--cleanTempDir', 'always'], { cleanTempDir: 'always' }],
       [['-c', '6'], { concurrency: 6 }],
       [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
     ];
@@ -105,13 +107,13 @@ describe(StrykerCli.name, () => {
   });
 
   describe(guardMinimalNodeVersion.name, () => {
-    it('should fail for < v14.18.0', () => {
-      expect(() => guardMinimalNodeVersion('v14.17.0')).throws(
-        'Node.js version v14.17.0 detected. StrykerJS requires version to match >=14.18.0. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
+    it('should fail for < v16.0.0', () => {
+      expect(() => guardMinimalNodeVersion('v14.21.3')).throws(
+        'Node.js version v14.21.3 detected. StrykerJS requires version to match >=16.0.0. Please update your Node.js version or visit https://nodejs.org/ for additional instructions'
       );
     });
-    it('should not fail for >= v14.18.0', () => {
-      expect(() => guardMinimalNodeVersion('v14.18.0')).not.throws();
+    it('should not fail for >= v16.0.0', () => {
+      expect(() => guardMinimalNodeVersion('v16.0.0')).not.throws();
     });
   });
 

@@ -1,7 +1,7 @@
 import path from 'path';
 import { isDeepStrictEqual } from 'util';
 
-import minimatch, { type Minimatch as IMinimatch } from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { StrykerOptions, FileDescriptions, FileDescription, Location, Position } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
@@ -16,7 +16,6 @@ import { coreTokens } from '../di/index.js';
 import { Project } from './project.js';
 import { FileSystem } from './file-system.js';
 
-const { Minimatch } = minimatch;
 const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']);
 
 export const IGNORE_PATTERN_CHARACTER = '!';
@@ -53,7 +52,7 @@ export class ProjectReader {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
     const project = new Project(this.fs, fileDescriptions, await this.readIncrementalReport());
-    project.logFiles(this.log, this.ignoreRules, this.force);
+    project.logFiles(this.log, this.ignoreRules, this.force, this.mutatePatterns);
     return project;
   }
 
@@ -143,12 +142,12 @@ export class ProjectReader {
     /**
      * Rewrite of: https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L213-L215
      */
-    const matchesDirectoryPartially = (entryPath: string, rule: IMinimatch) => {
+    const matchesDirectoryPartially = (entryPath: string, rule: Minimatch) => {
       return rule.match(`/${entryPath}`, true) || rule.match(entryPath, true);
     };
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L124
-    const matchesDirectory = (entryName: string, entryPath: string, rule: IMinimatch) => {
+    const matchesDirectory = (entryName: string, entryPath: string, rule: Minimatch) => {
       return (
         matchesFile(entryName, entryPath, rule) ||
         rule.match(`/${entryPath}/`) ||
@@ -158,7 +157,7 @@ export class ProjectReader {
     };
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L123
-    const matchesFile = (entryName: string, entryPath: string, rule: IMinimatch) => {
+    const matchesFile = (entryName: string, entryPath: string, rule: Minimatch) => {
       return rule.match(entryName) || rule.match(entryPath) || rule.match(`/${entryPath}`);
     };
 

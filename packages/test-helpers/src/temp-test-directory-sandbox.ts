@@ -36,8 +36,25 @@ export class TempTestDirectorySandbox {
       throw new Error('Disposed without initialized');
     }
     process.chdir(this.originalWorkingDir);
-    await fs.promises.rm(this.tmpDir, { recursive: true, force: true });
+    await this.rm();
   }
+
+  private async rm(retries = 5) {
+    try {
+      await fs.promises.rm(this.tmpDir, { recursive: true, force: true });
+    } catch (err) {
+      if (retries > 0) {
+        await sleep();
+        await this.rm(retries - 1);
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
+function sleep(n = 10) {
+  return new Promise((res) => setTimeout(res, n));
 }
 
 function random(): number {

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "skipLibCheck": true
+  }
+}

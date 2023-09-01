@@ -33,7 +33,7 @@ import { configLoaderFactory } from './config-loaders/index.js';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options.js';
 import { JEST_OVERRIDE_OPTIONS } from './jest-override-options.js';
 import { determineResolveFromDirectory, JestConfigWrapper, JestWrapper, verifyAllTestFilesHaveCoverage } from './utils/index.js';
-import { state } from './jest-plugins/cjs/messaging.js';
+import { state } from './jest-plugins/messaging.cjs';
 
 export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
   (injector: Injector<PluginContext>): JestTestRunner;

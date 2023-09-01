@@ -1,6 +1,6 @@
 import os from 'os';
 
-import { MutationTestingPlanReadyEvent } from '@stryker-mutator/api/src/report';
+import { MutationTestingPlanReadyEvent } from '@stryker-mutator/api/report';
 
 import { ProgressKeeper } from './progress-keeper.js';
 
@@ -14,7 +14,7 @@ export class ProgressAppendOnlyReporter extends ProgressKeeper {
     }
   }
 
-  public onAllMutantsTested(): void {
+  public onMutationTestReportReady(): void {
     if (this.intervalReference) {
       clearInterval(this.intervalReference);
     }

@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-import { PartialStrykerOptions } from '@stryker-mutator/api/src/core';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { resolveFromRoot } from '../../helpers/test-utils.js';

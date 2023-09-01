@@ -13,7 +13,7 @@
     "configFile": "karma.conf.js"
   },
   "timeoutMS": 60000,
-  "concurrency": 2,
+  "concurrency": 1,
   "coverageAnalysis": "perTest",
   "plugins": [
     "@stryker-mutator/karma-runner"

@@ -1,4 +1,4 @@
-import { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
+import type { InjectableClass, InjectableFunction, InjectionToken } from 'typed-inject';
 
 import { Reporter } from '../report/index.js';
 import { TestRunner } from '../test-runner/index.js';

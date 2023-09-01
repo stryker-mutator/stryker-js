@@ -1,0 +1,25 @@
+{
+  "name": "vitest-old-version",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The e2e test for the oldest supported vitest version",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "rimraf \"reports\"",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC",
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/vitest-runner": "../../../packages/vitest-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "devDependencies": {
+    "vitest": "0.31.2"
+  }
+}

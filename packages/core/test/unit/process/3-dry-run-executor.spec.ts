@@ -3,7 +3,14 @@ import { EOL } from 'os';
 import { Injector } from 'typed-inject';
 import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { TestRunner, CompleteDryRunResult, ErrorDryRunResult, TimeoutDryRunResult, DryRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  CompleteDryRunResult,
+  ErrorDryRunResult,
+  TimeoutDryRunResult,
+  DryRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 import { Observable, mergeMap } from 'rxjs';
 import { I } from '@stryker-mutator/util';
@@ -22,6 +29,7 @@ import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 describe(DryRunExecutor.name, () => {
   let injectorMock: sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
   let testRunnerPoolMock: sinon.SinonStubbedInstance<I<Pool<TestRunner>>>;
+  let testRunnerCapabilities: TestRunnerCapabilities;
   let sut: DryRunExecutor;
   let timerMock: sinon.SinonStubbedInstance<Timer>;
   let testRunnerMock: sinon.SinonStubbedInstance<Required<TestRunner>>;
@@ -33,7 +41,9 @@ describe(DryRunExecutor.name, () => {
   beforeEach(() => {
     reporterStub = factory.reporter();
     timerMock = sinon.createStubInstance(Timer);
+    testRunnerCapabilities = factory.testRunnerCapabilities();
     testRunnerMock = factory.testRunner();
+    testRunnerMock.capabilities.resolves(testRunnerCapabilities);
     testRunnerPoolMock = createTestRunnerPoolMock();
     (
       testRunnerPoolMock.schedule as sinon.SinonStub<
@@ -170,6 +180,7 @@ describe(DryRunExecutor.name, () => {
           overhead: expectedOverHeadTimeMs,
           net: expectedNetTime,
         },
+        capabilities: testRunnerCapabilities,
       });
     });
 
@@ -222,6 +233,7 @@ describe(DryRunExecutor.name, () => {
       });
 
       it('should remap test locations when type checking was disabled for a test file', async () => {
+        testInjector.options.disableTypeChecks = '{src,test}/**/*.js';
         runResult.tests.push(
           factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
           factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } })
@@ -258,11 +270,18 @@ describe(DryRunExecutor.name, () => {
         );
       });
 
-      it('should log when there were no tests', async () => {
+      it('should log when there were no tests and allowEmpty is set to false', async () => {
+        testInjector.options.allowEmpty = false;
         await expect(sut.execute()).rejectedWith(
           ConfigError,
           'No tests were executed. Stryker will exit prematurely. Please check your configuration.'
         );
+      });
+
+      it('should prevent dryRun to throw an error when no tests are found and allowEmpty is set to true', async () => {
+        testInjector.options.allowEmpty = true;
+        await sut.execute();
+        expect(testInjector.logger.info).to.have.been.calledWith('No tests were found');
       });
     });
     describe('with failed tests', () => {

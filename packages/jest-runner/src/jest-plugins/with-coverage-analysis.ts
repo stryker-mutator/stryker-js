@@ -1,16 +1,16 @@
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
 
-import { Config } from '@jest/types';
+import type { Config } from '@jest/types';
 import { CoverageAnalysis, StrykerOptions } from '@stryker-mutator/api/core';
 import { propertyPath } from '@stryker-mutator/util';
 import semver from 'semver';
 
 import { JestWrapper } from '../utils/jest-wrapper.js';
 
-import { state } from './cjs/messaging.js';
+import { state } from './messaging.cjs';
 
-const jestEnvironmentGenericFileName = fileURLToPath(new URL('./cjs/jest-environment-generic.js', import.meta.url));
+const jestEnvironmentGenericFileName = fileURLToPath(new URL('./jest-environment-generic.cjs', import.meta.url));
 
 /**
  * Jest's defaults.
@@ -69,7 +69,7 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
   const testRunner = jestConfig.testRunner ?? getJestDefaults(jestWrapper).testRunner;
   if (testRunner === 'jest-jasmine2') {
     overrides.setupFilesAfterEnv = [
-      path.resolve(path.dirname(fileURLToPath(import.meta.url)), './jasmine2-setup-coverage-analysis.js'),
+      path.resolve(path.dirname(fileURLToPath(import.meta.url)), './jasmine2-setup-coverage-analysis.cjs'),
       ...(jestConfig.setupFilesAfterEnv ?? []),
     ];
   } else if (!testRunner.includes('jest-circus')) {
