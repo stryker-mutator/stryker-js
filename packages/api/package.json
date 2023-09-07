@@ -8,7 +8,7 @@
     "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
-  "files": ["./dist/"],
+  "files": ["./dist/", "./core.d.ts"],
   "exports": {
     "./check": "./dist/src/check/index.js",
     "./core": "./dist/src/core/index.js",
