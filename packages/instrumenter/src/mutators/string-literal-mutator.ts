@@ -1,4 +1,4 @@
-import babel, { NodePath } from '@babel/core';
+import babel, { type NodePath } from '@babel/core';
 
 import { NodeMutator } from './node-mutator.js';
 
