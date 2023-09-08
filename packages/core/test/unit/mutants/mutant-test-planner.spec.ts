@@ -14,6 +14,7 @@ import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { loc } from '../../helpers/producers.js';
 import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
 import { IncrementalDiffer } from '../../../src/mutants/incremental-differ.js';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 
 const TIME_OVERHEAD_MS = 501;
 
@@ -22,6 +23,7 @@ describe(MutantTestPlanner.name, () => {
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let fileSystemTestDouble: FileSystemTestDouble;
   let testCoverage: TestCoverageTestDouble;
+  let mutationTestReportHelperMock: MutationTestReportHelper;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -29,6 +31,7 @@ describe(MutantTestPlanner.name, () => {
     sandboxMock.sandboxFileFor.returns('sandbox/foo.js');
     fileSystemTestDouble = new FileSystemTestDouble();
     testCoverage = new TestCoverageTestDouble();
+    mutationTestReportHelperMock = sinon.createStubInstance(MutationTestReportHelper);
   });
 
   function act(
@@ -37,12 +40,13 @@ describe(MutantTestPlanner.name, () => {
   ): Promise<readonly MutantTestPlan[]> {
     return testInjector.injector
       .provideValue(coreTokens.testCoverage, testCoverage)
+      .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer) // inject the real deal
       .provideValue(coreTokens.reporter, reporterMock)
-      .provideValue(coreTokens.mutants, mutants)
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.timeOverheadMS, TIME_OVERHEAD_MS)
-      .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer) // inject the real deal
+      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportHelperMock)
+      .provideValue(coreTokens.mutants, mutants)
       .injectClass(MutantTestPlanner)
       .makePlan(mutants);
   }
@@ -126,7 +130,7 @@ describe(MutantTestPlanner.name, () => {
     const mutantPlans = await act(mutants);
 
     // Assert
-    sinon.assert.calledOnceWithExactly(reporterMock.onMutationTestingPlanReady, { mutantPlans });
+    sinon.assert.calledOnceWithExactly(reporterMock.onMutationTestingPlanReady, { mutantPlans, report: undefined });
   });
 
   describe('coverage', () => {

@@ -480,7 +480,7 @@ describe(IncrementalDiffer.name, () => {
 
       // Assert
       const actualMutant = actualDiff[0];
-      expect(actualMutant.status).undefined;
+      expect(actualMutant.status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should not reuse when the mutant was ignored', () => {
@@ -489,7 +489,7 @@ describe(IncrementalDiffer.name, () => {
 
       // Assert
       const actualMutant = actualDiff[0];
-      expect(actualMutant.status).undefined;
+      expect(actualMutant.status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should normalize line endings when comparing diffs', () => {
@@ -538,7 +538,7 @@ describe(IncrementalDiffer.name, () => {
 
     it('should not reuse the status of a mutant in changed text', () => {
       const actualDiff = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*').act();
-      expect(actualDiff[0].status).undefined;
+      expect(actualDiff[0].status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should reuse the status when there is no test coverage', () => {
@@ -710,7 +710,7 @@ describe(IncrementalDiffer.name, () => {
         .withLocatedTest({ includeEnd: true })
         .withAddedCodeInsideTheTest('addedText();')
         .act();
-      expect(actualDiff[0].status).undefined;
+      expect(actualDiff[0].status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should close locations of tests in the incremental report', () => {
@@ -756,7 +756,7 @@ describe(IncrementalDiffer.name, () => {
         .withMathProjectExample({ mutantState: MutantStatus.Survived })
         .withSecondTest({ located: false })
         .act();
-      expect(actualDiff[0].status).undefined;
+      expect(actualDiff[0].status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should identify that a "Killed" state can be reused when the killing test didn\'t change', () => {
@@ -775,7 +775,7 @@ describe(IncrementalDiffer.name, () => {
         .withTestFile()
         .withSecondTestInIncrementalReport({ isKillingTest: true })
         .act();
-      expect(actualDiff[0].status).undefined;
+      expect(actualDiff[0].status).to.be.eq(MutantStatus.Pending);
     });
 
     it('should identify that a "Killed" state for a static mutant (no covering tests) can be reused when the killing test didn\'t change', () => {

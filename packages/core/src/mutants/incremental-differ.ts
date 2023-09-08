@@ -121,7 +121,7 @@ export class IncrementalDiffer {
       const relativeFileName = toRelativeNormalizedFileName(mutant.fileName);
       const mutantKey = mutantToIdentifyingKey(mutant, relativeFileName);
       currentMutantKeys.add(mutantKey);
-      if (!mutant.status && !this.options.force) {
+      if (mutant.status === MutantStatus.Pending && !this.options.force) {
         const oldMutant = reusableMutantsByKey.get(mutantKey);
         if (oldMutant) {
           const coveringTests = testCoverage.forMutant(mutant.id);

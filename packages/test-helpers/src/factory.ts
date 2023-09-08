@@ -154,6 +154,7 @@ export const mutant = factoryMethod<Mutant>(() => ({
   mutatorName: 'foobarMutator',
   location: location(),
   replacement: 'replacement',
+  status: MutantStatus.Pending,
 }));
 
 export const metrics = factoryMethod<Metrics>(() => ({
@@ -340,6 +341,7 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   static: false,
   replacement: '',
   location: location(),
+  status: MutantStatus.Pending,
 }));
 
 export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { status: MutantStatus.Ignored }>(() => ({
@@ -367,6 +369,7 @@ export const mutantEarlyResultPlan = factoryMethod<MutantEarlyResultPlan>(() => 
 
 export const mutationTestingPlanReadyEvent = factoryMethod<MutationTestingPlanReadyEvent>(() => ({
   mutantPlans: [mutantRunPlan()],
+  report: undefined,
 }));
 
 export const runTiming = factoryMethod<RunTiming>(() => ({

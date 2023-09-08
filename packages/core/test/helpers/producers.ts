@@ -1,7 +1,7 @@
 import { CpuInfo } from 'os';
 import type { Dirent } from 'fs';
 
-import { ClearTextReporterOptions, Location, Mutant, schema } from '@stryker-mutator/api/core';
+import { ClearTextReporterOptions, Location, Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
 import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
@@ -154,6 +154,7 @@ export function createMutant(overrides?: Partial<Mutant>): Mutant {
     location: { start: { line: 1, column: 2 }, end: { line: 3, column: 3 } },
     mutatorName: 'fooMutator',
     replacement: 'foo',
+    status: MutantStatus.Pending,
     ...overrides,
   };
 }

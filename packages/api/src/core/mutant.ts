@@ -23,7 +23,7 @@ export interface Mutant
   /**
    * The status if a mutant if known. This should be undefined for a mutant that still needs testing.
    */
-  status?: schema.MutantStatus;
+  status: schema.MutantStatus;
 }
 
 /**
