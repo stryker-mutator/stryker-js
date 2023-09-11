@@ -8,42 +8,40 @@ export const stringLiteralMutator: NodeMutator = {
   name: 'StringLiteral',
 
   *mutate(path) {
-    if (path.isTemplateLiteral() && isValidParentForTemplateLiteral(path)) {
+    if (path.isTemplateLiteral() && isValidParent(path)) {
       const replacement = path.node.quasis.length === 1 && path.node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : '';
       yield types.templateLiteral([types.templateElement({ raw: replacement })], []);
     }
-    if (path.isStringLiteral() && isValidParentForStringLiteral(path)) {
+    if (path.isStringLiteral() && isValidParent(path)) {
       yield types.stringLiteral(path.node.value.length === 0 ? 'Stryker was here!' : '');
     }
   },
 };
 
-function isValidParentForStringLiteral(child: NodePath<babel.types.StringLiteral>): boolean {
+function isValidParent(child: NodePath<babel.types.StringLiteral> | NodePath<babel.types.TemplateLiteral>): boolean {
   const parent = child.parent;
-  return !(
-    types.isImportDeclaration(parent) ||
-    types.isExportDeclaration(parent) ||
+  const sharedLogic = !(
     types.isImportOrExportDeclaration(parent) ||
     types.isTSExternalModuleReference(parent) ||
-    types.isJSXAttribute(parent) ||
     types.isExpressionStatement(parent) ||
     types.isTSLiteralType(parent) ||
-    types.isObjectMethod(parent) ||
     (types.isObjectProperty(parent) && parent.key === child.node) ||
-    (types.isClassProperty(parent) && parent.key === child.node) ||
     (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'require' })) ||
     (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'Symbol' }))
   );
-}
 
-function isValidParentForTemplateLiteral(child: NodePath<babel.types.TemplateLiteral>): boolean {
-  const parent = child.parent;
-  return !(
-    types.isImportOrExportDeclaration(parent) ||
-    types.isTSExternalModuleReference(parent) ||
-    types.isExpressionStatement(parent) ||
-    types.isTSLiteralType(parent) ||
-    (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'require' })) ||
-    (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'Symbol' }))
+  if (child.isTemplateLiteral()) {
+    return sharedLogic;
+  }
+
+  return (
+    sharedLogic &&
+    !(
+      types.isImportDeclaration(parent) ||
+      types.isExportDeclaration(parent) ||
+      types.isJSXAttribute(parent) ||
+      types.isObjectMethod(parent) ||
+      (types.isClassProperty(parent) && parent.key === child.node)
+    )
   );
 }
