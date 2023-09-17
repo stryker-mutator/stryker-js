@@ -87,7 +87,7 @@ function toApiLocation(source: types.SourceLocation, offset: Offset): Location {
 
 function toPosition(source: Position, offset: Offset): Position {
   return {
-    column: source.column + (source.line === 1 ? offset.position : 0),
+    column: source.column, // + (source.line === 1 ? offset.position : 0), TODO: delete comment if the math is unnecessary
     line: source.line + offset.line - 1, // Stryker works 0-based internally
   };
 }

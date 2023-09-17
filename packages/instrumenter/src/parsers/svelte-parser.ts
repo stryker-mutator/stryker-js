@@ -1,6 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import type { BaseNode, Position, Program, SourceLocation } from 'estree';
 
 import type { Ast as InternalSvelteAst } from '../../../../node_modules/svelte/types/compiler/interfaces.js';
+
 import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset } from '../syntax/index.js';
 
 import { ParserContext } from './parser-context.js';
@@ -73,7 +75,7 @@ async function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, 
         const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
           ast: {
             ...ast,
-            offset: toOffset(node.children[0].loc.start),
+            offset: toOffset(node.children[0].start),
           },
           range: { start: node.children[0].start, end: node.children[0].end },
         }));

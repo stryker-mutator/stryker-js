@@ -3,7 +3,7 @@
 exports[`instrumenter integration should be able to instrument svelte with only a module script tag 1`] = `
 "<script context=\\"module\\">
 function stryNS_9fa48() {
-  var g = new Function(\\"return this\\")();
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
