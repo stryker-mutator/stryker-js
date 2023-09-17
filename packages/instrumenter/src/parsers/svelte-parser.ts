@@ -75,7 +75,7 @@ async function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, 
         const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
           ast: {
             ...ast,
-            offset: toOffset(node.children[0].start),
+            offset: toOffset(node.children[0].start as Position),
           },
           range: { start: node.children[0].start, end: node.children[0].end },
         }));
