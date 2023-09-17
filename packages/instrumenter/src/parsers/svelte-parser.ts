@@ -1,12 +1,14 @@
 import type { BaseNode, Position, Program, SourceLocation } from 'estree';
+
 import type { Ast as InternalSvelteAst } from '../../../../node_modules/svelte/types/compiler/interfaces.js';
-import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset, Ast } from '../syntax/index.js';
+import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset } from '../syntax/index.js';
+
 import { ParserContext } from './parser-context.js';
 
 const header = '<script></script>\n\n';
 
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
-  const { parse: svelteParse } = await import ('svelte/compiler');
+  const { parse: svelteParse } = await import('svelte/compiler');
   let ast = svelteParse(text);
 
   if (!ast.instance && !ast.module) {
@@ -47,7 +49,7 @@ async function sliceScript(text: string, fileName: string, program: Program, con
   };
 }
 
-function getMainScript(ast : InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode> {
+function getMainScript(ast: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode> {
   if (ast.instance?.content) {
     return sliceScript(text, fileName, ast.instance.content, context);
   } else {
@@ -55,7 +57,7 @@ function getMainScript(ast : InternalSvelteAst, text: string, fileName: string, 
   }
 }
 
-async function getAdditionalScripts(svelteAst : InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode[]> {
+async function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode[]> {
   const additionalScriptsAsPromised: Array<Promise<SvelteNode>> = [];
 
   if (svelteAst.instance?.content && svelteAst.module?.content) {

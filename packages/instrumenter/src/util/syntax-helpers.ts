@@ -193,7 +193,10 @@ export function isImportDeclaration(path: babel.NodePath): boolean {
   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
 }
 
-type Location = { start: Pick<babel.types.SourceLocation['start'], 'column' | 'line'>, end: Pick<babel.types.SourceLocation['end'], 'column' | 'line'>}
+interface Location {
+  start: Pick<babel.types.SourceLocation['start'], 'column' | 'line'>;
+  end: Pick<babel.types.SourceLocation['end'], 'column' | 'line'>;
+}
 
 /**
  * Determines if a location (needle) is included in an other location (haystack)
@@ -201,10 +204,9 @@ type Location = { start: Pick<babel.types.SourceLocation['start'], 'column' | 'l
  * @param needle the range to search for
  */
 export function locationIncluded(haystack: Location, needle: Location): boolean {
-  const startIncluded = haystack.start.line < needle.start.line 
-    || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
-  const endIncluded = haystack.end.line > needle.end.line 
-    || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
+  const startIncluded =
+    haystack.start.line < needle.start.line || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
+  const endIncluded = haystack.end.line > needle.end.line || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
   return startIncluded && endIncluded;
 }
 
@@ -212,10 +214,8 @@ export function locationIncluded(haystack: Location, needle: Location): boolean 
  * Determines if two locations overlap with each other
  */
 export function locationOverlaps(a: Location, b: Location): boolean {
-  const startIncluded = a.start.line < b.end.line 
-    || (a.start.line === b.end.line && a.start.column <= b.end.column);
-  const endIncluded = a.end.line > b.start.line 
-    || (a.end.line === b.start.line && a.end.column >= b.start.column);
+  const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
+  const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;
 }
 

@@ -22,7 +22,7 @@ describe(throwPlacementError.name, () => {
   it('should throw an error if mutant placing gave a error', () => {
     const expectedError = new Error('expectedError');
 
-    path.node.loc = { start: { column: 3, line: 2, index: 0 }, end: { column: 5, line: 4, index: 0 }, filename: '', identifierName: ''};
+    path.node.loc = { start: { column: 3, line: 2, index: 0 }, end: { column: 5, line: 4, index: 0 }, filename: '', identifierName: '' };
     const mutants = [createMutant()];
     expect(() => throwPlacementError(expectedError, path, fooPlacer, mutants, 'foo.js')).throws(
       SyntaxError,
