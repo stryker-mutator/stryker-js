@@ -193,7 +193,7 @@ export function isImportDeclaration(path: babel.NodePath): boolean {
   return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
 }
 
-type Location = { start: Pick<babel.types.SourceLocation["start"], "line" | "column">, end: Pick<babel.types.SourceLocation["end"], "line" | "column">}
+type Location = { start: Pick<babel.types.SourceLocation['start'], 'column' | 'line'>, end: Pick<babel.types.SourceLocation['end'], 'column' | 'line'>}
 
 /**
  * Determines if a location (needle) is included in an other location (haystack)
