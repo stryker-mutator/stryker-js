@@ -1,4 +1,4 @@
-import { SvelteAst } from '../syntax';
+import { SvelteAst } from '../syntax/index.js';
 
 import { Printer } from './index.js';
 

@@ -2,7 +2,7 @@ import { AstFormat } from '../syntax/index.js';
 
 import { placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 
-import { AstTransformer } from './transformer';
+import { AstTransformer } from './transformer.js';
 
 export const transformSvelte: AstTransformer<AstFormat.Svelte> = ({ root, originFileName }, mutantCollector, context) => {
   [root.mainScript, ...root.additionalScripts]

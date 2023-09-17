@@ -8,7 +8,8 @@
         "svelte",
         "js"
     ],
-    "testEnvironment": "jsdom",    "setupFilesAfterEnv": [
+    "testEnvironment": "jsdom",    
+    "setupFilesAfterEnv": [
         "@testing-library/jest-dom/extend-expect"
     ]
 }
