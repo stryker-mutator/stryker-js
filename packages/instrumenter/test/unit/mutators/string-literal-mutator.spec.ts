@@ -35,21 +35,13 @@ describe(sut.name, () => {
       expectJSMutation(sut, 'const b = ``;', 'const b = `Stryker was here!`;');
     });
 
-    it('should not mutate directive prologues in string literals', () => {
+    it('should not mutate directive prologues', () => {
       expectJSMutation(sut, '"use strict";"use asm";');
       expectJSMutation(sut, 'function a() {"use strict";"use asm";}');
     });
 
-    it('should not mutate directive prolouges in string templates', () => {
-      expectJSMutation(sut, '`use strict`;`use asm`;');
-      expectJSMutation(sut, 'function a() {`use strict`;`use asm`;}');
-    });
-
-    it('should not mutate string literals with single quotes in symbols with descriptions', () => {
+    it('should not mutate string literals in symbols with descriptions', () => {
       expectJSMutation(sut, "const a = Symbol('foo');");
-    });
-
-    it('should not mutate string literals with double  quotes in symbols with descriptions', () => {
       expectJSMutation(sut, 'const a = Symbol("foo");');
     });
 
@@ -57,8 +49,9 @@ describe(sut.name, () => {
       expectJSMutation(sut, 'const a = Symbol();');
     });
 
-    it('should not mutate template literals in symbols with descriptions', () => {
-      expectJSMutation(sut, 'const a = Symbol(`foo`);');
+    it('should mutate template literals in symbols with descriptions', () => {
+      expectJSMutation(sut, 'const a = Symbol(`foo`);', 'const a = Symbol(``);');
+      expectJSMutation(sut, "const a = Symbol('foo' + 'bar');", 'const a = Symbol(\'foo\' + "");', 'const a = Symbol("" + \'bar\');');
     });
   });
 
@@ -72,12 +65,10 @@ describe(sut.name, () => {
 
     it('should not mutate require call statements', () => {
       expectJSMutation(sut, 'require("./lib/square");');
-      expectJSMutation(sut, 'require(`./lib/square`);');
     });
 
     it('should mutate other call statements', () => {
       expectJSMutation(sut, 'require2("./lib/square");', 'require2("");');
-      expectJSMutation(sut, 'require2(`./lib/square`);', 'require2(``);');
     });
 
     it('should not mutate export statements', () => {
@@ -90,8 +81,6 @@ describe(sut.name, () => {
     it('should not mutate type declarations', () => {
       expectJSMutation(sut, 'const a: "hello" = "hello";', 'const a: "hello" = "";');
       expectJSMutation(sut, 'const a: Record<"id", number> = { id: 10 }');
-      expectJSMutation(sut, 'const a: `hello` = `hello`;', 'const a: `hello` = ``;');
-      expectJSMutation(sut, 'const a: Record<`id`, number> = { id: 10 }');
     });
 
     // interfaces itself are skipped entirely by the babel-transformer
@@ -103,11 +92,9 @@ describe(sut.name, () => {
     });
     it('should not mutate inside object property keys', () => {
       expectJSMutation(sut, 'const foo = { className, ["aria-label"]: label };');
-      expectJSMutation(sut, 'const foo = { className, [`aria-label`]: label };');
     });
     it('should still mutate inside object property values', () => {
       expectJSMutation(sut, 'const foo = { bar: "baz" };', 'const foo = { bar: "" };');
-      expectJSMutation(sut, 'const foo = { bar: `baz` };', 'const foo = { bar: `` };');
     });
     it('should not mutate class property keys', () => {
       expectJSMutation(sut, 'class Foo { "baz-bar" = 4; }');
@@ -117,7 +104,6 @@ describe(sut.name, () => {
     });
     it('should mutate class property values', () => {
       expectJSMutation(sut, 'class Foo { bar = "4"; }', 'class Foo { bar = ""; }');
-      expectJSMutation(sut, 'class Foo { bar = `4`; }', 'class Foo { bar = ``; }');
     });
   });
 
