@@ -94,7 +94,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.1.1",
-    "@types/diff-match-patch": "1.0.32",
+    "@types/diff-match-patch": "1.0.33",
     "@types/inquirer": "9.0.3",
     "@types/lodash.flatmap": "4.5.7",
     "@types/lodash.groupby": "4.6.7",
