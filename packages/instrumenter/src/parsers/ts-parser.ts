@@ -39,8 +39,8 @@ async function parse(text: string, fileName: string, isTSX: boolean): Promise<ba
     babelrc: false,
     presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true }]],
     plugins: [
-      require.resolve('@babel/plugin-proposal-class-properties'),
-      require.resolve('@babel/plugin-proposal-private-methods'),
+      require.resolve('@babel/plugin-transform-class-properties'),
+      require.resolve('@babel/plugin-transform-private-methods'),
       [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
     ],
   });
