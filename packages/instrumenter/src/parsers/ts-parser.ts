@@ -38,11 +38,7 @@ async function parse(text: string, fileName: string, isTSX: boolean): Promise<ba
     configFile: false,
     babelrc: false,
     presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true }]],
-    plugins: [
-      require.resolve('@babel/plugin-proposal-class-properties'),
-      require.resolve('@babel/plugin-proposal-private-methods'),
-      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-    ],
+    plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
   });
   if (ast === null) {
     throw new Error(`Expected ${fileName} to contain a babel.types.file, but it yielded null`);
