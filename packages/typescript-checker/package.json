@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.1.1",
-    "@types/semver": "7.5.1"
+    "@types/semver": "7.5.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~7.1.0",
