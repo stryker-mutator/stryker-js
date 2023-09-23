@@ -100,7 +100,7 @@
     "@types/lodash.groupby": "4.6.7",
     "@types/node": "18.17.1",
     "@types/progress": "2.0.5",
-    "@types/semver": "7.5.1",
+    "@types/semver": "7.5.2",
     "flatted": "3.2.7"
   }
 }
