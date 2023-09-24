@@ -3,7 +3,7 @@
   "version": "7.1.1",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
-  "files": ["./bin/", "./dist/", "./schema/"],
+  "files": ["./bin/", "./dist/", "./schema/", "./src/"],
   "exports": {
     ".": {
       "import": "./dist/src/index.js"
