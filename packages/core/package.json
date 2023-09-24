@@ -71,7 +71,7 @@
     "commander": "~11.0.0",
     "diff-match-patch": "1.0.5",
     "emoji-regex": "~10.2.1",
-    "execa": "~7.1.0",
+    "execa": "~7.2.0",
     "file-url": "~4.0.0",
     "get-port": "~7.0.0",
     "glob": "~10.3.0",
@@ -80,9 +80,9 @@
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.0",
     "minimatch": "~9.0.1",
-    "mutation-testing-elements": "2.0.1",
-    "mutation-testing-metrics": "2.0.1",
-    "mutation-testing-report-schema": "2.0.1",
+    "mutation-testing-elements": "2.0.3",
+    "mutation-testing-metrics": "2.0.3",
+    "mutation-testing-report-schema": "2.0.3",
     "npm-run-path": "~5.1.0",
     "progress": "~2.0.0",
     "rxjs": "~7.8.0",
@@ -95,13 +95,13 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "7.1.1",
-    "@types/diff-match-patch": "1.0.32",
+    "@types/diff-match-patch": "1.0.34",
     "@types/inquirer": "9.0.3",
     "@types/lodash.flatmap": "4.5.7",
     "@types/lodash.groupby": "4.6.7",
     "@types/node": "18.17.1",
     "@types/progress": "2.0.5",
-    "@types/semver": "7.5.1",
-    "flatted": "3.2.7"
+    "@types/semver": "7.5.2",
+    "flatted": "3.2.9"
   }
 }

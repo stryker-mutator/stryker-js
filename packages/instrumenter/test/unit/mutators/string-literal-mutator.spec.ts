@@ -39,6 +39,20 @@ describe(sut.name, () => {
       expectJSMutation(sut, '"use strict";"use asm";');
       expectJSMutation(sut, 'function a() {"use strict";"use asm";}');
     });
+
+    it('should not mutate string literals in symbols with descriptions', () => {
+      expectJSMutation(sut, "const a = Symbol('foo');");
+      expectJSMutation(sut, 'const a = Symbol("foo");');
+    });
+
+    it('should not mutate symbols without description', () => {
+      expectJSMutation(sut, 'const a = Symbol();');
+    });
+
+    it('should mutate template literals in symbols with descriptions', () => {
+      expectJSMutation(sut, 'const a = Symbol(`foo`);', 'const a = Symbol(``);');
+      expectJSMutation(sut, "const a = Symbol('foo' + 'bar');", 'const a = Symbol(\'foo\' + "");', 'const a = Symbol("" + \'bar\');');
+    });
   });
 
   describe('imports/exports', () => {
