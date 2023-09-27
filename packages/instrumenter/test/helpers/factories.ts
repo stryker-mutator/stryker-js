@@ -82,3 +82,23 @@ export function createMutable(overrides?: Partial<Mutable>): Mutable {
     ...overrides,
   };
 }
+
+export function createSourceLocation(overrides?: Partial<babel.types.SourceLocation>): babel.types.SourceLocation {
+  return {
+    start: createSourcePosition({ line: 1, column: 0 }),
+    end: createSourcePosition({ line: 1, column: 1 }),
+    filename: 'foo.js',
+    identifierName: undefined,
+    ...overrides,
+  };
+}
+
+export type SourcePosition = babel.types.SourceLocation['start'];
+export function createSourcePosition(overrides?: Partial<SourcePosition>): SourcePosition {
+  return {
+    line: 0,
+    column: 0,
+    index: 0,
+    ...overrides,
+  };
+}

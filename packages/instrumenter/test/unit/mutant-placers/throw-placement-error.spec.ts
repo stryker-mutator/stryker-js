@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import { throwPlacementError, MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
-import { createMutant } from '../../helpers/factories.js';
+import { createMutant, createSourceLocation, createSourcePosition } from '../../helpers/factories.js';
 
 describe(throwPlacementError.name, () => {
   let path: NodePath;
@@ -22,7 +22,7 @@ describe(throwPlacementError.name, () => {
   it('should throw an error if mutant placing gave a error', () => {
     const expectedError = new Error('expectedError');
 
-    path.node.loc = { start: { column: 3, line: 2 }, end: { column: 5, line: 4 } };
+    path.node.loc = createSourceLocation({ start: createSourcePosition({ column: 3, line: 2 }), end: createSourcePosition({ column: 5, line: 4 }) });
     const mutants = [createMutant()];
     expect(() => throwPlacementError(expectedError, path, fooPlacer, mutants, 'foo.js')).throws(
       SyntaxError,
