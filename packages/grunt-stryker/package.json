@@ -32,6 +32,7 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "files": ["./tasks/"],
   "main": "Gruntfile.js",
   "devDependencies": {
     "@stryker-mutator/api": "7.1.1",

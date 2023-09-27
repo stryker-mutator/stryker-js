@@ -4,6 +4,7 @@
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "type": "module",
+  "files": ["./dist/", "./src/"],
   "exports": {
     ".": {
       "import": "./dist/src/index.js"
