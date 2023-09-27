@@ -5,7 +5,7 @@ import { factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { Mutant } from '../../src/mutant.js';
-import { createJSAst } from '../helpers/factories.js';
+import { createJSAst, createSourceLocation } from '../helpers/factories.js';
 import { parseJS, findNodePath } from '../helpers/syntax-test-helpers.js';
 
 const { types } = babel;
@@ -35,7 +35,7 @@ describe(Mutant.name, () => {
         mutatorName: 'fooMutator',
         ignoreReason: 'ignore',
       });
-      mutant.original.loc = factory.location();
+      mutant.original.loc = createSourceLocation();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',
@@ -52,7 +52,7 @@ describe(Mutant.name, () => {
         replacement: types.stringLiteral('Stryker was here!'),
         mutatorName: 'fooMutator',
       });
-      mutant.original.loc = factory.location();
+      mutant.original.loc = createSourceLocation();
       const expected: Partial<MutantApi> = {
         fileName: 'file.js',
         id: '2',

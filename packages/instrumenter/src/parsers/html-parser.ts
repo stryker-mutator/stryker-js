@@ -78,7 +78,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
   }
 }
 
-function toSourceLocation({ line, col }: ParseLocation): { line: number; column: number } {
+function toSourceLocation({ line, col }: { line: number; col: number }): { line: number; column: number } {
   // Offset line with 1, since ngHtmlParser is 0-based
   return { line: line + 1, column: col };
 }
