@@ -2,7 +2,7 @@ import path from 'path';
 
 import { FileDescription, MutateDescription } from '@stryker-mutator/api/core';
 import { File } from '@stryker-mutator/instrumenter';
-import { I } from '@stryker-mutator/util';
+import { I, StrykerError } from '@stryker-mutator/util';
 
 import { FileSystem } from './file-system.js';
 
@@ -50,7 +50,11 @@ export class ProjectFile implements FileDescription {
 
   public async readOriginal(): Promise<string> {
     if (this.#originalContent === undefined) {
-      this.#originalContent = await this.fs.readFile(this.name, 'utf-8');
+      try {
+        this.#originalContent = await this.fs.readFile(this.name, 'utf-8');
+      } catch (e) {
+        throw new StrykerError(`Could not read file "${this.name}"`, e);
+      }
       if (this.#currentContent === undefined) {
         this.#currentContent = this.#originalContent;
       }
