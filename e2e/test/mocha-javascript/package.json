@@ -5,7 +5,7 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
+    "pretest": "rimraf reports stryker.log",
     "test": "stryker run",
     "test:unit": "mocha",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
