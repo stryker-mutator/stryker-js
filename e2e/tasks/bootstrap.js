@@ -49,7 +49,7 @@ function reportProgress(current) {
     if (count > 0) {
       process.stdout.write('\r');
     }
-    process.stdout.write(`${count}/60${current ? ` (${current})` : ''}`);
+    process.stdout.write(`${count}/${dirs.length}${current ? ` (${current})` : ''}`);
     process.stdout.clearLine?.(1);
   }
 }
