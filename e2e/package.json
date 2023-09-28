@@ -17,7 +17,7 @@
     "@types/tap": "15.0.9",
     "ajv": "8.12.0",
     "axios": "1.5.1",
-    "chai": "4.3.8",
+    "chai": "4.3.9",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
     "cross-env": "7.0.3",
