@@ -2,7 +2,7 @@
   "name": "@stryker-mutator/util",
   "version": "7.1.1",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
-  "files": ["./dist/", "./src/"],
+  "files": ["dist", "src"],
   "exports": {
     ".": {
       "import": "./dist/src/index.js"

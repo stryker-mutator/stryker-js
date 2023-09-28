@@ -3,10 +3,10 @@
   "version": "7.1.1",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
-    "./dist/",
-    "./src-generated/",
-    "./src/",
-    "./stryker-karma.conf.cjs"],
+    "dist",
+    "src-generated",
+    "src",
+    "stryker-karma.conf.cjs"],
   "exports": {
     ".": {
       "import": "./dist/src/index.js"
