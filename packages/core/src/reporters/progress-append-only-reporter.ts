@@ -5,7 +5,7 @@ import { MutationTestingPlanReadyEvent } from '@stryker-mutator/api/report';
 import { ProgressKeeper } from './progress-keeper.js';
 
 export class ProgressAppendOnlyReporter extends ProgressKeeper {
-  private intervalReference?: NodeJS.Timer;
+  private intervalReference?: NodeJS.Timeout;
 
   public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
     super.onMutationTestingPlanReady(event);
