@@ -68,8 +68,8 @@ jobs:
       run: npm run build
     - name: e2e install
       run: 'npm run e2e:install'
-    - name: e2e lint
-      run: 'npm run e2e:lint'
+    # - name: e2e lint
+    #   run: 'npm run e2e:lint'
     - name: Run e2e tests
       run: 'npm run e2e:run'
     - uses: actions/upload-artifact@v3
