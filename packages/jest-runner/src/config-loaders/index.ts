@@ -12,7 +12,7 @@ configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector,
 export function configLoaderFactory(
   options: StrykerOptions,
   injector: Injector<JestPluginContext>,
-  log: Logger
+  log: Logger,
 ): CustomJestConfigLoader | ReactScriptsJestConfigLoader {
   const warnAboutConfigFile = (projectType: string, configFile: string | undefined) => {
     if (configFile) {

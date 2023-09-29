@@ -26,7 +26,7 @@ export class Mutant implements Mutable {
     public readonly fileName: string,
     public readonly original: types.Node,
     specs: Mutable,
-    public readonly offset: Offset = { position: 0, line: 0 }
+    public readonly offset: Offset = { position: 0, line: 0 },
   ) {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;

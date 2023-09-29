@@ -45,8 +45,8 @@ describe('typescript-helpers', () => {
       });
       expect(
         JSON.parse(
-          overrideOptions({ config: { compilerOptions: { allowUnreachableCode: false, noUnusedLocals: true, noUnusedParameters: true } } }, false)
-        ).compilerOptions
+          overrideOptions({ config: { compilerOptions: { allowUnreachableCode: false, noUnusedLocals: true, noUnusedParameters: true } } }, false),
+        ).compilerOptions,
       ).deep.include({
         allowUnreachableCode: true,
         noUnusedLocals: false,
@@ -72,9 +72,9 @@ describe('typescript-helpers', () => {
                 },
               },
             },
-            false
-          )
-        ).compilerOptions
+            false,
+          ),
+        ).compilerOptions,
       ).deep.include({
         noEmit: true,
         incremental: false,
@@ -98,9 +98,9 @@ describe('typescript-helpers', () => {
                 },
               },
             },
-            false
-          )
-        ).compilerOptions
+            false,
+          ),
+        ).compilerOptions,
       ).not.hasOwnProperty('declarationDir');
       expect(
         JSON.parse(
@@ -117,9 +117,9 @@ describe('typescript-helpers', () => {
                 },
               },
             },
-            false
-          )
-        ).compilerOptions
+            false,
+          ),
+        ).compilerOptions,
       ).not.hasOwnProperty('declarationDir');
     });
 
@@ -141,9 +141,9 @@ describe('typescript-helpers', () => {
                 },
               },
             },
-            true
-          )
-        ).compilerOptions
+            true,
+          ),
+        ).compilerOptions,
       ).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
@@ -173,9 +173,9 @@ describe('typescript-helpers', () => {
                 },
               },
             },
-            true
-          )
-        ).compilerOptions
+            true,
+          ),
+        ).compilerOptions,
       ).to.not.have.any.keys('inlineSourceMap', 'inlineSources', 'mapRoute', 'sourceRoot', 'outFile');
     });
   });
@@ -197,7 +197,7 @@ describe('typescript-helpers', () => {
   describe(guardTSVersion.name, () => {
     it('should throw if typescript@3.5.0', () => {
       expect(guardTSVersion.bind(undefined, '3.5.0')).throws(
-        '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0'
+        '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0',
       );
     });
     it('should not throw if typescript@3.6.0', () => {

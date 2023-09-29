@@ -35,7 +35,10 @@ See https://stryker-mutator.io/docs/stryker-js/config-file for more information.
 
 export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
-  constructor(private readonly log: Logger, private readonly validator: I<OptionsValidator>) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly validator: I<OptionsValidator>,
+  ) {}
 
   public async readConfig(cliOptions: PartialStrykerOptions): Promise<StrykerOptions> {
     const options = await this.loadOptionsFromConfigFile(cliOptions);
@@ -100,7 +103,7 @@ export class ConfigReader {
       if (typeof maybeOptions !== 'object') {
         if (typeof maybeOptions === 'function') {
           this.log.fatal(
-            `Invalid config file. Exporting a function is no longer supported. Please export an object with your configuration instead, or use a "stryker.conf.json" file.\n${CONFIG_SYNTAX_HELP}`
+            `Invalid config file. Exporting a function is no longer supported. Please export an object with your configuration instead, or use a "stryker.conf.json" file.\n${CONFIG_SYNTAX_HELP}`,
           );
         } else {
           this.log.fatal(`Invalid config file. It must export an object, found a "${typeof maybeOptions}"!\n${CONFIG_SYNTAX_HELP}`);

@@ -38,7 +38,7 @@ export class Sandbox implements Disposable {
     coreTokens.temporaryDirectory,
     coreTokens.project,
     coreTokens.execa,
-    coreTokens.unexpectedExitRegistry
+    coreTokens.unexpectedExitRegistry,
   );
 
   constructor(
@@ -47,7 +47,7 @@ export class Sandbox implements Disposable {
     private readonly temporaryDirectory: I<TemporaryDirectory>,
     private readonly project: Project,
     private readonly execCommand: typeof execaCommand,
-    unexpectedExitHandler: I<UnexpectedExitHandler>
+    unexpectedExitHandler: I<UnexpectedExitHandler>,
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
@@ -55,7 +55,7 @@ export class Sandbox implements Disposable {
       this.tempDirectory = this.backupDirectory;
       this.log.info(
         'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
-        path.relative(process.cwd(), this.backupDirectory)
+        path.relative(process.cwd(), this.backupDirectory),
       );
       unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
     } else {
@@ -114,7 +114,7 @@ export class Sandbox implements Disposable {
                 this.log.warn(
                   normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
-              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`)
+              Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`),
                 );
               } else {
                 this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);

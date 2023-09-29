@@ -35,7 +35,7 @@ export class FileSystem implements Disposable {
     .pipe(
       mergeMap(async (action) => {
         await action.execute();
-      }, MAX_CONCURRENT_FILE_IO)
+      }, MAX_CONCURRENT_FILE_IO),
     )
     .subscribe();
 

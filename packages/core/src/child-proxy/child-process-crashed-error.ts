@@ -6,7 +6,7 @@ export class ChildProcessCrashedError extends StrykerError {
     message: string,
     public readonly exitCode?: number,
     public readonly signal?: string,
-    innerError?: Error
+    innerError?: Error,
   ) {
     super(message, innerError);
     Error.captureStackTrace(this, ChildProcessCrashedError);

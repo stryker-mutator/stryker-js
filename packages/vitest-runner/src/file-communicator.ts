@@ -30,7 +30,7 @@ export class FileCommunicator {
   
       afterAll(async (suite) => {
         suite.meta.mutantCoverage = ns.mutantCoverage;
-      });`)
+      });`),
     );
   }
 
@@ -53,7 +53,7 @@ export class FileCommunicator {
       }
       afterAll(async (suite) => {
         suite.meta.hitCount = ns.hitCount;
-      });`)
+      });`),
     );
   }
 

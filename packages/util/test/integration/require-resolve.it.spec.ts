@@ -13,7 +13,7 @@ const resolveTestResource: typeof path.resolve = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-  'require-resolve'
+  'require-resolve',
 );
 
 describe(requireResolve.name, () => {

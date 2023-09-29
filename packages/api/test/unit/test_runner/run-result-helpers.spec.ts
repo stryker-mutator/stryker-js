@@ -72,7 +72,7 @@ describe('runResultHelpers', () => {
             { status: TestStatus.Success, id: 'success2', name: 'success2', timeSpentMs: 42 },
           ],
         },
-        false
+        false,
       );
       expect(actual).deep.eq(expected);
     });

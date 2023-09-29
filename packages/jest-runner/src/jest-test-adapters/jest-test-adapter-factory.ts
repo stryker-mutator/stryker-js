@@ -13,7 +13,7 @@ export function jestTestAdapterFactory(
   log: Logger,
   jestWrapper: JestWrapper,
   options: StrykerOptions,
-  injector: Injector<JestPluginContext>
+  injector: Injector<JestPluginContext>,
 ): JestGreaterThan25TestAdapter | JestLessThan25TestAdapter {
   const version = jestWrapper.getVersion();
   log.debug('Detected Jest version %s', version);
@@ -33,12 +33,12 @@ function guardJestVersion(jest: string, options: StrykerOptions, log: Logger) {
   } else if (semver.satisfies(jest, '<24')) {
     if (options.coverageAnalysis !== 'off') {
       throw new Error(
-        `You need Jest version >= 24.0.0 to use the @stryker-mutator/jest-runner with "coverageAnalysis": "${options.coverageAnalysis}", you're currently using version 23.0.0. Please upgrade your jest version, or set "coverageAnalysis": "off".`
+        `You need Jest version >= 24.0.0 to use the @stryker-mutator/jest-runner with "coverageAnalysis": "${options.coverageAnalysis}", you're currently using version 23.0.0. Please upgrade your jest version, or set "coverageAnalysis": "off".`,
       );
     }
     log.warn(
       '[DEPRECATED] Support for Jest version < 24 is deprecated and will be removed in the next major version of Stryker, please upgrade your jest version (your current version is %s).',
-      jest
+      jest,
     );
   }
 }

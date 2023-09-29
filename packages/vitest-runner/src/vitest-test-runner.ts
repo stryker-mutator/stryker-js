@@ -28,7 +28,11 @@ export class VitestTestRunner implements TestRunner {
   private readonly fileCommunicator: FileCommunicator;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
 
-  constructor(options: StrykerOptions, private readonly log: Logger, globalNamespace: StrykerNamespace) {
+  constructor(
+    options: StrykerOptions,
+    private readonly log: Logger,
+    globalNamespace: StrykerNamespace,
+  ) {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
     this.fileCommunicator = new FileCommunicator(globalNamespace);
   }
@@ -53,7 +57,7 @@ export class VitestTestRunner implements TestRunner {
 
     if (this.ctx.config.browser.enabled) {
       throw new Error(
-        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.'
+        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.',
       );
     }
 
@@ -210,7 +214,7 @@ export class VitestTestRunner implements TestRunner {
 export const vitestTestRunnerFactory = createVitestTestRunnerFactory();
 
 export function createVitestTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
 ): {
   (injector: Injector<PluginContext>): VitestTestRunner;
   inject: ['$injector'];

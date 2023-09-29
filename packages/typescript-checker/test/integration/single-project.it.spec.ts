@@ -18,7 +18,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-  'single-project'
+  'single-project',
 ) as unknown as typeof path.resolve;
 
 describe('Typescript checker on a single project', () => {
@@ -109,7 +109,7 @@ describe('Typescript checker on a single project', () => {
       'errorInFileAbove2Mutants/counter.ts',
       'return (this.currentNumber += numberToIncrementBy);',
       'return "This should not return a string 🙄"',
-      'mutId2'
+      'mutId2',
     );
     const actual = await sut.check([mutant, mutant2]);
     assertions.expectCompileError(actual.mutId);
@@ -139,7 +139,7 @@ function createMutant(
   findText: string,
   replacement: string,
   id = '42',
-  offset = 0
+  offset = 0,
 ): Mutant {
   const lines = fileContents[fileName].split('\n');
   const lineNumber = lines.findIndex((line) => line.includes(findText));

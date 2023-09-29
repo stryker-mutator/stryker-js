@@ -12,7 +12,7 @@ import { beforeEach } from 'mocha';
  * @type {import('ajv').SchemaObject}
  */
 const monoSchema = JSON.parse(
-  fs.readFileSync(new URL('../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json', import.meta.url), 'utf-8')
+  fs.readFileSync(new URL('../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json', import.meta.url), 'utf-8'),
 );
 const valid = JSON.parse(fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'));
 const invalid = JSON.parse(fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'));

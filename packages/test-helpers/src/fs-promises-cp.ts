@@ -30,6 +30,6 @@ export async function fsPromisesCp(src: string, dest: string, options: { recursi
       } else {
         fail(`${dest} is not a file or directory, not yet supported to copy.`);
       }
-    })
+    }),
   );
 }

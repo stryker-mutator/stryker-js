@@ -18,7 +18,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-  'project-with-ts-buildinfo'
+  'project-with-ts-buildinfo',
 ) as unknown as typeof path.resolve;
 
 describe('project-with-ts-buildinfo', () => {

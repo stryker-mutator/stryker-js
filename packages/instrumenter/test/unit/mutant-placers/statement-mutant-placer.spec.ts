@@ -129,7 +129,7 @@ describe('statementMutantPlacer', () => {
         } else if (stryMutAct_9fa48("52")) {
           const foo = bar >>> baz;
         } else {
-          stryCov_9fa48("52", "659")`)
+          stryCov_9fa48("52", "659")`),
       );
     });
   });

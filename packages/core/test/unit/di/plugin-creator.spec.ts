@@ -87,13 +87,13 @@ describe(PluginCreator.name, () => {
     };
     pluginsByKind.set(PluginKind.Reporter, [errorPlugin]);
     expect(() => sut.create(PluginKind.Reporter, 'foo')).throws(
-      'Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.'
+      'Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.',
     );
   });
 
   it('should throw if the plugin cannot be found', () => {
     expect(() => sut.create(PluginKind.Checker, 'chess')).throws(
-      'Cannot find Checker plugin "chess". In fact, no Checker plugins were loaded. Did you forget to install it?'
+      'Cannot find Checker plugin "chess". In fact, no Checker plugins were loaded. Did you forget to install it?',
     );
   });
 
@@ -103,7 +103,7 @@ describe(PluginCreator.name, () => {
       { kind: PluginKind.Reporter, factory: factory.reporter, name: 'bar' },
     ]);
     expect(() => sut.create(PluginKind.Reporter, 'chess')).throws(
-      'Cannot find Reporter plugin "chess". Did you forget to install it? Loaded Reporter plugins were: foo, bar'
+      'Cannot find Reporter plugin "chess". Did you forget to install it? Loaded Reporter plugins were: foo, bar',
     );
   });
 });

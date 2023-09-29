@@ -306,8 +306,8 @@ describe(StrykerInitializer.name, () => {
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
         sinon.match(
-          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information."'
-        )
+          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information."',
+        ),
       );
     });
 
@@ -327,7 +327,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptBuildCommand[0].args[0].when).to.be.false;
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match((val) => !val.includes('"buildCommand": '))
+        sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
 
@@ -342,7 +342,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match((val) => !val.includes('"buildCommand": '))
+        sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
 
@@ -407,7 +407,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."')
+        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."'),
       );
     });
 
@@ -422,7 +422,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."')
+        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."'),
       );
     });
   });
@@ -441,7 +441,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection."
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.",
       );
       expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"testRunner": "command"'));
     });
@@ -460,7 +460,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection."
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.",
       );
       expect(fs.promises.writeFile).called;
     });
@@ -479,7 +479,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.warn).calledWith(
-        'Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually'
+        'Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually',
       );
       expect(fs.promises.writeFile).called;
     });
@@ -491,7 +491,7 @@ describe(StrykerInitializer.name, () => {
 
       await expect(sut.initialize()).to.be.rejected;
       expect(testInjector.logger.error).calledWith(
-        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`,
       );
     });
 
@@ -500,7 +500,7 @@ describe(StrykerInitializer.name, () => {
 
       await expect(sut.initialize()).to.be.rejected;
       expect(testInjector.logger.error).calledWith(
-        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`,
       );
     });
   });
@@ -562,7 +562,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testRunner: 'awesome',
       },
-      answerOverrides
+      answerOverrides,
     );
     inquirerPrompt.resolves(answers);
   }

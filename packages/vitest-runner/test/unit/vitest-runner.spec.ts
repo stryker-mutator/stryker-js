@@ -34,7 +34,7 @@ describe(VitestTestRunner.name, () => {
     it('should throw a not supported error', async () => {
       vitestStub.config.browser.enabled = true;
       await expect(sut.init()).rejectedWith(
-        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.'
+        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.',
       );
     });
   });

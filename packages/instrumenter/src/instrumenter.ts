@@ -26,7 +26,7 @@ export class Instrumenter {
     private readonly logger: Logger,
     private readonly _createParser = createParser,
     private readonly _print = print,
-    private readonly _transform = transform
+    private readonly _transform = transform,
   ) {}
 
   public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {

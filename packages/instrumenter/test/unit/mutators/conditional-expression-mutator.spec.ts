@@ -66,7 +66,7 @@ describe(sut.name, () => {
       'for(let i=0;; i++) { console.log(); }',
       `for (let i = 0; false; i++) {
   console.log();
-}`
+}`,
     );
   });
 
@@ -77,7 +77,7 @@ describe(sut.name, () => {
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if (false || c === 3) { a++ }',
-      'if (b === 5 || false) { a++ }'
+      'if (b === 5 || false) { a++ }',
     );
   });
 
@@ -88,7 +88,7 @@ describe(sut.name, () => {
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if (true && c === 3) { a++ }',
-      'if (b === 5 && true) { a++ }'
+      'if (b === 5 && true) { a++ }',
     );
   });
 
@@ -99,7 +99,7 @@ describe(sut.name, () => {
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if ((false) || (c3 && c4)) { a++ }',
-      'if ((c1 && c2) || (false)) { a++ }'
+      'if ((c1 && c2) || (false)) { a++ }',
     );
   });
 
@@ -110,7 +110,7 @@ describe(sut.name, () => {
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if ((true) && (c3 || c4)) { a++ }',
-      'if ((c1 || c2) && (true)) { a++ }'
+      'if ((c1 || c2) && (true)) { a++ }',
     );
   });
 
@@ -124,7 +124,7 @@ describe(sut.name, () => {
       'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default: a = "spam";}',
       'switch (v) {case 0: case 1: a = "qux"; break; default: a = "spam";}',
       'switch (v) {case 0: a = "foo"; case 1: default: a = "spam";}',
-      'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}'
+      'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}',
     );
   });
 
@@ -133,7 +133,7 @@ describe(sut.name, () => {
       sut,
       'switch (v) {case 0: case 1: break; default: a = "spam";}',
       'switch (v) {case 0: case 1: default: a = "spam";}',
-      'switch (v) {case 0: case 1: break; default:}'
+      'switch (v) {case 0: case 1: break; default:}',
     );
   });
 

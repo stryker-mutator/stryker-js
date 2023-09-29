@@ -23,7 +23,7 @@ createTestRunnerFactory.inject = tokens(
   coreTokens.loggingContext,
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
-  coreTokens.workerIdGenerator
+  coreTokens.workerIdGenerator,
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
@@ -32,7 +32,7 @@ export function createTestRunnerFactory(
   loggingContext: LoggingClientContext,
   getLogger: LoggerFactoryMethod,
   pluginModulePaths: readonly string[],
-  idGenerator: IdGenerator
+  idGenerator: IdGenerator,
 ): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
     return () => new RetryRejectedDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
@@ -53,12 +53,12 @@ export function createTestRunnerFactory(
                         loggingContext,
                         pluginModulePaths,
                         getLogger(ChildProcessTestRunnerProxy.name),
-                        idGenerator
-                      )
+                        idGenerator,
+                      ),
                   ),
-                options
-              )
-          )
+                options,
+              ),
+          ),
       );
   }
 }

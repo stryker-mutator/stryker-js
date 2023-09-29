@@ -42,7 +42,7 @@ export class RetryRejectedDecorator extends TestRunnerDecorator {
   private async run<T extends DryRunResult | MutantRunResult>(
     actRun: () => Promise<T>,
     attemptsLeft = MAX_RETRIES,
-    lastError?: unknown
+    lastError?: unknown,
   ): Promise<T | string> {
     if (attemptsLeft > 0) {
       try {
@@ -51,7 +51,7 @@ export class RetryRejectedDecorator extends TestRunnerDecorator {
         if (error instanceof OutOfMemoryError) {
           this.log.info(
             "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
-            error.pid
+            error.pid,
           );
         }
         await this.recover();

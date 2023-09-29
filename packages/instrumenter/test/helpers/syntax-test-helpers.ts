@@ -4,10 +4,10 @@ import babel, { type NodePath, type types } from '@babel/core';
 import { expect } from 'chai';
 import generator from '@babel/generator';
 
-/* eslint-disable @typescript-eslint/no-duplicate-imports */
+/* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
-/* eslint-enable @typescript-eslint/no-duplicate-imports */
+/* eslint-enable import/no-duplicates */
 
 const generate = generator.default;
 
@@ -54,7 +54,7 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
         filename: fileName,
         plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
       }),
-    }
+    },
   );
   return ast;
 }

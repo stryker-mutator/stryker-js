@@ -17,7 +17,11 @@ const STRYKER_DASHBOARD_API_KEY = 'STRYKER_DASHBOARD_API_KEY';
 
 export class DashboardReporterClient {
   public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient, commonTokens.options);
-  constructor(private readonly log: Logger, private readonly httpClient: HttpClient, private readonly options: StrykerOptions) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly httpClient: HttpClient,
+    private readonly options: StrykerOptions,
+  ) {}
 
   public async updateReport({
     report,
@@ -43,12 +47,12 @@ export class DashboardReporterClient {
       ['Content-Type']: 'application/json',
     });
     const responseBody = await result.readBody();
-    if (isOK(result.message.statusCode || 0)) {
+    if (isOK(result.message.statusCode ?? 0)) {
       const response: ReportResponseBody = JSON.parse(responseBody);
       return response.href;
     } else if (result.message.statusCode === 401) {
       throw new StrykerError(
-        `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "${STRYKER_DASHBOARD_API_KEY}" environment variable?`
+        `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "${STRYKER_DASHBOARD_API_KEY}" environment variable?`,
       );
     } else {
       throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);

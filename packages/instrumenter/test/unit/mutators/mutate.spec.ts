@@ -22,7 +22,7 @@ describe('allMutators', () => {
             throw new Error(`File ${fileName} is exporting more than the mutator: ${keys.join(',')}`);
           }
           return mutatorModule[keys[0]];
-        })
+        }),
     )) as NodeMutator[];
     actualMutators.forEach((mutator) => {
       expect(allMutators.includes(mutator), `${mutator.name} is missing!`).ok;

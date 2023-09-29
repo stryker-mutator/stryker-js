@@ -39,7 +39,7 @@ export class MutantInstrumenterExecutor {
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
-    private readonly options: StrykerOptions
+    private readonly options: StrykerOptions,
   ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {

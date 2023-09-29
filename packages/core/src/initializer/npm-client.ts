@@ -35,7 +35,10 @@ const handleResult =
 
 export class NpmClient {
   public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpm);
-  constructor(private readonly log: Logger, private readonly innerNpmClient: RestClient) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly innerNpmClient: RestClient,
+  ) {}
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
     return this.search(`/-/v1/search?text=keywords:${encodeURIComponent('@stryker-mutator/test-runner-plugin')}`).then(mapSearchResultToPromptOption);
@@ -53,7 +56,7 @@ export class NpmClient {
       .catch((err) => {
         this.log.warn(
           `Could not fetch additional initialization config for dependency ${pkgInfo.name}. You might need to configure it manually`,
-          err
+          err,
         );
         return pkgInfo;
       });
@@ -67,7 +70,7 @@ export class NpmClient {
       .catch((err) => {
         this.log.error(
           `Unable to reach 'https://registry.npmjs.com' (for query ${path}). Please check your internet connection.`,
-          errorToString(err)
+          errorToString(err),
         );
         const result: NpmSearchResult = {
           objects: [],

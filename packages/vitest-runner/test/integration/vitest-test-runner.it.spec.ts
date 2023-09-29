@@ -120,7 +120,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test1],
-          })
+          }),
         );
         assertions.expectKilled(runResult);
         expect(runResult.killedBy).deep.eq([test1]);
@@ -134,7 +134,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test1, test2], // tests both kill the mutant
-          })
+          }),
         );
         assertions.expectKilled(runResult);
         expect(runResult.nrOfTests).deep.eq(1);
@@ -150,7 +150,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test1, test2], // tests both kill the mutant
-          })
+          }),
         );
         assertions.expectKilled(runResult);
         expect(runResult.nrOfTests).deep.eq(2);
@@ -166,7 +166,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test1],
-          })
+          }),
         );
 
         // Act
@@ -176,7 +176,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test6],
-          })
+          }),
         );
 
         // Assert
@@ -193,7 +193,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'static',
             testFilter: [test6],
-          })
+          }),
         );
 
         // Assert
@@ -210,7 +210,7 @@ describe('VitestRunner integration', () => {
             activeMutant: factory.mutant({ id: '0' }), // Pollute the environment with a static mutant
             sandboxFileName,
             mutantActivation: 'static',
-          })
+          }),
         );
 
         // Act
@@ -220,7 +220,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: undefined, // no test filter, so test5 is also executed, the one that kills the static mutant
-          })
+          }),
         );
 
         // Assert
@@ -236,7 +236,7 @@ describe('VitestRunner integration', () => {
             sandboxFileName,
             mutantActivation: 'runtime',
             testFilter: [test6],
-          })
+          }),
         );
 
         // Assert
@@ -325,7 +325,7 @@ describe('VitestRunner integration', () => {
         factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '1' }),
           sandboxFileName: path.resolve(sandbox.tmpDir, 'packages', 'bar', 'src', 'math.js'),
-        })
+        }),
       );
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq([barTestId]);

@@ -122,7 +122,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
               //'spec1' => would kill the mutant
               'spec2',
             ],
-          })
+          }),
         );
         assertions.expectSurvived(result);
       });
@@ -256,7 +256,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
               //'Add should be able 1 to a number' => would kill the mutant
               'Add should be able negate a number',
             ],
-          })
+          }),
         );
         assertions.expectSurvived(result);
         expect(result.nrOfTests).eq(2);
@@ -265,7 +265,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       it('should be able to kill again after a mutant survived', async () => {
         await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
         const result = await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
+          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] }),
         );
         assertions.expectKilled(result);
         result.failureMessage = result.failureMessage.split('\n')[0];
@@ -280,7 +280,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
       it('should be able to clear the test filter', async () => {
         await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] })
+          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] }),
         );
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: undefined }));
         assertions.expectKilled(result);

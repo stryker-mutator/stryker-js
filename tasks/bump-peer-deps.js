@@ -12,7 +12,7 @@ const packages = await Promise.all(
     /** @type {{peerDependencies?: Object.<string, string | undefined>}} */
     const content = JSON.parse(await fs.readFile(fileUrl, 'utf-8'));
     return { name, fileUrl, content };
-  })
+  }),
 );
 /**
  * @type {{version: string}}
@@ -31,5 +31,5 @@ await Promise.all(
         }
       }
     }
-  })
+  }),
 );

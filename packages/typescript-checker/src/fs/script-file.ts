@@ -4,7 +4,11 @@ import { Mutant, Position } from '@stryker-mutator/api/core';
 export class ScriptFile {
   private readonly originalContent: string;
   private sourceFile: ts.SourceFile | undefined;
-  constructor(public content: string, public fileName: string, public modifiedTime = new Date()) {
+  constructor(
+    public content: string,
+    public fileName: string,
+    public modifiedTime = new Date(),
+  ) {
     this.originalContent = content;
   }
 
@@ -40,7 +44,7 @@ export class ScriptFile {
   private guardMutationIsWatched() {
     if (!this.watcher) {
       throw new Error(
-        `Tried to check file "${this.fileName}" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project.`
+        `Tried to check file "${this.fileName}" (which is part of your typescript project), but no watcher is registered for it. Changes would go unnoticed. This probably means that you need to expand the files that are included in your project.`,
       );
     }
   }

@@ -51,7 +51,7 @@ describe(ChildProcessProxy.name, () => {
         '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
         '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
       ],
-      idGenerator
+      idGenerator,
     );
   });
 
@@ -129,7 +129,7 @@ describe(ChildProcessProxy.name, () => {
     await expect(sut.proxy.exit(12)).rejected;
     const call = log.warn.getCall(0);
     expect(call.args[0]).matches(
-      /Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g
+      /Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g,
     );
     expect(call.args[0]).includes('stdout message');
     expect(call.args[0]).includes('stderr message');
@@ -149,6 +149,6 @@ describe(ChildProcessProxy.name, () => {
 function toLogLevel(level: log4js.Level) {
   const levelName = (level as any).levelStr.toLowerCase();
   return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(
-    (logLevel) => logLevel === levelName
+    (logLevel) => logLevel === levelName,
   );
 }

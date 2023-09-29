@@ -44,7 +44,7 @@ describe('html-parser', () => {
     it('should throw an error on invalid HTML', async () => {
       await expect(parse('<p></div>', 'index.html', contextStub as ParserContext)).rejectedWith(
         ParseError,
-        'Parse error in index.html (1:3) Unexpected closing tag "div".'
+        'Parse error in index.html (1:3) Unexpected closing tag "div".',
       );
     });
   });

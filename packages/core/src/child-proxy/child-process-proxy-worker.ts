@@ -129,7 +129,7 @@ export class ChildProcessProxyWorker {
       if (listener !== exceptListener) {
         this.log?.debug(
           "Removing an additional message listener, we don't want eavesdropping on our inter-process communication: %s",
-          listener.toString()
+          listener.toString(),
         );
         process.removeListener('message', listener);
       }

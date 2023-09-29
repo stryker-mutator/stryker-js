@@ -51,7 +51,7 @@ describe(ReactScriptsJestConfigLoader.name, () => {
 
     // Act & Assert
     await expect(sut.loadConfig()).rejectedWith(
-      'Unable to locate package "react-scripts". This package is required when "jest.projectType" is set to "create-react-app".'
+      'Unable to locate package "react-scripts". This package is required when "jest.projectType" is set to "create-react-app".',
     );
   });
 

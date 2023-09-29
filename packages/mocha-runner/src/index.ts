@@ -10,7 +10,7 @@ export { MochaTestRunner } from './mocha-test-runner.js';
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'mocha', createMochaTestRunner)];
 
 export const strykerValidationSchema: typeof import('../schema/mocha-runner-options.json') = JSON.parse(
-  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8')
+  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8'),
 );
 
 export { createMochaTestRunner, createMochaTestRunnerFactory };

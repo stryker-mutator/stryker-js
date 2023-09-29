@@ -20,7 +20,11 @@ import { FilePreprocessor } from './file-preprocessor.js';
  */
 export class DisableTypeChecksPreprocessor implements FilePreprocessor {
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeChecksHelper);
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly impl: typeof disableTypeChecks) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly impl: typeof disableTypeChecks,
+  ) {}
 
   public async preprocess(project: Project): Promise<void> {
     const matcher = new FileMatcher(this.options.disableTypeChecks);
@@ -36,14 +40,14 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
               warningLogged = true;
               this.log.warn(
                 `Unable to disable type checking for file "${name}". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${optionsPath(
-                  'disableTypeChecks'
+                  'disableTypeChecks',
                 )}" settings (or turn it completely off with \`false\`)`,
-                err
+                err,
               );
             }
           }
         }
-      })
+      }),
     );
     if (warningLogged) {
       this.log.warn(`(disable "${optionsPath('warnings', 'preprocessorErrors')}" to ignore this warning`);

@@ -69,7 +69,7 @@ export class JestTestRunner implements TestRunner {
     pluginTokens.jestTestAdapter,
     pluginTokens.configLoader,
     pluginTokens.jestWrapper,
-    pluginTokens.globalNamespace
+    pluginTokens.globalNamespace,
   );
 
   constructor(
@@ -78,7 +78,7 @@ export class JestTestRunner implements TestRunner {
     private readonly jestTestAdapter: JestTestAdapter,
     private readonly configLoader: JestConfigLoader,
     private readonly jestWrapper: JestWrapper,
-    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get enableFindRelatedTests from stryker jest options or default to true
@@ -87,7 +87,7 @@ export class JestTestRunner implements TestRunner {
       this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
     } else {
       this.log.debug(
-        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
+        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.',
       );
     }
   }
@@ -152,7 +152,7 @@ export class JestTestRunner implements TestRunner {
   private configForDryRun(
     fileNamesUnderTest: string[] | undefined,
     coverageAnalysis: CoverageAnalysis,
-    jestWrapper: JestWrapper
+    jestWrapper: JestWrapper,
   ): jest.Config.InitialOptions {
     return withCoverageAnalysis(this.configWithRoots(fileNamesUnderTest), coverageAnalysis, jestWrapper);
   }
@@ -160,7 +160,7 @@ export class JestTestRunner implements TestRunner {
   private configForMutantRun(
     fileNameUnderTest: string | undefined,
     hitLimit: number | undefined,
-    jestWrapper: JestWrapper
+    jestWrapper: JestWrapper,
   ): jest.Config.InitialOptions {
     return withHitLimit(this.configWithRoots(fileNameUnderTest ? [fileNameUnderTest] : undefined), hitLimit, jestWrapper);
   }
@@ -274,7 +274,7 @@ export class JestTestRunner implements TestRunner {
     this.log.debug(
       `Merging file-based config ${stringify(configFromFile)}
       with custom config ${stringify(config)}
-      and default (internal) stryker config ${stringify(JEST_OVERRIDE_OPTIONS)}`
+      and default (internal) stryker config ${stringify(JEST_OVERRIDE_OPTIONS)}`,
     );
     const mergedConfig: jest.Config.InitialOptions = {
       ...configFromFile,

@@ -53,7 +53,7 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
       ${tapProcess.spawnargs.map((arg, index) => (index === 0 ? arg : `"${arg}"`)).join(' ')}
       
       Stderr output:
-      ${stderrOutput.join('')}`
+      ${stderrOutput.join('')}`,
     );
   }
   return tapResult;

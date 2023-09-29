@@ -39,7 +39,7 @@ from(dirs)
         }
       }
       return dir;
-    }, concurrency)
+    }, concurrency),
   )
   .subscribe({
     next: (dir) => {

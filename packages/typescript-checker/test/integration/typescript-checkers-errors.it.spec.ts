@@ -15,7 +15,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-  'errors'
+  'errors',
 ) as unknown as typeof path.resolve;
 
 describe('Typescript checker errors', () => {
@@ -24,7 +24,7 @@ describe('Typescript checker errors', () => {
     testInjector.options.tsconfigFile = resolveTestResource('compile-error', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
-      'Typescript error(s) found in dry run compilation: testResources/errors/compile-error/add.ts(2,3): error TS2322:'
+      'Typescript error(s) found in dry run compilation: testResources/errors/compile-error/add.ts(2,3): error TS2322:',
     );
   });
 
@@ -33,7 +33,7 @@ describe('Typescript checker errors', () => {
     testInjector.options.tsconfigFile = resolveTestResource('invalid-tsconfig', 'tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     await expect(sut.init()).rejectedWith(
-      'Typescript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:'
+      'Typescript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:',
     );
   });
 
@@ -44,8 +44,8 @@ describe('Typescript checker errors', () => {
     await expect(sut.init()).rejectedWith(
       `The tsconfig file does not exist at: "${resolveTestResource(
         'empty-dir',
-        'tsconfig.json'
-      )}". Please configure the tsconfig file in your stryker.conf file using "tsconfigFile"`
+        'tsconfig.json',
+      )}". Please configure the tsconfig file in your stryker.conf file using "tsconfigFile"`,
     );
   });
 });

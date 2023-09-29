@@ -35,7 +35,7 @@ function getJestDefaults(jestWrapper: JestWrapper) {
 export function withCoverageAnalysis(
   jestConfig: Config.InitialOptions,
   coverageAnalysis: CoverageAnalysis,
-  jestWrapper: JestWrapper
+  jestWrapper: JestWrapper,
 ): Config.InitialOptions {
   // Override with Stryker specific test environment to capture coverage analysis
   if (coverageAnalysis === 'off') {
@@ -77,10 +77,10 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
     // Use includes here, since "react-scripts" will specify the full path to `jest-circus`, see https://github.com/stryker-mutator/stryker-js/issues/2789
     throw new Error(
       `The @stryker-mutator/jest-runner doesn't support ${propertyPath<StrykerOptions>()(
-        'coverageAnalysis'
+        'coverageAnalysis',
       )} "perTest" with "jestConfig.testRunner": "${
         jestConfig.testRunner
-      }". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues`
+      }". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues`,
     );
   }
 }
