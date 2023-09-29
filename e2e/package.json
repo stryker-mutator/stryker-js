@@ -22,7 +22,7 @@
     "chai-jest-snapshot": "2.0.0",
     "cross-env": "7.0.3",
     "enzyme-to-json": "3.6.2",
-    "execa": "7.2.0",
+    "execa": "8.0.1",
     "grunt": "1.6.1",
     "jasmine": "5.1.0",
     "jasmine-core": "5.1.1",
