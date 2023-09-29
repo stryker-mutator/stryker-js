@@ -23,7 +23,7 @@ describe(`${ProjectReader.name} integration`, () => {
     process.chdir(originalCwd);
   });
 
-  it('should by default resolve reasonable project source files to be mutated', async () => {
+  it('should resolve reasonable project source files to be mutated by default', async () => {
     process.chdir(resolveTestResource());
     const project = await sut.read();
     expect([...project.filesToMutate.keys()]).deep.eq([
@@ -38,4 +38,21 @@ describe(`${ProjectReader.name} integration`, () => {
       resolveTestResource('src', 'utils', 'esm.mjs'),
     ]);
   });
+
+  it('should be able to read files from disk', async () => {
+    // Arrange
+    process.chdir(resolveTestResource());
+    const project = await sut.read();
+
+    // Act
+    const content = await project.files.get(resolveTestResource('lib', 'string-utils.js'))?.readContent();
+
+    // Assert
+    expect(content).eq(stringConcatSnapshot);
+  });
 });
+
+const stringConcatSnapshot = `export function concat(a, b) {
+  return \`\${a}\${b}\`;
+}
+`;
