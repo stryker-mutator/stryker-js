@@ -76,4 +76,6 @@ jobs:
       if: failure()
       with:
         name: e2e-reports
-        path: e2e/test/*/reports/mutation/
+        path: |
+          e2e/test/*/reports/mutation/
+          e2e/test/*/stryker.log

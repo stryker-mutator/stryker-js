@@ -12,14 +12,14 @@
     "@types/karma": "6.3.5",
     "@types/lodash": "4.14.199",
     "@types/mocha": "10.0.2",
-    "@types/node": "18.17.1",
+    "@types/node": "18.18.0",
     "@types/sinon": "10.0.17",
-    "@types/sinon-chai": "3.2.9",
-    "@types/source-map-support": "0.5.7",
+    "@types/sinon-chai": "3.2.10",
+    "@types/source-map-support": "0.5.8",
     "@typescript-eslint/eslint-plugin": "5.62.0",
     "@typescript-eslint/parser": "5.62.0",
     "c8": "8.0.1",
-    "chai": "4.3.8",
+    "chai": "4.3.9",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
     "concurrently": "8.2.1",
@@ -45,7 +45,7 @@
     "sinon-chai": "3.7.0",
     "source-map-support": "0.5.21",
     "ts-node": "10.9.1",
-    "typescript": "5.1.6"
+    "typescript": "5.2.2"
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",

@@ -129,14 +129,14 @@ describe('The Stryker meta schema', () => {
 });
 
 describe('PartialStrykerOptions', () => {
-  ['Node', 'Node16'].forEach((moduleResolution) => {
-    describe(`with --moduleResolution ${moduleResolution}`, () => {
+  ['Node', 'Node16'].forEach((moduleMode) => {
+    describe(`with --moduleResolution ${moduleMode}`, () => {
       it('should validate a valid schema', async () => {
-        const diagnostics = tsc('--moduleResolution', moduleResolution, 'valid.js');
+        const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'valid.js');
         expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
       });
       it('should invalidate an invalid schema', async () => {
-        const diagnostics = tsc('--moduleResolution', moduleResolution, 'invalid.js');
+        const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'invalid.js');
         expect(diagnostics).not.empty;
         // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
         expect(diagnostics.map(({ messageText }) => messageText).sort()).deep.eq([

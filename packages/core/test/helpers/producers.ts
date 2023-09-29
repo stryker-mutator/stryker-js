@@ -143,6 +143,7 @@ export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
     isFile: () => !isDirectory,
     isSocket: dummy,
     isSymbolicLink: dummy,
+    path: 'foo',
     name,
   };
 }
