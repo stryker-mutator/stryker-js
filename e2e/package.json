@@ -53,10 +53,10 @@
   },
   "scripts": {
     "bootstrap": "node tasks/bootstrap.js",
-    "postinstall": "npm run bootstrap && npm run install-local-dependencies",
+    "postinstall": "npm run bootstrap -- mocha-javascript && npm run install-local-dependencies -- ./package.json",
     "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "lint": "tsc -p tsconfig.json && eslint . --resolve-plugins-relative-to . --ext .ts,.js",
-    "test": "node tasks/run-e2e-tests.js",
+    "test": "node tasks/run-e2e-tests.js mocha-javascript",
     "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm test"
   },
   "localDependencies": {
