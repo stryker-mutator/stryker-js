@@ -1,8 +1,6 @@
 import fs from 'fs/promises';
 import os from 'os';
 
-import { fileURLToPath } from 'url';
-
 import { execa } from 'execa';
 import { from, mergeMap } from 'rxjs';
 
