@@ -9,6 +9,8 @@ import { from, defer } from 'rxjs';
 import { tap, mergeAll, map } from 'rxjs/operators';
 import { minimatch } from 'minimatch';
 
+import { satisfiesPlatform } from './utils.js';
+
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
 /**
@@ -91,21 +93,6 @@ function satisfiesNodeVersion(pkg) {
   const supportedNodeVersionRange = pkg.engines?.node;
   if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
     console.log(`(node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
-    return false;
-  } else {
-    return true;
-  }
-}
-
-/**
- * @param {Package} pkg
- * @returns {boolean}
- */
-function satisfiesPlatform(pkg) {
-  /** @type {undefined|string[]} */
-  const supportedPlatforms = pkg.os;
-  if (supportedPlatforms && !supportedPlatforms.includes(process.platform)) {
-    console.log(`(current platform "${process.platform}" did not satisfy ${supportedPlatforms.map((platform) => `"${platform}"`).join(',')})`);
     return false;
   } else {
     return true;

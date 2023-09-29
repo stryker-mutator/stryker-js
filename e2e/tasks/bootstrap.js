@@ -7,6 +7,8 @@ import { execa } from 'execa';
 import { from, mergeMap } from 'rxjs';
 
 import { filter } from 'minimatch';
+
+import { satisfiesPlatform } from './utils.js';
 /**
  * Installs all test packages using max cpu as concurrent.
  */
@@ -16,19 +18,29 @@ const dirs = (await fs.readdir(new URL('../test', import.meta.url))).filter(filt
 const concurrency = os.cpus().length;
 const command = process.env.CI ? 'ci' : 'install';
 
+/**
+ * @typedef Package
+ * @property {string[]} [os]
+ */
+
 console.info(`Installing ${dirs.length} test dirs using "npm ${command}" (used pattern: "${pattern}", concurrency ${concurrency})`);
 let count = 0;
 reportProgress();
 from(dirs)
   .pipe(
     mergeMap(async (dir) => {
-      const cwd = fileURLToPath(new URL(`../test/${dir}`, import.meta.url));
-      try {
-        await execa('npm', [command], { timeout: 500000, cwd, stdio: 'pipe' });
-        return dir;
-      } catch (err) {
-        throw new Error(`Error running "npm ${command}" in ${cwd}`, { cause: err });
+      const cwd = new URL(`../test/${dir}/`, import.meta.url);
+      const url = new URL('./package.json', cwd);
+      /** @type {Package} */
+      const pkg = JSON.parse(await fs.readFile(url, 'utf-8'));
+      if (satisfiesPlatform(pkg)) {
+        try {
+          await execa('npm', [command], { timeout: 500000, cwd, stdio: 'pipe' });
+        } catch (err) {
+          throw new Error(`Error running "npm ${command}" in ${cwd}`, { cause: err });
+        }
       }
+      return dir;
     }, concurrency)
   )
   .subscribe({
