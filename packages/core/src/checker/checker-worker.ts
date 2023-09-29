@@ -33,7 +33,7 @@ export class CheckerWorker implements CheckerResource {
       (checker) =>
         checker.group?.(mutants) ??
         // Group one by one by default
-        mutants.map(({ id }) => [id])
+        mutants.map(({ id }) => [id]),
     );
   }
 

@@ -43,7 +43,11 @@ export class TypescriptChecker implements Checker {
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
   private readonly options: TypescriptCheckerOptionsWithStrykerOptions;
 
-  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly tsCompiler: TypescriptCompiler) {
+  constructor(
+    private readonly logger: Logger,
+    options: StrykerOptions,
+    private readonly tsCompiler: TypescriptCompiler,
+  ) {
     this.options = options as TypescriptCheckerOptionsWithStrykerOptions;
   }
 
@@ -102,7 +106,7 @@ export class TypescriptChecker implements Checker {
   private async checkErrors(
     mutants: Mutant[],
     errorsMap: Record<string, ts.Diagnostic[]>,
-    nodes: Map<string, TSFileNode>
+    nodes: Map<string, TSFileNode>,
   ): Promise<Record<string, ts.Diagnostic[]>> {
     const errors = await this.tsCompiler.check(mutants);
     const mutantsThatCouldNotBeTestedInGroups = new Set<Mutant>();
@@ -119,8 +123,8 @@ export class TypescriptChecker implements Checker {
           `Typescript error: '${
             error.messageText
           }' was reported without a corresponding file. This shouldn't happen. Please open an issue using this link: ${strykerReportBugUrl(
-            `[BUG]: TypeScript checker reports compile error without a corresponding file: ${error.messageText}`
-          )}`
+            `[BUG]: TypeScript checker reports compile error without a corresponding file: ${error.messageText}`,
+          )}`,
         );
       }
       const nodeErrorWasThrownIn = nodes.get(error.file?.fileName);
@@ -129,8 +133,8 @@ export class TypescriptChecker implements Checker {
           `Typescript error: '${error.messageText}' was reported in an unrelated file (${
             error.file.fileName
           }). This file is not part of your project, or referenced from your project. This shouldn't happen, please open an issue using this link: ${strykerReportBugUrl(
-            `[BUG]: TypeScript checker reports compile error in an unrelated file: ${error.messageText}`
-          )}`
+            `[BUG]: TypeScript checker reports compile error in an unrelated file: ${error.messageText}`,
+          )}`,
         );
       }
       const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);

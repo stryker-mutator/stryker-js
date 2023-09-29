@@ -13,9 +13,9 @@ export function throwPlacementError(error: Error, nodePath: NodePath, placer: Mu
   const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}"`;
   const errorMessage = `${location} ${message}. Either remove this file from the list of files to be mutated, or exclude the mutator (using ${propertyPath<StrykerOptions>()(
     'mutator',
-    'excludedMutations'
+    'excludedMutations',
   )}). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
-    message
+    message,
   )}. Original error: ${error.stack}`;
   let builtError = new Error(errorMessage);
   try {

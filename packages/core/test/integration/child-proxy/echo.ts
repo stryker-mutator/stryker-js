@@ -7,7 +7,11 @@ export class Echo {
 
   public readonly testRunnerName: string;
 
-  constructor(private readonly logger: Logger, options: StrykerOptions, private readonly fileDescriptions: FileDescriptions) {
+  constructor(
+    private readonly logger: Logger,
+    options: StrykerOptions,
+    private readonly fileDescriptions: FileDescriptions,
+  ) {
     this.testRunnerName = options.testRunner;
   }
 

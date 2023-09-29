@@ -52,7 +52,7 @@ describe(CustomJestConfigLoader.name, () => {
       await sut.loadConfig();
       sinon.assert.calledWith(
         testInjector.logger.debug,
-        'Read config from "my-foo-jest-config.js" (used native `readInitialOptions` from jest-config).'
+        'Read config from "my-foo-jest-config.js" (used native `readInitialOptions` from jest-config).',
       );
     });
 

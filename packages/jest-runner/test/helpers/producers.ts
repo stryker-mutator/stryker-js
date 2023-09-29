@@ -170,13 +170,13 @@ export const createGlobalConfig = (): Config.GlobalConfig =>
     bail: 1,
     changedFilesWithAncestor: true,
     collectCoverage: false,
-  } as Config.GlobalConfig); // Do this cast to prevent breaking builds when unused options are added
+  }) as Config.GlobalConfig; // Do this cast to prevent breaking builds when unused options are added
 
 export const createEnvironmentContext = (overrides?: Partial<EnvironmentContext>): EnvironmentContext =>
   ({
     testPath: 'foo.js',
     ...overrides,
-  } as EnvironmentContext); // Do this cast to prevent breaking builds when unused options are added
+  }) as EnvironmentContext; // Do this cast to prevent breaking builds when unused options are added
 
 export const createEnvironmentConfig = (): JestEnvironmentConfig => ({
   globalConfig: createGlobalConfig(),
@@ -187,20 +187,20 @@ export const createProjectConfig = (): Config.ProjectConfig =>
   ({
     detectLeaks: true,
     testEnvironmentOptions: {},
-  } as Config.ProjectConfig); // Do this cast to prevent breaking builds when unused options are added
+  }) as Config.ProjectConfig; // Do this cast to prevent breaking builds when unused options are added
 
 export const createCircusDescribeBlock = (overrides?: Partial<Circus.DescribeBlock>): Circus.DescribeBlock =>
   ({
     name: 'ROOT_SUITE',
     ...overrides,
-  } as Circus.DescribeBlock); // Do this cast to prevent breaking builds when unused options are added
+  }) as Circus.DescribeBlock; // Do this cast to prevent breaking builds when unused options are added
 
 export const createCircusTestEntry = (overrides?: Partial<Circus.TestEntry>): Circus.TestEntry =>
   ({
     name: 'should be bar',
     parent: createCircusDescribeBlock({ name: 'foo', parent: createCircusDescribeBlock() }),
     ...overrides,
-  } as Circus.TestEntry); // Do this casts to prevent breaking builds when unused options are added
+  }) as Circus.TestEntry; // Do this casts to prevent breaking builds when unused options are added
 
 export const createCircusTestStartEvent = (test = createCircusTestEntry()): Circus.Event => ({
   name: 'test_start',
@@ -217,7 +217,7 @@ export const createCircusRunStartEvent = (): Circus.AsyncEvent => ({
 export const createCircusState = (): Circus.State =>
   ({
     hasFocusedTests: false,
-  } as Circus.State); // Do this casts to prevent breaking builds when unused options are added
+  }) as Circus.State; // Do this casts to prevent breaking builds when unused options are added
 
 export const createSuccessResult = (): AggregatedResult =>
   createJestAggregatedResult({

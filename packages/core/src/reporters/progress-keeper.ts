@@ -36,7 +36,7 @@ export abstract class ProgressKeeper implements Reporter {
           ticks += this.timing.overhead;
         }
         return [mutant.id, ticks];
-      })
+      }),
     );
     this.progress.mutants = this.ticksByMutantId.size;
     this.progress.total = [...this.ticksByMutantId.values()].reduce((acc, n) => acc + n, 0);

@@ -33,7 +33,10 @@ export class OptionsValidator {
 
   public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
 
-  constructor(private readonly schema: JSONSchema7, private readonly log: Logger) {
+  constructor(
+    private readonly schema: JSONSchema7,
+    private readonly log: Logger,
+  ) {
     this.validateFn = ajv.compile(schema);
   }
 
@@ -55,21 +58,21 @@ export class OptionsValidator {
   private removeDeprecatedOptions(rawOptions: Record<string, unknown>) {
     if (typeof rawOptions.mutator === 'string') {
       this.log.warn(
-        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.',
       );
       delete rawOptions.mutator;
     }
     // @ts-expect-error mutator.name
     if (typeof rawOptions.mutator === 'object' && rawOptions.mutator.name) {
       this.log.warn(
-        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
+        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.',
       );
       // @ts-expect-error mutator.name
       delete rawOptions.mutator.name;
     }
     if (Object.keys(rawOptions).includes('testFramework')) {
       this.log.warn(
-        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.',
       );
       delete rawOptions.testFramework;
     }
@@ -82,7 +85,7 @@ export class OptionsValidator {
         ? 'webpack --config webpack.config.js'
         : 'npm run build';
       this.log.warn(
-        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`
+        `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`,
       );
       delete rawOptions.transpilers;
     }
@@ -93,14 +96,14 @@ export class OptionsValidator {
       const newIgnorePatterns: string[] = [
         '**',
         ...files.map((filePattern) =>
-          filePattern.startsWith(IGNORE_PATTERN_CHARACTER) ? filePattern.substr(1) : `${IGNORE_PATTERN_CHARACTER}${filePattern}`
+          filePattern.startsWith(IGNORE_PATTERN_CHARACTER) ? filePattern.substr(1) : `${IGNORE_PATTERN_CHARACTER}${filePattern}`,
         ),
       ];
       delete rawOptions.files;
       this.log.warn(
         `DEPRECATED. Use of "files" is deprecated, please use "${ignorePatternsName}" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ${JSON.stringify(
-          newIgnorePatterns
-        )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`
+          newIgnorePatterns,
+        )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`,
       );
       const existingIgnorePatterns = Array.isArray(rawOptions[ignorePatternsName]) ? (rawOptions[ignorePatternsName] as unknown[]) : [];
       rawOptions[ignorePatternsName] = [...newIgnorePatterns, ...existingIgnorePatterns];
@@ -108,7 +111,7 @@ export class OptionsValidator {
     // @ts-expect-error jest.enableBail
     if (rawOptions.jest?.enableBail !== undefined) {
       this.log.warn(
-        'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
+        'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean',
       );
       // @ts-expect-error jest.enableBail
       rawOptions.disableBail = !rawOptions.jest?.enableBail;
@@ -121,8 +124,8 @@ export class OptionsValidator {
       this.log.warn(
         `DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "${optionsPath(
           'htmlReporter',
-          'fileName'
-        )}" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string`
+          'fileName',
+        )}" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string`,
       );
       // @ts-expect-error htmlReporter.baseDir
       if (!rawOptions.htmlReporter.fileName) {
@@ -148,7 +151,7 @@ export class OptionsValidator {
     if (CommandTestRunner.is(options.testRunner)) {
       if (options.testRunnerNodeArgs.length) {
         this.log.warn(
-          'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
+          'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.',
         );
       }
     }
@@ -156,7 +159,7 @@ export class OptionsValidator {
       additionalErrors.push(
         `Config option "${optionsPath('ignoreStatic')}" is not supported with coverage analysis "${
           options.coverageAnalysis
-        }". Either turn off "${optionsPath('ignoreStatic')}", or configure "${optionsPath('coverageAnalysis')}" to be "perTest".`
+        }". Either turn off "${optionsPath('ignoreStatic')}", or configure "${optionsPath('coverageAnalysis')}" to be "perTest".`,
       );
     }
     options.mutate.forEach((mutateString, index) => {
@@ -164,7 +167,7 @@ export class OptionsValidator {
       if (match) {
         if (glob.hasMagic(mutateString)) {
           additionalErrors.push(
-            `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`
+            `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`,
           );
         } else {
           const [_, _fileName, mutationRange, startLine, _startColumn, endLine, _endColumn] = match;
@@ -172,12 +175,12 @@ export class OptionsValidator {
           const end = parseInt(endLine, 10);
           if (start < 1) {
             additionalErrors.push(
-              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid, line ${start} does not exist (lines start at 1).`
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid, line ${start} does not exist (lines start at 1).`,
             );
           }
           if (start > end) {
             additionalErrors.push(
-              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid. The "from" line number (${start}) should be less then the "to" line number (${end}).`
+              `Config option "mutate[${index}]" is invalid. Mutation range "${mutationRange}" is invalid. The "from" line number (${start}) should be less then the "to" line number (${end}).`,
             );
           }
         }
@@ -199,7 +202,7 @@ export class OptionsValidator {
   private throwErrorIfNeeded(errors: string[]) {
     if (errors.length > 0) {
       throw new ConfigError(
-        errors.length === 1 ? 'Please correct this configuration error and try again.' : 'Please correct these configuration errors and try again.'
+        errors.length === 1 ? 'Please correct this configuration error and try again.' : 'Please correct these configuration errors and try again.',
       );
     }
   }
@@ -242,8 +245,8 @@ export class OptionsValidator {
           this.log.warn(
             `Config option "${unserializable.path.join('.')}" is not (fully) serializable. ${
               unserializable.reason
-            }. Any test runner or checker worker processes might not receive this value as intended.`
-          )
+            }. Any test runner or checker worker processes might not receive this value as intended.`,
+          ),
         );
         this.log.warn(`(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`);
       }

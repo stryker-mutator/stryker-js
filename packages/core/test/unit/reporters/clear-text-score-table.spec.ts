@@ -19,7 +19,7 @@ describe(ClearTextScoreTable.name, () => {
           new MetricsResult(
             'child1',
             [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99 }))],
-            factory.metrics({ mutationScore: 60 })
+            factory.metrics({ mutationScore: 60 }),
           ),
         ],
         factory.metrics({
@@ -30,7 +30,7 @@ describe(ClearTextScoreTable.name, () => {
           runtimeErrors: 4,
           survived: 3,
           timeout: 2,
-        })
+        }),
       );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
@@ -54,7 +54,7 @@ describe(ClearTextScoreTable.name, () => {
         [],
         factory.metrics({
           killed: 1000000000,
-        })
+        }),
       );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 

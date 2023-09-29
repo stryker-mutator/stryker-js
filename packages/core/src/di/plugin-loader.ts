@@ -63,7 +63,7 @@ export class PluginLoader {
             ...plugin,
             moduleName,
           };
-        })
+        }),
       )
     ).filter(notEmpty);
 
@@ -100,7 +100,7 @@ export class PluginLoader {
             // Bare plugin expression like "@stryker-mutator/mocha-runner" (or file URL)
             return pluginExpression;
           }
-        })
+        }),
       )
     )
       .filter(notEmpty)
@@ -124,14 +124,14 @@ export class PluginLoader {
   }
 
   private async loadPlugin(
-    descriptor: string
+    descriptor: string,
   ): Promise<{ plugins: Array<Plugin<PluginKind>> | undefined; schemaContribution: Record<string, unknown> | undefined } | undefined> {
     this.log.debug('Loading plugin %s', descriptor);
     try {
       const module = await fileUtils.importModule(descriptor);
       const plugins = isPluginModule(module) ? module.strykerPlugins : undefined;
       const schemaContribution = hasValidationSchemaContribution(module) ? module.strykerValidationSchema : undefined;
-      if (plugins || schemaContribution) {
+      if (plugins ?? schemaContribution) {
         return {
           plugins,
           schemaContribution,
@@ -141,7 +141,7 @@ export class PluginLoader {
           'Module "%s" did not contribute a StrykerJS plugin. It didn\'t export a "%s" or "%s".',
           descriptor,
           propertyPath<PluginModule>()('strykerPlugins'),
-          propertyPath<SchemaValidationContribution>()('strykerValidationSchema')
+          propertyPath<SchemaValidationContribution>()('strykerValidationSchema'),
         );
       }
     } catch (e: any) {

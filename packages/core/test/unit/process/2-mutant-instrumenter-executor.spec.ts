@@ -64,7 +64,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
-      expectedInstrumenterOptions
+      expectedInstrumenterOptions,
     );
   });
 

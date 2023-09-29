@@ -192,7 +192,7 @@ describe(PluginLoader.name, () => {
     expect(testInjector.logger.warn).calledWithExactly(
       'Error during loading "%s" plugin:\n  %s',
       'a',
-      "Cannot find package 'a' imported from stryker-js/packages/core/dist/src/utils/file-utils.js"
+      "Cannot find package 'a' imported from stryker-js/packages/core/dist/src/utils/file-utils.js",
     );
   });
 
@@ -203,7 +203,7 @@ describe(PluginLoader.name, () => {
       'Module "%s" did not contribute a StrykerJS plugin. It didn\'t export a "%s" or "%s".',
       'a',
       'strykerPlugins',
-      'strykerValidationSchema'
+      'strykerValidationSchema',
     );
   });
 });

@@ -26,7 +26,7 @@ describe(throwPlacementError.name, () => {
     const mutants = [createMutant()];
     expect(() => throwPlacementError(expectedError, path, fooPlacer, mutants, 'foo.js')).throws(
       SyntaxError,
-      'foo.js:2:3 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or exclude the mutator (using mutator.excludedMutations). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new'
+      'foo.js:2:3 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or exclude the mutator (using mutator.excludedMutations). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new',
     );
   });
 
@@ -45,7 +45,7 @@ describe(throwPlacementError.name, () => {
     // Arrange & Act
     expect(() => throwPlacementError(expectedError, nodePath, fooPlacer, mutants, 'foo.js')).throws(
       Error,
-      'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or exclude the mutator (using mutator.excludedMutations). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new'
+      'foo.js:1:0 fooPlacer could not place mutants with type(s): "fooMutator". Either remove this file from the list of files to be mutated, or exclude the mutator (using mutator.excludedMutations). Please report this issue at https://github.com/stryker-mutator/stryker-js/issues/new',
     );
   });
 });

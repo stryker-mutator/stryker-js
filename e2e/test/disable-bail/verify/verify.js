@@ -37,7 +37,7 @@ describe('disableBail', () => {
  */
 async function arrangeActAssertBailWasDisabled(
   testRunner,
-  expectedKilledBy = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1']
+  expectedKilledBy = ['add should result in 42 for 40 and 2', 'add should result in 42 for 41 and 1'],
 ) {
   const { exitCode } = execStryker(`stryker run --testRunner ${testRunner}`);
   expect(exitCode).eq(0);

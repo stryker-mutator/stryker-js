@@ -17,7 +17,10 @@ export class EventRecorderReporter implements StrictReporter {
   private readonly createBaseFolderTask: Promise<string | undefined>;
   private index = 0;
 
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+  ) {
     this.createBaseFolderTask = fileUtils.cleanFolder(this.options.eventReporter.baseDir);
   }
 

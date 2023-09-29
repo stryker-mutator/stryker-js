@@ -55,7 +55,7 @@ describe('stryker-karma.conf.js', () => {
       conf.set({
         basePath: 'foobar',
         frameworks: ['mocha'],
-      })
+      }),
     );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
 
@@ -91,7 +91,7 @@ describe('stryker-karma.conf.js', () => {
       conf.set({
         basePath: 'foobar',
         frameworks: ['mocha'],
-      })
+      }),
     );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
 
@@ -117,7 +117,7 @@ describe('stryker-karma.conf.js', () => {
 
     // Assert
     expect(testInjector.logger.error).calledWithMatch(
-      `Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`
+      `Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`,
     );
     expect(requireResolveStub).calledWith(path.resolve(expectedKarmaConfigFile));
   });
@@ -198,7 +198,7 @@ describe('stryker-karma.conf.js', () => {
     requireResolveStub.returns((conf: Config) =>
       conf.set({
         frameworks: ['my', 'framework'],
-      })
+      }),
     );
     sut.setGlobals({ karmaConfigFile: 'foobar.conf.js' });
 

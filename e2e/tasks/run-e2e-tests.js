@@ -37,7 +37,7 @@ function runE2eTests() {
   const concurrency = Math.max(os.cpus().length / 2, 2);
   return test$.pipe(
     mergeAll(concurrency),
-    tap((testDir) => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`))
+    tap((testDir) => console.log(`\u2714 ${testDir} tested (${++testsRan}/${testDirs.length})`)),
   );
 }
 

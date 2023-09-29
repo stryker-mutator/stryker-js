@@ -24,7 +24,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read();
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
       );
     });
     it('should discover files recursively using readdir', async () => {
@@ -240,7 +240,7 @@ describe(ProjectReader.name, () => {
             Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)", 
             "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)".
             To enable file mutation, consider configuring the \`mutate\` 
-            property in your configuration file or using the --mutate option via the command line.`)
+            property in your configuration file or using the --mutate option via the command line.`),
         );
       });
     });
@@ -393,7 +393,7 @@ describe(ProjectReader.name, () => {
       sinon.assert.calledWithExactly(
         testInjector.logger.info,
         'No incremental result file found at %s, a full mutation testing run will be performed.',
-        'reports/stryker-incremental.json'
+        'reports/stryker-incremental.json',
       );
     });
     it('should be corrected for file locations', async () => {
@@ -427,7 +427,7 @@ describe(ProjectReader.name, () => {
                   ],
                 }),
               },
-            })
+            }),
           ),
         },
       });

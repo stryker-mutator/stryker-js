@@ -49,7 +49,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
         super.visitElement(el, context);
       }
     })(),
-    rootNodes
+    rootNodes,
   );
   const scripts = await Promise.all(scriptsAsPromised);
   const root: HtmlRootNode = {

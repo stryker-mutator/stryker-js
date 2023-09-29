@@ -205,7 +205,7 @@ describe(JasmineTestRunner.name, () => {
           mutantCoverage: expectedMutationCoverage,
         };
         expect(result).deep.eq(expectedResult);
-      })
+      }),
     );
 
     it('should not report mutation coverage when coverage analysis is "off"', async () => {
@@ -287,7 +287,7 @@ describe(JasmineTestRunner.name, () => {
             status: 'failure',
             failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
             description: 'string',
-          })
+          }),
         );
         await reporter.specDone!(createSpecResult({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' }));
         await reporter.specDone!(createSpecResult({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' }));

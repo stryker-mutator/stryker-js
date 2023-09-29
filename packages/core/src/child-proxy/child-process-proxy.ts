@@ -53,7 +53,7 @@ export class ChildProcessProxy<T> implements Disposable {
     pluginModulePaths: readonly string[],
     workingDirectory: string,
     execArgv: string[],
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
   ) {
     const workerId = idGenerator.next().toString();
     this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), {
@@ -67,7 +67,7 @@ export class ChildProcessProxy<T> implements Disposable {
       namedExport,
       workerId,
       this.worker.pid,
-      execArgv.length ? ` (using args ${execArgv.join(' ')})` : ''
+      execArgv.length ? ` (using args ${execArgv.join(' ')})` : '',
     );
     // Listen to `close`, not `exit`, see https://github.com/stryker-mutator/stryker-js/issues/1634
     this.worker.on('close', this.handleUnexpectedExit);
@@ -101,7 +101,7 @@ export class ChildProcessProxy<T> implements Disposable {
     workingDirectory: string,
     injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
     execArgv: string[],
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
   ): ChildProcessProxy<R> {
     return new ChildProcessProxy(
       modulePath,
@@ -112,7 +112,7 @@ export class ChildProcessProxy<T> implements Disposable {
       pluginModulePaths,
       workingDirectory,
       execArgv,
-      idGenerator
+      idGenerator,
     );
   }
 
@@ -247,7 +247,7 @@ export class ChildProcessProxy<T> implements Disposable {
         this.worker.pid,
         `Child process [pid ${this.worker.pid}] exited unexpectedly with exit code ${code} (${signal || 'without signal'}). ${stdoutAndStderr()}`,
         code,
-        signal
+        signal,
       );
       this.log.warn(this.fatalError.message, this.fatalError);
     }
@@ -271,7 +271,7 @@ export class ChildProcessProxy<T> implements Disposable {
     if (this.innerProcessIsCrashed(error)) {
       this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
       this.reportError(
-        new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error)
+        new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error),
       );
     } else {
       this.reportError(error);

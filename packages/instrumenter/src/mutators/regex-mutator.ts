@@ -53,7 +53,7 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
       return weaponRegex.mutate(pattern, flags, weaponRegexOptions).map((mutant) => mutant.pattern);
     } catch (err: any) {
       console.error(
-        `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`
+        `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`,
       );
     }
   }

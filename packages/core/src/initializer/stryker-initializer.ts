@@ -29,7 +29,7 @@ export class StrykerInitializer {
     initializerTokens.customInitializers,
     initializerTokens.configWriter,
     initializerTokens.gitignoreWriter,
-    initializerTokens.inquirer
+    initializerTokens.inquirer,
   );
   constructor(
     private readonly log: Logger,
@@ -38,7 +38,7 @@ export class StrykerInitializer {
     private readonly customInitializers: CustomInitializer[],
     private readonly configWriter: StrykerConfigWriter,
     private readonly gitignoreWriter: GitignoreWriter,
-    private readonly inquirer: StrykerInquirer
+    private readonly inquirer: StrykerInquirer,
   ) {}
 
   /**
@@ -116,11 +116,11 @@ export class StrykerInitializer {
       npmDependencies.map((pkg) => pkg.name),
       additionalConfig,
       pkgInfoOfSelectedTestRunner?.homepage ?? "(missing 'homepage' URL in package.json)",
-      isJsonSelected
+      isJsonSelected,
     );
     this.installNpmDependencies(
       npmDependencies.map((pkg) => pkg.name),
-      selectedPackageManager
+      selectedPackageManager,
     );
     return configFileName;
   }
@@ -154,7 +154,7 @@ export class StrykerInitializer {
       {
         name: 'dashboard',
         pkg: null,
-      }
+      },
     );
     return this.inquirer.promptReporters(reporterOptions);
   }

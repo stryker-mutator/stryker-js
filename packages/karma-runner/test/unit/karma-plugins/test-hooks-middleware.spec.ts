@@ -28,7 +28,7 @@ describe(TestHooksMiddleware.name, () => {
       it('should throw if the current test framework is not supported', () => {
         sut.configureTestFramework(['chai', 'requirejs', 'tap']); // "tap" is not yet supported
         expect(() => sut.configureCoverageAnalysis('perTest')).throws(
-          'Could not configure coverageAnalysis "perTest". Your test framework is not supported by the `@stryker-mutator/karma-runner`. Supported test frameworks: mocha, jasmine'
+          'Could not configure coverageAnalysis "perTest". Your test framework is not supported by the `@stryker-mutator/karma-runner`. Supported test frameworks: mocha, jasmine',
         );
       });
 
@@ -100,10 +100,10 @@ describe(TestHooksMiddleware.name, () => {
     it('should escape `/` in the regex literal', () => {
       sut.configureTestFramework(['mocha']);
       sut.configureMutantRun(
-        factory.mutantRunOptions({ testFilter: ['MutationTestReportTotalsComponent should show N/A when no mutation score is available'] })
+        factory.mutantRunOptions({ testFilter: ['MutationTestReportTotalsComponent should show N/A when no mutation score is available'] }),
       );
       expect(sut.currentTestHooks).contains(
-        'mocha.grep(/(MutationTestReportTotalsComponent should show N\\/A when no mutation score is available)/)'
+        'mocha.grep(/(MutationTestReportTotalsComponent should show N\\/A when no mutation score is available)/)',
       );
     });
 

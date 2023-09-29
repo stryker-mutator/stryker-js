@@ -54,7 +54,7 @@ describe('Infinite loop', () => {
         activeMutant: factory.mutant({ id: '12' }),
         testFilter: [`${infiniteLoopFileName}:3`],
         hitLimit: 10,
-      })
+      }),
     );
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
@@ -62,7 +62,7 @@ describe('Infinite loop', () => {
         activeMutant: factory.mutant({ id: '15' }),
         testFilter: [`${infiniteLoopFileName}:3`],
         hitLimit: 10,
-      })
+      }),
     );
 
     // Assert

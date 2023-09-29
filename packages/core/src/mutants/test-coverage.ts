@@ -16,7 +16,7 @@ export class TestCoverage {
     testsByMutantId: Map<string, Set<TestResult>>,
     testsById: Map<string, TestResult>,
     staticCoverage: CoverageData | undefined,
-    hitsByMutantId: Map<string, number>
+    hitsByMutantId: Map<string, number>,
   ) {
     this.#testsByMutantId = testsByMutantId;
     this.#testsById = testsById;
@@ -73,7 +73,7 @@ function testCoverageFrom({ tests, mutantCoverage }: CompleteDryRunResult, logge
       const foundTest = testsById.get(testId);
       if (!foundTest) {
         logger.warn(
-          `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.`
+          `Found test with id "${testId}" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.`,
         );
         return;
       }

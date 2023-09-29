@@ -169,8 +169,8 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       actualLogEvents.find(
         (logEvent) =>
           log4js.levels.DEBUG.isEqualTo(logEvent.level) &&
-          logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection')
-      )
+          logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection'),
+      ),
     ).ok;
   });
 

@@ -43,7 +43,7 @@ describe(parseTsx.name, () => {
       
       <MyComponent foo="bar" />; // ok`,
       (t) => t.isJSXElement(),
-      'test.tsx'
+      'test.tsx',
     );
   });
 

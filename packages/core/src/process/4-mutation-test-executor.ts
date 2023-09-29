@@ -47,7 +47,7 @@ export class MutationTestExecutor {
     commonTokens.logger,
     commonTokens.options,
     coreTokens.timer,
-    coreTokens.concurrencyTokenProvider
+    coreTokens.concurrencyTokenProvider,
   );
 
   constructor(
@@ -60,7 +60,7 @@ export class MutationTestExecutor {
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
-    private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>
+    private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
@@ -90,7 +90,7 @@ export class MutationTestExecutor {
   private executeNoCoverage(input$: Observable<MutantRunPlan>) {
     const [noCoverageMatchedMutant$, coveredMutant$] = partition(input$.pipe(shareReplay()), ({ runOptions }) => runOptions.testFilter?.length === 0);
     const noCoverageResult$ = noCoverageMatchedMutant$.pipe(
-      map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.NoCoverage))
+      map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.NoCoverage)),
     );
     return { noCoverageResult$, coveredMutant$ };
   }
@@ -98,7 +98,7 @@ export class MutationTestExecutor {
   private executeRunInTestRunner(input$: Observable<MutantRunPlan>): Observable<MutantResult> {
     const sortedPlan$ = input$.pipe(
       bufferTime(BUFFER_FOR_SORTING_MS),
-      mergeMap((plans) => plans.sort(reloadEnvironmentLast))
+      mergeMap((plans) => plans.sort(reloadEnvironmentLast)),
     );
     return this.testRunnerPool.schedule(sortedPlan$, async (testRunner, { mutant, runOptions }) => {
       const result = await testRunner.mutantRun(runOptions);
@@ -124,7 +124,7 @@ export class MutationTestExecutor {
       // Use this checker
       const [checkFailedResult$, checkPassedResult$] = partition(
         this.executeSingleChecker(checkerName, passedMutant$).pipe(shareReplay()),
-        isEarlyResult
+        isEarlyResult,
       );
 
       // Prepare for the next one
@@ -139,7 +139,7 @@ export class MutationTestExecutor {
             await this.checkerPool.dispose();
             this.concurrencyTokenProvider.freeCheckers();
           },
-        })
+        }),
       ),
     };
   }
@@ -164,8 +164,8 @@ export class MutationTestExecutor {
             : {
                 plan: PlanKind.EarlyResult as const,
                 mutant: this.mutationTestReportHelper.reportCheckFailed(mutantRunPlan.mutant, checkResult),
-              }
-        )
+              },
+        ),
       );
     return checkTask$;
   }

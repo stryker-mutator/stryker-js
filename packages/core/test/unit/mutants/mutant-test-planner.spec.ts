@@ -33,7 +33,7 @@ describe(MutantTestPlanner.name, () => {
 
   function act(
     mutants: Mutant[],
-    project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions())
+    project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions()),
   ): Promise<readonly MutantTestPlan[]> {
     return testInjector.injector
       .provideValue(coreTokens.testCoverage, testCoverage)
@@ -350,7 +350,7 @@ describe(MutantTestPlanner.name, () => {
         testCoverage.addTest(
           factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
           factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
-          factory.successTestResult({ id: 'spec3', timeSpentMs: 22 })
+          factory.successTestResult({ id: 'spec3', timeSpentMs: 22 }),
         );
         testCoverage.staticCoverage['1'] = false;
         testCoverage.addCoverage('1', ['spec1', 'spec3']);
@@ -385,7 +385,7 @@ describe(MutantTestPlanner.name, () => {
         factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
         factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
         factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-        factory.successTestResult({ id: 'spec4', timeSpentMs: 10 })
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 10 }),
       );
       arrangeStaticCoverage(4, 5, 6, 7);
       testCoverage.addCoverage(1, ['spec1']);
@@ -424,7 +424,7 @@ describe(MutantTestPlanner.name, () => {
 
       // Assert
       expect(testInjector.logger.warn).calledWithMatch(
-        'Detected 2 static mutants (100% of total) that are estimated to take 100% of the time running the tests!'
+        'Detected 2 static mutants (100% of total) that are estimated to take 100% of the time running the tests!',
       );
     });
 
@@ -468,7 +468,7 @@ describe(MutantTestPlanner.name, () => {
         factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
         factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
         factory.successTestResult({ id: 'spec3', timeSpentMs: 10 }),
-        factory.successTestResult({ id: 'spec4', timeSpentMs: 9 })
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 9 }),
       );
       arrangeStaticCoverage(4, 5, 6, 7);
       testCoverage.addCoverage(1, ['spec1']);
@@ -499,7 +499,7 @@ describe(MutantTestPlanner.name, () => {
         factory.successTestResult({ id: 'spec1', timeSpentMs: 1 }),
         factory.successTestResult({ id: 'spec2', timeSpentMs: 3 }),
         factory.successTestResult({ id: 'spec3', timeSpentMs: 0.1 }),
-        factory.successTestResult({ id: 'spec4', timeSpentMs: 7 })
+        factory.successTestResult({ id: 'spec4', timeSpentMs: 7 }),
       );
       arrangeStaticCoverage(4, 5, 6);
       testCoverage.addCoverage(1, ['spec2', 'spec1']);
@@ -538,7 +538,7 @@ describe(MutantTestPlanner.name, () => {
         const testFileFullName = path.resolve(this.#testFileName);
         const srcFileFullName = path.resolve(this.#srcFileName);
         this.#mutants.push(
-          factory.mutant({ id: '1', fileName: srcFileFullName, mutatorName: 'fooMutator', replacement: '<=', location: loc(0, 0, 0, 1) })
+          factory.mutant({ id: '1', fileName: srcFileFullName, mutatorName: 'fooMutator', replacement: '<=', location: loc(0, 0, 0, 1) }),
         );
         fileSystemTestDouble.files[srcFileFullName] = 'foo';
         fileSystemTestDouble.files[testFileFullName] = 'describe("foo")';

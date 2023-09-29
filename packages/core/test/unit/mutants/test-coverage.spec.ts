@@ -11,14 +11,14 @@ describe(TestCoverage.name, () => {
     it('should return false when no static coverage was reported for the mutant', () => {
       const sut = TestCoverage.from(
         factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }) }),
-        testInjector.logger
+        testInjector.logger,
       );
       expect(sut.hasStaticCoverage('1')).false;
     });
     it('should return true when static coverage was reported for the mutant', () => {
       const sut = TestCoverage.from(
         factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }) }),
-        testInjector.logger
+        testInjector.logger,
       );
       expect(sut.hasStaticCoverage('2')).true;
     });
@@ -50,7 +50,7 @@ describe(TestCoverage.name, () => {
           ['spec2', spec2],
         ]),
         {},
-        new Map()
+        new Map(),
       );
       sut.addCoverage('mutant1', ['spec2']);
       expect(sut.forMutant('mutant1')).deep.eq(new Set([spec1, spec2]));
@@ -65,7 +65,7 @@ describe(TestCoverage.name, () => {
           ['spec2', spec2],
         ]),
         {},
-        new Map()
+        new Map(),
       );
       sut.addCoverage('mutant1', ['spec2', 'spec3']);
       expect(sut.forMutant('mutant1')).deep.eq(new Set([spec1, spec2]));
@@ -123,7 +123,7 @@ describe(TestCoverage.name, () => {
 
       // Assert
       expect(testInjector.logger.warn).calledWith(
-        'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.'
+        'Found test with id "spec2" in coverage data, but not in the test results of the dry run. Not taking coverage data for this test into account.',
       );
     });
   });

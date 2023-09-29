@@ -47,7 +47,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       loggingContext,
       ['plugin', 'paths'],
       testInjector.logger,
-      idGenerator
+      idGenerator,
     );
   }
 
@@ -64,7 +64,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       'a working directory',
       ChildProcessTestRunnerWorker,
       ['--inspect', '--no-warnings'],
-      idGenerator
+      idGenerator,
     );
   });
 
@@ -123,7 +123,7 @@ describe(ChildProcessTestRunnerProxy.name, () => {
       expect(childProcessProxyMock.dispose).called;
       expect(testInjector.logger.warn).calledWithExactly(
         'An unexpected error occurred during test runner disposal. This might be worth looking into. Stryker will ignore this error.',
-        expectedError
+        expectedError,
       );
     });
 

@@ -36,7 +36,10 @@ export interface TSConfig {
 export class TSConfigPreprocessor implements FilePreprocessor {
   private readonly touched = new Set<string>();
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+  ) {}
 
   public async preprocess(project: Project): Promise<void> {
     if (this.options.inPlace) {

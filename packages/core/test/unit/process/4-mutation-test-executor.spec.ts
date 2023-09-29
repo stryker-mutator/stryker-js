@@ -354,7 +354,7 @@ describe(MutationTestExecutor.name, () => {
       sinon.assert.callOrder(
         testRunner.mutantRun.withArgs(plan2.runOptions),
         testRunner.mutantRun.withArgs(plan1.runOptions),
-        testRunner.mutantRun.withArgs(plan3.runOptions)
+        testRunner.mutantRun.withArgs(plan3.runOptions),
       );
     });
 

@@ -86,7 +86,7 @@ describe('babel-transformer', () => {
         normalizeWhitespaces(`{
         bar((console.log(bar + baz), bar + baz));
         foo((console.log(bar - baz), bar + baz, console.log(bar + baz), bar - baz, console.log(bar + baz), bar + baz));
-      }`)
+      }`),
       );
     });
 
@@ -371,7 +371,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(0);
         expect(
-          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
+          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything'),
         ).to.be.true;
         expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
       });
@@ -453,7 +453,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
         );
       });
 
@@ -468,7 +468,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
         );
       });
 
@@ -485,7 +485,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2")
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2"),
         );
       });
 
@@ -725,7 +725,7 @@ describe('babel-transformer', () => {
         mutantCollector: I<MutantCollector>,
         context: TransformerContext,
         mutators: NodeMutator[],
-        mutantPlacers: MutantPlacer[]
+        mutantPlacers: MutantPlacer[],
       ) => void
     )(ast, mutantCollector, context, mutators, mutantPlacers);
   }

@@ -125,7 +125,7 @@ export class StrykerReporter implements karma.Reporter {
     result: {
       mutantCoverage: MutantCoverage | undefined;
       hitCount: number | undefined;
-    }
+    },
   ): void => {
     this.mutantCoverage = result.mutantCoverage;
     this.hitCount = result.hitCount;

@@ -38,13 +38,13 @@ describe(RetryRejectedDecorator.name, () => {
     'dryRun',
     (suite, options) => suite.dryRun(options),
     () => factory.dryRunOptions({ timeout: 23 }),
-    () => factory.completeDryRunResult()
+    () => factory.completeDryRunResult(),
   );
   describeRun(
     'mutantRun',
     (suite, options) => suite.mutantRun(options),
     () => factory.mutantRunOptions({ timeout: 23 }),
-    () => factory.survivedMutantRunResult()
+    () => factory.survivedMutantRunResult(),
   );
 
   interface RunOptionsByMethod {
@@ -60,7 +60,7 @@ describe(RetryRejectedDecorator.name, () => {
     runMethod: T,
     act: (sut: RetryRejectedDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
     optionsFactory: () => RunOptionsByMethod[T],
-    resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never
+    resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never,
   ) {
     describe(runMethod, () => {
       let options: RunOptionsByMethod[T];
@@ -103,7 +103,7 @@ describe(RetryRejectedDecorator.name, () => {
         expect(result).to.eq(expectedResult);
         expect(logMock.info).calledWith(
           "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
-          123
+          123,
         );
       });
 
@@ -124,7 +124,7 @@ describe(RetryRejectedDecorator.name, () => {
         const result = await act(sut, options);
         assertions.expectErrored(result);
         expect((result as any).errorMessage).to.be.deep.eq(
-          `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`
+          `Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ${errorToString(finalError)}`,
         );
         expect(availableTestRunners).to.have.lengthOf(0);
       });

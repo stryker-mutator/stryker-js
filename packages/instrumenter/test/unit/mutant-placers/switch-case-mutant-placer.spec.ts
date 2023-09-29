@@ -104,7 +104,7 @@ describe('switchCaseMutantPlacer', () => {
             foo();
             } else if (stryMutAct_9fa48("42")) {}
             else {
-              stryCov_9fa48("42", "156")`)
+              stryCov_9fa48("42", "156")`),
       );
     });
   });

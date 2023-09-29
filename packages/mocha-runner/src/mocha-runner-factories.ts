@@ -9,7 +9,7 @@ import * as pluginTokens from './plugin-tokens.js';
 export const createMochaTestRunner = createMochaTestRunnerFactory();
 
 export function createMochaTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
 ): {
   (injector: Injector<PluginContext>): MochaTestRunner;
   inject: ['$injector'];

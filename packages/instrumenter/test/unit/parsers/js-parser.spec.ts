@@ -44,7 +44,7 @@ describe('js-parser', () => {
       itShouldSupportAst('export-namespace-from', 'export * as ns from "mod";', (t) => t.isExportNamespaceSpecifier());
       itShouldSupportAst('function-bind', 'obj::func', (t) => t.isBindExpression());
       itShouldSupportAst('function-sent', 'function* generator() { console.log("Sent", function.sent); console.log("Yield", yield);}', (t) =>
-        t.isMetaProperty()
+        t.isMetaProperty(),
       );
       itShouldSupportAst('numeric-separator', 'let budget = 1_000_000_000_000;', (t) => t.isNumericLiteral());
       itShouldSupportAst('optional-catch-binding', 'try{ throw 0; } catch { }', (t) => t.isCatchClause() && t.node.param === null);
@@ -53,12 +53,12 @@ describe('js-parser', () => {
       itShouldSupportAst(
         'nullish-coalescing-operator',
         'var foo = object.foo ?? "default";',
-        (t) => t.isLogicalExpression() && t.node.operator === '??'
+        (t) => t.isLogicalExpression() && t.node.operator === '??',
       );
       itShouldSupportAst(
         'throw-expressions',
         'const test = param === true || throw new Error("Falsy!");',
-        (t) => t.isUnaryExpression() && t.node.operator === 'throw'
+        (t) => t.isUnaryExpression() && t.node.operator === 'throw',
       );
 
       itShouldSupportAst('partial-application', 'const addOne = add(1, ?);', (t) => t.isArgumentPlaceholder());

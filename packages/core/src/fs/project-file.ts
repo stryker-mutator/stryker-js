@@ -17,7 +17,11 @@ export class ProjectFile implements FileDescription {
   #originalContent: string | undefined;
   #relativePath: string;
 
-  constructor(private readonly fs: I<FileSystem>, private readonly name: string, public mutate: MutateDescription) {
+  constructor(
+    private readonly fs: I<FileSystem>,
+    private readonly name: string,
+    public mutate: MutateDescription,
+  ) {
     this.#relativePath = path.relative(process.cwd(), this.name);
   }
 

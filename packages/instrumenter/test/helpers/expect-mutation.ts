@@ -59,7 +59,7 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
             expect.fail(
               `Mutated ${replacementNode.type} node \`${
                 generate(replacementNode).code
-              }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`
+              }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
             );
           }
         }
@@ -85,7 +85,7 @@ function nodeSet(ast: babel.Node, parentPath?: babel.NodePath) {
     },
     parentPath?.scope,
     parentPath?.state,
-    parentPath
+    parentPath,
   );
   return set;
 }

@@ -28,7 +28,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
             tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
-        })
+        }),
       );
       sut.onMutationTestingPlanReady(
         factory.mutationTestingPlanReadyEvent({
@@ -63,7 +63,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
               netTime: 15,
             }),
           ],
-        })
+        }),
       );
     });
 
@@ -74,7 +74,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
     it('should log correct info after ten seconds without completed tests', () => {
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 0% (elapsed: <1m, remaining: n/a) 0/4 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 0% (elapsed: <1m, remaining: n/a) 0/4 tested (0 survived, 0 timed out)${os.EOL}`,
       );
     });
 
@@ -82,7 +82,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
       sut.onMutantTested(factory.killedMutantResult({ id: '1' }));
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 0% (elapsed: <1m, remaining: n/a) 0/4 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 0% (elapsed: <1m, remaining: n/a) 0/4 tested (0 survived, 0 timed out)${os.EOL}`,
       );
     });
 
@@ -92,7 +92,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 10% (elapsed: <1m, remaining: ~1m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 10% (elapsed: <1m, remaining: ~1m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`,
       );
     });
 
@@ -102,7 +102,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 79% (elapsed: <1m, remaining: <1m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 79% (elapsed: <1m, remaining: <1m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`,
       );
     });
 
@@ -112,7 +112,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
       expect(process.stdout.write).to.not.have.been.called;
       sinon.clock.tick(HUNDRED_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 3% (elapsed: ~1m, remaining: ~46m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`
+        `Mutation testing 3% (elapsed: ~1m, remaining: ~46m) 1/4 tested (0 survived, 0 timed out)${os.EOL}`,
       );
     });
 
@@ -123,7 +123,7 @@ describe(ProgressAppendOnlyReporter.name, () => {
       sut.onMutantTested(factory.timeoutMutantResult({ id: '4' }));
       sinon.clock.tick(TEN_SECONDS);
       expect(process.stdout.write).to.have.been.calledWith(
-        `Mutation testing 82% (elapsed: <1m, remaining: <1m) 2/4 tested (1 survived, 1 timed out)${os.EOL}`
+        `Mutation testing 82% (elapsed: <1m, remaining: <1m) 2/4 tested (1 survived, 1 timed out)${os.EOL}`,
       );
     });
   });

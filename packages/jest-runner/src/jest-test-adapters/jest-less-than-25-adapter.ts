@@ -25,7 +25,7 @@ export class JestLessThan25TestAdapter implements JestTestAdapter {
         testNamePattern,
         testLocationInResults,
       },
-      [jestConfig.rootDir ?? process.cwd()]
+      [jestConfig.rootDir ?? process.cwd()],
     );
   }
 }

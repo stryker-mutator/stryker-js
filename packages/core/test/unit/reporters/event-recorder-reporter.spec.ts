@@ -41,7 +41,7 @@ describe(EventRecorderReporter.name, () => {
               (sut[eventName] as any)(expected);
               return (sut.wrapUp() as Promise<void>).then(
                 () => void 0,
-                (error) => (writeFileRejection = error)
+                (error) => (writeFileRejection = error),
               );
             });
 

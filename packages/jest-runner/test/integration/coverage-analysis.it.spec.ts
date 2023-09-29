@@ -121,7 +121,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               testFilter: ['Add should be able to recognize a negative number'],
               activeMutant: factory.mutant({ id: '6' }),
               sandboxFileName: resolveTestCase('src', 'Add.js'),
-            })
+            }),
           );
           assertions.expectKilled(result);
           expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
@@ -134,7 +134,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               testFilter: ['Add should be able to add two numbers', 'Circle should have a circumference of 2PI when the radius is 1'],
               activeMutant: factory.mutant({ id: '6' }), // mutant inside the "isNegativeNumber" function
               sandboxFileName: resolveTestCase('src', 'Add.js'),
-            })
+            }),
           );
           assertions.expectSurvived(result);
           expect(result.nrOfTests).eq(1); // Circle should have a circumference of 2PI when the radius is 1 is outside of the sandboxFileName
@@ -261,7 +261,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               testFilter: ['Add should be able to recognize a negative number'],
               activeMutant: factory.mutant({ id: '21' }),
               sandboxFileName: resolveTestCase('src', 'Add.js'),
-            })
+            }),
           );
           assertions.expectKilled(result);
           expect(result.killedBy).deep.eq(['Add should be able to recognize a negative number']);
@@ -274,7 +274,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               testFilter: ['Add should be able to add two numbers', 'Circle should have a circumference of 2PI when the radius is 1'],
               activeMutant: factory.mutant({ id: '11' }), // mutant inside the "negate" function
               sandboxFileName: resolveTestCase('src', 'Add.js'),
-            })
+            }),
           );
           assertions.expectSurvived(result);
           expect(result.nrOfTests).eq(1); // Circle should have a circumference of 2PI when the radius is 1 is outside of the sandboxFileName

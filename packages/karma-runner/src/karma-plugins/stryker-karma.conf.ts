@@ -17,7 +17,7 @@ export const strykerKarmaConfigPath = path.resolve(
   '..' /* karma-plugins */,
   '..' /* src */,
   '..' /* dist */,
-  'stryker-karma.conf.cjs'
+  'stryker-karma.conf.cjs',
 );
 
 function setDefaultOptions(config: Config) {
@@ -41,7 +41,7 @@ async function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCw
     } catch (error: any) {
       if (error.code === 'MODULE_NOT_FOUND') {
         log.error(
-          `Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`
+          `Unable to find karma config at "${globalSettings.karmaConfigFile}" (tried to load from ${configFileName}). Please check your stryker config. You might need to make sure the file is included in the sandbox directory.`,
         );
       } else {
         throw error; // oops

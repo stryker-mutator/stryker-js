@@ -8,7 +8,7 @@ import { JasmineTestRunner, createJasmineTestRunner, createJasmineTestRunnerFact
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jasmine', createJasmineTestRunner)];
 
 export const strykerValidationSchema: typeof import('../schema/jasmine-runner-options.json') = JSON.parse(
-  fs.readFileSync(new URL('../schema/jasmine-runner-options.json', import.meta.url), 'utf-8')
+  fs.readFileSync(new URL('../schema/jasmine-runner-options.json', import.meta.url), 'utf-8'),
 );
 
 export { JasmineTestRunner, createJasmineTestRunnerFactory };

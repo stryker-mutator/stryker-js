@@ -17,7 +17,7 @@ createCheckerFactory.inject = tokens(
   coreTokens.loggingContext,
   coreTokens.pluginModulePaths,
   commonTokens.getLogger,
-  coreTokens.workerIdGenerator
+  coreTokens.workerIdGenerator,
 );
 export function createCheckerFactory(
   options: StrykerOptions,
@@ -25,14 +25,14 @@ export function createCheckerFactory(
   loggingContext: LoggingClientContext,
   pluginModulePaths: readonly string[],
   getLogger: LoggerFactoryMethod,
-  idGenerator: IdGenerator
+  idGenerator: IdGenerator,
 ): () => CheckerFacade {
   return () =>
     new CheckerFacade(
       () =>
         new CheckerRetryDecorator(
           () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingContext, idGenerator),
-          getLogger(CheckerRetryDecorator.name)
-        )
+          getLogger(CheckerRetryDecorator.name),
+        ),
     );
 }

@@ -1,9 +1,9 @@
 import babel, { type NodePath, type types } from '@babel/core';
 
-/* eslint-disable @typescript-eslint/no-duplicate-imports */
+/* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
-/* eslint-enable @typescript-eslint/no-duplicate-imports */
+/* eslint-enable import/no-duplicates */
 
 import { instrumentationBabelHeader, isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
@@ -29,7 +29,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   mutantCollector,
   { options, mutateDescription, logger },
   mutators = allMutators,
-  mutantPlacers = allMutantPlacers
+  mutantPlacers = allMutantPlacers,
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889

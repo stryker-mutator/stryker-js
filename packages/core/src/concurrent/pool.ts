@@ -38,7 +38,10 @@ class WorkItem<TResource extends Resource, TIn, TOut> {
    * @param input The input to the ask
    * @param task The task, where a resource and input is presented
    */
-  constructor(private readonly input: TIn, private readonly task: (resource: TResource, input: TIn) => Promise<TOut> | TOut) {}
+  constructor(
+    private readonly input: TIn,
+    private readonly task: (resource: TResource, input: TIn) => Promise<TOut> | TOut,
+  ) {}
 
   public async execute(resource: TResource) {
     try {
@@ -91,7 +94,7 @@ export class Pool<TResource extends Resource> implements Disposable {
           resourcesSubject.next(resource); // recycle resource so it can pick up more work
         }),
         ignoreElements(),
-        takeUntil(this.dispose$)
+        takeUntil(this.dispose$),
       )
       .subscribe({
         error: (error) => {
@@ -123,7 +126,7 @@ export class Pool<TResource extends Resource> implements Disposable {
           error: (err) => {
             this.initSubject.error(err);
           },
-        })
+        }),
       )
       .subscribe({
         next: (resource) => resourcesSubject.next(resource),
@@ -150,7 +153,7 @@ export class Pool<TResource extends Resource> implements Disposable {
         const workItem = new WorkItem(input, task);
         this.todoSubject.next(workItem);
         return workItem.result$;
-      })
+      }),
     );
   }
 

@@ -17,7 +17,10 @@ export class ConcurrencyTokenProvider implements Disposable {
   public readonly checkerToken$: Observable<number>;
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
-  constructor(options: Pick<StrykerOptions, 'checkers' | 'concurrency'>, private readonly log: Logger) {
+  constructor(
+    options: Pick<StrykerOptions, 'checkers' | 'concurrency'>,
+    private readonly log: Logger,
+  ) {
     const cpuCount = os.cpus().length;
     const concurrency = options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
     if (options.checkers.length > 0) {

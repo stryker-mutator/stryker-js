@@ -62,8 +62,8 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);
 }`,
-    { configFile: false, browserslistConfigFile: false, env: { targets: {} } }
-  ) as babel.types.File
+    { configFile: false, browserslistConfigFile: false, env: { targets: {} } },
+  ) as babel.types.File,
 ).program.body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
 
 /**

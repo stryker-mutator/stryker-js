@@ -111,7 +111,7 @@ class ScenarioBuilder {
 
   public withMathProjectExample({ mutantState: mutantStatus = MutantStatus.Killed, isStatic = false } = {}): this {
     this.mutants.push(
-      createMutant({ id: this.mutantId, fileName: srcAdd, replacement: '-', mutatorName: 'min-replacement', location: loc(1, 11, 1, 12) })
+      createMutant({ id: this.mutantId, fileName: srcAdd, replacement: '-', mutatorName: 'min-replacement', location: loc(1, 11, 1, 12) }),
     );
     this.incrementalFiles[srcAdd] = factory.mutationTestReportSchemaFileResult({
       mutants: [
@@ -206,7 +206,7 @@ class ScenarioBuilder {
       srcAddContent
         .split('\n')
         .map((line, nr) => (nr === 1 ? `${text}${line}` : line))
-        .join('\n')
+        .join('\n'),
     );
     this.mutants[0].location = loc(1, 11 + text.length, 1, 12 + text.length);
     return this;
@@ -218,7 +218,7 @@ class ScenarioBuilder {
       testAddContent
         .split('\n')
         .map((line, nr) => (nr === 4 ? `${text}${line}` : line))
-        .join('\n')
+        .join('\n'),
     );
     for (const test of this.testCoverage.forMutant(this.mutantId)!) {
       if (test.startPosition) {
@@ -234,7 +234,7 @@ class ScenarioBuilder {
       testAddContent
         .split('\n')
         .map((line, nr) => (nr === 5 ? `  ${code}\n${line}` : line))
-        .join('\n')
+        .join('\n'),
     );
     for (const test of this.testCoverage.forMutant(this.mutantId)!) {
       if (test.startPosition) {
@@ -258,7 +258,7 @@ class ScenarioBuilder {
   public withSecondTestInIncrementalReport({ isKillingTest = false } = {}): this {
     this.currentFiles.set(testAdd, testAddContentTwoTests);
     this.incrementalTestFiles[testAdd].tests.unshift(
-      factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) })
+      factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) }),
     );
     if (isKillingTest) {
       this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec2'];
@@ -337,7 +337,7 @@ class ScenarioBuilder {
     this.incrementalTestFiles[testAdd].tests.push(
       factory.mutationTestReportSchemaTestDefinition({ id: 'spec3', name: 'should have name "add"', location: loc(9, 2) }),
       createAddWithTestGenerationTestDefinition('spec4', 40, 2, 42),
-      createAddWithTestGenerationTestDefinition('spec5', 45, -3, 42)
+      createAddWithTestGenerationTestDefinition('spec5', 45, -3, 42),
     );
     this.incrementalFiles[srcAdd].mutants[0].coveredBy = ['spec4', 'spec5'];
     this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec4'];
@@ -447,7 +447,7 @@ class ScenarioBuilder {
         files: this.incrementalFiles,
         testFiles: this.incrementalTestFiles,
       }),
-      this.currentFiles
+      this.currentFiles,
     );
   }
 }
@@ -614,7 +614,7 @@ describe(IncrementalDiffer.name, () => {
         testInjector.logger.info,
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector!.createTotalsReport()}` +
           `\n\tTests:\t\t${testStatisticsCollector!.createTotalsReport()}` +
-          `\n\tResult:\t\t${chalk.yellowBright(0)} of 1 mutant result(s) are reused.`
+          `\n\tResult:\t\t${chalk.yellowBright(0)} of 1 mutant result(s) are reused.`,
       );
     });
 
@@ -627,7 +627,7 @@ describe(IncrementalDiffer.name, () => {
       sinon.assert.calledWithExactly(
         testInjector.logger.info,
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector!.createTotalsReport()}` +
-          `\n\tResult:\t\t${chalk.yellowBright(1)} of 1 mutant result(s) are reused.`
+          `\n\tResult:\t\t${chalk.yellowBright(1)} of 1 mutant result(s) are reused.`,
       );
     });
 
@@ -641,7 +641,7 @@ describe(IncrementalDiffer.name, () => {
 
       sinon.assert.calledWithExactly(
         testInjector.logger.debug,
-        `Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${lineSeparator}No changes`
+        `Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${lineSeparator}No changes`,
       );
     });
 

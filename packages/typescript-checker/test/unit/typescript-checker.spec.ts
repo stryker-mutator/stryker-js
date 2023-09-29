@@ -59,8 +59,8 @@ describe(TypescriptChecker.name, () => {
       // Act
       await expect(sut.check(mutants)).rejectedWith(
         `Typescript error: 'fooError' was reported without a corresponding file. This shouldn't happen. Please open an issue using this link: ${strykerReportBugUrl(
-          '[BUG]: TypeScript checker reports compile error without a corresponding file: fooError'
-        )}`
+          '[BUG]: TypeScript checker reports compile error without a corresponding file: fooError',
+        )}`,
       );
     });
     it('should reject when errors relate to an unrelated file', async () => {
@@ -74,8 +74,8 @@ describe(TypescriptChecker.name, () => {
       // Act
       await expect(sut.check(mutants)).rejectedWith(
         `Typescript error: 'fooError' was reported in an unrelated file (bar.ts). This file is not part of your project, or referenced from your project. This shouldn't happen, please open an issue using this link: ${strykerReportBugUrl(
-          '[BUG]: TypeScript checker reports compile error in an unrelated file: fooError'
-        )}`
+          '[BUG]: TypeScript checker reports compile error in an unrelated file: fooError',
+        )}`,
       );
     });
   });
