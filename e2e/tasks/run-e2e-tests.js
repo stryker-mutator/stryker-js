@@ -11,6 +11,13 @@ import { minimatch } from 'minimatch';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 
+/**
+ * @typedef Package
+ * @property {object} [engines]
+ * @property {string} engines.node
+ * @property {string[]} [os]
+ */
+
 function runE2eTests() {
   const pattern = process.argv[2] ?? '*';
   const testDirs = fs
@@ -76,17 +83,29 @@ async function execNpm(command, testDir, stream) {
 }
 
 /**
- * @param {string} testDir
+ * @param {Package} pkg
  * @returns {boolean}
  */
-function satisfiesNodeVersion(testDir) {
-  const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf-8'));
-  /**
-   * @type {string|undefined}
-   */
+function satisfiesNodeVersion(pkg) {
+  /** @type {string|undefined} */
   const supportedNodeVersionRange = pkg.engines?.node;
   if (supportedNodeVersionRange && !semver.satisfies(process.version, supportedNodeVersionRange)) {
-    console.log(`\u2610 ${testDir} skipped (node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
+    console.log(`(node version ${process.version} did not satisfy ${supportedNodeVersionRange})`);
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/**
+ * @param {Package} pkg
+ * @returns {boolean}
+ */
+function satisfiesPlatform(pkg) {
+  /** @type {undefined|string[]} */
+  const supportedPlatforms = pkg.os;
+  if (supportedPlatforms && !supportedPlatforms.includes(process.platform)) {
+    console.log(`(current platform "${process.platform}" did not satisfy ${supportedPlatforms.map((platform) => `"${platform}"`).join(',')})`);
     return false;
   } else {
     return true;
@@ -107,7 +126,9 @@ async function retryCount(testDir) {
  * @returns {Promise<string>}
  */
 async function runTest(testDir, count = 0) {
-  if (satisfiesNodeVersion(testDir)) {
+  /** @type {Package} */
+  const pkg = JSON.parse(fs.readFileSync(path.resolve(testRootDir, testDir, 'package.json'), 'utf-8'));
+  if (satisfiesNodeVersion(pkg) && satisfiesPlatform(pkg)) {
     try {
       await execNpm('test', testDir, false);
     } catch (err) {
@@ -118,6 +139,8 @@ async function runTest(testDir, count = 0) {
       }
       throw err;
     }
+  } else {
+    console.log(`\u2610 ${testDir} skipped`);
   }
   return testDir;
 }
