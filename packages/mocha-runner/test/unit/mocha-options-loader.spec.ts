@@ -126,7 +126,7 @@ describe(MochaOptionsLoader.name, () => {
       existsFileStub.returns(false);
       sut.load(options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.'
+        'DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.',
       );
     });
 
@@ -149,7 +149,7 @@ describe(MochaOptionsLoader.name, () => {
 
       sut.load(options);
       expect(testInjector.logger.error).calledWith(
-        `Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`
+        `Could not load opts from "${path.resolve('some/mocha.opts/file')}". Please make sure opts file exists.`,
       );
     });
 
@@ -175,7 +175,7 @@ describe(MochaOptionsLoader.name, () => {
       expect(mochaOptions).deep.contains(createMochaOptions());
       expect(testInjector.logger.debug).calledWith(
         'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-        'mochaOptions.opts'
+        'mochaOptions.opts',
       );
     });
 
@@ -229,7 +229,7 @@ describe(MochaOptionsLoader.name, () => {
           require: ['ts-node/register'],
           spec: ['test'],
           ui: 'exports',
-        })
+        }),
       );
     });
 
@@ -263,7 +263,7 @@ describe(MochaOptionsLoader.name, () => {
           opts: 'some/mocha.opts/file',
           spec: ['test'],
           ui: 'bdd',
-        })
+        }),
       );
     });
   });

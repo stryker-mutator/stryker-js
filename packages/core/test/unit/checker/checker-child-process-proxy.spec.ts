@@ -40,7 +40,7 @@ describe(CheckerChildProcessProxy.name, () => {
         process.cwd(),
         CheckerWorker,
         [],
-        idGeneratorStub
+        idGeneratorStub,
       );
     });
     it('should provide arguments', () => {
@@ -56,7 +56,7 @@ describe(CheckerChildProcessProxy.name, () => {
         sinon.match.any,
         sinon.match.any,
         ['foo', 'bar'],
-        idGeneratorStub
+        idGeneratorStub,
       );
     });
   });

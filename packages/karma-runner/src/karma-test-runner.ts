@@ -34,7 +34,12 @@ export class KarmaTestRunner implements TestRunner {
   private isDisposed = false;
 
   public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options, pluginTokens.projectStarter);
-  constructor(private readonly log: Logger, getLogger: LoggerFactoryMethod, options: StrykerOptions, private readonly starter: ProjectStarter) {
+  constructor(
+    private readonly log: Logger,
+    getLogger: LoggerFactoryMethod,
+    options: StrykerOptions,
+    private readonly starter: ProjectStarter,
+  ) {
     const setup = this.loadSetup(options);
     configureKarma.setGlobals({
       getLogger,
@@ -60,7 +65,7 @@ export class KarmaTestRunner implements TestRunner {
     if (typeof maybeExitCode === 'number') {
       if (!this.isDisposed) {
         throw new Error(
-          `Karma exited prematurely with exit code ${maybeExitCode}. Please run stryker with \`--logLevel trace\` to see the karma logging and figure out what's wrong.`
+          `Karma exited prematurely with exit code ${maybeExitCode}. Please run stryker with \`--logLevel trace\` to see the karma logging and figure out what's wrong.`,
         );
       }
     } else {

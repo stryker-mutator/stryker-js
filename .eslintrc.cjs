@@ -35,6 +35,7 @@ module.exports = {
       },
     ],
     'import/no-default-export': 'error',
+    'import/no-duplicates': 'error',
     'import/no-extraneous-dependencies': ['error', {'devDependencies': false, 'optionalDependencies': false, 'peerDependencies': true}],
 
     // prettier rules
@@ -69,6 +70,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
     '@typescript-eslint/no-floating-promises': 'error',
+    '@typescript-eslint/class-methods-use-this': 'off',
 
     // disabled typescript-eslint rules we should enable in some way
 

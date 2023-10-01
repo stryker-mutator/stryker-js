@@ -97,7 +97,7 @@ describe(DashboardReporterClient.name, () => {
 
       // Assert
       await expect(promise).rejectedWith(
-        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`
+        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Unauthorized. Did you provide the correct api key in the "STRYKER_DASHBOARD_API_KEY" environment variable?`,
       );
     });
 
@@ -111,7 +111,7 @@ describe(DashboardReporterClient.name, () => {
 
       // Assert
       await expect(promise).rejectedWith(
-        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Response status code: 500. Response body: Internal server error`
+        `Error HTTP PUT ${baseUrl}/${projectName}/${expectedVersion}. Response status code: 500. Response body: Internal server error`,
       );
     });
   });

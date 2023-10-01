@@ -61,7 +61,7 @@ describe('tap-runner integration', () => {
 
       // Assert
       expect(testInjector.logger.debug).calledWithExactly(
-        `Running: \`node "-r" "${hooksFile}" "--enable-source-maps" "${testFile}"\` in ${process.cwd()}`
+        `Running: \`node "-r" "${hooksFile}" "--enable-source-maps" "${testFile}"\` in ${process.cwd()}`,
       );
     });
 
@@ -251,7 +251,7 @@ describe('tap-runner integration', () => {
         'node_modules',
         'ava',
         'entrypoints',
-        'cli.mjs'
+        'cli.mjs',
       );
       options.forceBail = false;
       options.tap = tapRunnerOptions({

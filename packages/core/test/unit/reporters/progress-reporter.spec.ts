@@ -35,7 +35,7 @@ describe(ProgressBarReporter.name, () => {
             tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
-        })
+        }),
       );
       sut.onMutationTestingPlanReady(
         factory.mutationTestingPlanReadyEvent({
@@ -61,7 +61,7 @@ describe(ProgressBarReporter.name, () => {
               netTime: 15,
             }),
           ],
-        })
+        }),
       );
     });
 
@@ -94,7 +94,7 @@ describe(ProgressBarReporter.name, () => {
             tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
-        })
+        }),
       );
       sut.onMutationTestingPlanReady(
         factory.mutationTestingPlanReadyEvent({
@@ -120,7 +120,7 @@ describe(ProgressBarReporter.name, () => {
               netTime: 15,
             }),
           ],
-        })
+        }),
       );
     });
 

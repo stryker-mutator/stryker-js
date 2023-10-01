@@ -146,7 +146,7 @@ describe(ConfigReader.name, () => {
 
       it('should throw an error', async () => {
         await expect(sut.readConfig({ configFile: 'testResources/config-reader/syntax-error.conf.js' })).rejectedWith(
-          'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier'
+          'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier',
         );
       });
     });

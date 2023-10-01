@@ -87,7 +87,7 @@ describe('Cucumber runner options integration', () => {
       const result = await sut.mutantRun(
         factory.mutantRunOptions({
           testFilter: [`${barFeature}:14`],
-        })
+        }),
       );
       assertions.expectKilled(result);
       expect(result.nrOfTests).eq(1);

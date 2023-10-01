@@ -47,7 +47,7 @@ describe(MutantCollector.name, () => {
           id: '1',
           original,
           replacement,
-        })
+        }),
       );
     });
 

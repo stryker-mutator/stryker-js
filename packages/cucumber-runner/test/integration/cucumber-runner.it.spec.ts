@@ -101,7 +101,7 @@ describe('Running in an example project', () => {
     const expectedPrefix = `Running cucumber with configuration: (${process.cwd()})`;
     expect(actualLogMessage.startsWith(expectedPrefix)).true;
     const actualConfig: IConfiguration = JSON.parse(
-      actualLogMessage.substring(expectedPrefix.length)
+      actualLogMessage.substring(expectedPrefix.length),
     );
     expect(actualConfig).deep.includes(expectedConfig);
   });

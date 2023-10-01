@@ -106,7 +106,7 @@ describe(MochaTestRunner.name, () => {
       const requires = ['esm', 'ts-node/require'];
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
       await expect(sut.init()).rejectedWith(
-        'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
+        'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.',
       );
     });
 
@@ -119,7 +119,7 @@ describe(MochaTestRunner.name, () => {
           opts: 'opts',
           require: [],
           ui: 'exports',
-        })
+        }),
       );
       mochaOptionsLoaderMock.load.returns(mochaOptions);
 
@@ -143,7 +143,7 @@ describe(MochaTestRunner.name, () => {
       const mochaOptions = Object.freeze(
         createMochaOptions({
           'async-only': false,
-        })
+        }),
       );
       mochaOptionsLoaderMock.load.returns(mochaOptions);
 
@@ -263,7 +263,7 @@ describe(MochaTestRunner.name, () => {
 
       // Act
       const onGoingAct = actMutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' })
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' }),
       );
 
       // Assert
@@ -282,7 +282,7 @@ describe(MochaTestRunner.name, () => {
 
       // Act
       const onGoingAct = actMutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' })
+        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' }),
       );
 
       // Assert

@@ -43,7 +43,10 @@ export class CommandTestRunner implements TestRunner {
 
   private timeoutHandler: (() => Promise<void>) | undefined;
 
-  constructor(private readonly workingDir: string, options: StrykerOptions) {
+  constructor(
+    private readonly workingDir: string,
+    options: StrykerOptions,
+  ) {
     this.settings = options.commandRunner;
   }
 

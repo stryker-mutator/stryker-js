@@ -19,7 +19,7 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     loggingContext: LoggingClientContext,
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
   ) {
     this.childProcess = ChildProcessProxy.create(
       new URL('./checker-worker.js', import.meta.url).toString(),
@@ -30,7 +30,7 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
       process.cwd(),
       CheckerWorker,
       options.checkerNodeArgs,
-      idGenerator
+      idGenerator,
     );
   }
 

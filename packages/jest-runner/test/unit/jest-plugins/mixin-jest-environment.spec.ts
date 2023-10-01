@@ -48,7 +48,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
           public async handleTestEvent(_event: Circus.Event, _eventState: Circus.State) {
             // Idle
           }
-        }
+        },
       ))(producers.createEnvironmentConfig(), producers.createEnvironmentContext());
 
       // Assert
@@ -81,9 +81,9 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
             producers.createCircusTestEntry({
               name: 'should be bar',
               parent: producers.createCircusDescribeBlock({ name: 'foo', parent: producers.createCircusDescribeBlock() }),
-            })
+            }),
           ),
-          producers.createCircusState()
+          producers.createCircusState(),
         );
 
         // Assert
@@ -101,9 +101,9 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
             producers.createCircusTestEntry({
               name: 'concat',
               parent: producers.createCircusDescribeBlock(), // direct root describe block
-            })
+            }),
           ),
-          producers.createCircusState()
+          producers.createCircusState(),
         );
 
         // Assert

@@ -15,7 +15,12 @@ interface Rule {
 }
 
 class IgnoreRule implements Rule {
-  constructor(public mutatorNames: string[], public line: number | undefined, public ignoreReason: IgnoreReason, public previousRule: Rule) {}
+  constructor(
+    public mutatorNames: string[],
+    public line: number | undefined,
+    public ignoreReason: IgnoreReason,
+    public previousRule: Rule,
+  ) {}
 
   private matches(mutatorName: string, line: number): boolean {
     const lineMatches = () => this.line === undefined || this.line === line;
@@ -53,7 +58,11 @@ export class DirectiveBookkeeper {
   private currentIgnoreRule = rootRule;
   private readonly allMutatorNames: string[];
 
-  constructor(private readonly logger: Logger, private readonly allMutators: NodeMutator[], private readonly originFileName: string) {
+  constructor(
+    private readonly logger: Logger,
+    private readonly allMutators: NodeMutator[],
+    private readonly originFileName: string,
+  ) {
     this.allMutatorNames = this.allMutators.map((x) => x.name.toLowerCase());
   }
 
@@ -112,7 +121,7 @@ export class DirectiveBookkeeper {
             scope ? directiveType + ' ' + scope : directiveType
           }' directive. Mutator with name '${mutator}' not found. Directive found at: ${this.originFileName}:${comment.loc!.start.line}:${
             comment.loc!.start.column
-          }.`
+          }.`,
         );
       }
     }

@@ -20,7 +20,7 @@ import { MutantCollector } from './mutant-collector.js';
 export function transform(
   ast: Ast,
   mutantCollector: I<MutantCollector>,
-  transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>
+  transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>,
 ): void {
   const context: TransformerContext = {
     ...transformerContext,

@@ -58,22 +58,22 @@ describe(findUnserializables.name, () => {
     });
     it('should be provided for a class instance', () => {
       expect(findUnserializables(new (class Person {})())?.[0].reason).eq(
-        'Value is an instance of "Person", this detail will get lost in translation during serialization'
+        'Value is an instance of "Person", this detail will get lost in translation during serialization',
       );
     });
     it('should be provided for an anonymous class instance', () => {
       expect(findUnserializables(new (class {})())?.[0].reason).eq(
-        'Value is an instance of "<anonymous class>", this detail will get lost in translation during serialization'
+        'Value is an instance of "<anonymous class>", this detail will get lost in translation during serialization',
       );
     });
     it('should be provided for a RegExp', () => {
       expect(findUnserializables(/regex/)?.[0].reason).eq(
-        'Value is an instance of "RegExp", this detail will get lost in translation during serialization'
+        'Value is an instance of "RegExp", this detail will get lost in translation during serialization',
       );
     });
     it('should be provided for a Date', () => {
       expect(findUnserializables(new Date(2010, 1, 1))?.[0].reason).eq(
-        'Value is an instance of "Date", this detail will get lost in translation during serialization'
+        'Value is an instance of "Date", this detail will get lost in translation during serialization',
       );
     });
     it('should be provided for unserializable numbers', () => {

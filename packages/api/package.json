@@ -8,6 +8,7 @@
     "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
+  "files": ["dist", "./core.d.ts", "src-generated", "src"],
   "exports": {
     "./check": "./dist/src/check/index.js",
     "./core": "./dist/src/core/index.js",
@@ -48,12 +49,12 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "mutation-testing-metrics": "2.0.1",
-    "mutation-testing-report-schema": "2.0.1",
+    "mutation-testing-metrics": "2.0.3",
+    "mutation-testing-report-schema": "2.0.3",
     "tslib": "~2.6.0",
     "typed-inject": "~4.0.0"
   },
   "devDependencies": {
-    "@types/node": "18.17.1"
+    "@types/node": "18.18.0"
   }
 }

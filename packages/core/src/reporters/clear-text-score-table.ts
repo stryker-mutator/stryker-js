@@ -28,7 +28,11 @@ class Column {
   protected width: number;
   private readonly emojiMatchInHeader: RegExpExecArray | null;
 
-  constructor(public header: string, public valueFactory: TableCellValueFactory, public rows: MetricsResult) {
+  constructor(
+    public header: string,
+    public valueFactory: TableCellValueFactory,
+    public rows: MetricsResult,
+  ) {
     this.emojiMatchInHeader = emojiRe.exec(this.header);
     const maxContentSize = this.determineValueSize();
     this.width = this.pad(dots(maxContentSize)).length;
@@ -71,7 +75,10 @@ class Column {
 }
 
 class MutationScoreColumn extends Column {
-  constructor(rows: MetricsResult, private readonly thresholds: MutationScoreThresholds) {
+  constructor(
+    rows: MetricsResult,
+    private readonly thresholds: MutationScoreThresholds,
+  ) {
     super('% score', (row) => (isNaN(row.metrics.mutationScore) ? 'n/a' : row.metrics.mutationScore.toFixed(2)), rows);
   }
   protected color(metricsResult: MetricsResult) {
@@ -104,7 +111,10 @@ class FileColumn extends Column {
 export class ClearTextScoreTable {
   private readonly columns: Column[];
 
-  constructor(private readonly metricsResult: MetricsResult, options: StrykerOptions) {
+  constructor(
+    private readonly metricsResult: MetricsResult,
+    options: StrykerOptions,
+  ) {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
@@ -115,7 +125,7 @@ export class ClearTextScoreTable {
       new Column(
         `${options.clearTextReporter.allowEmojis ? '💥' : '#'} errors`,
         (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
-        metricsResult
+        metricsResult,
       ),
     ];
   }
@@ -134,7 +144,7 @@ export class ClearTextScoreTable {
 
   private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
     return [this.drawRow((c) => c.drawTableCell(current, ancestorCount))].concat(
-      flatMap(current.childResults, (child) => this.drawValues(child, ancestorCount + 1))
+      flatMap(current.childResults, (child) => this.drawValues(child, ancestorCount + 1)),
     );
   }
 

@@ -103,7 +103,7 @@ export class LogConfigurator {
   public static configureMainProcess(
     consoleLogLevel: LogLevel = LogLevel.Information,
     fileLogLevel: LogLevel = LogLevel.Off,
-    allowConsoleColors = true
+    allowConsoleColors = true,
   ): void {
     const appenders = this.createMainProcessAppenders(consoleLogLevel, fileLogLevel, allowConsoleColors);
     log4js.configure(this.createLog4jsConfig(minLevel(consoleLogLevel, fileLogLevel), appenders));
@@ -121,7 +121,7 @@ export class LogConfigurator {
   public static async configureLoggingServer(
     consoleLogLevel: LogLevel,
     fileLogLevel: LogLevel,
-    allowConsoleColors: boolean
+    allowConsoleColors: boolean,
   ): Promise<LoggingClientContext> {
     const loggerPort = await netUtils.getFreePort();
 

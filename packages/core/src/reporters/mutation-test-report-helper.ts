@@ -36,7 +36,7 @@ export class MutationTestReportHelper {
     commonTokens.logger,
     coreTokens.testCoverage,
     coreTokens.fs,
-    coreTokens.requireFromCwd
+    coreTokens.requireFromCwd,
   );
 
   constructor(
@@ -46,7 +46,7 @@ export class MutationTestReportHelper {
     private readonly log: Logger,
     private readonly testCoverage: I<TestCoverage>,
     private readonly fs: I<FileSystem>,
-    private readonly requireFromCwd: typeof requireResolve
+    private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
@@ -143,7 +143,7 @@ export class MutationTestReportHelper {
       }
     } else {
       this.log.debug(
-        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+        "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.",
       );
     }
   }
@@ -172,12 +172,12 @@ export class MutationTestReportHelper {
 
   private async toFileResults(
     results: readonly MutantResult[],
-    remapTestIds: (ids: string[] | undefined) => string[] | undefined
+    remapTestIds: (ids: string[] | undefined) => string[] | undefined,
   ): Promise<schema.FileResultDictionary> {
     const fileResultsByName = new Map<string, schema.FileResult>(
       await Promise.all(
-        [...new Set(results.map(({ fileName }) => fileName))].map(async (fileName) => [fileName, await this.toFileResult(fileName)] as const)
-      )
+        [...new Set(results.map(({ fileName }) => fileName))].map(async (fileName) => [fileName, await this.toFileResult(fileName)] as const),
+      ),
     );
 
     return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
@@ -192,9 +192,9 @@ export class MutationTestReportHelper {
     const testFilesByName = new Map<string, schema.TestFile>(
       await Promise.all(
         [...new Set([...this.testCoverage.testsById.values()].map(({ fileName }) => fileName))].map(
-          async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const
-        )
-      )
+          async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const,
+        ),
+      ),
     );
 
     return [...this.testCoverage.testsById.values()].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
@@ -218,7 +218,7 @@ export class MutationTestReportHelper {
     } else {
       this.log.warn(
         normalizeWhitespaces(`File "${fileName}" not found
-    in input files, but did receive mutant result for it. This shouldn't happen`)
+    in input files, but did receive mutant result for it. This shouldn't happen`),
       );
     }
     return fileResult;
@@ -233,7 +233,7 @@ export class MutationTestReportHelper {
       } else {
         this.log.warn(
           normalizeWhitespaces(`Test file "${fileName}" not found
-        in input files, but did receive test result for it. This shouldn't happen.`)
+        in input files, but did receive test result for it. This shouldn't happen.`),
         );
       }
     }

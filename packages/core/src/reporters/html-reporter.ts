@@ -14,7 +14,10 @@ import { reporterUtil } from './reporter-util.js';
 export class HtmlReporter implements Reporter {
   private mainPromise: Promise<void> | undefined;
 
-  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly log: Logger,
+  ) {}
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 

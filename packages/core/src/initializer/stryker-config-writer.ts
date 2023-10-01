@@ -16,7 +16,10 @@ import { initializerTokens } from './index.js';
 
 export class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
-  constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly out: typeof console.log,
+  ) {}
 
   public async guardForExistingConfig(): Promise<void> {
     for (const fileName of SUPPORTED_CONFIG_FILE_NAMES) {
@@ -44,7 +47,7 @@ export class StrykerConfigWriter {
     requiredPlugins: string[],
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     homepageOfSelectedTestRunner: string,
-    exportAsJson: boolean
+    exportAsJson: boolean,
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> & { _comment: string } = {
       _comment:

@@ -53,14 +53,14 @@ describe(JestTestRunner.name, () => {
       options.jest.enableFindRelatedTests = true;
       createSut();
       expect(testInjector.logger.debug).calledWith(
-        'Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.'
+        'Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.',
       );
     });
     it('should log a helper message when find related tests is disabled', () => {
       options.jest.enableFindRelatedTests = false;
       createSut();
       expect(testInjector.logger.debug).calledWith(
-        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.'
+        'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.',
       );
     });
   });
@@ -88,7 +88,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: sinon.match({
             reporters: [],
           }),
-        })
+        }),
       );
     });
 
@@ -98,7 +98,7 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({ bail: false }),
-        })
+        }),
       );
     });
 
@@ -110,7 +110,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: sinon.match({
             bail: false,
           }),
-        })
+        }),
       );
     });
 
@@ -285,7 +285,7 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           fileNamesUnderTest: ['.stryker-tmp/sandbox2/foo.js'],
-        })
+        }),
       );
     });
 
@@ -296,7 +296,7 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           fileNamesUnderTest: undefined,
-        })
+        }),
       );
     });
 
@@ -445,7 +445,7 @@ describe(JestTestRunner.name, () => {
         const sut = await arrangeInitializedSut();
         const onGoingRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
         await expect(onGoingRun).rejectedWith(
-          'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues'
+          'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues',
         );
       });
 
@@ -467,7 +467,7 @@ describe(JestTestRunner.name, () => {
                 producers.createJestTestResult({ testFilePath: path.resolve('bar.js') }),
               ],
             }),
-          })
+          }),
         );
         const result = await onGoingRun;
 
@@ -483,14 +483,14 @@ describe(JestTestRunner.name, () => {
       options.jest.enableFindRelatedTests = true;
       const sut = await arrangeInitializedSut();
       await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' })
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' }),
       );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
           testNamePattern: undefined,
           fileNamesUnderTest: ['.stryker-tmp/sandbox2/foo.js'],
-        })
+        }),
       );
     });
 
@@ -503,7 +503,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: sinon.match.object,
           testNamePattern: undefined,
           fileNamesUnderTest: undefined,
-        })
+        }),
       );
     });
 
@@ -538,7 +538,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: {
             globals: { __strykerGlobalNamespace__: '__stryker2__' },
           },
-        })
+        }),
       );
     });
 
@@ -556,7 +556,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: {
             globals: { foo: 'bar' },
           },
-        })
+        }),
       );
     });
 
@@ -566,7 +566,7 @@ describe(JestTestRunner.name, () => {
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           testNamePattern: '(foo should be bar/z)|(baz should be ba\\\\\\.z)',
-        })
+        }),
       );
     });
 
@@ -578,7 +578,7 @@ describe(JestTestRunner.name, () => {
           jestConfig: sinon.match({
             bail: false,
           }),
-        })
+        }),
       );
     });
 

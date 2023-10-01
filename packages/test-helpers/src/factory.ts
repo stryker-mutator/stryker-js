@@ -145,7 +145,7 @@ export const mutationTestReportSchemaMutationTestResult = factoryMethod<schema.M
 }));
 
 export const mutationTestMetricsResult = factoryMethod<MutationTestMetricsResult>(() =>
-  calculateMutationTestMetrics(mutationTestReportSchemaMutationTestResult())
+  calculateMutationTestMetrics(mutationTestReportSchemaMutationTestResult()),
 );
 
 export const mutant = factoryMethod<Mutant>(() => ({

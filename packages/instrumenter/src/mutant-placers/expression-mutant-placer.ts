@@ -47,9 +47,9 @@ function arrowFunctionExpressionNamedIfNeeded(path: NodePath<babel.types.Express
         types.blockStatement([
           types.variableDeclaration('const', [types.variableDeclarator(path.parentPath.node.id, path.node)]),
           types.returnStatement(path.parentPath.node.id),
-        ])
+        ]),
       ),
-      []
+      [],
     );
   }
   return;
@@ -64,7 +64,7 @@ function isMemberOrCallOrNonNullExpression(path: NodePath) {
 }
 
 function isMemberOrNonNullExpression(
-  path: NodePath
+  path: NodePath,
 ): path is NodePath<babel.types.MemberExpression | babel.types.OptionalMemberExpression | babel.types.TSNonNullExpression> {
   return isMemberExpression(path) || path.isTSNonNullExpression();
 }

@@ -72,7 +72,7 @@ describe(TimeoutDecorator.name, () => {
     it('should handle timeouts', async () => {
       testRunner1.dryRun.returns(
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        new Promise<DryRunResult>(() => {})
+        new Promise<DryRunResult>(() => {}),
       );
       const runPromise = sut.dryRun(factory.dryRunOptions({ timeout: 20 }));
       clock.tick(20);
@@ -102,7 +102,7 @@ describe(TimeoutDecorator.name, () => {
     it('should handle timeouts', async () => {
       testRunner1.mutantRun.returns(
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        new Promise<MutantRunResult>(() => {})
+        new Promise<MutantRunResult>(() => {}),
       );
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ timeout: 20 }));
       clock.tick(20);

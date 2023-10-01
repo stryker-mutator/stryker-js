@@ -48,7 +48,7 @@ export interface ClassPlugin<TPluginKind extends PluginKind, Tokens extends Arra
 export function declareClassPlugin<TPluginKind extends PluginKind, Tokens extends Array<InjectionToken<PluginContext>>>(
   kind: TPluginKind,
   name: string,
-  injectableClass: InjectableClass<PluginContext, PluginInterfaces[TPluginKind], Tokens>
+  injectableClass: InjectableClass<PluginContext, PluginInterfaces[TPluginKind], Tokens>,
 ): ClassPlugin<TPluginKind, Tokens> {
   return {
     injectableClass,
@@ -66,7 +66,7 @@ export function declareClassPlugin<TPluginKind extends PluginKind, Tokens extend
 export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens extends Array<InjectionToken<PluginContext>>>(
   kind: TPluginKind,
   name: string,
-  factory: InjectableFunction<PluginContext, PluginInterfaces[TPluginKind], Tokens>
+  factory: InjectableFunction<PluginContext, PluginInterfaces[TPluginKind], Tokens>,
 ): FactoryPlugin<TPluginKind, Tokens> {
   return {
     factory,

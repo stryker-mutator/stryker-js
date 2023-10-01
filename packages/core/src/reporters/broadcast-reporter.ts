@@ -13,7 +13,11 @@ export class BroadcastReporter implements StrictReporter {
   public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreator, commonTokens.logger);
 
   public readonly reporters: Record<string, Reporter>;
-  constructor(private readonly options: StrykerOptions, private readonly pluginCreator: PluginCreator, private readonly log: Logger) {
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly pluginCreator: PluginCreator,
+    private readonly log: Logger,
+  ) {
     this.reporters = {};
     this.options.reporters.forEach((reporterName) => this.createReporter(reporterName));
     this.logAboutReporters();
@@ -48,7 +52,7 @@ export class BroadcastReporter implements StrictReporter {
             this.handleError(error, methodName, reporterName);
           }
         }
-      })
+      }),
     );
   }
 

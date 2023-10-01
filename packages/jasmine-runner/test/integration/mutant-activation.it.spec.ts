@@ -19,7 +19,7 @@ describe(`${JasmineTestRunner.name} mutant activation`, () => {
 
   it('should support static', async function () {
     const result = await sut.mutantRun(
-      factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' })
+      factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' }),
     );
     assertions.expectKilled(result);
     expect(result.failureMessage.startsWith('Error:'), result.failureMessage).true;
@@ -28,7 +28,7 @@ describe(`${JasmineTestRunner.name} mutant activation`, () => {
 
   it('should support runtime', async function () {
     const result = await sut.mutantRun(
-      factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' })
+      factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' }),
     );
     assertions.expectKilled(result);
     expect(result.failureMessage.startsWith('Error:'), result.failureMessage).true;

@@ -85,7 +85,7 @@ describe(BroadcastReporter.name, () => {
       await actAssertShouldForward(
         'onMutationTestReportReady',
         factory.mutationTestReportSchemaMutationTestResult(),
-        factory.mutationTestMetricsResult()
+        factory.mutationTestMetricsResult(),
       );
     });
     it('should forward "wrapUp"', async () => {
@@ -105,7 +105,7 @@ describe(BroadcastReporter.name, () => {
           new Promise<void>((resolve, reject) => {
             wrapUpResolveFn = resolve;
             wrapUpRejectFn = reject;
-          })
+          }),
         );
         rep2.wrapUp.returns(new Promise<void>((resolve) => (wrapUpResolveFn2 = resolve)));
         result = sut.wrapUp().then(() => void (isResolved = true));
@@ -156,7 +156,7 @@ describe(BroadcastReporter.name, () => {
         await actAssertShouldForward(
           'onMutationTestReportReady',
           factory.mutationTestReportSchemaMutationTestResult(),
-          factory.mutationTestMetricsResult()
+          factory.mutationTestMetricsResult(),
         );
       });
       it('should still broadcast "wrapUp"', async () => {

@@ -15,14 +15,14 @@ export class DashboardReporter implements Reporter {
     commonTokens.logger,
     dashboardReporterTokens.dashboardReporterClient,
     commonTokens.options,
-    dashboardReporterTokens.ciProvider
+    dashboardReporterTokens.ciProvider,
   );
 
   constructor(
     private readonly log: Logger,
     private readonly dashboardReporterClient: DashboardReporterClient,
     private readonly options: StrykerOptions,
-    private readonly ciProvider: CIProvider | null
+    private readonly ciProvider: CIProvider | null,
   ) {}
 
   private onGoingWork: Promise<void> | undefined;
@@ -34,7 +34,7 @@ export class DashboardReporter implements Reporter {
         await this.update(this.toReport(result, metrics), projectName, version, moduleName);
       } else {
         this.log.info(
-          'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.'
+          'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.',
         );
       }
     })();

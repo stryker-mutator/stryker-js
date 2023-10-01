@@ -27,7 +27,7 @@ class FileSystemAction<TOut> {
 /**
  * A wrapper around nodejs's 'fs' core module, for dependency injection purposes.
  *
- * Also has but with build-in buffering with a concurrency limit (like graceful-fs).
+ * Also has build-in buffering support with a concurrency limit (like "graceful-fs").
  */
 export class FileSystem implements Disposable {
   private readonly todoSubject = new Subject<FileSystemAction<any>>();
@@ -35,7 +35,7 @@ export class FileSystem implements Disposable {
     .pipe(
       mergeMap(async (action) => {
         await action.execute();
-      }, MAX_CONCURRENT_FILE_IO)
+      }, MAX_CONCURRENT_FILE_IO),
     )
     .subscribe();
 

@@ -15,7 +15,11 @@ export class Project {
   public readonly files = new Map<string, ProjectFile>();
   public readonly filesToMutate = new Map<string, ProjectFile>();
 
-  constructor(fs: I<FileSystem>, public readonly fileDescriptions: FileDescriptions, public readonly incrementalReport?: MutationTestResult) {
+  constructor(
+    fs: I<FileSystem>,
+    public readonly fileDescriptions: FileDescriptions,
+    public readonly incrementalReport?: MutationTestResult,
+  ) {
     Object.entries(fileDescriptions).forEach(([name, desc]) => {
       const file = new ProjectFile(fs, name, desc.mutate);
       this.files.set(name, file);
@@ -33,14 +37,14 @@ export class Project {
     if (this.isEmpty) {
       log.warn(
         normalizeWhitespaces(`No files found in directory ${process.cwd()} using ignore rules: ${JSON.stringify(ignoreRules)}. 
-      Make sure you run Stryker from the root directory of your project with the correct "${propertyPath<StrykerOptions>()('ignorePatterns')}".`)
+      Make sure you run Stryker from the root directory of your project with the correct "${propertyPath<StrykerOptions>()('ignorePatterns')}".`),
       );
     } else {
       if (this.filesToMutate.size) {
         const incrementalInfo = this.incrementalReport
           ? ` using incremental report with ${Object.values(this.incrementalReport.files).reduce(
               (total, { mutants }) => total + mutants.length,
-              0
+              0,
             )} mutant(s), and ${Object.values(this.incrementalReport.testFiles ?? {}).reduce((total, { tests }) => total + tests.length, 0)} test(s)${
               force ? '. Force mode is activated, all mutants will be retested' : ''
             }`
@@ -54,7 +58,7 @@ export class Project {
           Current glob pattern(s) used:
           ${mutatePatterns.map((pattern) => `"${pattern}"`).join(', ')}.
           To enable file mutation, consider configuring the \`${propertyPath<StrykerOptions>()(
-            'mutate'
+            'mutate',
           )}\` property in your configuration file or using the --mutate option via the command line.`);
         log.warn(msg);
       }

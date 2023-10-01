@@ -124,7 +124,7 @@ describe(Pool.name, () => {
             await tick();
             actualScheduledWork.push([input, worker]);
           })
-          .pipe(toArray())
+          .pipe(toArray()),
       );
       await tick(3);
 
@@ -177,8 +177,8 @@ describe(Pool.name, () => {
             if (n === 1) {
               throw expectedError;
             }
-          })
-        )
+          }),
+        ),
       ).rejectedWith(expectedError);
     });
   });
@@ -346,7 +346,7 @@ describe(Pool.name, () => {
           await tick();
           return worker;
         })
-        .pipe(toArray())
+        .pipe(toArray()),
     );
 
     // But don't await yet, until after dispose.

@@ -46,7 +46,7 @@ describe(FileCommunicator.name, () => {
       assertVitestSetupContains(
         `afterAll(async (suite) => {
           suite.meta.mutantCoverage = ns.mutantCoverage;
-        })`
+        })`,
       );
     });
   });
@@ -76,7 +76,7 @@ describe(FileCommunicator.name, () => {
       assertVitestSetupContains(
         `afterAll(async (suite) => {
           suite.meta.hitCount = ns.hitCount;
-        })`
+        })`,
       );
     });
   });

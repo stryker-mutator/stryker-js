@@ -22,7 +22,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     private readonly log: Logger,
     private readonly resolve: RequireResolve,
     private readonly processEnvRef: NodeJS.ProcessEnv,
-    private readonly requireFromCwd: typeof requireResolve
+    private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
   public async loadConfig(): Promise<Config.InitialOptions> {
@@ -40,8 +40,8 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
         throw Error(
           `Unable to locate package "react-scripts". This package is required when "${propertyPath<JestRunnerOptionsWithStrykerOptions>()(
             'jest',
-            'projectType'
-          )}" is set to "create-react-app".`
+            'projectType',
+          )}" is set to "create-react-app".`,
         );
       }
       throw e;
@@ -56,7 +56,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     const createReactJestConfig = this.requireFromCwd('react-scripts/scripts/utils/createJestConfig') as (
       resolve: (thing: string) => string,
       rootDir: string,
-      isEjecting: boolean
+      isEjecting: boolean,
     ) => Config.InitialOptions;
     const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
     return {
@@ -74,7 +74,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
       this.requireFromCwd('react-scripts/config/env.js');
     } catch (err) {
       this.log.warn(
-        'Unable to load environment variables using "react-scripts/config/env.js". The environment variables might differ from expected. Please open an issue if you think this is a bug: https://github.com/stryker-mutator/stryker-js/issues/new/choose.'
+        'Unable to load environment variables using "react-scripts/config/env.js". The environment variables might differ from expected. Please open an issue if you think this is a bug: https://github.com/stryker-mutator/stryker-js/issues/new/choose.',
       );
       this.log.debug('Inner error', err);
     }

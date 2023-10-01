@@ -53,13 +53,13 @@ describe('ts-printer', () => {
               types.jsxOpeningElement(types.jsxIdentifier('html'), []),
               types.jsxClosingElement(types.jsxIdentifier('html')),
               [],
-              false
-            )
+              false,
+            ),
           ),
         ]),
       ]),
       undefined,
-      undefined
+      undefined,
     );
 
     // Act

@@ -24,7 +24,7 @@ export interface PropertyPathOverloads<T> {
   <TProp1 extends KnownKeys<T>, TProp2 extends KnownKeys<OnlyObject<T[TProp1]>>>(
     key: TProp1,
     key2: TProp2,
-    key3: KnownKeys<OnlyObject<OnlyObject<T[TProp1]>[TProp2]>>
+    key3: KnownKeys<OnlyObject<OnlyObject<T[TProp1]>[TProp2]>>,
   ): string;
 }
 
@@ -64,6 +64,6 @@ export function normalizeFileName(fileName: string): string {
  */
 export function strykerReportBugUrl(titleSuggestion: string): string {
   return `https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=${encodeURIComponent(
-    titleSuggestion
+    titleSuggestion,
   )}`;
 }

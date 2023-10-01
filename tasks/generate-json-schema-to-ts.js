@@ -40,8 +40,8 @@ async function generate(schemaFile) {
   console.info(
     `✅ ${path.relative(path.resolve(dirname, '..'), path.resolve(dirname, schemaFile))} -> ${path.relative(
       path.resolve(dirname, '..'),
-      resolveFromParent(outFile)
-    )}`
+      resolveFromParent(outFile),
+    )}`,
   );
 }
 

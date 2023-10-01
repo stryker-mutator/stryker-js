@@ -82,8 +82,8 @@ describe('fileUtils', () => {
           .map(async (fileName) => {
             const content = await fsPromises.readFile(fileName, 'utf-8');
             return [fileName, content] as const;
-          })
-      )
+          }),
+      ),
     );
     return files;
   }
@@ -93,7 +93,7 @@ describe('fileUtils', () => {
       Object.entries(files).map(async ([fileName, fileContent]) => {
         await fsPromises.mkdir(path.dirname(fileName), { recursive: true });
         await fsPromises.writeFile(fileName, fileContent);
-      })
+      }),
     );
   }
 });

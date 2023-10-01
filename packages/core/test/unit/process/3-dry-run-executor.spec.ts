@@ -65,7 +65,7 @@ describe(DryRunExecutor.name, () => {
       timerMock,
       concurrencyTokenProviderMock,
       sandbox,
-      reporterStub
+      reporterStub,
     );
   });
 
@@ -159,7 +159,7 @@ describe(DryRunExecutor.name, () => {
       runResult.tests.push(factory.successTestResult());
       await sut.execute();
       expect(testInjector.logger.info).calledWith(
-        'Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.'
+        'Starting initial test run (command test runner with "perTest" coverage analysis). This may take a while.',
       );
     });
 
@@ -236,7 +236,7 @@ describe(DryRunExecutor.name, () => {
         testInjector.options.disableTypeChecks = '{src,test}/**/*.js';
         runResult.tests.push(
           factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
-          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } })
+          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } }),
         );
         sandbox.originalFileFor
           .withArgs('.stryker-tmp/sandbox-123/test/foo.spec.js')
@@ -266,7 +266,7 @@ describe(DryRunExecutor.name, () => {
           2,
           '2 seconds',
           20,
-          1980
+          1980,
         );
       });
 
@@ -274,7 +274,7 @@ describe(DryRunExecutor.name, () => {
         testInjector.options.allowEmpty = false;
         await expect(sut.execute()).rejectedWith(
           ConfigError,
-          'No tests were executed. Stryker will exit prematurely. Please check your configuration.'
+          'No tests were executed. Stryker will exit prematurely. Please check your configuration.',
         );
       });
 
@@ -293,7 +293,7 @@ describe(DryRunExecutor.name, () => {
       it('should have logged the errors', async () => {
         await expect(sut.execute()).rejected;
         expect(testInjector.logger.error).calledWith(
-          `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`
+          `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`,
         );
       });
 

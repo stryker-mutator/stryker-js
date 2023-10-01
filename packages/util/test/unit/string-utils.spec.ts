@@ -131,7 +131,7 @@ describe('stringUtils', () => {
   describe(strykerReportBugUrl.name, () => {
     it('should format a correct url', () => {
       expect(strykerReportBugUrl('theTitle')).eq(
-        'https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=theTitle'
+        'https://github.com/stryker-mutator/stryker-js/issues/new?assignees=&labels=%F0%9F%90%9B+Bug&template=bug_report.md&title=theTitle',
       );
     });
 

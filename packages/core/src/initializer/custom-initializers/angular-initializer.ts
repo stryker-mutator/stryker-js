@@ -20,7 +20,11 @@ const karmaConfigFile = 'karma.conf.js';
 
 export class AngularInitializer implements CustomInitializer {
   public static inject = [commonTokens.logger, coreTokens.execa, coreTokens.resolveFromCwd] as const;
-  constructor(private readonly log: Logger, private readonly execa: typeof execaCommand, private readonly resolve: typeof resolveFromCwd) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly execa: typeof execaCommand,
+    private readonly resolve: typeof resolveFromCwd,
+  ) {}
 
   public readonly name = 'angular-cli';
   // Please keep config in sync with handbook

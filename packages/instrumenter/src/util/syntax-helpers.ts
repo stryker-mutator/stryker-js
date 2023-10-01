@@ -10,14 +10,14 @@ const STRYKER_NAMESPACE_HELPER = 'stryNS_9fa48';
 const COVER_MUTANT_HELPER = 'stryCov_9fa48';
 const IS_MUTANT_ACTIVE_HELPER = 'stryMutAct_9fa48';
 
-const { types, traverse, parse } = babel;
+const { types, traverse } = babel;
 
 /**
  * Returns syntax for the header if JS/TS files
  */
 export const instrumentationBabelHeader = deepFreeze(
   // `globalThis` implementation is based on core-js's implementation. See https://github.com/stryker-mutator/stryker-js/issues/4035
-  parse(
+  babel.parse(
     `function ${STRYKER_NAMESPACE_HELPER}(){
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
@@ -62,8 +62,8 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
   ${IS_MUTANT_ACTIVE_HELPER} = isActive;
   return isActive(id);
 }`,
-    { configFile: false }
-  ) as babel.types.File
+    { configFile: false, browserslistConfigFile: false, env: { targets: {} } },
+  ) as babel.types.File,
 ).program.body as readonly babel.types.Statement[]; // cast here, otherwise the thing gets unwieldy to handle
 
 /**
@@ -191,11 +191,19 @@ export function isImportDeclaration(path: babel.NodePath): boolean {
 }
 
 /**
+ * A location of an ast node in a file
+ */
+export interface SourceLocationInFile {
+  end: Position;
+  start: Position;
+}
+
+/**
  * Determines if a location (needle) is included in an other location (haystack)
  * @param haystack The range to look in
  * @param needle the range to search for
  */
-export function locationIncluded(haystack: babel.types.SourceLocation, needle: babel.types.SourceLocation): boolean {
+export function locationIncluded(haystack: SourceLocationInFile, needle: SourceLocationInFile): boolean {
   const startIncluded =
     haystack.start.line < needle.start.line || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
   const endIncluded = haystack.end.line > needle.end.line || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
@@ -205,7 +213,7 @@ export function locationIncluded(haystack: babel.types.SourceLocation, needle: b
 /**
  * Determines if two locations overlap with each other
  */
-export function locationOverlaps(a: babel.types.SourceLocation, b: babel.types.SourceLocation): boolean {
+export function locationOverlaps(a: SourceLocationInFile, b: SourceLocationInFile): boolean {
   const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
   const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;

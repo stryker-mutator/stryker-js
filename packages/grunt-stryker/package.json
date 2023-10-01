@@ -32,10 +32,11 @@
   "engines": {
     "node": ">=16.0.0"
   },
+  "files": ["tasks"],
   "main": "Gruntfile.js",
   "devDependencies": {
     "@stryker-mutator/api": "7.1.1",
-    "@types/node": "18.17.1"
+    "@types/node": "18.18.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~7.1.0",
