@@ -99,7 +99,7 @@
     "@types/inquirer": "9.0.3",
     "@types/lodash.flatmap": "4.5.7",
     "@types/lodash.groupby": "4.6.7",
-    "@types/node": "18.18.0",
+    "@types/node": "18.18.1",
     "@types/progress": "2.0.5",
     "@types/semver": "7.5.3",
     "flatted": "3.2.9"

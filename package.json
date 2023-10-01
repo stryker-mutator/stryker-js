@@ -12,7 +12,7 @@
     "@types/karma": "6.3.5",
     "@types/lodash": "4.14.199",
     "@types/mocha": "10.0.2",
-    "@types/node": "18.18.0",
+    "@types/node": "18.18.1",
     "@types/sinon": "10.0.17",
     "@types/sinon-chai": "3.2.10",
     "@types/source-map-support": "0.5.8",
