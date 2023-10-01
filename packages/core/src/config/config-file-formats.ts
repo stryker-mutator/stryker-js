@@ -17,8 +17,8 @@ export const SUPPORTED_CONFIG_FILE_NAMES = Object.freeze(
     // Suffixes.
     ['.conf', '.config'],
     // Extensions.
-    ['json', 'js', 'mjs', 'cjs']
-  )
+    ['json', 'js', 'mjs', 'cjs'],
+  ),
 );
 
 export const DEFAULT_CONFIG_FILE_NAMES = Object.freeze({
