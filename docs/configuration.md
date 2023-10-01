@@ -96,7 +96,7 @@ Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the 
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
-Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true }`<br />
 
 Config file:
 
@@ -106,7 +106,10 @@ Config file:
     "allowColor": true,
     "allowEmojis": false,
     "logTests": true,
-    "maxTestsToLog": 3
+    "maxTestsToLog": 3,
+    "reportTests": true,
+    "reportMutants": true,
+    "reportScoreTable": true
   }
 }
 ```
@@ -454,6 +457,9 @@ The `clear-text` reporter supports three additional config options:
 - `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
 - `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
 - `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
+- `reportTests` to log tests. When set to `true` this reporter will report a list of all tests with the amounts of mutants they killed (if any).
+- `reportMutants` to log mutants. When set to `true` this reporter will report each `Survived` and `NoCoverage` mutant to the stdout, as well as log other mutant states on debug log level.
+- `reportScoreTable` to log the score table. When set to `true` this reporter will end with a summary table with a row per mutated file.
 
 The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.\*](#dashboard-dashboardoptions) configuration options.
 
