@@ -94,7 +94,7 @@ describe('tap-runner integration', () => {
       assertions.expectKilled(run);
       // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
       expect([...run.killedBy].sort()).deep.eq(['tests/error.spec.js']);
-      expect(run.failureMessage).eq('Concat two strings: An error occurred');
+      expect(run.failureMessage).eq('Concat two strings > An error occurred: An error occurred');
     });
 
     it('should be able to run test file with random output', async () => {
@@ -115,8 +115,9 @@ describe('tap-runner integration', () => {
       assertions.expectSurvived(run);
     });
 
-    const bailedFailureMessage = 'Failing test: This test will fail';
-    const notBailedFailureMessage = 'Failing test: This test will fail, This long tests could be bailed: 3hours is not 3hours';
+    const bailedFailureMessage = 'Failing test > This test will fail: This test will fail';
+    const notBailedFailureMessage =
+      'Failing test > This test will fail: This test will fail, This long tests could be bailed > 3hours is not 3hours: 3hours is not 3hours';
     it('should not bail out process when disableBail is false and forceBail is false', async () => {
       // Arrange/Act
       const run = await arrangeBail(false, false);
