@@ -328,7 +328,7 @@ describe(StrykerInitializer.name, () => {
       expect(promptBuildCommand.length === 1);
       expect(promptBuildCommand[0].args[0].when).to.be.false;
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
+        'stryker.config.json',
         sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
@@ -343,7 +343,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
+        'stryker.config.json',
         sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
@@ -408,7 +408,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
+        'stryker.config.json',
         sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."'),
       );
     });
@@ -423,7 +423,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
+        'stryker.config.json',
         sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."'),
       );
     });
