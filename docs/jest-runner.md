@@ -77,7 +77,7 @@ Whether to run jest with the `--findRelatedTests` flag. When `true`, Jest will o
 
 ## ECMAScript Modules
 
-Jest ships with [support for ECMAScript Modules (ESM)](https://jestjs.io/docs/ecmascript-modules). In order to provide the `--experimental-vm-modules` node option, you will need to add this to your stryker.conf.json file:
+Jest ships with [support for ECMAScript Modules (ESM)](https://jestjs.io/docs/ecmascript-modules). In order to provide the `--experimental-vm-modules` node option, you will need to add this to your stryker.config.json file:
 
 ```json
 {

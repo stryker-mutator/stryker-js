@@ -48,7 +48,7 @@ If you're asked to install Stryker, choose **Yes**. Follow the questionnaire.
 
 Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new).
 
-After the init is done, inspect the `stryker.conf.js` file.
+After the init is done, inspect the `stryker.config.mjs` file.
 
 For more information on what these options mean, take a look at [the Configuration docs page](./configuration.md)
 

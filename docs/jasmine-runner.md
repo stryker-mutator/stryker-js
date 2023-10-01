@@ -24,7 +24,7 @@ As such, you should make sure you have the correct versions of its dependencies 
 
 ## Example
 
-You can configure the jasmine test runner in the `stryker.conf.js` (or `stryker.conf.json`) file.
+You can configure the jasmine test runner in the `stryker.config.json` (or `stryker.config.js`) file.
 
 ```json
 {

@@ -3,7 +3,7 @@ title: Config file
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/config-file.md
 ---
 
-Although a config file is not mandatory, it is recommended. You can define your Stryker configuration in either a `.js` or `.json` file. If you use a `.js` file, it should contain a NodeJS module that exports the configuration object. Autocompletion is supported using JSON schema or using [`@type` JS docs](https://jsdoc.app/).
+Although a config file is not mandatory, it is recommended. You can define your Stryker configuration in either a JavaScript or JSON file. If you use a JavaScript file, it should export the configuration object. Autocompletion is supported using JSON schema or using [`@type` JS docs](https://jsdoc.app/).
 
 ## Configuration options
 
@@ -11,7 +11,7 @@ See [configuration](./configuration.md) for a list of available options.
 
 ## Setup
 
-With a `stryker.conf.json`:
+With a `stryker.config.json`:
 
 ```json
 {
@@ -20,7 +20,7 @@ With a `stryker.conf.json`:
 }
 ```
 
-Or as `stryker.conf.js`:
+Or as `stryker.config.js`:
 
 ```js
 // @ts-check
@@ -48,28 +48,32 @@ You can use your editor's autocompletion to help you author your configuration f
 ![config file autocompletion](./images/config-file-autocompletion.gif)
 
 ## Usage
+<details>
 
+<summary>History</summary>
+
+| Version | Changes                                            |
+| ------- | -------------------------------------------------- |
+| 7.1     | Add `.config.{json,js,mjs,cjs}` as default suffix. |
+
+</details>
 By default, Stryker will look for a config file in the current working directory. The default config file names are:
-- `stryker.conf.json`
-- `stryker.conf.js`
-- `stryker.conf.cjs`
-- `stryker.conf.mjs`
-- `.stryker.conf.json`
-- `.stryker.conf.js`
-- `.stryker.conf.cjs`
-- `.stryker.conf.mjs`
+- `stryker.conf.{json,js,mjs,cjs}`
+- `.stryker.conf.{json,js,mjs,cjs}`
+- `stryker.config.{json,js,mjs,cjs}`
+- `.stryker.config.{json,js,mjs,cjs}`
 
 You can also use a different configuration file with a second argument to the `run` command.
 ```shell
-# Use "stryker.conf.[js,json,mjs]" or ".stryker.conf.[js,json,mjs]" in the cwd
+# Use default config file names in the current working directory
 npx stryker run
-# Use "alternative-stryker.conf.json"
-npx stryker run alternative-stryker.conf.json
+# Use "alternative-stryker.config.json"
+npx stryker run alternative-stryker.config.json
 ```
 
 ## Glob patterns
 
-Some options allow for a glob pattern to be defined. These glob patterns are defined relative to the cwd. 
+Some options allow for a glob pattern to be defined. These glob patterns are defined relative to the cwd.
 
 For example, using `"mutate": [ "src/components/**/*.component.js" ]` will make sure only files ending with ".component.js" in the "src/components" directory are mutated.
 
@@ -77,7 +81,7 @@ We suggest using [https://globster.xyz/](https://globster.xyz/) when auditing mo
 
 ## Example
 
-The following is an example `stryker.conf.json` file. It specifies running mocha tests with the mocha test runner.
+The following is an example `stryker.config.json` file. It specifies running mocha tests with the mocha test runner.
 
 ```json
 {
