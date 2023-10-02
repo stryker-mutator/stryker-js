@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "7.1.1",
+  "version": "7.2.0",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "type": "module",
   "repository": {
@@ -8,7 +8,12 @@
     "url": "https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
-  "files": ["dist", "./core.d.ts", "src-generated", "src"],
+  "files": [
+    "dist",
+    "./core.d.ts",
+    "src-generated",
+    "src"
+  ],
   "exports": {
     "./check": "./dist/src/check/index.js",
     "./core": "./dist/src/core/index.js",
