@@ -3,7 +3,7 @@
   "version": "7.2.0",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "files": [
-    "dist",
+    "dist/src",
     "src"
   ],
   "exports": {

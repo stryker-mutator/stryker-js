@@ -3,7 +3,9 @@
   "version": "7.2.0",
   "description": "A plugin to use the TAP (test anything protocol) test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
-    "dist",
+    "dist/schema",
+    "dist/src-generated",
+    "dist/src",
     "src-generated",
     "src"
   ],
