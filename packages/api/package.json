@@ -9,8 +9,10 @@
     "directory": "packages/api"
   },
   "files": [
-    "dist",
-    "./core.d.ts",
+    "dist/schema",
+    "dist/src-generated",
+    "dist/src",
+    "core.d.ts",
     "src-generated",
     "src"
   ],

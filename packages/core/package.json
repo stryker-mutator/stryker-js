@@ -5,7 +5,7 @@
   "type": "module",
   "files": [
     "bin",
-    "dist",
+    "dist/src",
     "schema",
     "src"
   ],

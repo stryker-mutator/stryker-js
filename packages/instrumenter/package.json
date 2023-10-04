@@ -5,7 +5,7 @@
   "main": "dist/src/index.js",
   "type": "module",
   "files": [
-    "dist",
+    "dist/src",
     "src"
   ],
   "exports": {
