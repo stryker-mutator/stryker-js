@@ -5,7 +5,6 @@ import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
 
 import chalk from 'chalk';
-import flatMap from 'lodash.flatmap';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
 import { stringWidth } from '../../../src/utils/string-utils.js';
@@ -61,7 +60,7 @@ describe(ClearTextScoreTable.name, () => {
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
-      const killedColumnValues = flatMap(rows, (row) => row.split('|').filter((_, i) => i === 2));
+      const killedColumnValues = rows.flatMap((row) => row.split('|').filter((_, i) => i === 2));
       killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });
