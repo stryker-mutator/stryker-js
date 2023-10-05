@@ -6,7 +6,6 @@ export * from './known-keys.js';
 export * from './string-utils.js';
 export * from './noop-logger.js';
 export * from './not-empty.js';
-export * from './flat-map.js';
 export * from './i.js';
 export * from './task.js';
 export * from './require-resolve.js';

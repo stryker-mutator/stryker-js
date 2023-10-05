@@ -5,7 +5,6 @@ import { MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/co
 import { MetricsResult } from 'mutation-testing-metrics';
 
 import chalk from 'chalk';
-import flatMap from 'lodash.flatmap';
 
 import emojiRegex from 'emoji-regex';
 
@@ -144,7 +143,7 @@ export class ClearTextScoreTable {
 
   private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
     return [this.drawRow((c) => c.drawTableCell(current, ancestorCount))].concat(
-      flatMap(current.childResults, (child) => this.drawValues(child, ancestorCount + 1)),
+      current.childResults.flatMap((child) => this.drawValues(child, ancestorCount + 1)),
     );
   }
 
