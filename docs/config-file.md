@@ -48,6 +48,7 @@ You can use your editor's autocompletion to help you author your configuration f
 ![config file autocompletion](./images/config-file-autocompletion.gif)
 
 ## Usage
+
 <details>
 
 <summary>History</summary>
@@ -57,6 +58,7 @@ You can use your editor's autocompletion to help you author your configuration f
 | 7.1     | Add `.config.{json,js,mjs,cjs}` as default suffix. |
 
 </details>
+
 By default, Stryker will look for a config file in the current working directory. The default config file names are:
 - `stryker.conf.{json,js,mjs,cjs}`
 - `.stryker.conf.{json,js,mjs,cjs}`
