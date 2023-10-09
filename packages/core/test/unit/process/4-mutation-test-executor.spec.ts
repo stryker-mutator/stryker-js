@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -47,6 +47,7 @@ describe(MutationTestExecutor.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
+  let dryRunResult: sinon.SinonStubbedInstance<CompleteDryRunResult>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -74,6 +75,8 @@ describe(MutationTestExecutor.name, () => {
 
     mutants = [factory.mutant()];
     mutantTestPlans = [];
+    dryRunResult = factory.completeDryRunResult();
+    dryRunResult.tests.push(factory.testResult());
     mutantTestPlannerMock.makePlan.resolves(mutantTestPlans);
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
@@ -87,6 +90,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
+      .provideValue(coreTokens.dryRunResult, dryRunResult)
       .injectClass(MutationTestExecutor);
   });
 
@@ -387,6 +391,25 @@ describe(MutationTestExecutor.name, () => {
   it('should short circuit when dryRunOnly is enabled', async () => {
     // Arrange
     testInjector.options.dryRunOnly = true;
+    arrangeScenario();
+    const plan1 = mutantRunPlan({ id: '1' });
+    const plan2 = mutantRunPlan({ id: '2' });
+    mutantTestPlans.push(plan1, plan2);
+
+    // Act
+    const actualResults = await sut.execute();
+
+    // Assert
+    expect(mutantTestPlannerMock.makePlan).not.called;
+    expect(testRunner.mutantRun).not.called;
+    expect(checker.check).not.called;
+    expect(actualResults).empty;
+  });
+
+  it('should short circuit when no tests found and allowEmpty is enabled', async () => {
+    // Arrange
+    testInjector.options.allowEmpty = true;
+    dryRunResult.tests = [];
     arrangeScenario();
     const plan1 = mutantRunPlan({ id: '1' });
     const plan2 = mutantRunPlan({ id: '2' });
