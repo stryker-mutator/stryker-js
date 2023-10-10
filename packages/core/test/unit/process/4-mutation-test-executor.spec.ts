@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
+import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -47,7 +47,7 @@ describe(MutationTestExecutor.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
-  let dryRunResult: sinon.SinonStubbedInstance<CompleteDryRunResult>;
+  let completeDryRunResult: sinon.SinonStubbedInstance<CompleteDryRunResult>;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -75,8 +75,7 @@ describe(MutationTestExecutor.name, () => {
 
     mutants = [factory.mutant()];
     mutantTestPlans = [];
-    dryRunResult = factory.completeDryRunResult();
-    dryRunResult.tests.push(factory.testResult());
+    completeDryRunResult = factory.completeDryRunResult();
     mutantTestPlannerMock.makePlan.resolves(mutantTestPlans);
     sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
@@ -90,7 +89,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
-      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.dryRunResult, completeDryRunResult)
       .injectClass(MutationTestExecutor);
   });
 
@@ -101,9 +100,10 @@ describe(MutationTestExecutor.name, () => {
     mutationTestReportHelperMock.reportAll.returnsArg(0);
   }
 
-  function arrangeScenario(overrides?: { mutantRunPlan?: MutantRunPlan; checkResult?: CheckResult; mutantRunResult?: MutantRunResult }) {
+  function arrangeScenario(overrides?: { mutantRunPlan?: MutantRunPlan; checkResult?: CheckResult; mutantRunResult?: MutantRunResult; dryRunTestResult?: TestResult[] }) {
     checker.check.resolves([[overrides?.mutantRunPlan ?? mutantRunPlan(), overrides?.checkResult ?? factory.checkResult()]]);
     testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
+    completeDryRunResult.tests = overrides?.dryRunTestResult ?? [factory.testResult()];
     arrangeMutationTestReportHelper();
   }
 
@@ -409,8 +409,7 @@ describe(MutationTestExecutor.name, () => {
   it('should short circuit when no tests found and allowEmpty is enabled', async () => {
     // Arrange
     testInjector.options.allowEmpty = true;
-    dryRunResult.tests = [];
-    arrangeScenario();
+    arrangeScenario({ dryRunTestResult: [] });
     const plan1 = mutantRunPlan({ id: '1' });
     const plan2 = mutantRunPlan({ id: '2' });
     mutantTestPlans.push(plan1, plan2);
