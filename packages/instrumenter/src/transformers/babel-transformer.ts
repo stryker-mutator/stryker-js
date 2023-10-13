@@ -1,4 +1,4 @@
-import babel, { Node, type NodePath, type types } from '@babel/core';
+import babel, { type NodePath, type types } from '@babel/core';
 
 /* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
