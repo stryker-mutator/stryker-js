@@ -98,6 +98,7 @@ describe(OptionsValidator.name, () => {
         tsconfigFile: 'tsconfig.json',
         warnings: true,
         disableBail: false,
+        ignorers: [],
       };
       expect(options).deep.eq(expectedOptions);
     });
@@ -112,7 +113,7 @@ describe(OptionsValidator.name, () => {
       testInjector.options.files = ['src/**/*.js', '!src/index.js'];
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "files" is deprecated, please use "ignorePatterns" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ["**","!src/**/*.js","src/index.js"]. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string',
+        'DEPRECATED. Use of "files" is deprecated, please use "ignorePatterns" instead (or remove "files" altogether will probably work as well). For now, rewriting them as ["**","!src/**/*.js","src/index.js"]. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string'
       );
     });
 
@@ -154,7 +155,7 @@ describe(OptionsValidator.name, () => {
     // @ts-expect-error invalid setting
     testInjector.options.logLevel = 'thisTestPasses';
     actValidationErrors(
-      'Config option "logLevel" should be one of the allowed values ("off", "fatal", "error", "warn", "info", "debug", "trace"), but was "thisTestPasses".',
+      'Config option "logLevel" should be one of the allowed values ("off", "fatal", "error", "warn", "info", "debug", "trace"), but was "thisTestPasses".'
     );
   });
 
@@ -182,7 +183,7 @@ describe(OptionsValidator.name, () => {
     testInjector.options.jest = { enableBail: false };
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
-      'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean',
+      'DEPRECATED. Use of "jest.enableBail" is deprecated, please use "disableBail" instead. See https://stryker-mutator.io/docs/stryker-js/configuration#disablebail-boolean'
     );
     expect(testInjector.options.disableBail).true;
   });
@@ -192,7 +193,7 @@ describe(OptionsValidator.name, () => {
       breakConfig('htmlReporter', { baseDir: 'some/base/dir' }, false);
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "htmlReporter.fileName" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string',
+        'DEPRECATED. Use of "htmlReporter.baseDir" is deprecated, please use "htmlReporter.fileName" instead. See https://stryker-mutator.io/docs/stryker-js/configuration/#reporters-string'
       );
       expect(testInjector.options.htmlReporter.fileName).eq(path.join('some', 'base', 'dir', 'index.html'));
     });
@@ -242,7 +243,7 @@ describe(OptionsValidator.name, () => {
       };
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.',
+        'DEPRECATED. Use of "mutator.name" is no longer needed. You can remove "mutator.name" from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
     });
 
@@ -251,7 +252,7 @@ describe(OptionsValidator.name, () => {
       testInjector.options.mutator = 'javascript';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.',
+        'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.'
       );
     });
 
@@ -268,14 +269,14 @@ describe(OptionsValidator.name, () => {
     it('should not accept mutationRange for start > end', () => {
       testInjector.options.mutate = ['src/index.ts:6-5'];
       actValidationErrors(
-        'Config option "mutate[0]" is invalid. Mutation range "6-5" is invalid. The "from" line number (6) should be less then the "to" line number (5).',
+        'Config option "mutate[0]" is invalid. Mutation range "6-5" is invalid. The "from" line number (6) should be less then the "to" line number (5).'
       );
     });
 
     it('should not accept mutationRange with a glob pattern', () => {
       testInjector.options.mutate = ['src/index.*.ts:1:0-2:0'];
       actValidationErrors(
-        'Config option "mutate[0]" is invalid. Cannot combine a glob expression with a mutation range in "src/index.*.ts:1:0-2:0".',
+        'Config option "mutate[0]" is invalid. Cannot combine a glob expression with a mutation range in "src/index.*.ts:1:0-2:0".'
       );
     });
 
@@ -290,7 +291,7 @@ describe(OptionsValidator.name, () => {
       testInjector.options.testFramework = '';
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.',
+        'DEPRECATED. Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration.'
       );
     });
   });
@@ -362,7 +363,7 @@ describe(OptionsValidator.name, () => {
     testInjector.options.testRunner = 'command';
     sut.validate(testInjector.options);
     expect(testInjector.logger.warn).calledWith(
-      'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.',
+      'Using "testRunnerNodeArgs" together with the "command" test runner is not supported, these arguments will be ignored. You can add your custom arguments by setting the "commandRunner.command" option.'
     );
   });
 
@@ -370,7 +371,7 @@ describe(OptionsValidator.name, () => {
     testInjector.options.ignoreStatic = true;
     testInjector.options.coverageAnalysis = 'all';
     actValidationErrors(
-      'Config option "ignoreStatic" is not supported with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".',
+      'Config option "ignoreStatic" is not supported with coverage analysis "all". Either turn off "ignoreStatic", or configure "coverageAnalysis" to be "perTest".'
     );
   });
 
@@ -379,7 +380,7 @@ describe(OptionsValidator.name, () => {
       testInjector.options.transpilers = ['stryker-jest'];
       sut.validate(testInjector.options);
       expect(testInjector.logger.warn).calledWith(
-        'DEPRECATED. Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.',
+        'DEPRECATED. Support for "transpilers" is removed. You can now configure your own "buildCommand". For example, npm run build.'
       );
     });
   });
@@ -448,7 +449,7 @@ describe(OptionsValidator.name, () => {
       };
       sut.validate(testInjector.options, true);
       expect(testInjector.logger.warn).calledWith(
-        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.',
+        'Config option "karma.config.webpack.transformPath" is not (fully) serializable. Primitive type "function" has no JSON representation. Any test runner or checker worker processes might not receive this value as intended.'
       );
     });
     it('should not warn about unserializable values when the warning is disabled', () => {

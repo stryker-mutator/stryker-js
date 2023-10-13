@@ -2,6 +2,7 @@ import { MutateDescription } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
 
 import { Logger } from '@stryker-mutator/api/logging';
+import { Ignorer } from '@stryker-mutator/api/ignorer';
 
 import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
 
@@ -21,6 +22,7 @@ export function transform(
   ast: Ast,
   mutantCollector: I<MutantCollector>,
   transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>,
+  ignorers: Map<string, Ignorer>
 ): void {
   const context: TransformerContext = {
     ...transformerContext,
@@ -28,17 +30,22 @@ export function transform(
   };
   switch (ast.format) {
     case AstFormat.Html:
-      transformHtml(ast, mutantCollector, context);
+      transformHtml(ast, mutantCollector, context, ignorers);
       break;
     case AstFormat.JS:
     case AstFormat.TS:
     case AstFormat.Tsx:
-      transformBabel(ast, mutantCollector, context);
+      transformBabel(ast, mutantCollector, context, ignorers);
       break;
   }
 }
 
-export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCollector: I<MutantCollector>, context: TransformerContext) => void;
+export type AstTransformer<T extends AstFormat> = (
+  ast: AstByFormat[T],
+  mutantCollector: I<MutantCollector>,
+  context: TransformerContext,
+  ignorers: Map<string, Ignorer>
+) => void;
 
 export interface TransformerContext {
   transform: AstTransformer<AstFormat>;

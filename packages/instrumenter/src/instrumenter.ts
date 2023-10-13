@@ -4,6 +4,8 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { MutateDescription } from '@stryker-mutator/api/core';
 
+import { Ignorer } from '@stryker-mutator/api/ignorer';
+
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
 import { print } from './printers/index.js';
@@ -26,7 +28,7 @@ export class Instrumenter {
     private readonly logger: Logger,
     private readonly _createParser = createParser,
     private readonly _print = print,
-    private readonly _transform = transform,
+    private readonly _transform = transform
   ) {}
 
   public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {
@@ -37,7 +39,7 @@ export class Instrumenter {
     const parse = this._createParser(options);
     for await (const { name, mutate, content } of files) {
       const ast = await parse(content, name);
-      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate), logger: this.logger });
+      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate), logger: this.logger }, options.ignorers);
       const mutatedContent = this._print(ast);
       outFiles.push({
         name,

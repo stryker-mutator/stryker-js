@@ -1,4 +1,4 @@
-import babel, { type NodePath, type types } from '@babel/core';
+import babel, { Node, type NodePath, type types } from '@babel/core';
 
 /* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
@@ -28,8 +28,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
   { options, mutateDescription, logger },
+  ignorers,
   mutators = allMutators,
-  mutantPlacers = allMutantPlacers,
+  mutantPlacers = allMutantPlacers
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
@@ -40,6 +41,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
 
   // Create the bookkeeper responsible for the // Stryker ... directives
   const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
+
+  let activeIgnoreReason: string | undefined;
+  let ignoreNode: babel.types.Node | undefined;
 
   // Now start the actual traversing of the AST
   //
@@ -57,10 +61,16 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   traverse(file.ast, {
     enter(path) {
       directiveBookkeeper.processStrykerDirectives(path.node);
-
       if (shouldSkip(path)) {
         path.skip();
       } else {
+        ignorers.forEach((ignorer) => {
+          const ignoreResult = ignorer.shouldIgnore(path);
+          if (ignoreResult) {
+            activeIgnoreReason = ignoreResult.reason;
+            ignoreNode = path.node;
+          }
+        });
         addToPlacementMapIfPossible(path);
         if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
@@ -72,6 +82,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
     exit(path) {
       placeMutantsIfNeeded(path);
+      if (path.node === ignoreNode) {
+        ignoreNode = undefined;
+        activeIgnoreReason = undefined;
+      }
     },
   });
 
@@ -152,6 +166,12 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
+      .map((mutable) => {
+        if (activeIgnoreReason) {
+          mutable.ignoreReason = activeIgnoreReason;
+        }
+        return mutable;
+      })
       .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
       .filter((mutant) => !mutant.ignoreReason);
   }

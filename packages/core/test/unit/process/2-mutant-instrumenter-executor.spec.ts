@@ -6,9 +6,13 @@ import { Instrumenter, InstrumentResult, InstrumenterOptions, createInstrumenter
 import { I } from '@stryker-mutator/util';
 import { FileDescriptions } from '@stryker-mutator/api/core';
 
+import { PluginKind } from '@stryker-mutator/api/plugin';
+
+import { Ignorer } from '@stryker-mutator/api/ignorer';
+
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
 import { Project } from '../../../src/fs/index.js';
-import { coreTokens } from '../../../src/di/index.js';
+import { PluginCreator, coreTokens } from '../../../src/di/index.js';
 import { createConcurrencyTokenProviderMock, createCheckerPoolMock, ConcurrencyTokenProviderMock } from '../../helpers/producers.js';
 import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
@@ -25,6 +29,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
+  let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator>;
 
   beforeEach(() => {
     const fsTestDouble = new FileSystemTestDouble({ 'foo.js': 'console.log("bar")', 'foo.spec.js': '' });
@@ -44,7 +49,8 @@ describe(MutantInstrumenterExecutor.name, () => {
     };
     sandboxFilePreprocessorMock.preprocess.resolves();
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
-    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, project, testInjector.options);
+    pluginCreatorMock = sinon.createStubInstance(PluginCreator);
+    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, project, testInjector.options, pluginCreatorMock);
     injectorMock.injectFunction.withArgs(createInstrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.resolve.withArgs(coreTokens.sandbox).returns(sandboxMock);
@@ -60,12 +66,29 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator };
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, ignorers: new Map() };
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
-      expectedInstrumenterOptions,
+      expectedInstrumenterOptions
     );
+  });
+
+  it('should instrument the given files with single ignorer', async () => {
+    testInjector.options.mutator.plugins = ['functionSent'];
+    testInjector.options.mutator.excludedMutations = ['fooMutator'];
+    testInjector.options.ignorers = ['fooIgnorer'];
+    await sut.execute();
+    const expectedInstrumenterOptions: InstrumenterOptions = {
+      ...testInjector.options.mutator,
+      ignorers: new Map([['fooIgnorer', undefined as unknown as Ignorer]]),
+    };
+    sinon.assert.calledOnceWithExactly(
+      instrumenterMock.instrument,
+      [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
+      expectedInstrumenterOptions
+    );
+    sinon.assert.calledOnceWithExactly(pluginCreatorMock.create, PluginKind.Ignorer, 'fooIgnorer');
   });
 
   it('result in the new injector', async () => {
