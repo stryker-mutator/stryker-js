@@ -67,7 +67,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         ignorers.forEach((ignorer) => {
           const ignoreResult = ignorer.shouldIgnore(path);
           if (ignoreResult) {
-            activeIgnoreReason = ignoreResult.reason;
+            activeIgnoreReason = ignoreResult;
             ignoreNode = path.node;
           }
         });

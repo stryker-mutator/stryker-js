@@ -31,6 +31,7 @@ describe('babel-transformer', () => {
   let mutators: NodeMutator[];
   let mutantPlacers: MutantPlacer[];
   let mutantCollector: MutantCollector;
+  let ignorers: Map<string, Ignorer>;
 
   const fooMutator: NodeMutator = {
     name: 'Foo',
@@ -66,6 +67,7 @@ describe('babel-transformer', () => {
     mutantCollector = new MutantCollector();
     mutators = [fooMutator, plusMutator];
     mutantPlacers = [blockStatementPlacer, sequenceExpressionPlacer];
+    ignorers = new Map();
   });
 
   describe('the algorithm', () => {
@@ -720,6 +722,21 @@ describe('babel-transformer', () => {
     });
   });
 
+  describe('ignorers', () => {
+    it('mutants should have ignore reason when using console.log ignorer', () => {
+      const ast = createJSAst({ rawContent: 'console.log(foo + bar)' });
+      ignorers.set('console.log', {
+        shouldIgnore(path) {
+          return 'console.log';
+        },
+      });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(2);
+      expect(mutantCollector.mutants[0].ignoreReason).eq('console.log');
+      expect(mutantCollector.mutants[1].ignoreReason).eq('console.log');
+    });
+  });
+
   function act(ast: ScriptAst) {
     (
       transformBabel as (
@@ -730,6 +747,6 @@ describe('babel-transformer', () => {
         mutators: NodeMutator[],
         mutantPlacers: MutantPlacer[]
       ) => void
-    )(ast, mutantCollector, context, new Map(), mutators, mutantPlacers);
+    )(ast, mutantCollector, context, ignorers, mutators, mutantPlacers);
   }
 });

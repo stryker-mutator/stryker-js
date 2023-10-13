@@ -4,6 +4,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
+import { NodePath } from '@babel/core';
+
 import { createInstrumenter, File, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
@@ -103,6 +105,22 @@ describe('instrumenter integration', () => {
     it('should not make any mutations in a file with mutate = []', async () => {
       await arrangeAndActAssert({ name: 'specific-no-mutants.ts', mutate: [] });
     });
+
+    it('should not make any mutations in a file only containing console.log with console.log ignorer', async () => {
+      await arrangeAndActAssert(
+        'console-sample.js',
+        createInstrumenterOptions({
+          ignorers: new Map([
+            [
+              'console.log',
+              {
+                shouldIgnore,
+              },
+            ],
+          ]),
+        })
+      );
+    });
   });
 
   async function arrangeAndActAssert(file: Omit<File, 'content'> | string, options = createInstrumenterOptions()) {
@@ -117,5 +135,18 @@ describe('instrumenter integration', () => {
     expect(result.files).lengthOf(1);
     chaiJestSnapshot.setFilename(resolveTestResource('instrumenter', `${file.name}.out.snap`));
     expect(result.files[0].content).matchSnapshot();
+  }
+
+  function shouldIgnore(path: NodePath) {
+    if (
+      path.isExpressionStatement() &&
+      path.node.expression.type === 'CallExpression' &&
+      path.node.expression.callee.type === 'MemberExpression' &&
+      path.node.expression.callee.object.type === 'Identifier' &&
+      path.node.expression.callee.object.name === 'console'
+    ) {
+      return 'console statement';
+    }
+    return undefined;
   }
 });
