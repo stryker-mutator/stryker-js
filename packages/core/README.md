@@ -70,4 +70,4 @@ async function main() {
 }
 ```
 
-Stryker is written in TypeScript, so it is recommended to use Stryker as well to get the best developer experience.
+Stryker is written in TypeScript, so it is recommended to use Typescript as well to get the best developer experience.
