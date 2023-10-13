@@ -4,8 +4,6 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { MutateDescription } from '@stryker-mutator/api/core';
 
-import { Ignorer } from '@stryker-mutator/api/ignorer';
-
 import { createParser } from './parsers/index.js';
 import { transform, MutantCollector } from './transformers/index.js';
 import { print } from './printers/index.js';
