@@ -63,7 +63,7 @@
     "typed-inject": "~4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "~7.23.0",
+    "@babel/core": "7.23.2",
     "@types/node": "18.18.5"
   }
 }
