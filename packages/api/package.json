@@ -19,7 +19,7 @@
   "exports": {
     "./check": "./dist/src/check/index.js",
     "./core": "./dist/src/core/index.js",
-    "./ignorer": "./dist/src/ignorer/index.js",
+    "./ignore": "./dist/src/ignore/index.js",
     "./logging": "./dist/src/logging/index.js",
     "./plugin": "./dist/src/plugin/index.js",
     "./report": "./dist/src/report/index.js",
@@ -63,7 +63,6 @@
     "typed-inject": "~4.0.0"
   },
   "devDependencies": {
-    "@babel/core": "~7.23.0",
     "@types/node": "18.18.5"
   }
 }

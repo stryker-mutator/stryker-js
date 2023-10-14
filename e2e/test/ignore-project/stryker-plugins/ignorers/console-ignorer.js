@@ -3,7 +3,7 @@ import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
 
 export class ConsoleIgnorer {
   /**
-   * @param {import('@stryker-mutator/api/ignorer').NodePath} path
+   * @param {import('@stryker-mutator/api/ignore').NodePath} path
    */
   shouldIgnore(path) {
     if (

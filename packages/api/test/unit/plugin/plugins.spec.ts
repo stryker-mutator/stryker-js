@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { tokens, commonTokens, PluginKind, declareClassPlugin, declareFactoryPlugin } from '../../../src/plugin/index.js';
+import { tokens, commonTokens, PluginKind, declareClassPlugin, declareFactoryPlugin, declareValuePlugin } from '../../../src/plugin/index.js';
 import { Logger } from '../../../src/logging/index.js';
 import { MutantResult } from '../../../src/core/index.js';
 
@@ -38,6 +38,20 @@ describe('plugins', () => {
         factory: createReporter,
         kind: PluginKind.Reporter,
         name: 'rep',
+      });
+    });
+  });
+  describe(declareValuePlugin.name, () => {
+    it('should declare a value plugin', () => {
+      const value = {
+        onMutantTested(_: MutantResult) {
+          // idle
+        },
+      };
+      expect(declareValuePlugin(PluginKind.Reporter, 'rep', value)).deep.eq({
+        kind: PluginKind.Reporter,
+        name: 'rep',
+        value,
       });
     });
   });
