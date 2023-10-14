@@ -9,9 +9,16 @@ describe(FileMatcher.name, () => {
       expect(sut.matches('src/foo.ts')).true;
     });
 
-    it('should match if the pattern is set to `true`', () => {
+    ['js', 'ts', 'jsx', 'tsx', 'html', 'vue', 'mjs', 'mts', 'cts', 'cjs'].forEach((ext) => {
+      it(`should match when the glob pattern matches with extension ${ext}`, () => {
+        const sut = new FileMatcher(true);
+        expect(sut.matches(`src/foo.${ext}`)).true;
+      });
+    });
+
+    it('should not match binary files if the pattern is set to `true`', () => {
       const sut = new FileMatcher(true);
-      expect(sut.matches('src/foo.ts')).true;
+      expect(sut.matches('src/foo.docx')).false;
     });
 
     it('should not match if the pattern is set to `false`', () => {

@@ -12,6 +12,8 @@ export class FileMatcher {
   constructor(pattern: boolean | string) {
     if (typeof pattern === 'string') {
       this.pattern = normalizeFileName(path.resolve(pattern));
+    } else if (pattern) {
+      this.pattern = '**/*.{js,ts,jsx,tsx,html,vue,mjs,mts,cts,cjs}';
     } else {
       this.pattern = pattern;
     }

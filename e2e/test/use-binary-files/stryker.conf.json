@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "testRunner": "mocha",
+  "concurrency": 1,
+  "reporters": ["json", "html", "progress", "clear-text"],
+  "fileLogLevel": "warn",
+  "plugins": ["@stryker-mutator/mocha-runner"]
+}
