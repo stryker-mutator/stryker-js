@@ -16,6 +16,11 @@ describe(FileMatcher.name, () => {
       });
     });
 
+    it('should allow hidden files to be matched', () => {
+      const sut = new FileMatcher(true);
+      expect(sut.matches('.hidden/foo.js')).true;
+    });
+
     it('should not match binary files if the pattern is set to `true`', () => {
       const sut = new FileMatcher(true);
       expect(sut.matches('src/foo.docx')).false;

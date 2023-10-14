@@ -21,7 +21,7 @@ export class FileMatcher {
 
   public matches(fileName: string): boolean {
     if (typeof this.pattern === 'string') {
-      return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern);
+      return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern, { dot: true });
     } else {
       return this.pattern;
     }
