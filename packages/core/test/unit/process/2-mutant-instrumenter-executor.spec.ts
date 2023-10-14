@@ -5,10 +5,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { Instrumenter, InstrumentResult, InstrumenterOptions, createInstrumenter } from '@stryker-mutator/instrumenter';
 import { I } from '@stryker-mutator/util';
 import { FileDescriptions } from '@stryker-mutator/api/core';
-
 import { PluginKind } from '@stryker-mutator/api/plugin';
-
-import { Ignorer } from '@stryker-mutator/api/ignorer';
 
 import { DryRunContext, MutantInstrumenterContext, MutantInstrumenterExecutor } from '../../../src/process/index.js';
 import { Project } from '../../../src/fs/index.js';
@@ -66,29 +63,31 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, ignorers: new Map() };
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, ignorers: [] };
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
-      expectedInstrumenterOptions
+      expectedInstrumenterOptions,
     );
   });
 
   it('should instrument the given files with single ignorer', async () => {
     testInjector.options.mutator.plugins = ['functionSent'];
-    testInjector.options.mutator.excludedMutations = ['fooMutator'];
-    testInjector.options.ignorers = ['fooIgnorer'];
+    testInjector.options.mutator.excludedMutations = ['notIgnorer'];
+    testInjector.options.ignorers = ['notIgnorer'];
+    const notIgnorer = { shouldIgnore: () => undefined };
+    pluginCreatorMock.create.returns(notIgnorer);
     await sut.execute();
     const expectedInstrumenterOptions: InstrumenterOptions = {
       ...testInjector.options.mutator,
-      ignorers: new Map([['fooIgnorer', undefined as unknown as Ignorer]]),
+      ignorers: [notIgnorer],
     };
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
-      expectedInstrumenterOptions
+      expectedInstrumenterOptions,
     );
-    sinon.assert.calledOnceWithExactly(pluginCreatorMock.create, PluginKind.Ignorer, 'fooIgnorer');
+    sinon.assert.calledOnceWithExactly(pluginCreatorMock.create, PluginKind.Ignorer, 'notIgnorer');
   });
 
   it('result in the new injector', async () => {
