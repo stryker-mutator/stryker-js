@@ -126,7 +126,7 @@ export class ProjectReader {
         },
       ];
     }
-    const matcher = new FileMatcher(mutatePattern);
+    const matcher = new FileMatcher(mutatePattern, /* allowHiddenFiles */ false);
     const inputFiles = new Map<string, FileDescription>();
     for (const fileName of fileNames) {
       if (matcher.matches(fileName)) {
