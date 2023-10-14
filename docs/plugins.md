@@ -47,6 +47,10 @@ A checker plugin can _check_ a mutant before it is mutation tested. The check ca
 
 - **[TypeScript](./typescript-checker.md) (@stryker-mutator/typescript-checker)**: This checker will check each mutant for typescript compile errors.
 
+## Ignorers
+
+With an ignorer plugin, you can ignore all mutants in a specific a code pattern. See [using an ignore plugin](./disable-mutants.md#using-an-ignorer-plugin) for more information.
+
 ## &lt;Your plugin here&gt;
 
 You can write your plugins for Stryker. Interested? Have a look at our [create a plugin guide](./guides/create-a-plugin.md).

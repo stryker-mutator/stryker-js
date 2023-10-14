@@ -305,6 +305,20 @@ When using the command line, the list can only contain a comma separated list of
   - or in the config file: `"ignorePatterns": ["src/**","!str/app/important/*.ts"]` This would ignore everything in and below `src` - directory **except** the typescript files in `src/app/important` directory, but the `--mutate` might be the better option in that case, see [below](#mutate-string)
   - Keep in mind that you should **not accidentally ignore any other configuration** files your test runner might need for running the tests in the sandbox directory.
 
+### `ignorers` [`string[]`]
+
+_Since Stryker 7.3_
+
+Default: `[]`<br />
+Command line: _none_<br />
+Config file: `"ignorers": ["console.debug"]`<br />
+
+Specify which ignorer plugins to use. With an ignorer plugin you can ignore mutants inside common code patterns that you don't want to test for some reason. For example, you can use this to ignore all `console.debug()` statements from being mutated. 
+
+You only specify the name of the plugin here. The plugin's implementation must be loaded using a separate file, which must be listed in your [plugins array](#plugins-string).
+
+See [using an ignore plugin](./disable-mutants.md#using-an-ignorer-plugin) for more information.
+
 ### `ignoreStatic` [`boolean`]
 
 Default: `false`<br />
