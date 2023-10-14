@@ -30,7 +30,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   mutantCollector,
   { options, mutateDescription, logger },
   mutators = allMutators,
-  mutantPlacers = allMutantPlacers
+  mutantPlacers = allMutantPlacers,
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889

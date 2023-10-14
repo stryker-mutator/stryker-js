@@ -111,7 +111,7 @@ describe('instrumenter integration', () => {
         'console-sample.js',
         createInstrumenterOptions({
           ignorers: [consoleIgnorer],
-        })
+        }),
       );
     });
   });

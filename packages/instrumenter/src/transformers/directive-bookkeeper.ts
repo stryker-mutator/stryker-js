@@ -19,7 +19,7 @@ class IgnoreRule implements Rule {
     public mutatorNames: string[],
     public line: number | undefined,
     public ignoreReason: IgnoreReason,
-    public previousRule: Rule
+    public previousRule: Rule,
   ) {}
 
   private matches(mutatorName: string, line: number): boolean {
@@ -61,7 +61,7 @@ export class DirectiveBookkeeper {
   constructor(
     private readonly logger: Logger,
     private readonly allMutators: NodeMutator[],
-    private readonly originFileName: string
+    private readonly originFileName: string,
   ) {
     this.allMutatorNames = this.allMutators.map((x) => x.name.toLowerCase());
   }
@@ -121,7 +121,7 @@ export class DirectiveBookkeeper {
             scope ? directiveType + ' ' + scope : directiveType
           }' directive. Mutator with name '${mutator}' not found. Directive found at: ${this.originFileName}:${comment.loc!.start.line}:${
             comment.loc!.start.column
-          }.`
+          }.`,
         );
       }
     }

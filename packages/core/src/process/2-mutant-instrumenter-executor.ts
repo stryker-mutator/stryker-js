@@ -40,7 +40,7 @@ export class MutantInstrumenterExecutor {
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
     private readonly options: StrykerOptions,
-    private readonly pluginCreator: PluginCreator
+    private readonly pluginCreator: PluginCreator,
   ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {

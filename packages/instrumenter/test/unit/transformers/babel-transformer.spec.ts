@@ -4,7 +4,6 @@ import babel from '@babel/core';
 import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
-import { Ignorer } from '@stryker-mutator/api/ignorer';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
 import { AstTransformer, TransformerContext } from '../../../src/transformers/index.js';
@@ -14,7 +13,7 @@ import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
-import { createJSAst, createTSAst, createTransformerOptions } from '../../helpers/factories.js';
+import { createJSAst, createTSAst } from '../../helpers/factories.js';
 
 const generate = generator.default;
 const { types } = babel;
@@ -87,7 +86,7 @@ describe('babel-transformer', () => {
         normalizeWhitespaces(`{
         bar((console.log(bar + baz), bar + baz));
         foo((console.log(bar - baz), bar + baz, console.log(bar + baz), bar - baz, console.log(bar + baz), bar + baz));
-      }`)
+      }`),
       );
     });
 
@@ -372,7 +371,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(0);
         expect(
-          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything')
+          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything'),
         ).to.be.true;
         expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
       });
@@ -454,7 +453,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
         );
       });
 
@@ -469,7 +468,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1")
+          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
         );
       });
 
@@ -486,7 +485,7 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2")
+          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2"),
         );
       });
 
@@ -736,7 +735,7 @@ describe('babel-transformer', () => {
       mutantCollector,
       context,
       mutators,
-      mutantPlacers
+      mutantPlacers,
     );
   }
 });
