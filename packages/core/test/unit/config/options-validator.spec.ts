@@ -98,6 +98,7 @@ describe(OptionsValidator.name, () => {
         tsconfigFile: 'tsconfig.json',
         warnings: true,
         disableBail: false,
+        ignorers: [],
       };
       expect(options).deep.eq(expectedOptions);
     });

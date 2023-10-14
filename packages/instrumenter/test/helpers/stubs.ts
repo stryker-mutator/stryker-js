@@ -20,8 +20,9 @@ export function printerContextStub(): sinon.SinonStubbedInstance<PrinterContext>
   };
 }
 
-export function transformerContextStub(): sinon.SinonStubbedInstance<TransformerContext> {
+export function transformerContextStub(overrides?: Partial<TransformerContext>): sinon.SinonStubbedInstance<TransformerContext> {
   return {
+    ...overrides,
     transform: sinon.stub(),
     mutateDescription: true,
     options: createTransformerOptions(),

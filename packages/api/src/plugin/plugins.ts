@@ -4,6 +4,8 @@ import { Reporter } from '../report/index.js';
 import { TestRunner } from '../test-runner/index.js';
 import { Checker } from '../check/index.js';
 
+import { Ignorer } from '../ignorer/ignorer.js';
+
 import { PluginContext } from './contexts.js';
 import { PluginKind } from './plugin-kind.js';
 
@@ -82,6 +84,7 @@ export interface PluginInterfaces {
   [PluginKind.Reporter]: Reporter;
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.Checker]: Checker;
+  [PluginKind.Ignorer]: Ignorer;
 }
 
 /**
