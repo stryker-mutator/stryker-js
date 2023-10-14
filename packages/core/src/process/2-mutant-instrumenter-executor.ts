@@ -15,7 +15,6 @@ import { Timer } from '../utils/timer.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
-
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
@@ -49,7 +48,7 @@ export class MutantInstrumenterExecutor {
     const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
-    const ignorers = new Map(this.options.ignorers.map((name) => [name, this.pluginCreator.create(PluginKind.Ignorer, name)]));
+    const ignorers = this.options.ignorers.map((name) => this.pluginCreator.create(PluginKind.Ignorer, name));
     const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), { ignorers, ...this.options.mutator });
 
     // Preprocess the project

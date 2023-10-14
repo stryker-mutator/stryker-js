@@ -110,14 +110,7 @@ describe('instrumenter integration', () => {
       await arrangeAndActAssert(
         'console-sample.js',
         createInstrumenterOptions({
-          ignorers: new Map([
-            [
-              'console.log',
-              {
-                shouldIgnore,
-              },
-            ],
-          ]),
+          ignorers: [consoleIgnorer],
         })
       );
     });
@@ -137,16 +130,18 @@ describe('instrumenter integration', () => {
     expect(result.files[0].content).matchSnapshot();
   }
 
-  function shouldIgnore(path: NodePath) {
-    if (
-      path.isExpressionStatement() &&
-      path.node.expression.type === 'CallExpression' &&
-      path.node.expression.callee.type === 'MemberExpression' &&
-      path.node.expression.callee.object.type === 'Identifier' &&
-      path.node.expression.callee.object.name === 'console'
-    ) {
-      return 'console statement';
-    }
-    return undefined;
-  }
+  const consoleIgnorer = {
+    shouldIgnore(path: NodePath) {
+      if (
+        path.isExpressionStatement() &&
+        path.node.expression.type === 'CallExpression' &&
+        path.node.expression.callee.type === 'MemberExpression' &&
+        path.node.expression.callee.object.type === 'Identifier' &&
+        path.node.expression.callee.object.name === 'console'
+      ) {
+        return 'console statement';
+      }
+      return undefined;
+    },
+  };
 });

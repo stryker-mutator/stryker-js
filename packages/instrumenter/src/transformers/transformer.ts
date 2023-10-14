@@ -18,34 +18,24 @@ import { MutantCollector } from './mutant-collector.js';
  * @param mutantCollector the mutant collector that will be used to register and administer mutants
  * @param transformerContext the options used during transforming
  */
-export function transform(
-  ast: Ast,
-  mutantCollector: I<MutantCollector>,
-  transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>,
-  ignorers: Map<string, Ignorer>
-): void {
+export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transformerContext: Omit<TransformerContext, 'transform'>): void {
   const context: TransformerContext = {
     ...transformerContext,
     transform,
   };
   switch (ast.format) {
     case AstFormat.Html:
-      transformHtml(ast, mutantCollector, context, ignorers);
+      transformHtml(ast, mutantCollector, context);
       break;
     case AstFormat.JS:
     case AstFormat.TS:
     case AstFormat.Tsx:
-      transformBabel(ast, mutantCollector, context, ignorers);
+      transformBabel(ast, mutantCollector, context);
       break;
   }
 }
 
-export type AstTransformer<T extends AstFormat> = (
-  ast: AstByFormat[T],
-  mutantCollector: I<MutantCollector>,
-  context: TransformerContext,
-  ignorers: Map<string, Ignorer>
-) => void;
+export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCollector: I<MutantCollector>, context: TransformerContext) => void;
 
 export interface TransformerContext {
   transform: AstTransformer<AstFormat>;

@@ -37,7 +37,7 @@ export class Instrumenter {
     const parse = this._createParser(options);
     for await (const { name, mutate, content } of files) {
       const ast = await parse(content, name);
-      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate), logger: this.logger }, options.ignorers);
+      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate), logger: this.logger });
       const mutatedContent = this._print(ast);
       outFiles.push({
         name,

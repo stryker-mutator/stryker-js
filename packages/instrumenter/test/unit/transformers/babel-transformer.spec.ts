@@ -2,20 +2,19 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import babel from '@babel/core';
 import generator from '@babel/generator';
-import { I, normalizeWhitespaces } from '@stryker-mutator/util';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
-
 import { Ignorer } from '@stryker-mutator/api/ignorer';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
-import { TransformerContext } from '../../../src/transformers/index.js';
+import { AstTransformer, TransformerContext } from '../../../src/transformers/index.js';
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { transformBabel } from '../../../src/transformers/babel-transformer.js';
-import { ScriptAst } from '../../../src/syntax/index.js';
+import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
-import { createJSAst, createTSAst } from '../../helpers/factories.js';
+import { createJSAst, createTSAst, createTransformerOptions } from '../../helpers/factories.js';
 
 const generate = generator.default;
 const { types } = babel;
@@ -31,7 +30,6 @@ describe('babel-transformer', () => {
   let mutators: NodeMutator[];
   let mutantPlacers: MutantPlacer[];
   let mutantCollector: MutantCollector;
-  let ignorers: Map<string, Ignorer>;
 
   const fooMutator: NodeMutator = {
     name: 'Foo',
@@ -67,7 +65,6 @@ describe('babel-transformer', () => {
     mutantCollector = new MutantCollector();
     mutators = [fooMutator, plusMutator];
     mutantPlacers = [blockStatementPlacer, sequenceExpressionPlacer];
-    ignorers = new Map();
   });
 
   describe('the algorithm', () => {
@@ -725,11 +722,7 @@ describe('babel-transformer', () => {
   describe('ignorers', () => {
     it('mutants should have ignore reason when using console.log ignorer', () => {
       const ast = createJSAst({ rawContent: 'console.log(foo + bar)' });
-      ignorers.set('console.log', {
-        shouldIgnore(path) {
-          return 'console.log';
-        },
-      });
+      context.options.ignorers.push({ shouldIgnore: () => 'console.log' });
       act(ast);
       expect(mutantCollector.mutants).lengthOf(2);
       expect(mutantCollector.mutants[0].ignoreReason).eq('console.log');
@@ -738,15 +731,12 @@ describe('babel-transformer', () => {
   });
 
   function act(ast: ScriptAst) {
-    (
-      transformBabel as (
-        ast: ScriptAst,
-        mutantCollector: I<MutantCollector>,
-        context: TransformerContext,
-        ignorers: Map<string, Ignorer>,
-        mutators: NodeMutator[],
-        mutantPlacers: MutantPlacer[]
-      ) => void
-    )(ast, mutantCollector, context, ignorers, mutators, mutantPlacers);
+    (transformBabel as (...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: NodeMutator[], mutantPlacers: MutantPlacer[]]) => void)(
+      ast,
+      mutantCollector,
+      context,
+      mutators,
+      mutantPlacers
+    );
   }
 });

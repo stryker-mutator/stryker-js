@@ -12,6 +12,7 @@ import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
+import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
 
@@ -28,7 +29,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
   { options, mutateDescription, logger },
-  ignorers,
   mutators = allMutators,
   mutantPlacers = allMutantPlacers
 ) => {
@@ -42,8 +42,8 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // Create the bookkeeper responsible for the // Stryker ... directives
   const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
 
-  let activeIgnoreReason: string | undefined;
-  let ignoreNode: babel.types.Node | undefined;
+  // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
+  const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
 
   // Now start the actual traversing of the AST
   //
@@ -64,13 +64,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       if (shouldSkip(path)) {
         path.skip();
       } else {
-        ignorers.forEach((ignorer) => {
-          const ignoreResult = ignorer.shouldIgnore(path);
-          if (ignoreResult) {
-            activeIgnoreReason = ignoreResult;
-            ignoreNode = path.node;
-          }
-        });
+        ignorerBookkeeper.enterNode(path);
         addToPlacementMapIfPossible(path);
         if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
@@ -82,10 +76,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
     exit(path) {
       placeMutantsIfNeeded(path);
-      if (path.node === ignoreNode) {
-        ignoreNode = undefined;
-        activeIgnoreReason = undefined;
-      }
+      ignorerBookkeeper.leaveNode(path);
     },
   });
 
@@ -166,12 +157,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
-      .map((mutable) => {
-        if (activeIgnoreReason) {
-          mutable.ignoreReason = activeIgnoreReason;
-        }
-        return mutable;
-      })
       .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
       .filter((mutant) => !mutant.ignoreReason);
   }
@@ -185,12 +170,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         yield {
           replacement,
           mutatorName: mutator.name,
-          ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? formatIgnoreReason(mutator.name),
+          ignoreReason:
+            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+            findExcludedMutatorIgnoreReason(mutator.name) ??
+            ignorerBookkeeper.currentIgnoreMessage,
         };
       }
     }
 
-    function formatIgnoreReason(mutatorName: string): string | undefined {
+    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
       if (options.excludedMutations.includes(mutatorName)) {
         return `Ignored because of excluded mutation "${mutatorName}"`;
       } else {

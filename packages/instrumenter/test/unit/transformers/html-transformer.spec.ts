@@ -17,7 +17,7 @@ describe('transformHtml', () => {
     const context = transformerContextStub();
 
     // Act
-    transformHtml(htmlAst, mutantCollector, context, new Map());
+    transformHtml(htmlAst, mutantCollector, context);
 
     // Assert
     expect(context.transform).calledTwice;

@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import { NodePath, types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
@@ -7,8 +7,6 @@ import { InstrumenterOptions } from '../../src/index.js';
 import { TransformerOptions } from '../../src/transformers/index.js';
 
 import { parseTS, parseJS, findNodePath } from './syntax-test-helpers.js';
-
-const { types } = babel;
 
 export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
   return {
@@ -20,7 +18,7 @@ export function createParserOptions(overrides?: Partial<ParserOptions>): ParserO
 export function createTransformerOptions(overrides?: Partial<TransformerOptions>): TransformerOptions {
   return {
     excludedMutations: [],
-    ignorers: new Map(),
+    ignorers: [],
     ...overrides,
   };
 }
@@ -54,6 +52,10 @@ export function createJSAst(overrides?: Partial<JSAst>): JSAst {
     root: parseJS(rawContent),
     ...overrides,
   };
+}
+
+export function createIdentifierNodePath(name: string): NodePath<types.Identifier> {
+  return findNodePath<types.Identifier>(parseJS(name), (t) => t.isIdentifier());
 }
 
 export function createTSAst(overrides?: Partial<TSAst>): TSAst {
