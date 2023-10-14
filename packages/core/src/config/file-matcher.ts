@@ -9,7 +9,10 @@ import { normalizeFileName } from '@stryker-mutator/util';
 export class FileMatcher {
   private readonly pattern: boolean | string;
 
-  constructor(pattern: boolean | string) {
+  constructor(
+    pattern: boolean | string,
+    private readonly allowHiddenFiles = true,
+  ) {
     if (typeof pattern === 'string') {
       this.pattern = normalizeFileName(path.resolve(pattern));
     } else if (pattern) {
@@ -21,7 +24,7 @@ export class FileMatcher {
 
   public matches(fileName: string): boolean {
     if (typeof this.pattern === 'string') {
-      return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern, { dot: true });
+      return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern, { dot: this.allowHiddenFiles });
     } else {
       return this.pattern;
     }
