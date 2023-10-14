@@ -202,15 +202,26 @@ _Note: Disable bail needs to be supported by the test runner plugin in order to 
 
 ### `disableTypeChecks` [`boolean` | `string`]
 
+
+<details>
+
+<summary>History</summary>
+
+| Version | Changes                     |
+| ------- | --------------------------- |
+| 7.0     | Default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` |
+
+</details>
+
 Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-_Note:_ The default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` in Stryker v7.
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
 
-Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`.
+Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
 
-This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). Setting it to 'true' allows these directives to be stripped from all JavaScript and friend files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
+
 
 ### `dryRunOnly` [`boolean`]
 
