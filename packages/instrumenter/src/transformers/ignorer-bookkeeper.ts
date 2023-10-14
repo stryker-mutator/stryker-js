@@ -1,8 +1,8 @@
 import type { types, NodePath as BabelNodePath } from '@babel/core';
 
-import type { Ignorer } from '@stryker-mutator/api/ignorer';
+import type { Ignorer } from '@stryker-mutator/api/ignore';
 
-declare module '@stryker-mutator/api/ignorer' {
+declare module '@stryker-mutator/api/ignore' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface NodePath extends BabelNodePath {}
 }

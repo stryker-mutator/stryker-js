@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ClassPlugin, FactoryPlugin, Plugin, PluginKind } from '@stryker-mutator/api/plugin';
+import { ClassPlugin, FactoryPlugin, Plugin, PluginKind, ValuePlugin } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { coreTokens, PluginCreator } from '../../../src/di/index.js';
@@ -49,6 +49,23 @@ describe(PluginCreator.name, () => {
     expect(actualReporter).instanceOf(FooReporter);
   });
 
+  it("should return a ValuePlugin using it's value", () => {
+    // Arrange
+    const expectedReporter = factory.reporter('foo');
+    const valuePlugin: ValuePlugin<PluginKind.Reporter> = {
+      kind: PluginKind.Reporter,
+      name: 'foo',
+      value: expectedReporter,
+    };
+    pluginsByKind.set(PluginKind.Reporter, [valuePlugin]);
+
+    // Act
+    const actualReporter = sut.create(PluginKind.Reporter, 'foo');
+
+    // Assert
+    expect(actualReporter).eq(expectedReporter);
+  });
+
   it('should match plugins on name ignore case', () => {
     // Arrange
     const expectedReporter = factory.reporter('bar');
@@ -87,7 +104,7 @@ describe(PluginCreator.name, () => {
     };
     pluginsByKind.set(PluginKind.Reporter, [errorPlugin]);
     expect(() => sut.create(PluginKind.Reporter, 'foo')).throws(
-      'Plugin "Reporter:foo" could not be created, missing "factory" or "injectableClass" property.',
+      'Plugin "Reporter:foo" could not be created, missing "factory", "injectableClass" or "value" property',
     );
   });
 

@@ -45,10 +45,14 @@ Mutant 1 and 2 are killed by the tests. However, mutant 3 isn't killed. In fact,
 
 ## Disable mutants
 
-StrykerJS supports 2 ways to disable mutants.
+StrykerJS supports 3 ways to disable mutants.
 
-1. [Exclude the mutator](#exclude-the-mutator).
-2. [Using a `// Stryker disable` comment](#using-a--stryker-disable-comment).
+1. [Exclude the mutator](#exclude-the-mutator).\
+   Great if you are not interested in a specific mutator.
+2. [Using a `// Stryker disable` comment](#using-a--stryker-disable-comment).\
+   Good for one-off ignoring of mutants.
+3. [Using an `Ignorer` plugin](#using-an-ignorer-plugin).\
+   Good 
 
 Disabled mutants will still end up in your report, but will get the `ignored` status. This means that they don't influence your mutation score, but are still visible if you want to look for them. This has no impact on the performance of mutation testing.
 
