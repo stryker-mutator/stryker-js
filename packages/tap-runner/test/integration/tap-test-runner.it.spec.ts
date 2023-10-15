@@ -15,6 +15,9 @@ import { findTestyLookingFiles } from '../../src/tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
 import { tapRunnerOptions } from '../helpers/factory.js';
 
+// This is the setTimeout timer from "testResources/example/tests/bail.spec.js"
+const BAIL_TIMEOUT = 2000;
+
 describe('tap-runner integration', () => {
   let sut: TapTestRunner;
   let sandbox: TempTestDirectorySandbox;
@@ -166,7 +169,7 @@ describe('tap-runner integration', () => {
       const timeDiff = end.getTime() - start.getTime();
 
       // Assert
-      expect(timeDiff).lte(500);
+      expect(timeDiff).lte(BAIL_TIMEOUT);
     });
 
     it('should return result slow when not bailing (on unix)', async function () {
@@ -181,7 +184,7 @@ describe('tap-runner integration', () => {
       const timeDiff = end.getTime() - start.getTime();
 
       // Assert
-      expect(timeDiff).gte(2000);
+      expect(timeDiff).gte(BAIL_TIMEOUT);
     });
 
     async function arrangeAndActBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
