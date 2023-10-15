@@ -83,10 +83,11 @@ describe('Running in an example project', () => {
 
   it('should log the exec command on debug', async () => {
     // Arrange
-    const require = createRequire(import.meta.url);
     testInjector.logger.isDebugEnabled.returns(true);
     const expectedConfig: Partial<IConfiguration> = {
-      format: [require.resolve('../../src/stryker-formatter.cjs')],
+      format: [
+        new URL('../../src/stryker-formatter.cjs', import.meta.url).href,
+      ],
       retry: 0,
       parallel: 0,
       failFast: true,

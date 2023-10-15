@@ -63,9 +63,11 @@ export function cucumberTestRunnerFactory(
     .injectClass(CucumberTestRunner);
 }
 
-const require = createRequire(import.meta.url);
 const StrykerFormatter = strykerFormatterModule.default;
-const strykerFormatterFile = require.resolve('./stryker-formatter.cjs');
+const strykerFormatterFile = new URL(
+  './stryker-formatter.cjs',
+  import.meta.url,
+);
 
 interface ResolvedConfiguration {
   /**
@@ -132,7 +134,7 @@ export class CucumberTestRunner implements TestRunner {
     const { runConfiguration, useConfiguration }: ResolvedConfiguration =
       await loadConfiguration({
         provided: {
-          format: [strykerFormatterFile],
+          format: [strykerFormatterFile.href],
           retry: 0,
           parallel: 0,
           failFast: !disableBail,
