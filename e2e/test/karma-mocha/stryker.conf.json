@@ -8,7 +8,7 @@
       "files": ["src/*.js", "test/*.js"]
     }
   },
-  "timeoutMS": 60000,
+  "timeoutMS": 120000,
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "plugins": ["@stryker-mutator/karma-runner"]

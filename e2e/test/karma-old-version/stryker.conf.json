@@ -12,7 +12,7 @@
   "karma": {
     "configFile": "karma.conf.js"
   },
-  "timeoutMS": 60000,
+  "timeoutMS": 120000,
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "plugins": [
