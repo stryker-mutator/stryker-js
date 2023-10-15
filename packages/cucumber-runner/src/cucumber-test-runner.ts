@@ -1,5 +1,7 @@
 import fs from 'fs';
 
+import { fileURLToPath } from 'url';
+
 import semver from 'semver';
 import { Logger } from '@stryker-mutator/api/logging';
 import {
@@ -130,10 +132,13 @@ export class CucumberTestRunner implements TestRunner {
     disableBail: boolean,
     testFilter?: string[],
   ): Promise<DryRunResult> {
+    const href = semver.satisfies(cucumberVersion, '>=10')
+      ? strykerFormatterFile.href
+      : fileURLToPath(strykerFormatterFile.href);
     const { runConfiguration, useConfiguration }: ResolvedConfiguration =
       await loadConfiguration({
         provided: {
-          format: [strykerFormatterFile.href],
+          format: [href],
           retry: 0,
           parallel: 0,
           failFast: !disableBail,
