@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "stryker run",
-    "test:unit": "cucumber-js",
+    "test:unit": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" cucumber-js",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "Nico Jansen",

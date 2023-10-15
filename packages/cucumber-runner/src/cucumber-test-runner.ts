@@ -1,5 +1,6 @@
-import { createRequire } from 'module';
 import fs from 'fs';
+
+import { fileURLToPath } from 'url';
 
 import semver from 'semver';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -63,9 +64,11 @@ export function cucumberTestRunnerFactory(
     .injectClass(CucumberTestRunner);
 }
 
-const require = createRequire(import.meta.url);
 const StrykerFormatter = strykerFormatterModule.default;
-const strykerFormatterFile = require.resolve('./stryker-formatter.cjs');
+const strykerFormatterFile = new URL(
+  './stryker-formatter.cjs',
+  import.meta.url,
+);
 
 interface ResolvedConfiguration {
   /**
@@ -129,10 +132,13 @@ export class CucumberTestRunner implements TestRunner {
     disableBail: boolean,
     testFilter?: string[],
   ): Promise<DryRunResult> {
+    const href = semver.satisfies(cucumberVersion, '>=10')
+      ? strykerFormatterFile.href
+      : fileURLToPath(strykerFormatterFile.href);
     const { runConfiguration, useConfiguration }: ResolvedConfiguration =
       await loadConfiguration({
         provided: {
-          format: [strykerFormatterFile],
+          format: [href],
           retry: 0,
           parallel: 0,
           failFast: !disableBail,
