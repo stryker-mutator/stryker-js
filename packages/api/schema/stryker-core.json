@@ -533,7 +533,7 @@
       "default": false
     },
     "ignorers": {
-      "description": "Enable ignorer plugins here. An ignorer plugin will be invoked on each AST node visitation and can decide to ignore the node or not. This can be useful for example to ignore all mutants in a console.log() statement.",
+      "description": "Specify which ignore-plugins to use. With an ignore-plugin you can ignore mutants inside common code patterns that you don't want to test for some reason. For example, you can use this to ignore all `console.debug()` statements from being mutated.",
       "type": "array",
       "items": {
         "type": "string"

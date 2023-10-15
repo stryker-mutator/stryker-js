@@ -2,7 +2,7 @@
 import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
 
 export const strykerPlugins = [
-  declareValuePlugin(PluginKind.Ignorer, 'ConsoleIgnorer', {
+  declareValuePlugin(PluginKind.Ignore, 'ConsoleIgnorer', {
     shouldIgnore(path) {
       if (
         path.isExpressionStatement() &&

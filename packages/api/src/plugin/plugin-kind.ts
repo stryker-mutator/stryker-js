@@ -5,5 +5,5 @@ export enum PluginKind {
   Checker = 'Checker',
   TestRunner = 'TestRunner',
   Reporter = 'Reporter',
-  Ignorer = 'Ignorer',
+  Ignore = 'Ignore',
 }

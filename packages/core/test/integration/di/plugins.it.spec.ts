@@ -18,7 +18,7 @@ describe('Plugins integration', () => {
     });
 
     it('should be able to load a "ValuePlugin"', async () => {
-      const plugin = pluginCreator.create(PluginKind.Ignorer, 'console.debug');
+      const plugin = pluginCreator.create(PluginKind.Ignore, 'console.debug');
       expect(plugin).ok;
       expect(plugin.shouldIgnore).a('function');
     });

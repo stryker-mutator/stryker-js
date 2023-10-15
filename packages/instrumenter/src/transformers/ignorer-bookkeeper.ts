@@ -8,7 +8,7 @@ declare module '@stryker-mutator/api/ignore' {
 }
 
 /**
- * Responsible for keeping track of the active ignore message and node using the configured ignorer plugins.
+ * Responsible for keeping track of the active ignore message and node using the configured ignore-plugins.
  */
 export class IgnorerBookkeeper {
   private readonly ignorers;

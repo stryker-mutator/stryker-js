@@ -51,7 +51,7 @@ StrykerJS supports three ways to ignore mutants.
    If you are not interested in a specific mutator.
 2. [Using a `// Stryker disable` comment](#using-a--stryker-disable-comment).  
    Suitable for the one-off ignoring of mutants.
-3. [Using an `Ignorer` plugin](#using-an-ignorer-plugin).  
+3. [Using an ignore-plugin](#using-an-ignore-plugin).  
    If you want to ignore the same pattern multiple times (and in multiple files).
 
 Disabled mutants will remain in your report but will get the `ignored` status. Mutants with this status in your report don't influence your mutation score but are still visible if you want to look for them.
@@ -162,7 +162,7 @@ function max(a, b) {
 }
 ```
 
-Turn off all mutators for an entire file, but restore the EqualityOperator for 1 line:
+Turn off all mutators for an entire file, but restore the `EqualityOperator` for 1 line:
 
 ```js
 // Stryker disable all
@@ -178,9 +178,9 @@ The syntax looks like this:
 // Stryker [disable|restore] [next-line] *mutatorList*[: custom reason]
 ```
 
-The comment always starts with `// Stryker`, followed by either `disable` or `restore`. Next, you can specify whether or not this comment targets the `next-line` or all lines from this point on (by not using `next-line`). As for the mutator list, this is either a comma-separated list of mutators or `all` to signal this comment targets all mutators. Last is an optional custom reason text behind the `:` colon.
+The comment always starts with `// Stryker`, followed by either `disable` or `restore`. Next, you can specify whether this comment targets the `next-line` or all lines from this point on (by not using `next-line`). As for the mutator list, this is either a comma-separated list of mutators or `all` to signal this comment targets all mutators. Last is an optional custom reason text behind the `:` colon.
 
-## Using an ignorer plugin
+## Using an ignore-plugin
 
 _Available since Stryker 7.3_
 
@@ -199,9 +199,9 @@ function subtract(a, b) {
 }
 ```
 
-In the code above, you might want to ignore all mutants in `console.debug` statements in this code. This is where an Ignorer can help.
+In the code above, you might want to ignore all mutants in `console.debug` statements in this code. This is where an ignore-plugin can help.
 
-To declare a ignorer plugin, first install `@stryker-mutator/api` as a dev dependency:
+To declare an ignore-plugin, first install `@stryker-mutator/api` as a dev dependency:
 
 ```
 npm i -D @stryker-mutator/api
@@ -213,9 +213,9 @@ Now add a "stryker-console-ignorer.js" to your project:
 // stryker-console-ignorer.js
 import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
 
-export const strykerPlugins = [declareValuePlugin(PluginKind.Ignorer, 'console.debug', {
+export const strykerPlugins = [declareValuePlugin(PluginKind.Ignore, 'console.debug', {
   shouldIgnore(path) {
-    // Define the conditions for which you want to ignore mutants using visitor
+    // Define the conditions for which you want to ignore mutants
     if (
       path.isExpressionStatement() &&
       path.node.expression.type === 'CallExpression' &&
@@ -232,13 +232,9 @@ export const strykerPlugins = [declareValuePlugin(PluginKind.Ignorer, 'console.d
 })];
 ```
 
-:::info
+In the above example, you declare an ignore-plugin with the name `'console.debug'` and an `Ignorer`. An `Ignorer` is an object with a `shouldIgnore(path)` method. Stryker will execute this method on each node of the abstract syntax tree (AST). To ignore mutants in the current node and child nodes, return a non-empty ignore reason as a string here. The `path` parameter is a babel `NodePath` object, [see 'visiting' in the babel handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#user-content-visiting) for more information on the `NodePath` API.
 
-In the above example, you declare an `Ignorer` plugin. An `Ignorer` is an object with a `shouldIgnore(path)` method. Stryker will execute this method on each node of the abstract syntax tree (AST). To ignore the current node, return a non-empty ignore reason as a string here. The `path` parameter is a babel `NodePath` object, [see 'visiting' in the babel handbook for more information](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#user-content-visiting)
-
-:::
-
-You configure this plugin in your stryker.config.json file:
+You configure this plugin in your 'stryker.config.json' file:
 
 ```json
 {
@@ -249,11 +245,11 @@ You configure this plugin in your stryker.config.json file:
 
 After rerunning Stryker, your report will look like this.
 
-![Ignorer plugin report](disable-mutants-ignorer.png))
+![Ignore-plugin report](./images/disable-mutants-ignorer.png)
 
 :::tip
 
-If you want some TypeScript type-safety on the `path` being passed into your ignorer plugin, you will need to install the babel types yourself: `npm i -D @types/babel__core` and add this TypeScript file somewhere in your project:
+If you want TypeScript type-safety on the `path` being passed into your ignore-plugin, you will need to install the babel types yourself: `npm i -D @types/babel__core` and add this TypeScript file somewhere in your project:
 
 ```ts
 /// <reference types="@stryker-mutator/api/ignore" />
@@ -263,5 +259,7 @@ declare module '@stryker-mutator/api/ignore' {
   export interface NodePath extends babel.NodePath {}
 }
 ```
+
+If you want to write the plugin itself as TypeScript as well, you will need to transpile it to JavaScript yourself. Either by doing it before you run Stryker, or using a just-in-time compiler like `ts-node`.
 
 :::

@@ -24,7 +24,7 @@ class MyReporter {
 /** 
  * @param {Injector} _injector
  * @returns {TestRunner} 
- */1
+ */
 function createLazyTestRunner(_injector) {
   return {
     capabilities() {
@@ -50,7 +50,7 @@ createLazyTestRunner.inject = [commonTokens.injector];
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'console', MyReporter),
   declareFactoryPlugin(PluginKind.TestRunner, 'lazy', createLazyTestRunner),
-  declareValuePlugin(PluginKind.Ignorer, 'console.debug', {
+  declareValuePlugin(PluginKind.Ignore, 'console.debug', {
     shouldIgnore(path) {
       if (
         path.isExpresssionStatement() &&

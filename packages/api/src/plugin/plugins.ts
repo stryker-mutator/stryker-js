@@ -112,7 +112,7 @@ export interface PluginInterfaces {
   [PluginKind.Reporter]: Reporter;
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.Checker]: Checker;
-  [PluginKind.Ignorer]: Ignorer;
+  [PluginKind.Ignore]: Ignorer;
 }
 
 /**
