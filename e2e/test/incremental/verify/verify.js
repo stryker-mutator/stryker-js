@@ -25,6 +25,7 @@ describe('incremental', () => {
       concurrency: 1,
       plugins: ['./verify/mutation-run-plan-reporter.js'],
       reporters: ['mutation-run-plan', 'html'],
+      timeoutMS: 60_000,
     };
     await changeFiles('original'); // change the files back to there original state
   });

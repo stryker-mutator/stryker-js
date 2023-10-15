@@ -12,5 +12,5 @@
       }
     }
   },
-  "timeoutMS": 60000
+  "timeoutMS": 120000
 }
