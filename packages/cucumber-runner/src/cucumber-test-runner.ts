@@ -1,4 +1,3 @@
-import { createRequire } from 'module';
 import fs from 'fs';
 
 import semver from 'semver';

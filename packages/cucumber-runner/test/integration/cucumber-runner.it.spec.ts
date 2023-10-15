@@ -1,5 +1,4 @@
 import path from 'path';
-import { createRequire } from 'module';
 
 import { expect } from 'chai';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
