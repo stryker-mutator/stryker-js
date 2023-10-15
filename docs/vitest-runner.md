@@ -21,7 +21,7 @@ This plugin does not come packaged with it's own version of `vitest`, instead in
 
 ## Configuring
 
-You can configure the `@stryker-mutator/vitest-runner` using the `stryker.conf.js` (or `stryker.conf.json`) config file.
+You can configure the `@stryker-mutator/vitest-runner` using the `stryker.config.json` (or `stryker.config.js`) config file.
 
 ```json
 {

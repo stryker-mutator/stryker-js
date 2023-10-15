@@ -46,6 +46,9 @@ describe(OptionsValidator.name, () => {
           allowEmojis: false,
           logTests: true,
           maxTestsToLog: 3,
+          reportTests: true,
+          reportMutants: true,
+          reportScoreTable: true,
         },
         commandRunner: {
           command: 'npm test',
@@ -95,6 +98,7 @@ describe(OptionsValidator.name, () => {
         tsconfigFile: 'tsconfig.json',
         warnings: true,
         disableBail: false,
+        ignorers: [],
       };
       expect(options).deep.eq(expectedOptions);
     });

@@ -14,7 +14,7 @@ Keep in mind that you may have to change some configuration settings such as pat
 ## Vitest configuration
 
 1. Install the `@stryker-mutator/vitest-runner` plugin: `npm i -D @stryker-mutator/vitest-runner` or `yarn add --dev @stryker-mutator/vitest-runner`.
-1. Create a "stryker.conf.json" file that looks like this:
+1. Create a "stryker.config.json" file that looks like this:
    ```json
    {
      "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",

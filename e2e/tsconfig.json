@@ -8,7 +8,7 @@
     "composite": false,
     "importHelpers": false,
     "strictNullChecks": false, // hard to handle without a non-null assertion
-    "useUnknownInCatchVariables": false,// hard to handle without type assertions
+    "useUnknownInCatchVariables": false, // hard to handle without type assertions
     "esModuleInterop": true,
     "rootDir": "..",
     "types": ["mocha", "node"],
@@ -16,5 +16,5 @@
     "target": "ES2022",
     "lib": ["ES2022"]
   },
-  "include": ["tasks", "test/*/verify/*.js", "helpers.js"]
+  "include": ["tasks", "test/*/verify/*.js", "test/*/stryker-plugins/**/*.js", "test/*/stryker-plugins/**/*.ts", "helpers.js"]
 }

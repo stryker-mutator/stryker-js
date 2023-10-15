@@ -25,7 +25,7 @@ npm install --save-dev @stryker-mutator/typescript-checker
 
 ## Configuring
 
-You can configure the typescript checker in the `stryker.conf.js` (or `stryker.conf.json`) file.
+You can configure the typescript checker in the `stryker.config.json` (or `stryker.config.js`) file.
 
 ```json
 {

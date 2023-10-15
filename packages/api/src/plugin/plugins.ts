@@ -4,6 +4,8 @@ import { Reporter } from '../report/index.js';
 import { TestRunner } from '../test-runner/index.js';
 import { Checker } from '../check/index.js';
 
+import { Ignorer } from '../ignore/ignorer.js';
+
 import { PluginContext } from './contexts.js';
 import { PluginKind } from './plugin-kind.js';
 
@@ -12,7 +14,8 @@ import { PluginKind } from './plugin-kind.js';
  */
 export type Plugin<TPluginKind extends PluginKind> =
   | ClassPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>
-  | FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>;
+  | FactoryPlugin<TPluginKind, Array<InjectionToken<PluginContext>>>
+  | ValuePlugin<TPluginKind>;
 
 /**
  * Represents a plugin that is created with a factory method
@@ -24,6 +27,15 @@ export interface FactoryPlugin<TPluginKind extends PluginKind, Tokens extends Ar
    * The factory method used to create the plugin
    */
   readonly factory: InjectableFunction<PluginContext, PluginInterfaces[TPluginKind], Tokens>;
+}
+
+/**
+ * Represents a plugin that is provided as a simple value.
+ */
+export interface ValuePlugin<TPluginKind extends PluginKind> {
+  readonly kind: TPluginKind;
+  readonly name: string;
+  readonly value: PluginInterfaces[TPluginKind];
 }
 
 /**
@@ -76,12 +88,31 @@ export function declareFactoryPlugin<TPluginKind extends PluginKind, Tokens exte
 }
 
 /**
+ * Declare a value plugin. Use this method for simple plugins where you don't need values to be injected.
+ * @param kind The plugin kind
+ * @param name The name of the plugin
+ * @param value The plugin
+ */
+export function declareValuePlugin<TPluginKind extends PluginKind>(
+  kind: TPluginKind,
+  name: string,
+  value: PluginInterfaces[TPluginKind],
+): ValuePlugin<TPluginKind> {
+  return {
+    value,
+    kind,
+    name,
+  };
+}
+
+/**
  * Lookup type for plugin interfaces by kind.
  */
 export interface PluginInterfaces {
   [PluginKind.Reporter]: Reporter;
   [PluginKind.TestRunner]: TestRunner;
   [PluginKind.Checker]: Checker;
+  [PluginKind.Ignore]: Ignorer;
 }
 
 /**

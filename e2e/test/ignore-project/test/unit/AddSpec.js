@@ -1,5 +1,5 @@
-const { expect } = require('chai');
-const { add, addOne, isNegativeNumber, negate, notCovered } = require('../../src/Add');
+import { expect } from 'chai';
+import { add, addOne, isNegativeNumber, negate } from '../../src/Add.js';
 
 describe('Add', function () {
   it('should be able to add two numbers', function () {

@@ -12,6 +12,7 @@ import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
+import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
 
@@ -41,6 +42,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // Create the bookkeeper responsible for the // Stryker ... directives
   const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
 
+  // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
+  const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
+
   // Now start the actual traversing of the AST
   //
   // On the way down:
@@ -57,10 +61,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   traverse(file.ast, {
     enter(path) {
       directiveBookkeeper.processStrykerDirectives(path.node);
-
       if (shouldSkip(path)) {
         path.skip();
       } else {
+        ignorerBookkeeper.enterNode(path);
         addToPlacementMapIfPossible(path);
         if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
@@ -72,6 +76,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
     exit(path) {
       placeMutantsIfNeeded(path);
+      ignorerBookkeeper.leaveNode(path);
     },
   });
 
@@ -165,12 +170,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         yield {
           replacement,
           mutatorName: mutator.name,
-          ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? formatIgnoreReason(mutator.name),
+          ignoreReason:
+            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+            findExcludedMutatorIgnoreReason(mutator.name) ??
+            ignorerBookkeeper.currentIgnoreMessage,
         };
       }
     }
 
-    function formatIgnoreReason(mutatorName: string): string | undefined {
+    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
       if (options.excludedMutations.includes(mutatorName)) {
         return `Ignored because of excluded mutation "${mutatorName}"`;
       } else {

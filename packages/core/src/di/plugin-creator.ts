@@ -10,6 +10,7 @@ import {
   InjectionToken,
   tokens,
   commonTokens,
+  ValuePlugin,
 } from '@stryker-mutator/api/plugin';
 import { InjectableFunction, InjectableClass } from 'typed-inject';
 
@@ -32,9 +33,10 @@ export class PluginCreator {
       return this.injector.injectClass(
         plugin.injectableClass as InjectableClass<PluginContext, PluginInterfaces[TPlugin], Array<InjectionToken<PluginContext>>>,
       );
-    } else {
-      throw new Error(`Plugin "${kind}:${name}" could not be created, missing "factory" or "injectableClass" property.`);
+    } else if (isValuePlugin(plugin)) {
+      return plugin.value;
     }
+    throw new Error(`Plugin "${kind}:${name}" could not be created, missing "factory", "injectableClass" or "value" property.`);
   }
 
   private findPlugin<T extends keyof Plugins>(kind: T, name: string): Plugins[T] {
@@ -55,8 +57,11 @@ export class PluginCreator {
 }
 
 function isFactoryPlugin(plugin: Plugin<PluginKind>): plugin is FactoryPlugin<PluginKind, Array<InjectionToken<PluginContext>>> {
-  return !!(plugin as FactoryPlugin<PluginKind, Array<InjectionToken<PluginContext>>>).factory;
+  return Boolean((plugin as FactoryPlugin<PluginKind, Array<InjectionToken<PluginContext>>>).factory);
 }
 function isClassPlugin(plugin: Plugin<PluginKind>): plugin is ClassPlugin<PluginKind, Array<InjectionToken<PluginContext>>> {
-  return !!(plugin as ClassPlugin<PluginKind, Array<InjectionToken<PluginContext>>>).injectableClass;
+  return Boolean((plugin as ClassPlugin<PluginKind, Array<InjectionToken<PluginContext>>>).injectableClass);
+}
+function isValuePlugin(plugin: Plugin<PluginKind>): plugin is ValuePlugin<PluginKind> {
+  return Boolean((plugin as ValuePlugin<PluginKind>).value);
 }

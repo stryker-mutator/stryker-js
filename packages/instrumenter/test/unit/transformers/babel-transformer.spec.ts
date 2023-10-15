@@ -2,14 +2,14 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import babel from '@babel/core';
 import generator from '@babel/generator';
-import { I, normalizeWhitespaces } from '@stryker-mutator/util';
+import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
-import { TransformerContext } from '../../../src/transformers/index.js';
+import { AstTransformer, TransformerContext } from '../../../src/transformers/index.js';
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { transformBabel } from '../../../src/transformers/babel-transformer.js';
-import { ScriptAst } from '../../../src/syntax/index.js';
+import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
@@ -718,15 +718,24 @@ describe('babel-transformer', () => {
     });
   });
 
+  describe('ignorers', () => {
+    it('mutants should have ignore reason when using console.log ignorer', () => {
+      const ast = createJSAst({ rawContent: 'console.log(foo + bar)' });
+      context.options.ignorers.push({ shouldIgnore: () => 'console.log' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(2);
+      expect(mutantCollector.mutants[0].ignoreReason).eq('console.log');
+      expect(mutantCollector.mutants[1].ignoreReason).eq('console.log');
+    });
+  });
+
   function act(ast: ScriptAst) {
-    (
-      transformBabel as (
-        ast: ScriptAst,
-        mutantCollector: I<MutantCollector>,
-        context: TransformerContext,
-        mutators: NodeMutator[],
-        mutantPlacers: MutantPlacer[],
-      ) => void
-    )(ast, mutantCollector, context, mutators, mutantPlacers);
+    (transformBabel as (...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: NodeMutator[], mutantPlacers: MutantPlacer[]]) => void)(
+      ast,
+      mutantCollector,
+      context,
+      mutators,
+      mutantPlacers,
+    );
   }
 });

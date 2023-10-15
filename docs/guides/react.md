@@ -15,7 +15,7 @@ Recommended other packages:
 
 ### Configuration
 
-After installing the recommended packages, create the `stryker.conf.json` file in your repository.
+After installing the recommended packages, create the `stryker.config.json` file in your repository.
 The configuration below contains a good starting point for React projects.
 You may have to change some paths like the [mutate](../configuration.md#mutate-string) array.
 
