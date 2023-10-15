@@ -87,7 +87,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
       expectedInstrumenterOptions,
     );
-    sinon.assert.calledOnceWithExactly(pluginCreatorMock.create, PluginKind.Ignorer, 'notIgnorer');
+    sinon.assert.calledOnceWithExactly(pluginCreatorMock.create, PluginKind.Ignore, 'notIgnorer');
   });
 
   it('result in the new injector', async () => {
