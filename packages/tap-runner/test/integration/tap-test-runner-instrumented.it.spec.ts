@@ -28,7 +28,7 @@ describe('Running in an example project', () => {
 
     // Assert
     assertions.expectKilled(run);
-    expect(run.failureMessage).eq('Adding two numbers: Adding 10 and 5 equal to 15');
+    expect(run.failureMessage).eq('Adding two numbers > Adding 10 and 5 equal to 15: Adding 10 and 5 equal to 15');
   });
 
   it('should report coverage on dryRun', async () => {
