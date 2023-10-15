@@ -120,7 +120,7 @@ describe('tap-runner integration', () => {
       'Failing test > This test will fail: This test will fail, This long tests could be bailed > 3hours is not 3hours: 3hours is not 3hours';
     it('should not bail out process when disableBail is false and forceBail is false', async () => {
       // Arrange/Act
-      const run = await arrangeBail(false, false);
+      const run = await arrangeAndActBail(false, false);
 
       // Assert
       expect(run.failureMessage).eq(notBailedFailureMessage);
@@ -129,7 +129,7 @@ describe('tap-runner integration', () => {
 
     it('should not bail out process when disableBail is false and forceBail is true', async () => {
       // Arrange/Act
-      const run = await arrangeBail(true, true);
+      const run = await arrangeAndActBail(true, true);
 
       // Assert
       expect(run.failureMessage).eq(notBailedFailureMessage);
@@ -138,7 +138,7 @@ describe('tap-runner integration', () => {
 
     it('should not bail out process when disableBail is true and forceBail is false', async () => {
       // Arrange/Act
-      const run = await arrangeBail(true, false);
+      const run = await arrangeAndActBail(true, false);
 
       // Assert
       expect(run.failureMessage).eq(notBailedFailureMessage);
@@ -147,7 +147,7 @@ describe('tap-runner integration', () => {
 
     it('should bail out process when disableBail is false and forceBail is true', async () => {
       // Arrange/Act
-      const run = await arrangeBail(false, true);
+      const run = await arrangeAndActBail(false, true);
 
       // Assert
       expect(run.failureMessage).eq(bailedFailureMessage);
@@ -161,7 +161,7 @@ describe('tap-runner integration', () => {
 
       // Arrange/Act
       const start = new Date();
-      await arrangeBail(false, true);
+      await arrangeAndActBail(false, true);
       const end = new Date();
       const timeDiff = end.getTime() - start.getTime();
 
@@ -176,15 +176,15 @@ describe('tap-runner integration', () => {
 
       // Arrange/Act
       const start = new Date();
-      await arrangeBail(false, false);
+      await arrangeAndActBail(false, false);
       const end = new Date();
       const timeDiff = end.getTime() - start.getTime();
 
       // Assert
-      expect(timeDiff).gte(500);
+      expect(timeDiff).gte(2000);
     });
 
-    async function arrangeBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
+    async function arrangeAndActBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
       options.tap.forceBail = forceBail;
       const testFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
 
