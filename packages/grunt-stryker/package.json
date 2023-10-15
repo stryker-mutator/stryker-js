@@ -1,7 +1,7 @@
 {
   "name": "grunt-stryker",
   "description": "Grunt plugin for the mutation testing framework 'stryker'",
-  "version": "7.2.0",
+  "version": "7.3.0",
   "bugs": {
     "url": "https://github.com/stryker-mutator/stryker-js/issues"
   },
@@ -37,7 +37,7 @@
   ],
   "main": "Gruntfile.js",
   "devDependencies": {
-    "@stryker-mutator/api": "7.2.0",
+    "@stryker-mutator/api": "7.3.0",
     "@types/node": "18.18.5"
   },
   "peerDependencies": {
