@@ -22,8 +22,8 @@ npm i --save-dev @stryker-mutator/cucumber-runner
 The `@stryker-mutator/cucumber-runner` is a plugin for `stryker` to enable `@cucumber/cucumber` as a test runner.
 As such, you should make sure you have the correct versions of its dependencies installed:
 
-* `@cucumber/cucumber`
-* `@stryker-mutator/core`
+- `@cucumber/cucumber`
+- `@stryker-mutator/core`
 
 You can find the [`peerDependencies` in @stryker-mutator/cucumber-runner's package.json file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/cucumber-runner/package.json#L36).
 
@@ -69,3 +69,25 @@ The `@stryker-mutator/cucumber-runner` plugin supports coverage analysis, test f
 ## Non-standard feature file locations
 
 As of `@stryker-mutator/cucumber-runner` version 6.1, non-standard feature file locations are supported out of the box.
+
+## TypeScript
+
+If you're using ts-node to just-in-time transpile your TypeScript code with native ESM using a custom `--loader`, you will also need to add that to Stryker. For example, if you use this setup:
+
+```json
+{
+  "scripts": {
+    "test": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" cucumber-js",
+    "test:mutation": "stryker run"
+  }
+}
+```
+
+You will also need to add the `--loader` to your 'stryker.config.json' file:
+
+```json
+{
+  "testRunnerNodeArgs": ["--loader", "ts-node/esm"],
+  "testRunner": "cucumber"
+}
+```
