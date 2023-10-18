@@ -96,7 +96,7 @@ export function createFooTestRunnerFactory() {
 export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'foo', createFooTestRunner)];
 ```
 
-A value example (practical for simple plugins, like an [ignore-plugin]('../disable-mutants.md#using-an-ignore-plugin))
+A value example (practical for simple plugins, like an [ignore-plugin](../disable-mutants.md#using-an-ignore-plugin))
 
 ```ts
 // index.ts
