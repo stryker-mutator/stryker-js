@@ -63,6 +63,6 @@
     "typed-inject": "~4.0.0"
   },
   "devDependencies": {
-    "@types/node": "18.18.5"
+    "@types/node": "18.18.6"
   }
 }
