@@ -100,7 +100,12 @@ describe(MutationTestExecutor.name, () => {
     mutationTestReportHelperMock.reportAll.returnsArg(0);
   }
 
-  function arrangeScenario(overrides?: { mutantRunPlan?: MutantRunPlan; checkResult?: CheckResult; mutantRunResult?: MutantRunResult; dryRunTestResult?: TestResult[] }) {
+  function arrangeScenario(overrides?: {
+    mutantRunPlan?: MutantRunPlan;
+    checkResult?: CheckResult;
+    mutantRunResult?: MutantRunResult;
+    dryRunTestResult?: TestResult[];
+  }) {
     checker.check.resolves([[overrides?.mutantRunPlan ?? mutantRunPlan(), overrides?.checkResult ?? factory.checkResult()]]);
     testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
     completeDryRunResult.tests = overrides?.dryRunTestResult ?? [factory.testResult()];
@@ -439,6 +444,6 @@ describe(MutationTestExecutor.name, () => {
     expect(mutantTestPlannerMock.makePlan).called;
     expect(testRunner.mutantRun).calledWithExactly(plan1.runOptions);
     expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
-    expect(actualResults).deep.eq([plan1.mutant, plan2.mutant]);;
+    expect(actualResults).deep.eq([plan1.mutant, plan2.mutant]);
   });
 });

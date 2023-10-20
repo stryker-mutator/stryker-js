@@ -75,7 +75,7 @@ export class MutationTestExecutor {
     if (this.dryRunResult.tests.length === 0 && this.options.allowEmpty) {
       this.logDone();
       return [];
-  }
+    }
 
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
     const { earlyResult$, runMutant$ } = this.executeEarlyResult(from(mutantTestPlans));
