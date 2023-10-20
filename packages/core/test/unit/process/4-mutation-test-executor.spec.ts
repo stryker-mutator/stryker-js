@@ -423,4 +423,22 @@ describe(MutationTestExecutor.name, () => {
     expect(checker.check).not.called;
     expect(actualResults).empty;
   });
+
+  it('should not short circuit if no tests found and allowEmpty is disabled', async () => {
+    // Arrange
+    testInjector.options.allowEmpty = false;
+    arrangeScenario({ dryRunTestResult: [] });
+    const plan1 = mutantRunPlan({ id: '1' });
+    const plan2 = mutantRunPlan({ id: '2' });
+    mutantTestPlans.push(plan1, plan2);
+
+    // Act
+    const actualResults = await sut.execute();
+
+    // Assert
+    expect(mutantTestPlannerMock.makePlan).called;
+    expect(testRunner.mutantRun).calledWithExactly(plan1.runOptions);
+    expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
+    expect(actualResults).deep.eq([plan1.mutant, plan2.mutant]);;
+  });
 });
