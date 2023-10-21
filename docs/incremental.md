@@ -17,7 +17,7 @@ You enable incremental mode with the `--incremental` flag:
 npx stryker run --incremental
 ```
 
-_Setting `"incremental": true` in your stryker.conf.json file is also supported_
+_Setting `"incremental": true` in your stryker.config.json file is also supported_
 
 StrykerJS stores the previous result in a "reports/stryker-incremental.json" file (determined by the [--incrementalFile](./configuration.md#incrementalfile-string) option). The next time StrykerJS runs, it will read this JSON file and try to reuse as much of it as possible.
 

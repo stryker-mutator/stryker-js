@@ -23,7 +23,7 @@ As such, you should make sure you have the correct versions of its dependencies 
 
 ## Configuring
 
-You can configure the mocha test runner in the `stryker.conf.json` (or `stryker.conf.js`) file.
+You can configure the mocha test runner in the `stryker.config.json` (or `stryker.config.js`) file.
 
 ```json
 {
@@ -76,7 +76,7 @@ See https://mochajs.org/#-package-path.
 
 Default: `"test/mocha.opts"`
 
-Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.conf.js file will overrule options from the 'mocha.opts' file. Disable loading of an additional mocha.opts file with `false`.
+Specify a ['mocha.opts' file](https://mochajs.org/#mochaopts) to be loaded. Options specified directly in your stryker.config.js file will overrule options from the 'mocha.opts' file. Disable loading of an additional mocha.opts file with `false`.
 
 The only supported mocha options are used: `--ui`, `--require`, `--async-only`, `--timeout`, `--grep` (or their short form counterparts). Others are ignored by the @stryker-mutator/mocha-runner.
 

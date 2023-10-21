@@ -39,7 +39,7 @@ export class ProjectReader {
   constructor(
     private readonly fs: I<FileSystem>,
     private readonly log: Logger,
-    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force, htmlReporter, jsonReporter }: StrykerOptions
+    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force, htmlReporter, jsonReporter }: StrykerOptions,
   ) {
     this.mutatePatterns = mutate;
     this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, incrementalFile, htmlReporter.fileName, jsonReporter.fileName, ...ignorePatterns];
@@ -126,7 +126,7 @@ export class ProjectReader {
         },
       ];
     }
-    const matcher = new FileMatcher(mutatePattern);
+    const matcher = new FileMatcher(mutatePattern, /* allowHiddenFiles */ false);
     const inputFiles = new Map<string, FileDescription>();
     for (const fileName of fileNames) {
       if (matcher.matches(fileName)) {
@@ -185,7 +185,7 @@ export class ProjectReader {
             } else {
               return path.resolve(rootDir, relativeName, dirent.name);
             }
-          })
+          }),
       );
       return files.flat();
     };
@@ -207,7 +207,7 @@ export class ProjectReader {
           Object.entries(result.files).map(([fileName, file]) => [
             fileName,
             { ...file, mutants: file.mutants.map((mutant) => ({ ...mutant, location: reportLocationToStrykerLocation(mutant.location) })) },
-          ])
+          ]),
         ),
         testFiles:
           result.testFiles &&
@@ -218,7 +218,7 @@ export class ProjectReader {
                 ...file,
                 tests: file.tests.map((test) => ({ ...test, location: test.location && reportOpenEndLocationToStrykerLocation(test.location) })),
               },
-            ])
+            ]),
           ),
       };
     } catch (err: unknown) {

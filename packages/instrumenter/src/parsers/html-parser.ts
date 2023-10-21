@@ -1,5 +1,4 @@
 import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast.js';
-import type { ParseLocation } from 'angular-html-parser/lib/compiler/src/parse_util.js';
 
 import { HtmlAst, AstFormat, HtmlRootNode, ScriptFormat, AstByFormat, ScriptAst } from '../syntax/index.js';
 
@@ -50,7 +49,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
         super.visitElement(el, context);
       }
     })(),
-    rootNodes
+    rootNodes,
   );
   const scripts = await Promise.all(scriptsAsPromised);
   const root: HtmlRootNode = {
@@ -78,7 +77,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
   }
 }
 
-function toSourceLocation({ line, col }: Pick<ParseLocation, 'col' | 'line'>): { line: number; column: number } {
+function toSourceLocation({ line, col }: { line: number; col: number }): { line: number; column: number } {
   // Offset line with 1, since ngHtmlParser is 0-based
   return { line: line + 1, column: col };
 }

@@ -15,7 +15,10 @@ export const RESOURCES_DIR_NAME = 'strykerResources';
 export class JsonReporter implements Reporter {
   private mainPromise: Promise<void> | undefined;
 
-  constructor(private readonly options: StrykerOptions, private readonly log: Logger) {}
+  constructor(
+    private readonly options: StrykerOptions,
+    private readonly log: Logger,
+  ) {}
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 

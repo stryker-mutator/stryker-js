@@ -5,7 +5,11 @@ import { toPosixFileName } from '../tsconfig-helpers.js';
 // This class exist so we can have a two way dependency graph.
 // the two way dependency graph is used to search for mutants related to typescript errors
 export class TSFileNode {
-  constructor(public fileName: string, public parents: TSFileNode[], public children: TSFileNode[]) {}
+  constructor(
+    public fileName: string,
+    public parents: TSFileNode[],
+    public children: TSFileNode[],
+  ) {}
 
   public getAllParentReferencesIncludingSelf(allParentReferences: Set<TSFileNode> = new Set<TSFileNode>()): Set<TSFileNode> {
     allParentReferences.add(this);

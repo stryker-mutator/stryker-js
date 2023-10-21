@@ -46,6 +46,9 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   allowEmojis: false,
   logTests: true,
   maxTestsToLog: 3,
+  reportTests: true,
+  reportMutants: true,
+  reportScoreTable: true,
 }));
 
 export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<I<ConcurrencyTokenProvider>> & {
@@ -143,6 +146,7 @@ export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
     isFile: () => !isDirectory,
     isSocket: dummy,
     isSymbolicLink: dummy,
+    path: 'foo',
     name,
   };
 }

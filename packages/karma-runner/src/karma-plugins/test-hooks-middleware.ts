@@ -8,7 +8,7 @@ import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
 export const TEST_HOOKS_FILE_NAME = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
-  'test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0.js'
+  'test-hooks-middleware-21f23d35-a4c9-4b01-aeff-da9c99c3ffc0.js',
 );
 const TEST_HOOKS_FILE_BASE_NAME = path.basename(TEST_HOOKS_FILE_NAME);
 
@@ -106,8 +106,8 @@ export class TestHooksMiddleware {
       case undefined:
         throw new Error(
           `Could not configure coverageAnalysis "perTest". Your test framework is not supported by the \`@stryker-mutator/karma-runner\`. Supported test frameworks: ${SUPPORTED_FRAMEWORKS.join(
-            ', '
-          )}.`
+            ', ',
+          )}.`,
         );
     }
   }

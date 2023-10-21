@@ -156,7 +156,7 @@ describe('Running cucumber when steps are failing', () => {
 
     // Act
     const actual = await sut.dryRun(
-      factory.dryRunOptions({ disableBail: false })
+      factory.dryRunOptions({ disableBail: false }),
     );
 
     // Assert
@@ -182,7 +182,7 @@ describe('Running cucumber when steps are failing', () => {
 
     // Act
     const actual = await sut.dryRun(
-      factory.dryRunOptions({ disableBail: true })
+      factory.dryRunOptions({ disableBail: true }),
     );
 
     // Assert

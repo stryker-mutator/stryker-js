@@ -96,7 +96,7 @@ Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the 
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
-Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3 }`<br />
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true }`<br />
 
 Config file:
 
@@ -106,7 +106,10 @@ Config file:
     "allowColor": true,
     "allowEmojis": false,
     "logTests": true,
-    "maxTestsToLog": 3
+    "maxTestsToLog": 3,
+    "reportTests": true,
+    "reportMutants": true,
+    "reportScoreTable": true
   }
 }
 ```
@@ -199,11 +202,26 @@ _Note: Disable bail needs to be supported by the test runner plugin in order to 
 
 ### `disableTypeChecks` [`boolean` | `string`]
 
-Default: `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"`<br />
+
+<details>
+
+<summary>History</summary>
+
+| Version | Changes                     |
+| ------- | --------------------------- |
+| 7.0     | Default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` |
+
+</details>
+
+Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
+
+Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
+
+
 
 ### `dryRunOnly` [`boolean`]
 
@@ -283,9 +301,23 @@ When using the command line, the list can only contain a comma separated list of
 - `--ignorePatterns ".idea",".angular","/src/assets/*.png","/src/assets/*.jpg"`
 - `--ignorePatterns "/src/**/*.css"`
 - `--ignorePatterns` with `"!"` (= undo) for example:
-  - `--ignorePatterns "src/**","!str/app/important/*.ts"` (for details on usage of glob patterns like `!`, `*`, `**` see [above](#usage-of-globbing-expressions-on-options) )
+  - `--ignorePatterns "src/**","!str/app/important/*.ts"` (for details on usage of glob patterns like `!`, `*`, `**` see [above](#usage-of-globbing-expressions-on-options))
   - or in the config file: `"ignorePatterns": ["src/**","!str/app/important/*.ts"]` This would ignore everything in and below `src` - directory **except** the typescript files in `src/app/important` directory, but the `--mutate` might be the better option in that case, see [below](#mutate-string)
   - Keep in mind that you should **not accidentally ignore any other configuration** files your test runner might need for running the tests in the sandbox directory.
+
+### `ignorers` [`string[]`]
+
+_Since Stryker 7.3_
+
+Default: `[]`<br />
+Command line: _none_<br />
+Config file: `"ignorers": ["console.debug"]`<br />
+
+Specify which ignore-plugins to use. With an ignore-plugin you can ignore mutants inside common code patterns that you don't want to test for some reason. For example, you can use this to ignore all `console.debug()` statements from being mutated. 
+
+You only specify the name of the plugins here. The plugin's implementation must be loaded using a separate file, which must be listed in your [plugins array](#plugins-string).
+
+See [using an ignore-plugin](./disable-mutants.md#using-an-ignore-plugin) for more information.
 
 ### `ignoreStatic` [`boolean`]
 
@@ -333,10 +365,10 @@ Default: `false`<br />
 Command line: `--inPlace`<br />
 Config file: `"inPlace": true`<br />
 
-Determines whether or not Stryker should mutate your files in place.
+Determines whether Stryker should mutate your files in place.
 Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like "app-root-path" for example).
 
-When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also with `true` the [`ignorePatterns`](#ignorepatterns-string) has no effect any more.
+When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also, with `true` the [`ignorePatterns`](#ignorepatterns-string) has no effect anymore.
 
 When `false` (default) Stryker will work in the copy of your code inside the temp directory.
 
@@ -392,7 +424,7 @@ The default will try to guess your production code files based on sane defaults.
 - Include all js-like files inside the `src` or `lib` dir
   - Except files inside `__tests__` directories and file names ending with `test` or `spec`.
 
-If the defaults are not sufficient for you, for example in a angular project you might want to **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.
+If the defaults are not sufficient for you, for example in an angular project you might want to **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.
 
 It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Some examples:
 
@@ -440,22 +472,18 @@ Default: `['clear-text', 'progress', 'html']`<br />
 Command line: `--reporters clear-text,progress,dots,dashboard,html,json`<br />
 Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html", "json"]`
 
-With `reporters`, you can set the reporters for Stryker to use.
-These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
+Set the reporters for Stryker to use. These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
-The `html` reporter allows you to specify an output folder. This defaults to `reports/mutation/html`. The config for your config file is: `htmlReporter: { fileName: 'mypath/reports/stryker.html' }` (since Stryker v6).
+You can also add your custom reporter using a [reporter plugin](./plugins.md/#reporters)
 
-The `json` reporter allows specifying an output file name (may also contain a path). The config for your config file is: `jsonReporter: { fileName: 'mypath/reports/mutation.json' }`
+To configure specific reporters, see their configuration:
 
-The `clear-text` reporter supports three additional config options:
-
-- `allowColor` to use cyan and yellow in printing source file names and positions. This defaults to `true`, so specify as `clearTextReporter: { allowColor: false },` to disable if you must.
-- `logTests` to log the names of unit tests that were run to allow mutants. By default, only the first three are logged. The config for your config file is: `clearTextReporter: { logTests: true },`
-- `maxTestsToLog` to show more tests that were executed to kill a mutant when `logTests` is true. The config for your config file is: `clearTextReporter: { logTests: true, maxTestsToLog: 7 },`
-
-The `dashboard` reporter sends a report to https://dashboard.stryker-mutator.io, enabling you to add a mutation score badge to your readme, as well as hosting your html report on the dashboard. It uses the [dashboard.\*](#dashboard-dashboardoptions) configuration options.
+- [clearTextReporter](#cleartextreporter-cleartextoptions)
+- [dashboard](#dashboard-dashboardoptions)
+- [htmlReporter](#htmlreporter-object)
+- [jsonReporter](#jsonreporter-object)
 
 ### `symlinkNodeModules` [`boolean`]
 

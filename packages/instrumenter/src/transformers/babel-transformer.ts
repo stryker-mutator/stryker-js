@@ -1,9 +1,9 @@
 import babel, { type NodePath, type types } from '@babel/core';
 
-/* eslint-disable @typescript-eslint/no-duplicate-imports */
+/* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
-/* eslint-enable @typescript-eslint/no-duplicate-imports */
+/* eslint-enable import/no-duplicates */
 
 import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
@@ -12,6 +12,7 @@ import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
+import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
 
@@ -29,7 +30,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   mutantCollector,
   { options, mutateDescription, logger },
   mutators = allMutators,
-  mutantPlacers = allMutantPlacers
+  mutantPlacers = allMutantPlacers,
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
@@ -40,6 +41,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
 
   // Create the bookkeeper responsible for the // Stryker ... directives
   const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
+
+  // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
+  const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
 
   // Now start the actual traversing of the AST
   //
@@ -57,10 +61,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   traverse(file.ast, {
     enter(path) {
       directiveBookkeeper.processStrykerDirectives(path.node);
-
       if (shouldSkip(path)) {
         path.skip();
       } else {
+        ignorerBookkeeper.enterNode(path);
         addToPlacementMapIfPossible(path);
         if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
@@ -72,6 +76,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
     exit(path) {
       placeMutantsIfNeeded(path);
+      ignorerBookkeeper.leaveNode(path);
     },
   });
 
@@ -155,12 +160,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         yield {
           replacement,
           mutatorName: mutator.name,
-          ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? formatIgnoreReason(mutator.name),
+          ignoreReason:
+            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+            findExcludedMutatorIgnoreReason(mutator.name) ??
+            ignorerBookkeeper.currentIgnoreMessage,
         };
       }
     }
 
-    function formatIgnoreReason(mutatorName: string): string | undefined {
+    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
       if (options.excludedMutations.includes(mutatorName)) {
         return `Ignored because of excluded mutation "${mutatorName}"`;
       } else {

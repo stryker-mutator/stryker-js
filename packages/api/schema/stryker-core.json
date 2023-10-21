@@ -82,6 +82,21 @@
           "type": "integer",
           "minimum": 0,
           "default": 3
+        },
+        "reportTests": {
+          "description": "Indicates whether or not to log all tests.",
+          "type": "boolean",
+          "default": true
+        },
+        "reportMutants": {
+          "description": "Indicates whether or not to log all mutants.",
+          "type": "boolean",
+          "default": true
+        },
+        "reportScoreTable": {
+          "description": "Indicates whether or not to log score table.",
+          "type": "boolean",
+          "default": true
         }
       }
     },
@@ -516,6 +531,14 @@
       "description": "Allows stryker to exit without any errors in cases where no tests are found",
       "type": "boolean",
       "default": false
+    },
+    "ignorers": {
+      "description": "Specify which ignore-plugins to use. With an ignore-plugin you can ignore mutants inside common code patterns that you don't want to test for some reason. For example, you can use this to ignore all `console.debug()` statements from being mutated.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   }
 }

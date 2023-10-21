@@ -16,7 +16,10 @@ const { MutantStatus } = schema;
 
 export class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions) {
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+  ) {
     this.configConsoleColor();
   }
 
@@ -38,12 +41,19 @@ export class ClearTextReporter implements Reporter {
 
   public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
     this.writeLine();
-    this.reportAllTests(metrics);
-    this.reportAllMutants(metrics);
-    this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
+
+    if (this.options.clearTextReporter.reportTests) {
+      this.reportTests(metrics);
+    }
+    if (this.options.clearTextReporter.reportMutants) {
+      this.reportMutants(metrics);
+    }
+    if (this.options.clearTextReporter.reportScoreTable) {
+      this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
+    }
   }
 
-  private reportAllTests(metrics: MutationTestMetricsResult) {
+  private reportTests(metrics: MutationTestMetricsResult) {
     function indent(depth: number) {
       return new Array(depth).fill('  ').join('');
     }
@@ -66,7 +76,7 @@ export class ClearTextReporter implements Reporter {
               break;
             case TestStatus.Covering:
               this.writeLine(
-                `${indent(depth + 1)}${this.color('blueBright', '~')} ${formatTestLine(test, `covered ${test.coveredMutants?.length}`)}`
+                `${indent(depth + 1)}${this.color('blueBright', '~')} ${formatTestLine(test, `covered ${test.coveredMutants?.length}`)}`,
               );
               break;
             case TestStatus.NotCovering:
@@ -80,7 +90,7 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  private reportAllMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
+  private reportMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
     this.writeLine();
     let totalTests = 0;
 
@@ -138,7 +148,7 @@ export class ClearTextReporter implements Reporter {
       } else if (result.coveredByTests) {
         this.logExecutedTests(result.coveredByTests, logImplementation);
       }
-    } else if (result.status === MutantStatus.Killed && result.killedByTests && result.killedByTests.length) {
+    } else if (result.status === MutantStatus.Killed && result.killedByTests?.length) {
       logImplementation(`Killed by: ${result.killedByTests[0].name}`);
     } else if (result.status === MutantStatus.RuntimeError || result.status === MutantStatus.CompileError) {
       logImplementation(`Error message: ${result.statusReason}`);

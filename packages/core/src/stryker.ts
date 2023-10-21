@@ -18,7 +18,10 @@ export class Stryker {
    * @param cliOptions The cli options.
    * @param injectorFactory The injector factory, for testing purposes only
    */
-  constructor(private readonly cliOptions: PartialStrykerOptions, private readonly injectorFactory = createInjector) {}
+  constructor(
+    private readonly cliOptions: PartialStrykerOptions,
+    private readonly injectorFactory = createInjector,
+  ) {}
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
@@ -62,7 +65,7 @@ export class Stryker {
         log.info('You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/');
         if (!log.isTraceEnabled()) {
           log.info(
-            'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.'
+            'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.',
           );
         }
       }

@@ -150,7 +150,7 @@ describe('CustomInitializers', () => {
       // Assert
       sinon.assert.calledWithExactly(
         testInjector.logger.warn,
-        `Could not discover your local angular-cli version. Continuing without generating karma configuration. ${expectedError.stack}`
+        `Could not discover your local angular-cli version. Continuing without generating karma configuration. ${expectedError.stack}`,
       );
     });
   });

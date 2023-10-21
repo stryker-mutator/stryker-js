@@ -21,7 +21,7 @@ async function main() {
       './packages/mocha-runner/testResources/infinite-loop/infinite-loop.js':
         './packages/mocha-runner/testResources/infinite-loop-instrumented/infinite-loop.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
@@ -32,7 +32,7 @@ async function main() {
       './packages/jasmine-runner/testResources/infinite-loop/lib/infinite-loop.js':
         './packages/jasmine-runner/testResources/infinite-loop-instrumented/lib/infinite-loop.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument({
     './packages/karma-runner/testResources/sampleProject/src/Add.js': './packages/karma-runner/testResources/instrumented/src/Add.js',
@@ -46,7 +46,7 @@ async function main() {
       './packages/jest-runner/testResources/jasmine2-node/src/Circle.js':
         './packages/jest-runner/testResources/jasmine2-node-instrumented/src/Circle.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
@@ -57,25 +57,25 @@ async function main() {
       './packages/cucumber-runner/testResources/infinite-loop/src/infinite-loop.js':
         './packages/cucumber-runner/testResources/infinite-loop-instrumented/src/infinite-loop.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
       './packages/tap-runner/testResources/example/src/math.js': './packages/tap-runner/testResources/example-instrumented/src/math.js',
       './packages/tap-runner/testResources/example/src/formatter.js': './packages/tap-runner/testResources/example-instrumented/src/formatter.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     { './packages/vitest-runner/testResources/simple-project/math.orig.ts': './packages/vitest-runner/testResources/simple-project/math.ts' },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
       './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.orig.js':
         './packages/vitest-runner/testResources/infinite-loop/lib/infinite-loop.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
@@ -84,13 +84,13 @@ async function main() {
       './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.orig.js':
         './packages/vitest-runner/testResources/workspaces/packages/foo/src/math.js',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
   await instrument(
     {
       './packages/vitest-runner/testResources/async-failure/src/add.orig.ts': './packages/vitest-runner/testResources/async-failure/src/add.ts',
     },
-    '__stryker2__'
+    '__stryker2__',
   );
 }
 
@@ -109,8 +109,8 @@ async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMES
       toFileName,
       `// This file is generated with ${relative(process.cwd(), fileURLToPath(import.meta.url))}\n ${file.content.replace(
         new RegExp(INSTRUMENTER_CONSTANTS.NAMESPACE, 'g'),
-        globalNamespace
-      )}`
+        globalNamespace,
+      )}`,
     );
 
     console.log(`✅ ${toFileName}`);

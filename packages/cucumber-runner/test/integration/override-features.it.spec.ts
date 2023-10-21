@@ -35,7 +35,7 @@ describe('Running with a profile that has explicitly configured features', () =>
     const result = await sut.mutantRun(
       factory.mutantRunOptions({
         testFilter: [`${simpleMathFeature}:7`],
-      })
+      }),
     );
 
     assertions.expectSurvived(result);

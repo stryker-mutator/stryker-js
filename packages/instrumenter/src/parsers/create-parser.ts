@@ -9,7 +9,7 @@ import { parse as svelteParse } from './svelte-parser.js';
 import { ParserOptions } from './parser-options.js';
 
 export function createParser(
-  parserOptions: ParserOptions
+  parserOptions: ParserOptions,
 ): <T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T | undefined) => Promise<AstByFormat[T]> {
   const jsParse = createJSParser(parserOptions);
   return async function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {

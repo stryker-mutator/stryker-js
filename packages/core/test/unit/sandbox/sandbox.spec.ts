@@ -51,8 +51,8 @@ describe(Sandbox.name, () => {
         fileDescriptions[fileName] = { mutate: true };
         return fileDescriptions;
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      }, Object.create(null))
-    )
+      }, Object.create(null)),
+    ),
   ): Sandbox {
     return testInjector.injector
       .provideValue(coreTokens.project, project)
@@ -198,7 +198,7 @@ describe(Sandbox.name, () => {
       expect(calls[0]).calledWithExactly(path.resolve('node_modules'), path.join(SANDBOX_WORKING_DIR, 'node_modules'));
       expect(calls[1]).calledWithExactly(
         path.resolve('packages', 'a', 'node_modules'),
-        path.join(SANDBOX_WORKING_DIR, 'packages', 'a', 'node_modules')
+        path.join(SANDBOX_WORKING_DIR, 'packages', 'a', 'node_modules'),
       );
     });
 
@@ -220,8 +220,8 @@ describe(Sandbox.name, () => {
         normalizeWhitespaces(
           `Could not symlink "node_modules" in sandbox directory, it is already created in the sandbox.
         Please remove the node_modules from your sandbox files. Alternatively, set \`symlinkNodeModules\`
-        to \`false\` to disable this warning.`
-        )
+        to \`false\` to disable this warning.`,
+        ),
       );
     });
 
@@ -233,7 +233,7 @@ describe(Sandbox.name, () => {
       await sut.init();
       expect(testInjector.logger.warn).calledWithMatch(
         normalizeWhitespaces('Unexpected error while trying to symlink "basePath/node_modules" in sandbox directory.'),
-        error
+        error,
       );
     });
 

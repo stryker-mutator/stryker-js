@@ -76,7 +76,7 @@ export class MochaOptionsLoader {
         } else {
           this.log.debug(
             'No mocha opts file found, not loading additional mocha options (%s was not defined).',
-            propertyPath<MochaRunnerOptions>()('mochaOptions', 'opts')
+            propertyPath<MochaRunnerOptions>()('mochaOptions', 'opts'),
           );
           return {};
         }

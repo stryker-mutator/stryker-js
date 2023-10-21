@@ -1,5 +1,6 @@
-import { createRequire } from 'module';
 import fs from 'fs';
+
+import { fileURLToPath } from 'url';
 
 import semver from 'semver';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -53,19 +54,21 @@ type ISupportCodeLibrary = Exclude<
 
 cucumberTestRunnerFactory.inject = [commonTokens.injector];
 export function cucumberTestRunnerFactory(
-  injector: Injector<PluginContext>
+  injector: Injector<PluginContext>,
 ): CucumberTestRunner {
   return injector
     .provideValue(
       pluginTokens.globalNamespace,
-      INSTRUMENTER_CONSTANTS.NAMESPACE
+      INSTRUMENTER_CONSTANTS.NAMESPACE,
     )
     .injectClass(CucumberTestRunner);
 }
 
-const require = createRequire(import.meta.url);
 const StrykerFormatter = strykerFormatterModule.default;
-const strykerFormatterFile = require.resolve('./stryker-formatter.cjs');
+const strykerFormatterFile = new URL(
+  './stryker-formatter.cjs',
+  import.meta.url,
+);
 
 interface ResolvedConfiguration {
   /**
@@ -82,7 +85,7 @@ export class CucumberTestRunner implements TestRunner {
   public static inject = tokens(
     commonTokens.logger,
     commonTokens.options,
-    pluginTokens.globalNamespace
+    pluginTokens.globalNamespace,
   );
 
   private supportCodeLibrary?: ISupportCodeLibrary;
@@ -92,7 +95,7 @@ export class CucumberTestRunner implements TestRunner {
   constructor(
     private readonly logger: Logger,
     options: StrykerOptions,
-    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     guardForCucumberJSVersion();
     this.options = (options as CucumberRunnerWithStrykerOptions).cucumber;
@@ -121,18 +124,21 @@ export class CucumberTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = options.hitLimit;
     this.instrumenterContext.hitCount = options.hitLimit ? 0 : undefined;
     return toMutantRunResult(
-      await this.run(options.disableBail, options.testFilter)
+      await this.run(options.disableBail, options.testFilter),
     );
   }
 
   private async run(
     disableBail: boolean,
-    testFilter?: string[]
+    testFilter?: string[],
   ): Promise<DryRunResult> {
+    const href = semver.satisfies(cucumberVersion, '>=10')
+      ? strykerFormatterFile.href
+      : fileURLToPath(strykerFormatterFile.href);
     const { runConfiguration, useConfiguration }: ResolvedConfiguration =
       await loadConfiguration({
         provided: {
-          format: [strykerFormatterFile],
+          format: [href],
           retry: 0,
           parallel: 0,
           failFast: !disableBail,
@@ -145,7 +151,7 @@ export class CucumberTestRunner implements TestRunner {
     // Override the tests to run. Don't provide these above in provide, as that will merge all together
     config.sources.paths = this.determinePaths(
       testFilter,
-      config.sources.paths
+      config.sources.paths,
     );
 
     if (this.logger.isDebugEnabled()) {
@@ -153,8 +159,8 @@ export class CucumberTestRunner implements TestRunner {
         `Running cucumber with configuration: (${process.cwd()})\n${JSON.stringify(
           useConfiguration,
           null,
-          2
-        )}`
+          2,
+        )}`,
       );
     }
     if (this.supportCodeLibrary) {
@@ -170,7 +176,7 @@ export class CucumberTestRunner implements TestRunner {
     }
     const timeoutResult = determineHitLimitReached(
       this.instrumenterContext.hitCount,
-      this.instrumenterContext.hitLimit
+      this.instrumenterContext.hitLimit,
     );
     if (timeoutResult) {
       return timeoutResult;
@@ -191,7 +197,7 @@ export class CucumberTestRunner implements TestRunner {
 
   private determinePaths(
     testFilter: string[] | undefined,
-    defaultPaths: string[]
+    defaultPaths: string[],
   ): string[] {
     if (testFilter) {
       return Object.entries(
@@ -202,7 +208,7 @@ export class CucumberTestRunner implements TestRunner {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           lines.push(lineNumber);
           return acc;
-        }, {})
+        }, {}),
       ).map(([fileName, lines]) => [fileName, ...lines].join(':'));
     } else if (this.options.features) {
       return this.options.features;
@@ -216,13 +222,13 @@ function hasFailed(test: TestResult): test is FailedTestResult {
 }
 
 const pkg: { peerDependencies: { '@cucumber/cucumber': string } } = JSON.parse(
-  fs.readFileSync(new URL('../../package.json', import.meta.url), 'utf-8')
+  fs.readFileSync(new URL('../../package.json', import.meta.url), 'utf-8'),
 );
 
 export function guardForCucumberJSVersion(version = cucumberVersion): void {
   if (!semver.satisfies(version, pkg.peerDependencies['@cucumber/cucumber'])) {
     throw new Error(
-      `@stryker-mutator/cucumber-runner only supports @cucumber/cucumber@${pkg.peerDependencies['@cucumber/cucumber']}. Found v${version}`
+      `@stryker-mutator/cucumber-runner only supports @cucumber/cucumber@${pkg.peerDependencies['@cucumber/cucumber']}. Found v${version}`,
     );
   }
 }

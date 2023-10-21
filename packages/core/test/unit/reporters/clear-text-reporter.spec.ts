@@ -57,6 +57,32 @@ describe(ClearTextReporter.name, () => {
       ]);
     });
 
+    it('should not report the clear text table when reportScoreTable is not true', () => {
+      testInjector.options.clearTextReporter.reportScoreTable = false;
+
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: MutantStatus.Killed,
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      expect(stdoutStub).not.calledWithMatch(sinon.match('File      | % score | # killed | # timeout | # survived | # no cov | # errors |'));
+    });
+
     it('should show emojis in table with enableConsoleEmojis flag', () => {
       testInjector.options.clearTextReporter.allowEmojis = true;
 
@@ -246,6 +272,20 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithMatch(sinon.match('[Survived] Math'));
       });
 
+      it('should not report a Survived mutant to stdout when reportMutants is not true', async () => {
+        testInjector.options.clearTextReporter.reportMutants = false;
+        mutant.status = MutantStatus.Survived;
+        act(report);
+        expect(stdoutStub).not.calledWithMatch(sinon.match('[Survived] Math'));
+      });
+
+      it('should not report a NoCoverage mutant to stdout when reportMutants is not true', async () => {
+        testInjector.options.clearTextReporter.reportMutants = false;
+        mutant.status = MutantStatus.NoCoverage;
+        act(report);
+        expect(stdoutStub).not.calledWithMatch(sinon.match('[NoCoverage] Math'));
+      });
+
       it('should report a Timeout mutant to stdout', async () => {
         mutant.status = MutantStatus.Timeout;
         act(report);
@@ -351,6 +391,31 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithMatch(sinon.match('  ✓ foo should bar (killed 1)'));
         expect(stdoutStub).calledWithMatch(sinon.match('  ~ baz should qux (covered 1)'));
         expect(stdoutStub).calledWithMatch(sinon.match('  ✘ quux should corge (covered 0)'));
+      });
+
+      it('should not report a list of tests if file names are unknown when reportTests is not true', () => {
+        testInjector.options.clearTextReporter.reportTests = false;
+        const report = factory.mutationTestReportSchemaMutationTestResult({
+          files: {
+            'foo.js': factory.mutationTestReportSchemaFileResult({
+              mutants: [
+                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
+                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+              ],
+            }),
+          },
+          testFiles: {
+            '': factory.mutationTestReportSchemaTestFile({
+              tests: [
+                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' }),
+                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' }),
+                factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' }),
+              ],
+            }),
+          },
+        });
+        act(report);
+        expect(stdoutStub).not.calledWithMatch(sinon.match('All tests'));
       });
 
       it('should report in the correct colors', () => {

@@ -112,7 +112,7 @@ describe('LogConfigurator', () => {
     consoleLevel: LogLevel,
     fileLevel: LogLevel,
     defaultLevel: LogLevel,
-    allowConsoleColors: boolean
+    allowConsoleColors: boolean,
   ): log4js.Configuration {
     const coloredLayout: log4js.PatternLayout = {
       pattern: '%[%r (%z) %p %c%] %m',

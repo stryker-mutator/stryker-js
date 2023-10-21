@@ -9,5 +9,5 @@ export const resolveTestResource: typeof path.resolve = path.resolve.bind(
   '..' /* helpers */,
   '..' /* test */,
   '..' /* dist */,
-  'testResources'
+  'testResources',
 );

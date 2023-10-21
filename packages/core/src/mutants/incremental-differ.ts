@@ -45,9 +45,13 @@ export class IncrementalDiffer {
   private readonly mutateDescriptionByRelativeFileName: Map<string, MutateDescription>;
 
   public static inject = [commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions] as const;
-  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, fileDescriptions: FileDescriptions) {
+  constructor(
+    private readonly logger: Logger,
+    private readonly options: StrykerOptions,
+    fileDescriptions: FileDescriptions,
+  ) {
     this.mutateDescriptionByRelativeFileName = new Map(
-      Object.entries(fileDescriptions).map(([name, description]) => [toRelativeNormalizedFileName(name), description.mutate])
+      Object.entries(fileDescriptions).map(([name, description]) => [toRelativeNormalizedFileName(name), description.mutate]),
     );
   }
 
@@ -60,7 +64,7 @@ export class IncrementalDiffer {
     currentMutants: readonly Mutant[],
     testCoverage: I<TestCoverage>,
     incrementalReport: schema.MutationTestResult,
-    currentRelativeFiles: Map<string, string>
+    currentRelativeFiles: Map<string, string>,
   ): readonly Mutant[] {
     const { files, testFiles } = incrementalReport;
     const mutantStatisticsCollector = new DiffStatisticsCollector();
@@ -79,7 +83,7 @@ export class IncrementalDiffer {
       collectOldKilledAndCoverageMatrix();
     const oldTestKeys = new Set([...oldTestsById.values()].map(({ key }) => key));
     const newTestKeys = new Set(
-      [...testCoverage.testsById].map(([, test]) => testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName)))
+      [...testCoverage.testsById].map(([, test]) => testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName))),
     );
 
     // Create a dictionary to more easily get test information
@@ -180,7 +184,7 @@ export class IncrementalDiffer {
       this.logger.info(
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector.createTotalsReport()}` +
           testInfo +
-          `\n\tResult:\t\t${chalk.yellowBright(reusedMutantCount)} of ${currentMutants.length} mutant result(s) are reused.`
+          `\n\tResult:\t\t${chalk.yellowBright(reusedMutantCount)} of ${currentMutants.length} mutant result(s) are reused.`,
       );
     }
     if (this.logger.isDebugEnabled()) {
@@ -219,7 +223,7 @@ export class IncrementalDiffer {
           mutantStatisticsCollector.count(relativeFileName, 'removed', oldFile.mutants.length);
           // File has since been deleted, these mutants are not reused
           return [];
-        })
+        }),
       );
     }
 
@@ -290,7 +294,7 @@ export class IncrementalDiffer {
       oldMutant: schema.MutantResult,
       mutantKey: string,
       coveringTests: ReadonlySet<TestResult> | undefined,
-      oldKillingTests: Set<string> | undefined
+      oldKillingTests: Set<string> | undefined,
     ): boolean {
       if (!testCoverage.hasCoverage) {
         // This is the best we can do when the test runner didn't report coverage.
@@ -331,7 +335,7 @@ export class IncrementalDiffer {
     function diffTestCoverage(
       mutantId: string,
       oldCoveringTestKeys: Set<string> | undefined,
-      newCoveringTests: ReadonlySet<TestResult> | undefined
+      newCoveringTests: ReadonlySet<TestResult> | undefined,
     ): Map<string, DiffAction> {
       const result = new Map<string, DiffAction>();
       if (newCoveringTests) {
@@ -446,14 +450,14 @@ function deepClone(loc: Location): Location {
  */
 function mutantToIdentifyingKey(
   { mutatorName, replacement, location: { start, end } }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
-  relativeFileName: string
+  relativeFileName: string,
 ) {
   return `${relativeFileName}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
 }
 
 function testToIdentifyingKey(
   { name, location, startPosition }: Pick<schema.TestDefinition, 'location' | 'name'> & Pick<TestResult, 'startPosition'>,
-  relativeFileName: string | undefined
+  relativeFileName: string | undefined,
 ) {
   startPosition = startPosition ?? location?.start ?? { line: 0, column: 0 };
   return `${relativeFileName}@${startPosition.line}:${startPosition.column}\n${name}`;

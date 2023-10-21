@@ -5,7 +5,6 @@ import { expect } from 'chai';
 import { MetricsResult } from 'mutation-testing-metrics';
 
 import chalk from 'chalk';
-import flatMap from 'lodash.flatmap';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
 import { stringWidth } from '../../../src/utils/string-utils.js';
@@ -19,7 +18,7 @@ describe(ClearTextScoreTable.name, () => {
           new MetricsResult(
             'child1',
             [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99 }))],
-            factory.metrics({ mutationScore: 60 })
+            factory.metrics({ mutationScore: 60 }),
           ),
         ],
         factory.metrics({
@@ -30,7 +29,7 @@ describe(ClearTextScoreTable.name, () => {
           runtimeErrors: 4,
           survived: 3,
           timeout: 2,
-        })
+        }),
       );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
@@ -54,14 +53,14 @@ describe(ClearTextScoreTable.name, () => {
         [],
         factory.metrics({
           killed: 1000000000,
-        })
+        }),
       );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);
 
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
-      const killedColumnValues = flatMap(rows, (row) => row.split('|').filter((_, i) => i === 2));
+      const killedColumnValues = rows.flatMap((row) => row.split('|').filter((_, i) => i === 2));
       killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });

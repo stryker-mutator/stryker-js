@@ -1,11 +1,11 @@
 import { execaCommand } from 'execa';
-import { Injector, tokens, commonTokens, PluginContext } from '@stryker-mutator/api/plugin';
+import { Injector, tokens, commonTokens, PluginContext, PluginKind } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
-import { coreTokens } from '../di/index.js';
+import { coreTokens, PluginCreator } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 import { LoggingClientContext } from '../logging/index.js';
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
@@ -15,7 +15,6 @@ import { Timer } from '../utils/timer.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
-
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
@@ -32,14 +31,16 @@ export interface MutantInstrumenterContext extends PluginContext {
   [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
   [coreTokens.pluginModulePaths]: readonly string[];
   [coreTokens.fs]: I<FileSystem>;
+  [coreTokens.pluginCreator]: PluginCreator;
 }
 
 export class MutantInstrumenterExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.project, commonTokens.options);
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.project, commonTokens.options, coreTokens.pluginCreator);
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
-    private readonly options: StrykerOptions
+    private readonly options: StrykerOptions,
+    private readonly pluginCreator: PluginCreator,
   ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {
@@ -47,7 +48,8 @@ export class MutantInstrumenterExecutor {
     const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
-    const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), this.options.mutator);
+    const ignorers = this.options.ignorers.map((name) => this.pluginCreator.create(PluginKind.Ignore, name));
+    const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), { ignorers, ...this.options.mutator });
 
     // Preprocess the project
     const preprocess = this.injector.injectFunction(createPreprocessor);

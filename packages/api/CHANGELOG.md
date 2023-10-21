@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
+
+### Bug Fixes
+
+- **package:** don't publish test and tsbuildinfo. ([#4464](https://github.com/stryker-mutator/stryker-js/issues/4464)) ([ae3d2d8](https://github.com/stryker-mutator/stryker-js/commit/ae3d2d8f6bd92be73dface5cc7e08589872a4d60))
+
+### Features
+
+- **Ignorer plugin:** support ignorer plugins ([#4487](https://github.com/stryker-mutator/stryker-js/issues/4487)) ([4fe1000](https://github.com/stryker-mutator/stryker-js/commit/4fe10004881e8a46ca6ac32d957b069c70910686))
+- **plugin:** add support for `declareValuePlugin` ([#4490](https://github.com/stryker-mutator/stryker-js/issues/4490)) ([a3c35ca](https://github.com/stryker-mutator/stryker-js/commit/a3c35caa3b2dba7036e1ebf081c74fa594f88d03))
+
+# [7.2.0](https://github.com/stryker-mutator/stryker-js/compare/v7.1.1...v7.2.0) (2023-10-02)
+
+### Bug Fixes
+
+- **deps:** update mutation-testing-elements monorepo to v2.0.3 ([#4399](https://github.com/stryker-mutator/stryker-js/issues/4399)) ([2aa1f54](https://github.com/stryker-mutator/stryker-js/commit/2aa1f542f738512899ead0304200fc0c48250892))
+- **npm package:** ignore unused files ([#4405](https://github.com/stryker-mutator/stryker-js/issues/4405)) ([f14e789](https://github.com/stryker-mutator/stryker-js/commit/f14e78944652ceccd205ca1541465292e758c565))
+
+### Features
+
+- **reporter:** configurable clear-text reporter ([#4330](https://github.com/stryker-mutator/stryker-js/issues/4330)) ([74bcc74](https://github.com/stryker-mutator/stryker-js/commit/74bcc74b7fe4ea661c6b466e40f6b88dfdc8320a))
+
 ## [7.1.1](https://github.com/stryker-mutator/stryker-js/compare/v7.1.0...v7.1.1) (2023-07-15)
 
 ### Bug Fixes

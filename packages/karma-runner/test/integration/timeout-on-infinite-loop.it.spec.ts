@@ -52,14 +52,14 @@ describe('Infinite loop', () => {
         activeMutant: factory.mutant({ id: '24' }),
         testFilter: ['should be able to break out of an infinite loop with a hit counter'],
         hitLimit: 10,
-      })
+      }),
     );
 
     // Assert
     assertions.expectTimeout(result);
     expect(result.reason).contains('Hit limit reached');
     expect(new Date().valueOf() - startTime.valueOf(), 'Test took longer than 3 sec to complete, was the hit counter malfunctioning?').lt(
-      maxTestDurationMS
+      maxTestDurationMS,
     );
   });
 
@@ -69,7 +69,7 @@ describe('Infinite loop', () => {
         activeMutant: factory.mutant({ id: '24' }),
         testFilter: ['should be able to break out of an infinite loop with a hit counter'],
         hitLimit: 10,
-      })
+      }),
     );
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
@@ -77,7 +77,7 @@ describe('Infinite loop', () => {
         activeMutant: factory.mutant({ id: '27' }),
         testFilter: ['should be able to break out of an infinite loop with a hit counter'],
         hitLimit: 10,
-      })
+      }),
     );
 
     // Assert

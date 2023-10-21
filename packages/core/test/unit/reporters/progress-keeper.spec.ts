@@ -29,7 +29,7 @@ describe(ProgressKeeper.name, () => {
             factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
             factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
           ],
-        })
+        }),
       );
 
       // Act

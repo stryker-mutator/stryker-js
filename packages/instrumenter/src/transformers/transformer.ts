@@ -1,6 +1,5 @@
 import { MutateDescription } from '@stryker-mutator/api/core';
 import { I } from '@stryker-mutator/util';
-
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { Ast, AstByFormat, AstFormat } from '../syntax/index.js';
@@ -18,11 +17,7 @@ import { transformSvelte } from './svelte-transformer.js';
  * @param mutantCollector the mutant collector that will be used to register and administer mutants
  * @param transformerContext the options used during transforming
  */
-export function transform(
-  ast: Ast,
-  mutantCollector: I<MutantCollector>,
-  transformerContext: Pick<TransformerContext, 'logger' | 'mutateDescription' | 'options'>
-): void {
+export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transformerContext: Omit<TransformerContext, 'transform'>): void {
   const context: TransformerContext = {
     ...transformerContext,
     transform,

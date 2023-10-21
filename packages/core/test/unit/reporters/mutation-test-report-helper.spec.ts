@@ -301,7 +301,7 @@ describe(MutationTestReportHelper.name, () => {
         // Arrange
         testCoverage.addTest(
           factory.testResult({ id: 'spec1', name: 'dog should not eat dog' }),
-          factory.testResult({ id: 'spec2', name: 'dog should chase its own tail', startPosition: { line: 5, column: 0 } })
+          factory.testResult({ id: 'spec2', name: 'dog should chase its own tail', startPosition: { line: 5, column: 0 } }),
         );
 
         // Act
@@ -323,7 +323,7 @@ describe(MutationTestReportHelper.name, () => {
         // Arrange
         testCoverage.addTest(
           factory.testResult({ id: 'foo should bar', name: 'foo should bar' }),
-          factory.testResult({ id: 'baz should qux', name: 'baz should qux' })
+          factory.testResult({ id: 'baz should qux', name: 'baz should qux' }),
         );
         const killedMutantResult = factory.mutantResult({
           fileName: 'foo.js',
@@ -351,7 +351,7 @@ describe(MutationTestReportHelper.name, () => {
         testCoverage.addTest(
           factory.testResult({ id: 'spec1', fileName: 'foo.spec.js', name: '1' }),
           factory.testResult({ id: 'spec2', fileName: 'bar.spec.js', name: '2' }),
-          factory.testResult({ id: 'spec3', fileName: 'foo.spec.js', name: '3' })
+          factory.testResult({ id: 'spec3', fileName: 'foo.spec.js', name: '3' }),
         );
         fileSystemTestDouble.files['foo.spec.js'] = '';
         fileSystemTestDouble.files['bar.spec.js'] = '';
@@ -428,7 +428,7 @@ describe(MutationTestReportHelper.name, () => {
 
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.debug).calledWith(
-          "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior."
+          "No breaking threshold configured. Won't fail the build no matter how low your mutation score is. Set `thresholds.break` to change this behavior.",
         );
       });
 
@@ -475,7 +475,7 @@ describe(MutationTestReportHelper.name, () => {
             replacement: '{}',
             mutatorName: 'fooMutator',
           }),
-          factory.failedCheckResult()
+          factory.failedCheckResult(),
         );
 
         // Assert
@@ -496,7 +496,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportCheckFailed(
           factory.mutantTestCoverage({ fileName: 'add.js' }),
-          factory.failedCheckResult({ status: CheckStatus.CompileError, reason: 'cannot call foo of undefined' })
+          factory.failedCheckResult({ status: CheckStatus.CompileError, reason: 'cannot call foo of undefined' }),
         );
 
         // Assert
@@ -569,7 +569,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js' }),
-          factory.killedMutantRunResult({ killedBy: ['1'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' })
+          factory.killedMutantRunResult({ killedBy: ['1'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' }),
         );
 
         // Assert
@@ -590,7 +590,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js' }),
-          factory.killedMutantRunResult({ killedBy: ['1', '2'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' })
+          factory.killedMutantRunResult({ killedBy: ['1', '2'], nrOfTests: 42, failureMessage: 'foo should have been bar at line 1' }),
         );
 
         // Assert
@@ -610,7 +610,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js' }),
-          factory.errorMutantRunResult({ errorMessage: 'Cannot call foo of null' })
+          factory.errorMutantRunResult({ errorMessage: 'Cannot call foo of null' }),
         );
 
         // Assert
@@ -643,7 +643,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js', coveredBy: ['1'] }),
-          factory.survivedMutantRunResult({ nrOfTests: 4 })
+          factory.survivedMutantRunResult({ nrOfTests: 4 }),
         );
 
         // Assert
@@ -663,7 +663,7 @@ describe(MutationTestReportHelper.name, () => {
         // Act
         const actual = sut.reportMutantRunResult(
           factory.mutantTestCoverage({ fileName: 'add.js', coveredBy: undefined }),
-          factory.survivedMutantRunResult()
+          factory.survivedMutantRunResult(),
         );
 
         // Assert

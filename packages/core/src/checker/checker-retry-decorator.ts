@@ -8,7 +8,10 @@ import { ResourceDecorator } from '../concurrent/index.js';
 import { CheckerResource } from './checker-resource.js';
 
 export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
-  constructor(producer: () => CheckerResource, private readonly log: Logger) {
+  constructor(
+    producer: () => CheckerResource,
+    private readonly log: Logger,
+  ) {
     super(producer);
   }
 

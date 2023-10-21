@@ -20,7 +20,11 @@ type AngularCli = (options: { testing?: boolean; cliArgs: string[] }) => Promise
 export class AngularProjectStarter implements ProjectStarter {
   public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.requireResolve);
 
-  constructor(private readonly logger: Logger, private readonly options: StrykerOptions, private readonly requireFromCwd: typeof requireResolve) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly options: StrykerOptions,
+    private readonly requireFromCwd: typeof requireResolve,
+  ) {}
 
   public async start(): Promise<StartedProject> {
     this.verifyAngularCliVersion();

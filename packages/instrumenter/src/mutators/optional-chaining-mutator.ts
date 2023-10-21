@@ -25,14 +25,14 @@ export const optionalChainingMutator: NodeMutator = {
         t.cloneNode(path.node.object, true),
         t.cloneNode(path.node.property, true),
         path.node.computed,
-        /*optional*/ false
+        /*optional*/ false,
       );
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
       yield t.optionalCallExpression(
         t.cloneNode(path.node.callee, true),
         path.node.arguments.map((arg) => t.cloneNode(arg, true)),
-        /*optional*/ false
+        /*optional*/ false,
       );
     }
   },

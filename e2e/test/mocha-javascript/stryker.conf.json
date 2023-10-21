@@ -3,6 +3,7 @@
   "testRunner": "mocha",
   "concurrency": 2,
   "coverageAnalysis": "perTest",
+  "fileLogLevel": "trace",
   "reporters": ["json", "clear-text", "html", "event-recorder"],
   "plugins": [
     "@stryker-mutator/mocha-runner"

@@ -23,7 +23,7 @@ Recommended other packages:
 
 ### Configuration
 
-The `stryker init` command also creates a `stryker.conf.json` or `stryker.conf.js` configuration in your repository
+The `stryker init` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository
 like the one below which is a good starting point for Angular projects.
 You may have to change some paths or config settings like the selected browsers.
 We highly suggest using a headless browser when testing using Stryker.
@@ -52,7 +52,7 @@ Consider adding the Stryker TypeScript checker to increase mutation testing perf
 
 1. Install `@stryker-mutator/typescript-checker` as a development dependency:
    `npm install --save-dev @stryker-mutator/typescript-checker`
-1. Configure the TypeScript checker in `stryker.conf.json`:
+1. Configure the TypeScript checker in `stryker.config.json`:
    ```json
    {
      "checkers": ["typescript"],

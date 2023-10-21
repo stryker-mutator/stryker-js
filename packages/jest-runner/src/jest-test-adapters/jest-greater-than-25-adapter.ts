@@ -22,7 +22,7 @@ export class JestGreaterThan25TestAdapter implements JestTestAdapter {
         testNamePattern,
         testLocationInResults,
       },
-      [jestConfig.rootDir ?? process.cwd()]
+      [jestConfig.rootDir ?? process.cwd()],
     );
     return result;
   }

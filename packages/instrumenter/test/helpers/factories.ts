@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import { NodePath, types } from '@babel/core';
 
 import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, SvelteNode } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
@@ -7,8 +7,6 @@ import { InstrumenterOptions } from '../../src/index.js';
 import { TransformerOptions } from '../../src/transformers/index.js';
 
 import { parseTS, parseJS, findNodePath } from './syntax-test-helpers.js';
-
-const { types } = babel;
 
 export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
   return {
@@ -20,6 +18,7 @@ export function createParserOptions(overrides?: Partial<ParserOptions>): ParserO
 export function createTransformerOptions(overrides?: Partial<TransformerOptions>): TransformerOptions {
   return {
     excludedMutations: [],
+    ignorers: [],
     ...overrides,
   };
 }
@@ -53,6 +52,10 @@ export function createJSAst(overrides?: Partial<JSAst>): JSAst {
     root: parseJS(rawContent),
     ...overrides,
   };
+}
+
+export function createIdentifierNodePath(name: string): NodePath<types.Identifier> {
+  return findNodePath<types.Identifier>(parseJS(name), (t) => t.isIdentifier());
 }
 
 export function createTSAst(overrides?: Partial<TSAst>): TSAst {
@@ -103,6 +106,26 @@ export function createMutable(overrides?: Partial<Mutable>): Mutable {
   return {
     mutatorName: 'fooMutator',
     replacement: findNodePath(parseJS('bar'), (t) => t.isIdentifier()).node,
+    ...overrides,
+  };
+}
+
+export function createSourceLocation(overrides?: Partial<babel.types.SourceLocation>): babel.types.SourceLocation {
+  return {
+    start: createSourcePosition({ line: 1, column: 0 }),
+    end: createSourcePosition({ line: 1, column: 1 }),
+    filename: 'foo.js',
+    identifierName: undefined,
+    ...overrides,
+  };
+}
+
+export type SourcePosition = babel.types.SourceLocation['start'];
+export function createSourcePosition(overrides?: Partial<SourcePosition>): SourcePosition {
+  return {
+    line: 0,
+    column: 0,
+    index: 0,
     ...overrides,
   };
 }

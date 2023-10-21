@@ -63,7 +63,7 @@ describe(DisableTypeChecksPreprocessor.name, () => {
     await sut.preprocess(project);
     expect(testInjector.logger.warn).calledWithExactly(
       'Unable to disable type checking for file "src/app.ts". Shouldn\'t type checking be disabled for this file? Consider configuring a more restrictive "disableTypeChecks" settings (or turn it completely off with `false`)',
-      expectedError
+      expectedError,
     );
     expect(testInjector.logger.warn).calledWithExactly('(disable "warnings.preprocessorErrors" to ignore this warning');
     expect(await project.files.get(fileName)!.readContent()).eq('input');

@@ -25,7 +25,7 @@ import { helpers } from './helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 export function createJasmineTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE
+  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
 ): {
   (injector: Injector<PluginContext>): JasmineTestRunner;
   inject: ['$injector'];
@@ -71,7 +71,7 @@ export class JasmineTestRunner implements TestRunner {
     coverageAnalysis: CoverageAnalysis | undefined,
     disableBail: boolean,
     activeMutantId: string | undefined,
-    mutantActivation: MutantActivation | undefined
+    mutantActivation: MutantActivation | undefined,
   ): Promise<DryRunResult> {
     try {
       if (!this.jasmine) {

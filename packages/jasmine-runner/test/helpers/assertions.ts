@@ -6,7 +6,7 @@ type TimelessTestResult = Omit<FailedTestResult, 'timeSpentMs'> | Omit<SkippedTe
 export function expectTestResultsToEqual(actualTestResults: TestResult[], expectedResults: readonly TimelessTestResult[]): void {
   expect(actualTestResults).lengthOf(
     expectedResults.length,
-    `Expected ${JSON.stringify(actualTestResults, null, 2)} to equal ${JSON.stringify(expectedResults, null, 2)}`
+    `Expected ${JSON.stringify(actualTestResults, null, 2)} to equal ${JSON.stringify(expectedResults, null, 2)}`,
   );
   expectedResults.forEach((expectedResult) => {
     const actualTestResult = actualTestResults.find((testResult) => testResult.name === expectedResult.name);
@@ -17,7 +17,7 @@ export function expectTestResultsToEqual(actualTestResults: TestResult[], expect
       expect.fail(
         undefined,
         undefined,
-        `Could not find test result "${expectedResult.name}" in ${JSON.stringify(actualTestResults.map((_) => _.name))}`
+        `Could not find test result "${expectedResult.name}" in ${JSON.stringify(actualTestResults.map((_) => _.name))}`,
       );
     }
   });

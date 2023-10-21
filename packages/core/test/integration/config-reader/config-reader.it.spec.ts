@@ -94,6 +94,16 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
+      it('should use the stryker.config.js file in cwd', async () => {
+        process.chdir(resolveTestResource('config'));
+        sut = createSut();
+
+        const result = await sut.readConfig({});
+
+        expect(result.suffix).to.be.eq('config');
+        expect(testInjector.logger.warn).not.called;
+      });
+
       it('should use the default config if no stryker.conf file was found', async () => {
         process.chdir(resolveTestResource('no-config'));
 
@@ -136,7 +146,7 @@ describe(ConfigReader.name, () => {
 
       it('should throw an error', async () => {
         await expect(sut.readConfig({ configFile: 'testResources/config-reader/syntax-error.conf.js' })).rejectedWith(
-          'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier'
+          'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier',
         );
       });
     });

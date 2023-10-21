@@ -6,7 +6,10 @@ import { coreTokens } from '../di/index.js';
 
 export class MetaSchemaBuilder {
   public static inject = tokens(coreTokens.validationSchema, commonTokens.logger);
-  constructor(private readonly schema: JSONSchema7, private readonly log: Logger) {}
+  constructor(
+    private readonly schema: JSONSchema7,
+    private readonly log: Logger,
+  ) {}
 
   public buildMetaSchema(pluginSchemaContributions: Array<Record<string, unknown>>): JSONSchema7 {
     this.log.debug('Contributing %s schemas from plugins to options validation.', pluginSchemaContributions.length);

@@ -56,7 +56,7 @@ export class DryRunExecutor {
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
     coreTokens.sandbox,
-    coreTokens.reporter
+    coreTokens.reporter,
   );
 
   constructor(
@@ -66,7 +66,7 @@ export class DryRunExecutor {
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
     private readonly sandbox: I<Sandbox>,
-    private readonly reporter: StrictReporter
+    private readonly reporter: StrictReporter,
   ) {}
 
   public async execute(): Promise<Injector<MutationTestContext>> {
@@ -123,7 +123,7 @@ export class DryRunExecutor {
     const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) => this.sandbox.sandboxFileFor(name));
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
-      `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`
+      `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`,
     );
     this.log.debug(`Using timeout of ${dryRunTimeout} ms.`);
     const result = await testRunner.dryRun({
@@ -174,7 +174,7 @@ export class DryRunExecutor {
       tests.length,
       this.timer.humanReadableElapsed(INITIAL_TEST_RUN_MARKER),
       timing.net,
-      timing.overhead
+      timing.overhead,
     );
   }
 

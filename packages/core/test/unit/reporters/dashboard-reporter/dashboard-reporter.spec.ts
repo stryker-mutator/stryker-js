@@ -115,7 +115,7 @@ describe(DashboardReporter.name, () => {
     // Assert
     expect(dashboardClientMock.updateReport).not.called;
     expect(testInjector.logger.info).calledWithMatch(
-      'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server'
+      'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server',
     );
   });
 

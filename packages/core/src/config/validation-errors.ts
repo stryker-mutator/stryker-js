@@ -69,7 +69,7 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
   // For example when setting `logLevel: 4`, we don't want to see the error specifying that logLevel should be a string,
   // if the other error already specified that it should be one of the enum values.
   const nonShadowingTypeErrors = typeErrors.filter(
-    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.instancePath === typeError.instancePath)
+    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.instancePath === typeError.instancePath),
   );
   const typeErrorsMerged = mergeTypeErrorsByPath(nonShadowingTypeErrors);
   return [...nonTypeErrors, ...typeErrorsMerged];
@@ -87,7 +87,7 @@ function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObj
   return singleErrors.filter((error) => {
     if (metaErrors.some((metaError) => error.instancePath.startsWith(metaError.instancePath))) {
       return !singleErrors.some(
-        (otherError) => otherError.instancePath.startsWith(error.instancePath) && otherError.instancePath.length > error.instancePath.length
+        (otherError) => otherError.instancePath.startsWith(error.instancePath) && otherError.instancePath.length > error.instancePath.length,
       );
     } else {
       return true;
@@ -134,7 +134,7 @@ function describeError(error: ErrorObject): string {
       return `${errorPrefix} has the wrong type. It should be a ${expectedTypeDescription}, but was a ${jsonSchemaType(error.data)}.`;
     case 'enum':
       return `${errorPrefix} should be one of the allowed values (${error.params.allowedValues.map(stringify).join(', ')}), but was ${stringify(
-        error.data
+        error.data,
       )}.`;
     case 'minimum':
     case 'maximum':

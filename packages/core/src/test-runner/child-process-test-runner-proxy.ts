@@ -28,7 +28,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
     loggingContext: LoggingClientContext,
     pluginModulePaths: readonly string[],
     private readonly log: Logger,
-    idGenerator: IdGenerator
+    idGenerator: IdGenerator,
   ) {
     this.worker = ChildProcessProxy.create(
       new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
@@ -39,7 +39,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
       sandboxWorkingDirectory,
       ChildProcessTestRunnerWorker,
       options.testRunnerNodeArgs,
-      idGenerator
+      idGenerator,
     );
   }
 
@@ -67,13 +67,13 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
           // Handle error by logging it. We still want to kill the child process.
           this.log.warn(
             'An unexpected error occurred during test runner disposal. This might be worth looking into. Stryker will ignore this error.',
-            error
+            error,
           );
         }
       }),
 
       // ... but don't wait forever on that
-      MAX_WAIT_FOR_DISPOSE
+      MAX_WAIT_FOR_DISPOSE,
     );
 
     // After that, dispose the child process itself

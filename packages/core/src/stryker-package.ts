@@ -7,7 +7,7 @@ const pkg = deepFreeze(
   JSON.parse(fs.readFileSync(fileURLToPath(new URL('../../package.json', import.meta.url)), 'utf-8')) as {
     version: string;
     engines: { node: string };
-  }
+  },
 );
 
 export const strykerVersion = pkg.version;

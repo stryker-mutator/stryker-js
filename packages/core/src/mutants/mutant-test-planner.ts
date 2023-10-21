@@ -38,7 +38,7 @@ export class MutantTestPlanner {
     coreTokens.project,
     coreTokens.timeOverheadMS,
     commonTokens.options,
-    commonTokens.logger
+    commonTokens.logger,
   );
   private readonly timeSpentAllTests: number;
 
@@ -50,7 +50,7 @@ export class MutantTestPlanner {
     private readonly project: I<Project>,
     private readonly timeOverheadMS: number,
     private readonly options: StrykerOptions,
-    private readonly logger: Logger
+    private readonly logger: Logger,
   ) {
     this.timeSpentAllTests = calculateTotalTime(this.testCoverage.testsById.values());
   }
@@ -110,7 +110,7 @@ export class MutantTestPlanner {
       statusReason,
       coveredBy,
       killedBy,
-    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[]; killedBy?: string[] }
+    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[]; killedBy?: string[] },
   ): MutantEarlyResultPlan {
     return {
       plan: PlanKind.EarlyResult,
@@ -132,7 +132,7 @@ export class MutantTestPlanner {
       testFilter,
       isStatic,
       coveredBy,
-    }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined }
+    }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined },
   ): MutantRunPlan {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
     const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
@@ -189,13 +189,13 @@ export class MutantTestPlanner {
         const percentage = (perunage: number) => Math.round(perunage * 100);
         this.logger.warn(
           `Detected ${staticRunPlans.length} static mutants (${percentage(
-            staticRunPlans.length / runPlans.length
+            staticRunPlans.length / runPlans.length,
           )}% of total) that are estimated to take ${percentage(
-            relativeTimeForStaticMutants
+            relativeTimeForStaticMutants,
           )}% of the time running the tests!\n  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. \n  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants.\n  (disable "${optionsPath(
             'warnings',
-            'slow'
-          )}" to ignore this warning)`
+            'slow',
+          )}" to ignore this warning)`,
         );
       }
     }
@@ -209,7 +209,7 @@ export class MutantTestPlanner {
         currentMutants,
         this.testCoverage.testsById.values(),
         Object.keys(incrementalReport.files),
-        Object.keys(incrementalReport.testFiles ?? {})
+        Object.keys(incrementalReport.testFiles ?? {}),
       );
       const diffedMutants = this.incrementalDiffer.diff(currentMutants, this.testCoverage, incrementalReport, currentFiles);
 
@@ -226,7 +226,7 @@ export class MutantTestPlanner {
         thingsWithFileNamesOrFileNames
           .flatMap((container) => [...container].map((thing) => (typeof thing === 'string' ? thing : thing.fileName)))
           .filter(notEmpty)
-          .map((fileName) => path.resolve(fileName))
+          .map((fileName) => path.resolve(fileName)),
       ),
     ];
     const result = await Promise.all(
@@ -237,7 +237,7 @@ export class MutantTestPlanner {
         } else {
           return undefined;
         }
-      })
+      }),
     );
 
     return new Map(result.filter(notEmpty));

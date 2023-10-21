@@ -7,7 +7,7 @@ import { childProcessAsPromised } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
-import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../config/index.js';
+import { SUPPORTED_CONFIG_FILE_NAMES, DEFAULT_CONFIG_FILE_NAMES } from '../config/index.js';
 
 import { PromptOption } from './prompt-option.js';
 import { CustomInitializerConfiguration } from './custom-initializers/custom-initializer.js';
@@ -16,13 +16,14 @@ import { initializerTokens } from './index.js';
 
 export class StrykerConfigWriter {
   public static inject = tokens(commonTokens.logger, initializerTokens.out);
-  constructor(private readonly log: Logger, private readonly out: typeof console.log) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly out: typeof console.log,
+  ) {}
 
   public async guardForExistingConfig(): Promise<void> {
-    for (const file of SUPPORTED_CONFIG_FILE_BASE_NAMES) {
-      for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
-        await this.checkIfConfigFileExists(`${file}${ext}`);
-      }
+    for (const fileName of SUPPORTED_CONFIG_FILE_NAMES) {
+      await this.checkIfConfigFileExists(fileName);
     }
   }
 
@@ -46,7 +47,7 @@ export class StrykerConfigWriter {
     requiredPlugins: string[],
     additionalPiecesOfConfig: Array<Partial<StrykerOptions>>,
     homepageOfSelectedTestRunner: string,
-    exportAsJson: boolean
+    exportAsJson: boolean,
   ): Promise<string> {
     const configObject: Partial<StrykerOptions> & { _comment: string } = {
       _comment:
@@ -90,7 +91,7 @@ export class StrykerConfigWriter {
   }
 
   private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
-    const configFileName = `${SUPPORTED_CONFIG_FILE_BASE_NAMES[0]}.mjs`;
+    const configFileName = DEFAULT_CONFIG_FILE_NAMES.JAVASCRIPT;
     this.out(`Writing & formatting ${configFileName} ...`);
     const rawConfig = this.stringify(commentedConfig);
 
@@ -103,13 +104,13 @@ export class StrykerConfigWriter {
       await childProcessAsPromised.exec(`npx prettier --write ${configFileName}`);
     } catch (error) {
       this.log.debug('Prettier exited with error', error);
-      this.out('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
+      this.out(`Unable to format ${configFileName} file for you. This is not a big problem, but it might look a bit messy 🙈.`);
     }
     return configFileName;
   }
 
   private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
-    const configFileName = `${SUPPORTED_CONFIG_FILE_BASE_NAMES[0]}.json`;
+    const configFileName = DEFAULT_CONFIG_FILE_NAMES.JSON;
     this.out(`Writing & formatting ${configFileName}...`);
     const typedConfig = {
       $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',

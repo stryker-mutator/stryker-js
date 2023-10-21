@@ -77,7 +77,7 @@ describe('angularStarter', () => {
     };
     setAngularVersion();
     return expect(sut.start()).rejectedWith(
-      "Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are --project"
+      "Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are --project",
     );
   });
 

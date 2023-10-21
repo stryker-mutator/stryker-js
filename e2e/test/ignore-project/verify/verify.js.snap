@@ -3,11 +3,11 @@
 exports[`After running stryker on jest-react project should report expected scores 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 28,
+  "ignored": 32,
   "killed": 8,
-  "mutationScore": 53.333333333333336,
+  "mutationScore": 50,
   "mutationScoreBasedOnCoveredCode": 100,
-  "noCoverage": 7,
+  "noCoverage": 8,
   "pending": 0,
   "runtimeErrors": 0,
   "survived": 0,
@@ -15,8 +15,8 @@ Object {
   "totalCovered": 8,
   "totalDetected": 8,
   "totalInvalid": 0,
-  "totalMutants": 43,
-  "totalUndetected": 7,
-  "totalValid": 15,
+  "totalMutants": 48,
+  "totalUndetected": 8,
+  "totalValid": 16,
 }
 `;

@@ -1,3 +1,3 @@
 module.exports = {
-  default: '--require features/support/setup.js --require features/**/*.ts --publish-quiet'
+  default: '--require features/**/*.ts --publish-quiet'
 }

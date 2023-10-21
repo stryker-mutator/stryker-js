@@ -33,7 +33,7 @@ describe(CucumberTestRunner.name, () => {
     });
     it('should throw for v7', () => {
       expect(() => guardForCucumberJSVersion('7.99.99')).throws(
-        '@stryker-mutator/cucumber-runner only supports @cucumber/cucumber@>=8.0.0. Found v7.99.99'
+        '@stryker-mutator/cucumber-runner only supports @cucumber/cucumber@>=8.0.0. Found v7.99.99',
       );
     });
   });

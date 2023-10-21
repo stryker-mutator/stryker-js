@@ -63,7 +63,7 @@ describe(jestTestAdapterFactory.name, () => {
 
     expect(act).to.throw(
       Error,
-      'You need Jest version >= 24.0.0 to use the @stryker-mutator/jest-runner with "coverageAnalysis": "all", you\'re currently using version 23.0.0. Please upgrade your jest version, or set "coverageAnalysis": "off".'
+      'You need Jest version >= 24.0.0 to use the @stryker-mutator/jest-runner with "coverageAnalysis": "all", you\'re currently using version 23.0.0. Please upgrade your jest version, or set "coverageAnalysis": "off".',
     );
   });
 
@@ -80,7 +80,7 @@ describe(jestTestAdapterFactory.name, () => {
     expect(act).to.not.throw();
     expect(testInjector.logger.warn).calledWith(
       '[DEPRECATED] Support for Jest version < 24 is deprecated and will be removed in the next major version of Stryker, please upgrade your jest version (your current version is %s).',
-      '23.1.2'
+      '23.1.2',
     );
   });
 });

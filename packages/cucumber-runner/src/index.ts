@@ -11,14 +11,14 @@ export const strykerValidationSchema: typeof import('../schema/cucumber-runner-o
   JSON.parse(
     fs.readFileSync(
       new URL('../schema/cucumber-runner-options.json', import.meta.url),
-      'utf-8'
-    )
+      'utf-8',
+    ),
   );
 
 export const strykerPlugins = [
   declareFactoryPlugin(
     PluginKind.TestRunner,
     'cucumber',
-    cucumberTestRunnerFactory
+    cucumberTestRunnerFactory,
   ),
 ];

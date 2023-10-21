@@ -116,7 +116,7 @@ describe(KarmaTestRunner.name, () => {
       const onGoingInit = sut.init();
       exitTask.resolve(1);
       await expect(onGoingInit).rejectedWith(
-        "Karma exited prematurely with exit code 1. Please run stryker with `--logLevel trace` to see the karma logging and figure out what's wrong."
+        "Karma exited prematurely with exit code 1. Please run stryker with `--logLevel trace` to see the karma logging and figure out what's wrong.",
       );
     });
 

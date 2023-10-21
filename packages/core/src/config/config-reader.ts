@@ -12,7 +12,7 @@ import { ConfigError } from '../errors.js';
 import { fileUtils } from '../utils/file-utils.js';
 
 import { OptionsValidator } from './options-validator.js';
-import { SUPPORTED_CONFIG_FILE_BASE_NAMES, SUPPORTED_CONFIG_FILE_EXTENSIONS } from './config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_NAMES } from './config-file-formats.js';
 
 export const CONFIG_SYNTAX_HELP = `
 Example of how a config file should look:
@@ -35,7 +35,10 @@ See https://stryker-mutator.io/docs/stryker-js/config-file for more information.
 
 export class ConfigReader {
   public static inject = tokens(commonTokens.logger, coreTokens.optionsValidator);
-  constructor(private readonly log: Logger, private readonly validator: I<OptionsValidator>) {}
+  constructor(
+    private readonly log: Logger,
+    private readonly validator: I<OptionsValidator>,
+  ) {}
 
   public async readConfig(cliOptions: PartialStrykerOptions): Promise<StrykerOptions> {
     const options = await this.loadOptionsFromConfigFile(cliOptions);
@@ -73,11 +76,9 @@ export class ConfigReader {
         throw new ConfigReaderError('File does not exist!', configFileName);
       }
     }
-    for (const file of SUPPORTED_CONFIG_FILE_BASE_NAMES) {
-      for (const ext of SUPPORTED_CONFIG_FILE_EXTENSIONS) {
-        if (await fileUtils.exists(`${file}${ext}`)) {
-          return `${file}${ext}`;
-        }
+    for (const fileName of SUPPORTED_CONFIG_FILE_NAMES) {
+      if (await fileUtils.exists(fileName)) {
+        return fileName;
       }
     }
     return undefined;
@@ -100,7 +101,7 @@ export class ConfigReader {
       if (typeof maybeOptions !== 'object') {
         if (typeof maybeOptions === 'function') {
           this.log.fatal(
-            `Invalid config file. Exporting a function is no longer supported. Please export an object with your configuration instead, or use a "stryker.conf.json" file.\n${CONFIG_SYNTAX_HELP}`
+            `Invalid config file. Exporting a function is no longer supported. Please export an object with your configuration instead, or use a "stryker.conf.json" file.\n${CONFIG_SYNTAX_HELP}`,
           );
         } else {
           this.log.fatal(`Invalid config file. It must export an object, found a "${typeof maybeOptions}"!\n${CONFIG_SYNTAX_HELP}`);

@@ -75,7 +75,7 @@ describe(TSConfigPreprocessor.name, () => {
 
     // Assert
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
-      serializeTSConfig({ references: [{ path: '../../../model/tsconfig.json' }] })
+      serializeTSConfig({ references: [{ path: '../../../model/tsconfig.json' }] }),
     );
   });
 
@@ -89,7 +89,7 @@ describe(TSConfigPreprocessor.name, () => {
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
       serializeTSConfig({
         include: ['./**/*', '../../../../../node_modules/self-service-server/lib/main/shared/@types/**/*.d.ts'],
-      })
+      }),
     );
   });
 
@@ -102,7 +102,7 @@ describe(TSConfigPreprocessor.name, () => {
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
       serializeTSConfig({
         exclude: ['./**/*', '../../../foo.ts'],
-      })
+      }),
     );
   });
 
@@ -116,7 +116,7 @@ describe(TSConfigPreprocessor.name, () => {
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
       serializeTSConfig({
         files: ['foo/bar.ts', '../../../global.d.ts'],
-      })
+      }),
     );
   });
 
@@ -140,7 +140,7 @@ describe(TSConfigPreprocessor.name, () => {
     const project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
     await sut.preprocess(project);
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
-      serializeTSConfig({ extends: '../../../tsconfig.settings.json', compilerOptions: { target: 'es5' } })
+      serializeTSConfig({ extends: '../../../tsconfig.settings.json', compilerOptions: { target: 'es5' } }),
     );
   });
 
@@ -156,13 +156,13 @@ describe(TSConfigPreprocessor.name, () => {
 
     // Assert
     expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
-      serializeTSConfig({ extends: './tsconfig.settings.json', references: [{ path: './src' }] })
+      serializeTSConfig({ extends: './tsconfig.settings.json', references: [{ path: './src' }] }),
     );
     expect(await project.files.get(path.resolve('tsconfig.settings.json'))!.readContent()).eq(
-      serializeTSConfig({ extends: '../../../../tsconfig.root-settings.json' })
+      serializeTSConfig({ extends: '../../../../tsconfig.root-settings.json' }),
     );
     expect(await project.files.get(path.resolve('src/tsconfig.json'))!.readContent()).eq(
-      serializeTSConfig({ references: [{ path: '../../../../model/tsconfig.json' }] })
+      serializeTSConfig({ references: [{ path: '../../../../model/tsconfig.json' }] }),
     );
   });
 
@@ -192,16 +192,16 @@ describe(TSConfigPreprocessor.name, () => {
       serializeTSConfig({
         extends: '../../../../tsconfig.settings.json',
         references: [{ path: 'src' }, { path: 'test/tsconfig.test.json' }],
-      })
+      }),
     );
     expect(await project.files.get(path.resolve('src/tsconfig.json'))!.readContent()).eq(
       serializeTSConfig({
         extends: '../../../../../tsconfig.settings.json',
         references: [{ path: '../../../../model/tsconfig.json' }],
-      })
+      }),
     );
     expect(await project.files.get(path.resolve('test/tsconfig.test.json'))!.readContent()).eq(
-      serializeTSConfig({ extends: '../tsconfig.root.json', references: [{ path: '../src' }] })
+      serializeTSConfig({ extends: '../tsconfig.root.json', references: [{ path: '../src' }] }),
     );
   });
 });

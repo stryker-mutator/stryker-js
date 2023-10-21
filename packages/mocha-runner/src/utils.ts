@@ -4,7 +4,7 @@ import fs from 'fs';
 import { MochaOptions } from '../src-generated/mocha-runner-options.js';
 
 const mochaSchema: typeof import('../schema/mocha-runner-options.json') = JSON.parse(
-  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8')
+  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8'),
 );
 
 export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {

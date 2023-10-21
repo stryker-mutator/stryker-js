@@ -36,7 +36,7 @@ export class MochaTestRunner implements TestRunner {
     commonTokens.options,
     pluginTokens.loader,
     pluginTokens.mochaAdapter,
-    pluginTokens.globalNamespace
+    pluginTokens.globalNamespace,
   );
   private loadedEnv = false;
   constructor(
@@ -44,7 +44,7 @@ export class MochaTestRunner implements TestRunner {
     private readonly options: StrykerOptions,
     private readonly loader: I<MochaOptionsLoader>,
     private readonly mochaAdapter: I<MochaAdapter>,
-    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     StrykerMochaReporter.log = log;
     this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
@@ -64,7 +64,7 @@ export class MochaTestRunner implements TestRunner {
     if (mochaOptions.require) {
       if (mochaOptions.require.includes('esm')) {
         throw new Error(
-          'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.'
+          'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.',
         );
       }
       rootHooks = await this.mochaAdapter.handleRequires(mochaOptions.require);

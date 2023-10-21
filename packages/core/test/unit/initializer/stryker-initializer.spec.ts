@@ -17,7 +17,7 @@ import { StrykerInitializer } from '../../../src/initializer/stryker-initializer
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
-import { SUPPORTED_CONFIG_FILE_EXTENSIONS } from '../../../src/config/config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/config-file-formats.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 
@@ -132,7 +132,9 @@ describe(StrykerInitializer.name, () => {
       resolvePresetConfig();
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
-      expect(out).calledWith('Done configuring stryker. Please review "stryker.conf.json", you might need to configure your test runner correctly.');
+      expect(out).calledWith(
+        'Done configuring stryker. Please review "stryker.config.json", you might need to configure your test runner correctly.',
+      );
       expect(out).calledWith("Let's kill some mutants with this command: `stryker run`");
     });
 
@@ -158,7 +160,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
-      expect(childExec).calledWith('npx prettier --write stryker.conf.mjs');
+      expect(childExec).calledWith('npx prettier --write stryker.config.mjs');
     });
 
     it('should handle errors when formatting fails', async () => {
@@ -176,7 +178,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       // Assert
-      expect(out).calledWith('Unable to format stryker.conf.js file for you. This is not a big problem, but it might look a bit messy 🙈.');
+      expect(out).calledWith('Unable to format stryker.config.mjs file for you. This is not a big problem, but it might look a bit messy 🙈.');
       expect(testInjector.logger.debug).calledWith('Prettier exited with error', expectedError);
     });
 
@@ -275,7 +277,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
       const [fileName, content] = fsWriteFile.getCall(0).args;
-      expect(fileName).eq('stryker.conf.json');
+      expect(fileName).eq('stryker.config.json');
       const normalizedContent = normalizeWhitespaces(content as string);
       expect(normalizedContent).contains('"testRunner": "awesome"');
       expect(normalizedContent).contains('"packageManager": "npm"');
@@ -291,8 +293,8 @@ describe(StrykerInitializer.name, () => {
         configType: 'JSON',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"someOtherSetting": "enabled"'));
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"files": []'));
+      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"someOtherSetting": "enabled"'));
+      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"files": []'));
     });
 
     it('should annotate the config file with the docs url', async () => {
@@ -304,10 +306,10 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
+        'stryker.config.json',
         sinon.match(
-          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information."'
-        )
+          '"_comment": "This config was generated using \'stryker init\'. Please take a look at: https://stryker-mutator.io/docs/stryker-js/configuration/ for more information."',
+        ),
       );
     });
 
@@ -326,8 +328,8 @@ describe(StrykerInitializer.name, () => {
       expect(promptBuildCommand.length === 1);
       expect(promptBuildCommand[0].args[0].when).to.be.false;
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
-        sinon.match((val) => !val.includes('"buildCommand": '))
+        'stryker.config.json',
+        sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
 
@@ -341,8 +343,8 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
-        sinon.match((val) => !val.includes('"buildCommand": '))
+        'stryker.config.json',
+        sinon.match((val) => !val.includes('"buildCommand": ')),
       );
     });
 
@@ -355,7 +357,7 @@ describe(StrykerInitializer.name, () => {
         buildCommand: 'npm run build',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"buildCommand": "npm run build"'));
+      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"buildCommand": "npm run build"'));
     });
 
     it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
@@ -366,7 +368,7 @@ describe(StrykerInitializer.name, () => {
         configType: 'JSON',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"coverageAnalysis": "off"'));
+      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"coverageAnalysis": "off"'));
     });
 
     it('should reject with that error', () => {
@@ -406,8 +408,8 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."')
+        'stryker.config.json',
+        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."'),
       );
     });
 
@@ -421,8 +423,8 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
-        'stryker.conf.json',
-        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."')
+        'stryker.config.json',
+        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."'),
       );
     });
   });
@@ -441,9 +443,9 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection."
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.",
       );
-      expect(fs.promises.writeFile).calledWith('stryker.conf.json', sinon.match('"testRunner": "command"'));
+      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"testRunner": "command"'));
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {
@@ -460,7 +462,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection."
+        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.",
       );
       expect(fs.promises.writeFile).called;
     });
@@ -479,28 +481,19 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.warn).calledWith(
-        'Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually'
+        'Could not fetch additional initialization config for dependency stryker-awesome-runner. You might need to configure it manually',
       );
       expect(fs.promises.writeFile).called;
     });
   });
 
-  SUPPORTED_CONFIG_FILE_EXTENSIONS.forEach((ext) => {
-    it(`should log an error and quit when \`stryker.conf${ext}\` file already exists`, async () => {
-      existsStub.withArgs(`stryker.conf${ext}`).resolves(true);
+  SUPPORTED_CONFIG_FILE_NAMES.forEach((fileName) => {
+    it(`should log an error and quit when \`${fileName}\` file already exists`, async () => {
+      existsStub.withArgs(fileName).resolves(true);
 
       await expect(sut.initialize()).to.be.rejected;
       expect(testInjector.logger.error).calledWith(
-        `Stryker config file "stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
-      );
-    });
-
-    it(`should log an error and quit when \`.stryker.conf${ext}\` file already exists`, async () => {
-      existsStub.withArgs(`.stryker.conf${ext}`).resolves(true);
-
-      await expect(sut.initialize()).to.be.rejected;
-      expect(testInjector.logger.error).calledWith(
-        `Stryker config file ".stryker.conf${ext}" already exists in the current directory. Please remove it and try again.`
+        `Stryker config file "${fileName}" already exists in the current directory. Please remove it and try again.`,
       );
     });
   });
@@ -562,7 +555,7 @@ describe(StrykerInitializer.name, () => {
         reporters: ['dimension', 'mars'],
         testRunner: 'awesome',
       },
-      answerOverrides
+      answerOverrides,
     );
     inquirerPrompt.resolves(answers);
   }
@@ -573,7 +566,7 @@ describe(StrykerInitializer.name, () => {
 
   function expectStrykerConfWritten(expectedRawConfig: string) {
     const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
-    expect(fileName).eq('stryker.conf.mjs');
+    expect(fileName).eq('stryker.config.mjs');
     expect(normalizeWhitespaces(actualConfig as string)).eq(normalizeWhitespaces(expectedRawConfig));
   }
 });

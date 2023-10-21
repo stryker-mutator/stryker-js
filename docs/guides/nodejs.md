@@ -22,7 +22,7 @@ If you manage your code's compilation through a `tsconfig.json` file, this guide
 
 ## Configuration
 
-Please follow this configuration guide. Place the configuration examples inside your `stryker.conf.json` file.
+Please follow this configuration guide. Place the configuration examples inside your `stryker.config.json` file.
 
 ### Build command
 

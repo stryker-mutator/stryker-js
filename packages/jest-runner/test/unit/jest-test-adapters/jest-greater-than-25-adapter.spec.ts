@@ -51,7 +51,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
         silent: true,
         testNamePattern: undefined,
       }),
-      [jestConfig.rootDir]
+      [jestConfig.rootDir],
     );
   });
 
@@ -68,7 +68,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
         silent: true,
         testNamePattern: 'Foo should bar',
       }),
-      [jestConfig.rootDir]
+      [jestConfig.rootDir],
     );
   });
 
@@ -79,7 +79,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
       sinon.match({
         testLocationInResults: true,
       }),
-      [jestConfig.rootDir]
+      [jestConfig.rootDir],
     );
   });
 

@@ -1,3 +1,7 @@
+import { Ignorer } from '@stryker-mutator/api/ignore';
+
 import { MutatorOptions } from '../mutators/index.js';
 
-export type TransformerOptions = MutatorOptions;
+export interface TransformerOptions extends MutatorOptions {
+  ignorers: Ignorer[];
+}

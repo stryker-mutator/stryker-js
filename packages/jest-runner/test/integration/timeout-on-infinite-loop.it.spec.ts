@@ -59,7 +59,7 @@ describe('Infinite Loop', () => {
             activeMutant: factory.mutant({ id: '24' }),
             testFilter: ['should be able to break out of an infinite loop with a hit counter'],
             hitLimit: 10,
-          })
+          }),
         );
         const secondResult = await sut.mutantRun(
           factory.mutantRunOptions({
@@ -67,7 +67,7 @@ describe('Infinite Loop', () => {
             activeMutant: factory.mutant({ id: '27' }),
             testFilter: ['should be able to break out of an infinite loop with a hit counter'],
             hitLimit: 10,
-          })
+          }),
         );
         assertions.expectTimeout(firstResult);
         assertions.expectKilled(secondResult);

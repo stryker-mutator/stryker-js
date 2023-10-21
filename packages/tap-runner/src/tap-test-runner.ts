@@ -63,7 +63,7 @@ export class TapTestRunner implements TestRunner {
   constructor(
     options: StrykerOptions,
     private readonly log: Logger,
-    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__'
+    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     this.options = options as TapRunnerOptionsWithStrykerOptions;
   }
@@ -82,7 +82,7 @@ export class TapTestRunner implements TestRunner {
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     return toMutantRunResult(
-      await this.run({ disableBail: options.disableBail, activeMutant: options.activeMutant.id, hitLimit: options.hitLimit }, options.testFilter)
+      await this.run({ disableBail: options.disableBail, activeMutant: options.activeMutant.id, hitLimit: options.hitLimit }, options.testFilter),
     );
   }
 

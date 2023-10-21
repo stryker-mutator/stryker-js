@@ -3,6 +3,7 @@
   "description": "e2e test for different ignored mutants",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "test:unit": "mocha",
     "test": "stryker run",

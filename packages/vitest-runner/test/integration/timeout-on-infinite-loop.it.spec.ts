@@ -44,7 +44,7 @@ describe('Infinite loop', () => {
         testFilter: ['infinite-loop.spec.js'],
         hitLimit: 10,
         mutantActivation: 'static',
-      })
+      }),
     );
     const secondResult = await sut.mutantRun(
       factory.mutantRunOptions({
@@ -53,7 +53,7 @@ describe('Infinite loop', () => {
         testFilter: ['infinite-loop.spec.js'],
         hitLimit: 10,
         mutantActivation: 'static',
-      })
+      }),
     );
 
     // Assert

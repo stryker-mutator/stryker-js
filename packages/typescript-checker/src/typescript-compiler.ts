@@ -48,7 +48,11 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
   private readonly _nodes = new Map<string, TSFileNode>();
   private lastMutants: Mutant[] = [];
 
-  constructor(private readonly log: Logger, private readonly options: StrykerOptions, private readonly fs: HybridFileSystem) {
+  constructor(
+    private readonly log: Logger,
+    private readonly options: StrykerOptions,
+    private readonly fs: HybridFileSystem,
+  ) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
   }
@@ -123,7 +127,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
                 program
                   .getAllDependencies(file)
                   .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
-                  .flatMap((importFile) => this.resolveTSInputFile(importFile))
+                  .flatMap((importFile) => this.resolveTSInputFile(importFile)),
               ),
             });
           });
@@ -146,7 +150,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       },
       (summary) => {
         summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE && this.currentTask.resolve();
-      }
+      },
     );
 
     const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
@@ -184,7 +188,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         const node = this._nodes.get(fileName);
         if (node == null) {
           throw new Error(
-            `Node for file '${fileName}' could not be found. This should not happen. This shouldn't happen, please open an issue on the stryker-js github`
+            `Node for file '${fileName}' could not be found. This should not happen. This shouldn't happen, please open an issue on the stryker-js github`,
           );
         }
 
@@ -259,8 +263,8 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     if (!ts.sys.fileExists(this.tsconfigFile)) {
       throw new Error(
         `The tsconfig file does not exist at: "${path.resolve(
-          this.tsconfigFile
-        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>()('tsconfigFile')}"`
+          this.tsconfigFile,
+        )}". Please configure the tsconfig file in your stryker.conf file using "${propertyPath<StrykerOptions>()('tsconfigFile')}"`,
       );
     }
   }
