@@ -233,7 +233,7 @@ export function placeHeaderIfNeeded(
   mutantCollector: I<MutantCollector>,
   originFileName: string,
   options: MutatorOptions,
-  root: babel.types.File
+  root: babel.types.File,
 ): void {
   if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
     // Be sure to leave comments like `// @flow` in.

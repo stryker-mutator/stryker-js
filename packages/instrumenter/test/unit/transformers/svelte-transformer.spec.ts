@@ -50,7 +50,7 @@ describe('svelte-transformer', () => {
     const mutantCollector = new MutantCollector();
     const context = transformerContextStub();
 
-    context.options = { excludedMutations: [], noHeader: true };
+    context.options = { excludedMutations: [], ignorers: [], noHeader: true };
 
     const jsAstsTransformed = jsAstsOriginal.map((script) => transformBabel(script, mutantCollector, context));
 
