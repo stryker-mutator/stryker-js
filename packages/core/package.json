@@ -75,7 +75,7 @@
     "chalk": "~5.3.0",
     "commander": "~11.1.0",
     "diff-match-patch": "1.0.5",
-    "emoji-regex": "~10.2.1",
+    "emoji-regex": "~10.3.0",
     "execa": "~8.0.0",
     "file-url": "~4.0.0",
     "get-port": "~7.0.0",
