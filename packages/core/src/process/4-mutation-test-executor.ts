@@ -2,7 +2,7 @@ import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, buffe
 import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, MutantStatus, Mutant, StrykerOptions, PlanKind, MutantTestPlan, MutantRunPlan } from '@stryker-mutator/api/core';
-import { TestRunner } from '@stryker-mutator/api/test-runner';
+import { TestRunner, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 import { CheckStatus } from '@stryker-mutator/api/check';
@@ -22,6 +22,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.timeOverheadMS]: number;
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
+  [coreTokens.dryRunResult]: I<CompleteDryRunResult>;
 }
 
 const CHECK_BUFFER_MS = 10_000;
@@ -48,6 +49,7 @@ export class MutationTestExecutor {
     commonTokens.options,
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
+    coreTokens.dryRunResult,
   );
 
   constructor(
@@ -61,11 +63,17 @@ export class MutationTestExecutor {
     private readonly options: StrykerOptions,
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
+    private readonly dryRunResult: CompleteDryRunResult,
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
     if (this.options.dryRunOnly) {
       this.log.info('The dry-run has been completed successfully. No mutations have been executed.');
+      return [];
+    }
+
+    if (this.dryRunResult.tests.length === 0 && this.options.allowEmpty) {
+      this.logDone();
       return [];
     }
 
