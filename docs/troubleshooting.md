@@ -350,11 +350,11 @@ To keep using `module-alias`, there are 2 workarounds:
 
 1. Mark the `node_modules` folder as part of your sandbox:
 
-  ```diff
-  {
-  +  "ignorePatterns": ["!node_modules"],
-  +  "symlinkNodeModules": false
-  }
-  ```
+```diff
+{
++  "ignorePatterns": ["!node_modules"],
++  "symlinkNodeModules": false
+}
+```
 
 2. Let StrykerJS mutate your files in place: `npx stryker run --inPlace`
