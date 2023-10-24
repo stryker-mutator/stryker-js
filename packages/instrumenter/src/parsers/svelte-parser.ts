@@ -1,7 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import type { BaseNode, Position, Program, SourceLocation } from 'estree';
-
-import type { Ast as InternalSvelteAst } from '../../../../node_modules/svelte/types/compiler/interfaces.js';
+import type { BaseNode, Node, Position, Program, SourceLocation } from 'estree';
 
 import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset } from '../syntax/index.js';
 
@@ -9,7 +6,10 @@ import { ParserContext } from './parser-context.js';
 
 const header = '<script></script>\n\n';
 
+type InternalSvelteAst = ReturnType<typeof import('svelte/compiler').parse>;
+
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
+  // eslint-disable-next-line import/no-extraneous-dependencies
   const { parse: svelteParse } = await import('svelte/compiler');
   let ast = svelteParse(text);
 
@@ -66,9 +66,10 @@ async function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, 
     additionalScriptsAsPromised.push(sliceScript(text, fileName, svelteAst.module.content, context));
   }
 
+  // eslint-disable-next-line import/no-extraneous-dependencies
   const { walk } = await import('svelte/compiler');
 
-  walk(svelteAst.html, {
+  walk(svelteAst.html as Node, {
     enter(node: any) {
       if (node.name === 'script' && node.children[0]) {
         const sourceText = node.children[0].data as string;
