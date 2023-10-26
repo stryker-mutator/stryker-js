@@ -24,7 +24,7 @@ describe('svelte-printer', () => {
     const expectedOutput = /<script>.*const name = "test";.*<\/script><h1>hello!<\/h1>/s;
     const ast = createSvelteAst({
       rawContent: input,
-      root: { mainScript: { ast: script, range: { start: script.root.start, end: script.root.end! } }, additionalScripts: [] },
+      root: { mainScript: { ast: script, range: { start: script.root.start, end: script.root.end! }, expression: false }, additionalScripts: [] },
     });
 
     const output = print(ast, contextStub);

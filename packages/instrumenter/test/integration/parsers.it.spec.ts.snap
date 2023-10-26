@@ -161,8 +161,8 @@ export default {
       Object {
         "format": "js",
         "offset": Object {
+          "column": 187,
           "line": 7,
-          "position": 187,
         },
         "originFileName": "App.vue",
         "rawContent": "
@@ -6247,8 +6247,8 @@ Object {
       Object {
         "format": "js",
         "offset": Object {
+          "column": 197,
           "line": 8,
-          "position": 197,
         },
         "originFileName": "index.html",
         "rawContent": "
@@ -6387,8 +6387,8 @@ Object {
       Object {
         "format": "ts",
         "offset": Object {
+          "column": 278,
           "line": 12,
-          "position": 278,
         },
         "originFileName": "index.html",
         "rawContent": "

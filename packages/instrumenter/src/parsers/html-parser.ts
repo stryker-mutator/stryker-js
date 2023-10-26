@@ -68,7 +68,7 @@ async function ngHtmlParser(text: string, fileName: string, parserContext: Parse
       return {
         ...ast,
         offset: {
-          position: offset.offset,
+          column: offset.offset,
           line: offset.line,
         },
       };

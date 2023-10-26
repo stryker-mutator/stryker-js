@@ -75,6 +75,7 @@ describe('svelte-parser', async () => {
           end: 28 + script.length,
           start: 28,
         },
+        expression: false,
       };
       expect(parsed.root.mainScript).deep.eq(expected);
     });
@@ -140,6 +141,7 @@ describe('svelte-parser', async () => {
           end: 43 + script.length,
           start: 43,
         },
+        expression: false,
       };
       expect(parsed.root.additionalScripts[0]).deep.eq(expected);
     });
