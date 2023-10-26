@@ -67,7 +67,7 @@ describe(Mutant.name, () => {
       // Arrange
       const lt = findNodePath<babel.types.BinaryExpression>(parseJS('if(a < b) { console.log("hello world"); }'), (p) => p.isBinaryExpression()).node;
       const lte = types.binaryExpression('<=', lt.left, lt.right);
-      const mutant = new Mutant('1', 'bar.js', lt, { replacement: lte, mutatorName: 'barMutator' }, { position: 42, line: 4 });
+      const mutant = new Mutant('1', 'bar.js', lt, { replacement: lte, mutatorName: 'barMutator' }, { column: 42, line: 4 });
 
       // Act
       const actual = mutant.toApiMutant();

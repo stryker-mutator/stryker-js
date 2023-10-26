@@ -2,7 +2,6 @@ import babel, { type types } from '@babel/core';
 import generate from '@babel/generator';
 import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
 
-import { Offset } from './syntax/index.js';
 import { deepCloneNode, eqNode } from './util/index.js';
 
 const { traverse } = babel;
@@ -26,7 +25,7 @@ export class Mutant implements Mutable {
     public readonly fileName: string,
     public readonly original: types.Node,
     specs: Mutable,
-    public readonly offset: Offset = { position: 0, line: 0 },
+    public readonly offset: Position = { column: 0, line: 0 },
   ) {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
@@ -77,7 +76,7 @@ export class Mutant implements Mutable {
   }
 }
 
-function toApiLocation(source: types.SourceLocation, offset: Offset): Location {
+function toApiLocation(source: types.SourceLocation, offset: Position): Location {
   const loc = {
     start: toPosition(source.start, offset),
     end: toPosition(source.end, offset),
@@ -85,7 +84,7 @@ function toApiLocation(source: types.SourceLocation, offset: Offset): Location {
   return loc;
 }
 
-function toPosition(source: Position, offset: Offset): Position {
+function toPosition(source: Position, offset: Position): Position {
   return {
     column: source.column, // + (source.line === 1 ? offset.position : 0), TODO: delete comment if the math is unnecessary
     line: source.line + offset.line - 1, // Stryker works 0-based internally

@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import babel from '@babel/core';
 
+import { Position } from '@stryker-mutator/api/core';
+
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { createMutant } from '../../helpers/factories.js';
-import { Offset } from '../../../src/syntax/index.js';
 
 const { types } = babel;
 
@@ -55,7 +56,7 @@ describe(MutantCollector.name, () => {
       const fileName = 'file.js';
       const original = types.identifier('foo');
       const replacement = types.identifier('bar');
-      const expectedOffset: Offset = { line: 4, position: 42 };
+      const expectedOffset: Position = { line: 4, column: 42 };
 
       sut.collect(fileName, original, { replacement, mutatorName: 'mutatorName' }, expectedOffset);
 

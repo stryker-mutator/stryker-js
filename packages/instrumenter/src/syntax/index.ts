@@ -1,4 +1,5 @@
 import type { types as babelTypes } from '@babel/core';
+import { Position } from '@stryker-mutator/api/core';
 
 export enum AstFormat {
   Html = 'html',
@@ -23,12 +24,7 @@ export interface BaseAst {
   originFileName: string;
   rawContent: string;
   root: Ast['root'];
-  offset?: Offset;
-}
-
-export interface Offset {
-  position: number;
-  line: number;
+  offset?: Position;
 }
 
 /**
@@ -85,7 +81,10 @@ export interface SvelteRootNode {
   additionalScripts: SvelteNode[];
 }
 
-// Represents a svelte script or binding expression
+/**
+ * Represents a svelte script or binding expression
+ * We've taken a shortcut here, instead of representing the entire AST, we're only representing the script tags and expression bindings.
+ */
 export interface SvelteNode {
   ast: ScriptAst;
   range: Range;
