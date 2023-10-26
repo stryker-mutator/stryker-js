@@ -1,24 +1,27 @@
-import type { BaseNode, Node, Position, Program, SourceLocation } from 'estree';
+import type { BaseNode, Node, Position, Program } from 'estree';
+import type { TemplateNode, Text } from 'svelte/types/compiler/interfaces';
 
-import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode, Offset } from '../syntax/index.js';
+import { AstFormat, SvelteAst, SvelteRootNode, SvelteNode } from '../syntax/index.js';
+import { PositionConverter } from '../util/index.js';
 
 import { ParserContext } from './parser-context.js';
 
 const header = '<script></script>\n\n';
 
-type InternalSvelteAst = ReturnType<typeof import('svelte/compiler').parse>;
+type ProgramWithLocation = Program & { start: number; end: number };
 
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
   // eslint-disable-next-line import/no-extraneous-dependencies
   const { parse: svelteParse } = await import('svelte/compiler');
-  let ast = svelteParse(text);
+  let svelteAst = svelteParse(text);
 
-  if (!ast.instance && !ast.module) {
+  if (!svelteAst.instance && !svelteAst.module) {
     text = header + text;
-    ast = svelteParse(text);
+    svelteAst = svelteParse(text);
   }
+  const positionConverter = new PositionConverter(text);
 
-  const root = await astParse(ast, text, fileName, context);
+  const root = await astParse();
 
   return {
     originFileName: fileName,
@@ -26,101 +29,100 @@ export async function parse(text: string, fileName: string, context: ParserConte
     format: AstFormat.Svelte,
     root: root,
   };
-}
 
-async function astParse(root: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteRootNode> {
-  const mainScript = await getMainScript(root, text, fileName, context);
-  const additionalScripts = await getAdditionalScripts(root, text, fileName, context);
+  async function astParse(): Promise<SvelteRootNode> {
+    const mainScript = await getMainScript();
+    const additionalScripts = await getAdditionalScripts();
 
-  return {
-    mainScript: mainScript,
-    additionalScripts: additionalScripts,
-  };
-}
-
-async function sliceScript(text: string, fileName: string, program: Program, context: ParserContext): Promise<SvelteNode> {
-  const { start, end, loc } = program as unknown as { start: number; end: number; loc: SourceLocation };
-  const scriptText = text.slice(start, end);
-  const parsed = await context.parse(scriptText, fileName, AstFormat.JS);
-  return {
-    ast: {
-      ...parsed,
-      offset: toOffset(loc.start),
-    },
-    range: { start, end },
-  };
-}
-
-function getMainScript(ast: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode> {
-  if (ast.instance?.content) {
-    return sliceScript(text, fileName, ast.instance.content, context);
-  } else {
-    return sliceScript(text, fileName, ast.module!.content, context);
-  }
-}
-
-async function getAdditionalScripts(svelteAst: InternalSvelteAst, text: string, fileName: string, context: ParserContext): Promise<SvelteNode[]> {
-  const additionalScriptsAsPromised: Array<Promise<SvelteNode>> = [];
-
-  if (svelteAst.instance?.content && svelteAst.module?.content) {
-    additionalScriptsAsPromised.push(sliceScript(text, fileName, svelteAst.module.content, context));
+    return { mainScript, additionalScripts };
   }
 
-  // eslint-disable-next-line import/no-extraneous-dependencies
-  const { walk } = await import('svelte/compiler');
-
-  walk(svelteAst.html as Node, {
-    enter(node: any) {
-      if (node.name === 'script' && node.children[0]) {
-        const sourceText = node.children[0].data as string;
-        const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
-          ast: {
-            ...ast,
-            offset: toOffset(node.children[0].start as Position),
-          },
-          range: { start: node.children[0].start, end: node.children[0].end },
-        }));
-        additionalScriptsAsPromised.push(promise);
-      }
-
-      const bindingExpression = collectBindingExpression(node as BaseNode);
-      if (bindingExpression) {
-        const { start, end, loc } = bindingExpression as unknown as { start: number; end: number; loc: SourceLocation };
-        const sourceText = text.substring(start, end);
-        const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
-          ast: {
-            ...ast,
-            offset: toOffset(loc.start),
-          },
-          range: { start, end },
-          expression: true,
-        }));
-        additionalScriptsAsPromised.push(promise);
-      }
-    },
-  });
-
-  return Promise.all(additionalScriptsAsPromised);
-}
-
-function collectBindingExpression(node: BaseNode): BaseNode | null {
-  switch (node.type) {
-    case 'MustacheTag':
-    case 'IfBlock':
-    case 'ConstTag':
-    case 'EachBlock':
-    case 'AwaitBlock':
-    case 'KeyBlock':
-      return (node as any).expression;
-    case 'ArrowFunctionExpression':
-      return (node as any).body;
-    default:
-      return null;
+  async function sliceScript({ start, end }: { start: number; end: number }): Promise<SvelteNode> {
+    const scriptText = text.slice(start, end);
+    const parsed = await context.parse(scriptText, fileName, AstFormat.JS);
+    return {
+      ast: {
+        ...parsed,
+        offset: positionConverter.positionFromOffset(start),
+      },
+      range: { start, end },
+    };
   }
-}
-function toOffset(start: Position): Offset {
-  return {
-    line: start.line - 1,
-    position: start.column,
-  };
+
+  function getMainScript(): Promise<SvelteNode> {
+    if (svelteAst.instance?.content) {
+      return sliceScript(svelteAst.instance.content as ProgramWithLocation);
+    } else {
+      return sliceScript(svelteAst.module!.content as ProgramWithLocation);
+    }
+  }
+
+  async function getAdditionalScripts(): Promise<SvelteNode[]> {
+    const additionalScriptsAsPromised: Array<Promise<SvelteNode>> = [];
+
+    if (svelteAst.instance?.content && svelteAst.module?.content) {
+      additionalScriptsAsPromised.push(sliceScript(svelteAst.module.content as ProgramWithLocation));
+    }
+
+    // eslint-disable-next-line import/no-extraneous-dependencies
+    const { walk } = await import('svelte/compiler');
+
+    walk(svelteAst.html as Node, {
+      enter(n) {
+        const node = n as TemplateNode;
+        if (node.type === 'Element' && node.name === 'script' && node.children?.[0].type === 'Text') {
+          const textContentNode = node.children[0] as Text;
+          const sourceText = textContentNode.data;
+          const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
+            ast: {
+              ...ast,
+              offset: positionConverter.positionFromOffset(textContentNode.start),
+            },
+            range: { start: textContentNode.start, end: textContentNode.end },
+          }));
+          additionalScriptsAsPromised.push(promise);
+        }
+
+        const bindingExpression = collectBindingExpression(node as BaseNode);
+        if (bindingExpression) {
+          const { start, end, loc } = bindingExpression as BaseNode & { start: number; end: number };
+          const sourceText = text.substring(start, end);
+          const promise = context.parse(sourceText, fileName, AstFormat.JS).then((ast) => ({
+            ast: {
+              ...ast,
+              offset: toStrykerPosition(loc!.start),
+            },
+            range: { start, end },
+            expression: true,
+          }));
+          additionalScriptsAsPromised.push(promise);
+        }
+      },
+    });
+
+    return Promise.all(additionalScriptsAsPromised);
+  }
+
+  function collectBindingExpression(node: BaseNode): BaseNode | null {
+    switch (node.type) {
+      case 'MustacheTag':
+      case 'IfBlock':
+      case 'ConstTag':
+      case 'EachBlock':
+      case 'AwaitBlock':
+      case 'KeyBlock':
+        return (node as any).expression;
+      case 'ArrowFunctionExpression':
+        return (node as any).body;
+      default:
+        return null;
+    }
+  }
+  function toStrykerPosition(start: Position): Position {
+    return {
+      // Svelte compiler is 1-based, stryker works with 0-based internally
+      line: start.line - 1,
+      column: start.column,
+    };
+  }
 }
