@@ -24,7 +24,7 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
     return file;
   }
   if (isJSFileWithoutTSDirectives(file, format)) {
-    // Performance optimization. Only parse the file when it has a change of containing a `// @ts-` directive
+    // Performance optimization. Only parse the file when it has a chance of containing a `// @ts-` directive
     return {
       ...file,
       content: prefixWithNoCheck(file.content),

@@ -155,6 +155,36 @@ describe(disableTypeChecks.name, () => {
     });
   });
 
+  describe('with Svelte ast format', () => {
+    it('should prefix the script tags with `// @ts-nocheck`', async () => {
+      const inputFile = { name: 'foo.svelte', content: '<script lang="ts">foo();</script><script context="module">bar();</script>', mutate: true };
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
+      assertions.expectTextFileEqual(actual, {
+        name: 'foo.svelte',
+        content: '<script lang="ts">\n// @ts-nocheck\nfoo();\n</script><script context="module">\n// @ts-nocheck\nbar();\n</script>',
+      });
+    });
+
+    it('should remove `// @ts` directives from script tags', async () => {
+      const inputFile = {
+        name: 'foo.svelte',
+        content: '<script>// @ts-expect-error\nconst foo = "bar"-"baz";</script>',
+        mutate: true,
+      };
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
+      assertions.expectTextFileEqual(actual, {
+        name: 'foo.svelte',
+        content: '<script>\n// @ts-nocheck\n// \nconst foo = "bar"-"baz";\n</script>',
+      });
+    });
+
+    it('should not remove `// @ts` from the html itself', async () => {
+      const inputFile = { name: 'foo.svelte', content: '<template>\n// @ts-expect-error\n</template>', mutate: true };
+      const actual = await disableTypeChecks(inputFile, { plugins: null });
+      assertions.expectTextFileEqual(actual, { name: 'foo.svelte', content: '<template>\n// @ts-expect-error\n</template>' });
+    });
+  });
+
   describe('with unsupported AST format', () => {
     it('should silently ignore the file', async () => {
       const expectedFile = { content: '# Readme', name: 'readme.md', mutate: true };
