@@ -71,23 +71,23 @@ $: count = stryMutAct_9fa48(\\"10\\") ? a - b : (stryCov_9fa48(\\"10\\"), a + b)
 </script>
   
 <main>
-    <button on:click={() => (stryMutAct_9fa48(\\"11\\") ? a -= 1 : (stryCov_9fa48(\\"11\\"), a += 1))}>
+    <button on:click={stryMutAct_9fa48(\\"11\\") ? () => undefined : (stryCov_9fa48(\\"11\\"), () => stryMutAct_9fa48(\\"12\\") ? a -= 1 : (stryCov_9fa48(\\"12\\"), a += 1))}>
         increase a: {a}
     </button>
-    <button on:click={() => (stryMutAct_9fa48(\\"12\\") ? b -= 1 : (stryCov_9fa48(\\"12\\"), b += 1))}>
+    <button on:click={stryMutAct_9fa48(\\"13\\") ? () => undefined : (stryCov_9fa48(\\"13\\"), () => stryMutAct_9fa48(\\"14\\") ? b -= 1 : (stryCov_9fa48(\\"14\\"), b += 1))}>
         increase b: {b}
     </button>
-    <button disabled={stryMutAct_9fa48(\\"13\\") ? false : (stryCov_9fa48(\\"13\\"), true)}>
+    <button disabled={stryMutAct_9fa48(\\"15\\") ? false : (stryCov_9fa48(\\"15\\"), true)}>
         disabled button
     </button>
     <p>{a} + {b} = {count}.</p>
 
-    {#if stryMutAct_9fa48(\\"17\\") ? a >= 5 : stryMutAct_9fa48(\\"16\\") ? a <= 5 : stryMutAct_9fa48(\\"15\\") ? false : stryMutAct_9fa48(\\"14\\") ? true : (stryCov_9fa48(\\"14\\", \\"15\\", \\"16\\", \\"17\\"), a < 5)}
+    {#if stryMutAct_9fa48(\\"19\\") ? a >= 5 : stryMutAct_9fa48(\\"18\\") ? a <= 5 : stryMutAct_9fa48(\\"17\\") ? false : stryMutAct_9fa48(\\"16\\") ? true : (stryCov_9fa48(\\"16\\", \\"17\\", \\"18\\", \\"19\\"), a < 5)}
         <p>a is lower than 5, it's: {a}</p>
-    {:else if stryMutAct_9fa48(\\"21\\") ? b >= 5 : stryMutAct_9fa48(\\"20\\") ? b <= 5 : stryMutAct_9fa48(\\"19\\") ? false : stryMutAct_9fa48(\\"18\\") ? true : (stryCov_9fa48(\\"18\\", \\"19\\", \\"20\\", \\"21\\"), b < 5)}
+    {:else if stryMutAct_9fa48(\\"23\\") ? b >= 5 : stryMutAct_9fa48(\\"22\\") ? b <= 5 : stryMutAct_9fa48(\\"21\\") ? false : stryMutAct_9fa48(\\"20\\") ? true : (stryCov_9fa48(\\"20\\", \\"21\\", \\"22\\", \\"23\\"), b < 5)}
         <p>b is lower than 5, it's: {b}</p>
     {:else}
-        <p>just right! total: {stryMutAct_9fa48(\\"22\\") ? a - b : (stryCov_9fa48(\\"22\\"), a + b)}</p>
+        <p>just right! total: {stryMutAct_9fa48(\\"24\\") ? a - b : (stryCov_9fa48(\\"24\\"), a + b)}</p>
     {/if}
 
     <table>
@@ -98,12 +98,12 @@ $: count = stryMutAct_9fa48(\\"10\\") ? a - b : (stryCov_9fa48(\\"10\\"), a + b)
         <td>of age</td>
         </tr>
         {#each athletes as athlete}
-        {@const ofAge = stryMutAct_9fa48(\\"26\\") ? athlete.age < 18 : stryMutAct_9fa48(\\"25\\") ? athlete.age > 18 : stryMutAct_9fa48(\\"24\\") ? false : stryMutAct_9fa48(\\"23\\") ? true : (stryCov_9fa48(\\"23\\", \\"24\\", \\"25\\", \\"26\\"), athlete.age >= 18)}
+        {@const ofAge = stryMutAct_9fa48(\\"28\\") ? athlete.age < 18 : stryMutAct_9fa48(\\"27\\") ? athlete.age > 18 : stryMutAct_9fa48(\\"26\\") ? false : stryMutAct_9fa48(\\"25\\") ? true : (stryCov_9fa48(\\"25\\", \\"26\\", \\"27\\", \\"28\\"), athlete.age >= 18)}
         <tr>
             <td>{athlete.sport}</td>
             <td>{athlete.name}</td>
             <td>{athlete.age}</td>
-            <td>{ofAge ? stryMutAct_9fa48(\\"27\\") ? \\"\\" : (stryCov_9fa48(\\"27\\"), \\"Yes\\") : stryMutAct_9fa48(\\"28\\") ? \\"\\" : (stryCov_9fa48(\\"28\\"), \\"No\\")}</td>
+            <td>{ofAge ? stryMutAct_9fa48(\\"29\\") ? \\"\\" : (stryCov_9fa48(\\"29\\"), \\"Yes\\") : stryMutAct_9fa48(\\"30\\") ? \\"\\" : (stryCov_9fa48(\\"30\\"), \\"No\\")}</td>
         </tr>
         {/each}
     </table>

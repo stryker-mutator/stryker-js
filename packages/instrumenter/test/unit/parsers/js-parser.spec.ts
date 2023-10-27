@@ -74,7 +74,6 @@ describe('js-parser', () => {
     function createActArrangeAndAssertHelper(makeUrl: (name: string) => string) {
       return (babelProposalName: string, input: string, expectation: AstExpectation, only = false) => {
         (only ? it.only : it)(`should support "${babelProposalName}" (${makeUrl(babelProposalName)})`, async () => {
-          debugger;
           const { root } = await createParser(createParserOptions())(input, 'test.js');
           expectAst(root, expectation);
         });

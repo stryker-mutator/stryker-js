@@ -56,9 +56,9 @@ export async function parse(text: string, fileName: string, context: ParserConte
           templateScripts.push({ start: textContentNode.start, end: textContentNode.end, expression: false });
         }
 
-        const templateExpression = collectTemplateExpression(node as BaseNode);
+        const templateExpression = collectTemplateExpression(node);
         if (templateExpression) {
-          const { start, end } = templateExpression as BaseNode & Range;
+          const { start, end } = templateExpression;
           templateScripts.push({ start, end, expression: true });
         }
       },
@@ -80,17 +80,17 @@ export async function parse(text: string, fileName: string, context: ParserConte
     };
   }
 
-  function collectTemplateExpression(node: BaseNode): BaseNode | undefined {
+  function collectTemplateExpression(node: TemplateNode): (BaseNode & Range) | undefined {
     switch (node.type) {
       case 'MustacheTag':
+      case 'RawMustacheTag':
       case 'IfBlock':
       case 'ConstTag':
       case 'EachBlock':
       case 'AwaitBlock':
       case 'KeyBlock':
-        return (node as any).expression;
-      case 'ArrowFunctionExpression':
-        return (node as any).body;
+      case 'EventHandler':
+        return node.expression;
       default:
         return undefined;
     }

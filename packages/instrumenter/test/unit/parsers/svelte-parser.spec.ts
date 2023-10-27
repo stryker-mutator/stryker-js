@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { ParserContext } from '../../../src/parsers/parser-context.js';
 
 import { parse } from '../../../src/parsers/svelte-parser.js';
-import { createJSAst } from '../../helpers/factories.js';
+import { createJSAst, createRange } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
 import { AstFormat, TemplateScript } from '../../../src/syntax/index.js';
 
@@ -233,50 +233,171 @@ describe('svelte-parser', async () => {
   });
 
   describe('template expressions', () => {
-    it('should call the correct amount of parse functions', async () => {
-      const script = 'let a = 0; let temp = ["first", "second"];';
-      const svelte = `<script context="module">${script}</script>     
-      <div>
-        <button on:click={() => (a += 1)}>
-          increase a: {a}
-        </button>
-        
-        {#if a < 5}
-          <p>a is lower than 5, it's: {a}</p>
-        {:else if a < 5}
-          <p>b is lower than 5, it's: {a + 2}</p>
-        {/if}
-      
-        {#each temp as val}
-          {@const length = val.length}
-          {length}
-        {/each}
-      
-        {#key a}
-          <p>updates when a updates, it's {a}</p>
-        {/key}
-
-        {#await fetch('https://api.agify.io?name=teun&country_id=NL')}
-          <p>Wait for your estimated age</p>
-        {:then value}
-          <p>Your estimated age is: {#await value.json() } <p>default</p>{:then age}{age.age}{/await}</p> 
-        {:catch error}
-          <p>Something went test wrong: {error.message}</p>
-        {/await}
-      </div>
-      `;
-      const jsAst = createJSAst({ rawContent: script });
+    it('should parse a {expression}', async () => {
+      // Arrange
+      const jsAst = createJSAst({ rawContent: 'foo' });
+      jsAst.offset = { column: 6, line: 0 };
+      const svelte = '<div>{foo}</div>';
       contextStub.parse.resolves(jsAst);
 
+      // Act
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
-      expect(ast.root.additionalScripts.length).eq(15);
-      ast.root.additionalScripts.forEach((node) => {
-        expect(node.expression).to.be.true;
-      });
-      ast.root.additionalScripts.forEach((node) => {
-        expect(node.ast.root).to.exist;
-      });
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, 'foo', 'index.svelte', AstFormat.JS);
+      const expectedTemplateScript: TemplateScript = {
+        ast: jsAst,
+        expression: true,
+        range: createRange(6, 9),
+      };
+      expect(ast.root.additionalScripts).deep.eq([expectedTemplateScript]);
+    });
+
+    it('should parse a {@html expression}', async () => {
+      // Arrange
+      const jsAst = createJSAst({ rawContent: 'foo' });
+      jsAst.offset = { column: 6, line: 0 };
+      const svelte = '<div>{@html foo}</div>';
+      contextStub.parse.resolves(jsAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, 'foo', 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts[0].ast.root).deep.eq(jsAst.root);
+    });
+
+    it('should parse a {#if expression} {:else if expression} block', async () => {
+      // Arrange
+      const firstIfExpression = 'age < 18';
+      const secondIfExpression = 'age === 18';
+      const firstIf = createJSAst({ rawContent: firstIfExpression });
+      const secondIf = createJSAst({ rawContent: secondIfExpression });
+      const svelte = `<div>
+  {#if ${firstIfExpression}}
+    <p>underaged</p>
+  {:else if ${secondIfExpression}}
+    <p>exactly 18</p>
+  {:else}
+    <p>adult</p>
+  {/if}
+</div>`;
+      contextStub.parse.withArgs(firstIfExpression).resolves(firstIf);
+      contextStub.parse.withArgs(secondIfExpression).resolves(secondIf);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledTwice(contextStub.parse);
+      sinon.assert.calledWithExactly(contextStub.parse, firstIfExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledWithExactly(contextStub.parse, secondIfExpression, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(2);
+      expect(ast.root.additionalScripts[0].ast.root).eq(firstIf.root);
+      expect(ast.root.additionalScripts[1].ast.root).eq(secondIf.root);
+    });
+
+    it('should parse {#key expression}', async () => {
+      // Arrange
+      const keyExpression = 'age < 18';
+      const keyAst = createJSAst({ rawContent: keyExpression });
+      const svelte = `<div>
+  {#key ${keyExpression}}
+    <p>underaged</p>
+  {/key}
+</div>`;
+      contextStub.parse.withArgs(keyExpression).resolves(keyAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, keyExpression, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(1);
+      expect(ast.root.additionalScripts[0].ast.root).eq(keyAst.root);
+    });
+
+    it('should parse {#each expression}', async () => {
+      // Arrange
+      const eachExpression = '[1, 2, 3]';
+      const keyAst = createJSAst({ rawContent: eachExpression });
+      const svelte = `<div>
+  {#each ${eachExpression} as n}
+    <span>.</span>
+  {/each}
+</div>`;
+      contextStub.parse.withArgs(eachExpression).resolves(keyAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, eachExpression, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(1);
+      expect(ast.root.additionalScripts[0].ast.root).eq(keyAst.root);
+    });
+
+    it('should parse a {#await expression} block', async () => {
+      // Arrange
+      const awaitExpression = "fetch('https://api.agify.io?name=teun&country_id=NL')";
+      const awaitAst = createJSAst({ rawContent: awaitExpression });
+      const svelte = `<div>
+  {#await ${awaitExpression}}
+    <p>Loading</p>
+  {:then value}
+    <p>Done</p> 
+  {:catch error}
+    <p>Error</p>
+  {/await}
+</div>`;
+      contextStub.parse.withArgs(awaitExpression).resolves(awaitAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, awaitExpression, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(1);
+      expect(ast.root.additionalScripts[0].ast.root).eq(awaitAst.root);
+    });
+
+    it('should parse a {@const assignment} block', async () => {
+      // Arrange
+      const constAssignment = 'area = box.width * box.height';
+      const constAst = createJSAst({ rawContent: constAssignment });
+      const svelte = `<div>
+  {@const ${constAssignment}}
+</div>`;
+      contextStub.parse.withArgs(constAssignment).resolves(constAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, constAssignment, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(1);
+      expect(ast.root.additionalScripts[0].ast.root).eq(constAst.root);
+    });
+
+    it('should parse a on:event="handler" block', async () => {
+      // Arrange
+      const eventHandlerExpression = '() => (a += 1)';
+      const eventHandlerAst = createJSAst({ rawContent: eventHandlerExpression });
+      const svelte = `<div>
+  <button on:click={${eventHandlerExpression}}>
+    increase
+  </button>
+</div>`;
+      contextStub.parse.withArgs(eventHandlerExpression).resolves(eventHandlerAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledOnceWithExactly(contextStub.parse, eventHandlerExpression, 'index.svelte', AstFormat.JS);
+      expect(ast.root.additionalScripts).lengthOf(1);
+      expect(ast.root.additionalScripts[0].ast.root).eq(eventHandlerAst.root);
     });
   });
 });
