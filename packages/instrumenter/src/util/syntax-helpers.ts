@@ -237,16 +237,20 @@ export function placeHeaderIfNeeded(
 ): void {
   if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
     // Be sure to leave comments like `// @flow` in.
-    let header = instrumentationBabelHeader;
-    if (Array.isArray(root.program.body[0]?.leadingComments)) {
-      header = [
-        {
-          ...instrumentationBabelHeader[0],
-          leadingComments: root.program.body[0]?.leadingComments,
-        },
-        ...instrumentationBabelHeader.slice(1),
-      ];
-    }
-    root.program.body.unshift(...header);
+    placeHeader(root);
   }
+}
+
+export function placeHeader(root: babel.types.File): void {
+  let header = instrumentationBabelHeader;
+  if (Array.isArray(root.program.body[0]?.leadingComments)) {
+    header = [
+      {
+        ...instrumentationBabelHeader[0],
+        leadingComments: root.program.body[0]?.leadingComments,
+      },
+      ...instrumentationBabelHeader.slice(1),
+    ];
+  }
+  root.program.body.unshift(...header);
 }

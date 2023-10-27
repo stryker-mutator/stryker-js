@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`instrumenter integration should be able to instrument svelte with only template scripts tags 1`] = `
-"<script>
+"<script context=\\"module\\">
+
 function stryNS_9fa48() {
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
@@ -48,8 +49,8 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-</script>
 
+</script>
 <div>
 	<script>
 let name = stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'teun');

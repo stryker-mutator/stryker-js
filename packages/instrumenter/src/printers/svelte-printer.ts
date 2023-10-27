@@ -1,28 +1,30 @@
+import { notEmpty } from '@stryker-mutator/util';
+
 import { SvelteAst } from '../syntax/index.js';
 
 import { Printer } from './index.js';
 
 export const print: Printer<SvelteAst> = ({ root, rawContent }, context) => {
   let currentIndex = 0;
-  let svelte = '';
+  let outputText = '';
 
-  const sortedScripts = [root.mainScript, ...root.additionalScripts].sort((a, b) => a.range.start - b.range.start);
+  const sortedScripts = [root.moduleScript, ...root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
   for (const script of sortedScripts) {
     if (script.expression) {
       const code = context.print(script.ast, context);
       const codeWithoutSemicolon = code.slice(0, -1);
-      svelte += rawContent.substring(currentIndex, script.range.start) + codeWithoutSemicolon;
+      outputText += rawContent.substring(currentIndex, script.range.start) + codeWithoutSemicolon;
       currentIndex = script.range.end;
     } else {
-      svelte += rawContent.substring(currentIndex, script.range.start);
-      svelte += '\n';
-      svelte += context.print(script.ast, context);
-      svelte += '\n';
+      outputText += rawContent.substring(currentIndex, script.range.start);
+      outputText += '\n';
+      outputText += context.print(script.ast, context);
+      outputText += '\n';
       currentIndex = script.range.end;
     }
   }
 
-  svelte += rawContent.substring(currentIndex);
+  outputText += rawContent.substring(currentIndex);
 
-  return svelte;
+  return outputText;
 };

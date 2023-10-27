@@ -1,12 +1,10 @@
 import type { BaseNode, Node, Program } from 'estree';
 import type { TemplateNode, Text } from 'svelte/types/compiler/interfaces';
 
-import { AstFormat, SvelteAst, SvelteNode } from '../syntax/index.js';
+import { AstFormat, SvelteAst, TemplateScript, SvelteRootNode } from '../syntax/index.js';
 import { PositionConverter } from '../util/index.js';
 
 import { ParserContext } from './parser-context.js';
-
-const header = '<script></script>\n\n';
 
 interface Range {
   start: number;
@@ -19,62 +17,36 @@ type RangedProgram = Program & Range;
 
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
   // eslint-disable-next-line import/no-extraneous-dependencies
-  const { parse: svelteParse } = await import('svelte/compiler');
-  let svelteAst = svelteParse(text);
+  const { parse: svelteParse, walk } = await import('svelte/compiler');
+  const svelteAst = svelteParse(text);
 
-  if (!svelteAst.instance && !svelteAst.module) {
-    text = header + text;
-    svelteAst = svelteParse(text);
-  }
   const positionConverter = new PositionConverter(text);
 
-  const mainScript = await getMainScript();
-  const additionalScripts = await getTemplateScripts();
-
-  const root = { mainScript, additionalScripts };
+  const [moduleScript, additionalScripts] = await Promise.all([getModuleScript(), getTemplateScripts()]);
+  const root: SvelteRootNode = { moduleScript, additionalScripts };
 
   return {
     originFileName: fileName,
     rawContent: text,
     format: AstFormat.Svelte,
-    root: root,
+    root,
   };
 
-  async function parseTemplateScript({ start, end, expression }: TemplateRange): Promise<SvelteNode> {
-    const scriptText = text.slice(start, end);
-    const parsed = await context.parse(scriptText, fileName, AstFormat.JS);
-    return {
-      ast: {
-        ...parsed,
-        offset: positionConverter.positionFromOffset(start),
-      },
-      range: { start, end },
-      expression,
-    };
+  async function getModuleScript(): Promise<TemplateScript | undefined> {
+    if (svelteAst.module) {
+      const script = svelteAst.module.content as RangedProgram;
+      return parseTemplateScript({ start: script.start, end: script.end, expression: false });
+    }
+    return;
   }
 
-  function getMainScript(): Promise<SvelteNode> {
-    let script: RangedProgram;
-    if (svelteAst.instance?.content) {
-      script = svelteAst.instance.content as RangedProgram;
-    } else {
-      script = svelteAst.module!.content as RangedProgram;
-    }
-    return parseTemplateScript({ start: script.start, end: script.end, expression: false });
-  }
-
-  async function getTemplateScripts(): Promise<SvelteNode[]> {
-    const additionalScriptsAsPromised: Array<Promise<SvelteNode>> = [];
-
-    if (svelteAst.instance?.content && svelteAst.module?.content) {
-      const { start, end } = svelteAst.module.content as RangedProgram;
-      additionalScriptsAsPromised.push(parseTemplateScript({ start, end, expression: false }));
-    }
-
-    // eslint-disable-next-line import/no-extraneous-dependencies
-    const { walk } = await import('svelte/compiler');
-
+  async function getTemplateScripts(): Promise<TemplateScript[]> {
     const templateScripts: TemplateRange[] = [];
+
+    if (svelteAst.instance) {
+      const { start, end } = svelteAst.instance.content as RangedProgram;
+      templateScripts.push({ start, end, expression: false });
+    }
 
     walk(svelteAst.html as Node, {
       enter(n) {
@@ -92,7 +64,20 @@ export async function parse(text: string, fileName: string, context: ParserConte
       },
     });
 
-    return Promise.all([...additionalScriptsAsPromised, ...templateScripts.map((script) => parseTemplateScript(script))]);
+    return Promise.all(templateScripts.map((script) => parseTemplateScript(script)));
+  }
+
+  async function parseTemplateScript({ start, end, expression }: TemplateRange): Promise<TemplateScript> {
+    const scriptText = text.slice(start, end);
+    const parsed = await context.parse(scriptText, fileName, AstFormat.JS);
+    return {
+      ast: {
+        ...parsed,
+        offset: positionConverter.positionFromOffset(start),
+      },
+      range: { start, end },
+      expression,
+    };
   }
 
   function collectTemplateExpression(node: BaseNode): BaseNode | undefined {

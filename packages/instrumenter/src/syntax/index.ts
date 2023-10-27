@@ -77,15 +77,15 @@ export interface HtmlRootNode {
 }
 
 export interface SvelteRootNode {
-  mainScript: SvelteNode;
-  additionalScripts: SvelteNode[];
+  moduleScript?: TemplateScript;
+  additionalScripts: TemplateScript[];
 }
 
 /**
  * Represents a svelte script or binding expression
  * We've taken a shortcut here, instead of representing the entire AST, we're only representing the script tags and expression bindings.
  */
-export interface SvelteNode {
+export interface TemplateScript {
   ast: ScriptAst;
   range: Range;
   expression: boolean;

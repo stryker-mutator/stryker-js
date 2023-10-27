@@ -6,7 +6,7 @@ import { ParserContext } from '../../../src/parsers/parser-context.js';
 import { parse } from '../../../src/parsers/svelte-parser.js';
 import { createJSAst } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
-import { AstFormat, SvelteNode } from '../../../src/syntax/index.js';
+import { AstFormat, TemplateScript } from '../../../src/syntax/index.js';
 
 describe('svelte-parser', async () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
@@ -33,11 +33,16 @@ describe('svelte-parser', async () => {
       const script = 'const name = "test"';
       const jsAst = createJSAst({ rawContent: script });
       const svelte = `<script>${script}</script><h1>Hello {name}!</h1>`;
-      contextStub.parse.resolves(jsAst);
+      contextStub.parse
+        .withArgs(script)
+        .resolves(jsAst)
+        .withArgs('name')
+        .resolves(createJSAst({ rawContent: 'name' }));
 
-      const parsed = await parse(svelte, 'index.svelte', contextStub);
+      const actual = await parse(svelte, 'index.svelte', contextStub);
 
-      expect(parsed.root.mainScript).not.undefined;
+      expect(actual.root.additionalScripts[0].ast.root).eq(jsAst.root);
+      expect(actual.root.additionalScripts[0].expression).false;
     });
 
     it('should parse scripts correctly', async () => {
@@ -51,7 +56,36 @@ describe('svelte-parser', async () => {
       sinon.assert.calledWithExactly(contextStub.parse, script, 'index.svelte', AstFormat.JS);
     });
 
-    it('should offset the script location correctly', async () => {
+    it('should offset the module script location correctly', async () => {
+      const script = 'const name = "test"';
+      const jsAst = createJSAst({ rawContent: script });
+      const svelte = `// 0
+// 1
+// 2
+// 3
+<script context="module">${script}</script><h1>Hello {name}!</h1>`;
+      contextStub.parse.resolves(jsAst);
+
+      const parsed = await parse(svelte, 'index.svelte', contextStub);
+
+      const expected: TemplateScript = {
+        ast: {
+          ...jsAst,
+          offset: {
+            line: 4,
+            column: 25,
+          },
+        },
+        range: {
+          end: 45 + script.length,
+          start: 45,
+        },
+        expression: false,
+      };
+      expect(parsed.root.moduleScript).deep.eq(expected);
+    });
+
+    it('should offset the instance script location correctly', async () => {
       const script = 'const name = "test"';
       const jsAst = createJSAst({ rawContent: script });
       const svelte = `// 0
@@ -63,7 +97,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
-      const expected: SvelteNode = {
+      const expected: TemplateScript = {
         ast: {
           ...jsAst,
           offset: {
@@ -77,7 +111,7 @@ describe('svelte-parser', async () => {
         },
         expression: false,
       };
-      expect(parsed.root.mainScript).deep.eq(expected);
+      expect(parsed.root.additionalScripts.find(({ expression }) => !expression)).deep.eq(expected);
     });
 
     it('should offset the location of a template expression correctly', async () => {
@@ -95,7 +129,7 @@ describe('svelte-parser', async () => {
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      const expected: SvelteNode = {
+      const expected: TemplateScript = {
         ast: {
           ...jsAst,
           offset: {
@@ -109,7 +143,7 @@ describe('svelte-parser', async () => {
         },
         expression: true,
       };
-      expect(parsed.root.additionalScripts[0]).deep.eq(expected);
+      expect(parsed.root.additionalScripts.find(({ expression }) => expression)).deep.eq(expected);
     });
 
     it('should offset the location of a template script correctly', async () => {
@@ -129,7 +163,7 @@ describe('svelte-parser', async () => {
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      const expected: SvelteNode = {
+      const expected: TemplateScript = {
         ast: {
           ...jsAst,
           offset: {
@@ -143,7 +177,7 @@ describe('svelte-parser', async () => {
         },
         expression: false,
       };
-      expect(parsed.root.additionalScripts[0]).deep.eq(expected);
+      expect(parsed.root.additionalScripts[1]).deep.eq(expected);
     });
 
     it('should find module script tag', async () => {
@@ -154,7 +188,7 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
-      expect(parsed.root.mainScript).not.undefined;
+      expect(parsed.root.moduleScript).not.undefined;
     });
 
     it('should find html script tag', async () => {
@@ -193,29 +227,15 @@ describe('svelte-parser', async () => {
 
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
-      expect(parsed.root.mainScript).not.undefined;
+      expect(parsed.root.moduleScript).not.undefined;
       expect(parsed.root.additionalScripts).lengthOf(2);
     });
   });
 
-  describe('correct offset', () => {
-    it('should use the correct start and end number', async () => {
-      const script = "let name = 'world';";
-      const svelte = `<script>${script}</script><h1>Hello {name}!</h1>`;
-      const jsAst = createJSAst({ rawContent: script });
-      contextStub.parse.resolves(jsAst);
-
-      const parsed = await parse(svelte, 'index.svelte', contextStub);
-
-      expect(parsed.root.mainScript?.range.start).eq(8);
-      expect(parsed.root.mainScript?.range.end).eq(27);
-    });
-  });
-
   describe('template expressions', () => {
-    it('Should call the correct amount of parse functions', async () => {
+    it('should call the correct amount of parse functions', async () => {
       const script = 'let a = 0; let temp = ["first", "second"];';
-      const svelte = `<script>${script}</script>     
+      const svelte = `<script context="module">${script}</script>     
       <div>
         <button on:click={() => (a += 1)}>
           increase a: {a}

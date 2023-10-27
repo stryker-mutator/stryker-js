@@ -1,11 +1,10 @@
 import { expect } from 'chai';
-
 import sinon from 'sinon';
 
 import { print } from '../../../src/printers/svelte-printer.js';
 import { PrinterContext } from '../../../src/printers/index.js';
 import { printerContextStub } from '../../helpers/stubs.js';
-import { createJSAst, createSvelteAst, createSvelteNode } from '../../helpers/factories.js';
+import { createJSAst, createRange, createSvelteAst, createTemplateScript } from '../../helpers/factories.js';
 
 describe('svelte-printer', () => {
   let contextStub: sinon.SinonStubbedInstance<PrinterContext>;
@@ -24,7 +23,7 @@ describe('svelte-printer', () => {
     const expectedOutput = /<script>.*const name = "test";.*<\/script><h1>hello!<\/h1>/s;
     const ast = createSvelteAst({
       rawContent: input,
-      root: { mainScript: { ast: script, range: { start: script.root.start, end: script.root.end! }, expression: false }, additionalScripts: [] },
+      root: { moduleScript: { ast: script, range: { start: script.root.start, end: script.root.end! }, expression: false }, additionalScripts: [] },
     });
 
     const output = print(ast, contextStub);
@@ -35,11 +34,11 @@ describe('svelte-printer', () => {
   it('should replace multiple script tags and binding', () => {
     const expectedScriptContent = ['let name = "john";', 'let age = 30;', 'const city = "london";', 'let country = "uk";', '1 + 2;'];
     const scripts = [
-      createSvelteNode(createJSAst({ rawContent: '1' }), 8, 9),
-      createSvelteNode(createJSAst({ rawContent: '2' }), 43, 44),
-      createSvelteNode(createJSAst({ rawContent: '4' }), 99, 100),
-      createSvelteNode(createJSAst({ rawContent: '3' }), 81, 82),
-      createSvelteNode(createJSAst({ rawContent: '5' }), 110, 111, true),
+      createTemplateScript({ ast: createJSAst({ rawContent: '1' }), range: createRange(8, 9) }),
+      createTemplateScript({ ast: createJSAst({ rawContent: '2' }), range: createRange(43, 44) }),
+      createTemplateScript({ ast: createJSAst({ rawContent: '4' }), range: createRange(99, 100) }),
+      createTemplateScript({ ast: createJSAst({ rawContent: '3' }), range: createRange(81, 82) }),
+      createTemplateScript({ ast: createJSAst({ rawContent: '5' }), range: createRange(110, 111), expression: true }),
     ];
     contextStub.print
       .withArgs(scripts[0].ast, sinon.match.any)
@@ -57,7 +56,7 @@ describe('svelte-printer', () => {
     const expectedOutput =
       '<script>\nlet name = "john";\n</script><script context="module">\nlet age = 30;\n</script><div><h1>hello!</h1><script>\nconst city = "london";\n</script><script>\nlet country = "uk";\n</script>{1 + 2}</div>';
 
-    const ast = createSvelteAst({ rawContent: input, root: { mainScript: scripts[0], additionalScripts: scripts.slice(1) } });
+    const ast = createSvelteAst({ rawContent: input, root: { moduleScript: scripts[0], additionalScripts: scripts.slice(1) } });
 
     // Act
     const output = print(ast, contextStub);

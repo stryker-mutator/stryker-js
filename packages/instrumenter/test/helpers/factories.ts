@@ -1,6 +1,6 @@
 import { NodePath, types } from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, SvelteNode } from '../../src/syntax/index.js';
+import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, TemplateScript, Range } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
 import { InstrumenterOptions } from '../../src/index.js';
@@ -73,25 +73,29 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
   const rawContent = overrides?.rawContent ?? '<script>let name = "temp"</script><h1>hello {name}!</h1>';
   const originFileName = overrides?.originFileName ?? 'foo.svelte';
-  const mainScript = overrides?.root?.mainScript ?? createSvelteNode(createJSAst({ rawContent: 'let name = "temp"' }), 8, 25);
   return {
     format: AstFormat.Svelte,
     originFileName,
     rawContent,
     root: {
-      mainScript: mainScript,
+      moduleScript: overrides?.root?.moduleScript,
       additionalScripts: overrides?.root?.additionalScripts ?? [],
     },
     ...overrides,
   };
 }
 
-export function createSvelteNode(ast: JSAst, start: number, end: number, expression?: boolean): SvelteNode {
+export function createTemplateScript(overrides?: Partial<TemplateScript>): TemplateScript {
   return {
-    ast,
-    range: { start: start, end: end },
-    expression: expression ?? false,
+    ast: createJSAst(),
+    range: { start: 26, end: 16 },
+    expression: false,
+    ...overrides,
   };
+}
+
+export function createRange(start = 0, end = 0): Range {
+  return { start, end };
 }
 
 export function createMutant(overrides?: Partial<Mutant>): Mutant {
