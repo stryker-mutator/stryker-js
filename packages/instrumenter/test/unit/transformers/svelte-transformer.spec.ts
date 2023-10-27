@@ -111,18 +111,21 @@ describe('svelte-transformer', () => {
 
     it('should place the instrumentation header in an invented script module when the module script is absent', () => {
       // Arrange & Act
-      const svelteAst = arrangeAndActTransformWithMutantsWithoutModuleScript();
+      const { svelteAst, rawContent } = arrangeAndActTransformWithMutantsWithoutModuleScript();
 
       // Assert
       expect(svelteAst.root.moduleScript).ok;
-      expect(svelteAst.root.moduleScript!.ast.rawContent).eq('');
-      expect(svelteAst.root.moduleScript!.ast.root.program.body).length(4);
-      expect(svelteAst.root.moduleScript!.ast.root.program.body).deep.eq(instrumentationBabelHeader);
+      const moduleScript = svelteAst.root.moduleScript!;
+      expect(svelteAst.rawContent).eq(`<script context="module">\n\n</script>\n${rawContent}`);
+      expect(moduleScript.ast.rawContent).eq('');
+      expect(moduleScript.ast.root.program.body).length(4);
+      expect(moduleScript.ast.root.program.body).deep.eq(instrumentationBabelHeader);
+      expect(moduleScript.expression).false;
     });
 
     it('should offset the start and end location of additional script tags', () => {
       // Arrange & Act
-      const svelteAst = arrangeAndActTransformWithMutantsWithoutModuleScript();
+      const { svelteAst } = arrangeAndActTransformWithMutantsWithoutModuleScript();
 
       // Assert
       expect(svelteAst.root.additionalScripts).lengthOf(1);
@@ -132,10 +135,10 @@ describe('svelte-transformer', () => {
 
     function arrangeAndActTransformWithMutantsWithoutModuleScript() {
       const templateScriptContent = 'foo';
-      const svelte = `<h1>hello!{${templateScriptContent}}</h1>`;
+      const rawContent = `<h1>hello!{${templateScriptContent}}</h1>`;
       const jsTemplateScript = createJSAst({ rawContent: templateScriptContent });
       const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(11, 14), expression: true });
-      const svelteAst = createSvelteAst({ rawContent: svelte, root: { additionalScripts: [templateNode] } });
+      const svelteAst = createSvelteAst({ rawContent: rawContent, root: { additionalScripts: [templateNode] } });
       const mutantCollector = new MutantCollector();
       const context = transformerContextStub();
       context.transform.withArgs(jsTemplateScript, sinon.match.any, sinon.match.any).callsFake(() => {
@@ -145,7 +148,7 @@ describe('svelte-transformer', () => {
         });
       });
       transformSvelte(svelteAst, mutantCollector, context);
-      return svelteAst;
+      return { rawContent, svelteAst };
     }
   });
 });

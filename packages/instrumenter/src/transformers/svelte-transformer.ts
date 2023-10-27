@@ -12,18 +12,15 @@ const moduleScript = `${moduleScriptStart}\n</script>\n`;
 
 export const transformSvelte: AstTransformer<AstFormat.Svelte> = (svelte, mutantCollector, context) => {
   const { root, originFileName } = svelte;
-  [root.moduleScript, ...root.additionalScripts]
-    .filter(notEmpty)
-    .sort((a, b) => a.range.start - b.range.start)
-    .forEach((script) => {
-      context.transform(script.ast, mutantCollector, {
-        ...context,
-        options: {
-          ...context.options,
-          noHeader: true,
-        },
-      });
+  [root.moduleScript, ...root.additionalScripts].filter(notEmpty).forEach((script) => {
+    context.transform(script.ast, mutantCollector, {
+      ...context,
+      options: {
+        ...context.options,
+        noHeader: true,
+      },
     });
+  });
 
   if (mutantCollector.hasPlacedMutants(originFileName)) {
     // We need to place the instrumentation header inside the `<script context="module">` script
