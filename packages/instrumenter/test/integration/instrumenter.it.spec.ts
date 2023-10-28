@@ -67,6 +67,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument svelte', async () => {
     await arrangeAndActAssert('svelte-hello-world.svelte');
   });
+  it('should be able to instrument typescript inside svelte', async () => {
+    await arrangeAndActAssert('svelte-ts.svelte');
+  });
   it('should be able to instrument svelte with only a module script tag', async () => {
     await arrangeAndActAssert('svelte-module-script-tag.svelte');
   });

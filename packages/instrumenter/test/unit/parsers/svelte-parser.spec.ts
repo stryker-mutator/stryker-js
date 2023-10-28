@@ -1,12 +1,14 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+import { Position } from '@stryker-mutator/api/core';
+
 import { ParserContext } from '../../../src/parsers/parser-context.js';
 
 import { parse } from '../../../src/parsers/svelte-parser.js';
-import { createJSAst, createRange } from '../../helpers/factories.js';
+import { createJSAst, createRange, createTSAst } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
-import { AstFormat, TemplateScript } from '../../../src/syntax/index.js';
+import { AstFormat, Range, TemplateScript } from '../../../src/syntax/index.js';
 
 describe('svelte-parser', async () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
@@ -15,21 +17,8 @@ describe('svelte-parser', async () => {
     contextStub = parserContextStub();
   });
 
-  describe('parsing', async () => {
-    it('should be able to parse simple svelte file', async () => {
-      const script = "let name = 'world';";
-      const svelte = `<script>${script}</script><h1>Hello {name}!</h1>`;
-      const jsAst = createJSAst({ rawContent: script });
-      contextStub.parse.resolves(jsAst);
-
-      const parsed = await parse(svelte, 'index.svelte', contextStub);
-
-      expect(parsed).ok;
-    });
-  });
-
   describe('svelte script tags', async () => {
-    it('should find instance script tag', async () => {
+    it('should be able to parse an instance script tag', async () => {
       const script = 'const name = "test"';
       const jsAst = createJSAst({ rawContent: script });
       const svelte = `<script>${script}</script><h1>Hello {name}!</h1>`;
@@ -191,7 +180,7 @@ describe('svelte-parser', async () => {
       expect(parsed.root.moduleScript).not.undefined;
     });
 
-    it('should find html script tag', async () => {
+    it('should find an html script tag', async () => {
       const script = "const name = 'test'";
       const jsAst = createJSAst({ rawContent: script });
       const svelte = `<div><script>${script}</script></div>`;
@@ -228,7 +217,31 @@ describe('svelte-parser', async () => {
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
       expect(parsed.root.moduleScript).not.undefined;
+      expect(parsed.root.moduleScript?.range).deep.eq({ start: 61, end: 81 } satisfies Range);
       expect(parsed.root.additionalScripts).lengthOf(2);
+      expect(parsed.root.additionalScripts[0].range).deep.eq({ start: 8, end: 27 } satisfies Range);
+      expect(parsed.root.additionalScripts[1].range).deep.eq({ start: 117, end: 136 } satisfies Range);
+    });
+
+    it('should support typescript scripts', async () => {
+      const scripts = ['const hello: string = "hello";', 'const foo: string = "foo";', 'const bar: string = "bar";'];
+      const tsAsts = [createTSAst({ rawContent: scripts[0] }), createTSAst({ rawContent: scripts[1] }), createTSAst({ rawContent: scripts[2] })];
+      const svelte = `<script lang="ts">${scripts[0]}</script><script lang="ts" context=\"module\">${scripts[1]}</script><div><h1>hello</h1><script lang="ts">${scripts[2]}</script></div>`;
+      contextStub.parse
+        .withArgs(scripts[0], 'index.svelte', AstFormat.TS)
+        .resolves(tsAsts[0])
+        .withArgs(scripts[1], 'index.svelte', AstFormat.TS)
+        .resolves(tsAsts[1])
+        .withArgs(scripts[2], 'index.svelte', AstFormat.TS)
+        .resolves(tsAsts[2]);
+
+      const parsed = await parse(svelte, 'index.svelte', contextStub);
+
+      expect(parsed.root.moduleScript).ok;
+      expect(parsed.root.moduleScript!.ast.root).eq(tsAsts[1].root);
+      expect(parsed.root.additionalScripts).lengthOf(2);
+      expect(parsed.root.additionalScripts[0].ast.root).eq(tsAsts[0].root);
+      expect(parsed.root.additionalScripts[1].ast.root).eq(tsAsts[2].root);
     });
   });
 
