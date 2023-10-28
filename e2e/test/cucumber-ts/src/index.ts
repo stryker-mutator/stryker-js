@@ -1,7 +1,7 @@
-import { isInstanceOf, getParamList, isSurrializable } from './helpers';
-import ClassConstructor from './class-constructor';
+import { isInstanceOf, getParamList, isSurrializable } from './helpers.js';
+import ClassConstructor from './class-constructor.js';
 import { EOL } from 'os';
-export * from './surrializable';
+export * from './surrializable.js';
 
 const UID = Math.floor(Math.random() * 0x10000000000).toString(16);
 const PLACE_HOLDER_REGEXP = new RegExp('"@__' + UID + '-(\\d+)__@"', 'g');

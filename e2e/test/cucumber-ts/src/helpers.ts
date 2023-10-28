@@ -1,5 +1,5 @@
-import ClassConstructor from './class-constructor';
-import { Surrializable } from './surrializable';
+import ClassConstructor from './class-constructor.js';
+import { Surrializable } from './surrializable.js';
 
 export function isInstanceOf(thing: unknown, whitelist: ReadonlyArray<ClassConstructor>) {
   return whitelist.some(ctor => thing instanceof ctor);
