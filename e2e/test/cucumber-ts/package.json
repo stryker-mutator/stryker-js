@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "An e2e test for cucumber with typescript",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "test": "stryker run",

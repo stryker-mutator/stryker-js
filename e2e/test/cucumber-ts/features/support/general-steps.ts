@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from 'chai';
-import { deserialize, serialize } from '../../src';
+import { deserialize, serialize } from '../../src/index.js';
 
 class Person {
   constructor(public name: string, public age: number){}
