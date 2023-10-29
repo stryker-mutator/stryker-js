@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { Position } from '@stryker-mutator/api/core';
-
 import { ParserContext } from '../../../src/parsers/parser-context.js';
-
 import { parse } from '../../../src/parsers/svelte-parser.js';
 import { createJSAst, createRange, createTSAst } from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
