@@ -89,7 +89,7 @@ describe('svelte-transformer', () => {
         range: createRange(moduleScriptStart.length, moduleScriptStart.length + moduleScriptContent.length),
       });
       const jsTemplateScript = createJSAst({ rawContent: templateScriptContent });
-      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(28, 33), expression: true });
+      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(28, 33), isExpression: true });
       const svelteAst = createSvelteAst({ rawContent: svelte, root: { moduleScript: moduleScriptSvelteNode, additionalScripts: [templateNode] } });
       const mutantCollector = new MutantCollector();
       const context = transformerContextStub();
@@ -120,7 +120,7 @@ describe('svelte-transformer', () => {
       expect(moduleScript.ast.rawContent).eq('');
       expect(moduleScript.ast.root.program.body).length(4);
       expect(moduleScript.ast.root.program.body).deep.eq(instrumentationBabelHeader);
-      expect(moduleScript.expression).false;
+      expect(moduleScript.isExpression).false;
     });
 
     it('should offset the start and end location of additional script tags', () => {
@@ -137,7 +137,7 @@ describe('svelte-transformer', () => {
       const templateScriptContent = 'foo';
       const rawContent = `<h1>hello!{${templateScriptContent}}</h1>`;
       const jsTemplateScript = createJSAst({ rawContent: templateScriptContent });
-      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(11, 14), expression: true });
+      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(11, 14), isExpression: true });
       const svelteAst = createSvelteAst({ rawContent: rawContent, root: { additionalScripts: [templateNode] } });
       const mutantCollector = new MutantCollector();
       const context = transformerContextStub();

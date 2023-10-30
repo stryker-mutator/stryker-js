@@ -10,7 +10,7 @@ export const print: Printer<SvelteAst> = ({ root, rawContent }, context) => {
 
   const sortedScripts = [root.moduleScript, ...root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
   for (const script of sortedScripts) {
-    if (script.expression) {
+    if (script.isExpression) {
       const code = context.print(script.ast, context);
       const codeWithoutSemicolon = code.slice(0, -1);
       outputText += rawContent.substring(currentIndex, script.range.start) + codeWithoutSemicolon;

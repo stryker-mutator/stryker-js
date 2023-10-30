@@ -28,7 +28,7 @@ describe('svelte-parser', async () => {
       const actual = await parse(svelte, 'index.svelte', contextStub);
 
       expect(actual.root.additionalScripts[0].ast.root).eq(jsAst.root);
-      expect(actual.root.additionalScripts[0].expression).false;
+      expect(actual.root.additionalScripts[0].isExpression).false;
     });
 
     it('should parse scripts correctly', async () => {
@@ -66,7 +66,7 @@ describe('svelte-parser', async () => {
           end: 45 + script.length,
           start: 45,
         },
-        expression: false,
+        isExpression: false,
       };
       expect(parsed.root.moduleScript).deep.eq(expected);
     });
@@ -95,9 +95,9 @@ describe('svelte-parser', async () => {
           end: 28 + script.length,
           start: 28,
         },
-        expression: false,
+        isExpression: false,
       };
-      expect(parsed.root.additionalScripts.find(({ expression }) => !expression)).deep.eq(expected);
+      expect(parsed.root.additionalScripts.find(({ isExpression: expression }) => !expression)).deep.eq(expected);
     });
 
     it('should offset the location of a template expression correctly', async () => {
@@ -127,9 +127,9 @@ describe('svelte-parser', async () => {
           end: 49 + 'name'.length,
           start: 49,
         },
-        expression: true,
+        isExpression: true,
       };
-      expect(parsed.root.additionalScripts.find(({ expression }) => expression)).deep.eq(expected);
+      expect(parsed.root.additionalScripts.find(({ isExpression: expression }) => expression)).deep.eq(expected);
     });
 
     it('should offset the location of a template script correctly', async () => {
@@ -161,7 +161,7 @@ describe('svelte-parser', async () => {
           end: 43 + script.length,
           start: 43,
         },
-        expression: false,
+        isExpression: false,
       };
       expect(parsed.root.additionalScripts[1]).deep.eq(expected);
     });
@@ -257,7 +257,7 @@ describe('svelte-parser', async () => {
       sinon.assert.calledOnceWithExactly(contextStub.parse, 'foo', 'index.svelte', AstFormat.JS);
       const expectedTemplateScript: TemplateScript = {
         ast: jsAst,
-        expression: true,
+        isExpression: true,
         range: createRange(6, 9),
       };
       expect(ast.root.additionalScripts).deep.eq([expectedTemplateScript]);

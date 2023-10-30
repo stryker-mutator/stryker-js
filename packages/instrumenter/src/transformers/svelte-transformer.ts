@@ -35,7 +35,7 @@ export const transformSvelte: AstTransformer<AstFormat.Svelte> = (svelte, mutant
           originFileName,
         },
         range: { start: moduleScriptStart.length, end: moduleScriptStart.length },
-        expression: false,
+        isExpression: false,
       };
       svelte.rawContent = `${moduleScript}${svelte.rawContent}`;
       svelte.root.additionalScripts.forEach((script) => {

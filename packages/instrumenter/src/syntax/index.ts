@@ -88,7 +88,7 @@ export interface SvelteRootNode {
 export interface TemplateScript {
   ast: ScriptAst;
   range: Range;
-  expression: boolean;
+  isExpression: boolean;
 }
 
 export interface Range {

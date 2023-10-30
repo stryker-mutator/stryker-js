@@ -13,7 +13,7 @@ interface Range {
   end: number;
 }
 interface TemplateRange extends Range {
-  expression: boolean;
+  isExpression: boolean;
 }
 
 interface TemplateScriptRange extends TemplateRange {
@@ -73,7 +73,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
 
     if (ast.instance) {
       const { start, end } = ast.instance.content as RangedProgram;
-      ranges.push({ start, end, expression: false });
+      ranges.push({ start, end, isExpression: false });
     }
 
     walk(ast.html as Node, {
@@ -81,13 +81,13 @@ export async function parse(text: string, fileName: string, context: ParserConte
         const node = n as TemplateNode;
         if (node.type === 'Element' && node.name === 'script' && node.children?.[0].type === 'Text') {
           const textContentNode = node.children[0] as Text;
-          ranges.push({ start: textContentNode.start, end: textContentNode.end, expression: false });
+          ranges.push({ start: textContentNode.start, end: textContentNode.end, isExpression: false });
         }
 
         const templateExpression = collectTemplateExpression(node);
         if (templateExpression) {
           const { start, end } = templateExpression;
-          ranges.push({ start, end, expression: true });
+          ranges.push({ start, end, isExpression: true });
         }
       },
     });
@@ -101,7 +101,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
     }
     return;
   }
-  async function parseTemplateScript({ start, end, expression, format }: TemplateScriptRange): Promise<TemplateScript> {
+  async function parseTemplateScript({ start, end, isExpression, format }: TemplateScriptRange): Promise<TemplateScript> {
     const scriptText = text.slice(start, end);
     const parsed = await context.parse(scriptText, fileName, format);
     return {
@@ -110,7 +110,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
         offset: positionConverter.positionFromOffset(start),
       },
       range: { start, end },
-      expression,
+      isExpression,
     };
   }
 }
@@ -118,7 +118,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
 function getModuleScriptRange(svelteAst: InternalSvelteAst): TemplateRange | undefined {
   if (svelteAst.module) {
     const script = svelteAst.module.content as RangedProgram;
-    return { start: script.start, end: script.end, expression: false };
+    return { start: script.start, end: script.end, isExpression: false };
   }
   return;
 }
@@ -143,7 +143,7 @@ function remapScriptLocations(
       const scriptRange: TemplateScriptRange = {
         start,
         end: start + actualScript.content.length,
-        expression: range.expression,
+        isExpression: range.isExpression,
         format: actualScript.attributes.lang === 'ts' ? AstFormat.TS : AstFormat.JS,
       };
       offset += actualScript.content.length - script.length;
@@ -156,7 +156,7 @@ function remapScriptLocations(
       return {
         start,
         end: start + script.length,
-        expression: range.expression,
+        isExpression: range.isExpression,
         format: AstFormat.JS,
       };
     }

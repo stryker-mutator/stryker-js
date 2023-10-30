@@ -89,7 +89,7 @@ export function createTemplateScript(overrides?: Partial<TemplateScript>): Templ
   return {
     ast: createJSAst(),
     range: { start: 26, end: 16 },
-    expression: false,
+    isExpression: false,
     ...overrides,
   };
 }

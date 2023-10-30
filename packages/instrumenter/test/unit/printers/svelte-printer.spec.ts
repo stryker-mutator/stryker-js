@@ -23,7 +23,7 @@ describe('svelte-printer', () => {
     const expectedOutput = /<script>.*const name = "test";.*<\/script><h1>hello!<\/h1>/s;
     const ast = createSvelteAst({
       rawContent: input,
-      root: { moduleScript: { ast: script, range: { start: script.root.start, end: script.root.end! }, expression: false }, additionalScripts: [] },
+      root: { moduleScript: { ast: script, range: { start: script.root.start, end: script.root.end! }, isExpression: false }, additionalScripts: [] },
     });
 
     const output = print(ast, contextStub);
@@ -38,7 +38,7 @@ describe('svelte-printer', () => {
       createTemplateScript({ ast: createJSAst({ rawContent: '2' }), range: createRange(43, 44) }),
       createTemplateScript({ ast: createJSAst({ rawContent: '4' }), range: createRange(99, 100) }),
       createTemplateScript({ ast: createJSAst({ rawContent: '3' }), range: createRange(81, 82) }),
-      createTemplateScript({ ast: createJSAst({ rawContent: '5' }), range: createRange(110, 111), expression: true }),
+      createTemplateScript({ ast: createJSAst({ rawContent: '5' }), range: createRange(110, 111), isExpression: true }),
     ];
     contextStub.print
       .withArgs(scripts[0].ast, sinon.match.any)
