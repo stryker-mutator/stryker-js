@@ -3,12 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+
+
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "test:unit": "vitest run",
     "test": "stryker run",
-    "test:unit": "vitest",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "preview": "vite preview"
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

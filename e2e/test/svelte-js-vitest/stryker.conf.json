@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "reporters": [
     "progress",
@@ -7,7 +7,5 @@
     "json"
   ],
   "testRunner": "vitest",
-  "coverageAnalysis": "perTest",
-  "buildCommand": "npm run build", 
-  "disableTypeChecks": false
+  "concurrency": 2
 }

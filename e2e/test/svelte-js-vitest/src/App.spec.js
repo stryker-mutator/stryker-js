@@ -1,14 +1,26 @@
-import { describe, it, expect } from 'vitest';
-import App from './App.svelte';
-import { sum, isOldEnough, loop} from './App.svelte';
-import { render, screen } from '@testing-library/svelte'
+import { describe, it, expect, afterEach } from 'vitest';
+import App, { sum, isOldEnough, loop} from './App.svelte';
+import { render, screen, fireEvent, cleanup } from '@testing-library/svelte';
 
-describe("basic test", () => {
+describe("App.svelte", () => {
+
+  afterEach(() => {
+    cleanup();
+  });
+
   it("says 'hello world!'", () => {
     render(App);
     const node = screen.queryByText("Hello world!");
     expect(node).not.toBeNull();
   })
+
+  it('add one when hitting the button', async () => {
+    render(App);
+    const button = screen.getByText('Hits 0');
+    console.log(button);
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('Hits 1');
+  });
 
   it('adds 1 + 2 to equal 3', () => {
       expect(sum(1, 2)).toBe(3);
@@ -23,6 +35,7 @@ describe("basic test", () => {
     loop(5, (n) => (result += n));
     expect(result).toEqual(15);
   });
+  
 })
 
 
