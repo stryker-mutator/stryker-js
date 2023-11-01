@@ -81,7 +81,7 @@ describe('babel-transformer', () => {
     it('should not place the same mutant twice (#2968)', () => {
       const ast = createJSAst({ rawContent: 'foo((console.log(bar + baz), bar + baz));' });
       act(ast);
-      const code = generate(ast.root).code;
+      const { code } = generate(ast.root);
       expect(normalizeWhitespaces(code)).contains(
         normalizeWhitespaces(`{
         bar((console.log(bar + baz), bar + baz));
@@ -245,7 +245,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
         expect(ignoredMutants()).lengthOf(1);
-        const ignoredMutant = ignoredMutants()[0];
+        const [ignoredMutant] = ignoredMutants();
         expect(ignoredMutant.mutatorName).eq('Plus');
       });
 
@@ -338,7 +338,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(ignoredMutants()).lengthOf(3);
         expect(notIgnoredMutants()).lengthOf(1);
-        const notIgnoredMutant = notIgnoredMutants()[0];
+        const [notIgnoredMutant] = notIgnoredMutants();
         expect(notIgnoredMutant.mutatorName).eq('Foo');
       });
 
@@ -517,7 +517,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(1);
         expect(ignoredMutants()).lengthOf(3);
-        const actualNotIgnoredMutant = notIgnoredMutants()[0];
+        const [actualNotIgnoredMutant] = notIgnoredMutants();
         expect(actualNotIgnoredMutant.mutatorName).eq('Plus');
         expect(actualNotIgnoredMutant.original.loc!.start.line).eq(5);
       });
@@ -556,8 +556,7 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(2);
         expect(ignoredMutants()).lengthOf(2);
-        const actualNotIgnoredPlusMutant = notIgnoredMutants()[0];
-        const actualNotIgnoredFooMutant = notIgnoredMutants()[1];
+        const [actualNotIgnoredPlusMutant, actualNotIgnoredFooMutant] = notIgnoredMutants();
         expect(actualNotIgnoredPlusMutant.mutatorName).eq('Plus');
         expect(actualNotIgnoredPlusMutant.original.loc!.start.line).eq(5);
         expect(actualNotIgnoredFooMutant.mutatorName).eq('Foo');
@@ -579,7 +578,7 @@ describe('babel-transformer', () => {
 
         expect(notIgnoredMutants()).lengthOf(1);
         expect(ignoredMutants()).lengthOf(2);
-        const actualNotIgnoredFooMutant = notIgnoredMutants()[0];
+        const [actualNotIgnoredFooMutant] = notIgnoredMutants();
         expect(actualNotIgnoredFooMutant.mutatorName).eq('Plus');
         expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
       });
@@ -599,7 +598,7 @@ describe('babel-transformer', () => {
 
         expect(notIgnoredMutants()).lengthOf(1);
         expect(ignoredMutants()).lengthOf(2);
-        const actualNotIgnoredFooMutant = notIgnoredMutants()[0];
+        const [actualNotIgnoredFooMutant] = notIgnoredMutants();
         expect(actualNotIgnoredFooMutant.mutatorName).eq('Plus');
         expect(actualNotIgnoredFooMutant.original.loc!.start.line).eq(5);
       });
@@ -693,8 +692,8 @@ describe('babel-transformer', () => {
       act(ast);
       expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
       expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
-      const { leadingComments: _unused, ...actualFirstStatement } = ast.root.program.body[0];
-      const { leadingComments: _unused2, ...expectedFirstStatement } = instrumentationBabelHeader[0];
+      const [{ leadingComments: _unused, ...actualFirstStatement }] = ast.root.program.body;
+      const [{ leadingComments: _unused2, ...expectedFirstStatement }] = instrumentationBabelHeader;
       expect(actualFirstStatement).deep.eq(expectedFirstStatement);
       expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
     });
@@ -705,8 +704,8 @@ describe('babel-transformer', () => {
 
       expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
       expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
-      const { leadingComments: _unused, ...actualFirstStatement } = ast.root.program.body[0];
-      const { leadingComments: _unused2, ...expectedFirstStatement } = instrumentationBabelHeader[0];
+      const [{ leadingComments: _unused, ...actualFirstStatement }] = ast.root.program.body;
+      const [{ leadingComments: _unused2, ...expectedFirstStatement }] = instrumentationBabelHeader;
       expect(actualFirstStatement).deep.eq(expectedFirstStatement);
       expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
     });

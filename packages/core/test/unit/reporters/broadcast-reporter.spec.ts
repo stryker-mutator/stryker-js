@@ -177,7 +177,7 @@ describe(BroadcastReporter.name, () => {
   }
 
   function captureTTY() {
-    isTTY = process.stdout.isTTY;
+    ({ isTTY } = process.stdout);
   }
 
   function restoreTTY() {

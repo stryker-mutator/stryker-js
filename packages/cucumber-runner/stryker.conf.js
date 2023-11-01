@@ -9,7 +9,7 @@ const settings = JSON.parse(
     'utf-8',
   ),
 );
-settings.dashboard.module = import.meta.url.split('/').slice(-2)[0];
+settings.dashboard.module = import.meta.url.split('/').at(-2);
 settings.mochaOptions.spec.push('dist/test/integration/**/*.js');
 /**
  * @type {import('../api/dist/src/core/index.js').PartialStrykerOptions}

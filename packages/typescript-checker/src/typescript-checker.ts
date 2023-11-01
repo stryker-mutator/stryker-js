@@ -92,7 +92,7 @@ export class TypescriptChecker implements Checker {
     if (!this.options.typescriptChecker.prioritizePerformanceOverAccuracy) {
       return mutants.map((m) => [m.id]);
     }
-    const nodes = this.tsCompiler.nodes;
+    const { nodes } = this.tsCompiler;
     const [mutantsOutsideProject, mutantsInProject] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
 
     const groups = createGroups(mutantsInProject, nodes);

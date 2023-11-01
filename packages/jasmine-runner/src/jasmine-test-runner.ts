@@ -100,7 +100,7 @@ export class JasmineTestRunner implements TestRunner {
         jasmineDone() {
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
-            mutantCoverage = self.instrumenterContext.mutantCoverage;
+            ({ mutantCoverage } = self.instrumenterContext);
           }
           result = determineHitLimitReached(self.instrumenterContext.hitCount, self.instrumenterContext.hitLimit) ?? {
             status: DryRunStatus.Complete,

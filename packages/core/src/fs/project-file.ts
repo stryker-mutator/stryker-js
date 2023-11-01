@@ -15,7 +15,7 @@ import { FileSystem } from './file-system.js';
 export class ProjectFile implements FileDescription {
   #currentContent: string | undefined;
   #originalContent: string | undefined;
-  #relativePath: string;
+  readonly #relativePath: string;
 
   constructor(
     private readonly fs: I<FileSystem>,

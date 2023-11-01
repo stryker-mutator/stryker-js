@@ -97,7 +97,7 @@ describe('Running in an example project', () => {
 
     // Assert
     expect(testInjector.logger.debug).calledOnce;
-    const actualLogMessage = testInjector.logger.debug.getCall(0).args[0];
+    const [actualLogMessage] = testInjector.logger.debug.getCall(0).args;
     const expectedPrefix = `Running cucumber with configuration: (${process.cwd()})`;
     expect(actualLogMessage.startsWith(expectedPrefix)).true;
     const actualConfig: IConfiguration = JSON.parse(

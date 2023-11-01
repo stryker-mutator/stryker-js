@@ -459,7 +459,7 @@ describe(IncrementalDiffer.name, () => {
       const actualDiff = new ScenarioBuilder().withMathProjectExample().act();
 
       // Assert
-      const actualMutant = actualDiff[0];
+      const [actualMutant] = actualDiff;
       const expected: Partial<Mutant> = {
         id: '2',
         fileName: srcAdd,
@@ -479,7 +479,7 @@ describe(IncrementalDiffer.name, () => {
       const actualDiff = new ScenarioBuilder().withMathProjectExample().act();
 
       // Assert
-      const actualMutant = actualDiff[0];
+      const [actualMutant] = actualDiff;
       expect(actualMutant.status).undefined;
     });
 
@@ -488,7 +488,7 @@ describe(IncrementalDiffer.name, () => {
       const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: MutantStatus.Ignored }).act();
 
       // Assert
-      const actualMutant = actualDiff[0];
+      const [actualMutant] = actualDiff;
       expect(actualMutant.status).undefined;
     });
 
@@ -500,14 +500,14 @@ describe(IncrementalDiffer.name, () => {
         .withCrlfLineEndingsInIncrementalReport()
         .act();
 
-      const actualMutant = actualDiff[0];
+      const [actualMutant] = actualDiff;
       expect(actualMutant.status).eq(MutantStatus.Killed);
     });
 
     it('should map killedBy and coveredBy to the new test ids if a mutant result is reused', () => {
       const scenario = new ScenarioBuilder().withMathProjectExample();
       const actualDiff = scenario.act();
-      const actualMutant = actualDiff[0];
+      const [actualMutant] = actualDiff;
       const expectedTestIds = [scenario.newTestId];
       const expected: Partial<Mutant> = {
         coveredBy: expectedTestIds,
@@ -828,7 +828,7 @@ describe(IncrementalDiffer.name, () => {
       const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
       const mutants = scenario.act();
       expect(mutants).lengthOf(2);
-      const actualMutant = mutants[1];
+      const [, actualMutant] = mutants;
       expect(actualMutant.id).includes('src/multiply.js@1:11-1:12');
       expect(actualMutant.status).eq(MutantStatus.Killed);
       expect(actualMutant.fileName).eq(path.resolve(srcMultiply));
