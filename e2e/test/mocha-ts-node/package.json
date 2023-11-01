@@ -2,6 +2,7 @@
   "name": "mocha-ts-node",
   "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
   "scripts": {
+    "test:unit": "mocha",
     "test": "stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
