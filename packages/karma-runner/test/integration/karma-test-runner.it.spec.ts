@@ -42,7 +42,7 @@ describe(`${KarmaTestRunner.name} integration`, () => {
     const actualFailedTests = result.tests.filter(isFailed);
     expect(actualFailedTests).to.have.length(expectedFailureMessages.length);
     actualFailedTests.forEach((failedTest) => {
-      const actualFailedMessage = failedTest.failureMessage.split('\n')[0];
+      const [actualFailedMessage] = failedTest.failureMessage.split('\n');
       expect(actualFailedMessage).to.be.oneOf(expectedFailureMessages);
     });
   };

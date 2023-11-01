@@ -13,7 +13,7 @@ export function expectTestResults(result: CompleteDryRunResult, expectedTestResu
   const actualTestResults: TimelessTestResult[] = result.tests.map((test) => {
     const { timeSpentMs, ...timeless } = test;
     if (timeless.status === TestStatus.Failed) {
-      timeless.failureMessage = timeless.failureMessage.split('\n')[0];
+      [timeless.failureMessage] = timeless.failureMessage.split('\n');
     }
     return timeless;
   });

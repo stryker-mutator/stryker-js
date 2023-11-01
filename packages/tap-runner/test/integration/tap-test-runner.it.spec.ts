@@ -1,12 +1,10 @@
 import path from 'path';
 import os from 'os';
-
 import { fileURLToPath } from 'url';
 
 import { expect } from 'chai';
 import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus, KilledMutantRunResult } from '@stryker-mutator/api/test-runner';
-
 import { normalizeFileName } from '@stryker-mutator/util';
 
 import { TapTestRunner } from '../../src/index.js';
@@ -57,7 +55,7 @@ describe('tap-runner integration', () => {
       // Arrange
       testInjector.logger.isDebugEnabled.returns(true);
       options.tap.nodeArgs = ['--enable-source-maps']; // for testing purposes
-      const testFile = testFilter[0];
+      const [testFile] = testFilter;
 
       // Act
       await sut.dryRun(factory.dryRunOptions({ files: testFilter }));

@@ -152,7 +152,7 @@ export class VitestTestRunner implements TestRunner {
     // We need to invalidate the module cache for the vitest setup file
     // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
     this.ctx!.projects.forEach((project) => {
-      const moduleGraph = project.server.moduleGraph;
+      const { moduleGraph } = project.server;
       const module = moduleGraph.getModuleById(this.fileCommunicator.vitestSetup);
       if (module) {
         moduleGraph.invalidateModule(module);
