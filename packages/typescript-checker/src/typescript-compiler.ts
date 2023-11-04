@@ -4,7 +4,6 @@ import ts from 'typescript';
 import { propertyPath, Task } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import { HybridFileSystem } from './fs/index.js';
@@ -240,7 +239,7 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
     const sources: string[] | undefined = JSON.parse(sourceMap.content).sources;
 
     if (sources?.length === 1) {
-      const sourcePath = sources[0];
+      const [sourcePath] = sources;
       return toPosixFileName(path.resolve(path.dirname(sourceMapFileName), sourcePath));
     }
 

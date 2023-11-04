@@ -62,6 +62,7 @@ describe(Instrumenter.name, () => {
     await act(input);
 
     // Assert
+    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
     const actual = helper.transformerStub.getCall(0).args[2];
     const expected: transformers.TransformerOptions = createInstrumenterOptions({
       excludedMutations: [],

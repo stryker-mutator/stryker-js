@@ -57,7 +57,7 @@ export function getEmojiForStatus(status: schema.MutantStatus): string {
 }
 
 export function stringWidth(input: string): number {
-  let length = input.length;
+  let { length } = input;
   for (const match of input.matchAll(emojiRe)) {
     length = length - match[0].length + 2;
   }

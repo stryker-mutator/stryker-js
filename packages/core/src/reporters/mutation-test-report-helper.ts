@@ -130,7 +130,7 @@ export class MutationTestReportHelper {
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {
-    const mutationScore = metrics.systemUnderTestMetrics.metrics.mutationScore;
+    const { mutationScore } = metrics.systemUnderTestMetrics.metrics;
     const breaking = this.options.thresholds.break;
     const formattedScore = mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
@@ -319,6 +319,7 @@ export class MutationTestReportHelper {
     ];
     return dependencies.map(discover).reduce<schema.Dependencies>((acc, dependency) => {
       if (dependency) {
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         acc[dependency[0]] = dependency[1];
       }
       return acc;

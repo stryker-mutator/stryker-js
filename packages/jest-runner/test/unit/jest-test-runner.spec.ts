@@ -1,7 +1,5 @@
 import path from 'path';
-
 import { fileURLToPath, URL } from 'url';
-
 import { createRequire } from 'module';
 
 import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
@@ -10,7 +8,6 @@ import sinon from 'sinon';
 import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
-
 import { Task } from '@stryker-mutator/util';
 
 import { JestTestAdapter } from '../../src/jest-test-adapters/index.js';
@@ -427,6 +424,7 @@ describe(JestTestRunner.name, () => {
         options.jest.config = { testRunner: 'jest-jasmine2' };
         const sut = await arrangeInitializedSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         const { jestConfig } = jestTestAdapterMock.run.getCall(0).args[0];
         expect(jestConfig).has.not.property('setupFilesAfterEnv');
       });
