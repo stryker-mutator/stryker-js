@@ -56,7 +56,9 @@
     "vitest": "0.34.6",
     "vitest-dom": "0.1.1",
     "webpack": "5.89.0",
-    "webpack-cli": "5.1.4"
+    "webpack-cli": "5.1.4",
+    "@tsconfig/svelte": "^5.0.0",
+    "tslib": "^2.6.0"
   },
   "scripts": {
     "bootstrap": "node tasks/bootstrap.js",

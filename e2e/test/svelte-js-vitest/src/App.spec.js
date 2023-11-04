@@ -17,7 +17,6 @@ describe("App.svelte", () => {
   it('add one when hitting the button', async () => {
     render(App);
     const button = screen.getByText('Hits 0');
-    console.log(button);
     await fireEvent.click(button);
     expect(button.textContent).toEqual('Hits 1');
   });
