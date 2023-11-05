@@ -1,0 +1,23 @@
+{
+  "name": "svelte-old-version",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test:unit": "vitest run",
+    "test": "stryker run",
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "devDependencies": {
+    "svelte": "3.52"
+  },
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/vitest-runner": "../../../packages/vitest-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  }
+}
