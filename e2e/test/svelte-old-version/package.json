@@ -11,7 +11,7 @@
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "devDependencies": {
-    "svelte": "3.52"
+    "svelte": "4.0.0"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",
