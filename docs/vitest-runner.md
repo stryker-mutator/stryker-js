@@ -68,7 +68,7 @@ As you can see, the vitest runner:
 - Will **bail** on the first test failure (unless you set `disableBail` to `true`).  
   This is done to boost performance.
 - Will **disable code coverage reporting**  
-  This is done because StrykerJS uses it's own [coverage analysis](./configuration.md/#coverageanalysis-string), which _is_ supported.
+  This is done because StrykerJS uses it's own [coverage analysis](./configuration.md#coverageanalysis-string), which _is_ supported.
 
 ## In-source testing
 
