@@ -1,10 +1,15 @@
-import { describe, it, expect, afterEach } from 'vitest';
 import App, { sum, isOldEnough } from './App.svelte';
 import { render, screen, fireEvent, cleanup } from '@testing-library/svelte';
 
 describe('App.svelte', () => {
   afterEach(() => {
     cleanup();
+  });
+
+  it("says 'hello world!'", () => {
+    render(App);
+    const node = screen.queryByText('Hello world!');
+    expect(node).not.toBeNull();
   });
 
   it('add one when hitting the button', async () => {

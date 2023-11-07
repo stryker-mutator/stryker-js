@@ -2,6 +2,10 @@
   export function sum(a, b) {
     return a + b;
   }
+  // This function is  exported, but will not be tested to see if it affects the no coverage statistic
+  export function multiply(a, b) {
+    return a * b;
+  }
   export function isOldEnough(age) {
     return age >= 18;
   }

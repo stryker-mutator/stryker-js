@@ -3,6 +3,8 @@ import type { Ast as InternalSvelteAst, TemplateNode, Text } from 'svelte/types/
 
 import { notEmpty } from '@stryker-mutator/util';
 
+import { satisfies } from 'semver';
+
 import { AstFormat, SvelteAst, TemplateScript, SvelteRootNode } from '../syntax/index.js';
 import { PositionConverter } from '../util/index.js';
 
@@ -26,10 +28,15 @@ interface ScriptTag {
 }
 
 type RangedProgram = Program & Range;
-
+const MIN_SVELTE_VERSION = '>=3.30';
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
   // eslint-disable-next-line import/no-extraneous-dependencies
-  const { parse: svelteParse, walk, preprocess } = await import('svelte/compiler');
+  const { parse: svelteParse, walk, preprocess, VERSION } = await import('svelte/compiler');
+
+  if (!satisfies(VERSION, MIN_SVELTE_VERSION)) {
+    throw new Error(`Svelte version ${VERSION} not supported. Expected: ${MIN_SVELTE_VERSION} (processing file ${fileName})`);
+  }
+
   const positionConverter = new PositionConverter(text);
   const { replacedCode, scriptMap } = await replaceScripts(text);
   const svelteAst = svelteParse(replacedCode, { filename: fileName });

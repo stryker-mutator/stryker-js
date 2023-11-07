@@ -1,0 +1,8 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "reporters": ["html", "json", "progress"],
+  "testRunner": "jest",
+  "concurrency": 2,
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
+  "timeoutMS": 60000
+}

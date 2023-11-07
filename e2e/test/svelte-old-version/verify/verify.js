@@ -1,4 +1,3 @@
-// @ts-check
 import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 
 describe('Verify stryker has ran correctly', () => {
