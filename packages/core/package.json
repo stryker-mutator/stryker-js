@@ -103,7 +103,7 @@
     "@types/inquirer": "9.0.6",
     "@types/lodash.groupby": "4.6.9",
     "@types/node": "20.8.10",
-    "@types/progress": "2.0.6",
+    "@types/progress": "2.0.7",
     "@types/semver": "7.5.4",
     "flatted": "3.2.9"
   }
