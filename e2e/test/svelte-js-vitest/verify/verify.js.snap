@@ -51,22 +51,22 @@ Array [
   Object {
     "location": "10:12-10:21",
     "mutatorName": "ConditionalExpression",
-    "replacement": "true",
-  },
-  Object {
-    "location": "10:12-10:21",
-    "mutatorName": "ConditionalExpression",
     "replacement": "false",
   },
   Object {
     "location": "10:12-10:21",
-    "mutatorName": "EqualityOperator",
-    "replacement": "age > 18",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "true",
   },
   Object {
     "location": "10:12-10:21",
     "mutatorName": "EqualityOperator",
     "replacement": "age < 18",
+  },
+  Object {
+    "location": "10:12-10:21",
+    "mutatorName": "EqualityOperator",
+    "replacement": "age > 18",
   },
   Object {
     "location": "15:35-22:4",
@@ -96,22 +96,22 @@ Array [
   Object {
     "location": "20:14-20:19",
     "mutatorName": "ConditionalExpression",
-    "replacement": "true",
-  },
-  Object {
-    "location": "20:14-20:19",
-    "mutatorName": "ConditionalExpression",
     "replacement": "false",
   },
   Object {
     "location": "20:14-20:19",
-    "mutatorName": "EqualityOperator",
-    "replacement": "n >= 0",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "true",
   },
   Object {
     "location": "20:14-20:19",
     "mutatorName": "EqualityOperator",
     "replacement": "n <= 0",
+  },
+  Object {
+    "location": "20:14-20:19",
+    "mutatorName": "EqualityOperator",
+    "replacement": "n >= 0",
   },
   Object {
     "location": "33:21-33:33",
