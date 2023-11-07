@@ -3,5 +3,6 @@
   "reporters": ["html", "json", "progress"],
   "testRunner": "jest",
   "concurrency": 2,
-  "testRunnerNodeArgs": ["--experimental-vm-modules"]
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
+  "timeoutMS": 60000
 }
