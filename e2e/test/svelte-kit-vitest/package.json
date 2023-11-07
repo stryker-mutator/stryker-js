@@ -1,0 +1,17 @@
+{
+	"name": "svelte-kit-vitest",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+    "test:unit": "vitest run",
+    "test": "stryker run",
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"type": "module"
+}

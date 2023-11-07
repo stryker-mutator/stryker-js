@@ -74,7 +74,7 @@ describe('html-parser', () => {
       const parsed = await parse(html, 'index.html', contextStub as ParserContext);
 
       // Assert
-      expect(parsed.root.scripts[0].offset!.position).eq(74);
+      expect(parsed.root.scripts[0].offset!.column).eq(74);
       expect(parsed.root.scripts[0].offset!.line).eq(4);
       expect(parsed.root.scripts[0].root.start).eq(74);
       expect(parsed.root.scripts[0].root.end).eq(111);
@@ -147,9 +147,9 @@ describe('html-parser', () => {
       </body>
       </html>`;
       const expectedAsts = [
-        createJSAst({ rawContent: script1, offset: { line: 3, position: 41 } }),
-        createJSAst({ rawContent: script2, offset: { line: 4, position: 74 } }),
-        createJSAst({ rawContent: script3, offset: { line: 5, position: 107 } }),
+        createJSAst({ rawContent: script1, offset: { line: 3, column: 41 } }),
+        createJSAst({ rawContent: script2, offset: { line: 4, column: 74 } }),
+        createJSAst({ rawContent: script3, offset: { line: 5, column: 107 } }),
       ];
       contextStub.parse
         .withArgs(script1, sinon.match.any)

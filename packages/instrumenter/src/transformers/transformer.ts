@@ -8,6 +8,7 @@ import { TransformerOptions } from './transformer-options.js';
 import { transformBabel } from './babel-transformer.js';
 import { transformHtml } from './html-transformer.js';
 import { MutantCollector } from './mutant-collector.js';
+import { transformSvelte } from './svelte-transformer.js';
 
 /**
  * Transform the AST by generating mutants and placing them in the AST.
@@ -30,6 +31,8 @@ export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transfo
     case AstFormat.Tsx:
       transformBabel(ast, mutantCollector, context);
       break;
+    case AstFormat.Svelte:
+      transformSvelte(ast, mutantCollector, context);
   }
 }
 

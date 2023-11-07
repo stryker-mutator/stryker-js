@@ -1,8 +1,11 @@
 import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
 import babel from '@babel/core';
-import { deepFreeze } from '@stryker-mutator/util';
+import { deepFreeze, I } from '@stryker-mutator/util';
 
 import { Mutant } from '../mutant.js';
+
+import { MutantCollector } from '../transformers/index.js';
+import { MutatorOptions } from '../mutators/index.js';
 
 export { ID };
 
@@ -224,4 +227,30 @@ export function locationOverlaps(a: SourceLocationInFile, b: SourceLocationInFil
  */
 export function deepCloneNode<TNode extends babel.types.Node>(node: TNode): TNode {
   return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
+}
+
+export function placeHeaderIfNeeded(
+  mutantCollector: I<MutantCollector>,
+  originFileName: string,
+  options: MutatorOptions,
+  root: babel.types.File,
+): void {
+  if (mutantCollector.hasPlacedMutants(originFileName) && !options.noHeader) {
+    // Be sure to leave comments like `// @flow` in.
+    placeHeader(root);
+  }
+}
+
+export function placeHeader(root: babel.types.File): void {
+  let header = instrumentationBabelHeader;
+  if (Array.isArray(root.program.body[0]?.leadingComments)) {
+    header = [
+      {
+        ...instrumentationBabelHeader[0],
+        leadingComments: root.program.body[0]?.leadingComments,
+      },
+      ...instrumentationBabelHeader.slice(1),
+    ];
+  }
+  root.program.body.unshift(...header);
 }

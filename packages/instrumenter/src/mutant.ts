@@ -2,7 +2,6 @@ import babel, { type types } from '@babel/core';
 import generate from '@babel/generator';
 import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
 
-import { Offset } from './syntax/index.js';
 import { deepCloneNode, eqNode } from './util/index.js';
 
 const { traverse } = babel;
@@ -26,7 +25,7 @@ export class Mutant implements Mutable {
     public readonly fileName: string,
     public readonly original: types.Node,
     specs: Mutable,
-    public readonly offset: Offset = { position: 0, line: 0 },
+    public readonly offset: Position = { column: 0, line: 0 },
   ) {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
@@ -38,7 +37,7 @@ export class Mutant implements Mutable {
     return {
       fileName: this.fileName,
       id: this.id,
-      location: toApiLocation(this.original.loc!, this.offset.line),
+      location: toApiLocation(this.original.loc!, this.offset),
       mutatorName: this.mutatorName,
       replacement: this.replacementCode,
       statusReason: this.ignoreReason,
@@ -77,16 +76,17 @@ export class Mutant implements Mutable {
   }
 }
 
-function toApiLocation(source: types.SourceLocation, lineOffset: number): Location {
-  return {
-    start: toPosition(source.start, lineOffset),
-    end: toPosition(source.end, lineOffset),
+function toApiLocation(source: types.SourceLocation, offset: Position): Location {
+  const loc = {
+    start: toPosition(source.start, offset),
+    end: toPosition(source.end, offset),
   };
+  return loc;
 }
 
-function toPosition(source: Position, lineOffset: number): Position {
+function toPosition(source: Position, offset: Position): Position {
   return {
-    column: source.column,
-    line: source.line + lineOffset - 1, // Stryker works 0-based internally
+    column: source.column + (source.line === 1 ? offset.column : 0), // offset is zero-based
+    line: source.line + offset.line - 1, // Stryker works 0-based internally, offset is zero based as well
   };
 }

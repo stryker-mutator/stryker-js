@@ -1,7 +1,7 @@
 import type { types } from '@babel/core';
+import { Position } from '@stryker-mutator/api/core';
 
 import { Mutant, Mutable } from '../mutant.js';
-import { Offset } from '../syntax/index.js';
 
 export class MutantCollector {
   private readonly _mutants: Mutant[] = [];
@@ -19,7 +19,7 @@ export class MutantCollector {
    * @param offset offset of mutant nodes
    * @returns The mutant (for testability)
    */
-  public collect(fileName: string, original: types.Node, mutable: Mutable, offset: Offset = { line: 0, position: 0 }): Mutant {
+  public collect(fileName: string, original: types.Node, mutable: Mutable, offset: Position = { line: 0, column: 0 }): Mutant {
     const mutant = new Mutant(this._mutants.length.toString(), fileName, original, mutable, offset);
     this._mutants.push(mutant);
     return mutant;
