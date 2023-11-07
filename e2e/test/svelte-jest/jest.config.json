@@ -1,0 +1,9 @@
+{
+  "transform": {
+    "^.+\\.svelte$": "svelte-jester"
+  },
+  "moduleFileExtensions": ["svelte", "js"],
+  "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/jest-setup.js"],
+  "extensionsToTreatAsEsm": [".svelte"]
+}
