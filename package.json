@@ -13,7 +13,7 @@
     "@types/mocha": "10.0.4",
     "@types/node": "20.8.10",
     "@types/sinon": "17.0.1",
-    "@types/sinon-chai": "3.2.11",
+    "@types/sinon-chai": "3.2.12",
     "@types/source-map-support": "0.5.10",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.10.0",
