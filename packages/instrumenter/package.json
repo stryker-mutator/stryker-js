@@ -53,7 +53,7 @@
     "weapon-regex": "~1.1.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.22.15",
+    "@babel/preset-react": "7.23.3",
     "@stryker-mutator/test-helpers": "7.3.0",
     "@types/babel__core": "7.20.4",
     "@types/babel__generator": "7.6.7",
