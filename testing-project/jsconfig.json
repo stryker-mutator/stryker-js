@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "target": "es2022",
+    "lib": ["es2022", "DOM"],
+    "strict": true,
+    "strictNullChecks": false,
+    "allowJs": true,
+    "checkJs": true,
+    "moduleResolution": "node",
+    "maxNodeModuleJsDepth": 0
+  },
+  "include": ["src", "test"]
+}

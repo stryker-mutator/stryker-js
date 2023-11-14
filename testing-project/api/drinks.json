@@ -1,0 +1,5 @@
+[
+  { "name": "Roba Cola", "price": 2.3, "isAlcoholic": false },
+  { "name": "Robo Beer", "price": 3.5, "isAlcoholic": true },
+  { "name": "Rob(w)ine", "price": 5.0, "isAlcoholic": true }
+]

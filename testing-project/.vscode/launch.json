@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node-terminal",
+      "name": "❌avier stryker debug",
+      "request": "launch",
+      "command": "cd ../ && npm run clean && npm run build && cd ${workspaceFolder} && yarn run test:mutation --logLevel debug --useMutationLevel default",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/../packages/*/dist/**/*.js",
+      ]
+    },
+  ]
+}

@@ -9,7 +9,7 @@ import { allMutators, NodeMutator } from '../../../src/mutators/index.js';
 describe('allMutators', () => {
   it('should include all mutators', async () => {
     const resolveMutator = path.resolve.bind(path, path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'src', 'mutators');
-    const blackList = ['index.js', 'node-mutator.js', 'mutator-options.js', 'mutate.js'];
+    const blackList = ['index.js', 'node-mutator.js', 'mutator-options.js', 'mutate.js', 'mutation-level-options.js'];
     const actualMutators = (await Promise.all(
       fs
         .readdirSync(resolveMutator())

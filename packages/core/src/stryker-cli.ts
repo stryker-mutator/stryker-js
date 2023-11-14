@@ -150,6 +150,10 @@ export class StrykerCli {
       )
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(
+        '--useMutationLevel <mutationLevel>',
+        'Pick a mutation level to be selected during a mutation run, which will restrict the types of mutator operators which will be executed. The selected mutation level must be defined in the configuration file, except for the three default ones: X,Y,Z.',
+      )
+      .option(
         '--dashboard.project <name>',
         'Indicates which project name to use if the "dashboard" reporter is enabled. Defaults to the git url configured in the environment of your CI server.',
         deepOption(dashboard, 'project'),

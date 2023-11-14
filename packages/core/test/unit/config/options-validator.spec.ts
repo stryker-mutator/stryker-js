@@ -99,6 +99,7 @@ describe(OptionsValidator.name, () => {
         warnings: true,
         disableBail: false,
         ignorers: [],
+        mutationLevels: [],
       };
       expect(options).deep.eq(expectedOptions);
     });

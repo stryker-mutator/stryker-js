@@ -9,6 +9,7 @@
 /packages/*/reports/**
 /packages/*/coverage/**
 /packages/grunt-stryker/tasks/**
+/testing-project/*
 
 # e2e is linted in the e2e package
 /e2e

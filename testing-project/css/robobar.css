@@ -1,0 +1,13 @@
+:root {
+  --gray-dark-transparent: rgba(48, 48, 48, 0.8);
+}
+
+body {
+  background-image: url(../img/robotic-background-10.jpg);
+  background-size: 100%;
+}
+
+.container {
+  background-color: var(--gray-dark-transparent);
+  border-radius: 10px;
+}

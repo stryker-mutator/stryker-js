@@ -49,7 +49,11 @@ export class MutantInstrumenterExecutor {
 
     // Instrument files in-memory
     const ignorers = this.options.ignorers.map((name) => this.pluginCreator.create(PluginKind.Ignore, name));
-    const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), { ignorers, ...this.options.mutator });
+    const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), {
+      ignorers,
+      ...this.options.mutator,
+      runLevel: this.options.mutationLevels.find((level) => level.name === this.options.useMutationLevel),
+    });
 
     // Preprocess the project
     const preprocess = this.injector.injectFunction(createPreprocessor);

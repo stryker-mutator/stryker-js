@@ -253,6 +253,476 @@
           "default": true
         }
       }
+    },
+    "mutationLevel": {
+      "title": "MutationLevel",
+      "type": "object",
+      "default": {},
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "Name of the mutation level.",
+          "type": "string",
+          "default": ""
+        },
+        "ArithmeticOperator": {
+          "$ref": "#/definitions/ArithmeticOperator"
+        },
+        "ArrayDeclaration": {
+          "$ref": "#/definitions/ArrayDeclaration"
+        },
+        "BlockStatement": {
+          "$ref": "#/definitions/BlockStatement"
+        },
+        "BooleanLiteral": {
+          "$ref": "#/definitions/BooleanLiteral"
+        },
+        "ConditionalExpression": {
+          "$ref": "#/definitions/ConditionalExpression"
+        },
+        "EqualityOperator": {
+          "$ref": "#/definitions/EqualityOperator"
+        },
+        "MethodExpression": {
+          "$ref": "#/definitions/MethodExpression"
+        },
+        "ObjectLiteral": {
+          "$ref": "#/definitions/ObjectLiteral"
+        },
+        "OptionalChaining": {
+          "$ref": "#/definitions/OptionalChaining"
+        },
+        "Regex": {
+          "$ref": "#/definitions/Regex"
+        },
+        "StringLiteral": {
+          "$ref": "#/definitions/StringLiteral"
+        },
+        "UnaryOperator": {
+          "$ref": "#/definitions/UnaryOperator"
+        },
+        "UpdateOperator": {
+          "$ref": "#/definitions/UpdateOperator"
+        }
+      }
+    },
+    "ArithmeticOperator": {
+      "title": "ArithmeticOperator",
+      "type": "array",
+      "uniqueItems": true,
+      "default": [],
+      "items": {
+        "anyOf": [
+          {
+            "const" : "%To*",
+            "title": "PercentToMultiplyMutator",
+            "description": "Replace ```a % b``` with ```a * b```."
+          },
+          {
+            "const" : "*To/",
+            "title": "MultiplyToDivideMutator",
+            "description": "Replace ```a * b``` with ```a / b```."
+          },
+          {
+            "const" : "/To*",
+            "title": "DivideToMultiplyMutator",
+            "description": "Replace ```a / b``` with ```a * b```."
+          },
+          {
+            "const" : "+To-",
+            "title": "PlusToMinusMutator",
+            "description": "Replace ```a + b``` with ```a - b```."
+          },
+          {
+            "const" : "-To+",
+            "title": "MinusToPlusMutator",
+            "description": "Replace ```a - b``` with ```a + b```."
+          }
+        ]
+      }
+    },
+    "ArrayDeclaration": {
+      "title": "ArrayDeclaration",
+      "type": "array",
+      "description": "EmptyArray := \nEmptyConstructor := ",
+      "uniqueItems": true,
+      "default": [],
+      "items": {
+        "anyOf": [
+          {
+            "const" : "EmptyArray",
+            "title": "EmptyArrayMutator",
+            "description": "Replace ```new Array(1, 2, 3, 4)``` with ```new Array()```."
+          },
+          {
+            "const" : "EmptyConstructor",
+            "title": "EmptyConstructorMutator",
+            "description": "Replace ```[1, 2, 3, 4]``` with ```[ ]```."
+          }
+        ]
+      }
+    },
+    "BlockStatement": {
+      "title": "BlockStatementMutator",
+      "description": "Removes the content of every block statement.",
+      "type": "boolean",
+      "default": false
+    },
+    "BooleanLiteral": {
+      "title": "BooleanLiteral",
+      "type": "array",
+      "uniqueItems": true,
+      "default": [],
+      "items": {
+        "anyOf": [
+          {
+            "const" : "FalseToTrue",
+            "title": "FalseToTrueMutator",
+            "description": "Replace ```true``` with ```false```."
+          },
+          {
+            "const" : "TrueToFalse",
+            "title": "TrueToFalseMutator",
+            "description": "Replace ```true``` with ```false```."
+          },
+          {
+            "const" : "RemoveNegation",
+            "title": "RemoveNegationMutator",
+            "description": "Replace ```!(a == b)``` with ```a == b```."
+          }
+        ]
+      }
+    },
+    "ConditionalExpression": {
+      "title": "ConditionalExpression",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const" : "ForLoopToFalse",
+            "title": "ForLoopToFalseMutator",
+            "description": "Replace ```for (var i = 0; i < 10; i++) { }``` with ```for (var i = 0; false; i++) { }```."
+          },
+          {
+            "const" : "WhileLoopToFalse",
+            "title": "WhileLoopToFalseMutator",
+            "description": "Replace ```while (a > b) { }``` with ```while (false) { }```."
+          },
+          {
+            "const" : "DoWhileLoopToFalse",
+            "title": "DoWhileLoopToFalseMutator",
+            "description": "Replace ```do { } while (a > b);``` with ```do { } while (false);```."
+          },
+          {
+            "const" : "IfToTrue",
+            "title": "IfToTrueMutator",
+            "description": "Replace ```if (a > b) { }``` with ```if (true) { }```."
+          },
+          {
+            "const" : "IfToFalse",
+            "title": "IfToFalseMutator",
+            "description": "Replace ```if (a > b) { }``` with ```if (false) { }```."
+          },
+          {
+            "const" : "BooleanExpressionToTrue",
+            "title": "BooleanExpressionToTrueMutator",
+            "description": "Replace ```var x = a > b ? 1 : 2;``` with ```var x = true ? 1 : 2;```."
+          },
+          {
+            "const" : "BooleanExpressionToFalse",
+            "title": "BooleanExpressionToFalseMutator",
+            "description": "Replace ```var x = a > b ? 1 : 2;``` with ```var x = false ? 1 : 2;```."
+          }
+        ]
+      }
+    },
+    "EqualityOperator": {
+      "title": "EqualityOperator",
+      "type": "array",
+      "uniqueItems": true,
+      "default": [],
+      "items": {
+        "anyOf": [
+          {
+            "const" : "!==To===",
+            "title": "StrictDiffersToStrictEqualsMutator",
+            "description": "Replace ```a !== b``` with ```a === b```."
+          },
+          {
+            "const" : "!=To==",
+            "title": "DifferentToEqualsMutator",
+            "description": "Replace ```a != b``` with ```a == b```."
+          },
+          {
+            "const" : "<=To<",
+            "title": "SmallerOrEqualToSmallerMutator",
+            "description": "Replace ```a <= b``` with ```a < b```."
+          },
+          {
+            "const" : "<=To>",
+            "title": "SmallerOrEqualToBiggerMutator",
+            "description": "Replace ```a <= b``` with ```a > b```."
+          },
+          {
+            "const" : "<To<=",
+            "title": "SmallerToSmallerOrEqualMutator",
+            "description": "Replace ```a < b``` with ```a <= b```."
+          },
+          {
+            "const" : "<To>=",
+            "title": "SmallerToBiggerOrEqualMutator",
+            "description": "Replace ```a < b``` with ```a >= b```."
+          },
+          {
+            "const" : "===To!==",
+            "title": "StrictEqualsToStrictDiffersMutator",
+            "description": "Replace ```a === b``` with ```a !== b```."
+          },
+          {
+            "const" : "==To!=",
+            "title": "EqualsToDiffersMutator",
+            "description": "Replace ```a == b``` with ```a != b```."
+          },
+          {
+            "const" : ">=To<",
+            "title": "BiggerOrEqualToSmallerMutator",
+            "description": "Replace ```a >= b``` with ```a < b```."
+          },
+          {
+            "const" : ">=To>",
+            "title": "BiggerOrEqualToBiggerMutator",
+            "description": "Replace ```a >= b``` with ```a > b```."
+          },
+          {
+            "const" : ">To<=",
+            "title": "BiggerToSmallerOrEqualMutator",
+            "description": "Replace ```a > b``` with ```a <= b```."
+          },
+          {
+            "const" : ">To>=",
+            "title": "BiggerToBiggerOrEqualMutator",
+            "description": "Replace ```a > b``` with ```a >= b```."
+          }
+        ]
+      }
+    },
+    "LogicalOperator": {
+      "title": "LogicalOperator",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const" : "&&To||",
+            "title": "AndToOrMutator",
+            "description": "Replace ```a && b``` with ```a || b```."
+          },
+          {
+            "const" : "||To&&",
+            "title": "OrToAndMutator",
+            "description": "Replace ```a || b``` with ```a && b```."
+          },
+          {
+            "const" : "??To&&",
+            "title": "CoalescingToAndMutator",
+            "description": "Replace ```a ?? b``` with ```a && b```."
+          }
+        ]
+      }
+    },
+    "MethodExpression": {
+      "title": "MethodExpression",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "removeCharAt",
+            "title": "removeCharAtMutator",
+            "description": "Remove ```charAt()``` call."
+          },
+          {
+            "const": "endsWithToStartsWith",
+            "title": "endsWithToStartsWithMutator",
+            "description": "Replace ```endsWith()``` with ```startsWith()```."
+          },
+          {
+            "const": "everyToSome",
+            "title": "everyToSomeMutator",
+            "description": "Replace ```every()``` with ```some()```."
+          },
+          {
+            "const": "removeFilter",
+            "title": "removeFilterMutator",
+            "description": "Remove ```filter()``` call."
+          },
+          {
+            "const": "removeReverse",
+            "title": "removeReverseMutator",
+            "description": "Remove ```reverse()``` call"
+          },
+          {
+            "const": "removeSlice",
+            "title": "removeSliceMutator",
+            "description": "Remove ```slice()``` call."
+          },
+          {
+            "const": "removeSort",
+            "title": "removeSortMutator",
+            "description": "Remove ```sort()``` call."
+          },
+          {
+            "const": "removeSubstr",
+            "title": "removeSubstrMutator",
+            "description": "Remove ```substr()``` call."
+          },
+          {
+            "const": "removeSubstring",
+            "title": "removeSubstringMutator",
+            "description": "Remove ```substring()``` call."
+          },
+          {
+            "const": "toLocaleLowerCaseTotoLocaleUpperCase",
+            "title": "toLocaleLowerCaseTotoLocaleUpperCaseMutator",
+            "description": "Replace ```toLocalLowerCase()``` with ```toLocalUpperCase()```."
+          },
+          {
+            "const": "toLowerCaseTotoUpperCase",
+            "title": "toLowerCaseTotoUpperCaseMutator",
+            "description": "Replace ```toLocalLowerCase()``` with ```toLocalUpperCase()```."
+          },
+          {
+            "const": "removeTrim",
+            "title": "removeTrimMutator",
+            "description": "Remove ```trim()``` call."
+          },
+          {
+            "const": "trimEndTotrimStart",
+            "title": "trimEndTotrimStartMutator",
+            "description": "Replace ```trimEnd()``` with ```trimStart()```."
+          },
+          {
+            "const": "minToMax",
+            "title": "minToMaxMutator",
+            "description": "Replace ```min()``` with ```max()```."
+          }
+        ]
+      }
+    },
+    "ObjectLiteral": {
+      "title": "ObjectLiteralMutator",
+      "type": "boolean",
+      "description": "Replace ```{ foo: 'bar' }``` with ```{ }```.",
+      "default": false
+    },
+    "OptionalChaining": {
+      "title": "OptionalChaining",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "OptionalMemberExpression",
+            "title": "OptionalMemberExpressionMutator",
+            "description": "Replace ```foo?.bar``` with ```foo.bar```."
+          },
+          {
+            "const": "OptionalCallExpression",
+            "title": "OptionalCallExpressionMutator",
+            "description": "Replace ```foo?.()``` with ```foo()```."
+          }
+        ]
+      }
+    },
+    "Regex": {
+      "title": "Regex",
+      "type": "boolean",
+      "default": false
+    },
+    "StringLiteral": {
+      "title": "StringLiteral",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "EmptyString",
+            "title": "EmptyStringMutator",
+            "description": "Replace ```\"foo\"``` with ```\"\"```."
+          },
+          {
+            "const": "FillString",
+            "title": "FillStringMutator",
+            "description": "Replace ```\"\"``` with ```\"Stryker was here!\"```."
+          },
+          {
+            "const": "Interpolation",
+            "title": "InterpolationMutator",
+            "description": "Replace ```s\"foo ${bar}\"``` with ```s\"\"```."
+          }
+        ]
+      }
+    },
+    "UnaryOperator": {
+      "title": "UnaryOperator",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "+To-",
+            "title": "UnaryPlusToUnaryMinusMutator",
+            "description": "Replace ```+a``` with ```-a```."
+          },
+          {
+            "const": "-To+",
+            "title": "UnaryMinusToUnaryPlusMutator",
+            "description": "Replace ```-a``` with ```+a.```"
+          },
+          {
+            "const": "Remove~",
+            "title": "RemoveTildeMutator",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "UpdateOperator": {
+      "title": "UpdateOperator",
+      "type": "array",
+      "default": [],
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "const": "Post++To--",
+            "title": "PostPlusToMinusMutator",
+            "description": "Replace ```a++``` with ```a--```."
+          },
+          {
+            "const": "Post--To++",
+            "title": "PostMinusToPlusMutator",
+            "description": "Replace ```a--``` with ```a++```."
+          },
+          {
+            "const": "Pre++To--",
+            "title": "PrePlusToMinusMutator",
+            "description": "Replace ```++a``` with ```--a```."
+          },
+          {
+            "const": "Pre--To++",
+            "title": "PreMinusToPlusMutator",
+            "description": "Replace ```--a``` with ```++a```."
+          }
+        ]
+      }
     }
   },
   "properties": {
@@ -539,6 +1009,14 @@
         "type": "string"
       },
       "default": []
+    },
+    "mutationLevels": {
+      "description": "Define a list of mutation levels that can be used in a mutation run. This definition should contain all the possible levels, and the appropiate level will be selected using a CLI argument.",
+      "type": "array",
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/mutationLevel"
+      }
     }
   }
 }
