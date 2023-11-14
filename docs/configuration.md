@@ -476,7 +476,7 @@ Set the reporters for Stryker to use. These reporters can be used out of the box
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
-You can also add your custom reporter using a [reporter plugin](./plugins.md/#reporters)
+You can also add your custom reporter using a [reporter plugin](./plugins.md#reporters)
 
 To configure specific reporters, see their configuration:
 

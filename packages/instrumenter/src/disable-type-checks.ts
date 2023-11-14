@@ -4,7 +4,7 @@ import { notEmpty } from '@stryker-mutator/util';
 import { File } from './file.js';
 
 import { createParser, getFormat, ParserOptions } from './parsers/index.js';
-import { AstFormat, HtmlAst, ScriptAst } from './syntax/index.js';
+import { AstFormat, HtmlAst, ScriptAst, SvelteAst } from './syntax/index.js';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
@@ -24,7 +24,7 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
     return file;
   }
   if (isJSFileWithoutTSDirectives(file, format)) {
-    // Performance optimization. Only parse the file when it has a change of containing a `// @ts-` directive
+    // Performance optimization. Only parse the file when it has a chance of containing a `// @ts-` directive
     return {
       ...file,
       content: prefixWithNoCheck(file.content),
@@ -40,6 +40,8 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
       return { ...file, content: disableTypeCheckingInBabelAst(ast) };
     case AstFormat.Html:
       return { ...file, content: disableTypeCheckingInHtml(ast) };
+    case AstFormat.Svelte:
+      return { ...file, content: disableTypeCheckingInSvelte(ast) };
   }
 }
 
@@ -78,6 +80,21 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
     html += prefixWithNoCheck(removeTSDirectives(script.rawContent, script.root.comments));
     html += '\n';
     currentIndex = script.root.end!;
+  }
+  html += ast.rawContent.substring(currentIndex);
+  return html;
+}
+
+function disableTypeCheckingInSvelte(ast: SvelteAst): string {
+  const sortedScripts = [ast.root.moduleScript, ...ast.root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
+  let currentIndex = 0;
+  let html = '';
+  for (const script of sortedScripts) {
+    html += ast.rawContent.substring(currentIndex, script.range.start);
+    html += '\n';
+    html += prefixWithNoCheck(removeTSDirectives(script.ast.rawContent, script.ast.root.comments));
+    html += '\n';
+    currentIndex = script.range.end;
   }
   html += ast.rawContent.substring(currentIndex);
   return html;

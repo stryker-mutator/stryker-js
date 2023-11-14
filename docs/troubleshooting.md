@@ -309,3 +309,52 @@ Explicitly specify the plugins to load in your Stryker configuration file.
 +  ]
 }
 ```
+
+
+### All mutants survive - module-alias
+
+**Symptom**
+
+When using with the `module-alias` you might run into the issue where all mutants survive unexpectedly:
+
+> ```
+> [...]
+> #3. [Survived] ArithmeticOperator
+> C:\z\github\stryker-mutator\stryker-js\e2e\test\jest-node\src\sum.js:5:10
+> -     return a - b;
+> +     return a + b;
+> Ran all tests for this mutant.
+> 
+> Ran 0.00 tests per mutant on average.
+> ----------|---------|----------|-----------|------------|----------|---------|
+> File      | % score | # killed | # timeout | # survived | # no cov | # error |
+> ----------|---------|----------|-----------|------------|----------|---------|
+> All files |    0.00 |        0 |         0 |          4 |        0 |       0 |
+>  sum.js   |    0.00 |        0 |         0 |          4 |        0 |       0 |
+> ----------|---------|----------|-----------|------------|----------|---------|
+> ```
+>
+
+**Problem**
+
+The root cause is that StrykerJS's sandboxing does not support alias imports like `module-alias/register` as it always imports from the local project instead of the sandbox used by Stryker.
+
+It is preferable to avoid using `module-alias` for the following reasons:
+
+* It works by overriding a private node API so it might break at any major node release.
+* It will never work for native ESM.
+
+**Solution**
+
+To keep using `module-alias`, there are 2 workarounds:
+
+1. Mark the `node_modules` folder as part of your sandbox:
+
+```diff
+{
++  "ignorePatterns": ["!node_modules"],
++  "symlinkNodeModules": false
+}
+```
+
+2. Let StrykerJS mutate your files in place: `npx stryker run --inPlace`

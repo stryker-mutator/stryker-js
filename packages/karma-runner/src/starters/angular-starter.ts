@@ -28,7 +28,7 @@ export class AngularProjectStarter implements ProjectStarter {
 
   public async start(): Promise<StartedProject> {
     this.verifyAngularCliVersion();
-    const ngConfig = (this.options as KarmaRunnerOptionsWithStrykerOptions).karma.ngConfig;
+    const { ngConfig } = (this.options as KarmaRunnerOptionsWithStrykerOptions).karma;
 
     // Make sure require angular cli from inside this function, that way it won't break if angular isn't installed and this file is required.
     let cli = this.requireFromCwd('@angular/cli') as AngularCli;

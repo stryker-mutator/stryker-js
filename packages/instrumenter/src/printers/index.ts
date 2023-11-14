@@ -3,6 +3,7 @@ import { Ast, AstFormat } from '../syntax/index.js';
 import { print as htmlPrint } from './html-printer.js';
 import { print as jsPrint } from './js-printer.js';
 import { print as tsPrint } from './ts-printer.js';
+import { print as sveltePrint } from './svelte-printer.js';
 
 export type Printer<T extends Ast> = (file: T, context: PrinterContext) => string;
 
@@ -23,5 +24,7 @@ export function print(file: Ast): string {
       return tsPrint(file, context);
     case AstFormat.Html:
       return htmlPrint(file, context);
+    case AstFormat.Svelte:
+      return sveltePrint(file, context);
   }
 }

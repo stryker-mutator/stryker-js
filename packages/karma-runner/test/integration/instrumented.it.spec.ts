@@ -131,7 +131,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
         await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
         const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['spec1'] }));
         assertions.expectKilled(result);
-        result.failureMessage = result.failureMessage.split('\n')[0];
+        [result.failureMessage] = result.failureMessage.split('\n');
         const expected = factory.killedMutantRunResult({
           killedBy: ['spec1'],
           status: MutantRunStatus.Killed,
@@ -268,7 +268,7 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] }),
         );
         assertions.expectKilled(result);
-        result.failureMessage = result.failureMessage.split('\n')[0];
+        [result.failureMessage] = result.failureMessage.split('\n');
         const expected: KilledMutantRunResult = {
           killedBy: ['Add should be able 1 to a number'],
           status: MutantRunStatus.Killed,

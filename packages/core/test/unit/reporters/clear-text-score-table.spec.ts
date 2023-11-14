@@ -1,10 +1,9 @@
 import os from 'os';
 
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { expect } from 'chai';
-import { MetricsResult } from 'mutation-testing-metrics';
-
 import chalk from 'chalk';
+import { expect } from 'chai';
+import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import { MetricsResult } from 'mutation-testing-metrics';
 
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
 import { stringWidth } from '../../../src/utils/string-utils.js';
@@ -66,7 +65,7 @@ describe(ClearTextScoreTable.name, () => {
     });
 
     it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
-      const options = testInjector.options;
+      const { options } = testInjector;
       options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [
@@ -91,7 +90,7 @@ describe(ClearTextScoreTable.name, () => {
     });
 
     it('should color score in red and green if low equals high thresholds', () => {
-      const options = testInjector.options;
+      const { options } = testInjector;
       options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [

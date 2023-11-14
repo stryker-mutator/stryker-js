@@ -2,7 +2,7 @@ import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
 
-import chai from 'chai';
+import chai, { expect } from 'chai';
 import { execa, execaSync } from 'execa';
 import { it } from 'mocha';
 import chaiAsPromised from 'chai-as-promised';
@@ -10,7 +10,6 @@ import chaiAsPromised from 'chai-as-promised';
 import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
 
 const rootResolve = path.resolve.bind(path, fileURLToPath(new URL('..', import.meta.url)));
 

@@ -1,0 +1,12 @@
+{
+  "name": "svelte-jest",
+  "description": "An e2e test that verifies the behavior of svelte with jest",
+  "type": "module",
+  "scripts": {
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest src",
+    "test:watch": "npm run test -- --watch",
+    "test": "stryker run",
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}

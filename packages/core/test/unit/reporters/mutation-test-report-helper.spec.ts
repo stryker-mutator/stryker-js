@@ -340,7 +340,7 @@ describe(MutationTestReportHelper.name, () => {
           { id: '0', name: 'foo should bar', location: undefined },
           { id: '1', name: 'baz should qux', location: undefined },
         ];
-        const actualResultMutant = actualReport.files['foo.js'].mutants[0];
+        const [actualResultMutant] = actualReport.files['foo.js'].mutants;
         expect(actualReport.testFiles?.[''].tests).deep.eq(expectedTests);
         expect(actualResultMutant.coveredBy).deep.eq(['0', '1', 'not found']);
         expect(actualResultMutant.killedBy).deep.eq(['0']);

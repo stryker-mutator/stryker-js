@@ -19,7 +19,7 @@ export const stringLiteralMutator: NodeMutator = {
 };
 
 function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
-  const parent = child.parent;
+  const { parent } = child;
   return !(
     types.isImportDeclaration(parent) ||
     types.isExportDeclaration(parent) ||

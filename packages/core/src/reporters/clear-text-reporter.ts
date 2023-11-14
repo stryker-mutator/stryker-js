@@ -65,7 +65,7 @@ export class ClearTextReporter implements Reporter {
       const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
         const nameParts: string[] = [currentResult.name];
         while (!currentResult.file && currentResult.childResults.length === 1) {
-          currentResult = currentResult.childResults[0];
+          [currentResult] = currentResult.childResults;
           nameParts.push(currentResult.name);
         }
         this.writeLine(`${indent(depth)}${nameParts.join('/')}`);

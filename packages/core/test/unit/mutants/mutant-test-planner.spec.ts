@@ -522,7 +522,7 @@ describe(MutantTestPlanner.name, () => {
 
   describe('incremental', () => {
     class ScenarioBuilder {
-      #mutants: Mutant[] = [];
+      readonly #mutants: Mutant[] = [];
       #srcFileName = 'foo.js';
       #testFileName = 'foo.spec.js';
       #incrementalReport: schema.MutationTestResult | undefined = undefined;

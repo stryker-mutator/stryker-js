@@ -5,6 +5,7 @@ import { AstByFormat, AstFormat } from '../syntax/index.js';
 import { createParser as createJSParser } from './js-parser.js';
 import { parseTS, parseTsx } from './ts-parser.js';
 import { parse as htmlParse } from './html-parser.js';
+import { parse as svelteParse } from './svelte-parser.js';
 import { ParserOptions } from './parser-options.js';
 
 export function createParser(
@@ -26,6 +27,8 @@ export function createParser(
         return parseTS(code, fileName) as Promise<AstByFormat[T]>;
       case AstFormat.Html:
         return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
+      case AstFormat.Svelte:
+        return svelteParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
     }
   };
 }
@@ -49,6 +52,8 @@ export function getFormat(fileName: string, override?: AstFormat): AstFormat | u
       case '.html':
       case '.htm':
         return AstFormat.Html;
+      case '.svelte':
+        return AstFormat.Svelte;
       default:
         return;
     }

@@ -75,8 +75,8 @@ describe(OptionsValidator.name, () => {
         maxConcurrentTestRunners: 9007199254740991,
         maxTestRunnerReuse: 0,
         mutate: [
-          '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
-          '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue)',
+          '{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue|svelte)',
+          '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue|svelte)',
         ],
         mutator: {
           excludedMutations: [],

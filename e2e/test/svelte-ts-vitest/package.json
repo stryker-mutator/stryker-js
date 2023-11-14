@@ -1,0 +1,15 @@
+{
+  "name": "svelte-ts-vitest",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "test:unit": "vitest run",
+    "test": "stryker run",
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
