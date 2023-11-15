@@ -10,7 +10,7 @@ const arithmeticOperatorReplacements = Object.freeze({
   '+': { replacement: '-', mutatorName: '+To-' },
   '-': { replacement: '+', mutatorName: '-To+' },
   '*': { replacement: '/', mutatorName: '*To/' },
-  '/': { replacement: '/', mutatorName: '/To*' },
+  '/': { replacement: '*', mutatorName: '/To*' },
   '%': { replacement: '*', mutatorName: '%To*' },
 } as const);
 
@@ -28,6 +28,7 @@ export const arithmeticOperatorMutator: NodeMutator = {
 };
 
 function isInMutationLevel(node: types.BinaryExpression, level?: MutationLevel): boolean {
+  // No mutation level specified, so allow everything
   if (level === undefined) {
     return true;
   }
