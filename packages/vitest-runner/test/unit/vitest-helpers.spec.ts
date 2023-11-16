@@ -6,11 +6,13 @@ import { TestStatus } from '@stryker-mutator/api/test-runner';
 
 import { normalizeFileName } from '@stryker-mutator/util';
 
-import { collectTestsFromSuite, convertTestToTestResult, fromTestId, toTestId } from '../../src/vitest-helpers.js';
+import { collectTestsFromSuite, convertTestToTestResult, fromTestId, toRawTestId } from '../../src/vitest-helpers.js';
 
 describe('vitest-helpers', () => {
-  describe(toTestId.name, () => {
+  describe(toRawTestId.name, () => {
     it('should return correct testId', () => {
+      // Using normalizeFileName here mimics the behavior of vitest on windows: using forward slashes
+      const filePath = normalizeFileName(path.resolve('src', 'file.js'));
       const test: Test = {
         type: 'test',
         suite: {
@@ -28,8 +30,7 @@ describe('vitest-helpers', () => {
         context: {} as any,
         file: {
           name: 'file.js',
-          // Using normalizeFileName here mimics the behavior of vitest on windows: using forward slashes
-          filepath: normalizeFileName(path.resolve('src', 'file.js')),
+          filepath: filePath,
           type: 'suite',
           id: '1',
           mode: 'run',
@@ -37,16 +38,16 @@ describe('vitest-helpers', () => {
           meta: {},
         },
       };
-      const result = toTestId(test);
-      expect(result).to.be.equal('src/file.js#suite test1');
+      const result = toRawTestId(test);
+      expect(result).to.be.equal(`${filePath}#suite test1`);
     });
   });
 
   describe(fromTestId.name, () => {
-    it('should return correct fileName', () => {
-      const result = fromTestId('file.js#test1');
-      expect(result.file).to.be.equal('file.js');
-      expect(result.name).to.be.equal('test1');
+    it('should return correct file and test name', () => {
+      const { file, test } = fromTestId('file.js#test1');
+      expect(file).to.be.equal('file.js');
+      expect(test).to.be.equal('test1');
     });
   });
 

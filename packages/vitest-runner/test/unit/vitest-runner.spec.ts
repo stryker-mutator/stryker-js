@@ -30,15 +30,6 @@ describe(VitestTestRunner.name, () => {
     expect(sut.capabilities()).deep.eq(expectedCapabilities);
   });
 
-  describe('browser mode', () => {
-    it('should throw a not supported error', async () => {
-      vitestStub.config.browser.enabled = true;
-      await expect(sut.init()).rejectedWith(
-        'Browser mode is currently not supported by the `@stryker-mutator/vitest-runner`. Please disable `browser.enabled` in your `vitest.config.js`.',
-      );
-    });
-  });
-
   describe(VitestTestRunner.prototype.dispose.name, () => {
     it('should not throw when not initialized', async () => {
       await expect(sut.dispose()).not.rejected;
