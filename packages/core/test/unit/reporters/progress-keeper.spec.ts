@@ -1,6 +1,5 @@
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
-import { MutantStatus } from 'mutation-testing-report-schema';
 
 import { DryRunCompletedEvent, MutationTestingPlanReadyEvent } from '@stryker-mutator/api/report';
 
@@ -33,7 +32,7 @@ describe(ProgressKeeper.name, () => {
       );
 
       // Act
-      sut.onMutantTested(factory.mutantResult({ id: '1', status: MutantStatus.Survived }));
+      sut.onMutantTested(factory.mutantResult({ id: '1', status: 'Survived' }));
 
       // Assert
       expect(sut.progressForTesting.survived).eq(0);

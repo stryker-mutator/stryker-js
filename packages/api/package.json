@@ -57,8 +57,8 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
-    "mutation-testing-metrics": "2.0.5",
-    "mutation-testing-report-schema": "2.0.5",
+    "mutation-testing-metrics": "3.0.0",
+    "mutation-testing-report-schema": "3.0.0",
     "tslib": "~2.6.0",
     "typed-inject": "~4.0.0"
   },

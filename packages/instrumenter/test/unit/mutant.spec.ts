@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 import generator from '@babel/generator';
-import { Mutant as MutantApi, MutantStatus } from '@stryker-mutator/api/core';
+import { Mutant as MutantApi } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
 
 import { Mutant } from '../../src/mutant.js';
@@ -41,7 +41,7 @@ describe(Mutant.name, () => {
         mutatorName: 'fooMutator',
         replacement: '"Stryker was here!"',
         statusReason: 'ignore',
-        status: MutantStatus.Ignored,
+        status: 'Ignored',
       };
       expect(mutant.toApiMutant()).deep.include(expected);
     });

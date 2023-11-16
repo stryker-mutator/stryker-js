@@ -6,7 +6,7 @@ import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, Complet
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantStatus, MutantTestCoverage, MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan } from '@stryker-mutator/api/core';
+import { Mutant, MutantTestCoverage, MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
@@ -21,7 +21,7 @@ import { CheckerFacade } from '../../../src/checker/checker-facade.js';
 
 function ignoredEarlyResultPlan(overrides?: Partial<Mutant>): MutantEarlyResultPlan {
   return factory.mutantEarlyResultPlan({
-    mutant: { ...factory.mutant(overrides), status: MutantStatus.Ignored },
+    mutant: { ...factory.mutant(overrides), status: 'Ignored' },
   });
 }
 
@@ -148,7 +148,7 @@ describe(MutationTestExecutor.name, () => {
       await sut.execute();
 
       // Assert
-      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportMutantStatus, mutantTestPlans[0].mutant, MutantStatus.Ignored);
+      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportMutantStatus, mutantTestPlans[0].mutant, 'Ignored');
     });
 
     it('should report an uncovered mutant with `NoCoverage`', async () => {
@@ -160,7 +160,7 @@ describe(MutationTestExecutor.name, () => {
       await sut.execute();
 
       // Assert
-      expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutantTestPlans[0].mutant, MutantStatus.NoCoverage);
+      expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutantTestPlans[0].mutant, 'NoCoverage');
     });
   });
 

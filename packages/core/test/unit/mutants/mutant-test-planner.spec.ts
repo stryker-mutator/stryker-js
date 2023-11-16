@@ -3,7 +3,7 @@ import path from 'path';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
+import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
 import { MutantTestPlanner } from '../../../src/mutants/index.js';
@@ -48,14 +48,14 @@ describe(MutantTestPlanner.name, () => {
   }
 
   it('should make an early result plan for an ignored mutant', async () => {
-    const mutant = factory.mutant({ id: '2', status: MutantStatus.Ignored, statusReason: 'foo should ignore' });
+    const mutant = factory.mutant({ id: '2', status: 'Ignored', statusReason: 'foo should ignore' });
 
     // Act
     const result = await act([mutant]);
 
     // Assert
     const expected: MutantEarlyResultPlan[] = [
-      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: MutantStatus.Ignored, coveredBy: undefined, killedBy: undefined } },
+      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: 'Ignored', coveredBy: undefined, killedBy: undefined } },
     ];
     expect(result).deep.eq(expected);
   });
@@ -199,7 +199,7 @@ describe(MutantTestPlanner.name, () => {
             plan: PlanKind.EarlyResult,
             mutant: {
               ...mutant,
-              status: MutantStatus.Ignored,
+              status: 'Ignored',
               statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
               static: true,
               coveredBy: [],
@@ -548,7 +548,7 @@ describe(MutantTestPlanner.name, () => {
               source: 'foo',
               mutants: [
                 factory.mutantResult({
-                  status: MutantStatus.Killed,
+                  status: 'Killed',
                   replacement: '<=',
                   mutatorName: 'fooMutator',
                   location: loc(0, 0, 0, 1),
@@ -588,7 +588,7 @@ describe(MutantTestPlanner.name, () => {
 
       // Assert
       assertIsEarlyResultPlan(actualPlan);
-      expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
+      expect(actualPlan.mutant.status).eq('Killed');
       expect(actualPlan.mutant.killedBy).deep.eq(['spec1']);
     });
 
@@ -601,7 +601,7 @@ describe(MutantTestPlanner.name, () => {
 
       // Assert
       assertIsEarlyResultPlan(actualPlan);
-      expect(actualPlan.mutant.status).eq(MutantStatus.Killed);
+      expect(actualPlan.mutant.status).eq('Killed');
       expect(actualPlan.mutant.killedBy).deep.eq(['spec1']);
     });
   });
