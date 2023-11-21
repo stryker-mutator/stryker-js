@@ -36,6 +36,15 @@ const plugins = [
 ] as ParserPlugin[];
 
 export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]): void {
+  expectJSMutationWithLevel(sut, undefined, originalCode, ...expectedReplacements);
+}
+
+export function expectJSMutationWithLevel(
+  sut: NodeMutator,
+  level: string[] | undefined,
+  originalCode: string,
+  ...expectedReplacements: string[]
+): void {
   const sourceFileName = 'source.js';
   const ast = parse(originalCode, {
     sourceFilename: sourceFileName,
@@ -44,10 +53,11 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
   });
   const mutants: string[] = [];
   const originalNodeSet = nodeSet(ast);
+  const operations: string[] | undefined = level;
 
   babel.traverse(ast, {
     enter(path) {
-      for (const replacement of sut.mutate(path)) {
+      for (const replacement of sut.mutate(path, operations)) {
         const mutatedCode = generate(replacement).code;
         const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
         const afterMutatedCode = originalCode.substring(path.node.end ?? 0);

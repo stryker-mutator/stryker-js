@@ -9,7 +9,7 @@ import { cloneTemplate, RoboComponent, Selector } from './robo.component.js';
 
 export class PlaceOrderComponent extends RoboComponent {
   /** @type {OrderItem[]} */
-  orderItems = [];
+  orderItems = []
 
   /** @param {OrderItem} orderItem */
   increment(orderItem) {

@@ -4,6 +4,7 @@ import babel, { type NodePath, type types } from '@babel/core';
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 /* eslint-enable import/no-duplicates */
+import { MutationLevel } from '@stryker-mutator/api/core';
 
 import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
@@ -17,7 +18,6 @@ import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 import { AstTransformer } from './index.js';
 
 const { traverse } = babel;
-
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;
   placer: MutantPlacer<TNode>;
@@ -156,15 +156,22 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function* mutate(node: NodePath): Iterable<Mutable> {
     for (const mutator of mutators) {
-      for (const replacement of mutator.mutate(node)) {
-        yield {
-          replacement,
-          mutatorName: mutator.name,
-          ignoreReason:
-            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
-            findExcludedMutatorIgnoreReason(mutator.name) ??
-            ignorerBookkeeper.currentIgnoreMessage,
-        };
+      if (options.runLevel === undefined || mutator.name in options.runLevel) {
+        let propertyValue = undefined;
+        if (options.runLevel !== undefined) {
+          propertyValue = options.runLevel?.[mutator.name as keyof MutationLevel] as string[];
+        }
+
+        for (const replacement of mutator.mutate(node, propertyValue)) {
+          yield {
+            replacement,
+            mutatorName: mutator.name,
+            ignoreReason:
+              directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+              findExcludedMutatorIgnoreReason(mutator.name) ??
+              ignorerBookkeeper.currentIgnoreMessage,
+          };
+        }
       }
     }
 

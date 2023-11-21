@@ -344,20 +344,30 @@
     "ArrayDeclaration": {
       "title": "ArrayDeclaration",
       "type": "array",
-      "description": "EmptyArray := \nEmptyConstructor := ",
+      "description": "EmptyArray := \nEmptyArrayConstructor := \nFilledArray := \nFilledArrayConstructor := ",
       "uniqueItems": true,
       "default": [],
       "items": {
         "anyOf": [
           {
-            "const" : "EmptyArray",
+            "const": "EmptyArray",
             "title": "EmptyArrayMutator",
-            "description": "Replace ```new Array(1, 2, 3, 4)``` with ```new Array()```."
+            "description": "Replace ```[ ]``` with ```[Stryker was here]```."
           },
           {
-            "const" : "EmptyConstructor",
+            "const": "EmptyArrayConstructor",
             "title": "EmptyConstructorMutator",
+            "description": "Replace ```new Array()``` with  ```new Array(Stryker was here)```."
+          },
+          {
+            "const": "FilledArray",
+            "title": "FilledArrayMutator",
             "description": "Replace ```[1, 2, 3, 4]``` with ```[ ]```."
+          },
+          {
+            "const": "FilledArrayConstructor",
+            "title": "FilledArrayConstructorMutator",
+            "description": "Replace ```new Array([1, 2, 3, 4])``` with ```new Array()```."
           }
         ]
       }
