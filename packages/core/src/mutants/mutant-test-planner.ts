@@ -87,7 +87,7 @@ export class MutantTestPlanner {
       } else if (this.options.ignoreStatic) {
         // Static (w/o perTest coverage) and ignoreStatic is on -> Ignore.
         return this.createMutantEarlyResultPlan(mutant, {
-          status: MutantStatus.Ignored,
+          status: 'Ignored',
           statusReason: 'Static mutant (and "ignoreStatic" was enabled)',
           isStatic,
           coveredBy,

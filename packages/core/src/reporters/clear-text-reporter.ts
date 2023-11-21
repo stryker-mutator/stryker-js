@@ -12,8 +12,6 @@ import { getEmojiForStatus, plural } from '../utils/string-utils.js';
 
 import { ClearTextScoreTable } from './clear-text-score-table.js';
 
-const { MutantStatus } = schema;
-
 export class ClearTextReporter implements Reporter {
   public static inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(
@@ -99,14 +97,14 @@ export class ClearTextReporter implements Reporter {
         child.file?.mutants.forEach((result) => {
           totalTests += result.testsCompleted ?? 0;
           switch (result.status) {
-            case MutantStatus.Killed:
-            case MutantStatus.Timeout:
-            case MutantStatus.RuntimeError:
-            case MutantStatus.CompileError:
+            case 'Killed':
+            case 'Timeout':
+            case 'RuntimeError':
+            case 'CompileError':
               this.reportMutantResult(result, this.writeDebugLine);
               break;
-            case MutantStatus.Survived:
-            case MutantStatus.NoCoverage:
+            case 'Survived':
+            case 'NoCoverage':
               this.reportMutantResult(result, this.writeLine);
               break;
             default:
@@ -120,7 +118,7 @@ export class ClearTextReporter implements Reporter {
   }
 
   private statusLabel(mutant: MutantModel): string {
-    const status = MutantStatus[mutant.status];
+    const { status } = mutant;
     return this.options.clearTextReporter.allowEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
   }
 
@@ -142,15 +140,15 @@ export class ClearTextReporter implements Reporter {
       .forEach((line) => {
         logImplementation(chalk.green('+   ' + line));
       });
-    if (result.status === MutantStatus.Survived) {
+    if (result.status === 'Survived') {
       if (result.static) {
         logImplementation('Ran all tests for this mutant.');
       } else if (result.coveredByTests) {
         this.logExecutedTests(result.coveredByTests, logImplementation);
       }
-    } else if (result.status === MutantStatus.Killed && result.killedByTests?.length) {
+    } else if (result.status === 'Killed' && result.killedByTests?.length) {
       logImplementation(`Killed by: ${result.killedByTests[0].name}`);
-    } else if (result.status === MutantStatus.RuntimeError || result.status === MutantStatus.CompileError) {
+    } else if (result.status === 'RuntimeError' || result.status === 'CompileError') {
       logImplementation(`Error message: ${result.statusReason}`);
     }
     logImplementation('');
