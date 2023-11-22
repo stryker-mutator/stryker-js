@@ -258,7 +258,7 @@
       "title": "MutationLevel",
       "type": "object",
       "default": {},
-      "additionalProperties": false,
+      "required": ["name"],
       "properties": {
         "name": {
           "description": "Name of the mutation level.",
@@ -310,6 +310,7 @@
       "title": "ArithmeticOperator",
       "type": "array",
       "uniqueItems": true,
+      "minItems": 1,
       "default": [],
       "items": {
         "anyOf": [
@@ -347,6 +348,7 @@
       "description": "EmptyArray := \nEmptyArrayConstructor := \nFilledArray := \nFilledArrayConstructor := ",
       "uniqueItems": true,
       "default": [],
+      "minItems": 1,
       "items": {
         "anyOf": [
           {
@@ -383,6 +385,7 @@
       "type": "array",
       "uniqueItems": true,
       "default": [],
+      "minItems": 1,
       "items": {
         "anyOf": [
           {
@@ -408,6 +411,7 @@
       "type": "array",
       "default": [],
       "uniqueItems": true,
+      "minItems": 1,
       "items": {
         "anyOf": [
           {
@@ -453,6 +457,7 @@
       "type": "array",
       "uniqueItems": true,
       "default": [],
+      "minItems": 1,
       "items": {
         "anyOf": [
           {
@@ -522,6 +527,7 @@
       "title": "LogicalOperator",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [
@@ -547,6 +553,7 @@
       "title": "MethodExpression",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [
@@ -633,6 +640,7 @@
       "title": "OptionalChaining",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [
@@ -658,6 +666,7 @@
       "title": "StringLiteral",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [
@@ -683,6 +692,7 @@
       "title": "UnaryOperator",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [
@@ -708,6 +718,7 @@
       "title": "UpdateOperator",
       "type": "array",
       "default": [],
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "anyOf": [

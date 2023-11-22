@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 
+import { MutationLevel } from '@stryker-mutator/api/core';
+
 import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator.js';
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+
+const arithmeticLevel: MutationLevel = { name: 'ArithemticLevel', ArithmeticOperator: ['+To-', '-To+', '*To/'] };
 
 describe(sut.name, () => {
   it('should have name "ArithmeticOperator"', () => {
@@ -29,5 +33,16 @@ describe(sut.name, () => {
     expectJSMutation(sut, '3 + `a`');
 
     expectJSMutation(sut, '"a" + b + "c" + d + "e"');
+  });
+
+  it('should only mutate +, - and * from all possible mutators', () => {
+    expectJSMutationWithLevel(
+      sut,
+      arithmeticLevel.ArithmeticOperator,
+      'a + b; a - b; a * b; a % b; a / b; a % b',
+      'a - b; a - b; a * b; a % b; a / b; a % b', // mutates +
+      'a + b; a + b; a * b; a % b; a / b; a % b', // mutates -
+      'a + b; a - b; a / b; a % b; a / b; a % b', // mutates *
+    );
   });
 });

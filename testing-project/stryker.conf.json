@@ -18,6 +18,7 @@
   "mutationLevels": [
     { 
       "name": "default",
+      "ArithmeticOperator": ["+To-", "-To+", "*To/"],
       "ArrayDeclaration": ["EmptyArray", "FilledArray", "FilledArrayConstructor"]
 
     },
