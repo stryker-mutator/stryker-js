@@ -765,7 +765,7 @@
       "title": "UnaryOperator",
       "type": "array",
       "default": [],
-      "minItems": 1,
+      "minItems": 0,
       "uniqueItems": true,
       "items": {
         "anyOf": [
