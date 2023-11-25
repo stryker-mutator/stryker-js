@@ -10,7 +10,7 @@ const operators = Object.freeze({
   '+': { replacement: '-', mutatorName: '+To-' },
   '-': { replacement: '+', mutatorName: '-To+' },
   '~': { replacement: '', mutatorName: 'remove~' },
-})
+});
 
 export const unaryOperatorMutator: NodeMutator = {
   name: 'UnaryOperator',
