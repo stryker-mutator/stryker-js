@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator.js';
 
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "OptionalChaining"', () => {
@@ -28,5 +28,30 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'foo.bar()?.[0]', 'foo.bar()[0]');
     expectJSMutation(sut, 'foo.bar?.()[0]', 'foo.bar()[0]');
     expectJSMutation(sut, 'foo.bar()?.baz', 'foo.bar().baz');
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate OptionalMemberExpression from all possible mutators', () => {
+      expectJSMutationWithLevel(
+        sut,
+        ['OptionalMemberExpression'],
+        'foo?.bar; foo?.[0]; foo?.()',
+        'foo.bar; foo?.[0]; foo?.()', // removes .bar optional
+        'foo?.bar; foo[0]; foo?.()', // removes [0] optional
+      );
+    });
+    it('should block all mutators', () => {
+      expectJSMutationWithLevel(sut, [], 'foo?.bar; foo?.[0]; foo?.()');
+    });
+    it('should allow all mutators', () => {
+      expectJSMutationWithLevel(
+        sut,
+        undefined,
+        'foo?.bar; foo?.[0]; foo?.()',
+        'foo.bar; foo?.[0]; foo?.()', // removes .bar optional
+        'foo?.bar; foo[0]; foo?.()', // removes [0] optional
+        'foo?.bar; foo?.[0]; foo()', // removes () optional
+      );
+    });
   });
 });

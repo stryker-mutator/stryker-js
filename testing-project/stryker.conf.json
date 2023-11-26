@@ -20,6 +20,7 @@
       "name": "default",
       "ArithmeticOperator": ["+To-", "-To+", "*To/"],
       "ArrayDeclaration": ["EmptyArray", "FilledArray", "FilledArrayConstructor"],
+      "OptionalChaining": ["OptionalCallExpression", "OptionalMemberExpression"]
       "StringLiteral": ["EmptyString", "FillString", "EmptyInterpolation", "FillInterpolation"]
       "AssignmentOperator": ["-=To+=", "<<=To>>=", "&&=To||="],
       "BooleanLiteral": ["TrueToFalse", "RemoveNegation"]

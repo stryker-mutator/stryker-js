@@ -16,11 +16,21 @@ const { types: t } = babel;
  * foo?.[1] -> foo[1]
  * foo?.() -> foo()
  */
+
+const operators = Object.assign({
+  OptionalCallExpression: { mutatorName: 'OptionalCallExpression' },
+  OptionalMemberExpression: { mutatorName: 'OptionalMemberExpression' },
+});
+
 export const optionalChainingMutator: NodeMutator = {
   name: 'OptionalChaining',
 
-  *mutate(path) {
-    if (path.isOptionalMemberExpression() && path.node.optional) {
+  *mutate(path, operations) {
+    if (
+      path.isOptionalMemberExpression() &&
+      path.node.optional &&
+      (operations === undefined || operations.includes(operators.OptionalMemberExpression.mutatorName as string))
+    ) {
       yield t.optionalMemberExpression(
         t.cloneNode(path.node.object, true),
         t.cloneNode(path.node.property, true),
@@ -28,7 +38,11 @@ export const optionalChainingMutator: NodeMutator = {
         /*optional*/ false,
       );
     }
-    if (path.isOptionalCallExpression() && path.node.optional) {
+    if (
+      path.isOptionalCallExpression() &&
+      path.node.optional &&
+      (operations === undefined || operations.includes(operators.OptionalCallExpression.mutatorName as string))
+    ) {
       yield t.optionalCallExpression(
         t.cloneNode(path.node.callee, true),
         path.node.arguments.map((arg) => t.cloneNode(arg, true)),
