@@ -754,9 +754,14 @@
             "description": "Replace ```\"\"``` with ```\"Stryker was here!\"```."
           },
           {
-            "const": "Interpolation",
-            "title": "InterpolationMutator",
+            "const": "EmptyInterpolation",
+            "title": "EmptyInterpolation",
             "description": "Replace ```s\"foo ${bar}\"``` with ```s\"\"```."
+          },
+          {
+            "const": "FillInterpolation",
+            "title": "FillInterpolation",
+            "description": "Replace ```s\"\"``` with ```s\"Stryker was here!\"```."
           }
         ]
       }

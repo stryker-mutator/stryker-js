@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { stringLiteralMutator as sut } from '../../../src/mutators/string-literal-mutator.js';
 
 describe(sut.name, () => {
@@ -110,6 +110,32 @@ describe(sut.name, () => {
   describe('jsx', () => {
     it('should not mutate string JSX attributes', () => {
       expectJSMutation(sut, '<Record class="row" />');
+    });
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate EmptyString and EmptyInterpolation from all possible mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        ['EmptyString', 'EmptyInterpolation'],
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+        'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string
+        'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
+      );
+    });
+    it('should block the mutators', () => {
+      expectJSMutationWithLevel(sut, [], 'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``');
+    });
+    it('should mutate everything', () => {
+      expectJSMutationWithLevel(
+        sut,
+        undefined,
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+        'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string literal
+        'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString="Stryker was here!"; const emptyInterp=``', // fills string literal
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=`Stryker was here!`', // fills interpolation
+      );
     });
   });
 });
