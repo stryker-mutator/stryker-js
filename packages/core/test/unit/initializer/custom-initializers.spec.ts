@@ -15,9 +15,11 @@ import { AngularInitializer } from '../../../src/initializer/custom-initializers
 import { ReactInitializer } from '../../../src/initializer/custom-initializers/react-initializer.js';
 import { VueJsInitializer } from '../../../src/initializer/custom-initializers/vue-js-initializer.js';
 import { fileUtils } from '../../../src/utils/file-utils.js';
+import { SvelteInitializer } from '../../../src/initializer/custom-initializers/svelte-initializer.js';
+import { CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 
 describe('CustomInitializers', () => {
-  let inquirerPrompt: sinon.SinonStub;
+  let inquirerPrompt: sinon.SinonStubbedMember<typeof inquirer.prompt>;
 
   beforeEach(() => {
     inquirerPrompt = sinon.stub(inquirer, 'prompt');
@@ -164,6 +166,77 @@ describe('CustomInitializers', () => {
 
     it('should have the name "create-react-app"', () => {
       expect(sut.name).to.eq('create-react-app');
+    });
+  });
+
+  describe(SvelteInitializer.name, () => {
+    let sut: SvelteInitializer;
+    const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/svelte';
+
+    beforeEach(() => {
+      sut = testInjector.injector.injectClass(SvelteInitializer);
+    });
+
+    it('should have the name "svelte"', () => {
+      expect(sut.name).to.eq('svelte');
+    });
+
+    it('should prompt for test runner choice', async () => {
+      inquirerPrompt.resolves({ testRunner: 'vitest' });
+      await sut.createConfig();
+      sinon.assert.calledOnceWithExactly(inquirerPrompt, {
+        choices: ['jest', 'vitest'],
+        message: 'Which test runner are you using?',
+        name: 'testRunner',
+        type: 'list',
+      });
+    });
+
+    it('should write vitest test runner when test runner choice is "vitest"', async () => {
+      inquirerPrompt.resolves({ testRunner: 'vitest' });
+      const actualCustomInit = await sut.createConfig();
+      const expected: CustomInitializerConfiguration = {
+        config: {
+          testRunner: 'vitest',
+          reporters: ['progress', 'clear-text', 'html'],
+        },
+        dependencies: ['@stryker-mutator/vitest-runner'],
+        guideUrl,
+      };
+      expect(actualCustomInit).deep.eq(expected);
+    });
+
+    it('should prompt for native ESM when test runner choice is "jest"', async () => {
+      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: false });
+      await sut.createConfig();
+      sinon.assert.calledTwice(inquirerPrompt);
+      sinon.assert.calledWithExactly(inquirerPrompt, {
+        type: 'confirm',
+        name: 'nativeEsm',
+        message: 'Are you using native EcmaScript modules? (see https://jestjs.io/docs/ecmascript-modules)',
+        default: true,
+      });
+    });
+
+    it('should add --experimental-vm-modules when using native ESM with jest', async () => {
+      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: true });
+      const actualCustomInit = await sut.createConfig();
+      const expected: CustomInitializerConfiguration = {
+        config: {
+          testRunner: 'jest',
+          testRunnerNodeArgs: ['--experimental-vm-modules'],
+          reporters: ['progress', 'clear-text', 'html'],
+        },
+        dependencies: ['@stryker-mutator/jest-runner'],
+        guideUrl,
+      };
+      expect(actualCustomInit).deep.eq(expected);
+    });
+
+    it('should not add --experimental-vm-modules when commonjs with jest', async () => {
+      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: false });
+      const actualCustomInit = await sut.createConfig();
+      expect(actualCustomInit.config.testRunnerNodeArgs).undefined;
     });
   });
 

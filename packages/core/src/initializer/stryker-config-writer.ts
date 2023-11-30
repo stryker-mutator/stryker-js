@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { childProcessAsPromised } from '@stryker-mutator/util';
+import { Immutable, childProcessAsPromised } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
@@ -60,20 +60,24 @@ export class StrykerConfigWriter {
     };
 
     // Only write buildCommand to config file if non-empty
-    if (buildCommand.name) configObject.buildCommand = buildCommand.name;
+    if (buildCommand.name) {
+      configObject.buildCommand = buildCommand.name;
+    }
 
     // Automatic plugin discovery doesn't work with pnpm, so explicitly specify the required plugins in the config file
-    if (selectedPackageManager.name === 'pnpm') configObject.plugins = requiredPlugins;
+    if (selectedPackageManager.name === 'pnpm') {
+      configObject.plugins = requiredPlugins;
+    }
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
-    return this.writeStrykerConfig(configObject, exportAsJson);
+    return this.writeStrykerConfig(configObject as Immutable<PartialStrykerOptions>, exportAsJson);
   }
 
   /**
    * Create config based on the chosen preset
    * @function
    */
-  public async writePreset(initializerConfig: CustomInitializerConfiguration, exportAsJson: boolean): Promise<string> {
+  public async writeCustomInitializer(initializerConfig: CustomInitializerConfiguration, exportAsJson: boolean): Promise<string> {
     const config = {
       _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${initializerConfig.guideUrl}`,
       ...initializerConfig.config,
@@ -82,7 +86,7 @@ export class StrykerConfigWriter {
     return this.writeStrykerConfig(config, exportAsJson);
   }
 
-  private writeStrykerConfig(config: PartialStrykerOptions, exportAsJson: boolean) {
+  private writeStrykerConfig(config: Immutable<PartialStrykerOptions>, exportAsJson: boolean) {
     if (exportAsJson) {
       return this.writeJsonConfig(config);
     } else {
@@ -90,7 +94,7 @@ export class StrykerConfigWriter {
     }
   }
 
-  private async writeJsConfig(commentedConfig: PartialStrykerOptions) {
+  private async writeJsConfig(commentedConfig: Immutable<PartialStrykerOptions>) {
     const configFileName = DEFAULT_CONFIG_FILE_NAMES.JAVASCRIPT;
     this.out(`Writing & formatting ${configFileName} ...`);
     const rawConfig = this.stringify(commentedConfig);
@@ -109,7 +113,7 @@ export class StrykerConfigWriter {
     return configFileName;
   }
 
-  private async writeJsonConfig(commentedConfig: PartialStrykerOptions) {
+  private async writeJsonConfig(commentedConfig: Immutable<PartialStrykerOptions>) {
     const configFileName = DEFAULT_CONFIG_FILE_NAMES.JSON;
     this.out(`Writing & formatting ${configFileName}...`);
     const typedConfig = {
