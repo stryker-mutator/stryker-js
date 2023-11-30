@@ -3,7 +3,7 @@ title: Svelte
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/svelte.md
 ---
 
-Stryker supports Svelte projects out-of the box as of svelte version `>=3.30`. It will also mutate `.svelte` files using you're version of the svelte compiler.
+Stryker supports Svelte projects out-of-the-box as of Svelte version `>=3.30`. It will also mutate `.svelte` files using your installed version of the svelte compiler.
 
 <details>
 
