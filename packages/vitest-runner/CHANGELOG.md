@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Features
+
+- **vitest:** support browser mode ([#4628](https://github.com/stryker-mutator/stryker-js/issues/4628)) ([3d02969](https://github.com/stryker-mutator/stryker-js/commit/3d0296914e455fd3a1fa754ffa4711368af036c0))
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 ### Bug Fixes

@@ -1,7 +1,7 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "A helper package for testing",
   "exports": {
     ".": {
@@ -30,7 +30,7 @@
     "rxjs": "~7.8.0"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "7.3.0",
+    "@stryker-mutator/api": "8.0.0",
     "@types/node": "20.10.1",
     "typed-inject": "4.0.0"
   }

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Bug Fixes
+
+- **deps:** update mutation-testing-elements monorepo to v2.0.5 ([#4536](https://github.com/stryker-mutator/stryker-js/issues/4536)) ([45e3ae6](https://github.com/stryker-mutator/stryker-js/commit/45e3ae62427ea59dd5ddd42016ecf93b6ecf7e44))
+
+### Features
+
+- **vitest:** support browser mode ([#4628](https://github.com/stryker-mutator/stryker-js/issues/4628)) ([3d02969](https://github.com/stryker-mutator/stryker-js/commit/3d0296914e455fd3a1fa754ffa4711368af036c0))
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers
