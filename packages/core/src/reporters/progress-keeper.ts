@@ -79,8 +79,8 @@ export abstract class ProgressKeeper implements Reporter {
     return hours > 0 // conditional time formatting
       ? `~${hours}h ${minutes}m`
       : minutes > 0
-      ? `~${minutes}m`
-      : '<1m';
+        ? `~${minutes}m`
+        : '<1m';
   }
 }
 
