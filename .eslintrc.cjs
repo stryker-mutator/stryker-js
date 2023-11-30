@@ -13,8 +13,8 @@ module.exports = {
   settings: {
     'import/resolver': {
       typescript: true,
-      node: true
-    }
+      node: true,
+    },
   },
   rules: {
     // unicorn rules
@@ -36,7 +36,7 @@ module.exports = {
     ],
     'import/no-default-export': 'error',
     'import/no-duplicates': 'error',
-    'import/no-extraneous-dependencies': ['error', {'devDependencies': false, 'optionalDependencies': false, 'peerDependencies': true}],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: false, optionalDependencies: false, peerDependencies: true }],
 
     // prettier rules
     'prettier/prettier': ['error'],
@@ -124,6 +124,7 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'off',
 
     // we do not care
+    '@typescript-eslint/max-params': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/prefer-enum-initializers': 'off',
@@ -148,7 +149,7 @@ module.exports = {
       files: ['packages/*/test/**/*.+(ts|cts|mts)', 'tasks/*.js', 'packages/test-helpers/**/*.+(ts|cts|mts)'],
       rules: {
         'import/no-extraneous-dependencies': 'off',
-      }
-    }
+      },
+    },
   ],
 };

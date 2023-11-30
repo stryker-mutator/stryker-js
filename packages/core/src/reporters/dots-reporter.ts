@@ -2,22 +2,22 @@ import os from 'os';
 
 import chalk from 'chalk';
 import { Reporter } from '@stryker-mutator/api/report';
-import { MutantResult, MutantStatus } from '@stryker-mutator/api/core';
+import type { MutantResult } from '@stryker-mutator/api/core';
 
 export class DotsReporter implements Reporter {
   public onMutantTested(result: MutantResult): void {
     let toLog: string;
     switch (result.status) {
-      case MutantStatus.Killed:
+      case 'Killed':
         toLog = '.';
         break;
-      case MutantStatus.Timeout:
+      case 'Timeout':
         toLog = chalk.yellow('T');
         break;
-      case MutantStatus.Survived:
+      case 'Survived':
         toLog = chalk.bold.red('S');
         break;
-      case MutantStatus.RuntimeError:
+      case 'RuntimeError':
         toLog = chalk.yellow('E');
         break;
       default:

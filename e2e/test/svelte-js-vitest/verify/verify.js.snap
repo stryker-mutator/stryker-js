@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Verify stryker has ran correctly should report correct score 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 13,
+  "mutationScore": 64,
+  "mutationScoreBasedOnCoveredCode": 84.21052631578947,
+  "noCoverage": 6,
+  "pending": 0,
+  "runtimeErrors": 0,
+  "survived": 3,
+  "timeout": 3,
+  "totalCovered": 19,
+  "totalDetected": 16,
+  "totalInvalid": 0,
+  "totalMutants": 25,
+  "totalUndetected": 9,
+  "totalValid": 25,
+}
+`;
+
+exports[`Verify stryker has ran correctly should report mutants at the correct locations 1`] = `
+Array [
+  Object {
+    "location": "2:29-4:4",
+    "mutatorName": "BlockStatement",
+    "replacement": "{}",
+  },
+  Object {
+    "location": "3:12-3:17",
+    "mutatorName": "ArithmeticOperator",
+    "replacement": "a - b",
+  },
+  Object {
+    "location": "6:34-8:4",
+    "mutatorName": "BlockStatement",
+    "replacement": "{}",
+  },
+  Object {
+    "location": "7:12-7:17",
+    "mutatorName": "ArithmeticOperator",
+    "replacement": "a / b",
+  },
+  Object {
+    "location": "9:36-11:4",
+    "mutatorName": "BlockStatement",
+    "replacement": "{}",
+  },
+  Object {
+    "location": "10:12-10:21",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "false",
+  },
+  Object {
+    "location": "10:12-10:21",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "true",
+  },
+  Object {
+    "location": "10:12-10:21",
+    "mutatorName": "EqualityOperator",
+    "replacement": "age < 18",
+  },
+  Object {
+    "location": "10:12-10:21",
+    "mutatorName": "EqualityOperator",
+    "replacement": "age > 18",
+  },
+  Object {
+    "location": "15:35-22:4",
+    "mutatorName": "BlockStatement",
+    "replacement": "{}",
+  },
+  Object {
+    "location": "16:16-16:20",
+    "mutatorName": "BooleanLiteral",
+    "replacement": "false",
+  },
+  Object {
+    "location": "17:12-17:16",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "false",
+  },
+  Object {
+    "location": "17:18-21:6",
+    "mutatorName": "BlockStatement",
+    "replacement": "{}",
+  },
+  Object {
+    "location": "19:7-19:10",
+    "mutatorName": "UpdateOperator",
+    "replacement": "n++",
+  },
+  Object {
+    "location": "20:14-20:19",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "false",
+  },
+  Object {
+    "location": "20:14-20:19",
+    "mutatorName": "ConditionalExpression",
+    "replacement": "true",
+  },
+  Object {
+    "location": "20:14-20:19",
+    "mutatorName": "EqualityOperator",
+    "replacement": "n <= 0",
+  },
+  Object {
+    "location": "20:14-20:19",
+    "mutatorName": "EqualityOperator",
+    "replacement": "n >= 0",
+  },
+  Object {
+    "location": "33:21-33:33",
+    "mutatorName": "ArrowFunction",
+    "replacement": "() => undefined",
+  },
+  Object {
+    "location": "33:27-33:33",
+    "mutatorName": "UpdateOperator",
+    "replacement": "hits--",
+  },
+  Object {
+    "location": "34:21-34:39",
+    "mutatorName": "ArrowFunction",
+    "replacement": "() => undefined",
+  },
+  Object {
+    "location": "34:28-34:38",
+    "mutatorName": "AssignmentOperator",
+    "replacement": "hits -= 10",
+  },
+  Object {
+    "location": "34:50-34:59",
+    "mutatorName": "ArithmeticOperator",
+    "replacement": "hits - 10",
+  },
+]
+`;

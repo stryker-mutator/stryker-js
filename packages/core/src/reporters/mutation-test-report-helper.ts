@@ -76,14 +76,14 @@ export class MutationTestReportHelper {
       case MutantRunStatus.Error:
         return this.reportOne({
           ...mutant,
-          status: MutantStatus.RuntimeError,
+          status: 'RuntimeError',
           statusReason: result.errorMessage,
           location,
         });
       case MutantRunStatus.Killed:
         return this.reportOne({
           ...mutant,
-          status: MutantStatus.Killed,
+          status: 'Killed',
           testsCompleted: result.nrOfTests,
           killedBy: result.killedBy,
           statusReason: result.failureMessage,
@@ -92,14 +92,14 @@ export class MutationTestReportHelper {
       case MutantRunStatus.Timeout:
         return this.reportOne({
           ...mutant,
-          status: MutantStatus.Timeout,
+          status: 'Timeout',
           statusReason: result.reason,
           location,
         });
       case MutantRunStatus.Survived:
         return this.reportOne({
           ...mutant,
-          status: MutantStatus.Survived,
+          status: 'Survived',
           testsCompleted: result.nrOfTests,
           location,
         });
@@ -114,7 +114,7 @@ export class MutationTestReportHelper {
   private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus {
     switch (status) {
       case CheckStatus.CompileError:
-        return MutantStatus.CompileError;
+        return 'CompileError';
     }
   }
 
@@ -130,7 +130,7 @@ export class MutationTestReportHelper {
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {
-    const mutationScore = metrics.systemUnderTestMetrics.metrics.mutationScore;
+    const { mutationScore } = metrics.systemUnderTestMetrics.metrics;
     const breaking = this.options.thresholds.break;
     const formattedScore = mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
@@ -319,6 +319,7 @@ export class MutationTestReportHelper {
     ];
     return dependencies.map(discover).reduce<schema.Dependencies>((acc, dependency) => {
       if (dependency) {
+        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         acc[dependency[0]] = dependency[1];
       }
       return acc;

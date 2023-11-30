@@ -4,8 +4,6 @@ import emojiRegex from 'emoji-regex';
 
 const emojiRe = emojiRegex();
 
-const { MutantStatus } = schema;
-
 export function wrapInClosure(codeFragment: string): string {
   return `
     (function (window) {
@@ -38,26 +36,26 @@ export function deserialize<T>(stringified: string): T {
 
 export function getEmojiForStatus(status: schema.MutantStatus): string {
   switch (status) {
-    case MutantStatus.Killed:
+    case 'Killed':
       return '✅';
-    case MutantStatus.NoCoverage:
+    case 'NoCoverage':
       return '🙈';
-    case MutantStatus.Ignored:
+    case 'Ignored':
       return '🤥';
-    case MutantStatus.Survived:
+    case 'Survived':
       return '👽';
-    case MutantStatus.Timeout:
+    case 'Timeout':
       return '⏰';
-    case MutantStatus.Pending:
+    case 'Pending':
       return '⌛';
-    case MutantStatus.RuntimeError:
-    case MutantStatus.CompileError:
+    case 'RuntimeError':
+    case 'CompileError':
       return '💥';
   }
 }
 
 export function stringWidth(input: string): number {
-  let length = input.length;
+  let { length } = input;
   for (const match of input.matchAll(emojiRe)) {
     length = length - match[0].length + 2;
   }

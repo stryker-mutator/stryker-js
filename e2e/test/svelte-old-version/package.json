@@ -1,0 +1,24 @@
+{
+  "name": "svelte-old-version",
+  "description": "An e2e test that verifies the behavior the oldest supported version of svelte",
+  "type": "module",
+  "scripts": {
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest src",
+    "test:watch": "npm run test -- --watch",
+    "test": "stryker run",
+    "posttest": "npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "localDependencies": {
+    "@stryker-mutator/api": "../../../packages/api",
+    "@stryker-mutator/core": "../../../packages/core",
+    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
+    "@stryker-mutator/jest-runner": "../../../packages/jest-runner",
+    "@stryker-mutator/util": "../../../packages/util"
+  },
+  "devDependencies": {
+    "jest": "29.7.0",
+    "svelte": "3.30",
+    "svelte-jester": "3.0.0"
+  }
+}

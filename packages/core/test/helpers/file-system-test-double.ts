@@ -66,7 +66,7 @@ export class FileSystemTestDouble implements I<FileSystem> {
           .substring(dirName.length)
           .split(/[\/\\]/)
           .filter(Boolean);
-        const name = filePath[0];
+        const [name] = filePath;
         const isDirectory = filePath.length > 1;
         return createDirent({ name, isDirectory });
       });

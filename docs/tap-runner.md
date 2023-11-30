@@ -42,13 +42,13 @@ You can configure the tap test runner in the `stryker.config.json` (or `stryker.
 }
 ```
 
-The tap runner will look for files that match the `testFiles` [glob expressions](./config-file.md/#glob-patterns) and execute them using the `nodeArgs` as additional node arguments.
+The tap runner will look for files that match the `testFiles` [glob expressions](./config-file.md#glob-patterns) and execute them using the `nodeArgs` as additional node arguments.
 
 ### `tap.testFiles` [`string[]`]
 
 Default: `["{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx|mts|cts)"]`
 
-Specify [glob expressions](./config-file.md/#glob-patterns) to your test files. By default, the tap runner will look for testy-looking files, like files in the `test` directory, as well as any files that end in `*.spec.js` or `*.test.js`. If you want to run a specific file, you should override this setting.
+Specify [glob expressions](./config-file.md#glob-patterns) to your test files. By default, the tap runner will look for testy-looking files, like files in the `test` directory, as well as any files that end in `*.spec.js` or `*.test.js`. If you want to run a specific file, you should override this setting.
 
 ### `tap.nodeArgs` [`string[]`]
 

@@ -5,7 +5,9 @@
     "rootDir": "src",
     "types": [
       "node"
-    ]
+    ],
+    "skipLibCheck": true,
+    "noImplicitAny": true,
   },
   "references": [
     {

@@ -1,7 +1,7 @@
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { MutantStatus, ReportType, schema } from '@stryker-mutator/api/core';
+import { ReportType, schema } from '@stryker-mutator/api/core';
 
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
@@ -79,10 +79,10 @@ describe(DashboardReporter.name, () => {
       files: {
         'a.js': factory.mutationTestReportSchemaFileResult({
           mutants: [
-            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Killed }),
-            factory.mutationTestReportSchemaMutantResult({ status: MutantStatus.Survived }),
+            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
+            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
+            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
+            factory.mutationTestReportSchemaMutantResult({ status: 'Survived' }),
           ],
         }),
       },

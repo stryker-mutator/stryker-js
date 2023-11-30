@@ -64,6 +64,24 @@ describe('instrumenter integration', () => {
   it('should be able to place exotic mutants', async () => {
     await arrangeAndActAssert('mutant-placing.ts');
   });
+  it('should be able to instrument svelte', async () => {
+    await arrangeAndActAssert('svelte-hello-world.svelte');
+  });
+  it('should be able to instrument typescript inside svelte', async () => {
+    await arrangeAndActAssert('svelte-ts.svelte');
+  });
+  it('should be able to instrument svelte with only a module script tag', async () => {
+    await arrangeAndActAssert('svelte-module-script-tag.svelte');
+  });
+  it('should be able to instrument svelte with an instance, module and template script tags', async () => {
+    await arrangeAndActAssert('svelte-multiple-script-tags.svelte');
+  });
+  it('should be able to instrument svelte with only template scripts tags', async () => {
+    await arrangeAndActAssert('svelte-only-template-script-tags.svelte');
+  });
+  it('should be able to instrument svelte with template expressions', async () => {
+    await arrangeAndActAssert('svelte-template-expressions.svelte');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

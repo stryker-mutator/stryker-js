@@ -5,7 +5,7 @@ import babel, { type NodePath, type types } from '@babel/core';
 import { File } from '@babel/core';
 /* eslint-enable import/no-duplicates */
 
-import { instrumentationBabelHeader, isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps } from '../util/syntax-helpers.js';
+import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
 import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
@@ -80,20 +80,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     },
   });
 
-  if (mutantCollector.hasPlacedMutants(originFileName)) {
-    // Be sure to leave comments like `// @flow` in.
-    let header = instrumentationBabelHeader;
-    if (Array.isArray(root.program.body[0]?.leadingComments)) {
-      header = [
-        {
-          ...instrumentationBabelHeader[0],
-          leadingComments: root.program.body[0]?.leadingComments,
-        },
-        ...instrumentationBabelHeader.slice(1),
-      ];
-    }
-    root.program.body.unshift(...header);
-  }
+  placeHeaderIfNeeded(mutantCollector, originFileName, options, root);
 
   /**
    *  If mutants were collected, be sure to register them in the placement map.
@@ -101,7 +88,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   function registerInPlacementMap(path: NodePath, mutantsToPlace: Mutant[]) {
     const placementPath = path.find((ancestor) => placementMap.has(ancestor.node));
     if (placementPath) {
-      const appliedMutants = placementMap.get(placementPath.node)!.appliedMutants;
+      const { appliedMutants } = placementMap.get(placementPath.node)!;
       mutantsToPlace.forEach((mutant) => appliedMutants.set(mutant, mutant.applied(placementPath.node)));
     } else {
       throw new Error(`Mutants cannot be placed. This shouldn't happen! Unplaced mutants: ${JSON.stringify(mutantsToPlace, null, 2)}`);
@@ -157,7 +144,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
-      .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
+      .map((mutable) => {
+        const mutant = mutantCollector.collect(originFileName, path.node, mutable, offset);
+        return mutant;
+      })
       .filter((mutant) => !mutant.ignoreReason);
   }
 

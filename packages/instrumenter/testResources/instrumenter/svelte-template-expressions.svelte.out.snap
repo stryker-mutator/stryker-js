@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration should be able to instrument svelte with template expressions 1`] = `
+"<script context=\\"module\\">
+
+function stryNS_9fa48() {
+  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
+  var ns = g.__stryker__ || (g.__stryker__ = {});
+  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+    ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
+  }
+  function retrieveNS() {
+    return ns;
+  }
+  stryNS_9fa48 = retrieveNS;
+  return retrieveNS();
+}
+stryNS_9fa48();
+function stryCov_9fa48() {
+  var ns = stryNS_9fa48();
+  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
+    static: {},
+    perTest: {}
+  });
+  function cover() {
+    var c = cov.static;
+    if (ns.currentTestId) {
+      c = cov.perTest[ns.currentTestId] = cov.perTest[ns.currentTestId] || {};
+    }
+    var a = arguments;
+    for (var i = 0; i < a.length; i++) {
+      c[a[i]] = (c[a[i]] || 0) + 1;
+    }
+  }
+  stryCov_9fa48 = cover;
+  cover.apply(null, arguments);
+}
+function stryMutAct_9fa48(id) {
+  var ns = stryNS_9fa48();
+  function isActive(id) {
+    if (ns.activeMutant === id) {
+      if (ns.hitCount !== void 0 && ++ns.hitCount > ns.hitLimit) {
+        throw new Error('Stryker: Hit count limit reached (' + ns.hitCount + ')');
+      }
+      return true;
+    }
+    return false;
+  }
+  stryMutAct_9fa48 = isActive;
+  return isActive(id);
+}
+
+</script>
+<script>
+const athletes = stryMutAct_9fa48(\\"0\\") ? [] : (stryCov_9fa48(\\"0\\"), [stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
+  sport: stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), \\"Athletics\\"),
+  name: stryMutAct_9fa48(\\"3\\") ? \\"\\" : (stryCov_9fa48(\\"3\\"), \\"Alice\\"),
+  age: 16
+}), stryMutAct_9fa48(\\"4\\") ? {} : (stryCov_9fa48(\\"4\\"), {
+  sport: stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), \\"Swimming\\"),
+  name: stryMutAct_9fa48(\\"6\\") ? \\"\\" : (stryCov_9fa48(\\"6\\"), \\"Bob\\"),
+  age: 18
+}), stryMutAct_9fa48(\\"7\\") ? {} : (stryCov_9fa48(\\"7\\"), {
+  sport: stryMutAct_9fa48(\\"8\\") ? \\"\\" : (stryCov_9fa48(\\"8\\"), \\"Tennis\\"),
+  name: stryMutAct_9fa48(\\"9\\") ? \\"\\" : (stryCov_9fa48(\\"9\\"), \\"Charlie\\"),
+  age: 20
+})]);
+let a = 0;
+let b = 0;
+$: count = stryMutAct_9fa48(\\"10\\") ? a - b : (stryCov_9fa48(\\"10\\"), a + b);
+</script>
+  
+<main>
+    <button on:click={stryMutAct_9fa48(\\"11\\") ? () => undefined : (stryCov_9fa48(\\"11\\"), () => stryMutAct_9fa48(\\"12\\") ? a -= 1 : (stryCov_9fa48(\\"12\\"), a += 1))}>
+        increase a: {a}
+    </button>
+    <button on:click={stryMutAct_9fa48(\\"13\\") ? () => undefined : (stryCov_9fa48(\\"13\\"), () => stryMutAct_9fa48(\\"14\\") ? b -= 1 : (stryCov_9fa48(\\"14\\"), b += 1))}>
+        increase b: {b}
+    </button>
+    <button disabled={stryMutAct_9fa48(\\"15\\") ? false : (stryCov_9fa48(\\"15\\"), true)}>
+        disabled button
+    </button>
+    <p>{a} + {b} = {count}.</p>
+
+    {#if stryMutAct_9fa48(\\"19\\") ? a >= 5 : stryMutAct_9fa48(\\"18\\") ? a <= 5 : stryMutAct_9fa48(\\"17\\") ? false : stryMutAct_9fa48(\\"16\\") ? true : (stryCov_9fa48(\\"16\\", \\"17\\", \\"18\\", \\"19\\"), a < 5)}
+        <p>a is lower than 5, it's: {a}</p>
+    {:else if stryMutAct_9fa48(\\"23\\") ? b >= 5 : stryMutAct_9fa48(\\"22\\") ? b <= 5 : stryMutAct_9fa48(\\"21\\") ? false : stryMutAct_9fa48(\\"20\\") ? true : (stryCov_9fa48(\\"20\\", \\"21\\", \\"22\\", \\"23\\"), b < 5)}
+        <p>b is lower than 5, it's: {b}</p>
+    {:else}
+        <p>just right! total: {stryMutAct_9fa48(\\"24\\") ? a - b : (stryCov_9fa48(\\"24\\"), a + b)}</p>
+    {/if}
+
+    <table>
+        <tr>
+        <td>sport</td>
+        <td>name</td>
+        <td>age</td>
+        <td>of age</td>
+        </tr>
+        {#each athletes as athlete}
+        {@const ofAge = stryMutAct_9fa48(\\"28\\") ? athlete.age < 18 : stryMutAct_9fa48(\\"27\\") ? athlete.age > 18 : stryMutAct_9fa48(\\"26\\") ? false : stryMutAct_9fa48(\\"25\\") ? true : (stryCov_9fa48(\\"25\\", \\"26\\", \\"27\\", \\"28\\"), athlete.age >= 18)}
+        <tr>
+            <td>{athlete.sport}</td>
+            <td>{athlete.name}</td>
+            <td>{athlete.age}</td>
+            <td>{ofAge ? stryMutAct_9fa48(\\"29\\") ? \\"\\" : (stryCov_9fa48(\\"29\\"), \\"Yes\\") : stryMutAct_9fa48(\\"30\\") ? \\"\\" : (stryCov_9fa48(\\"30\\"), \\"No\\")}</td>
+        </tr>
+        {/each}
+    </table>
+</main>
+  "
+`;
