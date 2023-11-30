@@ -1,4 +1,5 @@
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { Immutable } from '@stryker-mutator/util';
 
 export interface CustomInitializer {
   readonly name: string;
@@ -6,7 +7,7 @@ export interface CustomInitializer {
 }
 
 export interface CustomInitializerConfiguration {
-  config: PartialStrykerOptions;
+  config: Immutable<PartialStrykerOptions>;
   guideUrl: string;
   dependencies: string[];
   additionalConfigFiles?: Record<string, string>;

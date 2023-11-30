@@ -88,7 +88,7 @@ export class StrykerInitializer {
   private async initiateInitializer(configWriter: StrykerConfigWriter, selectedPreset: CustomInitializer) {
     const presetConfig = await selectedPreset.createConfig();
     const isJsonSelected = await this.selectJsonConfigType();
-    const configFileName = await configWriter.writePreset(presetConfig, isJsonSelected);
+    const configFileName = await configWriter.writeCustomInitializer(presetConfig, isJsonSelected);
     if (presetConfig.additionalConfigFiles) {
       await Promise.all(Object.entries(presetConfig.additionalConfigFiles).map(([name, content]) => fsPromises.writeFile(name, content)));
     }
