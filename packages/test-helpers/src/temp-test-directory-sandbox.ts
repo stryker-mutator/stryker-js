@@ -13,9 +13,11 @@ import { fsPromisesCp } from './fs-promises-cp.js';
 export class TempTestDirectorySandbox {
   public tmpDir!: string;
   private originalWorkingDir: string | undefined;
-  private readonly from: string;
-  constructor(from: string) {
+  private readonly from;
+  private readonly soft;
+  constructor(from: string, { soft = false }: { soft?: boolean } = {}) {
     this.from = path.resolve('testResources', from);
+    this.soft = soft;
   }
 
   /**
@@ -23,8 +25,12 @@ export class TempTestDirectorySandbox {
    */
   public async init(): Promise<void> {
     this.originalWorkingDir = process.cwd();
-    this.tmpDir = path.resolve(this.originalWorkingDir, 'testResources', 'tmp', `workDir-${random()}`);
-    await fsPromisesCp(this.from, this.tmpDir, { recursive: true });
+    if (this.soft) {
+      this.tmpDir = path.resolve(this.from);
+    } else {
+      this.tmpDir = path.resolve(this.originalWorkingDir, 'testResources', 'tmp', `workDir-${random()}`);
+      await fsPromisesCp(this.from, this.tmpDir, { recursive: true });
+    }
     process.chdir(this.tmpDir);
   }
 
@@ -36,7 +42,9 @@ export class TempTestDirectorySandbox {
       throw new Error('Disposed without initialized');
     }
     process.chdir(this.originalWorkingDir);
-    await this.rm();
+    if (!this.soft) {
+      await this.rm();
+    }
   }
 
   private async rm(retries = 5) {

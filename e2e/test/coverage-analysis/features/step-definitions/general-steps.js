@@ -1,7 +1,7 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
-const { expect } = require('chai');
-const { concat, greet } = require('../../src/concat');
-const { add, multiply } = require('../../src/math');
+import { Given, When, Then } from '@cucumber/cucumber';
+import { expect } from 'chai';
+import { concat, greet } from '../../src/concat.js';
+import { add, multiply } from '../../src/math.js';
 
 Given('input {string}', function (input) {
   this.input = input;

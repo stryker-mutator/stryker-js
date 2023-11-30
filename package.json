@@ -15,8 +15,8 @@
     "@types/sinon": "17.0.2",
     "@types/sinon-chai": "3.2.12",
     "@types/source-map-support": "0.5.10",
-    "@typescript-eslint/eslint-plugin": "6.10.0",
-    "@typescript-eslint/parser": "6.10.0",
+    "@typescript-eslint/eslint-plugin": "6.13.1",
+    "@typescript-eslint/parser": "6.13.1",
     "c8": "8.0.1",
     "chai": "4.3.10",
     "chai-as-promised": "7.1.1",
@@ -48,6 +48,7 @@
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
+    "postinstall": "playwright install chromium",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.js",
     "lint:fix": "npm run lint -- --fix",
     "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
@@ -58,7 +59,7 @@
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
     "e2e": "npm run e2e:install && npm run e2e:lint && npm run e2e:run",
-    "e2e:install": "cd e2e && npm ci",
+    "e2e:install": "cd e2e && npm ci --force",
     "e2e:lint": "cd e2e && npm run lint",
     "e2e:run": "cd e2e && npm t",
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
@@ -68,6 +69,6 @@
     "version": "node tasks/bump-peer-deps.js"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   }
 }

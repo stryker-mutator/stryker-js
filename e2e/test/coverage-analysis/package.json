@@ -1,13 +1,15 @@
 {
   "name": "coverage-analysis",
   "description": "A e2e test for --coverageAnalysis",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "test:cucumber": "cucumber-js",
     "test:jasmine": "jasmine --config=jasmine.json",
     "test:mocha": "mocha",
-    "test:jest": "jest",
-    "test:karma": "karma start",
+    "test:jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:karma": "karma start karma.conf.cjs",
+    "test:vitest": "vitest",
+    "test:vitest:browser": "vitest --config vitest.browser.config.js",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

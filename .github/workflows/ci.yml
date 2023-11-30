@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x, 20.x]
         os: ['ubuntu-latest', 'windows-latest']
     steps:
     - uses: actions/checkout@v4
@@ -63,7 +63,9 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
-      run: npm ci || npm ci # retry once, install on windows is flaky...
+      # retry once, install on windows is flaky...
+      # Also, remove `--force` after v1 release of vitest
+      run: npm ci --force || npm ci --force 
     - name: Build packages
       run: npm run build
     - name: e2e install
