@@ -2,6 +2,7 @@ import path from 'path';
 
 import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
+import { MutantCoverage } from '@stryker-mutator/api/core';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
   if (testMode === 'skip') {
@@ -23,7 +24,7 @@ function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode
 export function convertTestToTestResult(test: Test): TestResult {
   const status = convertTaskStateToTestStatus(test.result?.state, test.mode);
   const baseTestResult: BaseTestResult = {
-    id: toTestId(test),
+    id: normalizeTestId(toRawTestId(test)),
     name: collectTestName(test),
     timeSpentMs: test.result?.duration ?? 0,
     fileName: test.file?.filepath && path.resolve(test.file.filepath),
@@ -42,9 +43,23 @@ export function convertTestToTestResult(test: Test): TestResult {
   }
 }
 
-export function fromTestId(id: string): { file: string; name: string } {
+export function fromTestId(id: string): { file: string; test: string } {
   const [file, ...name] = id.split('#');
-  return { file, name: name.join('#') };
+  return { file, test: name.join('#') };
+}
+
+export function normalizeTestId(id: string): string {
+  const { file, test } = fromTestId(id);
+  return `${path.relative(process.cwd(), file).replace(/\\/g, '/')}#${test}`;
+}
+
+export function normalizeCoverage(rawCoverage: MutantCoverage): MutantCoverage {
+  return {
+    perTest: Object.fromEntries(
+      Object.entries(rawCoverage.perTest).map(([rawTestId, coverageData]) => [normalizeTestId(rawTestId), coverageData] as const),
+    ),
+    static: rawCoverage.static,
+  };
 }
 
 export function collectTestsFromSuite(suite: Suite): Test[] {
@@ -91,7 +106,7 @@ export function collectTestName({ name, suite }: { name: string; suite?: Suite }
   return nameParts.join(' ').trim();
 }
 
-export function toTestId(test: Test): string {
-  return `${path.relative(process.cwd(), test.file?.filepath ?? 'unknown.js').replace(/\\/g, '/')}#${collectTestName(test)}`;
+export function toRawTestId(test: Test): string {
+  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
 }
 // Stryker restore all

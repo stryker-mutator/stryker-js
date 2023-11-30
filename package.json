@@ -48,6 +48,7 @@
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
+    "postinstall": "playwright install chromium",
     "lint": "eslint . --resolve-plugins-relative-to . --ext .ts,.js",
     "lint:fix": "npm run lint -- --fix",
     "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
@@ -58,7 +59,7 @@
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
     "e2e": "npm run e2e:install && npm run e2e:lint && npm run e2e:run",
-    "e2e:install": "cd e2e && npm ci",
+    "e2e:install": "cd e2e && npm ci --force",
     "e2e:lint": "cd e2e && npm run lint",
     "e2e:run": "cd e2e && npm t",
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",

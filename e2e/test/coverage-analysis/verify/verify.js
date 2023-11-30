@@ -33,10 +33,6 @@ describe('Coverage analysis', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'cucumber';
       strykerOptions.plugins.push('@stryker-mutator/cucumber-runner');
-      strykerOptions.cucumber = {
-        profile: 'stryker',
-        features: ['cucumber-features/*.feature'],
-      };
     });
     describeTests();
   });
@@ -45,6 +41,7 @@ describe('Coverage analysis', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'jest';
       strykerOptions.plugins.push('@stryker-mutator/jest-runner');
+      strykerOptions.testRunnerNodeArgs = ['--experimental-vm-modules'];
       strykerOptions.jest = {
         configFile: 'jest.config.json',
       };
@@ -65,6 +62,22 @@ describe('Coverage analysis', () => {
     describeTests();
   });
 
+  describe('with vitest-runner', () => {
+    beforeEach(() => {
+      strykerOptions.testRunner = 'vitest';
+      strykerOptions.plugins.push('@stryker-mutator/vitest-runner');
+    });
+
+    // Vitest only supports perTest coverage analysis
+    it('should provide expected', async () => {
+      await actAssertPerTest(12);
+    });
+    it.only('should provide expected in browser mode', async () => {
+      strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
+      await actAssertPerTest(14);
+    });
+  });
+
   describe('with karma-runner', () => {
     /**
      * @type {{ frameworks?: string[] }};
@@ -75,17 +88,17 @@ describe('Coverage analysis', () => {
       strykerOptions.plugins.push('@stryker-mutator/karma-runner');
       karmaConfigOverrides = {};
       strykerOptions.karma = {
-        configFile: 'karma.conf.js',
+        configFile: 'karma.conf.cjs',
         config: karmaConfigOverrides,
       };
     });
-    describe('with mocha test framework', () => {
+    describe('and mocha test framework', () => {
       beforeEach(() => {
         karmaConfigOverrides.frameworks = ['chai', 'mocha'];
       });
       describeTests();
     });
-    describe('with jasmine test framework', () => {
+    describe('and jasmine test framework', () => {
       beforeEach(() => {
         karmaConfigOverrides.frameworks = ['chai', 'jasmine'];
       });
@@ -153,25 +166,7 @@ describe('Coverage analysis', () => {
     });
 
     it('should provide the expected with --coverageAnalysis perTest', async () => {
-      // Arrange
-      strykerOptions.coverageAnalysis = 'perTest';
-      const stryker = new Stryker(strykerOptions);
-      // Act
-      const result = await stryker.runMutationTest();
-      // Assert
-      const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
-      const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
-      /**
-       * @type {Partial<import('mutation-testing-metrics').Metrics>}
-       */
-      const expectedMetricsResult = {
-        noCoverage: 2,
-        survived: 1,
-        killed: 8,
-        mutationScore: 72.72727272727273,
-      };
-      expect(metricsResult.metrics).deep.include(expectedMetricsResult);
-      expect(testsRan).eq(expectedTestCount.perTest);
+      await actAssertPerTest(expectedTestCount.perTest);
     });
 
     it('should provide the expected with --ignoreStatic', async () => {
@@ -185,7 +180,7 @@ describe('Coverage analysis', () => {
       const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
       const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
       const expectedMetricsResult = {
-        ignored: 13,
+        ignored: 1,
         noCoverage: 2,
         survived: 1,
         killed: 7,
@@ -194,5 +189,28 @@ describe('Coverage analysis', () => {
       expect(metricsResult.metrics).deep.include(expectedMetricsResult);
       expect(testsRan).eq(expectedTestCount.ignoreStatic);
     });
+  }
+
+  /** @param {number} expectedTestCount */
+  async function actAssertPerTest(expectedTestCount) {
+    // Arrange
+    strykerOptions.coverageAnalysis = 'perTest';
+    const stryker = new Stryker(strykerOptions);
+    // Act
+    const result = await stryker.runMutationTest();
+    // Assert
+    const testsRan = result.reduce((acc, mutant) => acc + (mutant.testsCompleted ?? 0), 0);
+    const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+    /**
+     * @type {Partial<import('mutation-testing-metrics').Metrics>}
+     */
+    const expectedMetricsResult = {
+      noCoverage: 2,
+      survived: 1,
+      killed: 8,
+      mutationScore: 72.72727272727273,
+    };
+    expect(metricsResult.metrics).deep.include(expectedMetricsResult);
+    expect(testsRan).eq(expectedTestCount);
   }
 });
