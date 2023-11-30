@@ -63,7 +63,9 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
-      run: npm ci || npm ci # retry once, install on windows is flaky...
+      # retry once, install on windows is flaky...
+      # Also, remove `--force` after v1 release of vitest
+      run: npm ci --force || npm ci --force 
     - name: Build packages
       run: npm run build
     - name: e2e install

@@ -13,10 +13,10 @@ describe(HeadingComponent.name, () => {
   });
 
   it('should project its content', () => {
-    // sut.innerHTML = 'Hello World';
-    // document.body.appendChild(sut);
-    // const slot = sut.shadowRoot!.querySelector('slot')!;
-    // const slotContent = slot.assignedNodes()[0] as Text;
-    // expect(slotContent.data).toContain('Hello World');
+    sut.innerHTML = 'Hello World';
+    document.body.appendChild(sut);
+    const slot = sut.shadowRoot!.querySelector('slot')!;
+    const slotContent = slot.assignedNodes()[0] as Text;
+    expect(slotContent.data).toContain('Hello World');
   });
 });

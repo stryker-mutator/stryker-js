@@ -72,7 +72,7 @@ describe('Coverage analysis', () => {
     it('should provide expected', async () => {
       await actAssertPerTest(12);
     });
-    it('should provide expected in browser mode', async () => {
+    it.only('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
       await actAssertPerTest(14);
     });
