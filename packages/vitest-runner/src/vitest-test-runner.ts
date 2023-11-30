@@ -15,7 +15,7 @@ import {
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
-import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps, normalizeTestId, normalizeCoverage } from './vitest-helpers.js';
+import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps, normalizeCoverage } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
