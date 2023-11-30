@@ -1,7 +1,7 @@
 import path from 'path';
 
 import sinon from 'sinon';
-import { Location, MutantResult, MutantStatus, schema } from '@stryker-mutator/api/core';
+import { Location, MutantResult, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import type { requireResolve } from '@stryker-mutator/util';
@@ -76,7 +76,7 @@ describe(MutationTestReportHelper.name, () => {
           {
             mutatorName: 'Foo',
             fileName: 'foo.js',
-            status: MutantStatus.Killed,
+            status: 'Killed',
             location: { start: { line: 1, column: 2 }, end: { line: 4, column: 5 } },
             replacement: '+',
             id: '1',
@@ -189,15 +189,15 @@ describe(MutationTestReportHelper.name, () => {
           static: true,
           statusReason: 'smacked on the head',
           testsCompleted: 32,
-          status: MutantStatus.Killed,
+          status: 'Killed',
         };
         const inputMutants = [
           killedMutantResult,
-          factory.mutantResult({ fileName: 'bar.js', status: MutantStatus.NoCoverage }),
-          factory.mutantResult({ fileName: 'baz.js', status: MutantStatus.RuntimeError }),
-          factory.mutantResult({ fileName: 'qux.js', status: MutantStatus.Survived }),
-          factory.mutantResult({ fileName: '5.js', status: MutantStatus.Timeout }),
-          factory.mutantResult({ fileName: '6.js', status: MutantStatus.CompileError }),
+          factory.mutantResult({ fileName: 'bar.js', status: 'NoCoverage' }),
+          factory.mutantResult({ fileName: 'baz.js', status: 'RuntimeError' }),
+          factory.mutantResult({ fileName: 'qux.js', status: 'Survived' }),
+          factory.mutantResult({ fileName: '5.js', status: 'Timeout' }),
+          factory.mutantResult({ fileName: '6.js', status: 'CompileError' }),
         ];
         inputMutants.forEach(({ fileName }) => {
           fileSystemTestDouble.files[fileName] = '';
@@ -216,15 +216,15 @@ describe(MutationTestReportHelper.name, () => {
           static: true,
           statusReason: 'smacked on the head',
           testsCompleted: 32,
-          status: MutantStatus.Killed,
+          status: 'Killed',
         };
         expect(Object.keys(actualReport.files)).lengthOf(6);
         expect(actualReport.files['foo.js'].mutants[0]).include(expectedKilledMutant);
-        expect(actualReport.files['bar.js'].mutants[0]).include({ status: MutantStatus.NoCoverage });
-        expect(actualReport.files['baz.js'].mutants[0]).include({ status: MutantStatus.RuntimeError });
-        expect(actualReport.files['qux.js'].mutants[0]).include({ status: MutantStatus.Survived });
-        expect(actualReport.files['5.js'].mutants[0]).include({ status: MutantStatus.Timeout });
-        expect(actualReport.files['6.js'].mutants[0]).include({ status: MutantStatus.CompileError });
+        expect(actualReport.files['bar.js'].mutants[0]).include({ status: 'NoCoverage' });
+        expect(actualReport.files['baz.js'].mutants[0]).include({ status: 'RuntimeError' });
+        expect(actualReport.files['qux.js'].mutants[0]).include({ status: 'Survived' });
+        expect(actualReport.files['5.js'].mutants[0]).include({ status: 'Timeout' });
+        expect(actualReport.files['6.js'].mutants[0]).include({ status: 'CompileError' });
       });
 
       it('should not offset the location when reporting all mutants', async () => {
@@ -424,7 +424,7 @@ describe(MutationTestReportHelper.name, () => {
       });
 
       it('should not set exit code = 1 if `threshold.break` is not configured', async () => {
-        await actReportAll([factory.mutantResult({ status: MutantStatus.Survived })]);
+        await actReportAll([factory.mutantResult({ status: 'Survived' })]);
 
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.debug).calledWith(
@@ -434,14 +434,14 @@ describe(MutationTestReportHelper.name, () => {
 
       it('should not set exit code = 1 if `threshold.break` === score', async () => {
         testInjector.options.thresholds.break = 50;
-        await actReportAll([factory.mutantResult({ status: MutantStatus.Survived }), factory.mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        await actReportAll([factory.mutantResult({ status: 'Survived' }), factory.mutantResult({ status: 'Killed' })]); // 50 %
         expect(setExitCodeStub).not.called;
         expect(testInjector.logger.info).calledWith('Final mutation score of 50.00 is greater than or equal to break threshold 50');
       });
 
       it('should set exit code = 1 if `threshold.break` > score', async () => {
         testInjector.options.thresholds.break = 50.01;
-        await actReportAll([factory.mutantResult({ status: MutantStatus.Survived }), factory.mutantResult({ status: MutantStatus.Killed })]); // 50 %
+        await actReportAll([factory.mutantResult({ status: 'Survived' }), factory.mutantResult({ status: 'Killed' })]); // 50 %
         expect(setExitCodeStub).calledWith(1);
         expect(testInjector.logger.error).calledWith('Final mutation score 50.00 under breaking threshold 50.01, setting exit code to 1 (failure).');
         expect(testInjector.logger.info).calledWith('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
@@ -501,7 +501,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.CompileError,
+          status: 'CompileError',
           statusReason: 'cannot call foo of undefined',
         };
         expect(actual).include(expected);
@@ -523,11 +523,11 @@ describe(MutationTestReportHelper.name, () => {
         const sut = createSut();
 
         // Act
-        const actual = sut.reportMutantStatus(input, MutantStatus.NoCoverage);
+        const actual = sut.reportMutantStatus(input, 'NoCoverage');
 
         // Assert
         const expected: MutantResult = {
-          status: MutantStatus.NoCoverage,
+          status: 'NoCoverage',
           fileName: 'add.js',
           id: '3',
           location: { start: { column: 1, line: 1 }, end: { column: 1, line: 1 } },
@@ -553,7 +553,7 @@ describe(MutationTestReportHelper.name, () => {
         const sut = createSut();
 
         // Act
-        sut.reportMutantStatus(input, MutantStatus.NoCoverage);
+        sut.reportMutantStatus(input, 'NoCoverage');
 
         // Assert
         expect(input).to.not.deep.include({ start: { column: 1, line: 1 }, end: { column: 1, line: 1 } });
@@ -574,7 +574,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.Killed,
+          status: 'Killed',
           killedBy: ['1'],
           testsCompleted: 42,
           statusReason: 'foo should have been bar at line 1',
@@ -595,7 +595,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.Killed,
+          status: 'Killed',
           killedBy: ['1', '2'],
           testsCompleted: 42,
           statusReason: 'foo should have been bar at line 1',
@@ -615,7 +615,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.RuntimeError,
+          status: 'RuntimeError',
           statusReason: 'Cannot call foo of null',
         };
         expect(actual).deep.include(expected);
@@ -630,7 +630,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.Timeout,
+          status: 'Timeout',
         };
         expect(actual).deep.include(expected);
       });
@@ -648,7 +648,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.Survived,
+          status: 'Survived',
           coveredBy: ['1'],
           testsCompleted: 4,
         };
@@ -668,7 +668,7 @@ describe(MutationTestReportHelper.name, () => {
 
         // Assert
         const expected: Partial<MutantResult> = {
-          status: MutantStatus.Survived,
+          status: 'Survived',
           coveredBy: undefined,
         };
         expect(actual).deep.include(expected);

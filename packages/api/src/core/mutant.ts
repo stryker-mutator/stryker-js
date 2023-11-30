@@ -1,6 +1,6 @@
 import * as schema from 'mutation-testing-report-schema/api';
 
-export { MutantStatus } from 'mutation-testing-report-schema/api';
+export type { MutantStatus } from 'mutation-testing-report-schema/api';
 
 // We're reusing the `MutantResult` interface here to acquire uniformity.
 
@@ -21,7 +21,7 @@ export interface Mutant
    */
   replacement: string;
   /**
-   * The status if a mutant if known. This should be undefined for a mutant that still needs testing.
+   * The status of a mutant if known. This should be undefined for a mutant that still needs testing.
    */
   status?: schema.MutantStatus;
 }

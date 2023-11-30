@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { MutantStatus } from 'mutation-testing-report-schema';
 
 import { expectMetricsJsonToMatchSnapshot, readMutationTestingJsonResult } from '../../../helpers.js';
 
@@ -19,15 +18,15 @@ describe('After running stryker on jest-react project', () => {
     expect(conditionalExpressionMutants).lengthOf(3);
     expect(equalityOperatorMutants).lengthOf(2);
     booleanLiteralMutants.forEach((booleanMutant) => {
-      expect(booleanMutant.status).eq(MutantStatus.Ignored);
+      expect(booleanMutant.status).eq('Ignored');
       expect(booleanMutant.statusReason).eq('Ignore boolean and conditions');
     });
     conditionalExpressionMutants.forEach((conditionalMutant) => {
-      expect(conditionalMutant.status).eq(MutantStatus.Ignored);
+      expect(conditionalMutant.status).eq('Ignored');
       expect(conditionalMutant.statusReason).eq('Ignore boolean and conditions');
     });
     equalityOperatorMutants.forEach((equalityMutant) => {
-      expect(equalityMutant.status).eq(MutantStatus.NoCoverage);
+      expect(equalityMutant.status).eq('NoCoverage');
     });
   });
 
@@ -37,7 +36,7 @@ describe('After running stryker on jest-react project', () => {
     const mutantsAtLine3 = circleResult.mutants.filter(({ location }) => location.start.line === 3);
     expect(mutantsAtLine3).lengthOf(2);
     mutantsAtLine3.forEach((mutant) => {
-      expect(mutant.status).eq(MutantStatus.Ignored);
+      expect(mutant.status).eq('Ignored');
       expect(mutant.statusReason).eq('Ignored because of excluded mutation "ArithmeticOperator"');
     });
   });
@@ -55,9 +54,9 @@ describe('After running stryker on jest-react project', () => {
     expect(mutantsAtLin13).lengthOf(1);
     expect(mutantsAtLine18).lengthOf(1);
     [...mutantsAtLine2, ...mutantsAtLin8, ...mutantsAtLin13].forEach((mutant) => {
-      expect(mutant.status).eq(MutantStatus.Ignored);
+      expect(mutant.status).eq('Ignored');
       expect(mutant.statusReason).eq("We're not interested in console.log statements for now");
     });
-    mutantsAtLine18.forEach((mutant) => expect(mutant.status).eq(MutantStatus.NoCoverage));
+    mutantsAtLine18.forEach((mutant) => expect(mutant.status).eq('NoCoverage'));
   });
 });

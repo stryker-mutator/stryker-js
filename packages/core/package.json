@@ -84,9 +84,9 @@
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.0",
     "minimatch": "~9.0.1",
-    "mutation-testing-elements": "2.0.5",
-    "mutation-testing-metrics": "2.0.5",
-    "mutation-testing-report-schema": "2.0.5",
+    "mutation-testing-elements": "3.0.1",
+    "mutation-testing-metrics": "3.0.0",
+    "mutation-testing-report-schema": "3.0.0",
     "npm-run-path": "~5.1.0",
     "progress": "~2.0.0",
     "rxjs": "~7.8.0",
@@ -102,9 +102,9 @@
     "@types/diff-match-patch": "1.0.36",
     "@types/inquirer": "9.0.7",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "20.9.0",
+    "@types/node": "20.10.1",
     "@types/progress": "2.0.7",
-    "@types/semver": "7.5.5",
+    "@types/semver": "7.5.6",
     "flatted": "3.2.9"
   }
 }

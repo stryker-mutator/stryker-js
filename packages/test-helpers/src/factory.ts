@@ -10,7 +10,6 @@ import {
   MutantResult,
   MutantCoverage,
   schema,
-  MutantStatus,
   MutantRunPlan,
   PlanKind,
   MutantEarlyResultPlan,
@@ -79,17 +78,17 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
 }));
 
 export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.Killed, killedBy: ['45'], testsCompleted: 2 });
+  mutantResult({ ...overrides, status: 'Killed', killedBy: ['45'], testsCompleted: 2 });
 export const survivedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.Survived, killedBy: ['45'], testsCompleted: 2 });
+  mutantResult({ ...overrides, status: 'Survived', killedBy: ['45'], testsCompleted: 2 });
 export const timeoutMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.Timeout, statusReason: 'expected error' });
+  mutantResult({ ...overrides, status: 'Timeout', statusReason: 'expected error' });
 export const runtimeErrorMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.RuntimeError, statusReason: 'expected error' });
+  mutantResult({ ...overrides, status: 'RuntimeError', statusReason: 'expected error' });
 export const ignoredMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.Ignored, statusReason: 'Ignored by "fooMutator" in excludedMutations' });
+  mutantResult({ ...overrides, status: 'Ignored', statusReason: 'Ignored by "fooMutator" in excludedMutations' });
 export const noCoverageMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: MutantStatus.NoCoverage });
+  mutantResult({ ...overrides, status: 'NoCoverage' });
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
   id: '256',
@@ -98,7 +97,7 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   range: [0, 0],
   replacement: '',
   fileName: 'file.js',
-  status: MutantStatus.Survived,
+  status: 'Survived',
   coveredBy: ['1', '2'],
   testsCompleted: 2,
   static: false,
@@ -113,7 +112,7 @@ export const mutationTestReportSchemaMutantResult = factoryMethod<schema.MutantR
   range: [0, 0],
   replacement: '',
   sourceFilePath: '',
-  status: MutantStatus.Killed,
+  status: 'Killed',
   testsRan: [''],
 }));
 
@@ -342,8 +341,8 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   location: location(),
 }));
 
-export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { status: MutantStatus.Ignored }>(() => ({
-  status: MutantStatus.Ignored,
+export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { status: 'Ignored' }>(() => ({
+  status: 'Ignored',
   coveredBy: undefined,
   fileName: '',
   id: '1',
@@ -362,7 +361,7 @@ export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
 
 export const mutantEarlyResultPlan = factoryMethod<MutantEarlyResultPlan>(() => ({
   plan: PlanKind.EarlyResult,
-  mutant: { ...mutantTestCoverage(), status: MutantStatus.Ignored },
+  mutant: { ...mutantTestCoverage(), status: 'Ignored' },
 }));
 
 export const mutationTestingPlanReadyEvent = factoryMethod<MutationTestingPlanReadyEvent>(() => ({

@@ -1,7 +1,7 @@
 import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap } from 'rxjs';
 import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, MutantStatus, Mutant, StrykerOptions, PlanKind, MutantTestPlan, MutantRunPlan } from '@stryker-mutator/api/core';
+import { MutantResult, Mutant, StrykerOptions, PlanKind, MutantTestPlan, MutantRunPlan } from '@stryker-mutator/api/core';
 import { TestRunner, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
@@ -98,7 +98,7 @@ export class MutationTestExecutor {
   private executeNoCoverage(input$: Observable<MutantRunPlan>) {
     const [noCoverageMatchedMutant$, coveredMutant$] = partition(input$.pipe(shareReplay()), ({ runOptions }) => runOptions.testFilter?.length === 0);
     const noCoverageResult$ = noCoverageMatchedMutant$.pipe(
-      map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, MutantStatus.NoCoverage)),
+      map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, 'NoCoverage')),
     );
     return { noCoverageResult$, coveredMutant$ };
   }
