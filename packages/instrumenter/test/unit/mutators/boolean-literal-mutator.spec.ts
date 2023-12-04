@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 
-import { MutationLevel } from '@stryker-mutator/api/core';
-
 import { booleanLiteralMutator as sut } from '../../../src/mutators/boolean-literal-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutators/mutation-level-options.js';
 
 const booleanLiteralLevel: MutationLevel = {
   name: 'BooleanLiteralLevel',

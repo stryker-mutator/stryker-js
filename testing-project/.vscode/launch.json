@@ -5,7 +5,7 @@
       "type": "node-terminal",
       "name": "❌avier stryker debug",
       "request": "launch",
-      "command": "cd ../ && npm run clean && npm run build && cd ${workspaceFolder} && yarn run test:mutation --logLevel debug --useMutationLevel default",
+      "command": "cd ../ && npm run clean && npm run build && cd ${workspaceFolder} && yarn run test:mutation --logLevel debug",
       "cwd": "${workspaceFolder}",
       "skipFiles": [
         "<node_internals>/**"

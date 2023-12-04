@@ -1,4 +1,7 @@
+import { MutatorDefinition } from '@stryker-mutator/api/core';
+
 export interface MutatorOptions {
-  excludedMutations: string[];
+  includedMutations: MutatorDefinition[];
+  excludedMutations: MutatorDefinition[];
   noHeader?: boolean;
 }

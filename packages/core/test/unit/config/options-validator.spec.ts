@@ -79,6 +79,7 @@ describe(OptionsValidator.name, () => {
           '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue|svelte)',
         ],
         mutator: {
+          includedMutations: [],
           excludedMutations: [],
           plugins: null,
         },
@@ -99,7 +100,6 @@ describe(OptionsValidator.name, () => {
         warnings: true,
         disableBail: false,
         ignorers: [],
-        mutationLevels: [],
       };
       expect(options).deep.eq(expectedOptions);
     });

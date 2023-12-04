@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 
-import { MutationLevel } from '@stryker-mutator/api/core';
-
 import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutators/mutation-level-options.js';
 
 const arithmeticLevel: MutationLevel = { name: 'ArithemticLevel', ArithmeticOperator: ['+To-', '-To+', '*To/'] };
 

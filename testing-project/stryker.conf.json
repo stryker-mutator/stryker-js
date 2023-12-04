@@ -15,20 +15,8 @@
     "configFile": "jest.config.cjs"
   },
   "coverageAnalysis": "perTest",
-  "mutationLevels": [
-    { 
-      "name": "default",
-      "ArithmeticOperator": ["+To-", "-To+", "*To/"],
-      "ArrayDeclaration": ["EmptyArray", "FilledArray", "FilledArrayConstructor"],
-      "OptionalChaining": ["OptionalCallExpression", "OptionalMemberExpression"]
-      "StringLiteral": ["EmptyString", "FillString", "EmptyInterpolation", "FillInterpolation"]
-      "AssignmentOperator": ["-=To+=", "<<=To>>=", "&&=To||="],
-      "BooleanLiteral": ["TrueToFalse", "RemoveNegation"]
-    },
-    {
-      "name": "fancy",
-      "BlockStatement": true,
-      "MethodExpression": ["minToMax"]
-    }
-  ]
+  "mutator": {
+    "includedMutations": ["@Level1", "@ArithmeticOperator", "removeCharAt", "BlockStatement"],
+    "excludedMutations": ["@Regex", "Remove~"]
+  }
 }

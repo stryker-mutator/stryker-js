@@ -63,7 +63,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     testInjector.options.mutator.plugins = ['functionSent'];
     testInjector.options.mutator.excludedMutations = ['fooMutator'];
     await sut.execute();
-    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, ignorers: [], runLevel: undefined };
+    const expectedInstrumenterOptions: InstrumenterOptions = { ...testInjector.options.mutator, ignorers: [] };
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,
       [{ name: 'foo.js', content: 'console.log("bar")', mutate: true }],
@@ -81,7 +81,6 @@ describe(MutantInstrumenterExecutor.name, () => {
     const expectedInstrumenterOptions: InstrumenterOptions = {
       ...testInjector.options.mutator,
       ignorers: [notIgnorer],
-      runLevel: undefined,
     };
     sinon.assert.calledOnceWithExactly(
       instrumenterMock.instrument,

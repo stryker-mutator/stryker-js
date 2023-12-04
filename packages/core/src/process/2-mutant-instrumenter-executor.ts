@@ -52,7 +52,6 @@ export class MutantInstrumenterExecutor {
     const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), {
       ignorers,
       ...this.options.mutator,
-      runLevel: this.options.mutationLevels.find((level) => level.name === this.options.useMutationLevel),
     });
 
     // Preprocess the project
