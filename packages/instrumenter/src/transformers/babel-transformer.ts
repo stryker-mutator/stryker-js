@@ -11,7 +11,7 @@ import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-p
 import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
-import { MutationLevel } from '../mutators/mutation-level-options.js';
+import { MutationLevel, defaultMutationLevels } from '../mutation-level/mutation-level.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
@@ -156,10 +156,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    * Generate mutants for the current node.
    */
   function* mutate(node: NodePath): Iterable<Mutable> {
+    //TODO: Create runLevel here
+    const runLevel: MutationLevel | undefined = undefined;
+    for (const defaultLevel of defaultMutationLevels) {
+      if ('@' + defaultLevel.name in options.includedMutations) {
+        //For each key in defaultLevel, ADD it to the runLevel
+      }
+    }
     for (const mutator of mutators) {
-      //TODO: Create runLevel here
-      const runLevel: MutationLevel | undefined = undefined;
-
       if (runLevel === undefined || mutator.name in runLevel) {
         let propertyValue = undefined;
         if (runLevel !== undefined) {

@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import {
   ArithmeticOperator,
   ArrayDeclaration,
@@ -38,3 +40,7 @@ export interface MutationLevel {
   UpdateOperator?: UpdateOperator[];
   [k: string]: unknown;
 }
+
+export const defaultMutationLevels: MutationLevel[] = JSON.parse(
+  fs.readFileSync(new URL('../../../src/mutation-level/default-mutation-levels.json', import.meta.url), 'utf-8'),
+).mutationLevels;

@@ -1,7 +1,8 @@
 import babel, { type NodePath } from '@babel/core';
 
+import { MutationOperator } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './node-mutator.js';
-import { MutationOperator } from './mutation-level-options.js';
 
 const { types } = babel;
 

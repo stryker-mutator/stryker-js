@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { equalityOperatorMutator as sut } from '../../../src/mutators/equality-operator-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
-import { MutationLevel } from '../../../src/mutators/mutation-level-options.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const equalityLevelA: MutationLevel = { name: 'EqualityLevelA', EqualityOperator: ['<To<=', '<To>=', '>=To>', '>=To<', '==To!='] };
 

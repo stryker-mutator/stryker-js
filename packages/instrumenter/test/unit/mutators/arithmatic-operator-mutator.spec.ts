@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
-import { MutationLevel } from '../../../src/mutators/mutation-level-options.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const arithmeticLevel: MutationLevel = { name: 'ArithemticLevel', ArithmeticOperator: ['+To-', '-To+', '*To/'] };
 

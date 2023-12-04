@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { assignmentOperatorMutator as sut } from '../../../src/mutators/assignment-operator-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
-import { MutationLevel } from '../../../src/mutators/mutation-level-options.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const assignmentOperatorLevel: MutationLevel = { name: 'AssignmentOperatorLevel', AssignmentOperator: ['-=To+=', '<<=To>>=', '&&=To||='] };
 const assignmentOperatorAllLevel: MutationLevel = {

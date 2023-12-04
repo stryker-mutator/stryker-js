@@ -1,0 +1,44 @@
+{
+    "mutationLevels": [
+      { 
+        "name": "level1",
+        "UpdateOperator": ["Post--To++"],
+        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<"],
+        "ArrayDeclaration": ["EmptyArrayConstructor"],
+        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue"],
+        "UnaryOperator": ["+To-"],
+        "AssignmentOperator": ["??=To&&="],
+        "ArithmeticOperator": ["/To*","%To*","*To/"],
+        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"]
+      },
+      {
+        "name": "level2",
+        "UpdateOperator": ["Post--To++", "Post++To--"],
+        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<","<To>=",">=To>", "!==To===", ">To>="],
+        "ArrayDeclaration": ["EmptyArrayConstructor"],
+        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue","SwitchToEmpty" ],
+        "UnaryOperator": ["+To-"],
+        "AssignmentOperator": ["??=To&&="],
+        "ArithmeticOperator": ["/To*","%To*","*To/", "+To-","-To+"],
+        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"],
+        "StringLiteral": ["FillString", "FillInterpolation"],
+        "Regex": true,
+        "BooleanLiteral": ["TrueToFalse"]
+      },
+      {
+        "name": "level3",
+        "UpdateOperator": ["Post--To++", "Post++To--"],
+        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<","<To>=",">=To>", "!==To===", ">To>=", "<To<=", ">To<="],
+        "ArrayDeclaration": ["EmptyArrayConstructor","EmptyArray", "FilledArray"],
+        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue","SwitchToEmpty" ],
+        "UnaryOperator": ["+To-", "-To+"],
+        "AssignmentOperator": ["??=To&&="],
+        "ArithmeticOperator": ["/To*","%To*","*To/", "+To-","-To+"],
+        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"],
+        "StringLiteral": ["FillString", "FillInterpolation"],
+        "Regex": true,
+        "BooleanLiteral": ["TrueToFalse", "FalseToTrue", "RemoveNegation"]
+      }
+    ]
+  }
+  
