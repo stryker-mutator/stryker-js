@@ -267,6 +267,7 @@
         { "$ref": "#/definitions/ArrayDeclaration" },
         { "$ref": "#/definitions/AssignmentOperator" },
         { "$ref": "#/definitions/BlockStatement" },
+        { "$ref": "#/definitions/ArrowFunction"},
         { "$ref": "#/definitions/BooleanLiteral" },
         { "$ref": "#/definitions/ConditionalExpression" },
         { "$ref": "#/definitions/EqualityOperator" },
@@ -416,6 +417,10 @@
           "description": "Replace ```a ??= b``` with ```a &&= b```."
         }
       ]
+    },
+    "ArrowFunction": {
+      "const": "ArrowFunction",
+      "description": "Mutates bodies of arrow functions to undefined"
     },
     "BlockStatement": {
       "const": "BlockStatement",

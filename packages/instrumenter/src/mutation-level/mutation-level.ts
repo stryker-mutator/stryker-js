@@ -3,6 +3,7 @@ import fs from 'fs';
 import {
   ArithmeticOperator,
   ArrayDeclaration,
+  ArrowFunction,
   AssignmentOperator,
   BlockStatement,
   BooleanLiteral,
@@ -27,14 +28,15 @@ export interface MutationLevel {
   ArithmeticOperator?: ArithmeticOperator[];
   ArrayDeclaration?: ArrayDeclaration[];
   AssignmentOperator?: AssignmentOperator[];
-  BlockStatement?: BlockStatement;
+  ArrowFunction?: ArrowFunction[];
+  BlockStatement?: BlockStatement[];
   BooleanLiteral?: BooleanLiteral[];
   ConditionalExpression?: ConditionalExpression[];
   EqualityOperator?: EqualityOperator[];
   MethodExpression?: MethodExpression[];
   ObjectLiteral?: ObjectLiteralMutator[];
   OptionalChaining?: OptionalChaining[];
-  Regex?: Regex;
+  Regex?: Regex[];
   StringLiteral?: StringLiteral[];
   UnaryOperator?: UnaryOperator[];
   UpdateOperator?: UpdateOperator[];
