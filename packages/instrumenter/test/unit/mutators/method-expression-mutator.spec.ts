@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
 import { methodExpressionMutator as sut } from '../../../src/mutators/method-expression-mutator.js';
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 
 describe(sut.name, () => {
   it('should have name "MethodExpression"', () => {
@@ -146,5 +146,20 @@ describe(sut.name, () => {
     it('should ignore new expressions', () => {
       expectJSMutation(sut, 'new text.trim();');
     });
+  });
+
+  it('should only mutate methods that are allowed by a MutationLevel and ignore others', () => {
+    const methodExpressionLevel = {
+      name: 'methodExpressionLevel',
+      MethodExpression: ['endsWithToStartsWith', 'startsWithToEndsWith', 'removeSubstring', 'toLowerCaseToToUpperCase'],
+    };
+    // The below should be swapped
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.startsWith();', 'text.endsWith();');
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.endsWith();', 'text.startsWith();');
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.substring();', 'text;');
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.toLowerCase();', 'text.toUpperCase();');
+    // The two below are not in the mutation level, so should be ignored
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.toUpperCase();');
+    expectJSMutationWithLevel(sut, methodExpressionLevel.MethodExpression, 'text.substr();');
   });
 });
