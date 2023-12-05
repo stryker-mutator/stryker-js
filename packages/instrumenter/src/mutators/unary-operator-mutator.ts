@@ -6,20 +6,26 @@ import { NodeMutator } from './index.js';
 
 const { types } = babel;
 
-enum UnaryOperator {
-  '+' = '-',
-  '-' = '+',
-  '~' = '',
-}
+const operators = Object.freeze({
+  '+': { replacement: '-', mutatorName: '+To-' },
+  '-': { replacement: '+', mutatorName: '-To+' },
+  '~': { replacement: '', mutatorName: 'remove~' },
+});
 
 export const unaryOperatorMutator: NodeMutator = {
   name: 'UnaryOperator',
 
-  *mutate(path) {
+  *mutate(path, operations) {
     if (path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix) {
-      const mutatedOperator = UnaryOperator[path.node.operator];
-      const replacement = mutatedOperator.length
-        ? types.unaryExpression(mutatedOperator as '-' | '+', deepCloneNode(path.node.argument))
+      const mutation = operators[path.node.operator];
+
+      if (operations !== undefined && !operations.includes(mutation.mutatorName)) {
+        // Mutator not allowed by MutationLevel
+        return;
+      }
+
+      const replacement = mutation.replacement.length
+        ? types.unaryExpression(mutation.replacement as '-' | '+', deepCloneNode(path.node.argument))
         : deepCloneNode(path.node.argument);
 
       yield replacement;
@@ -27,6 +33,6 @@ export const unaryOperatorMutator: NodeMutator = {
   },
 };
 
-function isSupported(operator: string): operator is keyof typeof UnaryOperator {
-  return Object.keys(UnaryOperator).includes(operator);
+function isSupported(operator: string): operator is keyof typeof operators {
+  return operator in operators;
 }
