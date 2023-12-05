@@ -478,6 +478,11 @@
           "const" : "BooleanExpressionToFalse",
           "title": "BooleanExpressionToFalseMutator",
           "description": "Replace ```var x = a > b ? 1 : 2;``` with ```var x = false ? 1 : 2;```."
+        },
+        {
+          "const" : "SwitchToEmpty",
+          "title": "SwitchToEmptyMutator",
+          "description": "Replace ```switch(x) with switch()```."
         }
       ]
     },
