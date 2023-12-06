@@ -1,5 +1,7 @@
 import babel from '@babel/core';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './index.js';
 
 const { types: t } = babel;
@@ -17,19 +19,19 @@ const { types: t } = babel;
  * foo?.() -> foo()
  */
 
-const operators = Object.assign({
-  OptionalCallExpression: { mutatorName: 'OptionalCallExpression' },
-  OptionalMemberExpression: { mutatorName: 'OptionalMemberExpression' },
-});
+const operators: NodeMutatorConfiguration = {
+  OptionalCallExpression: { mutationName: 'OptionalCallExpression' },
+  OptionalMemberExpression: { mutationName: 'OptionalMemberExpression' },
+};
 
 export const optionalChainingMutator: NodeMutator = {
   name: 'OptionalChaining',
 
-  *mutate(path, operations) {
+  *mutate(path, levelMutations) {
     if (
       path.isOptionalMemberExpression() &&
       path.node.optional &&
-      (operations === undefined || operations.includes(operators.OptionalMemberExpression.mutatorName as string))
+      (levelMutations === undefined || levelMutations.includes(operators.OptionalMemberExpression.mutationName))
     ) {
       yield t.optionalMemberExpression(
         t.cloneNode(path.node.object, true),
@@ -41,7 +43,7 @@ export const optionalChainingMutator: NodeMutator = {
     if (
       path.isOptionalCallExpression() &&
       path.node.optional &&
-      (operations === undefined || operations.includes(operators.OptionalCallExpression.mutatorName as string))
+      (levelMutations === undefined || levelMutations.includes(operators.OptionalCallExpression.mutationName))
     ) {
       yield t.optionalCallExpression(
         t.cloneNode(path.node.callee, true),

@@ -7,12 +7,12 @@ import { NodeMutator } from './index.js';
 export const arrowFunctionMutator: NodeMutator = {
   name: 'ArrowFunction',
 
-  *mutate(path, options) {
+  *mutate(path, levelMutations) {
     if (
       path.isArrowFunctionExpression() &&
       !types.isBlockStatement(path.node.body) &&
       !(types.isIdentifier(path.node.body) && path.node.body.name === 'undefined') &&
-      isInMutationLevel(options)
+      isInMutationLevel(levelMutations)
     ) {
       yield types.arrowFunctionExpression([], types.identifier('undefined'));
     }

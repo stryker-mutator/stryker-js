@@ -2,50 +2,46 @@ import babel, { type NodePath } from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
 
 const { types } = babel;
 
-const conditionalReplacements = Object.assign({
-  BooleanExpressionToFalse: { replacementOperator: types.booleanLiteral(false), mutatorName: 'BooleanExpressionToFalse' },
-  BooleanExpressionToTrue: { replacementOperator: types.booleanLiteral(true), mutatorName: 'BooleanExpressionToTrue' },
-  DoWhileLoopToFalse: { replacementOperator: types.booleanLiteral(false), mutatorName: 'DoWhileLoopToFalse' },
-  ForLoopToFalse: { replacementOperator: types.booleanLiteral(false), mutatorName: 'ForLoopToFalse' },
-  IfToFalse: { replacementOperator: types.booleanLiteral(false), mutatorName: 'IfToFalse' },
-  IfToTrue: { replacementOperator: types.booleanLiteral(true), mutatorName: 'IfToTrue' },
-  WhileLoopToFalse: { replacementOperator: types.booleanLiteral(false), mutatorName: 'WhileLoopToFalse' },
-  SwitchToEmpty: { replacementOperator: [], mutatorName: 'SwitchToEmpty' },
-} as const);
+const operators: NodeMutatorConfiguration = {
+  BooleanExpressionToFalse: { replacement: types.booleanLiteral(false), mutationName: 'BooleanExpressionToFalse' },
+  BooleanExpressionToTrue: { replacement: types.booleanLiteral(true), mutationName: 'BooleanExpressionToTrue' },
+  DoWhileLoopToFalse: { replacement: types.booleanLiteral(false), mutationName: 'DoWhileLoopToFalse' },
+  ForLoopToFalse: { replacement: types.booleanLiteral(false), mutationName: 'ForLoopToFalse' },
+  IfToFalse: { replacement: types.booleanLiteral(false), mutationName: 'IfToFalse' },
+  IfToTrue: { replacement: types.booleanLiteral(true), mutationName: 'IfToTrue' },
+  WhileLoopToFalse: { replacement: types.booleanLiteral(false), mutationName: 'WhileLoopToFalse' },
+  SwitchToEmpty: { replacement: [], mutationName: 'SwitchToEmpty' },
+};
 
 export const conditionalExpressionMutator: NodeMutator = {
   name: 'ConditionalExpression',
 
-  *mutate(path, operations) {
+  *mutate(path, levelMutations) {
     if (isTestOfLoop(path)) {
-      if (
-        isTestOfWhileLoop(path) &&
-        (operations === undefined || operations.includes(conditionalReplacements.WhileLoopToFalse.mutatorName as string))
-      ) {
-        yield conditionalReplacements.WhileLoopToFalse.replacementOperator;
+      if (isTestOfWhileLoop(path) && (levelMutations === undefined || levelMutations.includes(operators.WhileLoopToFalse.mutationName))) {
+        yield operators.WhileLoopToFalse.replacement;
       }
 
-      if (
-        isTestOfDoWhileLoop(path) &&
-        (operations === undefined || operations.includes(conditionalReplacements.DoWhileLoopToFalse.mutatorName as string))
-      ) {
-        yield conditionalReplacements.DoWhileLoopToFalse.replacementOperator;
+      if (isTestOfDoWhileLoop(path) && (levelMutations === undefined || levelMutations.includes(operators.DoWhileLoopToFalse.mutationName))) {
+        yield operators.DoWhileLoopToFalse.replacement;
       }
-      if (isTestOfForLoop(path) && (operations === undefined || operations.includes(conditionalReplacements.ForLoopToFalse.mutatorName as string))) {
-        yield conditionalReplacements.ForLoopToFalse.replacementOperator;
+      if (isTestOfForLoop(path) && (levelMutations === undefined || levelMutations.includes(operators.ForLoopToFalse.mutationName))) {
+        yield operators.ForLoopToFalse.replacement;
       }
     } else if (isTestOfCondition(path)) {
-      if (operations === undefined || operations.includes(conditionalReplacements.IfToTrue.mutatorName as string)) {
-        yield conditionalReplacements.IfToTrue.replacementOperator;
+      if (levelMutations === undefined || levelMutations.includes(operators.IfToTrue.mutationName)) {
+        yield operators.IfToTrue.replacement;
       }
-      if (operations === undefined || operations.includes(conditionalReplacements.IfToFalse.mutatorName as string)) {
-        yield conditionalReplacements.IfToFalse.replacementOperator;
+      if (levelMutations === undefined || levelMutations.includes(operators.IfToFalse.mutationName)) {
+        yield operators.IfToFalse.replacement;
       }
     } else if (isBooleanExpression(path)) {
       if (path.parent?.type === 'LogicalExpression') {
@@ -53,8 +49,8 @@ export const conditionalExpressionMutator: NodeMutator = {
         // has the same behavior as the (true) mutator, handled in the
         // isTestOfCondition branch above
         if (path.parent.operator === '||') {
-          if (operations === undefined || operations.includes(conditionalReplacements.BooleanExpressionToFalse.mutatorName as string)) {
-            yield conditionalReplacements.BooleanExpressionToFalse.replacementOperator;
+          if (levelMutations === undefined || levelMutations.includes(operators.BooleanExpressionToFalse.mutationName)) {
+            yield operators.BooleanExpressionToFalse.replacement;
           }
           return;
         }
@@ -62,29 +58,29 @@ export const conditionalExpressionMutator: NodeMutator = {
         // has the same behavior as the (false) mutator, handled in the
         // isTestOfCondition branch above
         if (path.parent.operator === '&&') {
-          if (operations === undefined || operations.includes(conditionalReplacements.BooleanExpressionToTrue.mutatorName as string)) {
-            yield conditionalReplacements.BooleanExpressionToTrue.replacementOperator;
+          if (levelMutations === undefined || levelMutations.includes(operators.BooleanExpressionToTrue.mutationName)) {
+            yield operators.BooleanExpressionToTrue.replacement;
           }
           return;
         }
       }
-      if (operations === undefined || operations.includes(conditionalReplacements.BooleanExpressionToTrue.mutatorName as string)) {
-        yield conditionalReplacements.BooleanExpressionToTrue.replacementOperator;
+      if (levelMutations === undefined || levelMutations.includes(operators.BooleanExpressionToTrue.mutationName)) {
+        yield operators.BooleanExpressionToTrue.replacement;
       }
-      if (operations === undefined || operations.includes(conditionalReplacements.BooleanExpressionToFalse.mutatorName as string)) {
-        yield conditionalReplacements.BooleanExpressionToFalse.replacementOperator;
+      if (levelMutations === undefined || levelMutations.includes(operators.BooleanExpressionToFalse.mutationName)) {
+        yield operators.BooleanExpressionToFalse.replacement;
       }
     } else if (path.isForStatement() && !path.node.test) {
-      if (operations === undefined || operations.includes(conditionalReplacements.ForLoopToFalse.mutatorName as string)) {
+      if (levelMutations === undefined || levelMutations.includes(operators.ForLoopToFalse.mutationName)) {
         const replacement = deepCloneNode(path.node);
-        replacement.test = conditionalReplacements.ForLoopToFalse.replacementOperator;
+        replacement.test = operators.ForLoopToFalse.replacement;
         yield replacement;
       }
     } else if (path.isSwitchCase() && path.node.consequent.length > 0) {
       // if not a fallthrough case
-      if (operations === undefined || operations.includes(conditionalReplacements.SwitchToEmpty.mutatorName as string)) {
+      if (levelMutations === undefined || levelMutations.includes(operators.SwitchToEmpty.mutationName)) {
         const replacement = deepCloneNode(path.node);
-        replacement.consequent = conditionalReplacements.SwitchToEmpty.replacementOperator;
+        replacement.consequent = operators.SwitchToEmpty.replacement;
         yield replacement;
       }
     }

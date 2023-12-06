@@ -2,38 +2,40 @@ import babel from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
 // prettier-ignore
-const operators = Object.freeze({
-  'charAt': { replacement: null, mutatorName: 'removeCharAt' },
-  'endsWith': { replacement: 'startsWith', mutatorName: 'endsWithToStartsWith' },
-  'startsWith': { replacement: 'endsWith', mutatorName: 'startsWithToEndsWith' },
-  'every': { replacement: 'some', mutatorName: 'everyToSome' },
-  'some': { replacement: 'every', mutatorName: 'someToEvery' },
-  'filter': { replacement: null, mutatorName: 'removeFilter' },
-  'reverse': { replacement: null, mutatorName: 'removeReverse' },
-  'slice': { replacement: null, mutatorName: 'removeSlice' },
-  'sort': { replacement: null, mutatorName: 'removeSort' },
-  'substr': { replacement: null, mutatorName: 'removeSubstr' },
-  'substring': { replacement: null, mutatorName: 'removeSubstring' },
-  'toLocaleLowerCase': { replacement: 'toLocaleUpperCase', mutatorName: 'toLocaleLowerCaseToToLocaleUpperCase' },
-  'toLocaleUpperCase': { replacement: 'toLocaleLowerCase', mutatorName: 'toLocaleUpperCaseToToLocaleLowerCase' },
-  'toLowerCase': { replacement: 'toUpperCase', mutatorName: 'toLowerCaseToToUpperCase' },
-  'toUpperCase': { replacement: 'toLowerCase', mutatorName: 'toUpperCaseToToLowerCase' },
-  'trim': { replacement: null, mutatorName: 'removeTrim' },
-  'trimEnd': { replacement: 'trimStart', mutatorName: 'trimEndToTrimStart' },
-  'trimStart': { replacement: 'trimEnd', mutatorName: 'trimStartToTrimEnd' },
-  'min': { replacement: 'max', mutatorName: 'minToMax' },
-  'max': { replacement: 'min', mutatorName: 'maxToMin' },
-});
+const operators: NodeMutatorConfiguration = {
+  'charAt': { replacement: null, mutationName: 'removeCharAt' },
+  'endsWith': { replacement: 'startsWith', mutationName: 'endsWithToStartsWith' },
+  'startsWith': { replacement: 'endsWith', mutationName: 'startsWithToEndsWith' },
+  'every': { replacement: 'some', mutationName: 'everyToSome' },
+  'some': { replacement: 'every', mutationName: 'someToEvery' },
+  'filter': { replacement: null, mutationName: 'removeFilter' },
+  'reverse': { replacement: null, mutationName: 'removeReverse' },
+  'slice': { replacement: null, mutationName: 'removeSlice' },
+  'sort': { replacement: null, mutationName: 'removeSort' },
+  'substr': { replacement: null, mutationName: 'removeSubstr' },
+  'substring': { replacement: null, mutationName: 'removeSubstring' },
+  'toLocaleLowerCase': { replacement: 'toLocaleUpperCase', mutationName: 'toLocaleLowerCaseToToLocaleUpperCase' },
+  'toLocaleUpperCase': { replacement: 'toLocaleLowerCase', mutationName: 'toLocaleUpperCaseToToLocaleLowerCase' },
+  'toLowerCase': { replacement: 'toUpperCase', mutationName: 'toLowerCaseToToUpperCase' },
+  'toUpperCase': { replacement: 'toLowerCase', mutationName: 'toUpperCaseToToLowerCase' },
+  'trim': { replacement: null, mutationName: 'removeTrim' },
+  'trimEnd': { replacement: 'trimStart', mutationName: 'trimEndToTrimStart' },
+  'trimStart': { replacement: 'trimEnd', mutationName: 'trimStartToTrimEnd' },
+  'min': { replacement: 'max', mutationName: 'minToMax' },
+  'max': { replacement: 'min', mutationName: 'maxToMin' },
+};
 
 export const methodExpressionMutator: NodeMutator = {
   name: 'MethodExpression',
 
-  *mutate(path, operations) {
+  *mutate(path, levelMutations) {
     // In case `operations` is undefined, any checks will short-circuit to true and allow the mutation
 
     if (!(path.isCallExpression() || path.isOptionalCallExpression())) {
@@ -45,14 +47,14 @@ export const methodExpressionMutator: NodeMutator = {
       return;
     }
 
-    const mutation = operators[callee.property.name as keyof typeof operators];
+    const mutation = operators[callee.property.name];
     if (mutation === undefined) {
       // Function is not known in `operators`, so no mutations
       return;
     }
 
-    if (operations !== undefined && !operations.includes(mutation.mutatorName)) {
-      // Mutator is blocked by mutation level, so no replacement
+    if (levelMutations !== undefined && !levelMutations.includes(mutation.mutationName)) {
+      // Mutator is blocked by mutation level, so no replacementOperator
       return;
     }
 
@@ -63,8 +65,8 @@ export const methodExpressionMutator: NodeMutator = {
 
     if (mutation.replacement != null) {
       mutatedCallee = types.isMemberExpression(callee)
-        ? types.memberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement), false, callee.optional)
-        : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement), false, callee.optional);
+        ? types.memberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement as string), false, callee.optional)
+        : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement as string), false, callee.optional);
     } else if (typeof mutation.replacement == 'object' && mutation.replacement == null) {
       yield deepCloneNode(callee.object);
       return;

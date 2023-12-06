@@ -2,43 +2,52 @@ import babel from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './index.js';
 
 const { types } = babel;
 
-const operators = Object.assign({
-  'Post++To--': { replacementOperator: '--', mutatorName: 'Post++To--' },
-  'Post--To++': { replacementOperator: '++', mutatorName: 'Post--To++' },
-  'Pre++To--': { replacementOperator: '--', mutatorName: 'Pre++To--' },
-  'Pre--To++': { replacementOperator: '++', mutatorName: 'Pre--To++' },
-  '++': { replacementOperator: '--', mutatorName: '++all' },
-  '--': { replacementOperator: '++', mutatorName: '--all' },
-} as const);
+const operators: NodeMutatorConfiguration = {
+  'Post++To--': { replacement: '--', mutationName: 'Post++To--' },
+  'Post--To++': { replacement: '++', mutationName: 'Post--To++' },
+  'Pre++To--': { replacement: '--', mutationName: 'Pre++To--' },
+  'Pre--To++': { replacement: '++', mutationName: 'Pre--To++' },
+  '++': { replacement: '--', mutationName: '++all' },
+  '--': { replacement: '++', mutationName: '--all' },
+};
 
 export const updateOperatorMutator: NodeMutator = {
   name: 'UpdateOperator',
 
-  *mutate(path, operations) {
+  *mutate(path, levelMutations) {
     if (path.isUpdateExpression()) {
-      if (operations === undefined) {
+      if (levelMutations === undefined) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        yield types.updateExpression(operators[path.node.operator].replacementOperator, deepCloneNode(path.node.argument), path.node.prefix);
+        yield types.updateExpression(operators[path.node.operator].replacement, deepCloneNode(path.node.argument), path.node.prefix);
       } else {
         let replacement = undefined;
-        if (path.node.prefix && path.node.operator == '++' && operations.includes(operators['Pre++To--'].mutatorName as string)) {
-          replacement = operators['Pre++To--'].replacementOperator;
-        } else if (path.node.prefix && path.node.operator == '--' && operations.includes(operators['Pre--To++'].mutatorName as string)) {
-          replacement = operators['Pre--To++'].replacementOperator;
-        } else if (!path.node.prefix && path.node.operator == '++' && operations.includes(operators['Post++To--'].mutatorName as string)) {
-          replacement = operators['Post++To--'].replacementOperator;
-        } else if (!path.node.prefix && path.node.operator == '--' && operations.includes(operators['Post--To++'].mutatorName as string)) {
-          replacement = operators['Post--To++'].replacementOperator;
+        if (path.node.prefix && path.node.operator == '++') {
+          replacement = getReplacement(levelMutations, operators['Pre++To--'].mutationName);
+        } else if (path.node.prefix && path.node.operator == '--') {
+          replacement = getReplacement(levelMutations, operators['Pre--To++'].mutationName);
+        } else if (!path.node.prefix && path.node.operator == '++') {
+          replacement = getReplacement(levelMutations, operators['Post++To--'].mutationName);
+        } else if (!path.node.prefix && path.node.operator == '--') {
+          replacement = getReplacement(levelMutations, operators['Post--To++'].mutationName);
         }
         if (replacement !== undefined) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           yield types.updateExpression(replacement, deepCloneNode(path.node.argument), path.node.prefix);
         }
       }
     }
   },
 };
+
+function getReplacement(levelMutations: string[], mutationName: string): '--' | '++' | undefined {
+  if (levelMutations.includes(mutationName)) {
+    const { replacement } = operators[mutationName];
+    return replacement;
+  }
+  return undefined;
+}

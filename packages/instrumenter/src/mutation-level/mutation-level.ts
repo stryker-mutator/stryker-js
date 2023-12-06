@@ -18,7 +18,13 @@ import {
   UpdateOperator,
 } from '@stryker-mutator/api/core';
 
-export type MutationOperator = Record<string, { replacementOperator: any; mutatorName: string }>;
+export type NodeMutatorConfiguration = Record<string, ReplacementConfiguration>;
+
+export type NodeMutatorMultiConfiguration = Record<string, ReplacementConfiguration[]>;
+interface ReplacementConfiguration {
+  replacement?: any;
+  mutationName: string;
+}
 
 export interface MutationLevel {
   /**

@@ -1,43 +1,43 @@
 import babel, { type NodePath } from '@babel/core';
 
-import { MutationOperator } from '../mutation-level/mutation-level.js';
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
 
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
-const operators: MutationOperator = {
-  FillString: { replacementOperator: types.stringLiteral('Stryker was here!'), mutatorName: 'FillString' },
-  EmptyString: { replacementOperator: types.stringLiteral(''), mutatorName: 'EmptyString' },
-  EmptyInterpolation: { replacementOperator: types.templateLiteral([types.templateElement({ raw: '' })], []), mutatorName: 'EmptyInterpolation' },
+const operators: NodeMutatorConfiguration = {
+  FillString: { replacement: types.stringLiteral('Stryker was here!'), mutationName: 'FillString' },
+  EmptyString: { replacement: types.stringLiteral(''), mutationName: 'EmptyString' },
+  EmptyInterpolation: { replacement: types.templateLiteral([types.templateElement({ raw: '' })], []), mutationName: 'EmptyInterpolation' },
   FillInterpolation: {
-    replacementOperator: types.templateLiteral([types.templateElement({ raw: 'Stryker was here!' })], []),
-    mutatorName: 'FillInterpolation',
+    replacement: types.templateLiteral([types.templateElement({ raw: 'Stryker was here!' })], []),
+    mutationName: 'FillInterpolation',
   },
 };
 
 export const stringLiteralMutator: NodeMutator = {
   name: 'StringLiteral',
 
-  *mutate(path, operations: string[] | undefined) {
+  *mutate(path, levelMutations) {
     if (path.isTemplateLiteral()) {
       const stringIsEmpty = path.node.quasis.length === 1 && path.node.quasis[0].value.raw.length === 0;
       if (
-        operations === undefined ||
-        (stringIsEmpty && operations.includes(operators.FillInterpolation.mutatorName)) ||
-        (!stringIsEmpty && operations.includes(operators.EmptyInterpolation.mutatorName))
+        levelMutations === undefined ||
+        (stringIsEmpty && levelMutations.includes(operators.FillInterpolation.mutationName)) ||
+        (!stringIsEmpty && levelMutations.includes(operators.EmptyInterpolation.mutationName))
       ) {
-        yield stringIsEmpty ? operators.FillInterpolation.replacementOperator : operators.EmptyInterpolation.replacementOperator;
+        yield stringIsEmpty ? operators.FillInterpolation.replacement : operators.EmptyInterpolation.replacement;
       }
     }
     if (path.isStringLiteral() && isValidParent(path)) {
       const stringIsEmpty = path.node.value.length === 0;
       if (
-        operations === undefined ||
-        (stringIsEmpty && operations.includes(operators.FillString.mutatorName)) ||
-        (!stringIsEmpty && operations.includes(operators.EmptyString.mutatorName))
+        levelMutations === undefined ||
+        (stringIsEmpty && levelMutations.includes(operators.FillString.mutationName)) ||
+        (!stringIsEmpty && levelMutations.includes(operators.EmptyString.mutationName))
       ) {
-        yield stringIsEmpty ? operators.FillString.replacementOperator : operators.EmptyString.replacementOperator;
+        yield stringIsEmpty ? operators.FillString.replacement : operators.EmptyString.replacement;
       }
     }
   },

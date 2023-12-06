@@ -2,22 +2,24 @@ import type { types } from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './index.js';
 
-const assignmentOperatorReplacements = Object.freeze({
-  '+=': { replacement: '-=', mutatorName: '+=To-=' },
-  '-=': { replacement: '+=', mutatorName: '-=To+=' },
-  '*=': { replacement: '/=', mutatorName: '*=To/=' },
-  '/=': { replacement: '*=', mutatorName: '/=To*=' },
-  '%=': { replacement: '*=', mutatorName: '%=To*=' },
-  '<<=': { replacement: '>>=', mutatorName: '<<=To>>=' },
-  '>>=': { replacement: '<<=', mutatorName: '>>=To<<=' },
-  '&=': { replacement: '|=', mutatorName: '&=To|=' },
-  '|=': { replacement: '&=', mutatorName: '|=To&=' },
-  '&&=': { replacement: '||=', mutatorName: '&&=To||=' },
-  '||=': { replacement: '&&=', mutatorName: '||=To&&=' },
-  '??=': { replacement: '&&=', mutatorName: '??=To&&=' },
-} as const);
+const operators: NodeMutatorConfiguration = {
+  '+=': { replacement: '-=', mutationName: '+=To-=' },
+  '-=': { replacement: '+=', mutationName: '-=To+=' },
+  '*=': { replacement: '/=', mutationName: '*=To/=' },
+  '/=': { replacement: '*=', mutationName: '/=To*=' },
+  '%=': { replacement: '*=', mutationName: '%=To*=' },
+  '<<=': { replacement: '>>=', mutationName: '<<=To>>=' },
+  '>>=': { replacement: '<<=', mutationName: '>>=To<<=' },
+  '&=': { replacement: '|=', mutationName: '&=To|=' },
+  '|=': { replacement: '&=', mutationName: '|=To&=' },
+  '&&=': { replacement: '||=', mutationName: '&&=To||=' },
+  '||=': { replacement: '&&=', mutationName: '||=To&&=' },
+  '??=': { replacement: '&&=', mutationName: '??=To&&=' },
+};
 
 const stringTypes = Object.freeze(['StringLiteral', 'TemplateLiteral']);
 const stringAssignmentTypes = Object.freeze(['&&=', '||=', '??=']);
@@ -25,17 +27,17 @@ const stringAssignmentTypes = Object.freeze(['&&=', '||=', '??=']);
 export const assignmentOperatorMutator: NodeMutator = {
   name: 'AssignmentOperator',
 
-  *mutate(path, options) {
+  *mutate(path, levelMutations) {
     if (
       path.isAssignmentExpression() &&
       isSupportedAssignmentOperator(path.node.operator) &&
       isSupported(path.node) &&
-      isInMutationLevel(path.node, options)
+      isInMutationLevel(path.node, levelMutations)
     ) {
-      const mutatedOperator = assignmentOperatorReplacements[path.node.operator].replacement;
-      const replacement = deepCloneNode(path.node);
-      replacement.operator = mutatedOperator;
-      yield replacement;
+      const mutatedOperator = operators[path.node.operator].replacement;
+      const replacementOperator = deepCloneNode(path.node);
+      replacementOperator.operator = mutatedOperator;
+      yield replacementOperator;
     }
   },
 };
@@ -44,12 +46,12 @@ function isInMutationLevel(node: types.AssignmentExpression, operations: string[
   if (operations === undefined) {
     return true;
   }
-  const { mutatorName } = assignmentOperatorReplacements[node.operator as keyof typeof assignmentOperatorReplacements];
-  return operations.some((op) => op === mutatorName);
+  const { mutationName } = operators[node.operator];
+  return operations.some((op) => op === mutationName);
 }
 
-function isSupportedAssignmentOperator(operator: string): operator is keyof typeof assignmentOperatorReplacements {
-  return Object.keys(assignmentOperatorReplacements).includes(operator);
+function isSupportedAssignmentOperator(operator: string): operator is keyof typeof operators {
+  return Object.keys(operators).includes(operator);
 }
 
 function isSupported(node: types.AssignmentExpression): boolean {

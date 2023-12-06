@@ -1,31 +1,33 @@
 import babel, { types } from '@babel/core';
 
+import { NodeMutatorMultiConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './node-mutator.js';
 
 const { types: t } = babel;
 
-const operators = {
+const operators: NodeMutatorMultiConfiguration = {
   '<': [
-    { replacement: '<=', mutatorName: '<To<=' },
-    { replacement: '>=', mutatorName: '<To>=' },
+    { replacement: '<=', mutationName: '<To<=' },
+    { replacement: '>=', mutationName: '<To>=' },
   ],
   '<=': [
-    { replacement: '<', mutatorName: '<=To<' },
-    { replacement: '>', mutatorName: '<=To>' },
+    { replacement: '<', mutationName: '<=To<' },
+    { replacement: '>', mutationName: '<=To>' },
   ],
   '>': [
-    { replacement: '>=', mutatorName: '>To>=' },
-    { replacement: '<=', mutatorName: '>To<=' },
+    { replacement: '>=', mutationName: '>To>=' },
+    { replacement: '<=', mutationName: '>To<=' },
   ],
   '>=': [
-    { replacement: '>', mutatorName: '>=To>' },
-    { replacement: '<', mutatorName: '>=To<' },
+    { replacement: '>', mutationName: '>=To>' },
+    { replacement: '<', mutationName: '>=To<' },
   ],
-  '==': [{ replacement: '!=', mutatorName: '==To!=' }],
-  '!=': [{ replacement: '==', mutatorName: '!=To==' }],
-  '===': [{ replacement: '!==', mutatorName: '===To!==' }],
-  '!==': [{ replacement: '===', mutatorName: '!==To===' }],
-} as const;
+  '==': [{ replacement: '!=', mutationName: '==To!=' }],
+  '!=': [{ replacement: '==', mutationName: '!=To==' }],
+  '===': [{ replacement: '!==', mutationName: '===To!==' }],
+  '!==': [{ replacement: '===', mutationName: '!==To===' }],
+};
 
 function isEqualityOperator(operator: string): operator is keyof typeof operators {
   return Object.keys(operators).includes(operator);
@@ -38,21 +40,21 @@ export const equalityOperatorMutator: NodeMutator = {
       const allMutations = filterMutationLevel(path.node, operations);
       // throw new Error(allMutations.toString());
       for (const mutableOperator of allMutations) {
-        const replacement = t.cloneNode(path.node, true);
-        replacement.operator = mutableOperator.replacement;
-        yield replacement;
+        const replacementOperator = t.cloneNode(path.node, true);
+        replacementOperator.operator = mutableOperator.replacement;
+        yield replacementOperator;
       }
     }
   },
 };
 
-function filterMutationLevel(node: types.BinaryExpression, operations: string[] | undefined) {
+function filterMutationLevel(node: types.BinaryExpression, levelMutations: string[] | undefined) {
   const allMutations = operators[node.operator as keyof typeof operators];
 
   // Nothing allowed, so return an empty array
-  if (operations === undefined) {
+  if (levelMutations === undefined) {
     return allMutations;
   }
 
-  return allMutations.filter((mut) => operations.some((op) => op === mut.mutatorName));
+  return allMutations.filter((mut) => levelMutations.some((op) => op === mut.mutationName));
 }

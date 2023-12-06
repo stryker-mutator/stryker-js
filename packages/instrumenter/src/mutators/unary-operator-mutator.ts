@@ -2,33 +2,35 @@ import babel from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
+import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+
 import { NodeMutator } from './index.js';
 
 const { types } = babel;
 
-const operators = Object.freeze({
-  '+': { replacement: '-', mutatorName: '+To-' },
-  '-': { replacement: '+', mutatorName: '-To+' },
-  '~': { replacement: '', mutatorName: 'remove~' },
-});
+const operators: NodeMutatorConfiguration = {
+  '+': { replacement: '-', mutationName: '+To-' },
+  '-': { replacement: '+', mutationName: '-To+' },
+  '~': { replacement: '', mutationName: 'remove~' },
+};
 
 export const unaryOperatorMutator: NodeMutator = {
   name: 'UnaryOperator',
 
-  *mutate(path, operations) {
+  *mutate(path, levelMutations) {
     if (path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix) {
       const mutation = operators[path.node.operator];
 
-      if (operations !== undefined && !operations.includes(mutation.mutatorName)) {
+      if (levelMutations !== undefined && !levelMutations.includes(mutation.mutationName)) {
         // Mutator not allowed by MutationLevel
         return;
       }
 
-      const replacement = mutation.replacement.length
+      const replacementOperator = mutation.replacement.length
         ? types.unaryExpression(mutation.replacement as '-' | '+', deepCloneNode(path.node.argument))
         : deepCloneNode(path.node.argument);
 
-      yield replacement;
+      yield replacementOperator;
     }
   },
 };
