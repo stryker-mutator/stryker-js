@@ -10,7 +10,7 @@ import {
   ConditionalExpression,
   EqualityOperator,
   MethodExpression,
-  ObjectLiteralMutator,
+  ObjectLiteral,
   OptionalChaining,
   Regex,
   StringLiteral,
@@ -34,7 +34,7 @@ export interface MutationLevel {
   ConditionalExpression?: ConditionalExpression[];
   EqualityOperator?: EqualityOperator[];
   MethodExpression?: MethodExpression[];
-  ObjectLiteral?: ObjectLiteralMutator[];
+  ObjectLiteral?: ObjectLiteral[];
   OptionalChaining?: OptionalChaining[];
   Regex?: Regex[];
   StringLiteral?: StringLiteral[];

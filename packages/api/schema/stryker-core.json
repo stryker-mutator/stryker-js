@@ -682,10 +682,8 @@
       ]
     },
     "ObjectLiteral": {
-      "title": "ObjectLiteralMutator",
-      "type": "boolean",
-      "description": "Replace ```{ foo: 'bar' }``` with ```{ }```.",
-      "default": false
+      "const": "ObjectLiteral",
+      "description": "Replace ```{ foo: 'bar' }``` with ```{ }```."
     },
     "OptionalChaining": {
       "title": "OptionalChaining",
