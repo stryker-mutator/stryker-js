@@ -32,13 +32,13 @@ const weaponRegexOptions: weaponRegex.MutationOptions = { mutationLevels: [1] };
 export const regexMutator: NodeMutator = {
   name: 'Regex',
 
-  *mutate(path) {
-    if (path.isRegExpLiteral()) {
+  *mutate(path, options) {
+    if (path.isRegExpLiteral() && isInMutationLevel(options)) {
       for (const replacementPattern of mutatePattern(path.node.pattern, path.node.flags)) {
         const replacement = types.regExpLiteral(replacementPattern, path.node.flags);
         yield replacement;
       }
-    } else if (path.isStringLiteral() && isObviousRegexString(path)) {
+    } else if (path.isStringLiteral() && isObviousRegexString(path) && isInMutationLevel(options)) {
       const flags = getFlags(path.parentPath as NodePath<t.NewExpression>);
       for (const replacementPattern of mutatePattern(path.node.value, flags)) {
         yield types.stringLiteral(replacementPattern);
@@ -58,4 +58,8 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
     }
   }
   return [];
+}
+
+function isInMutationLevel(operations: string[] | undefined): boolean {
+  return operations === undefined || operations.length > 0;
 }
