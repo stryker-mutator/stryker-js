@@ -67,6 +67,9 @@
     {
       "name": "parent",
       "path": "."
+    },
+    {
+      "path": "packages/initializer"
     }
   ],
   "settings": {
