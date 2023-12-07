@@ -7,8 +7,8 @@ const { types } = babel;
 export const blockStatementMutator: NodeMutator = {
   name: 'BlockStatement',
 
-  *mutate(path) {
-    if (path.isBlockStatement() && isValid(path)) {
+  *mutate(path, options) {
+    if (path.isBlockStatement() && isValid(path) && isInMutationLevel(options)) {
       yield types.blockStatement([]);
     }
   },
@@ -68,4 +68,8 @@ function hasSuperExpressionOnFirstLine(constructor: NodePath<babel.types.BlockSt
     types.isCallExpression(constructor.node.body[0].expression) &&
     types.isSuper(constructor.node.body[0].expression.callee)
   );
+}
+
+function isInMutationLevel(operations: string[] | undefined): boolean {
+  return operations === undefined || operations.length > 0;
 }

@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 
 import { blockStatementMutator as sut } from '../../../src/mutators/block-statement-mutator.js';
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const blockStatementLevel: MutationLevel = { name: 'BlockStatementLevel', BlockStatement: ['BlockStatement'] };
+const blockStatementUndefinedLevel: MutationLevel = { name: 'BlockStatementLevel' };
 
 describe(sut.name, () => {
   it('should have name "BlockStatement"', () => {
@@ -69,6 +73,23 @@ describe(sut.name, () => {
      */
     it('should not mutate a constructor containing a super call and contains initialized properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { private baz = "qux"; constructor() { super(); } }');
+    });
+
+    it('should only mutate what is defined in the mutator level', () => {
+      expectJSMutationWithLevel(sut, blockStatementLevel.BlockStatement, 'class Foo { constructor() { bar(); } }', 'class Foo { constructor() {} }');
+    });
+
+    it('should not mutate anything if there are no values in the mutation level', () => {
+      expectJSMutationWithLevel(sut, [], 'class Foo { constructor() { bar(); } }');
+    });
+
+    it('should mutate everything if the mutation level is undefined', () => {
+      expectJSMutationWithLevel(
+        sut,
+        blockStatementUndefinedLevel.BlockStatement,
+        'class Foo { constructor() { bar(); } }',
+        'class Foo { constructor() {} }',
+      );
     });
   });
 });
