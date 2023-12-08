@@ -24,7 +24,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read();
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".next",".nuxt",".svelte-kit",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
       );
     });
     it('should discover files recursively using readdir', async () => {
