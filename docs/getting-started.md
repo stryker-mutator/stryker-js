@@ -19,32 +19,15 @@ cd my-project
 
 ## 2 Install
 
-The easiest way to get started with Stryker is by installing the stryker-cli globally.
-It is a small package which forwards commands to your local Stryker instance.
+The easiest way to get started with Stryker is by using the `npm init stryker` command.
 
 ```bash
-npm install -g stryker-cli
+npm init stryker
 ```
 
-Optionally, you could also install Stryker directly yourself.
+This command will first install Stryker and then run the Stryker initializer. During the initialization, you'll be asked a series of questions to help set up Stryker for your project.
 
-```bash
-npm install --save-dev @stryker-mutator/core
-```
-
-If you choose to not install the stryker-cli, use `npx stryker` (after installing `@stryker-mutator/core` locally) instead of `stryker` for the rest of the quickstart.
-
----
-
-## 3 Configure
-
-Run this command to configure Stryker.
-
-```bash
-stryker init
-```
-
-If you're asked to install Stryker, choose **Yes**. Follow the questionnaire.
+If you're asked to install Stryker, choose **Yes**.
 
 Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new).
 
