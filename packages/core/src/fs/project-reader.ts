@@ -16,7 +16,7 @@ import { coreTokens } from '../di/index.js';
 import { Project } from './project.js';
 import { FileSystem } from './file-system.js';
 
-const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']);
+const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '*.tsbuildinfo', '/stryker.log', '.next', '.nuxt', '.svelte-kit']);
 
 export const IGNORE_PATTERN_CHARACTER = '!';
 /**
