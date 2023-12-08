@@ -3,16 +3,19 @@
   "type": "module",
   "version": "1.0.6",
   "description": "Initializer for StrykerJS",
-  "main": "index.js",
+  "main": "dist/src/index.js",
+  "files": [
+    "dist/src",
+    "src"
+  ],
   "author": "",
   "license": "ISC",
   "scripts": {
     "start": "tsc -b && node ./dist/src/index.js",
-    "build": "tsc -b",
-    "preinstall": "npm install @stryker-mutator/core@^8.0.0"
+    "build": "tsc -b"
   },
   "bin": "./dist/src/index.js",
   "dependencies": {
-    "@stryker-mutator/core": "^8.0.0"
+    "@stryker-mutator/core": "~8.0.0"
   }
 }

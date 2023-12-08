@@ -4,6 +4,7 @@
     { "path": "packages/api" },
     { "path": "packages/util" },
     { "path": "packages/core" },
+    { "path": "packages/initializer" },
     { "path": "packages/instrumenter" },
     { "path": "packages/jasmine-runner" },
     { "path": "packages/jest-runner" },

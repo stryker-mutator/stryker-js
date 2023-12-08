@@ -5,6 +5,9 @@
       "path": "packages/core"
     },
     {
+      "path": "packages/initializer"
+    },
+    {
       "name": "instrumenter",
       "path": "packages/instrumenter"
     },
@@ -67,9 +70,6 @@
     {
       "name": "parent",
       "path": "."
-    },
-    {
-      "path": "packages/initializer"
     }
   ],
   "settings": {
@@ -98,7 +98,7 @@
     "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
     "task.autoDetect": "off",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+      "source.fixAll.eslint": "explicit"
     },
     "cSpell.words": [
       "Appender",
