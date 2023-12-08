@@ -1,12 +1,11 @@
 {
   "name": "create-stryker-initializer-lex",
   "type": "module",
-  "version": "1.0.6",
+  "version": "1.0.14",
   "description": "Initializer for StrykerJS",
   "main": "dist/src/index.js",
   "files": [
-    "dist/src",
-    "src"
+    "dist/src/index.js"
   ],
   "author": "",
   "license": "ISC",
@@ -14,7 +13,7 @@
     "start": "tsc -b && node ./dist/src/index.js",
     "build": "tsc -b"
   },
-  "bin": "./dist/src/index.js",
+  "bin": "dist/src/index.js",
   "dependencies": {
     "@stryker-mutator/core": "~8.0.0"
   }
