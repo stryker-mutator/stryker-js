@@ -76,7 +76,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-environment-jsdom-sixteen": "2.0.0",
     "jest-jasmine2": "29.7.0",
-    "ts-node": "10.9.1"
+    "ts-node": "10.9.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~8.0.0"
