@@ -1,6 +1,6 @@
 import babel from '@babel/core';
 
-import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+import { OptionalChaining } from '@stryker-mutator/api/core';
 
 import { NodeMutator } from './index.js';
 
@@ -19,19 +19,22 @@ const { types: t } = babel;
  * foo?.() -> foo()
  */
 
-const operators: NodeMutatorConfiguration = {
-  OptionalCallExpression: { mutationName: 'OptionalCallExpression' },
-  OptionalMemberExpression: { mutationName: 'OptionalMemberExpression' },
-};
-
-export const optionalChainingMutator: NodeMutator = {
+export const optionalChainingMutator: NodeMutator<OptionalChaining> = {
   name: 'OptionalChaining',
+
+  operators: {
+    OptionalCallExpressionOptionalRemoval: { mutationName: 'OptionalCallExpressionOptionalRemoval' },
+    OptionalMemberExpressionOptionalRemoval: { mutationName: 'OptionalMemberExpressionOptionalRemoval' },
+    OptionalComputedMemberExpressionOptionalRemoval: { mutationName: 'OptionalComputedMemberExpressionOptionalRemoval' },
+  },
 
   *mutate(path, levelMutations) {
     if (
       path.isOptionalMemberExpression() &&
       path.node.optional &&
-      (levelMutations === undefined || levelMutations.includes(operators.OptionalMemberExpression.mutationName))
+      (levelMutations === undefined ||
+        (!path.node.computed && levelMutations.includes(this.operators.OptionalMemberExpressionOptionalRemoval.mutationName)) ||
+        (path.node.computed && levelMutations.includes(this.operators.OptionalComputedMemberExpressionOptionalRemoval.mutationName)))
     ) {
       yield t.optionalMemberExpression(
         t.cloneNode(path.node.object, true),
@@ -43,7 +46,7 @@ export const optionalChainingMutator: NodeMutator = {
     if (
       path.isOptionalCallExpression() &&
       path.node.optional &&
-      (levelMutations === undefined || levelMutations.includes(operators.OptionalCallExpression.mutationName))
+      (levelMutations === undefined || levelMutations.includes(this.operators.OptionalCallExpressionOptionalRemoval.mutationName))
     ) {
       yield t.optionalCallExpression(
         t.cloneNode(path.node.callee, true),

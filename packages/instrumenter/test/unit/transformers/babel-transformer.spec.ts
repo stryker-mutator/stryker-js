@@ -14,6 +14,7 @@ import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
 import { createJSAst, createTSAst } from '../../helpers/factories.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const generate = generator.default;
 const { types } = babel;
@@ -26,20 +27,22 @@ const { types } = babel;
  */
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
-  let mutators: NodeMutator[];
+  let mutators: Array<NodeMutator<keyof MutationLevel>>;
   let mutantPlacers: MutantPlacer[];
   let mutantCollector: MutantCollector;
 
-  const fooMutator: NodeMutator = {
+  const fooMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Foo',
+    operators: {},
     *mutate(path) {
       if (path.isIdentifier() && path.node.name === 'foo') {
         yield types.identifier('bar');
       }
     },
   };
-  const plusMutator: NodeMutator = {
+  const plusMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Plus',
+    operators: {},
     *mutate(path) {
       if (path.isBinaryExpression() && path.node.operator === '+') {
         yield types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true));
@@ -622,6 +625,7 @@ describe('babel-transformer', () => {
       });
       mutators.push({
         name: 'blockMutatorForTest',
+        operators: {},
         *mutate(path) {
           if (path.isBlockStatement()) {
             yield types.blockStatement([]);
@@ -729,12 +733,10 @@ describe('babel-transformer', () => {
   });
 
   function act(ast: ScriptAst) {
-    (transformBabel as (...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: NodeMutator[], mutantPlacers: MutantPlacer[]]) => void)(
-      ast,
-      mutantCollector,
-      context,
-      mutators,
-      mutantPlacers,
-    );
+    (
+      transformBabel as (
+        ...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: Array<NodeMutator<keyof MutationLevel>>, mutantPlacers: MutantPlacer[]]
+      ) => void
+    )(ast, mutantCollector, context, mutators, mutantPlacers);
   }
 });

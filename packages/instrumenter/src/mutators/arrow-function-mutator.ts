@@ -2,10 +2,16 @@ import babel from '@babel/core';
 
 const { types } = babel;
 
+import { ArrowFunction } from '@stryker-mutator/api/core';
+
 import { NodeMutator } from './index.js';
 
-export const arrowFunctionMutator: NodeMutator = {
+export const arrowFunctionMutator: NodeMutator<ArrowFunction> = {
   name: 'ArrowFunction',
+
+  operators: {
+    ArrowFunctionRemoval: { mutationName: 'ArrowFunctionRemoval' },
+  },
 
   *mutate(path, levelMutations) {
     if (
@@ -19,6 +25,6 @@ export const arrowFunctionMutator: NodeMutator = {
   },
 };
 
-function isInMutationLevel(operations: string[] | undefined): boolean {
-  return operations === undefined || operations.length > 0;
+function isInMutationLevel(levelMutations: string[] | undefined): boolean {
+  return levelMutations === undefined || levelMutations.includes(arrowFunctionMutator.operators.ArrowFunctionRemoval.mutationName);
 }

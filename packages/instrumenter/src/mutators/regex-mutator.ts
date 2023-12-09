@@ -1,6 +1,8 @@
 import babel, { NodePath, type types as t } from '@babel/core';
 import * as weaponRegex from 'weapon-regex';
 
+import { Regex } from '@stryker-mutator/api/core';
+
 import { NodeMutator } from './index.js';
 
 const { types } = babel;
@@ -29,8 +31,12 @@ function getFlags(path: NodePath<t.NewExpression>): string | undefined {
 
 const weaponRegexOptions: weaponRegex.MutationOptions = { mutationLevels: [1] };
 
-export const regexMutator: NodeMutator = {
+export const regexMutator: NodeMutator<Regex> = {
   name: 'Regex',
+
+  operators: {
+    RegexRemoval: { mutationName: 'RegexRemoval' },
+  },
 
   *mutate(path, options) {
     if (path.isRegExpLiteral() && isInMutationLevel(options)) {
@@ -60,6 +66,6 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
   return [];
 }
 
-function isInMutationLevel(operations: string[] | undefined): boolean {
-  return operations === undefined || operations.length > 0;
+function isInMutationLevel(levelMutations: string[] | undefined): boolean {
+  return levelMutations === undefined || levelMutations.includes(regexMutator.operators.RegexRemoval.mutationName);
 }

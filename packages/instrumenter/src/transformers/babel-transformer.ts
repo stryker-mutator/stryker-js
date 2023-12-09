@@ -159,7 +159,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     //TODO: Create runLevel here
     const runLevel: MutationLevel | undefined = undefined;
     for (const defaultLevel of defaultMutationLevels) {
-      if ('@' + defaultLevel.name in options.includedMutations) {
+      if (options.includedMutations.includes('@' + defaultLevel.name)) {
         //For each key in defaultLevel, ADD it to the runLevel
       }
     }

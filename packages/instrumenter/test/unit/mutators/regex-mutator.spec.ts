@@ -5,7 +5,7 @@ import { regexMutator as sut } from '../../../src/mutators/regex-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const regexLevel: MutationLevel = { name: 'RegexLevel', Regex: ['Regex'] };
+const regexLevel: MutationLevel = { name: 'RegexLevel', Regex: ['RegexRemoval'] };
 const regexUndefinedLevel: MutationLevel = { name: 'RegexLevel' };
 
 describe(sut.name, () => {

@@ -4,7 +4,7 @@ import { blockStatementMutator as sut } from '../../../src/mutators/block-statem
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const blockStatementLevel: MutationLevel = { name: 'BlockStatementLevel', BlockStatement: ['BlockStatement'] };
+const blockStatementLevel: MutationLevel = { name: 'BlockStatementLevel', BlockStatement: ['BlockStatementRemoval'] };
 const blockStatementUndefinedLevel: MutationLevel = { name: 'BlockStatementLevel' };
 
 describe(sut.name, () => {

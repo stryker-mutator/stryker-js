@@ -4,7 +4,10 @@ import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmet
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const arithmeticLevel: MutationLevel = { name: 'ArithemticLevel', ArithmeticOperator: ['+To-', '-To+', '*To/'] };
+const arithmeticLevel: MutationLevel = {
+  name: 'ArithemticLevel',
+  ArithmeticOperator: ['AdditionOperatorNegation', 'SubtractionOperatorNegation', 'MultiplicationOperatorNegation'],
+};
 
 describe(sut.name, () => {
   it('should have name "ArithmeticOperator"', () => {

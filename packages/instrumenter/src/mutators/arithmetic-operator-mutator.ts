@@ -1,25 +1,25 @@
 import type { types } from '@babel/core';
 
-import { deepCloneNode } from '../util/index.js';
+import { ArithmeticOperator } from '@stryker-mutator/api/core';
 
-import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './node-mutator.js';
 
-const operators: NodeMutatorConfiguration = {
-  '+': { replacement: '-', mutationName: '+To-' },
-  '-': { replacement: '+', mutationName: '-To+' },
-  '*': { replacement: '/', mutationName: '*To/' },
-  '/': { replacement: '*', mutationName: '/To*' },
-  '%': { replacement: '*', mutationName: '%To*' },
-};
-
-export const arithmeticOperatorMutator: NodeMutator = {
+export const arithmeticOperatorMutator: NodeMutator<ArithmeticOperator> = {
   name: 'ArithmeticOperator',
+
+  operators: {
+    '+': { replacement: '-', mutationName: 'AdditionOperatorNegation' },
+    '-': { replacement: '+', mutationName: 'SubtractionOperatorNegation' },
+    '*': { replacement: '/', mutationName: 'MultiplicationOperatorNegation' },
+    '/': { replacement: '*', mutationName: 'DivisionOperatorNegation' },
+    '%': { replacement: '*', mutationName: 'RemainderOperatorToMultiplicationReplacement' },
+  },
 
   *mutate(path, levelMutations) {
     if (path.isBinaryExpression() && isSupported(path.node.operator, path.node) && isInMutationLevel(path.node, levelMutations)) {
-      const mutatedOperator = operators[path.node.operator].replacement;
+      const mutatedOperator = this.operators[path.node.operator].replacement;
       const replacement = deepCloneNode(path.node);
       replacement.operator = mutatedOperator;
       yield replacement;
@@ -33,12 +33,12 @@ function isInMutationLevel(node: types.BinaryExpression, operations: string[] | 
     return true;
   }
 
-  const mutatedOperator = operators[node.operator as keyof typeof operators].mutationName;
+  const mutatedOperator = arithmeticOperatorMutator.operators[node.operator].mutationName;
   return operations.some((op) => op === mutatedOperator) ?? false;
 }
 
-function isSupported(operator: string, node: types.BinaryExpression): operator is keyof typeof operators {
-  if (!Object.keys(operators).includes(operator)) {
+function isSupported(operator: string, node: types.BinaryExpression): boolean {
+  if (!Object.keys(arithmeticOperatorMutator.operators).includes(operator)) {
     return false;
   }
 

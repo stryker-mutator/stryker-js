@@ -1,39 +1,38 @@
 import babel from '@babel/core';
 
-import { deepCloneNode } from '../util/index.js';
+import { MethodExpression } from '@stryker-mutator/api/core';
 
-import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
+import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
-// prettier-ignore
-const operators: NodeMutatorConfiguration = {
-  'charAt': { replacement: null, mutationName: 'removeCharAt' },
-  'endsWith': { replacement: 'startsWith', mutationName: 'endsWithToStartsWith' },
-  'startsWith': { replacement: 'endsWith', mutationName: 'startsWithToEndsWith' },
-  'every': { replacement: 'some', mutationName: 'everyToSome' },
-  'some': { replacement: 'every', mutationName: 'someToEvery' },
-  'filter': { replacement: null, mutationName: 'removeFilter' },
-  'reverse': { replacement: null, mutationName: 'removeReverse' },
-  'slice': { replacement: null, mutationName: 'removeSlice' },
-  'sort': { replacement: null, mutationName: 'removeSort' },
-  'substr': { replacement: null, mutationName: 'removeSubstr' },
-  'substring': { replacement: null, mutationName: 'removeSubstring' },
-  'toLocaleLowerCase': { replacement: 'toLocaleUpperCase', mutationName: 'toLocaleLowerCaseToToLocaleUpperCase' },
-  'toLocaleUpperCase': { replacement: 'toLocaleLowerCase', mutationName: 'toLocaleUpperCaseToToLocaleLowerCase' },
-  'toLowerCase': { replacement: 'toUpperCase', mutationName: 'toLowerCaseToToUpperCase' },
-  'toUpperCase': { replacement: 'toLowerCase', mutationName: 'toUpperCaseToToLowerCase' },
-  'trim': { replacement: null, mutationName: 'removeTrim' },
-  'trimEnd': { replacement: 'trimStart', mutationName: 'trimEndToTrimStart' },
-  'trimStart': { replacement: 'trimEnd', mutationName: 'trimStartToTrimEnd' },
-  'min': { replacement: 'max', mutationName: 'minToMax' },
-  'max': { replacement: 'min', mutationName: 'maxToMin' },
-};
-
-export const methodExpressionMutator: NodeMutator = {
+export const methodExpressionMutator: NodeMutator<MethodExpression> = {
   name: 'MethodExpression',
+
+  operators: {
+    charAt: { replacement: null, mutationName: 'CharAtMethodCallRemoval' },
+    endsWith: { replacement: 'startsWith', mutationName: 'EndsWithMethodCallNegation' },
+    startsWith: { replacement: 'endsWith', mutationName: 'StartsWithMethodCallNegation' },
+    every: { replacement: 'some', mutationName: 'EveryMethodCallNegation' },
+    some: { replacement: 'every', mutationName: 'SomeMethodCallNegation' },
+    filter: { replacement: null, mutationName: 'FilterMethodCallRemoval' },
+    reverse: { replacement: null, mutationName: 'ReverseMethodCallRemoval' },
+    slice: { replacement: null, mutationName: 'SliceMethodCallRemoval' },
+    sort: { replacement: null, mutationName: 'SortMethodCallRemoval' },
+    substr: { replacement: null, mutationName: 'SubstrMethodCallRemoval' },
+    substring: { replacement: null, mutationName: 'SubstringMethodCallRemoval' },
+    toLocaleLowerCase: { replacement: 'toLocaleUpperCase', mutationName: 'ToLocaleLowerCaseMethodCallNegation' },
+    toLocaleUpperCase: { replacement: 'toLocaleLowerCase', mutationName: 'ToLocaleUpperCaseMethodCallNegation' },
+    toLowerCase: { replacement: 'toUpperCase', mutationName: 'ToLowerCaseMethodCallNegation' },
+    toUpperCase: { replacement: 'toLowerCase', mutationName: 'ToUpperCaseMethodCallNegation' },
+    trim: { replacement: null, mutationName: 'TrimMethodCallRemoval' },
+    trimEnd: { replacement: 'trimStart', mutationName: 'TrimEndMethodCallNegation' },
+    trimStart: { replacement: 'trimEnd', mutationName: 'TrimStartMethodCallNegation' },
+    min: { replacement: 'max', mutationName: 'MinMethodCallNegation' },
+    max: { replacement: 'min', mutationName: 'MaxMethodCallNegation' },
+  },
 
   *mutate(path, levelMutations) {
     // In case `operations` is undefined, any checks will short-circuit to true and allow the mutation
@@ -47,7 +46,7 @@ export const methodExpressionMutator: NodeMutator = {
       return;
     }
 
-    const mutation = operators[callee.property.name];
+    const mutation = this.operators[callee.property.name];
     if (mutation === undefined) {
       // Function is not known in `operators`, so no mutations
       return;

@@ -4,7 +4,7 @@ import { arrowFunctionMutator as sut } from '../../../src/mutators/arrow-functio
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const arrowFunctionLevel: MutationLevel = { name: 'ArrowFunctionLevel', ArrowFunction: ['ArrowFunction'] };
+const arrowFunctionLevel: MutationLevel = { name: 'ArrowFunctionLevel', ArrowFunction: ['ArrowFunctionRemoval'] };
 const arrowFunctionUndefinedLevel: MutationLevel = { name: 'ArrowFunctionLevel' };
 
 describe(sut.name, () => {

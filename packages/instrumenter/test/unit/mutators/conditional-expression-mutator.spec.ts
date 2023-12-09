@@ -2,10 +2,31 @@ import { expect } from 'chai';
 
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { conditionalExpressionMutator as sut } from '../../../src/mutators/conditional-expression-mutator.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const conditionLevel: string[] = ['ForLoopToFalse', 'IfToFalse', 'IfToTrue', 'SwitchToEmpty'];
-const conditionLevel2: string[] = ['WhileLoopToFalse', 'BooleanExpressionToFalse', 'DoWhileLoopToFalse', 'BooleanExpressionToTrue'];
-const conditionLevel3 = undefined;
+const conditionalLevel: MutationLevel = {
+  name: 'ConditionalLevel',
+  ConditionalExpression: [
+    'ForLoopConditionToFalseReplacement',
+    'IfConditionToFalseReplacement',
+    'IfConditionToTrueReplacement',
+    'SwitchStatementBodyRemoval',
+  ],
+};
+
+const conditionalLevel2: MutationLevel = {
+  name: 'ConditionalLevel2',
+  ConditionalExpression: [
+    'WhileLoopConditionToFalseReplacement',
+    'BooleanExpressionToFalseReplacement',
+    'DoWhileLoopConditionToFalseReplacement',
+    'BooleanExpressionToTrueReplacement',
+  ],
+};
+
+const conditionalLevelUndefined: MutationLevel = {
+  name: 'ConditionLevelEmpty',
+};
 
 describe(sut.name, () => {
   it('should have name "ConditionalExpression"', () => {
@@ -148,7 +169,7 @@ describe(sut.name, () => {
   it('should only mutate for, if and switch statement', () => {
     expectJSMutationWithLevel(
       sut,
-      conditionLevel,
+      conditionalLevel.ConditionalExpression,
       'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}',
       'for (var i = 0; false; i++) { };if(x > 2); switch (x) {case 0: 2}', // mutates for loop
       'for (var i = 0; i < 10; i++) { };if(false); switch (x) {case 0: 2}', // mutates if statement to false
@@ -160,7 +181,7 @@ describe(sut.name, () => {
   it('should only mutate while, while do and boolean expression', () => {
     expectJSMutationWithLevel(
       sut,
-      conditionLevel2,
+      conditionalLevel2.ConditionalExpression,
       'while (a > b) { }; do { } while (a > b); var x = a > b ? 1 : 2',
       'while (false) { }; do { } while (a > b); var x = a > b ? 1 : 2', // mutates while loop
       'while (a > b) { }; do { } while (a > b); var x = false ? 1 : 2', // mutates boolean to false
@@ -172,7 +193,7 @@ describe(sut.name, () => {
   it('should only mutate all', () => {
     expectJSMutationWithLevel(
       sut,
-      conditionLevel3,
+      conditionalLevelUndefined.ConditionalExpression,
       'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2',
       'for (var i = 0; false; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates for loop
       'for (var i = 0; i < 10; i++) { };if(false); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates if statement to false

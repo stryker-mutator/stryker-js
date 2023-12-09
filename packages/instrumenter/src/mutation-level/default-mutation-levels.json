@@ -1,44 +1,152 @@
 {
-    "mutationLevels": [
-      { 
-        "name": "level1",
-        "UpdateOperator": ["Post--To++"],
-        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<"],
-        "ArrayDeclaration": ["EmptyArrayConstructor"],
-        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue"],
-        "UnaryOperator": ["+To-"],
-        "AssignmentOperator": ["??=To&&="],
-        "ArithmeticOperator": ["/To*","%To*","*To/"],
-        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"]
+   "mutationLevels":[
+      {
+         "name":"Level1",
+         "UpdateOperator":[
+            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator"
+         ],
+         "EqualityOperator":[
+            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
+            "EqualityOperator_LessThanEqualOperator_Boundary",
+            "EqualityOperator_EqualityOperator_ToInequalityOperator",
+            "EqualityOperator_InequalityOperator_ToEqualityOperator",
+            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator"
+         ],
+         "ArrayDeclaration":[
+            "ArrayDeclaration_ArrayConstructor_ItemsRemoval"
+         ],
+         "ConditionalExpression":[
+            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
+            "ConditionalExpression_BooleanExpression_ToTrueLiteral"
+         ],
+         "UnaryOperator":[
+            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator"
+         ],
+         "AssignmentOperator":[
+            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+         ],
+         "ArithmeticOperator":[
+            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator"
+         ],
+         "OptionalChaining":[
+            "OptionalChaining_OptionalCallExpression_OptionRemoval",
+            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+         ]
       },
       {
-        "name": "level2",
-        "UpdateOperator": ["Post--To++", "Post++To--"],
-        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<","<To>=",">=To>", "!==To===", ">To>="],
-        "ArrayDeclaration": ["EmptyArrayConstructor"],
-        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue","SwitchToEmpty" ],
-        "UnaryOperator": ["+To-"],
-        "AssignmentOperator": ["??=To&&="],
-        "ArithmeticOperator": ["/To*","%To*","*To/", "+To-","-To+"],
-        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"],
-        "StringLiteral": ["FillString", "FillInterpolation"],
-        "Regex": true,
-        "BooleanLiteral": ["TrueToFalse"]
+         "name":"Level2",
+         "UpdateOperator":[
+            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator",
+            "UpdateOperator_PostfixIncrementOperator_ToPostfixDecrementOperator"
+         ],
+         "EqualityOperator":[
+            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
+            "EqualityOperator_LessThanEqualOperator_Boundary",
+            "EqualityOperator_EqualityOperator_ToInequalityOperator",
+            "EqualityOperator_InequalityOperator_ToEqualityOperator",
+            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator",
+            "EqualityOperator_LessThanOperator_ToGreatherThanEqualOperator",
+            "EqualityOperator_GreatherThanEqualOperator_Boundary",
+            "EqualityOperator_StrictInequalityOperator_ToStrictEqualityOperator",
+            "EqualityOperator_GreaterThanOperator_Boundary"
+         ],
+         "ArrayDeclaration":[
+            "ArrayDeclaration_ArrayConstructor_ItemsRemoval"
+         ],
+         "ConditionalExpression":[
+            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
+            "ConditionalExpression_BooleanExpression_ToTrueLiteral",
+            "ConditionalExpression_SwitchStatementBody_Removal"
+         ],
+         "UnaryOperator":[
+            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator"
+         ],
+         "AssignmentOperator":[
+            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+         ],
+         "ArithmeticOperator":[
+            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator",
+            "ArithmeticOperator_AdditionOperator_ToSubtractionOperator",
+            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+         ],
+         "OptionalChaining":[
+            "OptionalChaining_OptionalCallExpression_OptionRemoval",
+            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+         ],
+         "StringLiteral":[
+            "StringLiteral_EmptyStringLiteral_ToFilledStringLiteral",
+            "StringLiteral_EmptyInterpolatedString_ToFilledInterpolatedString"
+         ],
+         "Regex":[
+            "Regex_Removal"
+         ],
+         "BooleanLiteral":[
+            "BooleanLiteral_TrueLiteral_ToFalseLiteral"
+         ]
       },
       {
-        "name": "level3",
-        "UpdateOperator": ["Post--To++", "Post++To--"],
-        "EqualityOperator": ["<=To>","<=To<", "==To!=", "!=To==",">=To<","<To>=",">=To>", "!==To===", ">To>=", "<To<=", ">To<="],
-        "ArrayDeclaration": ["EmptyArrayConstructor","EmptyArray", "FilledArray"],
-        "ConditionalExpression": ["BooleanExpressionToFalse", "BooleanExpressionToTrue","SwitchToEmpty" ],
-        "UnaryOperator": ["+To-", "-To+"],
-        "AssignmentOperator": ["??=To&&="],
-        "ArithmeticOperator": ["/To*","%To*","*To/", "+To-","-To+"],
-        "OptionalChaining": ["OptionalCallExpression","OptionalMemberExpression"],
-        "StringLiteral": ["FillString", "FillInterpolation"],
-        "Regex": true,
-        "BooleanLiteral": ["TrueToFalse", "FalseToTrue", "RemoveNegation"]
+         "name":"Level3",
+         "UpdateOperator":[
+            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator",
+            "UpdateOperator_PostfixIncrementOperator_ToPostfixDecrementOperator"
+         ],
+         "EqualityOperator":[
+            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
+            "EqualityOperator_LessThanEqualOperator_Boundary",
+            "EqualityOperator_EqualityOperator_ToInequalityOperator",
+            "EqualityOperator_InequalityOperator_ToEqualityOperator",
+            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator",
+            "EqualityOperator_LessThanOperator_ToGreatherThanEqualOperator",
+            "EqualityOperator_GreatherThanEqualOperator_Boundary",
+            "EqualityOperator_StrictInequalityOperator_ToStrictEqualityOperator",
+            "EqualityOperator_GreaterThanOperator_Boundary",
+            "EqualityOperator_LessThanOperator_Boundary",
+            "EqualityOperator_GreaterThanOperator_ToLessThanEqualOperator"
+         ],
+         "ArrayDeclaration":[
+            "ArrayDeclaration_ArrayConstructor_ItemsRemoval",
+            "EmptyArray",
+            "FilledArray"
+         ],
+         "ConditionalExpression":[
+            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
+            "ConditionalExpression_BooleanExpression_ToTrueLiteral",
+            "ConditionalExpression_SwitchStatementBody_Removal"
+         ],
+         "UnaryOperator":[
+            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator",
+            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+         ],
+         "AssignmentOperator":[
+            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+         ],
+         "ArithmeticOperator":[
+            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
+            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator",
+            "ArithmeticOperator_AdditionOperator_ToSubtractionOperator",
+            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+         ],
+         "OptionalChaining":[
+            "OptionalChaining_OptionalCallExpression_OptionRemoval",
+            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+         ],
+         "StringLiteral":[
+            "StringLiteral_EmptyStringLiteral_ToFilledStringLiteral",
+            "StringLiteral_EmptyInterpolatedString_ToFilledInterpolatedString"
+         ],
+         "Regex":[
+            "Regex_Removal"
+         ],
+         "BooleanLiteral":[
+            "BooleanLiteral_TrueLiteral_ToFalseLiteral",
+            "BooleanLiteral_FalseLiteral_ToTrueLiteral",
+            "BooleanLiteral_LogicalNot_Removal"
+         ]
       }
-    ]
-  }
-  
+   ]
+}

@@ -4,22 +4,25 @@ import { assignmentOperatorMutator as sut } from '../../../src/mutators/assignme
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const assignmentOperatorLevel: MutationLevel = { name: 'AssignmentOperatorLevel', AssignmentOperator: ['-=To+=', '<<=To>>=', '&&=To||='] };
+const assignmentOperatorLevel: MutationLevel = {
+  name: 'AssignmentOperatorLevel',
+  AssignmentOperator: ['SubtractionAssignmentNegation', 'LeftShiftAssignmentNegation', 'LogicalAndAssignmentNegation'],
+};
 const assignmentOperatorAllLevel: MutationLevel = {
   name: 'AssignmentOperatorLevel',
   AssignmentOperator: [
-    '+=To-=',
-    '-=To+=',
-    '*=To/=',
-    '/=To*=',
-    '%=To*=',
-    '<<=To>>=',
-    '>>=To<<=',
-    '&=To|=',
-    '|=To&=',
-    '&&=To||=',
-    '||=To&&=',
-    '??=To&&=',
+    'AdditionAssignmentNegation',
+    'SubtractionAssignmentNegation',
+    'MultiplicationAssignmentNegation',
+    'DivisionAssignmentNegation',
+    'RemainderAssignmentToMultiplicationReplacement',
+    'LeftShiftAssignmentNegation',
+    'RightShiftAssignmentNegation',
+    'BitwiseAndAssignmentNegation',
+    'BitwiseOrAssignmentNegation',
+    'LogicalAndAssignmentNegation',
+    'LogicalOrAssignmentNegation',
+    'NullishCoalescingAssignmentToLogicalAndReplacement',
   ],
 };
 const assignmentOperatorUndefinedLevel: MutationLevel = { name: 'AssignmentOperatorLevel' };

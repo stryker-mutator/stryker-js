@@ -4,7 +4,7 @@ import { objectLiteralMutator as sut } from '../../../src/mutators/object-litera
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const objectLiteralLevel: MutationLevel = { name: 'ObjectLiteralLevel', ObjectLiteral: ['ObjectLiteral'] };
+const objectLiteralLevel: MutationLevel = { name: 'ObjectLiteralLevel', ObjectLiteral: ['ObjectLiteralPropertiesRemoval'] };
 const objectLiteralUndefinedLevel: MutationLevel = { name: 'ObjectLiteralLevel' };
 
 describe(sut.name, () => {

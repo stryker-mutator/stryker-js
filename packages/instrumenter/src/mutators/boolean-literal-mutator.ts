@@ -1,21 +1,21 @@
 import babel from '@babel/core';
 
+import { BooleanLiteral } from '@stryker-mutator/api/core';
+
 import { deepCloneNode } from '../util/index.js';
 
 const { types } = babel;
 
-import { NodeMutatorConfiguration } from '../mutation-level/mutation-level.js';
-
 import { NodeMutator } from './index.js';
 
-const operators: NodeMutatorConfiguration = {
-  true: { replacement: false, mutationName: 'TrueToFalse' },
-  false: { replacement: true, mutationName: 'FalseToTrue' },
-  '!': { replacement: '', mutationName: 'RemoveNegation' },
-};
-
-export const booleanLiteralMutator: NodeMutator = {
+export const booleanLiteralMutator: NodeMutator<BooleanLiteral> = {
   name: 'BooleanLiteral',
+
+  operators: {
+    true: { replacement: false, mutationName: 'TrueLiteralNegation' },
+    false: { replacement: true, mutationName: 'FalseLiteralNegation' },
+    '!': { replacement: '', mutationName: 'LogicalNotRemoval' },
+  },
 
   *mutate(path, levelMutations) {
     if (isInMutationLevel(path, levelMutations)) {
@@ -34,13 +34,13 @@ function isInMutationLevel(path: any, levelMutations: string[] | undefined): boo
     return true;
   }
   if (path.isBooleanLiteral()) {
-    const { mutationName: mutatorName } = operators[path.node.value as keyof typeof operators];
+    const { mutationName: mutatorName } = booleanLiteralMutator.operators[path.node.value];
     return levelMutations.some((lit) => lit === mutatorName);
   }
   return (
     path.isUnaryExpression() &&
     path.node.operator === '!' &&
     path.node.prefix &&
-    levelMutations.some((lit: string) => lit === operators['!'].mutationName)
+    levelMutations.some((lit: string) => lit === booleanLiteralMutator.operators['!'].mutationName)
   );
 }

@@ -2,6 +2,12 @@ import { expect } from 'chai';
 
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { stringLiteralMutator as sut } from '../../../src/mutators/string-literal-mutator.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const stringLiteralLevel: MutationLevel = {
+  name: 'ObjectLiteralLevel',
+  StringLiteral: ['FilledStringLiteralToEmptyReplacement', 'FilledInterpolatedStringToEmptyReplacement'],
+};
 
 describe(sut.name, () => {
   it('should have name "StringLiteral"', () => {
@@ -117,7 +123,7 @@ describe(sut.name, () => {
     it('should only mutate EmptyString and EmptyInterpolation from all possible mutations', () => {
       expectJSMutationWithLevel(
         sut,
-        ['EmptyString', 'EmptyInterpolation'],
+        stringLiteralLevel.StringLiteral,
         'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
         'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string
         'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation

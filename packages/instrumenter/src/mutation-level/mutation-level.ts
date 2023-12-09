@@ -9,6 +9,7 @@ import {
   BooleanLiteral,
   ConditionalExpression,
   EqualityOperator,
+  LogicalOperator,
   MethodExpression,
   ObjectLiteral,
   OptionalChaining,
@@ -18,12 +19,11 @@ import {
   UpdateOperator,
 } from '@stryker-mutator/api/core';
 
-export type NodeMutatorConfiguration = Record<string, ReplacementConfiguration>;
+export type NodeMutatorConfiguration<T> = Record<string, ReplacementConfiguration<T>>;
 
-export type NodeMutatorMultiConfiguration = Record<string, ReplacementConfiguration[]>;
-interface ReplacementConfiguration {
+interface ReplacementConfiguration<T> {
   replacement?: any;
-  mutationName: string;
+  mutationName: T;
 }
 
 export interface MutationLevel {
@@ -39,6 +39,7 @@ export interface MutationLevel {
   BooleanLiteral?: BooleanLiteral[];
   ConditionalExpression?: ConditionalExpression[];
   EqualityOperator?: EqualityOperator[];
+  LogicalOperator?: LogicalOperator[];
   MethodExpression?: MethodExpression[];
   ObjectLiteral?: ObjectLiteral[];
   OptionalChaining?: OptionalChaining[];

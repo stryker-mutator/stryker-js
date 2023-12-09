@@ -3,6 +3,12 @@ import { expect } from 'chai';
 import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator.js';
 
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const optionalChainingLevel: MutationLevel = {
+  name: 'OptionalChainingLevel',
+  OptionalChaining: ['OptionalMemberExpressionOptionalRemoval'],
+};
 
 describe(sut.name, () => {
   it('should have name "OptionalChaining"', () => {
@@ -34,10 +40,9 @@ describe(sut.name, () => {
     it('should only mutate OptionalMemberExpression from all possible mutators', () => {
       expectJSMutationWithLevel(
         sut,
-        ['OptionalMemberExpression'],
+        optionalChainingLevel.OptionalChaining,
         'foo?.bar; foo?.[0]; foo?.()',
         'foo.bar; foo?.[0]; foo?.()', // removes .bar optional
-        'foo?.bar; foo[0]; foo?.()', // removes [0] optional
       );
     });
     it('should block all mutators', () => {

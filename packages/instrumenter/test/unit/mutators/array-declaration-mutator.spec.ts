@@ -2,8 +2,12 @@ import { expect } from 'chai';
 
 import { arrayDeclarationMutator as sut } from '../../../src/mutators/array-declaration-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const arrayDeclarationLevel: string[] = ['EmptyArray', 'EmptyArrayConstructor', 'FilledArray', 'FilledArrayConstructor'];
+const arrayDeclarationLevel: MutationLevel = {
+  name: 'ArrayDeclarationLevel',
+  ArrayDeclaration: ['ArrayLiteralItemsFill', 'ArrayConstructorItemsRemoval', 'ArrayLiteralItemsRemoval', 'ArrayConstructorItemsFill'],
+};
 
 describe(sut.name, () => {
   it('should have name "ArrayDeclaration"', () => {
@@ -44,7 +48,7 @@ describe(sut.name, () => {
   it('should only mutate [], new Array(), new Array(x,y) and [x,y] from all possible mutators', () => {
     expectJSMutationWithLevel(
       sut,
-      arrayDeclarationLevel,
+      arrayDeclarationLevel.ArrayDeclaration,
       '[]; new Array(); new Array({x:"", y:""}); [{x:"", y:""}]',
       '["Stryker was here"]; new Array(); new Array({x:"", y:""}); [{x:"", y:""}]', // mutates []
       '[]; new Array("Stryker was here"); new Array({x:"", y:""}); [{x:"", y:""}]', // mutates new Array()

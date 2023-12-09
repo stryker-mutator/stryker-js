@@ -2,6 +2,12 @@ import { expect } from 'chai';
 
 import { logicalOperatorMutator as sut } from '../../../src/mutators/logical-operator-mutator.js';
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const logicalOpLevel: MutationLevel = {
+  name: 'EqualityLevelB',
+  LogicalOperator: ['LogicalOrOperatorNegation', 'LogicalAndOperatorNegation'],
+};
 
 describe(sut.name, () => {
   it('should have name "LogicalOperator"', () => {
@@ -26,8 +32,7 @@ describe(sut.name, () => {
   });
 
   it('should only mutate || and &&', () => {
-    const level = ['||To&&', '&&To||'];
-    expectJSMutationWithLevel(sut, level, 'a || b; a && b; a ?? b', 'a && b; a && b; a ?? b', 'a || b; a || b; a ?? b');
+    expectJSMutationWithLevel(sut, logicalOpLevel.LogicalOperator, 'a || b; a && b; a ?? b', 'a && b; a && b; a ?? b', 'a || b; a || b; a ?? b');
   });
 
   it('should mutate all three', () => {

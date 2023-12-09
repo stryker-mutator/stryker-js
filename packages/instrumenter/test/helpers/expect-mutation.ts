@@ -4,6 +4,7 @@ import generator from '@babel/generator';
 import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
+import { MutationLevel } from '../../src/mutation-level/mutation-level.js';
 
 const generate = generator.default;
 
@@ -35,12 +36,12 @@ const plugins = [
   'typescript',
 ] as ParserPlugin[];
 
-export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]): void {
+export function expectJSMutation(sut: NodeMutator<keyof MutationLevel>, originalCode: string, ...expectedReplacements: string[]): void {
   expectJSMutationWithLevel(sut, undefined, originalCode, ...expectedReplacements);
 }
 
 export function expectJSMutationWithLevel(
-  sut: NodeMutator,
+  sut: NodeMutator<keyof MutationLevel>,
   level: string[] | undefined,
   originalCode: string,
   ...expectedReplacements: string[]
