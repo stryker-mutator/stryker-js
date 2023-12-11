@@ -36,7 +36,7 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "bin": "dist/src/index.js",
-  "devDependencies": {
+  "dependencies": {
     "@stryker-mutator/core": "~8.0.0"
   }
 }
