@@ -5,7 +5,7 @@
       "path": "packages/core"
     },
     {
-      "path": "packages/initializer"
+      "path": "packages/create-stryker"
     },
     {
       "name": "instrumenter",
