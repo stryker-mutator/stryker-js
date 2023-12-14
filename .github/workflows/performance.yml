@@ -25,7 +25,7 @@ jobs:
       env:
         PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
     - name: Store reports
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: mutation-testing-reports
         path: perf/test/*/reports/mutation
