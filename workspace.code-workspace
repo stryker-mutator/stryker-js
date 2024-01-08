@@ -95,7 +95,7 @@
     "eslint.rules.customizations": [{ "rule": "*", "severity": "warn" }],
     "task.autoDetect": "off",
     "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+      "source.fixAll.eslint": "explicit"
     },
     "cSpell.words": [
       "Appender",

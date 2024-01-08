@@ -49,7 +49,7 @@ A checker plugin can _check_ a mutant before it is mutation tested. The check ca
 
 ## Ignorers
 
-With an ignore-plugin, you can ignore all mutants in a specific a code pattern. See [using an ignore-plugin](./disable-mutants.md#using-an-ignorer-plugin) for more information.
+With an ignore-plugin, you can ignore all mutants in a specific a code pattern. See [using an ignore-plugin](./disable-mutants.md#using-an-ignore-plugin) for more information.
 
 ## &lt;Your plugin here&gt;
 
