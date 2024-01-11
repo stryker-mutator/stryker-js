@@ -5,7 +5,8 @@ import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expec
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const blockStatementLevel: MutationLevel = { name: 'BlockStatementLevel', BlockStatement: ['BlockStatementRemoval'] };
-const blockStatementUndefinedLevel: MutationLevel = { name: 'BlockStatementLevel' };
+const blockStatementUndefinedLevel: MutationLevel = { name: 'BlockStatementLevel', BlockStatement: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "BlockStatement"', () => {
@@ -74,22 +75,19 @@ describe(sut.name, () => {
     it('should not mutate a constructor containing a super call and contains initialized properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { private baz = "qux"; constructor() { super(); } }');
     });
+  });
 
-    it('should only mutate what is defined in the mutator level', () => {
-      expectJSMutationWithLevel(sut, blockStatementLevel.BlockStatement, 'class Foo { constructor() { bar(); } }', 'class Foo { constructor() {} }');
+  describe('mutation level', () => {
+    it('should remove BlockStatement', () => {
+      expectJSMutationWithLevel(sut, blockStatementLevel.BlockStatement, 'class Foo { constructor() { bar(); } }', 'class Foo { constructor() {} }'); // BlockStatementRemoval
     });
 
-    it('should not mutate anything if there are no values in the mutation level', () => {
-      expectJSMutationWithLevel(sut, [], 'class Foo { constructor() { bar(); } }');
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, blockStatementUndefinedLevel.BlockStatement, 'class Foo { constructor() { bar(); } }');
     });
 
-    it('should mutate everything if the mutation level is undefined', () => {
-      expectJSMutationWithLevel(
-        sut,
-        blockStatementUndefinedLevel.BlockStatement,
-        'class Foo { constructor() { bar(); } }',
-        'class Foo { constructor() {} }',
-      );
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, noLevel, 'class Foo { constructor() { bar(); } }', 'class Foo { constructor() {} }');
     });
   });
 });

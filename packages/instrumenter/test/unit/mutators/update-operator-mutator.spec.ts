@@ -9,14 +9,11 @@ const updateLevel: MutationLevel = {
   UpdateOperator: ['PrefixDecrementOperatorNegation', 'PrefixIncrementOperatorNegation'],
 };
 
-const updateLevel2: MutationLevel = {
-  name: 'UpdateLevel2',
-  UpdateOperator: ['PostfixDecrementOperatorNegation', 'PostfixIncrementOperatorNegation'],
-};
-
 const updateUndefinedLevel: MutationLevel = {
   name: 'UpdateLevel3',
+  UpdateOperator: [],
 };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "UpdateOperator"', () => {
@@ -39,35 +36,31 @@ describe(sut.name, () => {
     expectJSMutation(sut, '--a', '++a');
   });
 
-  it('should only mutate --a and ++a', () => {
-    expectJSMutationWithLevel(
-      sut,
-      updateLevel.UpdateOperator,
-      '--a; ++a; a--; a++',
-      '++a; ++a; a--; a++', //mutates --a
-      '--a; --a; a--; a++', //mutates ++a
-    );
-  });
+  describe('mutation level', () => {
+    it('should only mutate --a and ++a', () => {
+      expectJSMutationWithLevel(
+        sut,
+        updateLevel.UpdateOperator,
+        '--a; ++a; a--; a++',
+        '++a; ++a; a--; a++', //mutates --a
+        '--a; --a; a--; a++', //mutates ++a
+      );
+    });
 
-  it('should only mutate a-- and a++', () => {
-    expectJSMutationWithLevel(
-      sut,
-      updateLevel2.UpdateOperator,
-      '--a; ++a; a--; a++',
-      '--a; ++a; a--; a--', //mutates a++
-      '--a; ++a; a++; a++', //mutates a--
-    );
-  });
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, updateUndefinedLevel.UpdateOperator, '--a; ++a; a--; a++');
+    });
 
-  it('should mutate all', () => {
-    expectJSMutationWithLevel(
-      sut,
-      updateUndefinedLevel.UpdateOperator,
-      '--a; ++a; a--; a++',
-      '++a; ++a; a--; a++', //mutates --a
-      '--a; --a; a--; a++', //mutates ++a
-      '--a; ++a; a--; a--', //mutates a++
-      '--a; ++a; a++; a++', //mutates a--
-    );
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        '--a; ++a; a--; a++',
+        '++a; ++a; a--; a++', //mutates --a
+        '--a; --a; a--; a++', //mutates ++a
+        '--a; ++a; a--; a--', //mutates a++
+        '--a; ++a; a++; a++', //mutates a--
+      );
+    });
   });
 });

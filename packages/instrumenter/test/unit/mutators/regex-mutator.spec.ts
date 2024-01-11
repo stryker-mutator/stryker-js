@@ -6,7 +6,8 @@ import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expec
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const regexLevel: MutationLevel = { name: 'RegexLevel', Regex: ['RegexRemoval'] };
-const regexUndefinedLevel: MutationLevel = { name: 'RegexLevel' };
+const regexUndefinedLevel: MutationLevel = { name: 'RegexLevel', Regex: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "Regex"', () => {
@@ -58,15 +59,17 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
   });
 
-  it('should only mutate what is defined in the mutator level', () => {
-    expectJSMutationWithLevel(sut, regexLevel.Regex, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
-  });
+  describe('mutation level', () => {
+    it('should remove regex', () => {
+      expectJSMutationWithLevel(sut, regexLevel.Regex, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    });
 
-  it('should not mutate anything if there are no values in the mutation level', () => {
-    expectJSMutationWithLevel(sut, [], 'new RegExp("\\\\u{20}", foo)');
-  });
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, regexUndefinedLevel.Regex, 'new RegExp("\\\\u{20}", foo)');
+    });
 
-  it('should mutate everything if the mutation level is undefined', () => {
-    expectJSMutationWithLevel(sut, regexUndefinedLevel.Regex, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, noLevel, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    });
   });
 });

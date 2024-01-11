@@ -4,11 +4,12 @@ import { unaryOperatorMutator as sut } from '../../../src/mutators/unary-operato
 import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
-const unaryOperatorLevelA: MutationLevel = {
-  name: 'unaryOperatorA',
+const unaryOperatorLevel: MutationLevel = {
+  name: 'unaryOperatorLevel',
   UnaryOperator: ['UnaryPlusOperatorNegation', 'UnaryBitwiseOrRemoval'],
 };
-const unaryOperatorLevelB: MutationLevel = { name: 'unaryOperatorB', UnaryOperator: ['UnaryMinOperatorNegation'] };
+const unaryOperatorUndefinedLevel: MutationLevel = { name: 'unaryOperatorUndefinedLevel', UnaryOperator: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "UnaryOperator"', () => {
@@ -35,11 +36,30 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'a-a');
   });
 
-  it('should not mutate -b to +b', () => {
-    expectJSMutationWithLevel(sut, unaryOperatorLevelA.UnaryOperator, '+a; -b; ~c;', '-a; -b; ~c;', '+a; -b; c;');
-  });
+  describe('mutation level', () => {
+    it('should only mutate unary + and ~', () => {
+      expectJSMutationWithLevel(
+        sut,
+        unaryOperatorLevel.UnaryOperator,
+        '+a; -b; ~c;',
+        '-a; -b; ~c;', // mutates + to -
+        '+a; -b; c;', // removes ~
+      );
+    });
 
-  it('should only mutate -b to +b', () => {
-    expectJSMutationWithLevel(sut, unaryOperatorLevelB.UnaryOperator, '+a; -b; ~c;', '+a; +b; ~c;');
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, unaryOperatorUndefinedLevel.UnaryOperator, '+a; -b; ~c;');
+    });
+
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        '+a; -b; ~c;',
+        '-a; -b; ~c;', // mutates + to -
+        '+a; -b; c;', // removes ~
+        '+a; +b; ~c;', // mutates - to +
+      );
+    });
   });
 });

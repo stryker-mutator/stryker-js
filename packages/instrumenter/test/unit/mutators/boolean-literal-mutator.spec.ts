@@ -9,14 +9,12 @@ const booleanLiteralLevel: MutationLevel = {
   BooleanLiteral: ['TrueLiteralNegation', 'LogicalNotRemoval'],
 };
 
-const booleanLiteralAllLevel: MutationLevel = {
-  name: 'BooleanLiteralLevel',
-  BooleanLiteral: ['TrueLiteralNegation', 'FalseLiteralNegation', 'LogicalNotRemoval'],
-};
-
 const booleanLiteralUndefinedLevel: MutationLevel = {
   name: 'BooleanLiteralLevel',
+  BooleanLiteral: [],
 };
+
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "BooleanLiteral"', () => {
@@ -35,39 +33,30 @@ describe(sut.name, () => {
     expectJSMutation(sut, '!a', 'a');
   });
 
-  it('should only mutate what is defined in the mutation level', () => {
-    expectJSMutationWithLevel(
-      sut,
-      booleanLiteralLevel.BooleanLiteral,
-      'if (true) {}; if (false) {}; if (!value) {}',
-      'if (false) {}; if (false) {}; if (!value) {}',
-      'if (true) {}; if (false) {}; if (value) {}',
-    );
-  });
+  describe('mutation level', () => {
+    it('should only mutate TrueLiteralNegation, LogicalNotRemoval', () => {
+      expectJSMutationWithLevel(
+        sut,
+        booleanLiteralLevel.BooleanLiteral,
+        'if (true) {}; if (false) {}; if (!value) {}',
+        'if (false) {}; if (false) {}; if (!value) {}', // TrueLiteralNegation
+        'if (true) {}; if (false) {}; if (value) {}', // LogicalNotRemoval
+      );
+    });
 
-  it('should not mutate anything if there are no values in the mutation level', () => {
-    expectJSMutationWithLevel(sut, [], 'if (true) {}; if (false) {}; if (!value) {}');
-  });
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, booleanLiteralUndefinedLevel.BooleanLiteral, 'if (true) {}; if (false) {}; if (!value) {}');
+    });
 
-  it('should mutate everything if everything is in the mutation level', () => {
-    expectJSMutationWithLevel(
-      sut,
-      booleanLiteralAllLevel.BooleanLiteral,
-      'if (true) {}; if (false) {}; if (!value) {}',
-      'if (false) {}; if (false) {}; if (!value) {}',
-      'if (true) {}; if (false) {}; if (value) {}',
-      'if (true) {}; if (true) {}; if (!value) {}',
-    );
-  });
-
-  it('should mutate everything if the mutation level is undefined', () => {
-    expectJSMutationWithLevel(
-      sut,
-      booleanLiteralUndefinedLevel.BooleanLiteral,
-      'if (true) {}; if (false) {}; if (!value) {}',
-      'if (false) {}; if (false) {}; if (!value) {}',
-      'if (true) {}; if (false) {}; if (value) {}',
-      'if (true) {}; if (true) {}; if (!value) {}',
-    );
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        'if (true) {}; if (false) {}; if (!value) {}',
+        'if (false) {}; if (false) {}; if (!value) {}', // TrueLiteralNegation
+        'if (true) {}; if (false) {}; if (value) {}', // LogicalNotRemoval
+        'if (true) {}; if (true) {}; if (!value) {}', // FalseLiteralNegation
+      );
+    });
   });
 });

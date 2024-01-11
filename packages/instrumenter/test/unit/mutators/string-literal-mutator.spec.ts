@@ -5,9 +5,11 @@ import { stringLiteralMutator as sut } from '../../../src/mutators/string-litera
 import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const stringLiteralLevel: MutationLevel = {
-  name: 'ObjectLiteralLevel',
+  name: 'stringLiteralLevel',
   StringLiteral: ['FilledStringLiteralToEmptyReplacement', 'FilledInterpolatedStringToEmptyReplacement'],
 };
+const stringLiteralUndefinedLevel: MutationLevel = { name: 'stringLiteralUndefinedLevel', StringLiteral: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "StringLiteral"', () => {
@@ -120,7 +122,7 @@ describe(sut.name, () => {
   });
 
   describe('mutation level', () => {
-    it('should only mutate EmptyString and EmptyInterpolation from all possible mutations', () => {
+    it('should only mutate EmptyString and EmptyInterpolation', () => {
       expectJSMutationWithLevel(
         sut,
         stringLiteralLevel.StringLiteral,
@@ -129,13 +131,17 @@ describe(sut.name, () => {
         'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
       );
     });
-    it('should block the mutators', () => {
-      expectJSMutationWithLevel(sut, [], 'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``');
-    });
-    it('should mutate everything', () => {
+    it('should not perform any ' + sut.name + ' mutations', () => {
       expectJSMutationWithLevel(
         sut,
-        undefined,
+        stringLiteralUndefinedLevel.StringLiteral,
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+      );
+    });
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
         'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
         'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string literal
         'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
