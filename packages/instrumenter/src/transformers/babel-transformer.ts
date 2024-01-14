@@ -21,6 +21,9 @@ import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 import { AstTransformer } from './index.js';
 
 const { traverse } = babel;
+
+const IGNORED_BY_LEVEL_STATUS = 'Ignored by level';
+
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;
   placer: MutantPlacer<TNode>;
@@ -161,13 +164,18 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     const runLevel = createRunLevel();
 
     for (const mutator of mutators) {
-      if (runLevel === undefined || mutator.name in runLevel) {
+      const totalMutatorCount = mutator.numberOfMutants(node);
+
+      if (totalMutatorCount > 0 && (runLevel === undefined || mutator.name in runLevel)) {
         let propertyValue = undefined;
         if (runLevel !== undefined) {
           propertyValue = runLevel?.[mutator.name] as string[];
         }
 
+        let mutated = 0;
+
         for (const replacement of mutator.mutate(node, propertyValue)) {
+          mutated++;
           yield {
             replacement,
             mutatorName: mutator.name,
@@ -175,6 +183,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
               directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
               findExcludedMutatorIgnoreReason(mutator.name) ??
               ignorerBookkeeper.currentIgnoreMessage,
+          };
+        }
+        for (let i = 0; i < totalMutatorCount - mutated; i++) {
+          // totalMutatorCount - mutated is the number of potential mutants not mutated
+          const placeholderNode = babel.types.stringLiteral('excludedByLevel');
+          yield {
+            replacement: placeholderNode,
+            mutatorName: mutator.name,
+            ignoreReason: IGNORED_BY_LEVEL_STATUS,
           };
         }
       }

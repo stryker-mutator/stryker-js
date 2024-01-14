@@ -33,6 +33,10 @@ export const unaryOperatorMutator: NodeMutator<UnaryOperator> = {
       yield replacementOperator;
     }
   },
+
+  numberOfMutants(path): number {
+    return path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix ? 1 : 0;
+  },
 };
 
 function isSupported(operator: string): operator is keyof typeof unaryOperatorMutator.operators {

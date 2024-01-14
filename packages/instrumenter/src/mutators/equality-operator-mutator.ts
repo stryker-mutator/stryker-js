@@ -39,6 +39,15 @@ export const equalityOperatorMutator: NodeMutator<EqualityOperator> = {
       }
     }
   },
+
+  numberOfMutants(path): number {
+    // Necessary to use path.node.operator
+    if (path.isBinaryExpression() && isEqualityOperator(path.node.operator)) {
+      return Object.keys(equalityOperatorMutator.operators).filter((k) => k.startsWith(path.node.operator + 'To')).length;
+    }
+
+    return 0;
+  },
 };
 
 function isEqualityOperator(operator: string): operator is keyof typeof equalityOperatorMutator.operators {

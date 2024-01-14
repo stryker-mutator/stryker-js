@@ -14,13 +14,34 @@ export const conditionalExpressionMutator: NodeMutator<ConditionalExpression> = 
   name: 'ConditionalExpression',
 
   operators: {
-    BooleanExpressionToFalseReplacement: { replacement: types.booleanLiteral(false), mutationName: 'BooleanExpressionToFalseReplacement' },
-    BooleanExpressionToTrueReplacement: { replacement: types.booleanLiteral(true), mutationName: 'BooleanExpressionToTrueReplacement' },
-    DoWhileLoopConditionToFalseReplacement: { replacement: types.booleanLiteral(false), mutationName: 'DoWhileLoopConditionToFalseReplacement' },
-    ForLoopConditionToFalseReplacement: { replacement: types.booleanLiteral(false), mutationName: 'ForLoopConditionToFalseReplacement' },
-    IfConditionToFalseReplacement: { replacement: types.booleanLiteral(false), mutationName: 'IfConditionToFalseReplacement' },
-    IfConditionToTrueReplacement: { replacement: types.booleanLiteral(true), mutationName: 'IfConditionToTrueReplacement' },
-    WhileLoopConditionToFalseReplacement: { replacement: types.booleanLiteral(false), mutationName: 'WhileLoopConditionToFalseReplacement' },
+    BooleanExpressionToFalseReplacement: {
+      replacement: types.booleanLiteral(false),
+      mutationName: 'BooleanExpressionToFalseReplacement',
+    },
+    BooleanExpressionToTrueReplacement: {
+      replacement: types.booleanLiteral(true),
+      mutationName: 'BooleanExpressionToTrueReplacement',
+    },
+    DoWhileLoopConditionToFalseReplacement: {
+      replacement: types.booleanLiteral(false),
+      mutationName: 'DoWhileLoopConditionToFalseReplacement',
+    },
+    ForLoopConditionToFalseReplacement: {
+      replacement: types.booleanLiteral(false),
+      mutationName: 'ForLoopConditionToFalseReplacement',
+    },
+    IfConditionToFalseReplacement: {
+      replacement: types.booleanLiteral(false),
+      mutationName: 'IfConditionToFalseReplacement',
+    },
+    IfConditionToTrueReplacement: {
+      replacement: types.booleanLiteral(true),
+      mutationName: 'IfConditionToTrueReplacement',
+    },
+    WhileLoopConditionToFalseReplacement: {
+      replacement: types.booleanLiteral(false),
+      mutationName: 'WhileLoopConditionToFalseReplacement',
+    },
     SwitchStatementBodyRemoval: { replacement: [], mutationName: 'SwitchStatementBodyRemoval' },
   },
 
@@ -94,6 +115,20 @@ export const conditionalExpressionMutator: NodeMutator<ConditionalExpression> = 
       }
     }
   },
+
+  numberOfMutants(path): number {
+    if (
+      isTestOfLoop(path) ||
+      (path.isForStatement() && !path.node.test) ||
+      (path.isSwitchCase() && path.node.consequent.length > 0) ||
+      (isBooleanExpression(path) && path.parent?.type === 'LogicalExpression')
+    ) {
+      return 1;
+    } else if (isTestOfCondition(path) || isBooleanExpression(path)) {
+      return 2;
+    }
+    return 0;
+  },
 };
 
 function isTestOfLoop(path: NodePath): boolean {
@@ -106,26 +141,17 @@ function isTestOfLoop(path: NodePath): boolean {
 
 function isTestOfWhileLoop(path: NodePath): boolean {
   const { parentPath } = path;
-  if (!parentPath) {
-    return false;
-  }
-  return parentPath.isWhileStatement() && parentPath.node.test === path.node;
+  return parentPath !== null && parentPath && parentPath.isWhileStatement() && parentPath.node.test === path.node;
 }
 
 function isTestOfForLoop(path: NodePath): boolean {
   const { parentPath } = path;
-  if (!parentPath) {
-    return false;
-  }
-  return parentPath.isForStatement() && parentPath.node.test === path.node;
+  return parentPath !== null && parentPath && parentPath.isForStatement() && parentPath.node.test === path.node;
 }
 
 function isTestOfDoWhileLoop(path: NodePath): boolean {
   const { parentPath } = path;
-  if (!parentPath) {
-    return false;
-  }
-  return parentPath.isDoWhileStatement() && parentPath.node.test === path.node;
+  return parentPath !== null && parentPath.isDoWhileStatement() && parentPath.node.test === path.node;
 }
 
 function isTestOfCondition(path: NodePath): boolean {

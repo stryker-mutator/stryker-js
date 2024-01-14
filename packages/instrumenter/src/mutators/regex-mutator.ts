@@ -51,6 +51,10 @@ export const regexMutator: NodeMutator<Regex> = {
       }
     }
   },
+
+  numberOfMutants(path): number {
+    return path.isRegExpLiteral() || (path.isStringLiteral() && isObviousRegexString(path)) ? 1 : 0;
+  },
 };
 
 function mutatePattern(pattern: string, flags: string | undefined): string[] {

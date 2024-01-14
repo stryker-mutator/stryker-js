@@ -4,8 +4,9 @@ import { fileURLToPath, pathToFileURL } from 'url';
 
 import { expect } from 'chai';
 
+import { MutatorDefinition } from '@stryker-mutator/api/core';
+
 import { allMutators, NodeMutator } from '../../../src/mutators/index.js';
-import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 describe('allMutators', () => {
   it('should include all mutators', async () => {
@@ -24,7 +25,7 @@ describe('allMutators', () => {
           }
           return mutatorModule[keys[0]];
         }),
-    )) as Array<NodeMutator<keyof MutationLevel>>;
+    )) as Array<NodeMutator<MutatorDefinition>>;
     actualMutators.forEach((mutator) => {
       expect(allMutators.includes(mutator), `${mutator.name} is missing!`).ok;
     });

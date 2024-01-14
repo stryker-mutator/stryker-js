@@ -46,6 +46,17 @@ export const arrayDeclarationMutator: NodeMutator<ArrayDeclaration> = {
       yield replacement;
     }
   },
+
+  numberOfMutants(path): number {
+    if (
+      path.isArrayExpression() ||
+      ((path.isCallExpression() || path.isNewExpression()) && types.isIdentifier(path.node.callee) && path.node.callee.name === 'Array')
+    ) {
+      return 1;
+    }
+
+    return 0;
+  },
 };
 
 function isArrayInLevel(node: babel.types.ArrayExpression, levelMutations: string[] | undefined): boolean {

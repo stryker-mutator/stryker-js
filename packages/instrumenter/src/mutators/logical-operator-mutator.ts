@@ -22,6 +22,10 @@ export const logicalOperatorMutator: NodeMutator<LogicalOperator> = {
       yield replacementOperator;
     }
   },
+
+  numberOfMutants(path): number {
+    return path.isLogicalExpression() && isSupported(path.node.operator) ? 1 : 0;
+  },
 };
 
 function isSupported(operator: string): operator is keyof typeof logicalOperatorMutator.operators {

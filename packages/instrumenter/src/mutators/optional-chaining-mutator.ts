@@ -55,4 +55,8 @@ export const optionalChainingMutator: NodeMutator<OptionalChaining> = {
       );
     }
   },
+
+  numberOfMutants(path): number {
+    return (path.isOptionalMemberExpression() || path.isOptionalCallExpression()) && path.node.optional ? 1 : 0;
+  },
 };

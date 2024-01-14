@@ -27,6 +27,10 @@ export const booleanLiteralMutator: NodeMutator<BooleanLiteral> = {
       }
     }
   },
+
+  numberOfMutants(path): number {
+    return path.isBooleanLiteral() || (path.isUnaryExpression() && path.node.operator === '!' && path.node.prefix) ? 1 : 0;
+  },
 };
 
 function isInMutationLevel(path: any, levelMutations: string[] | undefined): boolean {

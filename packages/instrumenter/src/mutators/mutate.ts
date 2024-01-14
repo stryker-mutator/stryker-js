@@ -1,4 +1,4 @@
-import { MutationLevel } from '../mutation-level/mutation-level.js';
+import { MutatorDefinition } from '@stryker-mutator/api/core';
 
 import { arithmeticOperatorMutator } from './arithmetic-operator-mutator.js';
 import { NodeMutator } from './node-mutator.js';
@@ -18,7 +18,7 @@ import { regexMutator } from './regex-mutator.js';
 import { optionalChainingMutator } from './optional-chaining-mutator.js';
 import { assignmentOperatorMutator } from './assignment-operator-mutator.js';
 
-export const allMutators: Array<NodeMutator<keyof MutationLevel>> = [
+export const allMutators: Array<NodeMutator<MutatorDefinition>> = [
   arithmeticOperatorMutator,
   arrayDeclarationMutator,
   arrowFunctionMutator,
