@@ -11,6 +11,7 @@ import {
   EqualityOperator,
   LogicalOperator,
   MethodExpression,
+  MutatorDefinition,
   ObjectLiteral,
   OptionalChaining,
   Regex,
@@ -47,7 +48,7 @@ export interface MutationLevel {
   StringLiteral?: StringLiteral[];
   UnaryOperator?: UnaryOperator[];
   UpdateOperator?: UpdateOperator[];
-  [k: string]: unknown;
+  [k: string]: MutatorDefinition[] | string | undefined;
 }
 
 export const defaultMutationLevels: MutationLevel[] = JSON.parse(

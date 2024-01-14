@@ -3,149 +3,149 @@
       {
          "name":"Level1",
          "UpdateOperator":[
-            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator"
+            "PrefixDecrementOperatorNegation"
          ],
          "EqualityOperator":[
-            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
-            "EqualityOperator_LessThanEqualOperator_Boundary",
-            "EqualityOperator_EqualityOperator_ToInequalityOperator",
-            "EqualityOperator_InequalityOperator_ToEqualityOperator",
-            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator"
+            "LessThanEqualOperatorNegation",
+            "LessThanEqualOperatorBoundary",
+            "EqualityOperatorNegation",
+            "InequalityOperatorNegation",
+            "GreaterThanEqualOperatorNegation"
          ],
          "ArrayDeclaration":[
-            "ArrayDeclaration_ArrayConstructor_ItemsRemoval"
+            "ArrayConstructorItemsRemoval"
          ],
          "ConditionalExpression":[
-            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
-            "ConditionalExpression_BooleanExpression_ToTrueLiteral"
+            "BooleanExpressionToFalseReplacement",
+            "BooleanExpressionToTrueReplacement"
          ],
          "UnaryOperator":[
-            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator"
+            "UnaryPlusOperatorNegation"
          ],
          "AssignmentOperator":[
-            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+            "NullishCoalescingAssignmentToLogicalAndReplacement"
          ],
          "ArithmeticOperator":[
-            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator"
+            "DivisionOperatorNegation",
+            "RemainderOperatorToMultiplicationReplacement",
+            "MultiplicationOperatorNegation"
          ],
          "OptionalChaining":[
-            "OptionalChaining_OptionalCallExpression_OptionRemoval",
-            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+            "OptionalCallExpressionOptionalRemoval",
+            "OptionalMemberExpressionOptionalRemoval"
          ]
       },
       {
          "name":"Level2",
          "UpdateOperator":[
-            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator",
-            "UpdateOperator_PostfixIncrementOperator_ToPostfixDecrementOperator"
+            "PrefixDecrementOperatorNegation",
+            "PostfixIncrementOperatorNegation"
          ],
          "EqualityOperator":[
-            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
-            "EqualityOperator_LessThanEqualOperator_Boundary",
-            "EqualityOperator_EqualityOperator_ToInequalityOperator",
-            "EqualityOperator_InequalityOperator_ToEqualityOperator",
-            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator",
-            "EqualityOperator_LessThanOperator_ToGreatherThanEqualOperator",
-            "EqualityOperator_GreatherThanEqualOperator_Boundary",
-            "EqualityOperator_StrictInequalityOperator_ToStrictEqualityOperator",
-            "EqualityOperator_GreaterThanOperator_Boundary"
+            "LessThanEqualOperatorNegation",
+            "LessThanEqualOperatorBoundary",
+            "EqualityOperatorNegation",
+            "InequalityOperatorNegation",
+            "GreaterThanEqualOperatorNegation",
+            "LessThanOperatorNegation",
+            "GreaterThanEqualOperatorBoundary",
+            "StrictInequalityOperatorNegation",
+            "GreaterThanOperatorBoundary"
          ],
          "ArrayDeclaration":[
-            "ArrayDeclaration_ArrayConstructor_ItemsRemoval"
+            "ArrayConstructorItemsRemoval"
          ],
          "ConditionalExpression":[
-            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
-            "ConditionalExpression_BooleanExpression_ToTrueLiteral",
-            "ConditionalExpression_SwitchStatementBody_Removal"
+            "BooleanExpressionToFalseReplacement",
+            "BooleanExpressionToTrueReplacement",
+            "SwitchStatementBodyRemoval"
          ],
          "UnaryOperator":[
-            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator"
+            "UnaryPlusOperatorNegation"
          ],
          "AssignmentOperator":[
-            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+            "NullishCoalescingAssignmentToLogicalAndReplacement"
          ],
          "ArithmeticOperator":[
-            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator",
-            "ArithmeticOperator_AdditionOperator_ToSubtractionOperator",
-            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+            "DivisionOperatorNegation",
+            "RemainderOperatorToMultiplicationReplacement",
+            "MultiplicationOperatorNegation",
+            "AdditionOperatorNegation",
+            "SubtractionOperatorNegation"
          ],
          "OptionalChaining":[
-            "OptionalChaining_OptionalCallExpression_OptionRemoval",
-            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+            "OptionalCallExpressionOptionalRemoval",
+            "OptionalMemberExpressionOptionalRemoval"
          ],
          "StringLiteral":[
-            "StringLiteral_EmptyStringLiteral_ToFilledStringLiteral",
-            "StringLiteral_EmptyInterpolatedString_ToFilledInterpolatedString"
+            "EmptyStringLiteralToFilledReplacement",
+            "EmptyInterpolatedStringToFilledReplacement"
          ],
          "Regex":[
-            "Regex_Removal"
+            "RegexRemoval"
          ],
          "BooleanLiteral":[
-            "BooleanLiteral_TrueLiteral_ToFalseLiteral"
+            "TrueLiteralNegation"
          ]
       },
       {
          "name":"Level3",
          "UpdateOperator":[
-            "UpdateOperator_PostfixDecrementOperator_ToPostfixIncrementOperator",
-            "UpdateOperator_PostfixIncrementOperator_ToPostfixDecrementOperator"
+            "PrefixDecrementOperatorNegation",
+            "PostfixIncrementOperatorNegation"
          ],
          "EqualityOperator":[
-            "EqualityOperator_LessThanEqualOperator_ToGreatherThanOperator",
-            "EqualityOperator_LessThanEqualOperator_Boundary",
-            "EqualityOperator_EqualityOperator_ToInequalityOperator",
-            "EqualityOperator_InequalityOperator_ToEqualityOperator",
-            "EqualityOperator_GreatherThanEqualOperator_ToLessThanOperator",
-            "EqualityOperator_LessThanOperator_ToGreatherThanEqualOperator",
-            "EqualityOperator_GreatherThanEqualOperator_Boundary",
-            "EqualityOperator_StrictInequalityOperator_ToStrictEqualityOperator",
-            "EqualityOperator_GreaterThanOperator_Boundary",
-            "EqualityOperator_LessThanOperator_Boundary",
-            "EqualityOperator_GreaterThanOperator_ToLessThanEqualOperator"
+            "LessThanEqualOperatorNegation",
+            "LessThanEqualOperatorBoundary",
+            "EqualityOperatorNegation",
+            "InequalityOperatorNegation",
+            "GreaterThanEqualOperatorNegation",
+            "LessThanOperatorNegation",
+            "GreaterThanEqualOperatorBoundary",
+            "StrictInequalityOperatorNegation",
+            "GreaterThanOperatorBoundary",
+            "LessThanOperatorBoundary",
+            "GreaterThanOperatorNegation"
          ],
          "ArrayDeclaration":[
-            "ArrayDeclaration_ArrayConstructor_ItemsRemoval",
+            "ArrayConstructorItemsRemoval",
             "EmptyArray",
             "FilledArray"
          ],
          "ConditionalExpression":[
-            "ConditionalExpression_BooleanExpression_ToFalseLiteral",
-            "ConditionalExpression_BooleanExpression_ToTrueLiteral",
-            "ConditionalExpression_SwitchStatementBody_Removal"
+            "BooleanExpressionToFalseReplacement",
+            "BooleanExpressionToTrueReplacement",
+            "SwitchStatementBodyRemoval"
          ],
          "UnaryOperator":[
-            "UnaryOperator_UnaryPlusOperator_ToUnaryMinusOperator",
-            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+            "UnaryPlusOperatorNegation",
+            "SubtractionOperatorNegation"
          ],
          "AssignmentOperator":[
-            "AssignmentOperator_NullishCoalescingAssignment_ToLogicalAndAssignment"
+            "NullishCoalescingAssignmentToLogicalAndReplacement"
          ],
          "ArithmeticOperator":[
-            "ArithmeticOperator_DivisionOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_RemainderOperator_ToMultiplicationOperator",
-            "ArithmeticOperator_MultiplicationOperator_ToDivisionOperator",
-            "ArithmeticOperator_AdditionOperator_ToSubtractionOperator",
-            "ArithmeticOperator_SubtractionOperator_ToAdditionOperator"
+            "DivisionOperatorNegation",
+            "RemainderOperatorToMultiplicationReplacement",
+            "MultiplicationOperatorNegation",
+            "AdditionOperatorNegation",
+            "SubtractionOperatorNegation"
          ],
          "OptionalChaining":[
-            "OptionalChaining_OptionalCallExpression_OptionRemoval",
-            "OptionalChaining_OptionalMemberExpression_OptionRemoval"
+            "OptionalCallExpressionOptionalRemoval",
+            "OptionalMemberExpressionOptionalRemoval"
          ],
          "StringLiteral":[
-            "StringLiteral_EmptyStringLiteral_ToFilledStringLiteral",
-            "StringLiteral_EmptyInterpolatedString_ToFilledInterpolatedString"
+            "EmptyStringLiteralToFilledReplacement",
+            "EmptyInterpolatedStringToFilledReplacement"
          ],
          "Regex":[
-            "Regex_Removal"
+            "RegexRemoval"
          ],
          "BooleanLiteral":[
-            "BooleanLiteral_TrueLiteral_ToFalseLiteral",
-            "BooleanLiteral_FalseLiteral_ToTrueLiteral",
-            "BooleanLiteral_LogicalNot_Removal"
+            "TrueLiteralNegation",
+            "FalseLiteralNegation",
+            "LogicalNotRemoval"
          ]
       }
    ]

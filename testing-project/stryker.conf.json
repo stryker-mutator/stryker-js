@@ -16,7 +16,7 @@
   },
   "coverageAnalysis": "perTest",
   "mutator": {
-    "includedMutations": ["@Level1", "@ArithmeticOperator", "removeCharAt", "BlockStatement"],
-    "excludedMutations": ["@Regex", "Remove~"]
+    "includedMutations": ["@Level1", "@ArithmeticOperator", "CharAtMethodCallRemoval", "BlockStatementRemoval" ],
+    "excludedMutations": ["RegexRemoval", "AdditionOperatorNegation"]
   }
 }
